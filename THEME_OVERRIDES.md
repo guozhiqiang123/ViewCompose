@@ -24,7 +24,7 @@
 文档更新：
 
 - `Phase 1` 已完成
-- `Phase 2` 未开始
+- `Phase 2` 已完成
 - `Phase 3` 未开始
 - `Phase 4` 未开始
 
@@ -449,6 +449,6 @@ UiThemeOverride(
 当前阶段状态：
 
 - `Phase 1` 已完成
-- `Phase 2` 未开始
+- `Phase 2` 已完成
 - `Phase 3` 未开始
 - `Phase 4` 未开始

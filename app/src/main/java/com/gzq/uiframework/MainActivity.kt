@@ -65,6 +65,7 @@ import com.gzq.uiframework.widget.core.UiTreeBuilder
 import com.gzq.uiframework.widget.core.UiEnvironment
 import com.gzq.uiframework.widget.core.UiTextStyle
 import com.gzq.uiframework.widget.core.UiTheme
+import com.gzq.uiframework.widget.core.UiThemeOverride
 import com.gzq.uiframework.widget.core.TextFieldVariant
 import com.gzq.uiframework.widget.core.dp
 import com.gzq.uiframework.widget.core.key
@@ -213,7 +214,7 @@ private fun UiTreeBuilder.OverviewPage(
     selectedTabState: MutableState<Int>,
 ) {
     LazyColumn(
-        items = listOf("intro", "theme", "jump", "surface"),
+        items = listOf("intro", "theme", "overrides", "jump", "surface"),
         key = { it },
         modifier = Modifier.Empty.fillMaxSize(),
     ) { section ->
@@ -255,6 +256,123 @@ private fun UiTreeBuilder.OverviewPage(
                 )
                 Text(
                     text = "Shapes: card=${Theme.shapes.cardCornerRadius}px, control=${Theme.shapes.controlCornerRadius}px",
+                    style = UiTextStyle(fontSizeSp = 13.sp),
+                    modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+                )
+            }
+
+            "overrides" -> DemoSection(
+                title = "Scoped Theme Overrides",
+                subtitle = "Each block below overrides only one token domain for its local subtree.",
+            ) {
+                UiThemeOverride(
+                    colors = Theme.colors.copy(
+                        primary = Theme.colors.accent,
+                        surfaceVariant = Theme.colors.primary,
+                    ),
+                ) {
+                    Column(
+                        spacing = 8.dp,
+                        modifier = Modifier.Empty
+                            .fillMaxWidth()
+                            .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                            .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                            .padding(12.dp),
+                    ) {
+                        Text(text = "Color Override")
+                        ThemeSwatchRow(
+                            label = "Local Colors",
+                            swatches = listOf(
+                                ThemeSwatch("Primary", Theme.colors.primary),
+                                ThemeSwatch("Surface", Theme.colors.surfaceVariant),
+                            ),
+                        )
+                        Button(
+                            text = "Accent As Primary",
+                            modifier = Modifier.Empty.fillMaxWidth(),
+                        )
+                    }
+                }
+                UiThemeOverride(
+                    shapes = Theme.shapes.copy(
+                        cardCornerRadius = 32.dp,
+                        controlCornerRadius = 24.dp,
+                    ),
+                ) {
+                    Column(
+                        spacing = 8.dp,
+                        modifier = Modifier.Empty
+                            .fillMaxWidth()
+                            .backgroundColor(SurfaceDefaults.backgroundColor())
+                            .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                            .padding(16.dp),
+                    ) {
+                        Text(text = "Shape Override")
+                        Text(
+                            text = "Local card=${Theme.shapes.cardCornerRadius}px, control=${Theme.shapes.controlCornerRadius}px",
+                            style = UiTextStyle(fontSizeSp = 13.sp),
+                            modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+                        )
+                        Row(
+                            spacing = 8.dp,
+                            modifier = Modifier.Empty.fillMaxWidth(),
+                        ) {
+                            Box(
+                                modifier = Modifier.Empty
+                                    .weight(1f)
+                                    .height(72.dp)
+                                    .backgroundColor(Theme.colors.surfaceVariant)
+                                    .cornerRadius(SurfaceDefaults.cardCornerRadius()),
+                            ) {}
+                            Button(
+                                text = "Rounded Action",
+                                variant = ButtonVariant.Tonal,
+                                size = ButtonSize.Large,
+                                modifier = Modifier.Empty.weight(1f),
+                            )
+                        }
+                    }
+                }
+                UiThemeOverride(
+                    interactions = Theme.interactions.copy(
+                        pressedOverlay = (Theme.colors.primary and 0x00FFFFFF) or 0x44000000,
+                    ),
+                ) {
+                    Column(
+                        spacing = 8.dp,
+                        modifier = Modifier.Empty
+                            .fillMaxWidth()
+                            .backgroundColor(SurfaceDefaults.backgroundColor())
+                            .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                            .padding(12.dp),
+                    ) {
+                        Text(text = "Interaction Override")
+                        ThemeSwatchRow(
+                            label = "Pressed Overlay",
+                            swatches = listOf(
+                                ThemeSwatch("Base", Theme.interactions.pressedOverlay),
+                                ThemeSwatch("Primary", Theme.colors.primary),
+                            ),
+                        )
+                        Row(
+                            spacing = 8.dp,
+                            modifier = Modifier.Empty.fillMaxWidth(),
+                        ) {
+                            Button(
+                                text = "Press Me",
+                                variant = ButtonVariant.Primary,
+                                modifier = Modifier.Empty.weight(1f),
+                            )
+                            Button(
+                                text = "Outlined",
+                                variant = ButtonVariant.Outlined,
+                                modifier = Modifier.Empty.weight(1f),
+                            )
+                        }
+                    }
+                }
+                Text(
+                    text = "Outside these blocks, the parent demo theme stays unchanged.",
                     style = UiTextStyle(fontSizeSp = 13.sp),
                     modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
                 )
