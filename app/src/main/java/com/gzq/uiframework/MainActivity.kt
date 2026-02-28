@@ -1087,6 +1087,9 @@ private fun UiTreeBuilder.InputPage() {
     val analyticsEnabledState = remember { mutableStateOf(false) }
     val selectedTierState = remember { mutableStateOf("Alpha") }
     val intensityState = remember { mutableStateOf(32) }
+    val stressExpandedState = remember { mutableStateOf(false) }
+    val stressReadonlyState = remember { mutableStateOf(true) }
+    val stressErrorState = remember { mutableStateOf(true) }
     val summaryState = remember {
         derivedStateOf {
             "Preview: ${nameState.value.ifBlank { "Anonymous" }} · " +
@@ -1098,6 +1101,7 @@ private fun UiTreeBuilder.InputPage() {
     val pageItems = when (selectedPageState.value) {
         0 -> listOf("page", "page_filter", "intro", "form", "verify")
         1 -> listOf("page", "page_filter", "controls", "verify")
+        2 -> listOf("page", "page_filter", "stress", "verify")
         else -> listOf("page", "page_filter", "summary", "verify")
     }
 
@@ -1114,7 +1118,7 @@ private fun UiTreeBuilder.InputPage() {
             )
 
             "page_filter" -> ChapterPageFilterSection(
-                pages = listOf("Fields", "Selection", "Summary"),
+                pages = listOf("Fields", "Selection", "Stress", "Summary"),
                 selectedIndex = selectedPageState.value,
                 onSelectionChange = { selectedPageState.value = it },
             )
@@ -1341,6 +1345,92 @@ private fun UiTreeBuilder.InputPage() {
                 }
             }
 
+            "stress" -> DemoSection(
+                title = "Input Edge Cases",
+                subtitle = "This page focuses on long labels, read-only text, multiline growth, and persistent error styling under theme changes.",
+            ) {
+                Row(
+                    spacing = 8.dp,
+                    modifier = Modifier.Empty.margin(bottom = 12.dp),
+                ) {
+                    Button(
+                        text = if (stressExpandedState.value) "Compact Copy" else "Expanded Copy",
+                        size = ButtonSize.Compact,
+                        onClick = {
+                            stressExpandedState.value = !stressExpandedState.value
+                        },
+                    )
+                    Button(
+                        text = if (stressReadonlyState.value) "Editable Notes" else "Readonly Notes",
+                        size = ButtonSize.Compact,
+                        variant = ButtonVariant.Outlined,
+                        onClick = {
+                            stressReadonlyState.value = !stressReadonlyState.value
+                        },
+                    )
+                    Button(
+                        text = if (stressErrorState.value) "Clear Error" else "Show Error",
+                        size = ButtonSize.Compact,
+                        variant = ButtonVariant.Tonal,
+                        onClick = {
+                            stressErrorState.value = !stressErrorState.value
+                        },
+                    )
+                }
+                TextField(
+                    value = if (stressExpandedState.value) {
+                        "A much longer project title that should still keep label, placeholder, and supporting text readable without clipping."
+                    } else {
+                        "Compact title"
+                    },
+                    onValueChange = {},
+                    readOnly = true,
+                    label = "Release channel display name",
+                    supportingText = if (stressExpandedState.value) {
+                        "Long supporting text should wrap cleanly and remain aligned with the field container even when the content spans multiple lines."
+                    } else {
+                        "Short supporting text"
+                    },
+                    variant = TextFieldVariant.Outlined,
+                    size = TextFieldSize.Large,
+                    modifier = Modifier.Empty
+                        .fillMaxWidth()
+                        .margin(bottom = 12.dp),
+                )
+                TextArea(
+                    value = if (stressExpandedState.value) {
+                        "Readonly stress note:\n- Local theme overrides stay active\n- Multiline container should keep padding stable\n- Long copy should not push helper text outside the card"
+                    } else {
+                        "Readonly note"
+                    },
+                    onValueChange = {},
+                    label = "Reviewer notes",
+                    supportingText = "Toggle readonly and expanded copy to inspect multiline stability.",
+                    readOnly = stressReadonlyState.value,
+                    maxLines = 6,
+                    variant = TextFieldVariant.Tonal,
+                    size = TextFieldSize.Large,
+                    modifier = Modifier.Empty
+                        .fillMaxWidth()
+                        .height(132.dp)
+                        .margin(bottom = 12.dp),
+                )
+                PasswordField(
+                    value = if (stressErrorState.value) "" else "stable-password",
+                    onValueChange = {},
+                    label = "Protected field",
+                    supportingText = if (stressErrorState.value) {
+                        "Error state must remain visible through theme switches and page changes."
+                    } else {
+                        "Resolved state should return to standard themed styling."
+                    },
+                    isError = stressErrorState.value,
+                    variant = TextFieldVariant.Filled,
+                    size = TextFieldSize.Medium,
+                    modifier = Modifier.Empty.fillMaxWidth(),
+                )
+            }
+
             "summary" -> DemoSection(
                 title = "Derived Summary",
                 subtitle = "This section is driven by `derivedStateOf`, not duplicated imperative updates.",
@@ -1365,6 +1455,7 @@ private fun UiTreeBuilder.InputPage() {
                 howToVerify = listOf(
                     "输入文本并点击 Reset Form，确认所有字段一起回到初始值。",
                     "观察空密码时的错误态，并切换 theme mode，确认错误色和容器色同步变化。",
+                    "打开 Stress 页切换 expanded / readonly / error，确认长文案、多行和只读态不会把布局撑坏。",
                     "切换 selection controls 和 slider，确认摘要区立即反映变化。",
                 ),
                 expected = listOf(
