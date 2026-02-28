@@ -11,7 +11,7 @@
 - `Phase 1` 已完成
 - `Phase 2` 已完成
 - `Phase 3` 已完成
-- `Phase 4` 未开始
+- `Phase 4` 已完成
 
 ## 2. 结论
 
@@ -216,13 +216,19 @@ object AppTheme {
 
 ### 8.3 为什么 v1 不直接上泛型 CompositionLocal
 
-当前项目还没有必要一开始就引入完整的 `CompositionLocal<T>` 抽象。
+当前项目仍然没有必要一开始就引入完整的 `CompositionLocal<T>` 抽象。
 
 原因：
 
 - 当前 runtime 还在早期
 - 先收敛“主题”这一类高价值上下文即可
 - 后续如果 theme/elevation/locale/density 都需要类似能力，再抽象成通用 local 系统更稳
+
+当前实现补充：
+
+- 已有可复用的 `LocalValue` / `LocalContext`
+- `Theme` 已经迁到 local 机制
+- `UiEnvironment`、`Environment`、`AndroidEnvironmentBridge` 已落地
 
 ## 9. 与 Android View Theme 的关系
 
@@ -316,10 +322,21 @@ fun UiTheme(
 
 ### Phase 4
 
+状态：已完成
+
 目标：
 
 - 抽象为更通用的 local/context 系统
 - 让 density、locale、layout direction 等上下文共享同一机制
+
+当前实现补充：
+
+- 已新增通用 local 运行时
+- 已新增 `UiEnvironment`
+- 已新增 `Environment.density`
+- 已新增 `Environment.localeTags`
+- 已新增 `Environment.layoutDirection`
+- sample 已开始使用环境上下文和 density 驱动尺寸
 
 ## 11. 当前实现约束
 
