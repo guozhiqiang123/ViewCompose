@@ -1,10 +1,6 @@
 package com.gzq.uiframework.renderer.view
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.ColorFilter
-import android.graphics.PixelFormat
-import android.graphics.drawable.Drawable
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.gzq.uiframework.renderer.layout.HorizontalAlignment
+import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.modifier.AlphaModifierElement
 import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
@@ -142,11 +139,11 @@ object ViewTreeRenderer {
         val view = when (node.type) {
             NodeType.Text -> TextView(context)
             NodeType.Button -> Button(context)
-            NodeType.Row -> LinearLayout(context).apply {
+            NodeType.Row -> DeclarativeLinearLayout(context).apply {
                 orientation = LinearLayout.HORIZONTAL
             }
 
-            NodeType.Column -> LinearLayout(context).apply {
+            NodeType.Column -> DeclarativeLinearLayout(context).apply {
                 orientation = LinearLayout.VERTICAL
             }
 
@@ -193,17 +190,19 @@ object ViewTreeRenderer {
             }
 
             NodeType.Row -> {
-                (view as LinearLayout).apply {
+                (view as DeclarativeLinearLayout).apply {
                     orientation = LinearLayout.HORIZONTAL
-                    applyLinearSpacing(readLinearSpacing(node))
+                    itemSpacing = readLinearSpacing(node)
+                    mainAxisArrangement = readRowArrangement(node)
                     gravity = readRowVerticalAlignment(node).toGravity()
                 }
             }
 
             NodeType.Column -> {
-                (view as LinearLayout).apply {
+                (view as DeclarativeLinearLayout).apply {
                     orientation = LinearLayout.VERTICAL
-                    applyLinearSpacing(readLinearSpacing(node))
+                    itemSpacing = readLinearSpacing(node)
+                    mainAxisArrangement = readColumnArrangement(node)
                     gravity = readColumnHorizontalAlignment(node).toGravity()
                 }
             }
@@ -294,7 +293,7 @@ object ViewTreeRenderer {
         val width = widthModifier?.width ?: size?.width ?: defaultWidth
         val height = heightModifier?.height ?: size?.height ?: defaultHeight
         return when (parent) {
-            is LinearLayout -> {
+            is DeclarativeLinearLayout -> {
                 val resolvedWidth = if (
                     weight != null &&
                     parent.orientation == LinearLayout.HORIZONTAL &&
@@ -315,7 +314,7 @@ object ViewTreeRenderer {
                 } else {
                     height
                 }
-                LinearLayout.LayoutParams(resolvedWidth, resolvedHeight).applyLayoutParams(
+                android.widget.LinearLayout.LayoutParams(resolvedWidth, resolvedHeight).applyLayoutParams(
                     margin = margin,
                 ) {
                     this.weight = weight?.weight ?: 0f
@@ -380,9 +379,19 @@ object ViewTreeRenderer {
             ?: VerticalAlignment.Top
     }
 
+    private fun readRowArrangement(node: VNode): MainAxisArrangement {
+        return node.props.values[PropKeys.ROW_MAIN_AXIS_ARRANGEMENT] as? MainAxisArrangement
+            ?: MainAxisArrangement.Start
+    }
+
     private fun readColumnHorizontalAlignment(node: VNode): HorizontalAlignment {
         return node.props.values[PropKeys.COLUMN_HORIZONTAL_ALIGNMENT] as? HorizontalAlignment
             ?: HorizontalAlignment.Start
+    }
+
+    private fun readColumnArrangement(node: VNode): MainAxisArrangement {
+        return node.props.values[PropKeys.COLUMN_MAIN_AXIS_ARRANGEMENT] as? MainAxisArrangement
+            ?: MainAxisArrangement.Start
     }
 
     private fun disposeMountedNode(
@@ -395,46 +404,6 @@ object ViewTreeRenderer {
                 (adapter as? LazyColumnAdapter)?.disposeAll()
             }
         mountedNode.children = emptyList()
-    }
-
-    private fun LinearLayout.applyLinearSpacing(
-        spacing: Int,
-    ) {
-        if (spacing <= 0) {
-            showDividers = LinearLayout.SHOW_DIVIDER_NONE
-            dividerDrawable = null
-            return
-        }
-        showDividers = LinearLayout.SHOW_DIVIDER_MIDDLE
-        dividerDrawable = if (orientation == LinearLayout.HORIZONTAL) {
-            SpacingDrawable(
-                width = spacing,
-                height = 0,
-            )
-        } else {
-            SpacingDrawable(
-                width = 0,
-                height = spacing,
-            )
-        }
-    }
-
-    private class SpacingDrawable(
-        private val width: Int,
-        private val height: Int,
-    ) : Drawable() {
-        override fun draw(canvas: Canvas) = Unit
-
-        override fun setAlpha(alpha: Int) = Unit
-
-        override fun setColorFilter(colorFilter: ColorFilter?) = Unit
-
-        @Deprecated("Deprecated in Java")
-        override fun getOpacity(): Int = PixelFormat.TRANSPARENT
-
-        override fun getIntrinsicWidth(): Int = width
-
-        override fun getIntrinsicHeight(): Int = height
     }
 
     private fun VerticalAlignment.toGravity(): Int {

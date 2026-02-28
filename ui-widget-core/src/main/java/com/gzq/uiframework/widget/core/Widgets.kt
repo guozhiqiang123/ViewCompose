@@ -3,6 +3,7 @@ package com.gzq.uiframework.widget.core
 import android.content.Context
 import android.view.View
 import com.gzq.uiframework.renderer.layout.HorizontalAlignment
+import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.node.LazyListItem
@@ -83,6 +84,7 @@ fun UiTreeBuilder.Box(
 fun UiTreeBuilder.Row(
     key: Any? = null,
     spacing: Int = 0,
+    arrangement: MainAxisArrangement = MainAxisArrangement.Start,
     verticalAlignment: VerticalAlignment = VerticalAlignment.Top,
     modifier: Modifier = Modifier.Empty,
     content: UiTreeBuilder.() -> Unit,
@@ -93,6 +95,7 @@ fun UiTreeBuilder.Row(
         props = Props(
             values = mapOf(
                 PropKeys.LINEAR_SPACING to spacing,
+                PropKeys.ROW_MAIN_AXIS_ARRANGEMENT to arrangement,
                 PropKeys.ROW_VERTICAL_ALIGNMENT to verticalAlignment,
             ),
         ),
@@ -104,6 +107,7 @@ fun UiTreeBuilder.Row(
 fun UiTreeBuilder.Column(
     key: Any? = null,
     spacing: Int = 0,
+    arrangement: MainAxisArrangement = MainAxisArrangement.Start,
     horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Start,
     modifier: Modifier = Modifier.Empty,
     content: UiTreeBuilder.() -> Unit,
@@ -114,6 +118,7 @@ fun UiTreeBuilder.Column(
         props = Props(
             values = mapOf(
                 PropKeys.LINEAR_SPACING to spacing,
+                PropKeys.COLUMN_MAIN_AXIS_ARRANGEMENT to arrangement,
                 PropKeys.COLUMN_HORIZONTAL_ALIGNMENT to horizontalAlignment,
             ),
         ),

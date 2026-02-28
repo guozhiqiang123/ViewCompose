@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.gzq.uiframework.renderer.layout.HorizontalAlignment
+import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.modifier.Visibility
@@ -128,6 +129,7 @@ class MainActivity : AppCompatActivity() {
                     modifier = Modifier.Empty.padding(8),
                 )
                 Row(
+                    arrangement = MainAxisArrangement.SpaceBetween,
                     spacing = 12,
                     verticalAlignment = VerticalAlignment.Center,
                     modifier = Modifier.Empty
@@ -201,6 +203,7 @@ class MainActivity : AppCompatActivity() {
                     key("transient-panel") {
                         val panelTapState = remember { mutableStateOf(0) }
                         Column(
+                            arrangement = MainAxisArrangement.Center,
                             horizontalAlignment = HorizontalAlignment.Center,
                             spacing = 4,
                             modifier = Modifier.Empty
