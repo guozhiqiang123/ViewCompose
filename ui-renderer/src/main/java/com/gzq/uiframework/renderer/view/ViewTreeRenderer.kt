@@ -155,6 +155,7 @@ object ViewTreeRenderer {
 
             NodeType.Box -> DeclarativeBoxLayout(context)
             NodeType.Spacer -> View(context)
+            NodeType.Divider -> View(context)
             NodeType.Image -> View(context)
             NodeType.AndroidView -> readViewFactory(node)?.invoke(context) ?: View(context)
             NodeType.LazyColumn -> RecyclerView(context).apply {
@@ -217,9 +218,13 @@ object ViewTreeRenderer {
                 (view as DeclarativeBoxLayout).contentGravity = readBoxAlignment(node).toGravity()
             }
 
-            NodeType.Spacer,
-            NodeType.Image,
-            -> Unit
+            NodeType.Spacer -> Unit
+
+            NodeType.Divider -> {
+                view.setBackgroundColor(readDividerColor(node))
+            }
+
+            NodeType.Image -> Unit
 
             NodeType.AndroidView -> {
                 readViewUpdate(node)?.invoke(view)
@@ -313,12 +318,13 @@ object ViewTreeRenderer {
             -> ViewGroup.LayoutParams.WRAP_CONTENT
 
             NodeType.Spacer -> 0
+            NodeType.Divider -> defaultDividerWidth(parent, node)
             else -> ViewGroup.LayoutParams.MATCH_PARENT
         }
-        val defaultHeight = if (node.type == NodeType.Spacer) {
-            0
-        } else {
-            ViewGroup.LayoutParams.WRAP_CONTENT
+        val defaultHeight = when (node.type) {
+            NodeType.Spacer -> 0
+            NodeType.Divider -> defaultDividerHeight(parent, node)
+            else -> ViewGroup.LayoutParams.WRAP_CONTENT
         }
         val width = widthModifier?.width ?: size?.width ?: defaultWidth
         val height = heightModifier?.height ?: size?.height ?: defaultHeight
@@ -436,6 +442,32 @@ object ViewTreeRenderer {
     private fun readColumnArrangement(node: VNode): MainAxisArrangement {
         return node.props.values[PropKeys.COLUMN_MAIN_AXIS_ARRANGEMENT] as? MainAxisArrangement
             ?: MainAxisArrangement.Start
+    }
+
+    private fun defaultDividerWidth(parent: ViewGroup, node: VNode): Int {
+        val thickness = readDividerThickness(node)
+        return if ((parent as? LinearLayout)?.orientation == LinearLayout.HORIZONTAL) {
+            thickness
+        } else {
+            ViewGroup.LayoutParams.MATCH_PARENT
+        }
+    }
+
+    private fun defaultDividerHeight(parent: ViewGroup, node: VNode): Int {
+        val thickness = readDividerThickness(node)
+        return if ((parent as? LinearLayout)?.orientation == LinearLayout.HORIZONTAL) {
+            ViewGroup.LayoutParams.MATCH_PARENT
+        } else {
+            thickness
+        }
+    }
+
+    private fun readDividerColor(node: VNode): Int {
+        return node.props.values[PropKeys.DIVIDER_COLOR] as? Int ?: 0xFF000000.toInt()
+    }
+
+    private fun readDividerThickness(node: VNode): Int {
+        return node.props.values[PropKeys.DIVIDER_THICKNESS] as? Int ?: 1
     }
 
     private fun disposeMountedNode(

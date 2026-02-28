@@ -12,4 +12,6 @@ object PropKeys {
     const val COLUMN_MAIN_AXIS_ARRANGEMENT: String = "column_main_axis_arrangement"
     const val ROW_VERTICAL_ALIGNMENT: String = "row_vertical_alignment"
     const val COLUMN_HORIZONTAL_ALIGNMENT: String = "column_horizontal_alignment"
+    const val DIVIDER_COLOR: String = "divider_color"
+    const val DIVIDER_THICKNESS: String = "divider_thickness"
 }

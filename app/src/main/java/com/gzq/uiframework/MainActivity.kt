@@ -32,6 +32,7 @@ import com.gzq.uiframework.widget.core.AndroidView
 import com.gzq.uiframework.widget.core.Box
 import com.gzq.uiframework.widget.core.Button
 import com.gzq.uiframework.widget.core.Column
+import com.gzq.uiframework.widget.core.Divider
 import com.gzq.uiframework.widget.core.DisposableEffect
 import com.gzq.uiframework.widget.core.LazyColumn
 import com.gzq.uiframework.widget.core.Row
@@ -134,6 +135,11 @@ class MainActivity : AppCompatActivity() {
                 Text(
                     text = listOrderState.value,
                     modifier = Modifier.Empty.padding(8),
+                )
+                Divider(
+                    color = Color.parseColor("#D8CCBA"),
+                    thickness = 1,
+                    modifier = Modifier.Empty.margin(vertical = 8),
                 )
                 Box(
                     contentAlignment = BoxAlignment.Center,

@@ -99,6 +99,25 @@ fun UiTreeBuilder.Spacer(
     )
 }
 
+fun UiTreeBuilder.Divider(
+    color: Int,
+    thickness: Int = 1,
+    key: Any? = null,
+    modifier: Modifier = Modifier.Empty,
+) {
+    emit(
+        type = NodeType.Divider,
+        key = key,
+        props = Props(
+            values = mapOf(
+                PropKeys.DIVIDER_COLOR to color,
+                PropKeys.DIVIDER_THICKNESS to thickness,
+            ),
+        ),
+        modifier = modifier,
+    )
+}
+
 fun UiTreeBuilder.Row(
     key: Any? = null,
     spacing: Int = 0,
