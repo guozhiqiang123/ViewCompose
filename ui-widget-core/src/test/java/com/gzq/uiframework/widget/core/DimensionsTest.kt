@@ -7,6 +7,7 @@ class DimensionsTest {
     @Test
     fun `dp uses current environment density`() {
         var resolved = 0
+        var floatResolved = 0
 
         buildVNodeTree {
             UiEnvironment(
@@ -20,14 +21,17 @@ class DimensionsTest {
                 ),
             ) {
                 resolved = 8.dp
+                floatResolved = 8.4f.dp
             }
         }
 
         assertEquals(16, resolved)
+        assertEquals(16, floatResolved)
     }
 
     @Test
     fun `sp keeps semantic text units`() {
         assertEquals(14, 14.sp)
+        assertEquals(15, 14.6f.sp)
     }
 }
