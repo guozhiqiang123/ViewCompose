@@ -145,6 +145,7 @@ UiTheme(AppTheme.light()) {
 - `UiThemeOverride(...)` 用于父主题基础上的局部 patch
 - `Theme.components` 用于承载组件默认样式 token
 - `Theme.components` 当前已覆盖 `button`、`textField`、`segmentedControl`、`inputControl`
+- `button`、`textField`、`segmentedControl` 当前都已具备 disabled 等状态型组件 token
 
 ### 6.3 Widget/Modifier Consumption Layer
 
