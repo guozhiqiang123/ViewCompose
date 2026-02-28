@@ -875,8 +875,14 @@ private fun UiTreeBuilder.ThemeSwatchRow(
 
 private fun UiTreeBuilder.LayoutPage() {
     val boxTapState = remember { mutableStateOf(0) }
+    val selectedPageState = remember { mutableStateOf(0) }
+    val pageItems = when (selectedPageState.value) {
+        0 -> listOf("page", "page_filter", "row", "column", "verify")
+        1 -> listOf("page", "page_filter", "box", "verify")
+        else -> listOf("page", "page_filter", "verify")
+    }
     LazyColumn(
-        items = listOf("page", "row", "box", "column", "verify"),
+        items = pageItems,
         key = { it },
         modifier = Modifier.Empty.fillMaxSize(),
     ) { section ->
@@ -885,6 +891,12 @@ private fun UiTreeBuilder.LayoutPage() {
                 title = "Layouts",
                 goal = "Stress the custom linear and box containers so measurement, placement, spacing, and child overrides stay predictable.",
                 modules = listOf("DeclarativeLinearLayout", "DeclarativeBoxLayout", "layout defaults", "modifiers"),
+            )
+
+            "page_filter" -> ChapterPageFilterSection(
+                pages = listOf("Linear", "Overlay", "Checklist"),
+                selectedIndex = selectedPageState.value,
+                onSelectionChange = { selectedPageState.value = it },
             )
 
             "row" -> DemoSection(
@@ -1298,6 +1310,7 @@ private fun UiTreeBuilder.InputPage() {
 private fun UiTreeBuilder.StatePage() {
     val clickCountState = remember { mutableStateOf(0) }
     val panelVisibleState = remember { mutableStateOf(true) }
+    val selectedPageState = remember { mutableStateOf(0) }
     val summaryState = remember {
         derivedStateOf {
             val value = clickCountState.value
@@ -1315,9 +1328,14 @@ private fun UiTreeBuilder.StatePage() {
         value = "Last update: ${clickCountState.value} tap(s) committed"
         null
     }
+    val pageItems = when (selectedPageState.value) {
+        0 -> listOf("page", "page_filter", "counter", "verify")
+        1 -> listOf("page", "page_filter", "panel", "verify")
+        else -> listOf("page", "page_filter", "verify")
+    }
 
     LazyColumn(
-        items = listOf("page", "counter", "panel", "verify"),
+        items = pageItems,
         key = { it },
         modifier = Modifier.Empty.fillMaxSize(),
     ) { section ->
@@ -1326,6 +1344,12 @@ private fun UiTreeBuilder.StatePage() {
                 title = "State & Effects",
                 goal = "Exercise the runtime primitives directly so remember, derived state, produced values, and keyed identity can be inspected by hand.",
                 modules = listOf("ui-runtime", "remember", "effects", "key scopes"),
+            )
+
+            "page_filter" -> ChapterPageFilterSection(
+                pages = listOf("Core", "Identity", "Checklist"),
+                selectedIndex = selectedPageState.value,
+                onSelectionChange = { selectedPageState.value = it },
             )
 
             "counter" -> DemoSection(
@@ -1432,6 +1456,7 @@ private fun UiTreeBuilder.StatePage() {
 private fun UiTreeBuilder.CollectionPage() {
     val reversedState = remember { mutableStateOf(false) }
     val alternateLabelsState = remember { mutableStateOf(false) }
+    val selectedPageState = remember { mutableStateOf(0) }
     val listOrderState = produceState(
         initialValue = "List order: A-B-C",
         reversedState.value,
@@ -1453,9 +1478,14 @@ private fun UiTreeBuilder.CollectionPage() {
             },
         )
     }
+    val pageItems = when (selectedPageState.value) {
+        0 -> listOf("page", "page_filter", "controls", "verify")
+        1 -> listOf("page", "page_filter", "list", "verify")
+        else -> listOf("page", "page_filter", "interop", "verify")
+    }
 
     LazyColumn(
-        items = listOf("page", "controls", "interop", "list", "verify"),
+        items = pageItems,
         key = { it },
         modifier = Modifier.Empty.fillMaxSize(),
     ) { section ->
@@ -1464,6 +1494,12 @@ private fun UiTreeBuilder.CollectionPage() {
                 title = "Collections",
                 goal = "Validate keyed list reuse, local item state preservation, and AndroidView coexistence inside lazy containers.",
                 modules = listOf("LazyColumn", "diff", "lazy item sessions", "AndroidView"),
+            )
+
+            "page_filter" -> ChapterPageFilterSection(
+                pages = listOf("Controls", "List", "Interop"),
+                selectedIndex = selectedPageState.value,
+                onSelectionChange = { selectedPageState.value = it },
             )
 
             "controls" -> DemoSection(
@@ -1565,8 +1601,14 @@ private fun UiTreeBuilder.CollectionPage() {
 
 private fun UiTreeBuilder.InteropPage() {
     val alternateLabelsState = remember { mutableStateOf(false) }
+    val selectedPageState = remember { mutableStateOf(0) }
+    val pageItems = when (selectedPageState.value) {
+        0 -> listOf("page", "page_filter", "basics", "verify")
+        1 -> listOf("page", "page_filter", "theme_bridge", "verify")
+        else -> listOf("page", "page_filter", "why_it_matters", "verify")
+    }
     LazyColumn(
-        items = listOf("page", "basics", "theme_bridge", "why_it_matters", "verify"),
+        items = pageItems,
         key = { it },
         modifier = Modifier.Empty.fillMaxSize(),
     ) { section ->
@@ -1575,6 +1617,12 @@ private fun UiTreeBuilder.InteropPage() {
                 title = "Interop",
                 goal = "Keep AndroidView as a first-class migration path and verify that native widgets still fit inside framework theme and state boundaries.",
                 modules = listOf("AndroidView", "theme bridge", "local propagation"),
+            )
+
+            "page_filter" -> ChapterPageFilterSection(
+                pages = listOf("Basics", "Theme", "Why"),
+                selectedIndex = selectedPageState.value,
+                onSelectionChange = { selectedPageState.value = it },
             )
 
             "basics" -> DemoSection(
@@ -1655,8 +1703,14 @@ private fun UiTreeBuilder.InteropPage() {
 }
 
 private fun UiTreeBuilder.DiagnosticsPage() {
+    val selectedPageState = remember { mutableStateOf(0) }
+    val pageItems = when (selectedPageState.value) {
+        0 -> listOf("page", "page_filter", "runtime", "verify")
+        1 -> listOf("page", "page_filter", "renderer", "verify")
+        else -> listOf("page", "page_filter", "gaps", "verify")
+    }
     LazyColumn(
-        items = listOf("page", "runtime", "renderer", "gaps", "verify"),
+        items = pageItems,
         key = { it },
         modifier = Modifier.Empty.fillMaxSize(),
     ) { section ->
@@ -1665,6 +1719,12 @@ private fun UiTreeBuilder.DiagnosticsPage() {
                 title = "Diagnostics",
                 goal = "Turn the demo into a manual regression console for runtime locals, renderer patches, and visible framework gaps.",
                 modules = listOf("debug logging", "theme locals", "renderer", "roadmap gaps"),
+            )
+
+            "page_filter" -> ChapterPageFilterSection(
+                pages = listOf("Runtime", "Renderer", "Gaps"),
+                selectedIndex = selectedPageState.value,
+                onSelectionChange = { selectedPageState.value = it },
             )
 
             "runtime" -> DemoSection(
