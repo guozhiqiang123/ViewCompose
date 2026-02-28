@@ -4,6 +4,8 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.gzq.uiframework.renderer.node.LazyListItem
+import com.gzq.uiframework.renderer.reconcile.LazyListDiff
+import com.gzq.uiframework.renderer.reconcile.LazyListUpdate
 
 internal class LazyColumnAdapter : RecyclerView.Adapter<LazyColumnViewHolder>() {
     private var items: List<LazyListItem> = emptyList()
@@ -40,8 +42,20 @@ internal class LazyColumnAdapter : RecyclerView.Adapter<LazyColumnViewHolder>() 
     }
 
     fun submitItems(items: List<LazyListItem>) {
-        this.items = items
-        notifyDataSetChanged()
+        val result = LazyListDiff.calculate(
+            previous = this.items,
+            next = items,
+        )
+        this.items = result.items
+        result.updates.forEach { update ->
+            when (update) {
+                is LazyListUpdate.Insert -> notifyItemInserted(update.index)
+                is LazyListUpdate.Remove -> notifyItemRemoved(update.index)
+                is LazyListUpdate.Move -> notifyItemMoved(update.fromIndex, update.toIndex)
+                is LazyListUpdate.Change -> notifyItemChanged(update.index)
+                LazyListUpdate.ReloadAll -> notifyDataSetChanged()
+            }
+        }
     }
 }
 
