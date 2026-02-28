@@ -142,6 +142,7 @@ class ThemeTest {
         assertEquals(customTheme.interactions.pressedOverlay, rippleColor.color)
         assertEquals(0xFFFFFFFF.toInt(), textColor.color)
         assertEquals(customTheme.typography.label.fontSizeSp, textSize.sizeSp)
+        assertEquals(customTheme.controls.button.mediumHeight, ButtonDefaults.height())
     }
 
     @Test
@@ -164,6 +165,45 @@ class ThemeTest {
         assertEquals(Theme.colors.divider, border.color)
         assertEquals(1.dp, border.width)
         assertEquals(Theme.colors.textPrimary, textColor.color)
+    }
+
+    @Test
+    fun `button sizing defaults reflect current theme`() {
+        val baseTheme = UiThemeDefaults.light()
+        val customTheme = UiThemeTokens(
+            colors = baseTheme.colors,
+            typography = baseTheme.typography,
+            controls = UiControlSizing(
+                button = UiButtonSizing(
+                    compactHeight = 31,
+                    mediumHeight = 41,
+                    largeHeight = 51,
+                    compactHorizontalPadding = 11,
+                    mediumHorizontalPadding = 21,
+                    largeHorizontalPadding = 31,
+                    compactVerticalPadding = 6,
+                    mediumVerticalPadding = 8,
+                    largeVerticalPadding = 10,
+                ),
+                textField = UiControlSizeDefaults.default().textField,
+                segmentedControl = UiControlSizeDefaults.default().segmentedControl,
+            ),
+        )
+        var compactHeight = 0
+        var largeHorizontalPadding = 0
+        var largeStyle = 0
+
+        buildVNodeTree {
+            UiTheme(customTheme) {
+                compactHeight = ButtonDefaults.height(ButtonSize.Compact)
+                largeHorizontalPadding = ButtonDefaults.horizontalPadding(ButtonSize.Large)
+                largeStyle = ButtonDefaults.textStyle(ButtonSize.Large).fontSizeSp
+            }
+        }
+
+        assertEquals(31, compactHeight)
+        assertEquals(31, largeHorizontalPadding)
+        assertEquals(customTheme.typography.body.fontSizeSp, largeStyle)
     }
 
     @Test
@@ -292,6 +332,45 @@ class ThemeTest {
         assertEquals(108, controlColor)
         assertEquals(customTheme.shapes.cardCornerRadius, cardCornerRadius)
         assertEquals(customTheme.interactions.pressedOverlay, pressedColor)
+    }
+
+    @Test
+    fun `text field sizing defaults reflect current theme`() {
+        val baseTheme = UiThemeDefaults.light()
+        val customTheme = UiThemeTokens(
+            colors = baseTheme.colors,
+            typography = baseTheme.typography,
+            controls = UiControlSizing(
+                button = UiControlSizeDefaults.default().button,
+                textField = UiTextFieldSizing(
+                    compactHeight = 35,
+                    mediumHeight = 45,
+                    largeHeight = 55,
+                    compactHorizontalPadding = 12,
+                    mediumHorizontalPadding = 16,
+                    largeHorizontalPadding = 20,
+                    compactVerticalPadding = 5,
+                    mediumVerticalPadding = 7,
+                    largeVerticalPadding = 9,
+                ),
+                segmentedControl = UiControlSizeDefaults.default().segmentedControl,
+            ),
+        )
+        var compactHeight = 0
+        var mediumVerticalPadding = 0
+        var compactStyle = 0
+
+        buildVNodeTree {
+            UiTheme(customTheme) {
+                compactHeight = TextFieldDefaults.height(TextFieldSize.Compact)
+                mediumVerticalPadding = TextFieldDefaults.verticalPadding(TextFieldSize.Medium)
+                compactStyle = TextFieldDefaults.textStyle(TextFieldSize.Compact).fontSizeSp
+            }
+        }
+
+        assertEquals(35, compactHeight)
+        assertEquals(7, mediumVerticalPadding)
+        assertEquals(customTheme.typography.label.fontSizeSp, compactStyle)
     }
 
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {

@@ -30,6 +30,48 @@ data class UiShapes(
     val controlCornerRadius: Int,
 )
 
+data class UiButtonSizing(
+    val compactHeight: Int,
+    val mediumHeight: Int,
+    val largeHeight: Int,
+    val compactHorizontalPadding: Int,
+    val mediumHorizontalPadding: Int,
+    val largeHorizontalPadding: Int,
+    val compactVerticalPadding: Int,
+    val mediumVerticalPadding: Int,
+    val largeVerticalPadding: Int,
+)
+
+data class UiTextFieldSizing(
+    val compactHeight: Int,
+    val mediumHeight: Int,
+    val largeHeight: Int,
+    val compactHorizontalPadding: Int,
+    val mediumHorizontalPadding: Int,
+    val largeHorizontalPadding: Int,
+    val compactVerticalPadding: Int,
+    val mediumVerticalPadding: Int,
+    val largeVerticalPadding: Int,
+)
+
+data class UiSegmentedControlSizing(
+    val compactHeight: Int,
+    val mediumHeight: Int,
+    val largeHeight: Int,
+    val compactHorizontalPadding: Int,
+    val mediumHorizontalPadding: Int,
+    val largeHorizontalPadding: Int,
+    val compactVerticalPadding: Int,
+    val mediumVerticalPadding: Int,
+    val largeVerticalPadding: Int,
+)
+
+data class UiControlSizing(
+    val button: UiButtonSizing,
+    val textField: UiTextFieldSizing,
+    val segmentedControl: UiSegmentedControlSizing,
+)
+
 data class UiInteractionColors(
     val pressedOverlay: Int,
 )
@@ -49,6 +91,7 @@ data class UiThemeTokens(
     val typography: UiTypography,
     val input: UiInputColors = UiInputDefaults.fromColors(colors),
     val shapes: UiShapes = UiShapeDefaults.default(),
+    val controls: UiControlSizing = UiControlSizeDefaults.default(),
     val interactions: UiInteractionColors = UiInteractionDefaults.fromColors(colors),
 )
 
@@ -73,6 +116,46 @@ object UiShapeDefaults {
         return UiShapes(
             cardCornerRadius = 20.dp,
             controlCornerRadius = 14.dp,
+        )
+    }
+}
+
+object UiControlSizeDefaults {
+    fun default(): UiControlSizing {
+        return UiControlSizing(
+            button = UiButtonSizing(
+                compactHeight = 36.dp,
+                mediumHeight = 44.dp,
+                largeHeight = 52.dp,
+                compactHorizontalPadding = 12.dp,
+                mediumHorizontalPadding = 16.dp,
+                largeHorizontalPadding = 20.dp,
+                compactVerticalPadding = 8.dp,
+                mediumVerticalPadding = 10.dp,
+                largeVerticalPadding = 12.dp,
+            ),
+            textField = UiTextFieldSizing(
+                compactHeight = 40.dp,
+                mediumHeight = 48.dp,
+                largeHeight = 56.dp,
+                compactHorizontalPadding = 12.dp,
+                mediumHorizontalPadding = 14.dp,
+                largeHorizontalPadding = 16.dp,
+                compactVerticalPadding = 8.dp,
+                mediumVerticalPadding = 10.dp,
+                largeVerticalPadding = 12.dp,
+            ),
+            segmentedControl = UiSegmentedControlSizing(
+                compactHeight = 36.dp,
+                mediumHeight = 42.dp,
+                largeHeight = 48.dp,
+                compactHorizontalPadding = 12.dp,
+                mediumHorizontalPadding = 14.dp,
+                largeHorizontalPadding = 18.dp,
+                compactVerticalPadding = 6.dp,
+                mediumVerticalPadding = 8.dp,
+                largeVerticalPadding = 10.dp,
+            ),
         )
     }
 }
@@ -142,6 +225,9 @@ object Theme {
 
     val shapes: UiShapes
         get() = LocalContext.current(LocalTheme).shapes
+
+    val controls: UiControlSizing
+        get() = LocalContext.current(LocalTheme).controls
 
     val interactions: UiInteractionColors
         get() = LocalContext.current(LocalTheme).interactions

@@ -7,6 +7,12 @@ enum class ButtonVariant {
     Outlined,
 }
 
+enum class ButtonSize {
+    Compact,
+    Medium,
+    Large,
+}
+
 object ButtonDefaults {
     fun containerColor(
         variant: ButtonVariant = ButtonVariant.Primary,
@@ -50,6 +56,48 @@ object ButtonDefaults {
     }
 
     fun cornerRadius(): Int = Theme.shapes.controlCornerRadius
+
+    fun height(
+        size: ButtonSize = ButtonSize.Medium,
+    ): Int {
+        return when (size) {
+            ButtonSize.Compact -> Theme.controls.button.compactHeight
+            ButtonSize.Medium -> Theme.controls.button.mediumHeight
+            ButtonSize.Large -> Theme.controls.button.largeHeight
+        }
+    }
+
+    fun horizontalPadding(
+        size: ButtonSize = ButtonSize.Medium,
+    ): Int {
+        return when (size) {
+            ButtonSize.Compact -> Theme.controls.button.compactHorizontalPadding
+            ButtonSize.Medium -> Theme.controls.button.mediumHorizontalPadding
+            ButtonSize.Large -> Theme.controls.button.largeHorizontalPadding
+        }
+    }
+
+    fun verticalPadding(
+        size: ButtonSize = ButtonSize.Medium,
+    ): Int {
+        return when (size) {
+            ButtonSize.Compact -> Theme.controls.button.compactVerticalPadding
+            ButtonSize.Medium -> Theme.controls.button.mediumVerticalPadding
+            ButtonSize.Large -> Theme.controls.button.largeVerticalPadding
+        }
+    }
+
+    fun textStyle(
+        size: ButtonSize = ButtonSize.Medium,
+    ): UiTextStyle {
+        return when (size) {
+            ButtonSize.Compact,
+            ButtonSize.Medium,
+            -> Theme.typography.label
+
+            ButtonSize.Large -> Theme.typography.body
+        }
+    }
 
     fun pressedColor(): Int = Theme.interactions.pressedOverlay
 }

@@ -10,6 +10,8 @@ import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.modifier.backgroundColor
 import com.gzq.uiframework.renderer.modifier.border
 import com.gzq.uiframework.renderer.modifier.cornerRadius
+import com.gzq.uiframework.renderer.modifier.height
+import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.renderer.modifier.rippleColor
 import com.gzq.uiframework.renderer.modifier.textColor
 import com.gzq.uiframework.renderer.modifier.textSize
@@ -51,12 +53,23 @@ fun UiTreeBuilder.TextField(
     singleLine: Boolean = true,
     type: TextFieldType = TextFieldType.Text,
     variant: TextFieldVariant = TextFieldVariant.Filled,
+    size: TextFieldSize = TextFieldSize.Medium,
     enabled: Boolean = true,
     isError: Boolean = false,
-    style: UiTextStyle = TextFieldDefaults.textStyle(),
+    style: UiTextStyle = TextFieldDefaults.textStyle(size),
     key: Any? = null,
     modifier: Modifier = Modifier.Empty,
 ) {
+    val defaultModifier = Modifier.Empty
+        .padding(
+            horizontal = TextFieldDefaults.horizontalPadding(size),
+            vertical = TextFieldDefaults.verticalPadding(size),
+        )
+    val sizeModifier = if (singleLine) {
+        defaultModifier.height(TextFieldDefaults.height(size))
+    } else {
+        defaultModifier
+    }
     emit(
         type = NodeType.TextField,
         key = key,
@@ -76,6 +89,7 @@ fun UiTreeBuilder.TextField(
             ),
         ),
         modifier = Modifier.Empty
+            .then(sizeModifier)
             .backgroundColor(
                 TextFieldDefaults.containerColor(
                     variant = variant,
@@ -104,9 +118,10 @@ fun UiTreeBuilder.PasswordField(
     onValueChange: (String) -> Unit,
     hint: String = "",
     variant: TextFieldVariant = TextFieldVariant.Filled,
+    size: TextFieldSize = TextFieldSize.Medium,
     enabled: Boolean = true,
     isError: Boolean = false,
-    style: UiTextStyle = TextFieldDefaults.textStyle(),
+    style: UiTextStyle = TextFieldDefaults.textStyle(size),
     key: Any? = null,
     modifier: Modifier = Modifier.Empty,
 ) {
@@ -117,6 +132,7 @@ fun UiTreeBuilder.PasswordField(
         singleLine = true,
         type = TextFieldType.Password,
         variant = variant,
+        size = size,
         enabled = enabled,
         isError = isError,
         style = style,
@@ -243,8 +259,9 @@ fun UiTreeBuilder.EmailField(
     onValueChange: (String) -> Unit,
     hint: String = "",
     variant: TextFieldVariant = TextFieldVariant.Filled,
+    size: TextFieldSize = TextFieldSize.Medium,
     enabled: Boolean = true,
-    style: UiTextStyle = TextFieldDefaults.textStyle(),
+    style: UiTextStyle = TextFieldDefaults.textStyle(size),
     key: Any? = null,
     modifier: Modifier = Modifier.Empty,
 ) {
@@ -255,6 +272,7 @@ fun UiTreeBuilder.EmailField(
         singleLine = true,
         type = TextFieldType.Email,
         variant = variant,
+        size = size,
         enabled = enabled,
         style = style,
         key = key,
@@ -267,8 +285,9 @@ fun UiTreeBuilder.NumberField(
     onValueChange: (String) -> Unit,
     hint: String = "",
     variant: TextFieldVariant = TextFieldVariant.Filled,
+    size: TextFieldSize = TextFieldSize.Medium,
     enabled: Boolean = true,
-    style: UiTextStyle = TextFieldDefaults.textStyle(),
+    style: UiTextStyle = TextFieldDefaults.textStyle(size),
     key: Any? = null,
     modifier: Modifier = Modifier.Empty,
 ) {
@@ -279,6 +298,7 @@ fun UiTreeBuilder.NumberField(
         singleLine = true,
         type = TextFieldType.Number,
         variant = variant,
+        size = size,
         enabled = enabled,
         style = style,
         key = key,
@@ -291,9 +311,10 @@ fun UiTreeBuilder.TextArea(
     onValueChange: (String) -> Unit,
     hint: String = "",
     variant: TextFieldVariant = TextFieldVariant.Filled,
+    size: TextFieldSize = TextFieldSize.Medium,
     enabled: Boolean = true,
     isError: Boolean = false,
-    style: UiTextStyle = TextFieldDefaults.textStyle(),
+    style: UiTextStyle = TextFieldDefaults.textStyle(size),
     key: Any? = null,
     modifier: Modifier = Modifier.Empty,
 ) {
@@ -304,6 +325,7 @@ fun UiTreeBuilder.TextArea(
         singleLine = false,
         type = TextFieldType.Text,
         variant = variant,
+        size = size,
         enabled = enabled,
         isError = isError,
         style = style,
@@ -316,7 +338,8 @@ fun UiTreeBuilder.Button(
     text: String,
     onClick: (() -> Unit)? = null,
     variant: ButtonVariant = ButtonVariant.Primary,
-    style: UiTextStyle = Theme.typography.label,
+    size: ButtonSize = ButtonSize.Medium,
+    style: UiTextStyle = ButtonDefaults.textStyle(size),
     key: Any? = null,
     modifier: Modifier = Modifier.Empty,
 ) {
@@ -330,6 +353,11 @@ fun UiTreeBuilder.Button(
             },
         ),
         modifier = Modifier.Empty
+            .height(ButtonDefaults.height(size))
+            .padding(
+                horizontal = ButtonDefaults.horizontalPadding(size),
+                vertical = ButtonDefaults.verticalPadding(size),
+            )
             .backgroundColor(ButtonDefaults.containerColor(variant))
             .border(
                 width = ButtonDefaults.borderWidth(variant),

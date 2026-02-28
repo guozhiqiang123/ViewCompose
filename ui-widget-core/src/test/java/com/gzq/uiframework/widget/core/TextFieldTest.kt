@@ -3,6 +3,7 @@ package com.gzq.uiframework.widget.core
 import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
 import com.gzq.uiframework.renderer.modifier.BorderModifierElement
 import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
+import com.gzq.uiframework.renderer.modifier.HeightModifierElement
 import com.gzq.uiframework.renderer.modifier.RippleColorModifierElement
 import com.gzq.uiframework.renderer.modifier.TextColorModifierElement
 import com.gzq.uiframework.renderer.modifier.TextSizeModifierElement
@@ -111,6 +112,26 @@ class TextFieldTest {
         assertEquals(0x00000000, background.color)
         assertEquals(Theme.input.control, border.color)
         assertEquals(1.dp, border.width)
+    }
+
+    @Test
+    fun `compact text field applies themed height and typography`() {
+        val tree = buildVNodeTree {
+            UiTheme(UiThemeDefaults.light()) {
+                TextField(
+                    value = "hello",
+                    onValueChange = {},
+                    size = TextFieldSize.Compact,
+                )
+            }
+        }
+
+        val elements = tree.single().modifier.readModifierElements()
+        val height = elements.last { it is HeightModifierElement } as HeightModifierElement
+        val textSize = elements.last { it is TextSizeModifierElement } as TextSizeModifierElement
+
+        assertEquals(TextFieldDefaults.height(TextFieldSize.Compact), height.height)
+        assertEquals(Theme.typography.label.fontSizeSp, textSize.sizeSp)
     }
 
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {

@@ -3,10 +3,14 @@ package com.gzq.uiframework
 import android.content.Context
 import android.content.res.Configuration
 import com.gzq.uiframework.widget.core.UiColors
+import com.gzq.uiframework.widget.core.UiControlSizing
+import com.gzq.uiframework.widget.core.UiButtonSizing
 import com.gzq.uiframework.widget.core.UiInputColors
 import com.gzq.uiframework.widget.core.UiInteractionColors
+import com.gzq.uiframework.widget.core.UiSegmentedControlSizing
 import com.gzq.uiframework.widget.core.UiShapes
 import com.gzq.uiframework.widget.core.UiTextStyle
+import com.gzq.uiframework.widget.core.UiTextFieldSizing
 import com.gzq.uiframework.widget.core.UiThemeTokens
 import com.gzq.uiframework.widget.core.UiTypography
 import com.gzq.uiframework.widget.core.dp
@@ -50,6 +54,41 @@ object DemoThemeTokens {
             cardCornerRadius = 24.dp,
             controlCornerRadius = 18.dp,
         ),
+        controls = UiControlSizing(
+            button = UiButtonSizing(
+                compactHeight = 38.dp,
+                mediumHeight = 46.dp,
+                largeHeight = 54.dp,
+                compactHorizontalPadding = 14.dp,
+                mediumHorizontalPadding = 18.dp,
+                largeHorizontalPadding = 22.dp,
+                compactVerticalPadding = 8.dp,
+                mediumVerticalPadding = 10.dp,
+                largeVerticalPadding = 12.dp,
+            ),
+            textField = UiTextFieldSizing(
+                compactHeight = 42.dp,
+                mediumHeight = 50.dp,
+                largeHeight = 58.dp,
+                compactHorizontalPadding = 14.dp,
+                mediumHorizontalPadding = 16.dp,
+                largeHorizontalPadding = 18.dp,
+                compactVerticalPadding = 8.dp,
+                mediumVerticalPadding = 10.dp,
+                largeVerticalPadding = 12.dp,
+            ),
+            segmentedControl = UiSegmentedControlSizing(
+                compactHeight = 38.dp,
+                mediumHeight = 44.dp,
+                largeHeight = 50.dp,
+                compactHorizontalPadding = 12.dp,
+                mediumHorizontalPadding = 14.dp,
+                largeHorizontalPadding = 18.dp,
+                compactVerticalPadding = 6.dp,
+                mediumVerticalPadding = 8.dp,
+                largeVerticalPadding = 10.dp,
+            ),
+        ),
         interactions = UiInteractionColors(
             pressedOverlay = 0x1A2F241B,
         ),
@@ -85,6 +124,41 @@ object DemoThemeTokens {
         shapes = UiShapes(
             cardCornerRadius = 24.dp,
             controlCornerRadius = 18.dp,
+        ),
+        controls = UiControlSizing(
+            button = UiButtonSizing(
+                compactHeight = 38.dp,
+                mediumHeight = 46.dp,
+                largeHeight = 54.dp,
+                compactHorizontalPadding = 14.dp,
+                mediumHorizontalPadding = 18.dp,
+                largeHorizontalPadding = 22.dp,
+                compactVerticalPadding = 8.dp,
+                mediumVerticalPadding = 10.dp,
+                largeVerticalPadding = 12.dp,
+            ),
+            textField = UiTextFieldSizing(
+                compactHeight = 42.dp,
+                mediumHeight = 50.dp,
+                largeHeight = 58.dp,
+                compactHorizontalPadding = 14.dp,
+                mediumHorizontalPadding = 16.dp,
+                largeHorizontalPadding = 18.dp,
+                compactVerticalPadding = 8.dp,
+                mediumVerticalPadding = 10.dp,
+                largeVerticalPadding = 12.dp,
+            ),
+            segmentedControl = UiSegmentedControlSizing(
+                compactHeight = 38.dp,
+                mediumHeight = 44.dp,
+                largeHeight = 50.dp,
+                compactHorizontalPadding = 12.dp,
+                mediumHorizontalPadding = 14.dp,
+                largeHorizontalPadding = 18.dp,
+                compactVerticalPadding = 6.dp,
+                mediumVerticalPadding = 8.dp,
+                largeVerticalPadding = 10.dp,
+            ),
         ),
         interactions = UiInteractionColors(
             pressedOverlay = 0x26F4EFE8,

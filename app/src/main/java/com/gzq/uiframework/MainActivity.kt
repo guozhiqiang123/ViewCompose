@@ -34,6 +34,7 @@ import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.AndroidView
 import com.gzq.uiframework.widget.core.Box
 import com.gzq.uiframework.widget.core.Button
+import com.gzq.uiframework.widget.core.ButtonSize
 import com.gzq.uiframework.widget.core.ButtonVariant
 import com.gzq.uiframework.widget.core.Column
 import com.gzq.uiframework.widget.core.DisposableEffect
@@ -56,6 +57,7 @@ import com.gzq.uiframework.widget.core.Text
 import com.gzq.uiframework.widget.core.TextArea
 import com.gzq.uiframework.widget.core.TextDefaults
 import com.gzq.uiframework.widget.core.TextField
+import com.gzq.uiframework.widget.core.TextFieldSize
 import com.gzq.uiframework.widget.core.Theme
 import com.gzq.uiframework.widget.core.UiTreeBuilder
 import com.gzq.uiframework.widget.core.UiEnvironment
@@ -324,16 +326,19 @@ private fun UiTreeBuilder.OverviewPage(
                     Button(
                         text = "Primary",
                         variant = ButtonVariant.Primary,
+                        size = ButtonSize.Compact,
                         modifier = Modifier.Empty.weight(1f),
                     )
                     Button(
                         text = "Tonal",
                         variant = ButtonVariant.Tonal,
+                        size = ButtonSize.Medium,
                         modifier = Modifier.Empty.weight(1f),
                     )
                     Button(
                         text = "Outline",
                         variant = ButtonVariant.Outlined,
+                        size = ButtonSize.Large,
                         modifier = Modifier.Empty.weight(1f),
                     )
                 }
@@ -524,6 +529,7 @@ private fun UiTreeBuilder.InputPage() {
                     onValueChange = { nameState.value = it },
                     hint = "Name",
                     variant = TextFieldVariant.Filled,
+                    size = TextFieldSize.Large,
                     modifier = Modifier.Empty
                         .fillMaxWidth()
                         .margin(bottom = 12.dp),
@@ -533,6 +539,7 @@ private fun UiTreeBuilder.InputPage() {
                     onValueChange = { emailState.value = it },
                     hint = "Email",
                     variant = TextFieldVariant.Tonal,
+                    size = TextFieldSize.Medium,
                     modifier = Modifier.Empty
                         .fillMaxWidth()
                         .margin(bottom = 12.dp),
@@ -542,6 +549,7 @@ private fun UiTreeBuilder.InputPage() {
                     onValueChange = { passwordState.value = it },
                     hint = "Password",
                     variant = TextFieldVariant.Outlined,
+                    size = TextFieldSize.Medium,
                     isError = passwordState.value.isBlank(),
                     modifier = Modifier.Empty
                         .fillMaxWidth()
@@ -552,6 +560,7 @@ private fun UiTreeBuilder.InputPage() {
                     onValueChange = { ageState.value = it },
                     hint = "Version age",
                     variant = TextFieldVariant.Outlined,
+                    size = TextFieldSize.Compact,
                     modifier = Modifier.Empty
                         .fillMaxWidth()
                         .margin(bottom = 12.dp),
@@ -561,6 +570,7 @@ private fun UiTreeBuilder.InputPage() {
                     onValueChange = {},
                     hint = "Disabled email",
                     variant = TextFieldVariant.Tonal,
+                    size = TextFieldSize.Medium,
                     enabled = false,
                     modifier = Modifier.Empty
                         .fillMaxWidth()
@@ -571,6 +581,7 @@ private fun UiTreeBuilder.InputPage() {
                     onValueChange = { bioState.value = it },
                     hint = "Short bio",
                     variant = TextFieldVariant.Filled,
+                    size = TextFieldSize.Large,
                     modifier = Modifier.Empty
                         .fillMaxWidth()
                         .height(120.dp)
@@ -578,6 +589,7 @@ private fun UiTreeBuilder.InputPage() {
                 )
                 Button(
                     text = "Reset Form",
+                    size = ButtonSize.Large,
                     onClick = {
                         nameState.value = "GZQ"
                         emailState.value = "demo@uiframework.dev"
