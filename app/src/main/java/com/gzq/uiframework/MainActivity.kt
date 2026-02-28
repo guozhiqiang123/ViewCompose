@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         "Text modifier click: OFF"
                     },
-                    modifier = Modifier.Empty.padding(8),
+                    modifier = Modifier.Empty.padding(horizontal = 8, vertical = 4),
                 )
                 Text(text = "Clicks: ${clickCountState.value}")
                 Text(
@@ -127,7 +127,7 @@ class MainActivity : AppCompatActivity() {
                 Row(
                     modifier = Modifier.Empty
                         .fillMaxWidth()
-                        .padding(8),
+                        .padding(horizontal = 8, vertical = 4),
                 ) {
                     Text(
                         text = "Left pane",

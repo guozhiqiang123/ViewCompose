@@ -59,12 +59,36 @@ enum class Visibility {
 }
 
 fun Modifier.padding(all: Int): Modifier {
+    return padding(
+        horizontal = all,
+        vertical = all,
+    )
+}
+
+fun Modifier.padding(
+    horizontal: Int = 0,
+    vertical: Int = 0,
+): Modifier {
+    return padding(
+        left = horizontal,
+        top = vertical,
+        right = horizontal,
+        bottom = vertical,
+    )
+}
+
+fun Modifier.padding(
+    left: Int = 0,
+    top: Int = 0,
+    right: Int = 0,
+    bottom: Int = 0,
+): Modifier {
     return then(
         PaddingModifierElement(
-            left = all,
-            top = all,
-            right = all,
-            bottom = all,
+            left = left,
+            top = top,
+            right = right,
+            bottom = bottom,
         ),
     )
 }
