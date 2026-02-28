@@ -154,6 +154,7 @@ object ViewTreeRenderer {
             }
 
             NodeType.Box -> DeclarativeBoxLayout(context)
+            NodeType.Spacer -> View(context)
             NodeType.Image -> View(context)
             NodeType.AndroidView -> readViewFactory(node)?.invoke(context) ?: View(context)
             NodeType.LazyColumn -> RecyclerView(context).apply {
@@ -216,6 +217,7 @@ object ViewTreeRenderer {
                 (view as DeclarativeBoxLayout).contentGravity = readBoxAlignment(node).toGravity()
             }
 
+            NodeType.Spacer,
             NodeType.Image,
             -> Unit
 
@@ -305,12 +307,19 @@ object ViewTreeRenderer {
             .lastOrNull { it is HorizontalAlignModifierElement } as? HorizontalAlignModifierElement
         val verticalAlign = node.modifier.elements
             .lastOrNull { it is VerticalAlignModifierElement } as? VerticalAlignModifierElement
-        val defaultWidth = if (node.type == NodeType.Text || node.type == NodeType.Button) {
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        } else {
-            ViewGroup.LayoutParams.MATCH_PARENT
+        val defaultWidth = when (node.type) {
+            NodeType.Text,
+            NodeType.Button,
+            -> ViewGroup.LayoutParams.WRAP_CONTENT
+
+            NodeType.Spacer -> 0
+            else -> ViewGroup.LayoutParams.MATCH_PARENT
         }
-        val defaultHeight = ViewGroup.LayoutParams.WRAP_CONTENT
+        val defaultHeight = if (node.type == NodeType.Spacer) {
+            0
+        } else {
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        }
         val width = widthModifier?.width ?: size?.width ?: defaultWidth
         val height = heightModifier?.height ?: size?.height ?: defaultHeight
         return when (parent) {

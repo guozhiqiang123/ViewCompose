@@ -88,6 +88,17 @@ fun UiTreeBuilder.Box(
     )
 }
 
+fun UiTreeBuilder.Spacer(
+    key: Any? = null,
+    modifier: Modifier = Modifier.Empty,
+) {
+    emit(
+        type = NodeType.Spacer,
+        key = key,
+        modifier = modifier,
+    )
+}
+
 fun UiTreeBuilder.Row(
     key: Any? = null,
     spacing: Int = 0,

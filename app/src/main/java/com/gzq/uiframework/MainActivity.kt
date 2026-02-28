@@ -24,6 +24,7 @@ import com.gzq.uiframework.renderer.modifier.offset
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.renderer.modifier.visibility
 import com.gzq.uiframework.renderer.modifier.weight
+import com.gzq.uiframework.renderer.modifier.width
 import com.gzq.uiframework.renderer.modifier.zIndex
 import com.gzq.uiframework.runtime.derivedStateOf
 import com.gzq.uiframework.runtime.mutableStateOf
@@ -35,6 +36,7 @@ import com.gzq.uiframework.widget.core.DisposableEffect
 import com.gzq.uiframework.widget.core.LazyColumn
 import com.gzq.uiframework.widget.core.Row
 import com.gzq.uiframework.widget.core.SideEffect
+import com.gzq.uiframework.widget.core.Spacer
 import com.gzq.uiframework.widget.core.Text
 import com.gzq.uiframework.widget.core.key
 import com.gzq.uiframework.widget.core.produceState
@@ -159,7 +161,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 Row(
                     arrangement = MainAxisArrangement.SpaceEvenly,
-                    spacing = 12,
+                    spacing = 0,
                     verticalAlignment = VerticalAlignment.Center,
                     modifier = Modifier.Empty
                         .fillMaxWidth()
@@ -173,6 +175,7 @@ class MainActivity : AppCompatActivity() {
                             .weight(1f)
                             .padding(12),
                     )
+                    Spacer(modifier = Modifier.Empty.width(12))
                     Text(
                         text = "Right pane",
                         modifier = Modifier.Empty
