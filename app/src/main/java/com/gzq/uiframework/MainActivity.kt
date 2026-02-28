@@ -33,6 +33,7 @@ import com.gzq.uiframework.widget.core.Button
 import com.gzq.uiframework.widget.core.Column
 import com.gzq.uiframework.widget.core.Divider
 import com.gzq.uiframework.widget.core.DisposableEffect
+import com.gzq.uiframework.widget.core.dp
 import com.gzq.uiframework.widget.core.Environment
 import com.gzq.uiframework.widget.core.FlexibleSpacer
 import com.gzq.uiframework.widget.core.LazyColumn
@@ -106,11 +107,11 @@ class MainActivity : AppCompatActivity() {
             }
             UiEnvironment(androidContext = root.context) {
                 val density = Environment.density
-                val pagePadding = density.dp(24)
-                val blockPadding = density.dp(8)
-                val cardPadding = density.dp(12)
-                val boxHeight = density.dp(72)
-                val listHeight = density.dp(220)
+                val pagePadding = 24.dp
+                val blockPadding = 8.dp
+                val cardPadding = 12.dp
+                val boxHeight = 72.dp
+                val listHeight = 220.dp
                 val environmentLabel = "Env: ${Environment.localeTags.firstOrNull() ?: "und"} · " +
                     "${Environment.layoutDirection.name} · " +
                     "${"%.2f".format(Locale.US, density.density)}x"
@@ -152,7 +153,7 @@ class MainActivity : AppCompatActivity() {
                         },
                         modifier = Modifier.Empty.padding(
                             horizontal = blockPadding,
-                            vertical = density.dp(4),
+                            vertical = 4.dp,
                         ),
                     )
                     Text(text = "Clicks: ${clickCountState.value}")
@@ -192,7 +193,7 @@ class MainActivity : AppCompatActivity() {
                                 .offset(x = -blockPadding.toFloat(), y = -blockPadding.toFloat())
                                 .zIndex(1f)
                                 .backgroundColor(Theme.colors.accent)
-                                .padding(horizontal = blockPadding, vertical = density.dp(4)),
+                                .padding(horizontal = blockPadding, vertical = 4.dp),
                         )
                     }
                     Row(
@@ -201,7 +202,7 @@ class MainActivity : AppCompatActivity() {
                         verticalAlignment = VerticalAlignment.Center,
                         modifier = Modifier.Empty
                             .fillMaxWidth()
-                            .padding(horizontal = blockPadding, vertical = density.dp(4)),
+                            .padding(horizontal = blockPadding, vertical = 4.dp),
                     ) {
                         Text(
                             text = "Left pane",
@@ -283,13 +284,13 @@ class MainActivity : AppCompatActivity() {
                                     text = "Transient keyed panel",
                                     modifier = Modifier.Empty
                                         .align(HorizontalAlignment.Start)
-                                        .padding(density.dp(4)),
+                                        .padding(4.dp),
                                 )
                                 Button(
                                     text = "Panel taps: ${panelTapState.value}",
                                     modifier = Modifier.Empty
                                         .align(HorizontalAlignment.End)
-                                        .padding(density.dp(4)),
+                                        .padding(4.dp),
                                     onClick = {
                                         panelTapState.value = panelTapState.value + 1
                                     },
@@ -334,11 +335,11 @@ class MainActivity : AppCompatActivity() {
                         ) {
                             Text(
                                 text = item.title,
-                                modifier = Modifier.Empty.padding(density.dp(4)),
+                                modifier = Modifier.Empty.padding(4.dp),
                             )
                             Button(
                                 text = "Item ${item.id} taps: ${itemCountState.value}",
-                                modifier = Modifier.Empty.padding(density.dp(4)),
+                                modifier = Modifier.Empty.padding(4.dp),
                                 onClick = {
                                     itemCountState.value = itemCountState.value + 1
                                 },
