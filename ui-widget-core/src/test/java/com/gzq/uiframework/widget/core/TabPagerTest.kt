@@ -34,6 +34,11 @@ class TabPagerTest {
 
         assertEquals(NodeType.TabPager, node.type)
         assertEquals(1, node.props.values[PropKeys.SELECTED_TAB_INDEX])
+        assertEquals(TabPagerDefaults.backgroundColor(), node.props.values[PropKeys.TAB_BACKGROUND_COLOR])
+        assertEquals(TabPagerDefaults.indicatorColor(), node.props.values[PropKeys.TAB_INDICATOR_COLOR])
+        assertEquals(TabPagerDefaults.selectedTextColor(), node.props.values[PropKeys.TAB_SELECTED_TEXT_COLOR])
+        assertEquals(TabPagerDefaults.unselectedTextColor(), node.props.values[PropKeys.TAB_UNSELECTED_TEXT_COLOR])
+        assertEquals(TabPagerDefaults.rippleColor(), node.props.values[PropKeys.TAB_RIPPLE_COLOR])
         assertEquals(2, pages.size)
         assertEquals("Overview", pages[0].title)
         assertEquals("Input", pages[1].title)

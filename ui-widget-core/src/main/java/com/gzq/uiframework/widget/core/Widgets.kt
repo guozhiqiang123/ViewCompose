@@ -504,6 +504,11 @@ fun UiTreeBuilder.TabPager(
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
     key: Any? = null,
+    backgroundColor: Int = TabPagerDefaults.backgroundColor(),
+    indicatorColor: Int = TabPagerDefaults.indicatorColor(),
+    selectedTextColor: Int = TabPagerDefaults.selectedTextColor(),
+    unselectedTextColor: Int = TabPagerDefaults.unselectedTextColor(),
+    rippleColor: Int = TabPagerDefaults.rippleColor(),
     modifier: Modifier = Modifier.Empty,
     pages: TabPagerScope.() -> Unit,
 ) {
@@ -515,6 +520,11 @@ fun UiTreeBuilder.TabPager(
             values = mapOf(
                 PropKeys.SELECTED_TAB_INDEX to selectedTabIndex,
                 PropKeys.ON_TAB_SELECTED to onTabSelected,
+                PropKeys.TAB_BACKGROUND_COLOR to backgroundColor,
+                PropKeys.TAB_INDICATOR_COLOR to indicatorColor,
+                PropKeys.TAB_SELECTED_TEXT_COLOR to selectedTextColor,
+                PropKeys.TAB_UNSELECTED_TEXT_COLOR to unselectedTextColor,
+                PropKeys.TAB_RIPPLE_COLOR to rippleColor,
                 PropKeys.TAB_PAGES to builtPages.map { page ->
                     TabPage(
                         title = page.title,

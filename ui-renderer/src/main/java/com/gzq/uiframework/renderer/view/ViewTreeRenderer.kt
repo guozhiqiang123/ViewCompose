@@ -298,6 +298,11 @@ object ViewTreeRenderer {
                     pages = readTabPages(node),
                     selectedTabIndex = readSelectedTabIndex(node),
                     onTabSelected = readOnTabSelected(node),
+                    backgroundColor = readTabBackgroundColor(node),
+                    indicatorColor = readTabIndicatorColor(node),
+                    selectedTextColor = readTabSelectedTextColor(node),
+                    unselectedTextColor = readTabUnselectedTextColor(node),
+                    rippleColor = readTabRippleColor(node),
                 )
             }
         }
@@ -755,6 +760,26 @@ object ViewTreeRenderer {
     @Suppress("UNCHECKED_CAST")
     private fun readOnTabSelected(node: VNode): ((Int) -> Unit)? {
         return node.props.values[PropKeys.ON_TAB_SELECTED] as? ((Int) -> Unit)
+    }
+
+    private fun readTabBackgroundColor(node: VNode): Int {
+        return node.props.values[PropKeys.TAB_BACKGROUND_COLOR] as? Int ?: 0
+    }
+
+    private fun readTabIndicatorColor(node: VNode): Int {
+        return node.props.values[PropKeys.TAB_INDICATOR_COLOR] as? Int ?: 0
+    }
+
+    private fun readTabSelectedTextColor(node: VNode): Int {
+        return node.props.values[PropKeys.TAB_SELECTED_TEXT_COLOR] as? Int ?: 0
+    }
+
+    private fun readTabUnselectedTextColor(node: VNode): Int {
+        return node.props.values[PropKeys.TAB_UNSELECTED_TEXT_COLOR] as? Int ?: 0
+    }
+
+    private fun readTabRippleColor(node: VNode): Int {
+        return node.props.values[PropKeys.TAB_RIPPLE_COLOR] as? Int ?: DEFAULT_RIPPLE_COLOR
     }
 
     private fun readLinearSpacing(node: VNode): Int {

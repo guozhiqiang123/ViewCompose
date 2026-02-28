@@ -1,6 +1,7 @@
 package com.gzq.uiframework.renderer.view
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
@@ -55,11 +56,21 @@ internal class DeclarativeTabPagerLayout(
         pages: List<TabPage>,
         selectedTabIndex: Int,
         onTabSelected: ((Int) -> Unit)?,
+        backgroundColor: Int,
+        indicatorColor: Int,
+        selectedTextColor: Int,
+        unselectedTextColor: Int,
+        rippleColor: Int,
     ) {
         this.onTabSelected = onTabSelected
         this.pages = pages
         viewPager.offscreenPageLimit = pages.size.coerceAtLeast(1)
         adapter.submitPages(pages)
+        tabLayout.setBackgroundColor(backgroundColor)
+        viewPager.setBackgroundColor(backgroundColor)
+        tabLayout.setSelectedTabIndicatorColor(indicatorColor)
+        tabLayout.setTabTextColors(unselectedTextColor, selectedTextColor)
+        tabLayout.tabRippleColor = ColorStateList.valueOf(rippleColor)
         syncTabs()
         val resolvedIndex = TabPagerSelectionResolver.resolve(pages, selectedTabIndex)
         if (resolvedIndex == null) {
