@@ -1,15 +1,13 @@
 package com.gzq.uiframework
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.gzq.uiframework.widget.core.Box
 import com.gzq.uiframework.widget.core.Column
 import com.gzq.uiframework.widget.core.Text
-import com.gzq.uiframework.widget.core.buildVNodeTree
+import com.gzq.uiframework.widget.core.renderInto
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,14 +20,12 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        val tree = buildVNodeTree {
+        renderInto(findViewById(R.id.main)) {
             Column {
                 Text(text = "UIFramework")
-                Box {
-                    Text(text = "Phase 1 bootstrap")
-                }
+                Text(text = "Declarative UI on Android Views")
+                Text(text = "Phase 1: first render pipeline")
             }
         }
-        Log.d("UIFramework", "Bootstrapped vnode tree size=${tree.size}")
     }
 }

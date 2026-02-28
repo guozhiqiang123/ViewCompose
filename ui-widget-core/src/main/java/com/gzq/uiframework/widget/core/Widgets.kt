@@ -2,6 +2,7 @@ package com.gzq.uiframework.widget.core
 
 import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.node.NodeType
+import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.Props
 
 fun UiTreeBuilder.Text(
@@ -14,7 +15,7 @@ fun UiTreeBuilder.Text(
         key = key,
         props = Props(
             values = mapOf(
-                TEXT_PROP to text,
+                PropKeys.TEXT to text,
             ),
         ),
         modifier = modifier,
@@ -59,5 +60,3 @@ fun UiTreeBuilder.Column(
         content = content,
     )
 }
-
-private const val TEXT_PROP: String = "text"
