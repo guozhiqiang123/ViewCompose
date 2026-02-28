@@ -14,6 +14,7 @@ import com.gzq.uiframework.renderer.modifier.backgroundColor
 import com.gzq.uiframework.renderer.modifier.clickable
 import com.gzq.uiframework.renderer.modifier.fillMaxWidth
 import com.gzq.uiframework.renderer.modifier.height
+import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.renderer.modifier.visibility
 import com.gzq.uiframework.renderer.modifier.weight
@@ -198,6 +199,7 @@ class MainActivity : AppCompatActivity() {
                         Column(
                             modifier = Modifier.Empty
                                 .backgroundColor(Color.parseColor("#FDECC8"))
+                                .margin(vertical = 8)
                                 .padding(8),
                         ) {
                             Text(

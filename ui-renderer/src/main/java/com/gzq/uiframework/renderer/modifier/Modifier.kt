@@ -19,6 +19,13 @@ data class PaddingModifierElement(
     val bottom: Int,
 ) : ModifierElement
 
+data class MarginModifierElement(
+    val left: Int,
+    val top: Int,
+    val right: Int,
+    val bottom: Int,
+) : ModifierElement
+
 data class BackgroundColorModifierElement(
     val color: Int,
 ) : ModifierElement
@@ -96,6 +103,41 @@ fun Modifier.padding(
 fun Modifier.backgroundColor(color: Int): Modifier {
     return then(
         BackgroundColorModifierElement(color),
+    )
+}
+
+fun Modifier.margin(all: Int): Modifier {
+    return margin(
+        horizontal = all,
+        vertical = all,
+    )
+}
+
+fun Modifier.margin(
+    horizontal: Int = 0,
+    vertical: Int = 0,
+): Modifier {
+    return margin(
+        left = horizontal,
+        top = vertical,
+        right = horizontal,
+        bottom = vertical,
+    )
+}
+
+fun Modifier.margin(
+    left: Int = 0,
+    top: Int = 0,
+    right: Int = 0,
+    bottom: Int = 0,
+): Modifier {
+    return then(
+        MarginModifierElement(
+            left = left,
+            top = top,
+            right = right,
+            bottom = bottom,
+        ),
     )
 }
 

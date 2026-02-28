@@ -13,6 +13,7 @@ import com.gzq.uiframework.renderer.modifier.AlphaModifierElement
 import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
 import com.gzq.uiframework.renderer.modifier.ClickableModifierElement
 import com.gzq.uiframework.renderer.modifier.HeightModifierElement
+import com.gzq.uiframework.renderer.modifier.MarginModifierElement
 import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
 import com.gzq.uiframework.renderer.modifier.SizeModifierElement
 import com.gzq.uiframework.renderer.modifier.Visibility
@@ -259,6 +260,7 @@ object ViewTreeRenderer {
     }
 
     private fun createLayoutParams(parent: ViewGroup, node: VNode): ViewGroup.LayoutParams {
+        val margin = node.modifier.elements.lastOrNull { it is MarginModifierElement } as? MarginModifierElement
         val size = node.modifier.elements.lastOrNull { it is SizeModifierElement } as? SizeModifierElement
         val widthModifier = node.modifier.elements.lastOrNull { it is WidthModifierElement } as? WidthModifierElement
         val heightModifier = node.modifier.elements.lastOrNull { it is HeightModifierElement } as? HeightModifierElement
@@ -293,13 +295,40 @@ object ViewTreeRenderer {
                 } else {
                     height
                 }
-                LinearLayout.LayoutParams(resolvedWidth, resolvedHeight).apply {
+                LinearLayout.LayoutParams(resolvedWidth, resolvedHeight).applyLayoutParams(
+                    margin = margin,
+                ) {
                     this.weight = weight?.weight ?: 0f
                 }
             }
-            is FrameLayout -> FrameLayout.LayoutParams(width, height)
-            else -> ViewGroup.LayoutParams(width, height)
+            is FrameLayout -> FrameLayout.LayoutParams(width, height).applyLayoutParams(margin = margin)
+            else -> ViewGroup.MarginLayoutParams(width, height).applyMargin(margin)
         }
+    }
+
+    private fun <T : ViewGroup.MarginLayoutParams> T.applyLayoutParams(
+        margin: MarginModifierElement?,
+        block: T.() -> Unit = {},
+    ): T {
+        applyMargin(margin)
+        block()
+        return this
+    }
+
+    private fun <T : ViewGroup.MarginLayoutParams> T.applyMargin(
+        margin: MarginModifierElement?,
+    ): T {
+        if (margin == null) {
+            setMargins(0, 0, 0, 0)
+            return this
+        }
+        setMargins(
+            margin.left,
+            margin.top,
+            margin.right,
+            margin.bottom,
+        )
+        return this
     }
 
     @Suppress("UNCHECKED_CAST")
