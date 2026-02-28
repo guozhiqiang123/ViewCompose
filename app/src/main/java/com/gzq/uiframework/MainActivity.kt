@@ -875,10 +875,12 @@ private fun UiTreeBuilder.ThemeSwatchRow(
 
 private fun UiTreeBuilder.LayoutPage() {
     val boxTapState = remember { mutableStateOf(0) }
+    val useLongLabelsState = remember { mutableStateOf(false) }
     val selectedPageState = remember { mutableStateOf(0) }
     val pageItems = when (selectedPageState.value) {
         0 -> listOf("page", "page_filter", "row", "column", "verify")
         1 -> listOf("page", "page_filter", "box", "verify")
+        2 -> listOf("page", "page_filter", "edge", "verify")
         else -> listOf("page", "page_filter", "verify")
     }
     LazyColumn(
@@ -894,7 +896,7 @@ private fun UiTreeBuilder.LayoutPage() {
             )
 
             "page_filter" -> ChapterPageFilterSection(
-                pages = listOf("Linear", "Overlay", "Checklist"),
+                pages = listOf("Linear", "Overlay", "Edges", "Checklist"),
                 selectedIndex = selectedPageState.value,
                 onSelectionChange = { selectedPageState.value = it },
             )
@@ -984,11 +986,82 @@ private fun UiTreeBuilder.LayoutPage() {
                 }
             }
 
+            "edge" -> DemoSection(
+                title = "Layout Edge Cases",
+                subtitle = "This page compresses the combinations that previously exposed wrong defaults for wrap, weight, and nested container sizing.",
+            ) {
+                Button(
+                    text = if (useLongLabelsState.value) "Use Short Labels" else "Use Long Labels",
+                    modifier = Modifier.Empty.margin(bottom = 12.dp),
+                    onClick = {
+                        useLongLabelsState.value = !useLongLabelsState.value
+                    },
+                )
+                Row(
+                    spacing = 8.dp,
+                    verticalAlignment = VerticalAlignment.Center,
+                    modifier = Modifier.Empty
+                        .fillMaxWidth()
+                        .backgroundColor(SurfaceDefaults.backgroundColor())
+                        .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                        .padding(12.dp)
+                        .margin(bottom = 12.dp),
+                ) {
+                    Surface(
+                        modifier = Modifier.Empty.padding(8.dp),
+                    ) {
+                        Icon(
+                            source = ImageSource.Resource(R.drawable.demo_media_icon),
+                            contentDescription = "Layout probe icon",
+                        )
+                    }
+                    Button(
+                        text = if (useLongLabelsState.value) {
+                            "A very long weighted label that should wrap without breaking sibling layout"
+                        } else {
+                            "Weighted"
+                        },
+                        modifier = Modifier.Empty.weight(1f),
+                    )
+                    Button(
+                        text = "Action",
+                        variant = ButtonVariant.Outlined,
+                        modifier = Modifier.Empty.weight(1f),
+                    )
+                }
+                Row(
+                    spacing = 8.dp,
+                    verticalAlignment = VerticalAlignment.Center,
+                    modifier = Modifier.Empty
+                        .fillMaxWidth()
+                        .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                        .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                        .padding(12.dp),
+                ) {
+                    Surface(
+                        modifier = Modifier.Empty.padding(8.dp),
+                    ) {
+                        Text(text = "Wrap")
+                    }
+                    Surface(
+                        variant = SurfaceVariant.Variant,
+                        modifier = Modifier.Empty.padding(8.dp),
+                    ) {
+                        Text(text = "Still Wrap")
+                    }
+                    Text(
+                        text = "Nested surfaces should hug content and leave the remaining width to this text block.",
+                        modifier = Modifier.Empty.weight(1f),
+                    )
+                }
+            }
+
             else -> VerificationNotesSection(
                 what = "Layouts should expose measurement bugs quickly, especially around wrap content defaults, fill, weight, and child alignment overrides.",
                 howToVerify = listOf(
                     "反复点击 Box 区域，确认点击态、overlay 和 pinned tag 不会错位。",
                     "在不同宽度设备上观察 Row 中 top/bottom 对齐文本，确认不会被 Stretch 或异常留白撑开。",
+                    "切换 Edge Cases 里的长短标签，确认 weighted button 与嵌套 surface 不会把兄弟节点挤没或撑出空白。",
                     "检查 Column 的 SpaceEvenly 摆放，确认 divider 和文本间距稳定。",
                 ),
                 expected = listOf(
