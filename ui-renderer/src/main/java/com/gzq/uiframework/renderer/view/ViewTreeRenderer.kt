@@ -11,6 +11,11 @@ import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.VNode
+import com.gzq.uiframework.renderer.reconcile.ChildReconciler
+import com.gzq.uiframework.renderer.reconcile.InsertPatch
+import com.gzq.uiframework.renderer.reconcile.RemovePatch
+import com.gzq.uiframework.renderer.reconcile.RenderPatch
+import com.gzq.uiframework.renderer.reconcile.ReusePatch
 
 object ViewTreeRenderer {
     fun renderInto(
@@ -18,46 +23,66 @@ object ViewTreeRenderer {
         previous: List<MountedNode>,
         nodes: List<VNode>,
     ): List<MountedNode> {
-        val usedPrevious = BooleanArray(previous.size)
+        val reconcileResult = ChildReconciler.reconcile(
+            previous = previous,
+            nodes = nodes,
+        )
         val nextMounted = mutableListOf<MountedNode>()
-        nodes.forEachIndexed { index, node ->
-            val reusableIndex = findReusableIndex(
-                previous = previous,
-                usedPrevious = usedPrevious,
-                targetIndex = index,
-                node = node,
+        reconcileResult.patches.forEach { patch ->
+            nextMounted += applyPatch(
+                container = container,
+                patch = patch,
             )
-            val previousNode = reusableIndex?.let(previous::get)
-            if (previousNode != null) {
-                usedPrevious[reusableIndex] = true
-                bindView(previousNode.view, node)
-                previousNode.view.layoutParams = createLayoutParams(container, node)
-                previousNode.children = reconcileChildren(previousNode.view, previousNode.children, node)
-                previousNode.vnode = node
-                moveViewToIndex(
-                    container = container,
-                    view = previousNode.view,
-                    targetIndex = index,
-                )
-                nextMounted += previousNode
-            } else {
-                val mountedNode = mountNode(container.context, node)
+        }
+        reconcileResult.removals.forEach { removal ->
+            applyRemoval(
+                container = container,
+                removal = removal,
+            )
+        }
+        return nextMounted
+    }
+
+    private fun applyPatch(
+        container: ViewGroup,
+        patch: RenderPatch,
+    ): MountedNode {
+        return when (patch) {
+            is InsertPatch -> {
+                val mountedNode = mountNode(container.context, patch.nextVNode)
                 container.addView(
                     mountedNode.view,
-                    index.coerceAtMost(container.childCount),
-                    createLayoutParams(container, node),
+                    patch.targetIndex.coerceAtMost(container.childCount),
+                    createLayoutParams(container, patch.nextVNode),
                 )
-                nextMounted += mountedNode
+                mountedNode
+            }
+
+            is ReusePatch -> {
+                val mountedNode = patch.mountedNode
+                bindView(mountedNode.view, patch.nextVNode)
+                mountedNode.view.layoutParams = createLayoutParams(container, patch.nextVNode)
+                mountedNode.children = reconcileChildren(
+                    view = mountedNode.view,
+                    previousChildren = mountedNode.children,
+                    node = patch.nextVNode,
+                )
+                mountedNode.vnode = patch.nextVNode
+                moveViewToIndex(
+                    container = container,
+                    view = mountedNode.view,
+                    targetIndex = patch.targetIndex,
+                )
+                mountedNode
             }
         }
+    }
 
-        previous.forEachIndexed { index, mountedNode ->
-            if (!usedPrevious[index]) {
-                container.removeView(mountedNode.view)
-            }
-        }
-
-        return nextMounted
+    private fun applyRemoval(
+        container: ViewGroup,
+        removal: RemovePatch,
+    ) {
+        container.removeView(removal.mountedNode.view)
     }
 
     private fun reconcileChildren(
@@ -146,36 +171,6 @@ object ViewTreeRenderer {
             padding.right,
             padding.bottom,
         )
-    }
-
-    private fun canReuse(previous: VNode, next: VNode): Boolean {
-        if (previous.type != next.type) {
-            return false
-        }
-        return previous.key == next.key
-    }
-
-    private fun findReusableIndex(
-        previous: List<MountedNode>,
-        usedPrevious: BooleanArray,
-        targetIndex: Int,
-        node: VNode,
-    ): Int? {
-        if (node.key != null) {
-            previous.forEachIndexed { index, mountedNode ->
-                if (!usedPrevious[index] && canReuse(mountedNode.vnode, node)) {
-                    return index
-                }
-            }
-            return null
-        }
-
-        val candidate = previous.getOrNull(targetIndex) ?: return null
-        return if (!usedPrevious[targetIndex] && canReuse(candidate.vnode, node)) {
-            targetIndex
-        } else {
-            null
-        }
     }
 
     private fun moveViewToIndex(
