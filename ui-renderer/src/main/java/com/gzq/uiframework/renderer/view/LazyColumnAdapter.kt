@@ -11,7 +11,9 @@ import com.gzq.uiframework.renderer.reconcile.LazyListUpdate
 
 internal class LazyColumnAdapter : RecyclerView.Adapter<LazyColumnViewHolder>() {
     private var items: List<LazyListItem> = emptyList()
-    private val attachedHolders = LinkedHashSet<LazyColumnViewHolder>()
+    private val holderRegistry = LazyHolderRegistry<LazyColumnViewHolder> { holder ->
+        holder.recycle()
+    }
     private var lastIdentityWarning: String? = null
 
     init {
@@ -35,22 +37,27 @@ internal class LazyColumnAdapter : RecyclerView.Adapter<LazyColumnViewHolder>() 
         holder: LazyColumnViewHolder,
         position: Int,
     ) {
+        holderRegistry.onBound(holder)
         holder.bind(items[position])
     }
 
     override fun onViewRecycled(holder: LazyColumnViewHolder) {
-        attachedHolders -= holder
-        holder.recycle()
+        holderRegistry.onRecycled(holder)
     }
 
     override fun onViewAttachedToWindow(holder: LazyColumnViewHolder) {
         super.onViewAttachedToWindow(holder)
-        attachedHolders += holder
+        holderRegistry.onAttached(holder)
     }
 
     override fun onViewDetachedFromWindow(holder: LazyColumnViewHolder) {
         super.onViewDetachedFromWindow(holder)
-        attachedHolders -= holder
+        holderRegistry.onDetached(holder)
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        disposeAll()
     }
 
     override fun getItemCount(): Int = items.size
@@ -94,10 +101,7 @@ internal class LazyColumnAdapter : RecyclerView.Adapter<LazyColumnViewHolder>() 
     }
 
     fun disposeAll() {
-        attachedHolders.toList().forEach { holder ->
-            holder.recycle()
-        }
-        attachedHolders.clear()
+        holderRegistry.disposeAll()
         items = emptyList()
     }
 }
