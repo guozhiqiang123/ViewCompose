@@ -21,6 +21,8 @@ import com.gzq.uiframework.renderer.modifier.size
 import com.gzq.uiframework.renderer.modifier.textColor
 import com.gzq.uiframework.renderer.modifier.textSize
 import com.gzq.uiframework.renderer.modifier.weight
+import com.gzq.uiframework.renderer.node.ImageContentScale
+import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.LazyListItemSession
 import com.gzq.uiframework.renderer.node.LazyListItemSessionFactory
@@ -48,6 +50,50 @@ fun UiTreeBuilder.Text(
         modifier = Modifier.Empty
             .textColor(TextDefaults.primaryColor())
             .textSize(style.fontSizeSp)
+            .then(modifier),
+    )
+}
+
+fun UiTreeBuilder.Image(
+    source: ImageSource,
+    contentDescription: String? = null,
+    contentScale: ImageContentScale = ImageContentScale.Fit,
+    tint: Int? = null,
+    key: Any? = null,
+    modifier: Modifier = Modifier.Empty,
+) {
+    emit(
+        type = NodeType.Image,
+        key = key,
+        props = Props(
+            values = buildMap {
+                put(PropKeys.IMAGE_SOURCE, source)
+                put(PropKeys.IMAGE_CONTENT_SCALE, contentScale)
+                put(PropKeys.IMAGE_CONTENT_DESCRIPTION, contentDescription)
+                put(PropKeys.IMAGE_REMOTE_LOADER, ImageLoading.current)
+                tint?.let { put(PropKeys.IMAGE_TINT, it) }
+            },
+        ),
+        modifier = modifier,
+    )
+}
+
+fun UiTreeBuilder.Icon(
+    source: ImageSource,
+    contentDescription: String? = null,
+    tint: Int = ContentColor.current,
+    size: Int = 24.dp,
+    key: Any? = null,
+    modifier: Modifier = Modifier.Empty,
+) {
+    Image(
+        source = source,
+        contentDescription = contentDescription,
+        contentScale = ImageContentScale.Inside,
+        tint = tint,
+        key = key,
+        modifier = Modifier.Empty
+            .size(width = size, height = size)
             .then(modifier),
     )
 }

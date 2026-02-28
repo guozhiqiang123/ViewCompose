@@ -23,6 +23,7 @@ import com.gzq.uiframework.renderer.modifier.height
 import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.offset
 import com.gzq.uiframework.renderer.modifier.padding
+import com.gzq.uiframework.renderer.modifier.size
 import com.gzq.uiframework.renderer.modifier.textColor
 import com.gzq.uiframework.renderer.modifier.visibility
 import com.gzq.uiframework.renderer.modifier.weight
@@ -44,6 +45,8 @@ import com.gzq.uiframework.widget.core.Environment
 import com.gzq.uiframework.widget.core.FlexibleSpacer
 import com.gzq.uiframework.widget.core.Checkbox
 import com.gzq.uiframework.widget.core.CircularProgressIndicator
+import com.gzq.uiframework.widget.core.Icon
+import com.gzq.uiframework.widget.core.Image
 import com.gzq.uiframework.widget.core.LazyColumn
 import com.gzq.uiframework.widget.core.LinearProgressIndicator
 import com.gzq.uiframework.widget.core.NumberField
@@ -77,6 +80,8 @@ import com.gzq.uiframework.widget.core.produceState
 import com.gzq.uiframework.widget.core.remember
 import com.gzq.uiframework.widget.core.renderInto
 import com.gzq.uiframework.widget.core.sp
+import com.gzq.uiframework.renderer.node.ImageContentScale
+import com.gzq.uiframework.renderer.node.ImageSource
 import java.util.Locale
 
 private val DEMO_TABS = listOf(
@@ -218,7 +223,7 @@ private fun UiTreeBuilder.OverviewPage(
     selectedTabState: MutableState<Int>,
 ) {
     LazyColumn(
-        items = listOf("intro", "theme", "overrides", "progress", "jump", "surface"),
+        items = listOf("intro", "theme", "overrides", "progress", "media", "jump", "surface"),
         key = { it },
         modifier = Modifier.Empty.fillMaxSize(),
     ) { section ->
@@ -502,6 +507,70 @@ private fun UiTreeBuilder.OverviewPage(
                     CircularProgressIndicator()
                     Text(
                         text = "Progress family is now part of the P1 widget surface.",
+                        modifier = Modifier.Empty.weight(1f),
+                    )
+                }
+            }
+
+            "media" -> DemoSection(
+                title = "Image + Icon",
+                subtitle = "Media primitives are now separate from remote loading. The widget defines semantics; loading stays pluggable.",
+            ) {
+                Row(
+                    spacing = 16.dp,
+                    verticalAlignment = VerticalAlignment.Center,
+                    modifier = Modifier.Empty.fillMaxWidth().margin(bottom = 12.dp),
+                ) {
+                    Image(
+                        source = ImageSource.Resource(R.mipmap.ic_launcher),
+                        contentDescription = "Launcher image",
+                        contentScale = ImageContentScale.Crop,
+                        modifier = Modifier.Empty
+                            .size(64.dp, 64.dp)
+                            .cornerRadius(Theme.shapes.cardCornerRadius),
+                    )
+                    Column(
+                        spacing = 8.dp,
+                        modifier = Modifier.Empty.weight(1f),
+                    ) {
+                        Text(text = "Image uses a typed source and content scale.")
+                        Text(
+                            text = "Remote loading can be provided later through a scoped loader without changing the Image API.",
+                            style = UiTextStyle(fontSizeSp = 13.sp),
+                            modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+                        )
+                    }
+                }
+                Row(
+                    spacing = 12.dp,
+                    verticalAlignment = VerticalAlignment.Center,
+                    modifier = Modifier.Empty.fillMaxWidth(),
+                ) {
+                    Surface(
+                        modifier = Modifier.Empty.padding(8.dp),
+                    ) {
+                        Icon(
+                            source = ImageSource.Resource(R.drawable.ic_launcher_foreground),
+                            contentDescription = "Foreground icon",
+                        )
+                    }
+                    UiThemeOverride(
+                        colors = {
+                            copy(textPrimary = accent)
+                        },
+                    ) {
+                        Surface(
+                            variant = SurfaceVariant.Variant,
+                            modifier = Modifier.Empty.padding(8.dp),
+                        ) {
+                            Icon(
+                                source = ImageSource.Resource(R.drawable.ic_launcher_foreground),
+                                contentDescription = "Accent icon",
+                            )
+                        }
+                    }
+                    Text(
+                        text = "Icon defaults to ContentColor.current, so it naturally follows local surface/content scopes.",
                         modifier = Modifier.Empty.weight(1f),
                     )
                 }

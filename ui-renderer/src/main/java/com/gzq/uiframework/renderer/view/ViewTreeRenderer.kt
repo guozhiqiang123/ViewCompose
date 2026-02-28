@@ -21,6 +21,7 @@ import android.widget.CheckBox
 import android.widget.CompoundButton
 import android.widget.EditText
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.RadioButton
@@ -58,9 +59,12 @@ import com.gzq.uiframework.renderer.modifier.VisibilityModifierElement
 import com.gzq.uiframework.renderer.modifier.WeightModifierElement
 import com.gzq.uiframework.renderer.modifier.WidthModifierElement
 import com.gzq.uiframework.renderer.modifier.ZIndexModifierElement
+import com.gzq.uiframework.renderer.node.ImageContentScale
+import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
+import com.gzq.uiframework.renderer.node.RemoteImageLoader
 import com.gzq.uiframework.renderer.node.SegmentedControlItem
 import com.gzq.uiframework.renderer.node.TextFieldType
 import com.gzq.uiframework.renderer.node.TabPage
@@ -199,7 +203,7 @@ object ViewTreeRenderer {
             NodeType.Surface -> DeclarativeBoxLayout(context)
             NodeType.Spacer -> View(context)
             NodeType.Divider -> View(context)
-            NodeType.Image -> View(context)
+            NodeType.Image -> ImageView(context)
             NodeType.AndroidView -> readViewFactory(node)?.invoke(context) ?: View(context)
             NodeType.LazyColumn -> RecyclerView(context).apply {
                 layoutManager = LinearLayoutManager(context)
@@ -313,7 +317,9 @@ object ViewTreeRenderer {
                 view.setBackgroundColor(readDividerColor(node))
             }
 
-            NodeType.Image -> Unit
+            NodeType.Image -> {
+                bindImage(view as ImageView, node)
+            }
 
             NodeType.AndroidView -> {
                 readViewUpdate(node)?.invoke(view)
@@ -688,6 +694,30 @@ object ViewTreeRenderer {
         view.indicatorSize = readProgressIndicatorSize(node)
     }
 
+    private fun bindImage(
+        view: ImageView,
+        node: VNode,
+    ) {
+        view.contentDescription = readImageContentDescription(node)
+        view.scaleType = readImageContentScale(node).toScaleType()
+        val tint = readImageTint(node)
+        view.imageTintList = tint?.let(ColorStateList::valueOf)
+        when (val source = readImageSource(node)) {
+            is ImageSource.Resource -> {
+                view.setImageResource(source.resId)
+            }
+
+            is ImageSource.Remote -> {
+                view.setImageDrawable(null)
+                readRemoteImageLoader(node)?.load(view, source.url)
+            }
+
+            null -> {
+                view.setImageDrawable(null)
+            }
+        }
+    }
+
     private fun bindProgressIndicator(
         view: ProgressBar,
         node: VNode,
@@ -752,6 +782,7 @@ object ViewTreeRenderer {
             NodeType.RadioButton,
             NodeType.CircularProgressIndicator,
             NodeType.Button,
+            NodeType.Image,
             NodeType.SegmentedControl,
             -> ViewGroup.LayoutParams.WRAP_CONTENT
 
@@ -1063,6 +1094,27 @@ object ViewTreeRenderer {
         return node.props.values[PropKeys.PROGRESS_FRACTION] as? Float
     }
 
+    private fun readImageSource(node: VNode): ImageSource? {
+        return node.props.values[PropKeys.IMAGE_SOURCE] as? ImageSource
+    }
+
+    private fun readImageContentScale(node: VNode): ImageContentScale {
+        return node.props.values[PropKeys.IMAGE_CONTENT_SCALE] as? ImageContentScale
+            ?: ImageContentScale.Fit
+    }
+
+    private fun readImageContentDescription(node: VNode): String? {
+        return node.props.values[PropKeys.IMAGE_CONTENT_DESCRIPTION] as? String
+    }
+
+    private fun readImageTint(node: VNode): Int? {
+        return node.props.values[PropKeys.IMAGE_TINT] as? Int
+    }
+
+    private fun readRemoteImageLoader(node: VNode): RemoteImageLoader? {
+        return node.props.values[PropKeys.IMAGE_REMOTE_LOADER] as? RemoteImageLoader
+    }
+
     private fun readProgressIndicatorColor(node: VNode): Int {
         return node.props.values[PropKeys.PROGRESS_INDICATOR_COLOR] as? Int ?: 0xFF000000.toInt()
     }
@@ -1127,6 +1179,15 @@ object ViewTreeRenderer {
             BoxAlignment.BottomStart -> Gravity.BOTTOM or Gravity.START
             BoxAlignment.BottomCenter -> Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
             BoxAlignment.BottomEnd -> Gravity.BOTTOM or Gravity.END
+        }
+    }
+
+    private fun ImageContentScale.toScaleType(): ImageView.ScaleType {
+        return when (this) {
+            ImageContentScale.Fit -> ImageView.ScaleType.FIT_CENTER
+            ImageContentScale.Crop -> ImageView.ScaleType.CENTER_CROP
+            ImageContentScale.FillBounds -> ImageView.ScaleType.FIT_XY
+            ImageContentScale.Inside -> ImageView.ScaleType.CENTER_INSIDE
         }
     }
 }
