@@ -17,4 +17,5 @@ sealed interface NodeType {
     data object AndroidView : NodeType
     data object LazyColumn : NodeType
     data object TabPager : NodeType
+    data object SegmentedControl : NodeType
 }

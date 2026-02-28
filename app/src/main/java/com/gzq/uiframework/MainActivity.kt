@@ -48,6 +48,8 @@ import com.gzq.uiframework.widget.core.NumberField
 import com.gzq.uiframework.widget.core.PasswordField
 import com.gzq.uiframework.widget.core.RadioButton
 import com.gzq.uiframework.widget.core.Row
+import com.gzq.uiframework.widget.core.SegmentedControl
+import com.gzq.uiframework.widget.core.SegmentedControlSize
 import com.gzq.uiframework.widget.core.SideEffect
 import com.gzq.uiframework.widget.core.Slider
 import com.gzq.uiframework.widget.core.SurfaceDefaults
@@ -166,26 +168,15 @@ private fun UiTreeBuilder.DemoRoot(root: ViewGroup) {
                         text = "Demo Theme",
                         style = UiTextStyle(fontSizeSp = 14.sp),
                     )
-                    Row(
-                        spacing = 8.dp,
+                    SegmentedControl(
+                        items = listOf("System", "Light", "Dark"),
+                        selectedIndex = themeModeState.value.ordinal,
+                        onSelectionChange = { index ->
+                            themeModeState.value = DemoThemeMode.entries[index]
+                        },
+                        size = SegmentedControlSize.Medium,
                         modifier = Modifier.Empty.fillMaxWidth(),
-                    ) {
-                        ThemeModeButton(
-                            label = "System",
-                            active = themeModeState.value == DemoThemeMode.System,
-                            onClick = { themeModeState.value = DemoThemeMode.System },
-                        )
-                        ThemeModeButton(
-                            label = "Light",
-                            active = themeModeState.value == DemoThemeMode.Light,
-                            onClick = { themeModeState.value = DemoThemeMode.Light },
-                        )
-                        ThemeModeButton(
-                            label = "Dark",
-                            active = themeModeState.value == DemoThemeMode.Dark,
-                            onClick = { themeModeState.value = DemoThemeMode.Dark },
-                        )
-                    }
+                    )
                 }
                 TabPager(
                     selectedTabIndex = selectedTabState.value,
@@ -216,19 +207,6 @@ private fun UiTreeBuilder.DemoRoot(root: ViewGroup) {
             }
         }
     }
-}
-
-private fun UiTreeBuilder.ThemeModeButton(
-    label: String,
-    active: Boolean,
-    onClick: () -> Unit,
-) {
-    Button(
-        text = if (active) "$label *" else label,
-        variant = if (active) ButtonVariant.Secondary else ButtonVariant.Outlined,
-        modifier = Modifier.Empty.weight(1f),
-        onClick = onClick,
-    )
 }
 
 private fun UiTreeBuilder.OverviewPage(

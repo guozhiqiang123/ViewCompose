@@ -55,6 +55,7 @@ import com.gzq.uiframework.renderer.modifier.ZIndexModifierElement
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
+import com.gzq.uiframework.renderer.node.SegmentedControlItem
 import com.gzq.uiframework.renderer.node.TextFieldType
 import com.gzq.uiframework.renderer.node.TabPage
 import com.gzq.uiframework.renderer.node.VNode
@@ -195,6 +196,7 @@ object ViewTreeRenderer {
                 adapter = LazyColumnAdapter()
             }
             NodeType.TabPager -> DeclarativeTabPagerLayout(context)
+            NodeType.SegmentedControl -> DeclarativeSegmentedControlLayout(context)
         }
 
         cacheOriginalBackground(view)
@@ -308,6 +310,23 @@ object ViewTreeRenderer {
                     selectedTextColor = readTabSelectedTextColor(node),
                     unselectedTextColor = readTabUnselectedTextColor(node),
                     rippleColor = readTabRippleColor(node),
+                )
+            }
+
+            NodeType.SegmentedControl -> {
+                (view as DeclarativeSegmentedControlLayout).bind(
+                    items = readSegmentItems(node),
+                    selectedIndex = readSegmentSelectedIndex(node),
+                    onSelectionChange = readOnSegmentSelected(node),
+                    backgroundColor = readSegmentBackgroundColor(node),
+                    indicatorColor = readSegmentIndicatorColor(node),
+                    cornerRadius = readSegmentCornerRadius(node),
+                    textColor = readSegmentTextColor(node),
+                    selectedTextColor = readSegmentSelectedTextColor(node),
+                    rippleColor = readSegmentRippleColor(node),
+                    textSizeSp = readSegmentTextSize(node),
+                    horizontalPadding = readSegmentPaddingHorizontal(node),
+                    verticalPadding = readSegmentPaddingVertical(node),
                 )
             }
         }
@@ -654,6 +673,7 @@ object ViewTreeRenderer {
             NodeType.Switch,
             NodeType.RadioButton,
             NodeType.Button,
+            NodeType.SegmentedControl,
             -> ViewGroup.LayoutParams.WRAP_CONTENT
 
             NodeType.Spacer -> 0
@@ -817,6 +837,56 @@ object ViewTreeRenderer {
 
     private fun readTabRippleColor(node: VNode): Int {
         return node.props.values[PropKeys.TAB_RIPPLE_COLOR] as? Int ?: DEFAULT_RIPPLE_COLOR
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun readSegmentItems(node: VNode): List<SegmentedControlItem> {
+        return node.props.values[PropKeys.SEGMENT_ITEMS] as? List<SegmentedControlItem> ?: emptyList()
+    }
+
+    private fun readSegmentSelectedIndex(node: VNode): Int {
+        return node.props.values[PropKeys.SEGMENT_SELECTED_INDEX] as? Int ?: 0
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun readOnSegmentSelected(node: VNode): ((Int) -> Unit)? {
+        return node.props.values[PropKeys.ON_SEGMENT_SELECTED] as? ((Int) -> Unit)
+    }
+
+    private fun readSegmentBackgroundColor(node: VNode): Int {
+        return node.props.values[PropKeys.SEGMENT_BACKGROUND_COLOR] as? Int ?: Color.TRANSPARENT
+    }
+
+    private fun readSegmentIndicatorColor(node: VNode): Int {
+        return node.props.values[PropKeys.SEGMENT_INDICATOR_COLOR] as? Int ?: Color.TRANSPARENT
+    }
+
+    private fun readSegmentCornerRadius(node: VNode): Int {
+        return node.props.values[PropKeys.SEGMENT_CORNER_RADIUS] as? Int ?: 0
+    }
+
+    private fun readSegmentTextColor(node: VNode): Int {
+        return node.props.values[PropKeys.SEGMENT_TEXT_COLOR] as? Int ?: Color.BLACK
+    }
+
+    private fun readSegmentSelectedTextColor(node: VNode): Int {
+        return node.props.values[PropKeys.SEGMENT_SELECTED_TEXT_COLOR] as? Int ?: Color.WHITE
+    }
+
+    private fun readSegmentRippleColor(node: VNode): Int {
+        return node.props.values[PropKeys.SEGMENT_RIPPLE_COLOR] as? Int ?: DEFAULT_RIPPLE_COLOR
+    }
+
+    private fun readSegmentTextSize(node: VNode): Int {
+        return node.props.values[PropKeys.SEGMENT_TEXT_SIZE_SP] as? Int ?: 14
+    }
+
+    private fun readSegmentPaddingHorizontal(node: VNode): Int {
+        return node.props.values[PropKeys.SEGMENT_CONTENT_PADDING_HORIZONTAL] as? Int ?: 0
+    }
+
+    private fun readSegmentPaddingVertical(node: VNode): Int {
+        return node.props.values[PropKeys.SEGMENT_CONTENT_PADDING_VERTICAL] as? Int ?: 0
     }
 
     private fun readLinearSpacing(node: VNode): Int {

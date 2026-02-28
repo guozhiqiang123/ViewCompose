@@ -22,6 +22,7 @@ import com.gzq.uiframework.renderer.node.LazyListItemSessionFactory
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.Props
+import com.gzq.uiframework.renderer.node.SegmentedControlItem
 import com.gzq.uiframework.renderer.node.TabPage
 import com.gzq.uiframework.renderer.node.TextFieldType
 
@@ -367,6 +368,41 @@ fun UiTreeBuilder.Button(
             .rippleColor(ButtonDefaults.pressedColor())
             .textColor(ButtonDefaults.contentColor(variant))
             .textSize(style.fontSizeSp)
+            .then(modifier),
+    )
+}
+
+fun UiTreeBuilder.SegmentedControl(
+    items: List<String>,
+    selectedIndex: Int,
+    onSelectionChange: (Int) -> Unit,
+    size: SegmentedControlSize = SegmentedControlSize.Medium,
+    key: Any? = null,
+    modifier: Modifier = Modifier.Empty,
+) {
+    emit(
+        type = NodeType.SegmentedControl,
+        key = key,
+        props = Props(
+            values = mapOf(
+                PropKeys.SEGMENT_ITEMS to items.map { label ->
+                    SegmentedControlItem(label = label)
+                },
+                PropKeys.SEGMENT_SELECTED_INDEX to selectedIndex,
+                PropKeys.ON_SEGMENT_SELECTED to onSelectionChange,
+                PropKeys.SEGMENT_BACKGROUND_COLOR to SegmentedControlDefaults.backgroundColor(),
+                PropKeys.SEGMENT_INDICATOR_COLOR to SegmentedControlDefaults.indicatorColor(),
+                PropKeys.SEGMENT_CORNER_RADIUS to SegmentedControlDefaults.cornerRadius(),
+                PropKeys.SEGMENT_TEXT_COLOR to SegmentedControlDefaults.textColor(),
+                PropKeys.SEGMENT_SELECTED_TEXT_COLOR to SegmentedControlDefaults.selectedTextColor(),
+                PropKeys.SEGMENT_RIPPLE_COLOR to SegmentedControlDefaults.rippleColor(),
+                PropKeys.SEGMENT_TEXT_SIZE_SP to SegmentedControlDefaults.textStyle(size).fontSizeSp,
+                PropKeys.SEGMENT_CONTENT_PADDING_HORIZONTAL to SegmentedControlDefaults.horizontalPadding(size),
+                PropKeys.SEGMENT_CONTENT_PADDING_VERTICAL to SegmentedControlDefaults.verticalPadding(size),
+            ),
+        ),
+        modifier = Modifier.Empty
+            .height(SegmentedControlDefaults.height(size))
             .then(modifier),
     )
 }

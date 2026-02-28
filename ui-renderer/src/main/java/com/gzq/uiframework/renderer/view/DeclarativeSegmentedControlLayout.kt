@@ -1,0 +1,136 @@
+package com.gzq.uiframework.renderer.view
+
+import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.RippleDrawable
+import android.text.TextUtils
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
+import com.gzq.uiframework.renderer.node.SegmentedControlItem
+
+internal class DeclarativeSegmentedControlLayout(
+    context: Context,
+) : LinearLayout(context) {
+    private var items: List<SegmentedControlItem> = emptyList()
+    private var selectedIndex: Int = -1
+    private var onSelectionChange: ((Int) -> Unit)? = null
+    private val indicatorInset = 2 * context.resources.displayMetrics.density
+
+    init {
+        orientation = HORIZONTAL
+        gravity = Gravity.CENTER_VERTICAL
+        clipToPadding = false
+    }
+
+    fun bind(
+        items: List<SegmentedControlItem>,
+        selectedIndex: Int,
+        onSelectionChange: ((Int) -> Unit)?,
+        backgroundColor: Int,
+        indicatorColor: Int,
+        cornerRadius: Int,
+        textColor: Int,
+        selectedTextColor: Int,
+        rippleColor: Int,
+        textSizeSp: Int,
+        horizontalPadding: Int,
+        verticalPadding: Int,
+    ) {
+        this.onSelectionChange = onSelectionChange
+        background = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            setColor(backgroundColor)
+            this.cornerRadius = cornerRadius.toFloat()
+        }
+        if (this.items.map { it.label } != items.map { it.label }) {
+            rebuild(items)
+        }
+        this.items = items
+        this.selectedIndex = selectedIndex
+        updateChildren(
+            indicatorColor = indicatorColor,
+            cornerRadius = cornerRadius,
+            textColor = textColor,
+            selectedTextColor = selectedTextColor,
+            rippleColor = rippleColor,
+            textSizeSp = textSizeSp,
+            horizontalPadding = horizontalPadding,
+            verticalPadding = verticalPadding,
+        )
+    }
+
+    private fun rebuild(items: List<SegmentedControlItem>) {
+        removeAllViews()
+        items.forEachIndexed { index, _ ->
+            addView(
+                TextView(context).apply {
+                    gravity = Gravity.CENTER
+                    ellipsize = TextUtils.TruncateAt.END
+                    maxLines = 1
+                    layoutParams = LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f)
+                    setOnClickListener {
+                        onSelectionChange?.invoke(index)
+                    }
+                },
+            )
+        }
+    }
+
+    private fun updateChildren(
+        indicatorColor: Int,
+        cornerRadius: Int,
+        textColor: Int,
+        selectedTextColor: Int,
+        rippleColor: Int,
+        textSizeSp: Int,
+        horizontalPadding: Int,
+        verticalPadding: Int,
+    ) {
+        for (index in 0 until childCount) {
+            val child = getChildAt(index) as? TextView ?: continue
+            val item = items.getOrNull(index) ?: continue
+            val isSelected = index == selectedIndex
+            child.text = item.label
+            child.setTextColor(if (isSelected) selectedTextColor else textColor)
+            child.textSize = textSizeSp.toFloat()
+            child.setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding)
+            child.layoutParams = (child.layoutParams as LayoutParams).apply {
+                leftMargin = indicatorInset.toInt()
+                topMargin = indicatorInset.toInt()
+                rightMargin = indicatorInset.toInt()
+                bottomMargin = indicatorInset.toInt()
+            }
+            child.background = createSegmentBackground(
+                selected = isSelected,
+                indicatorColor = indicatorColor,
+                rippleColor = rippleColor,
+                cornerRadius = (cornerRadius - indicatorInset).coerceAtLeast(0f),
+            )
+            child.isSelected = isSelected
+        }
+    }
+
+    private fun createSegmentBackground(
+        selected: Boolean,
+        indicatorColor: Int,
+        rippleColor: Int,
+        cornerRadius: Float,
+    ) = RippleDrawable(
+        ColorStateList.valueOf(rippleColor),
+        GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            setColor(if (selected) indicatorColor else Color.TRANSPARENT)
+            this.cornerRadius = cornerRadius
+        },
+        GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            setColor(Color.WHITE)
+            this.cornerRadius = cornerRadius
+        },
+    )
+}
