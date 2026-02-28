@@ -25,7 +25,10 @@ import com.gzq.uiframework.widget.core.Column
 import com.gzq.uiframework.widget.core.DisposableEffect
 import com.gzq.uiframework.widget.core.LazyColumn
 import com.gzq.uiframework.widget.core.Row
+import com.gzq.uiframework.widget.core.SideEffect
 import com.gzq.uiframework.widget.core.Text
+import com.gzq.uiframework.widget.core.key
+import com.gzq.uiframework.widget.core.produceState
 import com.gzq.uiframework.widget.core.remember
 import com.gzq.uiframework.widget.core.renderInto
 
@@ -50,6 +53,7 @@ class MainActivity : AppCompatActivity() {
         ) {
             val clickCountState = remember { mutableStateOf(0) }
             val textToggleState = remember { mutableStateOf(false) }
+            val transientPanelVisibleState = remember { mutableStateOf(true) }
             val clickSummaryState = remember {
                 derivedStateOf {
                     val clickCount = clickCountState.value
@@ -62,12 +66,23 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-            DisposableEffect(clickSummaryState.value) {
+            val listOrderState = produceState(
+                initialValue = "List order: A-B-C",
+                reversedState.value,
+            ) {
+                value = if (reversedState.value) {
+                    "List order: C-B-A"
+                } else {
+                    "List order: A-B-C"
+                }
+                null
+            }
+            SideEffect {
                 title = "UIFramework - ${clickSummaryState.value}"
+            }
+            DisposableEffect {
                 {
-                    if (title == "UIFramework - ${clickSummaryState.value}") {
-                        title = "UIFramework"
-                    }
+                    title = "UIFramework"
                 }
             }
             Column(
@@ -103,6 +118,10 @@ class MainActivity : AppCompatActivity() {
                     modifier = Modifier.Empty
                         .alpha(0.7f)
                         .padding(8),
+                )
+                Text(
+                    text = listOrderState.value,
+                    modifier = Modifier.Empty.padding(8),
                 )
                 Row(
                     modifier = Modifier.Empty
@@ -150,6 +169,39 @@ class MainActivity : AppCompatActivity() {
                         reversedState.value = !reversedState.value
                     },
                 )
+                Button(
+                    text = if (transientPanelVisibleState.value) {
+                        "Hide transient panel"
+                    } else {
+                        "Show transient panel"
+                    },
+                    modifier = Modifier.Empty.padding(8),
+                    onClick = {
+                        transientPanelVisibleState.value = !transientPanelVisibleState.value
+                    },
+                )
+                if (transientPanelVisibleState.value) {
+                    key("transient-panel") {
+                        val panelTapState = remember { mutableStateOf(0) }
+                        Column(
+                            modifier = Modifier.Empty
+                                .backgroundColor(Color.parseColor("#FDECC8"))
+                                .padding(8),
+                        ) {
+                            Text(
+                                text = "Transient keyed panel",
+                                modifier = Modifier.Empty.padding(4),
+                            )
+                            Button(
+                                text = "Panel taps: ${panelTapState.value}",
+                                modifier = Modifier.Empty.padding(4),
+                                onClick = {
+                                    panelTapState.value = panelTapState.value + 1
+                                },
+                            )
+                        }
+                    }
+                }
                 Text(
                     text = "Visibility sample: hidden when reversed",
                     modifier = Modifier.Empty
