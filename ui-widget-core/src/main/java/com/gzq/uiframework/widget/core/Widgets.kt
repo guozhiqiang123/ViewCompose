@@ -4,6 +4,8 @@ import android.content.Context
 import android.view.View
 import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.node.LazyListItem
+import com.gzq.uiframework.renderer.node.LazyListItemSession
+import com.gzq.uiframework.renderer.node.LazyListItemSessionFactory
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.Props
@@ -115,8 +117,14 @@ fun <T> UiTreeBuilder.LazyColumn(
                 PropKeys.LAZY_ITEMS to items.map { item ->
                     LazyListItem(
                         key = key?.invoke(item),
-                        nodes = buildVNodeTree {
-                            itemContent(item)
+                        contentToken = item,
+                        sessionFactory = LazyListItemSessionFactory { container ->
+                            WidgetLazyListItemSession(
+                                container = container,
+                                content = {
+                                    itemContent(item)
+                                },
+                            )
                         },
                     )
                 },
@@ -124,4 +132,22 @@ fun <T> UiTreeBuilder.LazyColumn(
         ),
         modifier = modifier,
     )
+}
+
+private class WidgetLazyListItemSession(
+    container: android.view.ViewGroup,
+    content: UiTreeBuilder.() -> Unit,
+) : LazyListItemSession {
+    private val session = RenderSession(
+        container = container,
+        content = content,
+    )
+
+    override fun render() {
+        session.render()
+    }
+
+    override fun dispose() {
+        session.dispose()
+    }
 }

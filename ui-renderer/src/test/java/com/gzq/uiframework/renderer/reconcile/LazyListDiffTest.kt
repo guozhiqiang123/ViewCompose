@@ -2,6 +2,8 @@ package com.gzq.uiframework.renderer.reconcile
 
 import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.node.LazyListItem
+import com.gzq.uiframework.renderer.node.LazyListItemSession
+import com.gzq.uiframework.renderer.node.LazyListItemSessionFactory
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.Props
 import com.gzq.uiframework.renderer.node.VNode
@@ -56,14 +58,14 @@ class LazyListDiffTest {
     private fun item(key: String?): LazyListItem {
         return LazyListItem(
             key = key,
-            nodes = listOf(
-                VNode(
-                    type = NodeType.Text,
-                    key = key,
-                    props = Props.Empty,
-                    modifier = Modifier.Empty,
-                ),
-            ),
+            contentToken = key,
+            sessionFactory = LazyListItemSessionFactory {
+                object : LazyListItemSession {
+                    override fun render() = Unit
+
+                    override fun dispose() = Unit
+                }
+            },
         )
     }
 }

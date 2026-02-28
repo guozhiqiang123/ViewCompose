@@ -4,6 +4,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.gzq.uiframework.renderer.node.LazyListItem
+import com.gzq.uiframework.renderer.node.LazyListItemSession
 import com.gzq.uiframework.renderer.reconcile.LazyListDiff
 import com.gzq.uiframework.renderer.reconcile.LazyListUpdate
 
@@ -34,6 +35,10 @@ internal class LazyColumnAdapter : RecyclerView.Adapter<LazyColumnViewHolder>() 
         holder.bind(items[position])
     }
 
+    override fun onViewRecycled(holder: LazyColumnViewHolder) {
+        holder.recycle()
+    }
+
     override fun getItemCount(): Int = items.size
 
     override fun getItemId(position: Int): Long {
@@ -62,13 +67,26 @@ internal class LazyColumnAdapter : RecyclerView.Adapter<LazyColumnViewHolder>() 
 internal class LazyColumnViewHolder(
     private val container: FrameLayout,
 ) : RecyclerView.ViewHolder(container) {
-    private var mountedNodes: List<MountedNode> = emptyList()
+    private var currentKey: Any? = null
+    private var currentContentToken: Any? = null
+    private var session: LazyListItemSession? = null
 
     fun bind(item: LazyListItem) {
-        mountedNodes = ViewTreeRenderer.renderInto(
-            container = container,
-            previous = mountedNodes,
-            nodes = item.nodes,
-        )
+        if (session == null || currentKey != item.key || currentContentToken != item.contentToken) {
+            session?.dispose()
+            container.removeAllViews()
+            session = item.sessionFactory.create(container)
+            currentKey = item.key
+            currentContentToken = item.contentToken
+        }
+        session?.render()
+    }
+
+    fun recycle() {
+        session?.dispose()
+        session = null
+        currentKey = null
+        currentContentToken = null
+        container.removeAllViews()
     }
 }

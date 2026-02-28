@@ -111,11 +111,25 @@ class MainActivity : AppCompatActivity() {
                     key = { item -> item },
                     modifier = Modifier.Empty.padding(8),
                 ) { item ->
-                    Text(
-                        text = "Lazy item $item",
+                    val itemCountState = remember { mutableStateOf(0) }
+                    Column(
                         key = item,
-                        modifier = Modifier.Empty.padding(8),
-                    )
+                        modifier = Modifier.Empty
+                            .backgroundColor(Color.parseColor("#FFF7ED"))
+                            .padding(8),
+                    ) {
+                        Text(
+                            text = "Lazy item $item",
+                            modifier = Modifier.Empty.padding(4),
+                        )
+                        Button(
+                            text = "Item $item taps: ${itemCountState.value}",
+                            modifier = Modifier.Empty.padding(4),
+                            onClick = {
+                                itemCountState.value = itemCountState.value + 1
+                            },
+                        )
+                    }
                 }
             }
         }
