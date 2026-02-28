@@ -9,6 +9,7 @@ import com.gzq.uiframework.renderer.reconcile.LazyListUpdate
 
 internal class LazyColumnAdapter : RecyclerView.Adapter<LazyColumnViewHolder>() {
     private var items: List<LazyListItem> = emptyList()
+    private val attachedHolders = LinkedHashSet<LazyColumnViewHolder>()
 
     init {
         setHasStableIds(true)
@@ -35,7 +36,18 @@ internal class LazyColumnAdapter : RecyclerView.Adapter<LazyColumnViewHolder>() 
     }
 
     override fun onViewRecycled(holder: LazyColumnViewHolder) {
+        attachedHolders -= holder
         holder.recycle()
+    }
+
+    override fun onViewAttachedToWindow(holder: LazyColumnViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        attachedHolders += holder
+    }
+
+    override fun onViewDetachedFromWindow(holder: LazyColumnViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        attachedHolders -= holder
     }
 
     override fun getItemCount(): Int = items.size
@@ -60,6 +72,14 @@ internal class LazyColumnAdapter : RecyclerView.Adapter<LazyColumnViewHolder>() 
                 LazyListUpdate.ReloadAll -> notifyDataSetChanged()
             }
         }
+    }
+
+    fun disposeAll() {
+        attachedHolders.toList().forEach { holder ->
+            holder.recycle()
+        }
+        attachedHolders.clear()
+        items = emptyList()
     }
 }
 

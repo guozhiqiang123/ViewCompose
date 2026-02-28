@@ -103,6 +103,11 @@ object ViewTreeRenderer {
         container: ViewGroup,
         removal: RemovePatch<MountedNode>,
     ) {
+        (removal.payload.view as? RecyclerView)
+            ?.adapter
+            ?.let { adapter ->
+                (adapter as? LazyColumnAdapter)?.disposeAll()
+            }
         container.removeView(removal.payload.view)
     }
 
