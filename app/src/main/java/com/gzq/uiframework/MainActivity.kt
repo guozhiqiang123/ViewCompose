@@ -230,7 +230,7 @@ private fun UiTreeBuilder.OverviewPage(
     selectedTabState: MutableState<Int>,
 ) {
     LazyColumn(
-        items = listOf("intro", "jump", "surface"),
+        items = listOf("intro", "theme", "jump", "surface"),
         key = { it },
         modifier = Modifier.Empty.fillMaxSize(),
     ) { section ->
@@ -244,6 +244,35 @@ private fun UiTreeBuilder.OverviewPage(
                 )
                 Text(
                     text = "The pager itself is also rendered through the framework as a mapped virtual control.",
+                    modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+                )
+            }
+
+            "theme" -> DemoSection(
+                title = "Theme Preview",
+                subtitle = "This block shows the active demo theme tokens, including the tab pager palette.",
+            ) {
+                ThemeSwatchRow(
+                    "Core",
+                    listOf(
+                        ThemeSwatch("Bg", Theme.colors.background),
+                        ThemeSwatch("Surface", Theme.colors.surface),
+                        ThemeSwatch("Primary", Theme.colors.primary),
+                        ThemeSwatch("Accent", Theme.colors.accent),
+                    ),
+                )
+                ThemeSwatchRow(
+                    "Input",
+                    listOf(
+                        ThemeSwatch("Field", Theme.input.fieldContainer),
+                        ThemeSwatch("Control", Theme.input.control),
+                        ThemeSwatch("Error", Theme.input.fieldError),
+                        ThemeSwatch("Pressed", Theme.interactions.pressedOverlay),
+                    ),
+                )
+                Text(
+                    text = "Shapes: card=${Theme.shapes.cardCornerRadius}px, control=${Theme.shapes.controlCornerRadius}px",
+                    style = UiTextStyle(fontSizeSp = 13.sp),
                     modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
                 )
             }
@@ -288,6 +317,45 @@ private fun UiTreeBuilder.OverviewPage(
                 Text(text = "Text, TextField, EmailField, PasswordField, NumberField, TextArea")
                 Text(text = "Row, Column, Box, Divider, Spacer, FlexibleSpacer, LazyColumn")
                 Text(text = "AndroidView interop, TabPager, state runtime, effect runtime")
+            }
+        }
+    }
+}
+
+private fun UiTreeBuilder.ThemeSwatchRow(
+    label: String,
+    swatches: List<ThemeSwatch>,
+) {
+    Column(
+        spacing = 8.dp,
+        modifier = Modifier.Empty.margin(bottom = 8.dp),
+    ) {
+        Text(
+            text = label,
+            style = UiTextStyle(fontSizeSp = 13.sp),
+            modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+        )
+        Row(
+            spacing = 8.dp,
+            modifier = Modifier.Empty.fillMaxWidth(),
+        ) {
+            swatches.forEach { swatch ->
+                Column(
+                    spacing = 6.dp,
+                    modifier = Modifier.Empty.weight(1f),
+                ) {
+                    Box(
+                        modifier = Modifier.Empty
+                            .fillMaxWidth()
+                            .height(48.dp)
+                            .backgroundColor(swatch.color)
+                            .cornerRadius(SurfaceDefaults.cardCornerRadius()),
+                    ) {}
+                    Text(
+                        text = swatch.label,
+                        style = UiTextStyle(fontSizeSp = 12.sp),
+                    )
+                }
             }
         }
     }
@@ -817,4 +885,9 @@ private fun UiTreeBuilder.DemoSection(
 private data class DemoListItem(
     val id: String,
     val title: String,
+)
+
+private data class ThemeSwatch(
+    val label: String,
+    val color: Int,
 )
