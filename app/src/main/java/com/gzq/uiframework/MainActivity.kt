@@ -317,11 +317,17 @@ private fun UiTreeBuilder.OverviewPage(
     selectedChapterState: MutableState<Int>,
 ) {
     LazyColumn(
-        items = listOf("intro", "theme", "overrides", "progress", "media", "jump", "surface"),
+        items = listOf("page", "intro", "theme", "overrides", "progress", "media", "jump", "surface", "verify"),
         key = { it },
         modifier = Modifier.Empty.fillMaxSize(),
     ) { section ->
         when (section) {
+            "page" -> ChapterPageOverviewSection(
+                title = "Foundations",
+                goal = "Verify the core visual primitives, theme scopes, component defaults, and media widgets before moving into more advanced runtime scenarios.",
+                modules = listOf("ui-widget-core", "ui-renderer", "theme locals", "component defaults"),
+            )
+
             "intro" -> DemoSection(
                 title = "Why This Demo Changed",
                 subtitle = "The sample is now split by category so the runtime surface is easier to read and extend.",
@@ -763,7 +769,7 @@ private fun UiTreeBuilder.OverviewPage(
                 )
             }
 
-            else -> DemoSection(
+            "surface" -> DemoSection(
                 title = "Current Surface",
                 subtitle = "The first vertical slice now includes the following framework controls.",
             ) {
@@ -794,6 +800,24 @@ private fun UiTreeBuilder.OverviewPage(
                 Text(text = "Row, Column, Box, Divider, Spacer, FlexibleSpacer, LazyColumn")
                 Text(text = "Progress indicators, AndroidView interop, TabPager, state runtime, effect runtime")
             }
+
+            else -> VerificationNotesSection(
+                what = "Foundations should prove that the current theme, media, and button families render consistently under chapter navigation and theme switching.",
+                howToVerify = listOf(
+                    "切换顶部 theme mode，确认 Foundations 章内所有 section 颜色、圆角和点击态一起更新。",
+                    "观察远程图片、本地图标和 IconButton，确认不会出现大面积空白或错误布局。",
+                    "点击 Jump 区域按钮，确认章节切换稳定且返回 Foundations 后状态仍然正常。",
+                ),
+                expected = listOf(
+                    "所有基础控件在亮色、暗色和系统模式下都保持可读。",
+                    "Image 的 placeholder / fallback 场景可见，Icon 跟随 ContentColor 变化。",
+                    "TabPager 顶部导航可滚动，不会因为章节增多而截断。",
+                ),
+                relatedGaps = listOf(
+                    "还没有更细的 page 内二级导航。",
+                    "还没有图形和动画类基础能力。",
+                ),
+            )
         }
     }
 }
@@ -840,11 +864,17 @@ private fun UiTreeBuilder.ThemeSwatchRow(
 private fun UiTreeBuilder.LayoutPage() {
     val boxTapState = remember { mutableStateOf(0) }
     LazyColumn(
-        items = listOf("row", "box", "column"),
+        items = listOf("page", "row", "box", "column", "verify"),
         key = { it },
         modifier = Modifier.Empty.fillMaxSize(),
     ) { section ->
         when (section) {
+            "page" -> ChapterPageOverviewSection(
+                title = "Layouts",
+                goal = "Stress the custom linear and box containers so measurement, placement, spacing, and child overrides stay predictable.",
+                modules = listOf("DeclarativeLinearLayout", "DeclarativeBoxLayout", "layout defaults", "modifiers"),
+            )
+
             "row" -> DemoSection(
                 title = "Row + Spacer + Cross Axis Alignment",
                 subtitle = "Custom linear layout now supports spacing, arrangement, and child-level cross-axis override.",
@@ -909,7 +939,7 @@ private fun UiTreeBuilder.LayoutPage() {
                 }
             }
 
-            else -> DemoSection(
+            "column" -> DemoSection(
                 title = "Column Arrangement",
                 subtitle = "Main-axis arrangement and dividers are now stable inside the custom linear container.",
             ) {
@@ -929,6 +959,23 @@ private fun UiTreeBuilder.LayoutPage() {
                     Text(text = "Three")
                 }
             }
+
+            else -> VerificationNotesSection(
+                what = "Layouts should expose measurement bugs quickly, especially around wrap content defaults, fill, weight, and child alignment overrides.",
+                howToVerify = listOf(
+                    "反复点击 Box 区域，确认点击态、overlay 和 pinned tag 不会错位。",
+                    "在不同宽度设备上观察 Row 中 top/bottom 对齐文本，确认不会被 Stretch 或异常留白撑开。",
+                    "检查 Column 的 SpaceEvenly 摆放，确认 divider 和文本间距稳定。",
+                ),
+                expected = listOf(
+                    "线性容器默认子项不会意外扩展成整行。",
+                    "Box 的 align / offset / zIndex 组合稳定。",
+                    "Spacing、alignment 和 child override 不会互相覆盖成异常布局。",
+                ),
+                relatedGaps = listOf(
+                    "还没有自定义布局协议和布局调试可视化。",
+                ),
+            )
         }
     }
 }
@@ -952,11 +999,17 @@ private fun UiTreeBuilder.InputPage() {
     }
 
     LazyColumn(
-        items = listOf("intro", "form", "controls", "summary"),
+        items = listOf("page", "intro", "form", "controls", "summary", "verify"),
         key = { it },
         modifier = Modifier.Empty.fillMaxSize(),
     ) { section ->
         when (section) {
+            "page" -> ChapterPageOverviewSection(
+                title = "Input",
+                goal = "Verify that text fields and selection controls stay declarative across value updates, error states, variants, and local theme overrides.",
+                modules = listOf("TextField family", "selection widgets", "input defaults", "theme components"),
+            )
+
             "intro" -> DemoSection(
                 title = "Text And Input Family",
                 subtitle = "The framework now maps multiple `EditText` variants: text, password, email, number, and multiline text.",
@@ -1179,7 +1232,7 @@ private fun UiTreeBuilder.InputPage() {
                 }
             }
 
-            else -> DemoSection(
+            "summary" -> DemoSection(
                 title = "Derived Summary",
                 subtitle = "This section is driven by `derivedStateOf`, not duplicated imperative updates.",
             ) {
@@ -1197,6 +1250,23 @@ private fun UiTreeBuilder.InputPage() {
                     modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
                 )
             }
+
+            else -> VerificationNotesSection(
+                what = "Input chapter should prove that value, enabled/error state, component variants, and local overrides stay in sync with the runtime.",
+                howToVerify = listOf(
+                    "输入文本并点击 Reset Form，确认所有字段一起回到初始值。",
+                    "观察空密码时的错误态，并切换 theme mode，确认错误色和容器色同步变化。",
+                    "切换 selection controls 和 slider，确认摘要区立即反映变化。",
+                ),
+                expected = listOf(
+                    "TextField label、supportingText、placeholder 和内容布局稳定。",
+                    "禁用态和错误态不会丢失主题样式。",
+                    "derived summary 始终和输入状态保持一致。",
+                ),
+                relatedGaps = listOf(
+                    "还没有 focus 管理、IME 回调链和表单状态抽象。",
+                ),
+            )
         }
     }
 }
@@ -1223,11 +1293,17 @@ private fun UiTreeBuilder.StatePage() {
     }
 
     LazyColumn(
-        items = listOf("counter", "panel"),
+        items = listOf("page", "counter", "panel", "verify"),
         key = { it },
         modifier = Modifier.Empty.fillMaxSize(),
     ) { section ->
         when (section) {
+            "page" -> ChapterPageOverviewSection(
+                title = "State & Effects",
+                goal = "Exercise the runtime primitives directly so remember, derived state, produced values, and keyed identity can be inspected by hand.",
+                modules = listOf("ui-runtime", "remember", "effects", "key scopes"),
+            )
+
             "counter" -> DemoSection(
                 title = "remember + derivedStateOf + produceState",
                 subtitle = "This block shows local state, derived labels, and a small produced status string.",
@@ -1264,7 +1340,7 @@ private fun UiTreeBuilder.StatePage() {
                 }
             }
 
-            else -> DemoSection(
+            "panel" -> DemoSection(
                 title = "key Scope + Conditional UI",
                 subtitle = "The transient panel keeps its own state while visible, and is fully recreated when toggled back in.",
             ) {
@@ -1308,6 +1384,23 @@ private fun UiTreeBuilder.StatePage() {
                     }
                 }
             }
+
+            else -> VerificationNotesSection(
+                what = "State chapter should reveal whether root rerendering, local identity, and conditional recreation behave predictably under repeated interaction.",
+                howToVerify = listOf(
+                    "连续点击 Increment 和 Reset，确认派生文案与 timeline 一起更新。",
+                    "隐藏再显示 transient panel，确认 panel 内点击计数会被重建。",
+                    "切换 theme mode 后再继续点击，确认状态值不受主题刷新影响。",
+                ),
+                expected = listOf(
+                    "remember 状态在同一 identity 下保留，在 key 变化后重建。",
+                    "derivedStateOf 和 produceState 不会落后于源状态。",
+                    "条件 UI 显隐不会留下脏状态。",
+                ),
+                relatedGaps = listOf(
+                    "还没有更细粒度的通用 subtree recomposition。",
+                ),
+            )
         }
     }
 }
@@ -1338,11 +1431,17 @@ private fun UiTreeBuilder.CollectionPage() {
     }
 
     LazyColumn(
-        items = listOf("controls", "interop", "list"),
+        items = listOf("page", "controls", "interop", "list", "verify"),
         key = { it },
         modifier = Modifier.Empty.fillMaxSize(),
     ) { section ->
         when (section) {
+            "page" -> ChapterPageOverviewSection(
+                title = "Collections",
+                goal = "Validate keyed list reuse, local item state preservation, and AndroidView coexistence inside lazy containers.",
+                modules = listOf("LazyColumn", "diff", "lazy item sessions", "AndroidView"),
+            )
+
             "controls" -> DemoSection(
                 title = "Collection Controls",
                 subtitle = "These buttons mutate the source list and labels while preserving keyed item state.",
@@ -1389,7 +1488,7 @@ private fun UiTreeBuilder.CollectionPage() {
                 )
             }
 
-            else -> DemoSection(
+            "list" -> DemoSection(
                 title = "LazyColumn",
                 subtitle = "Each item keeps its own local state while keyed reorder and content updates pass through the diff layer.",
             ) {
@@ -1419,6 +1518,23 @@ private fun UiTreeBuilder.CollectionPage() {
                     }
                 }
             }
+
+            else -> VerificationNotesSection(
+                what = "Collections should reveal list diff bugs, state leakage between items, and local propagation problems in nested sessions.",
+                howToVerify = listOf(
+                    "对单个 item 连续点击计数，再切换 A-B-C / C-B-A 顺序，确认同 key 的计数被保留。",
+                    "切换 Alternate labels，确认标题变化但 item 本地状态不丢。",
+                    "观察 AndroidView interop 区域，确认它能跟随列表外部状态同步更新。",
+                ),
+                expected = listOf(
+                    "keyed reorder 只移动节点，不重建对应 item session。",
+                    "lazy item remember 状态不会串位。",
+                    "列表与原生 View 互操作不会丢 local 上下文。",
+                ),
+                relatedGaps = listOf(
+                    "还没有 LazyRow、LazyGrid、sticky headers 和显式 list state。",
+                ),
+            )
         }
     }
 }
@@ -1426,11 +1542,17 @@ private fun UiTreeBuilder.CollectionPage() {
 private fun UiTreeBuilder.InteropPage() {
     val alternateLabelsState = remember { mutableStateOf(false) }
     LazyColumn(
-        items = listOf("basics", "theme_bridge", "why_it_matters"),
+        items = listOf("page", "basics", "theme_bridge", "why_it_matters", "verify"),
         key = { it },
         modifier = Modifier.Empty.fillMaxSize(),
     ) { section ->
         when (section) {
+            "page" -> ChapterPageOverviewSection(
+                title = "Interop",
+                goal = "Keep AndroidView as a first-class migration path and verify that native widgets still fit inside framework theme and state boundaries.",
+                modules = listOf("AndroidView", "theme bridge", "local propagation"),
+            )
+
             "basics" -> DemoSection(
                 title = "AndroidView Basics",
                 subtitle = "Legacy native views still mount inside the same declarative tree and can react to framework state.",
@@ -1479,7 +1601,7 @@ private fun UiTreeBuilder.InteropPage() {
                 )
             }
 
-            else -> DemoSection(
+            "why_it_matters" -> DemoSection(
                 title = "Why Interop Matters",
                 subtitle = "Interop is one of the biggest practical advantages of this framework compared with a pure Compose rewrite path.",
             ) {
@@ -1487,17 +1609,40 @@ private fun UiTreeBuilder.InteropPage() {
                     text = "Use this chapter to validate gradual migration: existing custom views, business widgets, and SDK surfaces should still be mountable without rewriting them first.",
                 )
             }
+
+            else -> VerificationNotesSection(
+                what = "Interop chapter should prove that old View widgets can stay mounted inside the declarative tree without losing state or theme alignment.",
+                howToVerify = listOf(
+                    "点击切换文案按钮，确认原生 TextView 文案实时更新。",
+                    "切换全局 theme mode，确认原生 View 所在容器仍与框架主题协调。",
+                    "反复切换章节并返回 Interop，确认 AndroidView 依旧可用。",
+                ),
+                expected = listOf(
+                    "AndroidView update 会响应框架状态变化。",
+                    "theme locals 和 Android theme bridge 可以共存。",
+                    "Interop 章节不会因为延迟 session 丢失 local 上下文。",
+                ),
+                relatedGaps = listOf(
+                    "还没有 custom view adapter catalog 和 Fragment host demo。",
+                ),
+            )
         }
     }
 }
 
 private fun UiTreeBuilder.DiagnosticsPage() {
     LazyColumn(
-        items = listOf("runtime", "renderer", "gaps"),
+        items = listOf("page", "runtime", "renderer", "gaps", "verify"),
         key = { it },
         modifier = Modifier.Empty.fillMaxSize(),
     ) { section ->
         when (section) {
+            "page" -> ChapterPageOverviewSection(
+                title = "Diagnostics",
+                goal = "Turn the demo into a manual regression console for runtime locals, renderer patches, and visible framework gaps.",
+                modules = listOf("debug logging", "theme locals", "renderer", "roadmap gaps"),
+            )
+
             "runtime" -> DemoSection(
                 title = "Runtime Snapshot",
                 subtitle = "This chapter will become the manual inspection home for state invalidation, local propagation, and effect boundaries.",
@@ -1519,7 +1664,7 @@ private fun UiTreeBuilder.DiagnosticsPage() {
                 )
             }
 
-            else -> DemoSection(
+            "gaps" -> DemoSection(
                 title = "Known Gaps",
                 subtitle = "These gaps are intentionally visible so the diagnostics chapter can guide future framework work.",
             ) {
@@ -1527,6 +1672,23 @@ private fun UiTreeBuilder.DiagnosticsPage() {
                 Text(text = "No patch timeline UI")
                 Text(text = "No performance counters page")
             }
+
+            else -> VerificationNotesSection(
+                what = "Diagnostics should be the first place to check before assuming a visual bug belongs to a widget, layout, or runtime layer.",
+                howToVerify = listOf(
+                    "切换 theme mode 与章节，确认 runtime snapshot 始终反映当前 environment。",
+                    "在出现渲染问题时，对照这里列出的 gaps 判断是已知缺口还是新回归。",
+                    "结合日志观察 renderer 行为，并确认 diagnostics 页面描述与当前实现一致。",
+                ),
+                expected = listOf(
+                    "该章节能快速告诉你当前框架还缺什么。",
+                    "环境信息和主题信息不会在章节切换后失真。",
+                    "Diagnostics 会持续作为后续 inspector 的落点。",
+                ),
+                relatedGaps = listOf(
+                    "还没有 render tree、patch timeline 和性能面板可视化。",
+                ),
+            )
         }
     }
 }
@@ -1602,6 +1764,70 @@ private fun UiTreeBuilder.DemoSection(
             )
             Divider()
             content()
+        }
+    }
+}
+
+private fun UiTreeBuilder.ChapterPageOverviewSection(
+    title: String,
+    goal: String,
+    modules: List<String>,
+) {
+    DemoSection(
+        title = title,
+        subtitle = "This page defines the testing goal and the framework layers that should be touched during manual verification.",
+    ) {
+        Text(text = goal)
+        ChecklistGroup(
+            title = "Framework Modules",
+            items = modules,
+        )
+    }
+}
+
+private fun UiTreeBuilder.VerificationNotesSection(
+    what: String,
+    howToVerify: List<String>,
+    expected: List<String>,
+    relatedGaps: List<String> = emptyList(),
+) {
+    DemoSection(
+        title = "Verification Notes",
+        subtitle = "Use this block as the manual acceptance checklist for the current chapter page.",
+    ) {
+        Text(text = what)
+        ChecklistGroup(
+            title = "How To Verify",
+            items = howToVerify,
+        )
+        ChecklistGroup(
+            title = "Expected",
+            items = expected,
+        )
+        if (relatedGaps.isNotEmpty()) {
+            ChecklistGroup(
+                title = "Related Gaps",
+                items = relatedGaps,
+            )
+        }
+    }
+}
+
+private fun UiTreeBuilder.ChecklistGroup(
+    title: String,
+    items: List<String>,
+) {
+    Column(
+        spacing = 4.dp,
+        modifier = Modifier.Empty.margin(top = 8.dp),
+    ) {
+        Text(
+            text = title,
+            style = UiTextStyle(fontSizeSp = 13.sp),
+            modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+        )
+        items.forEachIndexed { index, item ->
+            Text(text = "${index + 1}. $item")
         }
     }
 }
