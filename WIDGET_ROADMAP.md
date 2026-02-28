@@ -313,6 +313,7 @@ v1 应支持：
 - `contentDescription`
 - `contentScale`
 - `tint`
+- `placeholder / error / fallback` 语义
 
 建议暂缓：
 
@@ -334,6 +335,7 @@ v1 应支持：
 - `enabled`
 - `variant`
 - `size`
+- `leadingIcon / trailingIcon`
 
 建议暂缓：
 
@@ -365,6 +367,11 @@ v1 应支持：
 - 掩码输入规则
 - 原生所有 IME flag
 - 富文本编辑
+
+当前 v1 约束：
+
+- `keyboardType` 目前由 `TextFieldType` 语义枚举承载
+- `label / placeholder / supportingText` 已进入正式 DSL，并由 `TextField` 语义容器负责展示
 
 ### 8.5 Checkbox / Switch / RadioButton / Slider
 
@@ -450,34 +457,40 @@ v1 应支持：
 
 ## 10. 当前实现与路线建议
 
-### 10.1 当前已经具备的 P1 骨架
+### 10.1 当前已经具备的 P1 基线
 
-当前仓库已经有：
+当前仓库已经补齐的 `P1` 基础控件与核心语义包括：
 
-- `Text`
-- `Button`
-- `TextField` 家族基础版
-- `Checkbox`
-- `Switch`
-- `RadioButton`
-- `Slider`
-- `Box / Row / Column / Spacer / Divider`
-- `LazyColumn`
+- `Box / Row / Column / Surface / Spacer / Divider`
+- `Text(maxLines, overflow, textAlign)`
+- `Image / Icon`
+- `Button / IconButton`
+- `TextField / PasswordField / EmailField / NumberField / TextArea`
+- `Checkbox / Switch / RadioButton / Slider`
+- `LinearProgressIndicator / CircularProgressIndicator`
+- `LazyColumn(contentPadding, spacing, key, item sessions)`
 - `AndroidView`
 
-这条线是正确的。
+其中补齐的关键语义包括：
 
-### 10.2 当前最缺的 P1 控件
+- `Image` 的 `placeholder / error / fallback`
+- `Button` 的 `leadingIcon / trailingIcon`
+- `TextField` 的 `label / placeholder / supportingText / readOnly / maxLines / imeAction`
 
-按 v1 视角，最应该补的是：
+结论：
 
-1. `Surface`
-2. `Image`
-3. `Icon`
-4. `LinearProgressIndicator`
-5. `CircularProgressIndicator`
-6. `IconButton`
-7. `TextField` 的 `label / supportingText / imeAction / keyboardType` 语义补齐
+- `P1` 基础控件层已经闭环
+- 后续主线应切到 `P2` 能力，或继续收敛主题 / 状态 / 交互细节，而不是继续新增 `P1` 控件种类
+
+### 10.2 当前 P1 的剩余工作
+
+按当前实现状态，`P1` 不再有“缺少基础控件”的阻塞项。
+
+后续如果仍在 `P1` 范围内继续打磨，优先级更高的是：
+
+1. 收紧现有控件的交互细节和状态语义
+2. 完善主题 token 与组件默认值映射
+3. 补更细的测试和调试能力
 
 ### 10.3 当前已存在但应视为 P2 的控件
 
