@@ -290,3 +290,23 @@ fun UiTreeBuilder.UiThemeOverride(
         content()
     }
 }
+
+fun UiTreeBuilder.UiThemeOverride(
+    colors: (UiColors.() -> UiColors)? = null,
+    typography: (UiTypography.() -> UiTypography)? = null,
+    input: (UiInputColors.() -> UiInputColors)? = null,
+    shapes: (UiShapes.() -> UiShapes)? = null,
+    controls: (UiControlSizing.() -> UiControlSizing)? = null,
+    interactions: (UiInteractionColors.() -> UiInteractionColors)? = null,
+    content: UiTreeBuilder.() -> Unit,
+) {
+    UiThemeOverride(
+        colors = colors?.invoke(Theme.colors),
+        typography = typography?.invoke(Theme.typography),
+        input = input?.invoke(Theme.input),
+        shapes = shapes?.invoke(Theme.shapes),
+        controls = controls?.invoke(Theme.controls),
+        interactions = interactions?.invoke(Theme.interactions),
+        content = content,
+    )
+}

@@ -175,6 +175,57 @@ class ThemeTest {
     }
 
     @Test
+    fun `builder theme override updates selected domains`() {
+        val baseTheme = UiThemeDefaults.light()
+        var resolvedPrimary = 0
+        var resolvedCorner = 0
+        var unchangedBody = 0
+
+        buildVNodeTree {
+            UiTheme(baseTheme) {
+                UiThemeOverride(
+                    colors = { copy(primary = 0xFF445566.toInt()) },
+                    shapes = { copy(controlCornerRadius = 77) },
+                ) {
+                    resolvedPrimary = Theme.colors.primary
+                    resolvedCorner = Theme.shapes.controlCornerRadius
+                    unchangedBody = Theme.typography.body.fontSizeSp
+                }
+            }
+        }
+
+        assertEquals(0xFF445566.toInt(), resolvedPrimary)
+        assertEquals(77, resolvedCorner)
+        assertEquals(baseTheme.typography.body.fontSizeSp, unchangedBody)
+    }
+
+    @Test
+    fun `builder theme override composes with object override`() {
+        val baseTheme = UiThemeDefaults.light()
+        var resolvedPrimary = 0
+        var resolvedPressed = 0
+
+        buildVNodeTree {
+            UiTheme(baseTheme) {
+                UiThemeOverride(
+                    colors = baseTheme.colors.copy(primary = 0xFF111111.toInt()),
+                ) {
+                    UiThemeOverride(
+                        colors = { copy(primary = 0xFF222222.toInt()) },
+                        interactions = { copy(pressedOverlay = 0x33445566) },
+                    ) {
+                        resolvedPrimary = Theme.colors.primary
+                        resolvedPressed = Theme.interactions.pressedOverlay
+                    }
+                }
+            }
+        }
+
+        assertEquals(0xFF222222.toInt(), resolvedPrimary)
+        assertEquals(0x33445566, resolvedPressed)
+    }
+
+    @Test
     fun `button uses themed container and readable content colors`() {
         val customTheme = UiThemeTokens(
             colors = UiColors(

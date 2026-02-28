@@ -266,10 +266,12 @@ private fun UiTreeBuilder.OverviewPage(
                 subtitle = "Each block below overrides only one token domain for its local subtree.",
             ) {
                 UiThemeOverride(
-                    colors = Theme.colors.copy(
-                        primary = Theme.colors.accent,
-                        surfaceVariant = Theme.colors.primary,
-                    ),
+                    colors = {
+                        copy(
+                            primary = accent,
+                            surfaceVariant = primary,
+                        )
+                    },
                 ) {
                     Column(
                         spacing = 8.dp,
@@ -294,10 +296,12 @@ private fun UiTreeBuilder.OverviewPage(
                     }
                 }
                 UiThemeOverride(
-                    shapes = Theme.shapes.copy(
-                        cardCornerRadius = 32.dp,
-                        controlCornerRadius = 24.dp,
-                    ),
+                    shapes = {
+                        copy(
+                            cardCornerRadius = 32.dp,
+                            controlCornerRadius = 24.dp,
+                        )
+                    },
                 ) {
                     Column(
                         spacing = 8.dp,
@@ -334,9 +338,11 @@ private fun UiTreeBuilder.OverviewPage(
                     }
                 }
                 UiThemeOverride(
-                    interactions = Theme.interactions.copy(
-                        pressedOverlay = (Theme.colors.primary and 0x00FFFFFF) or 0x44000000,
-                    ),
+                    interactions = {
+                        copy(
+                            pressedOverlay = (Theme.colors.primary and 0x00FFFFFF) or 0x44000000,
+                        )
+                    },
                 ) {
                     Column(
                         spacing = 8.dp,
