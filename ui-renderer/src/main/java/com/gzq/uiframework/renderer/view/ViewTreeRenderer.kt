@@ -36,6 +36,7 @@ import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.gzq.uiframework.renderer.layout.BoxAlignment
 import com.gzq.uiframework.renderer.layout.HorizontalAlignment
+import com.gzq.uiframework.renderer.layout.LayoutParamDefaultsResolver
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.modifier.AlphaModifierElement
@@ -790,27 +791,23 @@ object ViewTreeRenderer {
             .lastOrNull { it is HorizontalAlignModifierElement } as? HorizontalAlignModifierElement
         val verticalAlign = node.modifier.elements
             .lastOrNull { it is VerticalAlignModifierElement } as? VerticalAlignModifierElement
-        val defaultWidth = when (node.type) {
-            NodeType.Text,
-            NodeType.TextField,
-            NodeType.Checkbox,
-            NodeType.Switch,
-            NodeType.RadioButton,
-            NodeType.CircularProgressIndicator,
-            NodeType.Button,
-            NodeType.IconButton,
-            NodeType.Image,
-            NodeType.SegmentedControl,
-            -> ViewGroup.LayoutParams.WRAP_CONTENT
-
-            NodeType.Spacer -> 0
-            NodeType.Divider -> defaultDividerWidth(parent, node)
-            else -> ViewGroup.LayoutParams.MATCH_PARENT
+        val defaultWidth = if (node.type == NodeType.Divider) {
+            defaultDividerWidth(parent, node)
+        } else {
+            LayoutParamDefaultsResolver.defaultWidth(
+                nodeType = node.type,
+                parentIsLinearLayout = parent is DeclarativeLinearLayout,
+                linearOrientation = (parent as? DeclarativeLinearLayout)?.orientation,
+            )
         }
-        val defaultHeight = when (node.type) {
-            NodeType.Spacer -> 0
-            NodeType.Divider -> defaultDividerHeight(parent, node)
-            else -> ViewGroup.LayoutParams.WRAP_CONTENT
+        val defaultHeight = if (node.type == NodeType.Divider) {
+            defaultDividerHeight(parent, node)
+        } else {
+            LayoutParamDefaultsResolver.defaultHeight(
+                nodeType = node.type,
+                parentIsLinearLayout = parent is DeclarativeLinearLayout,
+                linearOrientation = (parent as? DeclarativeLinearLayout)?.orientation,
+            )
         }
         val width = widthModifier?.width ?: size?.width ?: defaultWidth
         val height = heightModifier?.height ?: size?.height ?: defaultHeight
