@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.VNode
@@ -101,6 +102,7 @@ object ViewTreeRenderer {
     }
 
     private fun bindView(view: View, node: VNode) {
+        applyModifier(view, node)
         when (node.type) {
             NodeType.Text -> {
                 (view as TextView).text = node.props.values[PropKeys.TEXT] as? CharSequence
@@ -123,6 +125,20 @@ object ViewTreeRenderer {
             NodeType.LazyColumn,
             -> Unit
         }
+    }
+
+    private fun applyModifier(view: View, node: VNode) {
+        val padding = node.modifier.elements.lastOrNull { it is PaddingModifierElement } as? PaddingModifierElement
+        if (padding == null) {
+            view.setPadding(0, 0, 0, 0)
+            return
+        }
+        view.setPadding(
+            padding.left,
+            padding.top,
+            padding.right,
+            padding.bottom,
+        )
     }
 
     private fun canReuse(previous: VNode, next: VNode): Boolean {

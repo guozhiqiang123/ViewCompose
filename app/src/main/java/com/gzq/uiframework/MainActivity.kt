@@ -5,6 +5,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.gzq.uiframework.renderer.modifier.Modifier
+import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.Button
 import com.gzq.uiframework.widget.core.Column
@@ -26,12 +28,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         renderInto(root) {
-            Column {
-                Text(text = "UIFramework")
-                Text(text = "Declarative UI on Android Views")
+            Column(
+                modifier = Modifier.Empty.padding(24),
+            ) {
+                Text(
+                    text = "UIFramework",
+                    modifier = Modifier.Empty.padding(8),
+                )
+                Text(
+                    text = "Declarative UI on Android Views",
+                    modifier = Modifier.Empty.padding(8),
+                )
                 Text(text = "Clicks: ${clickCountState.value}")
                 Button(
                     text = "Increment",
+                    modifier = Modifier.Empty.padding(8),
                     onClick = {
                         clickCountState.value = clickCountState.value + 1
                     },

@@ -11,3 +11,21 @@ class Modifier private constructor(
 }
 
 interface ModifierElement
+
+data class PaddingModifierElement(
+    val left: Int,
+    val top: Int,
+    val right: Int,
+    val bottom: Int,
+) : ModifierElement
+
+fun Modifier.padding(all: Int): Modifier {
+    return then(
+        PaddingModifierElement(
+            left = all,
+            top = all,
+            right = all,
+            bottom = all,
+        ),
+    )
+}
