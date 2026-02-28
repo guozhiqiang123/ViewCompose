@@ -2,751 +2,490 @@
 
 ## 1. 文档定位
 
-本文档定义 `UIFramework` 的目标、边界、模块职责、运行时模型、数据流、更新时序和阶段性开发计划。
+本文档用于重新定义 `UIFramework` 当前阶段的真实架构基线。
 
-这份文档是后续开发的主基线。后续实现默认遵循本文档；如果实现过程中需要偏离，必须先更新本文档中的对应章节，再继续开发。
+它不再描述“最初想做成什么”，而是回答 3 个更重要的问题：
 
-项目当前状态：
+1. 现在这套框架实际上是怎么工作的
+2. 当前设计哪些部分是合理的，哪些部分已经偏离最优方向
+3. 后续继续开发时，应该以什么架构边界为准，避免再次跑偏
+
+后续如果实现需要偏离本文档，必须先更新本文档，再继续开发。
+
+当前状态：
 
 - 日期：2026-02-28
 - 仓库：`/Users/gzq/AndroidStudioProjects/UIFramework`
-- 当前工程状态：标准空白 Android App，只有 `:app` 模块
-- 技术基线：Kotlin + Android View System，`minSdk 24`，`compileSdk 36`
+- 当前模块：`:ui-runtime`、`:ui-renderer`、`:ui-widget-core`、`:app`
+- 当前技术基线：Kotlin + Android View System，`minSdk 24`，`compileSdk 36`
 
-## 2. 产品定义
+## 2. 总结结论
 
-`UIFramework` 的目标不是复刻 Jetpack Compose 编译器与 Runtime，而是：
+当前框架的总体方向是合理的，但文档和实现长期存在两个明显错位：
 
-> 做一个基于 Android View 的声明式渲染引擎，具备虚拟树、keyed diff、状态驱动局部更新、原生 View 互操作。
+1. 早期文档把目标写成了“更细粒度的通用 RenderScope + Adapter Registry + 更多模块分层”
+2. 实际实现已经收敛成了“根级 RenderSession + keyed child reconcile + 集中式 ViewTreeRenderer + RecyclerView 承载 LazyColumn”
 
-这个定义包含四个核心承诺：
+这不是坏事。相反，这说明项目已经自然演化出一条更务实的 v1 路线。
 
-1. UI 以声明方式描述，而不是手动查找和操作 `View`
-2. 框架内部维护虚拟节点树，使用 diff 进行增量更新
-3. 状态变化驱动局部子树刷新，而不是依赖页面级 `notifyDataSetChanged`
-4. 可以无缝复用现有 `View`、`ViewGroup`、自定义控件与业务组件
+当前结论应明确为：
 
-## 3. 设计目标
+> `UIFramework` 当前是一个基于 Android View 的声明式渲染框架 v1，采用根级会话驱动重建、虚拟树 keyed 复用、集中式 renderer、局部列表 item session，以及基于 local 的主题/环境上下文。
 
-### 3.1 核心目标
+这条路线对当前阶段是合理的，原因如下：
 
-- 提供 Kotlin-first、易书写的声明式 API
-- 使用虚拟节点树表达 UI 结构
-- 使用 `key + type` 进行稳定 identity 判定
-- 将节点变化最小化映射到真实 `View` 树
-- 建立轻量状态系统，驱动局部更新
-- 支持原生 `View` 互操作，便于渐进接入
-- 为列表场景提供高价值的增量更新能力
-- 提供必要的 debug 能力，便于定位重建与 patch 行为
+- 产品目标本来就是 “Compose-like on View”，不是复刻 Compose Runtime
+- 现阶段最重要的是把“声明式 API + keyed 更新 + View 互操作 + 可调试性”做稳
+- 过早追求通用 RenderScope 树、Adapter Registry、更多子模块，只会把复杂度前置
 
-### 3.2 非目标
+但也必须明确：
 
-- v1 不追求 Compose 级别的编译器优化
-- v1 不实现完整的多平台能力
-- v1 不自研跨平台布局引擎
-- v1 不追求任意线程执行 UI patch
-- v1 不优先做动画 DSL、大规模手势系统和复杂导航系统
+- 当前框架还没有实现“全树通用局部 scope 更新”
+- 当前 renderer 是明显的集中式单体
+- 当前 runtime 能力有一部分仍放在 `ui-widget-core`，而不是纯 `ui-runtime`
 
-## 4. 设计原则
+所以，正确评价不是“架构已经定型”，而是：
 
-- 声明优先：业务代码描述结果，不描述操作步骤
-- View 兼容优先：优先兼容 Android View 生态，而不是绕开它
-- 局部更新优先：任何状态变化都尽量收敛到局部子树
-- 显式 identity：涉及复用、移动、列表项时必须可表达稳定 key
-- 运行时简单可控：v1 先实现清晰、可调试的 Runtime，再考虑极致优化
-- 渐进增强：先跑通基础节点、状态、diff、互操作，再扩展布局与性能
+> 当前设计是合理的 v1 骨架，但还不是最终形态；后续应基于当前实际实现继续收敛，而不是继续追逐早期那版理想化蓝图。
 
-## 5. 总体架构
+## 3. 产品定义
+
+`UIFramework` 的目标仍然保持不变：
+
+> 做一个基于 Android View 的声明式渲染引擎，具备虚拟树、keyed diff、状态驱动更新、原生 View 互操作。
+
+但这里的“状态驱动更新”，必须按当前真实能力重新表述：
+
+- 通用页面节点：当前是“根级 render block 重跑 + keyed 复用”
+- `LazyColumn` item：当前具备更细的 item session 边界
+- 主题 / 环境 / remember / effect：通过 local + store 体系参与一次 render session
+
+也就是说，当前并不是 Compose 那种“任意子树自动细粒度重组”，而是：
+
+> 根级重建 + renderer 最小复用 + 列表项独立 session。
+
+这是一个更准确、更可执行的定义。
+
+## 4. 当前真实模块结构
+
+### 4.1 模块职责
+
+| 模块 | 当前职责 | 评价 |
+| --- | --- | --- |
+| `:ui-runtime` | `State`、`MutableState`、`derivedStateOf`、读依赖观察 | 合理，但范围偏窄 |
+| `:ui-renderer` | `VNode`、`NodeType`、`Modifier`、reconcile、mounted tree、Android View 渲染、自定义容器 | 当前最核心模块 |
+| `:ui-widget-core` | DSL、`renderInto`、`RenderSession`、`remember`、effect、local、theme、environment、widget 默认值 | 当前实际上的 composition/runtime 表层 |
+| `:app` | demo、主题切换、能力演示、回归验证入口 | 合理 |
+
+### 4.2 模块评价
+
+当前模块拆分虽然不“纯”，但对现阶段是合理的：
+
+- `ui-runtime` 没有被过早做大
+- `ui-renderer` 承担了大部分真正有技术含量的底层实现
+- `ui-widget-core` 既是 DSL 层，也是 composition/session 层，这在 v1 完全可以接受
+
+当前不建议继续拆出：
+
+- `:ui-node`
+- `:ui-view-adapter`
+- `:ui-debug`
+- `:ui-widget-lazy`
+
+这些拆分都还为时过早。现在继续拆，只会增加跨模块维护成本。
+
+## 5. 当前核心调用链
+
+当前真实调用链如下：
 
 ```mermaid
 flowchart TD
-    A["Business DSL"] --> B["VNode Tree"]
-    B --> C["Reconciler"]
-    C --> D["Patch List"]
-    D --> E["Mount Manager"]
-    E --> F["Android View Tree"]
-    G["State Runtime"] --> H["Dirty Scope Scheduler"]
-    H --> B
-    I["Adapter Registry"] --> E
-    J["AndroidView Interop"] --> I
+    A["Business DSL"] --> B["renderInto(container)"]
+    B --> C["RenderSession"]
+    C --> D["buildVNodeTree"]
+    D --> E["RuntimeObservation.observeReads"]
+    E --> F["VNode Tree"]
+    F --> G["ChildReconciler"]
+    G --> H["ViewTreeRenderer"]
+    H --> I["Android View Tree"]
+    C --> J["RememberStore / EffectStore / LocalContext"]
+    H --> K["LazyColumnAdapter / Item Sessions"]
 ```
 
-整体架构分为 7 个角色：
-
-| 角色 | 职责 |
-| --- | --- |
-| DSL Layer | 提供 `Column {}`、`Text()`、`Modifier` 等声明式 API |
-| Composition Layer | 将 DSL 构造成虚拟节点树 `VNode` |
-| State Runtime | 管理 `State`、依赖收集、dirty scope 标记、调度更新 |
-| Reconciler | 比较旧树和新树，生成 patch |
-| Mount Manager | 将 patch 应用到真实 `View` 树 |
-| Adapter Registry | 管理虚拟控件到真实 `View` 的映射与更新策略 |
-| Interop Layer | 支持挂载现有原生 `View` / 自定义 `View` |
+最关键的几个真实节点是：
 
-## 6. 推荐模块划分
+- `renderInto(...)`
+- `RenderSession`
+- `buildVNodeTree(...)`
+- `RuntimeObservation.observeReads(...)`
+- `ChildReconciler.reconcile(...)`
+- `ViewTreeRenderer.renderInto(...)`
 
-文档定义的目标模块如下。当前仓库只有 `:app`，后续按里程碑逐步拆分。
+这条链路已经构成了当前项目的真实主干，后续任何设计讨论都应围绕它展开。
 
-| 模块 | 职责 |
-| --- | --- |
-| `:ui-runtime` | 状态系统、依赖追踪、dirty scope、调度器、effect 生命周期 |
-| `:ui-node` | `VNode`、`Key`、`Props`、`Modifier`、Patch 模型 |
-| `:ui-renderer` | Reconciler、MountManager、NodeCoordinator、更新入口 |
-| `:ui-view-adapter` | Android `View` 适配器注册与默认实现 |
-| `:ui-widget-core` | `Text`、`Button`、`Box`、`Row`、`Column` 等基础组件 |
-| `:ui-widget-lazy` | `LazyColumn`、列表 item identity、复用与局部刷新 |
-| `:ui-debug` | 树打印、patch 日志、重组统计、调试开关 |
-| `:sample-app` | 演示与验证入口，后期替代当前 `:app` 或并入 `:app` |
+## 6. 当前运行时模型
 
-v1 可以先合并实现为较少模块，以减少初期工程复杂度。推荐初期拆分如下：
+### 6.1 根级 RenderSession
 
-- `:ui-runtime`
-- `:ui-renderer`
-- `:ui-widget-core`
-- `:app`
+当前框架不是通用 `RenderScope` 树，而是一个根级 `RenderSession`。
 
-其中 `VNode` 与 Adapter 可以先放在 `:ui-renderer`，等结构稳定后再拆。
+`RenderSession` 当前负责：
 
-## 7. 核心数据模型
-
-### 7.1 VNode
-
-`VNode` 是 UI 的不可变描述，不直接等于 Android `View`。
-
-建议核心字段：
-
-```kotlin
-data class VNode(
-    val type: NodeType,
-    val key: Any? = null,
-    val props: Props = Props.Empty,
-    val modifier: Modifier = Modifier,
-    val children: List<VNode> = emptyList()
-)
-```
-
-字段说明：
-
-| 字段 | 说明 |
-| --- | --- |
-| `type` | 虚拟控件类型，例如 `Text`、`Column`、`AndroidView` |
-| `key` | 稳定 identity，主要用于列表项、可移动节点、复用判断 |
-| `props` | 组件参数，例如文本、颜色、点击事件、方向等 |
-| `modifier` | 通用修饰链，例如大小、边距、点击、背景、可见性 |
-| `children` | 子节点列表 |
-
-### 7.2 NodeType
-
-建议 `NodeType` 设计成稳定标识，不直接用字符串。
-
-```kotlin
-sealed interface NodeType {
-    data object Text : NodeType
-    data object Button : NodeType
-    data object Row : NodeType
-    data object Column : NodeType
-    data object Box : NodeType
-    data object AndroidView : NodeType
-}
-```
+- 执行 render block
+- 建立一次状态读取观察
+- 驱动 `VNode` 构建
+- 调用 renderer 完成 reconcile + mount
+- 提交 `DisposableEffect` / `SideEffect`
+- 持有 `RememberStore`
 
-### 7.3 Props
+这意味着当前更新模型的真实语义是：
 
-`Props` 是节点私有参数集合，不承载通用布局和行为参数。
+- 状态变化后，`RenderSession` 重新执行根 render block
+- renderer 利用 keyed reuse 尽量复用已有 View
+- 真正的“局部性”目前主要来自 renderer 的复用，而不是通用 subtree scope
 
-建议：
+这个设计对 v1 是合理的，因为：
 
-- 节点私有参数进入 `props`
-- 通用行为尽量进入 `modifier`
-- `props` 应当是稳定、可比较的不可变结构
+- 逻辑简单
+- 调试成本低
+- 与 Android View 的主线程模型兼容
+- 现阶段已经足以支持 demo 和一般页面
 
-### 7.4 Modifier
+### 6.2 观察模型
 
-`Modifier` 是横切属性链，负责承载可组合的通用能力。
+当前状态依赖追踪是基于 `RuntimeObservation` 完成的。
 
-v1 支持范围：
+真实机制：
 
-- `size`
-- `padding`
-- `margin`
-- `background`
-- `alpha`
-- `visibility`
-- `clickable`
-- `enabled`
-- `tag`
+1. `RenderSession.render()` 开始一次观察
+2. render 中读取 `state.value`
+3. `RuntimeObservation` 记录这次 render 读过哪些 state
+4. state 变化时，触发当前 session 的 `scheduleRender()`
+5. session 在主线程 `post()` 下一次重渲染
 
-设计目标：
+它的本质是：
 
-- 同一能力的更新逻辑集中在 modifier adapter
-- 避免每个节点 API 重复声明一大批通用属性
-- 让布局与交互表达方式统一
+> 根会话级观察，不是通用 scope 图。
 
-### 7.5 Key
+这个设计目前是合理的，但文档必须停止把它描述成“已经具备通用 RenderScope 树”。
 
-`key` 是运行时 identity 的基础规则。
+### 6.3 local / remember / effect
 
-设计结论：
+当前 `remember`、`DisposableEffect`、`SideEffect`、`produceState`、`UiTheme`、`UiThemeOverride`、`Environment` 都已经存在，而且都挂在 `ui-widget-core` 的 session 体系上。
 
-- 节点匹配优先使用 `type + key`
-- 没有 `key` 时，退化为同层级位置匹配
-- 可重排集合必须要求稳定 key
-- `LazyColumn` item 需要显式 `key` 能力
+这说明项目实际上已经形成了一个“composition runtime 表层”，只是当前没有单独起模块名。
 
-## 8. 组件与书写模型
+正确认识应当是：
 
-### 8.1 目标 API 风格
+- `ui-runtime` 目前只负责 observable state
+- `ui-widget-core` 负责 composition/session/local/effect/theme 这一层
 
-```kotlin
-renderInto(root) {
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .background(Color.White)
-    ) {
-        Text(text = titleState.value)
-        Button(
-            text = "Refresh",
-            onClick = { reload() }
-        )
-        LazyColumn {
-            items(
-                items = messages,
-                key = { it.id }
-            ) { message ->
-                Text(message.title)
-            }
-        }
-    }
-}
-```
+这并不优雅，但当前是合理的。
 
-设计要求：
+后续如果这层继续变复杂，再考虑把它提炼成新的 `ui-composition` 或并入更完整的 `ui-runtime`。
 
-- API 看起来像声明结果，不像写 imperative 代码
-- 容器使用 lambda 组织子节点
-- `Modifier` 链式组合
-- 业务方尽量不接触底层 `View`
+## 7. 当前渲染模型
 
-### 8.2 书写层与运行层分离
+### 7.1 VNode + keyed reconcile
 
-必须明确：
+当前渲染模型仍然是正确的：
 
-- DSL 是输入层
-- `VNode` 是中间层
-- `View` 是输出层
+- DSL 构造 `VNode`
+- `ChildReconciler` 在兄弟节点级别做 keyed 复用
+- `ViewTreeRenderer` 按 patch 结果插入、复用、移除节点
 
-业务代码不能直接依赖 “节点声明一定对应某个固定 View 实现”，否则后续 adapter 优化会被锁死。
+这里的关键事实是：
 
-## 9. 状态系统设计
+- 当前 reconcile 只有 `Insert`、`Reuse`、`Remove`
+- 并没有独立的 `Replace / UpdateProps / UpdateModifier / Move` 抽象类型对外存在
+- “Move” 语义隐含在 `ReusePatch.targetIndex` + `moveViewToIndex(...)` 中
+- “属性差异更新”不是 patch 级 diff，而是 `bindView(...)` 时全量重绑当前节点
 
-### 9.1 设计定位
+这不是缺陷，而是当前阶段的合理简化。
 
-状态系统不是 `LiveData` 替代品，而是声明式渲染 Runtime 的更新触发器。
+当前正确表述应为：
 
-目标：
+> 框架已经具备显式 patch 列表，但 patch 模型仍然是 sibling reuse 导向，而不是细粒度属性 patch 导向。
 
-- 表达可观察状态
-- 支持读取依赖自动收集
-- 状态变更时只刷新相关 scope
-- 合并短时间内的多次状态变更
+### 7.2 集中式 ViewTreeRenderer
 
-### 9.2 核心接口
+当前 `ViewTreeRenderer` 是一体化 renderer，内部承担：
 
-```kotlin
-interface State<T> {
-    val value: T
-}
-
-interface MutableState<T> : State<T> {
-    override var value: T
-}
-
-fun <T> mutableStateOf(value: T): MutableState<T>
-fun <T> derivedStateOf(block: () -> T): State<T>
-```
-
-### 9.3 RenderScope
-
-为了实现局部更新，需要引入 `RenderScope`。
-
-职责：
-
-- 表示一次可独立重建的渲染作用域
-- 记录该作用域在渲染时读取了哪些 `State`
-- 在相关 `State` 变化时被标记为 dirty
-- 由调度器在下一批处理中触发重建
-
-建议原则：
-
-- 页面根有 root scope
-- 容器节点可引入子 scope
-- 列表 item 可拥有更细粒度 scope
-
-v1 不追求任意节点自动最细粒度切分，先采用“容器级子树 scope”。
-
-### 9.4 依赖追踪
-
-运行时过程：
-
-1. 当前 `RenderScope` 开始执行 render block
-2. render 过程中读取 `state.value`
-3. runtime 记录 “scope -> state” 和 “state -> scope” 双向关系
-4. `state.value` 变化时，相关 scope 被标记 dirty
-5. scheduler 将 dirty scope 合并到下一次 UI 提交
-
-### 9.5 调度策略
-
-v1 采用简单稳定的主线程批量提交策略：
-
-- 状态可在任意线程修改，但内部最终通过主线程调度 UI 更新
-- 一个 frame 内多次状态变更合并为一次提交
-- 同一个 scope 重复 dirty 只提交一次
-- patch 应用始终发生在主线程
-
-## 10. Reconciler 设计
-
-### 10.1 目标
-
-Reconciler 负责比较旧 `VNode` 树与新 `VNode` 树，并生成最小必要 patch。
-
-输出 patch 类型建议包括：
-
-- `Insert`
-- `Remove`
-- `Move`
-- `Replace`
-- `UpdateProps`
-- `UpdateModifier`
-
-### 10.2 节点匹配规则
-
-默认匹配规则：
-
-1. 优先比较 `type`
-2. 如果存在 `key`，必须比较 `key`
-3. `type` 不同直接 `Replace`
-4. `type` 相同且 `key` 相同则继续比较 `props / modifier / children`
-5. 无 `key` 的兄弟节点按顺序匹配
-
-### 10.3 子节点 diff
-
-v1 采用 keyed children diff：
-
-- 如果子节点存在显式 key，优先使用 key 建立映射
-- 同 key 节点支持 `Move`
-- 新树新增节点生成 `Insert`
-- 旧树缺失节点生成 `Remove`
-- 同一节点只更新变化的 `props` 和 `modifier`
-
-### 10.4 patch 生成原则
-
-- 优先局部更新，不轻易整棵 replace
-- 不为了理论最优算法牺牲实现清晰度
-- patch 必须可打印、可调试
-- patch 应独立于 `View` 实现，便于测试
-
-## 11. View 挂载与适配层
-
-### 11.1 Adapter Registry
-
-每一种虚拟节点类型对应一套 adapter。
-
-建议接口：
-
-```kotlin
-interface ViewAdapter<V : View> {
-    fun create(context: Context): V
-    fun bind(view: V, props: Props)
-    fun applyModifier(view: V, modifier: Modifier)
-    fun mountChildren(view: V, children: List<MountedNode>)
-    fun unmount(view: V)
-}
-```
-
-### 11.2 Mount Manager
-
-职责：
-
-- 持有 `VNode` 与真实 `View` 的挂载关系
-- 应用 patch 到真实树
-- 管理 child attach/detach
-- 处理节点销毁与资源释放
-
-### 11.3 默认控件映射
-
-v1 映射建议：
-
-| VNode | Android View |
-| --- | --- |
-| `Text` | `TextView` |
-| `Button` | `TextView` 或 `MaterialButton` |
-| `Box` | `FrameLayout` |
-| `Row` | 横向 `LinearLayout` |
-| `Column` | 纵向 `LinearLayout` |
-| `Image` | `ImageView` |
-| `AndroidView` | 直接托管业务侧提供的 `View` |
-
-### 11.4 扁平化策略
-
-v1 不主动实现激进的 view flattening，只预留架构空间。
+- `NodeType -> View` 创建
+- 各节点 `bind`
+- `Modifier` 应用
+- child reconcile
+- attach/detach/dispose
+- `LazyColumn`、`TabPager`、`SegmentedControl` 等特殊节点桥接
+
+这在架构上不是最终形态，但在当前阶段是合理的。
 
 理由：
 
-- 初期优先保证声明与更新模型稳定
-- flattening 会显著提高布局、事件、modifier 实现复杂度
-- 等基本能力稳定后，再评估对 `Box/Row/Column` 做局部优化
+- 节点数量还没多到必须做 adapter registry
+- 当前最大的价值是统一调试和统一行为约束
+- 过早抽 adapter 接口，收益低于复杂度
 
-## 12. 原生 View 互操作
+但这里必须写清楚后续边界：
 
-互操作是本框架的关键竞争力之一。
+- 继续增加节点类型是允许的
+- 但如果 `ViewTreeRenderer` 持续膨胀，就必须抽出 binder / factory / modifier applier 子组件
+- 当前不建议直接上完整 `Adapter Registry`
 
-建议提供：
+### 7.3 自定义容器策略
 
-```kotlin
-AndroidView(
-    key = "legacy_chart",
-    factory = { context -> LegacyChartView(context) },
-    update = { view -> view.bind(data) }
-)
-```
+当前框架已经没有完全依赖原生 `LinearLayout / FrameLayout` 语义，而是引入了：
 
-设计要求：
+- `DeclarativeLinearLayout`
+- `DeclarativeBoxLayout`
+- `DeclarativeTabPagerLayout`
+- `DeclarativeSegmentedControlLayout`
 
-- 支持挂载已有自定义 `View`
-- 支持更新 block
-- 支持 `key`
-- 支持生命周期回调
-- 明确 factory 只在首次创建或 identity 变化时触发
+这个方向是正确的。
 
-## 13. 生命周期与 Effect
+它解决了两个问题：
 
-### 13.1 必要性
+1. Android 原生容器表达力不够
+2. 声明式布局语义需要更稳定的父容器控制权
 
-声明式树只解决 UI 描述，不自动解决副作用管理。
+所以，后续设计应明确一条原则：
 
-必须区分：
+> 只要原生 `ViewGroup` 不能稳定承载框架语义，就允许引入少量自定义容器；不要被“必须完全复用系统容器”束缚。
 
-- render 阶段：只构建声明，不做副作用
-- commit 阶段：patch 应用完成后，才允许副作用进入 attach 态
+## 8. 当前列表模型
 
-### 13.2 v1 Effect 能力
+`LazyColumn` 是当前设计里最合理的部分之一。
 
-建议 v1 提供：
+当前真实策略：
 
-- `OnMount`
-- `OnUnmount`
-- `DisposableEffect(key)`
+- 容器基于 `RecyclerView`
+- diff 基于 `LazyListDiff`
+- identity 校验基于 `LazyListIdentityInspector`
+- item 渲染基于 `LazyItemSessionController`
+- item 可拥有独立 session 和本地 `remember`
 
-这些能力用于：
-
-- 注册和释放监听器
-- 启停动画
-- 托管生命周期敏感资源
-
-### 13.3 生命周期绑定
-
-框架需感知：
-
-- `View` attach/detach
-- `LifecycleOwner`
-- 页面销毁时的 scope 释放
-
-所有 state 订阅、effect、interop 资源都必须可追踪释放，避免泄漏。
-
-## 14. 列表与懒加载设计
-
-`LazyColumn` 是 v1 必做能力，不是增强项。
+这条路线非常合理，应当继续坚持。
 
 原因：
 
-- 列表是 Android 业务最常见场景
-- 没有列表能力，框架只能验证 demo，无法进入真实业务
-- 列表正好检验 `key`、局部更新、复用、状态边界设计是否成立
+- 避免自研滚动与回收系统
+- item 状态边界更清晰
+- 直接验证 keyed identity 是否可靠
+- 更符合 Android View 生态现实
 
-v1 建议方案：
+这里要明确冻结一个架构决定：
 
-- 基于 `RecyclerView` 承载
-- item 内容仍由框架的 `VNode` 和 adapter 渲染
-- item identity 使用显式 `key`
-- item scope 独立 dirty
-- item 内部保留状态恢复入口
+> `LazyColumn` 继续基于 `RecyclerView`，短期内不做自研 lazy container。
 
-这样可以复用成熟滚动与回收能力，避免一开始自研复杂容器。
+## 9. 当前主题与环境模型
 
-## 15. 调试与可观测性
+主题系统已经从“样式工具”演变成真实的运行时上下文系统。
 
-没有调试能力，声明式运行时很难落地。
+当前已经具备：
 
-v1 至少提供：
+- `UiTheme`
+- `UiThemeOverride`
+- `Theme.current`
+- `LocalValue / LocalContext`
+- `Environment`
+- `AndroidThemeBridge`
 
-- 打印当前 `VNode` 树
-- 打印 patch 列表
-- 统计每个 scope 的重建次数
-- 标记哪些 `State` 触发了某次更新
-- 通过 debug 开关决定是否输出日志
+这说明当前架构里已经存在一个明确子系统：
 
-后续增强可包括：
+> 基于 local 的声明式上下文系统。
 
-- 可视化树检查器
-- 渲染耗时统计
-- measure/layout 次数统计
+这部分设计是合理且成熟的，应在总架构中正式承认，而不是把它当成 widget 附属功能。
 
-## 16. 数据流
+因此，后续架构讨论必须把以下几类能力视为同一层问题：
 
-### 16.1 首次渲染数据流
+- theme
+- environment
+- remember
+- effect
+- side effect
+
+它们都属于“composition/session 上下文层”。
+
+## 10. 设计合理性评估
+
+### 10.1 当前明确合理的部分
+
+1. `DSL -> VNode -> View` 三层分离是正确的
+2. 根级 `RenderSession` 对当前阶段是合理复杂度
+3. keyed sibling reconcile 的实现方式简单、可测、可调试
+4. `RecyclerView + item session` 的 `LazyColumn` 策略非常合理
+5. local 驱动的主题 / 环境系统已经形成稳定方向
+6. 自定义容器补足原生 `ViewGroup` 的表达缺陷，这个决策是正确的
+
+### 10.2 当前不合理或必须纠正的认知
+
+1. 文档不能再声称框架已经具备通用 `RenderScope` 树
+2. 文档不能再把 `Adapter Registry` 视为当前实际架构
+3. 文档不能再把工程描述成“只有空白 app”
+4. 文档不能再用“局部 scope 更新”概括整个框架现状
+
+真实情况是：
+
+- 当前是根级 render + 复用式增量更新
+- 列表 item 具备更细粒度 session
+- 通用 subtree scope 还没有形成
+
+### 10.3 当前真正的结构问题
+
+当前有 3 个真实问题需要在后续持续约束：
+
+1. `ViewTreeRenderer` 过于集中
+   - 当前还能接受
+   - 继续膨胀就必须拆解内部职责
+
+2. `ui-widget-core` 同时承担 DSL 和 composition runtime
+   - 当前可接受
+   - 如果 effect/local/session 继续增长，就要考虑提炼独立层
+
+3. 通用节点更新仍依赖根 render 重跑
+   - 当前适合 v1
+   - 但如果后面进入更复杂页面，这会成为性能与可预测性的上限
+
+## 11. 更新后的架构基线
+
+从现在开始，项目按下面这套基线理解和继续开发。
+
+### 11.1 固定不变的部分
+
+- 保持 `Android View` 为真实承载层
+- 保持 `VNode` 为中间表达层
+- 保持 `RenderSession` 为当前根级更新入口
+- 保持 `ChildReconciler + ViewTreeRenderer` 为核心更新链
+- 保持 `LazyColumn -> RecyclerView` 路线
+- 保持 theme / environment / remember / effect 基于 local/session 体系
+
+### 11.2 当前不做的部分
+
+- 不做完整 Router
+- 不做编译器插件
+- 不做通用 Adapter Registry
+- 不做额外模块过度拆分
+- 不做自研 lazy scroll container
+- 不急着做全树细粒度 subtree scope
+
+### 11.3 后续如果继续演进，优先顺序应该是
+
+1. 继续稳定 composition runtime 表层
+   - `remember`
+   - effect
+   - local
+   - theme
+   - environment
+
+2. 控制 renderer 膨胀
+   - 先拆内部 binder / background / input / container 子职责
+   - 不急着抽通用 adapter registry
+
+3. 增强组件和状态语义
+   - 输入控件
+   - 容器状态
+   - 主题 token
+
+4. 最后再评估是否值得做通用 subtree scope
+
+## 12. 实际数据流
+
+### 12.1 首次渲染
 
 ```mermaid
 sequenceDiagram
-    participant Biz as Business Code
-    participant DSL as DSL Builder
-    participant RT as Runtime
-    participant R as Reconciler
-    participant M as Mount Manager
-    participant V as Android View Tree
+    participant Biz as Business DSL
+    participant Session as RenderSession
+    participant Build as buildVNodeTree
+    participant Obs as RuntimeObservation
+    participant Rec as ChildReconciler
+    participant Render as ViewTreeRenderer
+    participant View as Android View Tree
 
-    Biz->>DSL: renderInto(root) { ... }
-    DSL->>RT: build root VNode
-    RT->>R: oldTree = null, newTree = rootVNode
-    R->>M: create patches
-    M->>V: create and attach Views
-    M->>RT: register mounted nodes and scopes
+    Biz->>Session: renderInto(container) { ... }
+    Session->>Obs: observeReads(...)
+    Obs->>Build: execute render block
+    Build-->>Session: root VNode list
+    Session->>Rec: reconcile(previous, next)
+    Rec-->>Render: Insert / Reuse / Remove patches
+    Render->>View: create / bind / move / remove
+    Session->>Session: commit effect + sideEffect
 ```
 
-### 16.2 状态更新数据流
+### 12.2 状态变化
 
 ```mermaid
 sequenceDiagram
-    participant S as State
-    participant RT as Runtime
-    participant Sch as Scheduler
-    participant Scope as RenderScope
-    participant R as Reconciler
-    participant M as Mount Manager
+    participant State as MutableState
+    participant Obs as Observation
+    participant Session as RenderSession
+    participant Render as ViewTreeRenderer
 
-    S->>RT: value changed
-    RT->>Sch: mark related scope dirty
-    Sch->>Scope: rerender dirty scope
-    Scope->>R: oldSubTree vs newSubTree
-    R->>M: patch list
-    M->>M: apply patch
+    State->>Obs: invalidate
+    Obs->>Session: scheduleRender()
+    Session->>Session: post(renderRunnable)
+    Session->>Session: rebuild VNode tree
+    Session->>Render: keyed reuse renderInto(...)
 ```
 
-## 17. 更新时序
+### 12.3 Lazy item 更新
 
-### 17.1 首次渲染时序
+```mermaid
+sequenceDiagram
+    participant RV as RecyclerView
+    participant Adapter as LazyColumnAdapter
+    participant Holder as ViewHolder
+    participant Item as LazyItemSessionController
 
-1. 业务代码调用 `renderInto(root) { ... }`
-2. DSL 构造根 `VNode`
-3. Runtime 创建 root scope
-4. 执行 render block，记录 state 读取依赖
-5. Reconciler 对比空树与新树
-6. Mount Manager 根据 patch 创建并挂载真实 `View`
-7. commit 完成后触发 `OnMount` / effect attach
+    RV->>Adapter: submitItems(nextItems)
+    Adapter->>Adapter: LazyListDiff.calculate(...)
+    Adapter->>Holder: bind(item)
+    Holder->>Item: bind(item)
+    Item->>Item: reuse session by key or recreate
+    Item->>Item: render item session
+```
 
-### 17.2 状态变更时序
+## 13. 风险与约束
 
-1. 某个 `MutableState` 的 `value` 被更新
-2. Runtime 查询依赖该 state 的 scopes
-3. 相关 scopes 被标记 dirty
-4. Scheduler 在下一次合适时机合并执行更新
-5. dirty scope 重新执行 render block，生成新的子树
-6. Reconciler 比较旧子树与新子树
-7. Mount Manager 应用 patch 到真实 `View`
-8. 完成后触发必要的 effect 更新与资源释放
+### 13.1 当前主要风险
 
-### 17.3 节点 replace 时序
-
-1. 新旧节点 `type` 不同，或 identity 不匹配
-2. Reconciler 生成 `Replace`
-3. Mount Manager 先执行旧节点的 dispose / unmount
-4. 创建新节点的真实 `View`
-5. 挂载到父容器对应位置
-6. 触发新节点 attach 回调
-
-## 18. 性能策略
-
-v1 采用“先稳定、后极致”的策略。
-
-### 18.1 必做优化
-
-- key 驱动的局部 children diff
-- scope 级 dirty 合并
-- 主线程批量提交
-- `props` / `modifier` 差异化 patch
-- 列表场景优先复用 `RecyclerView`
-
-### 18.2 暂缓优化
-
-- view flattening
-- 后台 layout 计算
-- 复杂的 slot table 或编译期跳过重组
-- 高级动画合成
-
-## 19. API 设计约束
-
-后续 API 设计必须满足以下约束：
-
-- 容器节点支持 lambda child builder
-- 通用属性优先走 `Modifier`
-- 所有可重排集合都支持显式 `key`
-- 事件参数命名统一，例如 `onClick`
-- 互操作入口命名稳定为 `AndroidView`
-- 状态入口命名靠近 Compose 心智，例如 `mutableStateOf`
-
-## 20. 测试策略
-
-需要从一开始建立 3 类测试：
-
-| 类型 | 内容 |
-| --- | --- |
-| 单元测试 | `State`、依赖追踪、diff、patch 生成 |
-| 集成测试 | patch 应用到 `View` 树后的结构与属性正确性 |
-| Sample 验证 | 示例页面验证首次渲染、局部更新、列表更新和互操作 |
-
-关键测试点：
-
-- 同 key 移动不重建 View
-- prop 更新不 replace 整个节点
-- state 更新只触发相关 scope
-- `AndroidView` factory 不被重复错误调用
-- 列表项重排后状态与 view 绑定不串位
-
-## 21. 风险与对策
-
-| 风险 | 说明 | 对策 |
+| 风险 | 说明 | 当前约束 |
 | --- | --- | --- |
-| API 看起来像 Compose，行为却不一致 | 用户会产生错误预期 | 文档明确目标是“Compose-like on View”，不是 Compose clone |
-| 状态系统过早复杂化 | Runtime 难以调试 | v1 保持 scope 粒度有限、更新链路清晰 |
-| 过早追求 flattening | modifier 与事件处理复杂度暴涨 | 先稳定 adapter 和 diff |
-| 列表状态错乱 | key/复用策略不成熟 | `LazyColumn` 强制 key，优先基于 RecyclerView |
-| 互操作生命周期不清晰 | 容易泄漏资源 | 明确 attach/detach 与 dispose 规则 |
+| 文档比实现更理想化 | 容易误导后续设计 | 以后所有架构文档必须写“当前真实能力” |
+| renderer 继续膨胀 | switch 和 bind 逻辑会越来越重 | 新节点进入前先判断是否该拆 renderer 内部职责 |
+| runtime 分层继续模糊 | `ui-widget-core` 会越来越重 | composition/session 能力继续增长时再考虑独立层 |
+| 错把 keyed reuse 当成通用局部重组 | 容易产生性能误判 | 统一承认当前是根级重跑模型 |
 
-## 22. 分阶段开发计划
+### 13.2 当前协作约定
 
-### 22.1 Phase 0: 工程重构
+从现在开始，后续新增能力必须先回答下面 3 个问题：
 
-目标：
+1. 它属于 state/runtime、composition/session、renderer，还是 widget/theme？
+2. 它是否会继续膨胀 `ViewTreeRenderer`？
+3. 它是否真的需要新的模块，还是只是当前模块内拆职责即可？
 
-- 从空白 App 调整为可承载框架开发的模块结构
-- 建立基础测试环境
+如果没有回答清楚，不应直接实现。
 
-交付：
+## 14. 下一阶段建议
 
-- 新增 `:ui-runtime`
-- 新增 `:ui-renderer`
-- 新增 `:ui-widget-core`
-- `:app` 作为 sample 入口
+按当前项目状态，后续最合理的技术方向不是继续改大架构，而是：
 
-### 22.2 Phase 1: 跑通最小渲染闭环
+1. 稳定现有 composition runtime
+   - 继续补 `remember` / effect / local 的边界测试
 
-目标：
+2. 控制 renderer 复杂度
+   - 把 `ViewTreeRenderer` 内部逐步拆成更小的职责块
 
-- 从 DSL 到 `View` 挂载跑通完整链路
+3. 继续加强组件系统
+   - 主题
+   - 输入控件
+   - 容器语义
 
-交付：
+4. 暂缓更激进的设计
+   - Router
+   - 编译器插件
+   - 通用 RenderScope 树
+   - 过细模块拆分
 
-- `VNode`
-- root render API
-- `Text`、`Column`、`Box`
-- Adapter Registry
-- 首次渲染能力
+这条路线最符合当前项目的真实成熟度。
 
-### 22.3 Phase 2: 跑通状态驱动更新
-
-目标：
-
-- 建立局部刷新能力
-
-交付：
-
-- `mutableStateOf`
-- RenderScope
-- dirty scheduler
-- prop diff 与 patch 应用
-
-### 22.4 Phase 3: 补齐基础交互与 Modifier
-
-目标：
-
-- 让 API 具备实际页面搭建能力
-
-交付：
-
-- `Modifier`
-- 点击事件
-- 常见布局属性
-- 背景、可见性、尺寸类更新
-
-### 22.5 Phase 4: 列表能力
-
-目标：
-
-- 进入真实业务场景
-
-交付：
-
-- `LazyColumn`
-- item key
-- item scope
-- 列表更新验证
-
-### 22.6 Phase 5: 互操作与调试
-
-目标：
-
-- 提升业务接入能力与可维护性
-
-交付：
-
-- `AndroidView`
-- 树打印
-- patch 日志
-- scope 更新统计
-
-## 23. v1 范围定义
-
-v1 必须包含：
-
-- `renderInto`
-- `Text`
-- `Button`
-- `Box`
-- `Row`
-- `Column`
-- `AndroidView`
-- `LazyColumn`
-- `Modifier`
-- `mutableStateOf`
-- `derivedStateOf`
-- keyed diff
-- 局部 scope 更新
-- 基础 debug 日志
-
-v1 不承诺：
-
-- 完整 Compose 兼容 API
-- 编译器插件
-- 精细到表达式级的重组优化
-- 复杂动画系统
-- 自研滚动与回收容器
-
-## 24. 协作约定
-
-后续开发与讨论遵循以下约定：
-
-- 所有新增能力优先判断是否符合本文档目标与边界
-- 如需引入新模块、调整分层或修改更新模型，先更新本文档
-- 所有阶段性实现优先保证可运行、可验证、可调试
-- 任何性能优化都不应破坏 identity、state、patch 的正确性
-
-## 25. 下一步实施建议
-
-按当前项目状态，建议的直接下一步是：
-
-1. 调整 Gradle 工程结构，拆出 `:ui-runtime`、`:ui-renderer`、`:ui-widget-core`
-2. 实现 `VNode`、`NodeType`、`renderInto`
-3. 实现 `Text`、`Column`、`Box` 的首次渲染
-4. 再接入 `mutableStateOf` 和局部更新
-
-这条路线风险最低，也最容易持续验证设计是否成立。
