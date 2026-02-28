@@ -20,9 +20,11 @@ import com.gzq.uiframework.renderer.modifier.clickable
 import com.gzq.uiframework.renderer.modifier.fillMaxWidth
 import com.gzq.uiframework.renderer.modifier.height
 import com.gzq.uiframework.renderer.modifier.margin
+import com.gzq.uiframework.renderer.modifier.offset
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.renderer.modifier.visibility
 import com.gzq.uiframework.renderer.modifier.weight
+import com.gzq.uiframework.renderer.modifier.zIndex
 import com.gzq.uiframework.runtime.derivedStateOf
 import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.AndroidView
@@ -149,6 +151,8 @@ class MainActivity : AppCompatActivity() {
                         text = "Pinned",
                         modifier = Modifier.Empty
                             .align(BoxAlignment.BottomEnd)
+                            .offset(x = -8f, y = -8f)
+                            .zIndex(1f)
                             .backgroundColor(Color.parseColor("#D6C6F0"))
                             .padding(horizontal = 8, vertical = 4),
                     )

@@ -65,6 +65,15 @@ data class BoxAlignModifierElement(
     val alignment: BoxAlignment,
 ) : ModifierElement
 
+data class OffsetModifierElement(
+    val x: Float,
+    val y: Float,
+) : ModifierElement
+
+data class ZIndexModifierElement(
+    val zIndex: Float,
+) : ModifierElement
+
 enum class Visibility {
     Visible,
     Invisible,
@@ -201,6 +210,24 @@ fun Modifier.weight(weight: Float): Modifier {
 fun Modifier.align(alignment: BoxAlignment): Modifier {
     return then(
         BoxAlignModifierElement(alignment),
+    )
+}
+
+fun Modifier.offset(
+    x: Float = 0f,
+    y: Float = 0f,
+): Modifier {
+    return then(
+        OffsetModifierElement(
+            x = x,
+            y = y,
+        ),
+    )
+}
+
+fun Modifier.zIndex(zIndex: Float): Modifier {
+    return then(
+        ZIndexModifierElement(zIndex),
     )
 }
 

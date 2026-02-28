@@ -20,12 +20,14 @@ import com.gzq.uiframework.renderer.modifier.BoxAlignModifierElement
 import com.gzq.uiframework.renderer.modifier.ClickableModifierElement
 import com.gzq.uiframework.renderer.modifier.HeightModifierElement
 import com.gzq.uiframework.renderer.modifier.MarginModifierElement
+import com.gzq.uiframework.renderer.modifier.OffsetModifierElement
 import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
 import com.gzq.uiframework.renderer.modifier.SizeModifierElement
 import com.gzq.uiframework.renderer.modifier.Visibility
 import com.gzq.uiframework.renderer.modifier.VisibilityModifierElement
 import com.gzq.uiframework.renderer.modifier.WeightModifierElement
 import com.gzq.uiframework.renderer.modifier.WidthModifierElement
+import com.gzq.uiframework.renderer.modifier.ZIndexModifierElement
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
@@ -237,9 +239,13 @@ object ViewTreeRenderer {
             .lastOrNull { it is BackgroundColorModifierElement } as? BackgroundColorModifierElement
         val clickable = node.modifier.elements
             .lastOrNull { it is ClickableModifierElement } as? ClickableModifierElement
+        val offset = node.modifier.elements
+            .lastOrNull { it is OffsetModifierElement } as? OffsetModifierElement
         val padding = node.modifier.elements.lastOrNull { it is PaddingModifierElement } as? PaddingModifierElement
         val visibility = node.modifier.elements
             .lastOrNull { it is VisibilityModifierElement } as? VisibilityModifierElement
+        val zIndex = node.modifier.elements
+            .lastOrNull { it is ZIndexModifierElement } as? ZIndexModifierElement
         view.alpha = alpha?.alpha ?: 1f
         view.setBackgroundColor(backgroundColor?.color ?: 0x00000000)
         view.visibility = when (visibility?.visibility ?: Visibility.Visible) {
@@ -247,6 +253,9 @@ object ViewTreeRenderer {
             Visibility.Invisible -> View.INVISIBLE
             Visibility.Gone -> View.GONE
         }
+        view.translationX = offset?.x ?: 0f
+        view.translationY = offset?.y ?: 0f
+        view.z = zIndex?.zIndex ?: 0f
         view.isClickable = clickable != null
         view.setOnClickListener(
             if (clickable == null) {
