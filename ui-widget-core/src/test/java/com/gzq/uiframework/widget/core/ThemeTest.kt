@@ -318,7 +318,10 @@ class ThemeTest {
                 ),
                 textField = baseTheme.components.textField,
                 segmentedControl = baseTheme.components.segmentedControl,
-                inputControl = baseTheme.components.inputControl,
+                checkbox = baseTheme.components.checkbox,
+                switchControl = baseTheme.components.switchControl,
+                radioButton = baseTheme.components.radioButton,
+                slider = baseTheme.components.slider,
                 tabPager = baseTheme.components.tabPager,
             ),
         )
@@ -443,11 +446,27 @@ class ThemeTest {
                     outlinedDisabledBorder = 208,
                     outlinedErrorBorder = 209,
                 ),
-                inputControl = UiInputControlStyles(
+                checkbox = UiCheckboxStyles(
                     label = 210,
                     labelDisabled = 211,
                     control = 212,
                     controlDisabled = 213,
+                ),
+                switchControl = UiSwitchStyles(
+                    label = 214,
+                    labelDisabled = 215,
+                    control = 216,
+                    controlDisabled = 217,
+                ),
+                radioButton = UiRadioButtonStyles(
+                    label = 218,
+                    labelDisabled = 219,
+                    control = 220,
+                    controlDisabled = 221,
+                ),
+                slider = UiSliderStyles(
+                    control = 222,
+                    controlDisabled = 223,
                 ),
                 segmentedControl = UiSegmentedControlStyles(
                     background = 301,
@@ -472,7 +491,8 @@ class ThemeTest {
         var disabledPrimary = 0
         var textFieldTonal = 0
         var textFieldError = 0
-        var inputControlDisabled = 0
+        var checkboxDisabled = 0
+        var sliderDisabled = 0
         var segmentedIndicator = 0
         var segmentedDisabledText = 0
         var tabPagerText = 0
@@ -484,7 +504,8 @@ class ThemeTest {
                 disabledPrimary = ButtonDefaults.containerColor(ButtonVariant.Primary, enabled = false)
                 textFieldTonal = TextFieldDefaults.containerColor(TextFieldVariant.Tonal)
                 textFieldError = TextFieldDefaults.borderColor(TextFieldVariant.Outlined, isError = true)
-                inputControlDisabled = InputControlDefaults.controlColor(enabled = false)
+                checkboxDisabled = InputControlDefaults.checkboxControlColor(enabled = false)
+                sliderDisabled = InputControlDefaults.sliderControlColor(enabled = false)
                 segmentedIndicator = SegmentedControlDefaults.indicatorColor()
                 segmentedDisabledText = SegmentedControlDefaults.textColor(enabled = false)
                 tabPagerText = TabPagerDefaults.unselectedTextColor()
@@ -496,7 +517,8 @@ class ThemeTest {
         assertEquals(109, disabledPrimary)
         assertEquals(202, textFieldTonal)
         assertEquals(209, textFieldError)
-        assertEquals(213, inputControlDisabled)
+        assertEquals(213, checkboxDisabled)
+        assertEquals(223, sliderDisabled)
         assertEquals(306, segmentedIndicator)
         assertEquals(309, segmentedDisabledText)
         assertEquals(314, tabPagerText)
@@ -616,7 +638,7 @@ class ThemeTest {
                 container = TextFieldDefaults.containerColor()
                 disabledContainer = TextFieldDefaults.containerColor(enabled = false)
                 errorColor = TextFieldDefaults.hintColor(isError = true)
-                controlColor = InputControlDefaults.controlColor()
+                controlColor = InputControlDefaults.checkboxControlColor()
                 cardCornerRadius = SurfaceDefaults.cardCornerRadius()
                 pressedColor = SurfaceDefaults.pressedColor()
             }
@@ -708,7 +730,7 @@ class ThemeTest {
                             button = button.copy(
                                 primaryContainer = 0xFF778899.toInt(),
                             ),
-                            inputControl = inputControl.copy(
+                            checkbox = checkbox.copy(
                                 controlDisabled = 0xFF556677.toInt(),
                             ),
                             segmentedControl = segmentedControl.copy(
@@ -719,7 +741,7 @@ class ThemeTest {
                 ) {
                     buttonPrimary = ButtonDefaults.containerColor(ButtonVariant.Primary)
                     segmentedIndicator = SegmentedControlDefaults.indicatorColor()
-                    disabledControl = InputControlDefaults.controlColor(enabled = false)
+                    disabledControl = InputControlDefaults.checkboxControlColor(enabled = false)
                     baseTextField = TextFieldDefaults.containerColor(TextFieldVariant.Filled)
                 }
             }

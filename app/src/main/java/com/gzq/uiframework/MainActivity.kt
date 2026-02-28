@@ -842,11 +842,27 @@ private fun UiTreeBuilder.InputPage() {
                 UiThemeOverride(
                     components = {
                         copy(
-                            inputControl = inputControl.copy(
+                            checkbox = checkbox.copy(
                                 control = Theme.colors.accent,
                                 controlDisabled = Theme.colors.divider,
                                 label = Theme.colors.textPrimary,
                                 labelDisabled = Theme.colors.textSecondary,
+                            ),
+                            switchControl = switchControl.copy(
+                                control = Theme.colors.accent,
+                                controlDisabled = Theme.colors.divider,
+                                label = Theme.colors.textPrimary,
+                                labelDisabled = Theme.colors.textSecondary,
+                            ),
+                            radioButton = radioButton.copy(
+                                control = Theme.colors.accent,
+                                controlDisabled = Theme.colors.divider,
+                                label = Theme.colors.textPrimary,
+                                labelDisabled = Theme.colors.textSecondary,
+                            ),
+                            slider = slider.copy(
+                                control = Theme.colors.accent,
+                                controlDisabled = Theme.colors.divider,
                             ),
                         )
                     },

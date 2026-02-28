@@ -114,9 +114,28 @@ data class UiSegmentedControlStyles(
     val selectedTextDisabled: Int,
 )
 
-data class UiInputControlStyles(
+data class UiCheckboxStyles(
     val label: Int,
     val labelDisabled: Int,
+    val control: Int,
+    val controlDisabled: Int,
+)
+
+data class UiSwitchStyles(
+    val label: Int,
+    val labelDisabled: Int,
+    val control: Int,
+    val controlDisabled: Int,
+)
+
+data class UiRadioButtonStyles(
+    val label: Int,
+    val labelDisabled: Int,
+    val control: Int,
+    val controlDisabled: Int,
+)
+
+data class UiSliderStyles(
     val control: Int,
     val controlDisabled: Int,
 )
@@ -132,7 +151,10 @@ data class UiComponentStyles(
     val button: UiButtonStyles,
     val textField: UiTextFieldStyles,
     val segmentedControl: UiSegmentedControlStyles,
-    val inputControl: UiInputControlStyles,
+    val checkbox: UiCheckboxStyles,
+    val switchControl: UiSwitchStyles,
+    val radioButton: UiRadioButtonStyles,
+    val slider: UiSliderStyles,
     val tabPager: UiTabPagerStyles,
 )
 
@@ -302,9 +324,25 @@ object UiComponentStyleDefaults {
                 selectedText = contentColorFor(colors.primary),
                 selectedTextDisabled = colors.textSecondary,
             ),
-            inputControl = UiInputControlStyles(
+            checkbox = UiCheckboxStyles(
                 label = input.fieldText,
                 labelDisabled = input.fieldTextDisabled,
+                control = input.control,
+                controlDisabled = input.controlDisabled,
+            ),
+            switchControl = UiSwitchStyles(
+                label = input.fieldText,
+                labelDisabled = input.fieldTextDisabled,
+                control = input.control,
+                controlDisabled = input.controlDisabled,
+            ),
+            radioButton = UiRadioButtonStyles(
+                label = input.fieldText,
+                labelDisabled = input.fieldTextDisabled,
+                control = input.control,
+                controlDisabled = input.controlDisabled,
+            ),
+            slider = UiSliderStyles(
                 control = input.control,
                 controlDisabled = input.controlDisabled,
             ),

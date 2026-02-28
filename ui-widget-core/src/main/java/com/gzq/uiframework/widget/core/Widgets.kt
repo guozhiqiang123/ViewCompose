@@ -161,11 +161,11 @@ fun UiTreeBuilder.Checkbox(
                 PropKeys.CHECKED to checked,
                 PropKeys.ON_CHECKED_CHANGE to onCheckedChange,
                 PropKeys.ENABLED to enabled,
-                PropKeys.CONTROL_COLOR to InputControlDefaults.controlColor(enabled),
+                PropKeys.CONTROL_COLOR to InputControlDefaults.checkboxControlColor(enabled),
             ),
         ),
         modifier = Modifier.Empty
-            .textColor(InputControlDefaults.labelColor(enabled))
+            .textColor(InputControlDefaults.checkboxLabelColor(enabled))
             .rippleColor(InputControlDefaults.pressedColor())
             .textSize(style.fontSizeSp)
             .then(modifier),
@@ -190,11 +190,11 @@ fun UiTreeBuilder.Switch(
                 PropKeys.CHECKED to checked,
                 PropKeys.ON_CHECKED_CHANGE to onCheckedChange,
                 PropKeys.ENABLED to enabled,
-                PropKeys.CONTROL_COLOR to InputControlDefaults.controlColor(enabled),
+                PropKeys.CONTROL_COLOR to InputControlDefaults.switchControlColor(enabled),
             ),
         ),
         modifier = Modifier.Empty
-            .textColor(InputControlDefaults.labelColor(enabled))
+            .textColor(InputControlDefaults.switchLabelColor(enabled))
             .rippleColor(InputControlDefaults.pressedColor())
             .textSize(style.fontSizeSp)
             .then(modifier),
@@ -219,11 +219,11 @@ fun UiTreeBuilder.RadioButton(
                 PropKeys.CHECKED to checked,
                 PropKeys.ON_CHECKED_CHANGE to onCheckedChange,
                 PropKeys.ENABLED to enabled,
-                PropKeys.CONTROL_COLOR to InputControlDefaults.controlColor(enabled),
+                PropKeys.CONTROL_COLOR to InputControlDefaults.radioButtonControlColor(enabled),
             ),
         ),
         modifier = Modifier.Empty
-            .textColor(InputControlDefaults.labelColor(enabled))
+            .textColor(InputControlDefaults.radioButtonLabelColor(enabled))
             .rippleColor(InputControlDefaults.pressedColor())
             .textSize(style.fontSizeSp)
             .then(modifier),
@@ -248,7 +248,7 @@ fun UiTreeBuilder.Slider(
                 PropKeys.MIN_VALUE to min,
                 PropKeys.MAX_VALUE to max,
                 PropKeys.ENABLED to enabled,
-                PropKeys.CONTROL_COLOR to InputControlDefaults.controlColor(enabled),
+                PropKeys.CONTROL_COLOR to InputControlDefaults.sliderControlColor(enabled),
                 PropKeys.ON_SLIDER_VALUE_CHANGE to onValueChange,
             ),
         ),

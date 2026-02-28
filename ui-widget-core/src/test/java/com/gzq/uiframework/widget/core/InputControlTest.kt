@@ -30,11 +30,27 @@ class InputControlTest {
             components = UiComponentStyles(
                 button = UiThemeDefaults.light().components.button,
                 textField = UiThemeDefaults.light().components.textField,
-                inputControl = UiInputControlStyles(
+                checkbox = UiCheckboxStyles(
                     label = 91,
                     labelDisabled = 92,
                     control = 93,
                     controlDisabled = 94,
+                ),
+                switchControl = UiSwitchStyles(
+                    label = 95,
+                    labelDisabled = 96,
+                    control = 97,
+                    controlDisabled = 98,
+                ),
+                radioButton = UiRadioButtonStyles(
+                    label = 99,
+                    labelDisabled = 100,
+                    control = 101,
+                    controlDisabled = 102,
+                ),
+                slider = UiSliderStyles(
+                    control = 103,
+                    controlDisabled = 104,
                 ),
                 segmentedControl = UiThemeDefaults.light().components.segmentedControl,
                 tabPager = UiThemeDefaults.light().components.tabPager,
@@ -123,12 +139,15 @@ class InputControlTest {
             components = UiComponentStyles(
                 button = baseTheme.components.button,
                 textField = baseTheme.components.textField,
-                inputControl = UiInputControlStyles(
+                checkbox = UiCheckboxStyles(
                     label = 101,
                     labelDisabled = 102,
                     control = 103,
                     controlDisabled = 104,
                 ),
+                switchControl = baseTheme.components.switchControl,
+                radioButton = baseTheme.components.radioButton,
+                slider = baseTheme.components.slider,
                 segmentedControl = baseTheme.components.segmentedControl,
                 tabPager = baseTheme.components.tabPager,
             ),
@@ -153,6 +172,81 @@ class InputControlTest {
             102,
             (elements.last { it is TextColorModifierElement } as TextColorModifierElement).color,
         )
+    }
+
+    @Test
+    fun `input controls resolve independent component domains`() {
+        val baseTheme = UiThemeDefaults.light()
+        val customTheme = UiThemeTokens(
+            colors = baseTheme.colors,
+            typography = baseTheme.typography,
+            input = baseTheme.input,
+            components = UiComponentStyles(
+                button = baseTheme.components.button,
+                textField = baseTheme.components.textField,
+                checkbox = UiCheckboxStyles(
+                    label = 201,
+                    labelDisabled = 202,
+                    control = 203,
+                    controlDisabled = 204,
+                ),
+                switchControl = UiSwitchStyles(
+                    label = 205,
+                    labelDisabled = 206,
+                    control = 207,
+                    controlDisabled = 208,
+                ),
+                radioButton = UiRadioButtonStyles(
+                    label = 209,
+                    labelDisabled = 210,
+                    control = 211,
+                    controlDisabled = 212,
+                ),
+                slider = UiSliderStyles(
+                    control = 213,
+                    controlDisabled = 214,
+                ),
+                segmentedControl = baseTheme.components.segmentedControl,
+                tabPager = baseTheme.components.tabPager,
+            ),
+        )
+
+        val tree = buildVNodeTree {
+            UiTheme(customTheme) {
+                Column {
+                    Checkbox(
+                        text = "Checkbox",
+                        checked = true,
+                        onCheckedChange = {},
+                    )
+                    Switch(
+                        text = "Switch",
+                        checked = true,
+                        onCheckedChange = {},
+                    )
+                    RadioButton(
+                        text = "Radio",
+                        checked = true,
+                        onCheckedChange = {},
+                    )
+                    Slider(
+                        value = 12,
+                        onValueChange = {},
+                    )
+                }
+            }
+        }
+
+        val root = tree.single()
+        val checkbox = root.children[0]
+        val switchControl = root.children[1]
+        val radioButton = root.children[2]
+        val slider = root.children[3]
+
+        assertEquals(203, checkbox.props.values[PropKeys.CONTROL_COLOR])
+        assertEquals(207, switchControl.props.values[PropKeys.CONTROL_COLOR])
+        assertEquals(211, radioButton.props.values[PropKeys.CONTROL_COLOR])
+        assertEquals(213, slider.props.values[PropKeys.CONTROL_COLOR])
     }
 
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {

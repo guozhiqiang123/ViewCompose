@@ -69,7 +69,10 @@ class TabPagerTest {
                 button = baseTheme.components.button,
                 textField = baseTheme.components.textField,
                 segmentedControl = baseTheme.components.segmentedControl,
-                inputControl = baseTheme.components.inputControl,
+                checkbox = baseTheme.components.checkbox,
+                switchControl = baseTheme.components.switchControl,
+                radioButton = baseTheme.components.radioButton,
+                slider = baseTheme.components.slider,
                 tabPager = UiTabPagerStyles(
                     background = 601,
                     indicator = 602,

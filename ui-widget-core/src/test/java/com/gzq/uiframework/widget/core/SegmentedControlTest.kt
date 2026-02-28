@@ -63,7 +63,10 @@ class SegmentedControlTest {
             components = UiComponentStyles(
                 button = baseTheme.components.button,
                 textField = baseTheme.components.textField,
-                inputControl = baseTheme.components.inputControl,
+                checkbox = baseTheme.components.checkbox,
+                switchControl = baseTheme.components.switchControl,
+                radioButton = baseTheme.components.radioButton,
+                slider = baseTheme.components.slider,
                 segmentedControl = UiSegmentedControlStyles(
                     background = 401,
                     backgroundDisabled = 405,
@@ -106,7 +109,10 @@ class SegmentedControlTest {
             components = UiComponentStyles(
                 button = baseTheme.components.button,
                 textField = baseTheme.components.textField,
-                inputControl = baseTheme.components.inputControl,
+                checkbox = baseTheme.components.checkbox,
+                switchControl = baseTheme.components.switchControl,
+                radioButton = baseTheme.components.radioButton,
+                slider = baseTheme.components.slider,
                 segmentedControl = UiSegmentedControlStyles(
                     background = 501,
                     backgroundDisabled = 502,
