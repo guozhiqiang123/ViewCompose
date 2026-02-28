@@ -70,31 +70,14 @@ object UiThemeDefaults {
     }
 }
 
-internal object ThemeContext {
-    private val currentThemes = ThreadLocal<List<UiThemeTokens>>()
-
-    fun <T> withTheme(
-        tokens: UiThemeTokens,
-        block: () -> T,
-    ): T {
-        val previous = currentThemes.get().orEmpty()
-        currentThemes.set(previous + tokens)
-        return try {
-            block()
-        } finally {
-            currentThemes.set(previous)
-        }
-    }
-
-    fun current(): UiThemeTokens = currentThemes.get()?.lastOrNull() ?: UiThemeDefaults.light()
-}
+private val LocalTheme = LocalValue(UiThemeDefaults::light)
 
 object Theme {
     val colors: UiColors
-        get() = ThemeContext.current().colors
+        get() = LocalContext.current(LocalTheme).colors
 
     val typography: UiTypography
-        get() = ThemeContext.current().typography
+        get() = LocalContext.current(LocalTheme).typography
 }
 
 fun UiTreeBuilder.UiTheme(
@@ -105,7 +88,7 @@ fun UiTreeBuilder.UiTheme(
     val resolvedTokens = tokens
         ?: androidContext?.let(AndroidThemeBridge::fromContext)
         ?: UiThemeDefaults.light()
-    ThemeContext.withTheme(resolvedTokens) {
+    LocalContext.provide(LocalTheme, resolvedTokens) {
         content()
     }
 }
