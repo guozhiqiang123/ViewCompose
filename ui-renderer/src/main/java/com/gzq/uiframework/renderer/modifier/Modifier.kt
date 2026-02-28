@@ -36,6 +36,10 @@ data class VisibilityModifierElement(
     val visibility: Visibility,
 ) : ModifierElement
 
+data class ClickableModifierElement(
+    val onClick: () -> Unit,
+) : ModifierElement
+
 enum class Visibility {
     Visible,
     Invisible,
@@ -80,5 +84,11 @@ fun Modifier.alpha(alpha: Float): Modifier {
 fun Modifier.visibility(visibility: Visibility): Modifier {
     return then(
         VisibilityModifierElement(visibility),
+    )
+}
+
+fun Modifier.clickable(onClick: () -> Unit): Modifier {
+    return then(
+        ClickableModifierElement(onClick),
     )
 }

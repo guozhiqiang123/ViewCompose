@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.gzq.uiframework.renderer.modifier.AlphaModifierElement
 import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
+import com.gzq.uiframework.renderer.modifier.ClickableModifierElement
 import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
 import com.gzq.uiframework.renderer.modifier.SizeModifierElement
 import com.gzq.uiframework.renderer.modifier.Visibility
@@ -195,6 +196,8 @@ object ViewTreeRenderer {
             .lastOrNull { it is AlphaModifierElement } as? AlphaModifierElement
         val backgroundColor = node.modifier.elements
             .lastOrNull { it is BackgroundColorModifierElement } as? BackgroundColorModifierElement
+        val clickable = node.modifier.elements
+            .lastOrNull { it is ClickableModifierElement } as? ClickableModifierElement
         val padding = node.modifier.elements.lastOrNull { it is PaddingModifierElement } as? PaddingModifierElement
         val visibility = node.modifier.elements
             .lastOrNull { it is VisibilityModifierElement } as? VisibilityModifierElement
@@ -205,6 +208,14 @@ object ViewTreeRenderer {
             Visibility.Invisible -> View.INVISIBLE
             Visibility.Gone -> View.GONE
         }
+        view.isClickable = clickable != null
+        view.setOnClickListener(
+            if (clickable == null) {
+                null
+            } else {
+                View.OnClickListener { clickable.onClick() }
+            },
+        )
         if (padding == null) {
             view.setPadding(0, 0, 0, 0)
             return

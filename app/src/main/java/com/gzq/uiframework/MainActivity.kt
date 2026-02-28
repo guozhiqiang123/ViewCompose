@@ -12,6 +12,7 @@ import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.modifier.Visibility
 import com.gzq.uiframework.renderer.modifier.alpha
 import com.gzq.uiframework.renderer.modifier.backgroundColor
+import com.gzq.uiframework.renderer.modifier.clickable
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.renderer.modifier.size
 import com.gzq.uiframework.renderer.modifier.visibility
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity() {
             debugTag = "UIFrameworkSample",
         ) {
             val clickCountState = remember { mutableStateOf(0) }
+            val textToggleState = remember { mutableStateOf(false) }
             val clickSummaryState = remember {
                 derivedStateOf {
                     val clickCount = clickCountState.value
@@ -79,6 +81,18 @@ class MainActivity : AppCompatActivity() {
                 )
                 Text(
                     text = "Declarative UI on Android Views",
+                    modifier = Modifier.Empty
+                        .clickable {
+                            textToggleState.value = !textToggleState.value
+                        }
+                        .padding(8),
+                )
+                Text(
+                    text = if (textToggleState.value) {
+                        "Text modifier click: ON"
+                    } else {
+                        "Text modifier click: OFF"
+                    },
                     modifier = Modifier.Empty.padding(8),
                 )
                 Text(text = "Clicks: ${clickCountState.value}")
