@@ -6,6 +6,10 @@
 
 这份文档是后续主题相关实现的基线。若实现需要偏离本文档，必须先更新本文档再继续开发。
 
+补充专题：
+
+- 主题公共属性单独覆盖规划见 [THEME_OVERRIDES.md](/Users/gzq/AndroidStudioProjects/UIFramework/THEME_OVERRIDES.md)
+
 当前实现状态：
 
 - `Phase 1` 已完成
