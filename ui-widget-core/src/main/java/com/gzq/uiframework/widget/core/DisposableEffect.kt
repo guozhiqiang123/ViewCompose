@@ -103,8 +103,9 @@ fun DisposableEffect(
     vararg keys: Any?,
     effect: () -> (() -> Unit),
 ) {
+    val scopedKeys = GroupKeyContext.current() + keys.toList()
     EffectContext.currentStore()?.register(
-        keys = keys.toList(),
+        keys = scopedKeys,
         effect = effect,
     )
 }

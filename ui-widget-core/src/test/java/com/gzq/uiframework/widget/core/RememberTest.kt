@@ -81,4 +81,23 @@ class RememberTest {
 
         assertNotSame(first, second)
     }
+
+    @Test
+    fun `key scope prevents conditional remember slot from leaking into sibling`() {
+        val store = RememberStore()
+        lateinit var alwaysWhenBranchShown: Any
+        lateinit var alwaysWhenBranchHidden: Any
+
+        RememberContext.withStore(store) {
+            key("conditional-branch") {
+                remember { Any() }
+            }
+            alwaysWhenBranchShown = remember { Any() }
+        }
+        RememberContext.withStore(store) {
+            alwaysWhenBranchHidden = remember { Any() }
+        }
+
+        assertNotSame(alwaysWhenBranchShown, alwaysWhenBranchHidden)
+    }
 }

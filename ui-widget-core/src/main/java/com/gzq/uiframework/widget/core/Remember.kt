@@ -70,8 +70,9 @@ fun <T> remember(
     calculation: () -> T,
 ): T {
     val store = RememberContext.currentStore() ?: return calculation()
+    val scopedKeys = GroupKeyContext.current() + keys.toList()
     return store.remember(
-        keys = keys.toList(),
+        keys = scopedKeys,
         calculation = calculation,
     )
 }

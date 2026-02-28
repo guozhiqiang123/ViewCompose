@@ -105,6 +105,40 @@ class DisposableEffectTest {
         )
     }
 
+    @Test
+    fun `key scope contributes to effect identity`() {
+        val store = EffectStore()
+        val events = mutableListOf<String>()
+
+        EffectContext.withStore(store) {
+            key("branch-A") {
+                DisposableEffect {
+                    events += "start:A"
+                    {
+                        events += "dispose:A"
+                    }
+                }
+            }
+        }
+        store.commit()
+        EffectContext.withStore(store) {
+            key("branch-B") {
+                DisposableEffect {
+                    events += "start:B"
+                    {
+                        events += "dispose:B"
+                    }
+                }
+            }
+        }
+        store.commit()
+
+        assertEquals(
+            listOf("start:A", "dispose:A", "start:B"),
+            events,
+        )
+    }
+
     private fun renderEffect(
         store: EffectStore,
         key: String,
