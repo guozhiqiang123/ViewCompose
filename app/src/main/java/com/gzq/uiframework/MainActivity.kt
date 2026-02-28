@@ -154,7 +154,7 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
                 Row(
-                    arrangement = MainAxisArrangement.SpaceBetween,
+                    arrangement = MainAxisArrangement.SpaceEvenly,
                     spacing = 12,
                     verticalAlignment = VerticalAlignment.Center,
                     modifier = Modifier.Empty
@@ -228,7 +228,7 @@ class MainActivity : AppCompatActivity() {
                     key("transient-panel") {
                         val panelTapState = remember { mutableStateOf(0) }
                         Column(
-                            arrangement = MainAxisArrangement.Center,
+                            arrangement = MainAxisArrangement.SpaceAround,
                             horizontalAlignment = HorizontalAlignment.Center,
                             spacing = 4,
                             modifier = Modifier.Empty

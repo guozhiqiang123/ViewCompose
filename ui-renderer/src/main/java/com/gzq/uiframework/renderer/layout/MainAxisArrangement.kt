@@ -5,4 +5,6 @@ enum class MainAxisArrangement {
     Center,
     End,
     SpaceBetween,
+    SpaceAround,
+    SpaceEvenly,
 }

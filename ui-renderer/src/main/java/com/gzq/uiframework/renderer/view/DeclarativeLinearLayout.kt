@@ -61,21 +61,11 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
         val baseSpacing = if (children.size > 1) itemSpacing * (children.size - 1) else 0
         val consumedWidth = totalChildrenWidth + baseSpacing
         val extraSpace = max(0, innerWidth - consumedWidth)
-        val gap = when {
-            children.size <= 1 -> itemSpacing
-            mainAxisArrangement == MainAxisArrangement.SpaceBetween -> {
-                itemSpacing + extraSpace / (children.size - 1)
-            }
-            else -> itemSpacing
-        }
-        var currentLeft = paddingLeft + when (mainAxisArrangement) {
-            MainAxisArrangement.Start,
-            MainAxisArrangement.SpaceBetween,
-            -> 0
-
-            MainAxisArrangement.Center -> extraSpace / 2
-            MainAxisArrangement.End -> extraSpace
-        }
+        val arrangement = resolveArrangementMetrics(
+            extraSpace = extraSpace,
+            childCount = children.size,
+        )
+        var currentLeft = paddingLeft + arrangement.leadingSpace
         children.forEachIndexed { index, child ->
             val params = child.layoutParams as MarginLayoutParams
             currentLeft += params.leftMargin
@@ -89,7 +79,7 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
             child.layout(currentLeft, childTop, childRight, childBottom)
             currentLeft = childRight + params.rightMargin
             if (index != children.lastIndex) {
-                currentLeft += gap
+                currentLeft += arrangement.gap
             }
         }
     }
@@ -106,21 +96,11 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
         val baseSpacing = if (children.size > 1) itemSpacing * (children.size - 1) else 0
         val consumedHeight = totalChildrenHeight + baseSpacing
         val extraSpace = max(0, innerHeight - consumedHeight)
-        val gap = when {
-            children.size <= 1 -> itemSpacing
-            mainAxisArrangement == MainAxisArrangement.SpaceBetween -> {
-                itemSpacing + extraSpace / (children.size - 1)
-            }
-            else -> itemSpacing
-        }
-        var currentTop = paddingTop + when (mainAxisArrangement) {
-            MainAxisArrangement.Start,
-            MainAxisArrangement.SpaceBetween,
-            -> 0
-
-            MainAxisArrangement.Center -> extraSpace / 2
-            MainAxisArrangement.End -> extraSpace
-        }
+        val arrangement = resolveArrangementMetrics(
+            extraSpace = extraSpace,
+            childCount = children.size,
+        )
+        var currentTop = paddingTop + arrangement.leadingSpace
         children.forEachIndexed { index, child ->
             val params = child.layoutParams as MarginLayoutParams
             currentTop += params.topMargin
@@ -134,7 +114,60 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
             child.layout(childLeft, currentTop, childRight, childBottom)
             currentTop = childBottom + params.bottomMargin
             if (index != children.lastIndex) {
-                currentTop += gap
+                currentTop += arrangement.gap
+            }
+        }
+    }
+
+    private fun resolveArrangementMetrics(
+        extraSpace: Int,
+        childCount: Int,
+    ): ArrangementMetrics {
+        if (childCount <= 1) {
+            return ArrangementMetrics(
+                leadingSpace = when (mainAxisArrangement) {
+                    MainAxisArrangement.Center -> extraSpace / 2
+                    MainAxisArrangement.End -> extraSpace
+                    MainAxisArrangement.SpaceAround,
+                    MainAxisArrangement.SpaceEvenly,
+                    -> extraSpace / 2
+                    MainAxisArrangement.Start,
+                    MainAxisArrangement.SpaceBetween,
+                    -> 0
+                },
+                gap = itemSpacing,
+            )
+        }
+        return when (mainAxisArrangement) {
+            MainAxisArrangement.Start -> ArrangementMetrics(
+                leadingSpace = 0,
+                gap = itemSpacing,
+            )
+            MainAxisArrangement.Center -> ArrangementMetrics(
+                leadingSpace = extraSpace / 2,
+                gap = itemSpacing,
+            )
+            MainAxisArrangement.End -> ArrangementMetrics(
+                leadingSpace = extraSpace,
+                gap = itemSpacing,
+            )
+            MainAxisArrangement.SpaceBetween -> ArrangementMetrics(
+                leadingSpace = 0,
+                gap = itemSpacing + extraSpace / (childCount - 1),
+            )
+            MainAxisArrangement.SpaceAround -> {
+                val unit = extraSpace / (childCount * 2)
+                ArrangementMetrics(
+                    leadingSpace = unit,
+                    gap = itemSpacing + unit * 2,
+                )
+            }
+            MainAxisArrangement.SpaceEvenly -> {
+                val unit = extraSpace / (childCount + 1)
+                ArrangementMetrics(
+                    leadingSpace = unit,
+                    gap = itemSpacing + unit,
+                )
             }
         }
     }
@@ -206,4 +239,9 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
 
         override fun getIntrinsicHeight(): Int = height
     }
+
+    private data class ArrangementMetrics(
+        val leadingSpace: Int,
+        val gap: Int,
+    )
 }
