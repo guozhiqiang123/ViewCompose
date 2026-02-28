@@ -3,6 +3,10 @@ package com.gzq.uiframework.renderer.node
 sealed interface NodeType {
     data object Text : NodeType
     data object TextField : NodeType
+    data object Checkbox : NodeType
+    data object Switch : NodeType
+    data object RadioButton : NodeType
+    data object Slider : NodeType
     data object Button : NodeType
     data object Row : NodeType
     data object Column : NodeType

@@ -91,6 +91,112 @@ fun UiTreeBuilder.PasswordField(
     )
 }
 
+fun UiTreeBuilder.Checkbox(
+    text: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    enabled: Boolean = true,
+    style: UiTextStyle = InputControlDefaults.labelStyle(),
+    key: Any? = null,
+    modifier: Modifier = Modifier.Empty,
+) {
+    emit(
+        type = NodeType.Checkbox,
+        key = key,
+        props = Props(
+            values = mapOf(
+                PropKeys.TEXT to text,
+                PropKeys.CHECKED to checked,
+                PropKeys.ON_CHECKED_CHANGE to onCheckedChange,
+                PropKeys.ENABLED to enabled,
+            ),
+        ),
+        modifier = Modifier.Empty
+            .textColor(InputControlDefaults.labelColor())
+            .textSize(style.fontSizeSp)
+            .then(modifier),
+    )
+}
+
+fun UiTreeBuilder.Switch(
+    text: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    enabled: Boolean = true,
+    style: UiTextStyle = InputControlDefaults.labelStyle(),
+    key: Any? = null,
+    modifier: Modifier = Modifier.Empty,
+) {
+    emit(
+        type = NodeType.Switch,
+        key = key,
+        props = Props(
+            values = mapOf(
+                PropKeys.TEXT to text,
+                PropKeys.CHECKED to checked,
+                PropKeys.ON_CHECKED_CHANGE to onCheckedChange,
+                PropKeys.ENABLED to enabled,
+            ),
+        ),
+        modifier = Modifier.Empty
+            .textColor(InputControlDefaults.labelColor())
+            .textSize(style.fontSizeSp)
+            .then(modifier),
+    )
+}
+
+fun UiTreeBuilder.RadioButton(
+    text: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    enabled: Boolean = true,
+    style: UiTextStyle = InputControlDefaults.labelStyle(),
+    key: Any? = null,
+    modifier: Modifier = Modifier.Empty,
+) {
+    emit(
+        type = NodeType.RadioButton,
+        key = key,
+        props = Props(
+            values = mapOf(
+                PropKeys.TEXT to text,
+                PropKeys.CHECKED to checked,
+                PropKeys.ON_CHECKED_CHANGE to onCheckedChange,
+                PropKeys.ENABLED to enabled,
+            ),
+        ),
+        modifier = Modifier.Empty
+            .textColor(InputControlDefaults.labelColor())
+            .textSize(style.fontSizeSp)
+            .then(modifier),
+    )
+}
+
+fun UiTreeBuilder.Slider(
+    value: Int,
+    onValueChange: (Int) -> Unit,
+    min: Int = 0,
+    max: Int = 100,
+    enabled: Boolean = true,
+    key: Any? = null,
+    modifier: Modifier = Modifier.Empty,
+) {
+    emit(
+        type = NodeType.Slider,
+        key = key,
+        props = Props(
+            values = mapOf(
+                PropKeys.SLIDER_VALUE to value,
+                PropKeys.MIN_VALUE to min,
+                PropKeys.MAX_VALUE to max,
+                PropKeys.ENABLED to enabled,
+                PropKeys.ON_SLIDER_VALUE_CHANGE to onValueChange,
+            ),
+        ),
+        modifier = modifier,
+    )
+}
+
 fun UiTreeBuilder.EmailField(
     value: String,
     onValueChange: (String) -> Unit,

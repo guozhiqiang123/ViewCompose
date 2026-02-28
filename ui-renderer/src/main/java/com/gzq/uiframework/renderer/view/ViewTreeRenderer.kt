@@ -10,9 +10,14 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CheckBox
+import android.widget.CompoundButton
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.RadioButton
+import android.widget.SeekBar
+import android.widget.Switch
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -156,6 +161,10 @@ object ViewTreeRenderer {
         val view = when (node.type) {
             NodeType.Text -> TextView(context)
             NodeType.TextField -> EditText(context)
+            NodeType.Checkbox -> CheckBox(context)
+            NodeType.Switch -> Switch(context)
+            NodeType.RadioButton -> RadioButton(context)
+            NodeType.Slider -> SeekBar(context)
             NodeType.Button -> Button(context)
             NodeType.Row -> DeclarativeLinearLayout(context).apply {
                 orientation = LinearLayout.HORIZONTAL
@@ -204,6 +213,22 @@ object ViewTreeRenderer {
 
             NodeType.TextField -> {
                 bindTextField(view as EditText, node)
+            }
+
+            NodeType.Checkbox -> {
+                bindCompoundButton(view as CheckBox, node)
+            }
+
+            NodeType.Switch -> {
+                bindCompoundButton(view as Switch, node)
+            }
+
+            NodeType.RadioButton -> {
+                bindCompoundButton(view as RadioButton, node)
+            }
+
+            NodeType.Slider -> {
+                bindSlider(view as SeekBar, node)
             }
 
             NodeType.Button -> {
@@ -410,6 +435,45 @@ object ViewTreeRenderer {
         view.setTag(R.id.ui_framework_text_watcher, watcher)
     }
 
+    private fun bindCompoundButton(view: CompoundButton, node: VNode) {
+        view.setOnCheckedChangeListener(null)
+        view.text = node.props.values[PropKeys.TEXT] as? CharSequence
+        view.isEnabled = readEnabled(node)
+        view.isChecked = readChecked(node)
+        view.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked != readChecked(node)) {
+                readOnCheckedChange(node)?.invoke(isChecked)
+            }
+        }
+    }
+
+    private fun bindSlider(view: SeekBar, node: VNode) {
+        val min = readMinValue(node)
+        val max = readMaxValue(node)
+        val value = readSliderValue(node).coerceIn(min, max)
+        val listener = view.getTag(R.id.ui_framework_seek_listener) as? SeekBar.OnSeekBarChangeListener
+        if (listener != null) {
+            view.setOnSeekBarChangeListener(null)
+        }
+        view.max = (max - min).coerceAtLeast(0)
+        view.progress = value - min
+        view.isEnabled = readEnabled(node)
+        val nextListener = object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val resolvedValue = min + progress
+                if (fromUser && resolvedValue != readSliderValue(node)) {
+                    readOnSliderValueChange(node)?.invoke(resolvedValue)
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
+        }
+        view.setOnSeekBarChangeListener(nextListener)
+        view.setTag(R.id.ui_framework_seek_listener, nextListener)
+    }
+
     private fun resolveInputType(type: TextFieldType, singleLine: Boolean): Int {
         val baseType = when (type) {
             TextFieldType.Text -> InputType.TYPE_CLASS_TEXT
@@ -442,6 +506,9 @@ object ViewTreeRenderer {
         val defaultWidth = when (node.type) {
             NodeType.Text,
             NodeType.TextField,
+            NodeType.Checkbox,
+            NodeType.Switch,
+            NodeType.RadioButton,
             NodeType.Button,
             -> ViewGroup.LayoutParams.WRAP_CONTENT
 
@@ -534,6 +601,16 @@ object ViewTreeRenderer {
     }
 
     @Suppress("UNCHECKED_CAST")
+    private fun readOnCheckedChange(node: VNode): ((Boolean) -> Unit)? {
+        return node.props.values[PropKeys.ON_CHECKED_CHANGE] as? ((Boolean) -> Unit)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun readOnSliderValueChange(node: VNode): ((Int) -> Unit)? {
+        return node.props.values[PropKeys.ON_SLIDER_VALUE_CHANGE] as? ((Int) -> Unit)
+    }
+
+    @Suppress("UNCHECKED_CAST")
     private fun readViewFactory(node: VNode): ((Context) -> View)? {
         return node.props.values[PropKeys.VIEW_FACTORY] as? ((Context) -> View)
     }
@@ -617,6 +694,14 @@ object ViewTreeRenderer {
         return node.props.values[PropKeys.DIVIDER_THICKNESS] as? Int ?: 1
     }
 
+    private fun readChecked(node: VNode): Boolean {
+        return node.props.values[PropKeys.CHECKED] as? Boolean ?: false
+    }
+
+    private fun readEnabled(node: VNode): Boolean {
+        return node.props.values[PropKeys.ENABLED] as? Boolean ?: true
+    }
+
     private fun readFieldValue(node: VNode): String {
         return node.props.values[PropKeys.VALUE] as? String ?: ""
     }
@@ -635,6 +720,18 @@ object ViewTreeRenderer {
 
     private fun readFieldHintColor(node: VNode): Int {
         return node.props.values[PropKeys.HINT_TEXT_COLOR] as? Int ?: 0xFF888888.toInt()
+    }
+
+    private fun readSliderValue(node: VNode): Int {
+        return node.props.values[PropKeys.SLIDER_VALUE] as? Int ?: 0
+    }
+
+    private fun readMinValue(node: VNode): Int {
+        return node.props.values[PropKeys.MIN_VALUE] as? Int ?: 0
+    }
+
+    private fun readMaxValue(node: VNode): Int {
+        return node.props.values[PropKeys.MAX_VALUE] as? Int ?: 100
     }
 
     private fun disposeMountedNode(

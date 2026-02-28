@@ -39,12 +39,16 @@ import com.gzq.uiframework.widget.core.Divider
 import com.gzq.uiframework.widget.core.EmailField
 import com.gzq.uiframework.widget.core.Environment
 import com.gzq.uiframework.widget.core.FlexibleSpacer
+import com.gzq.uiframework.widget.core.Checkbox
 import com.gzq.uiframework.widget.core.LazyColumn
 import com.gzq.uiframework.widget.core.NumberField
 import com.gzq.uiframework.widget.core.PasswordField
+import com.gzq.uiframework.widget.core.RadioButton
 import com.gzq.uiframework.widget.core.Row
 import com.gzq.uiframework.widget.core.SideEffect
+import com.gzq.uiframework.widget.core.Slider
 import com.gzq.uiframework.widget.core.SurfaceDefaults
+import com.gzq.uiframework.widget.core.Switch
 import com.gzq.uiframework.widget.core.TabPager
 import com.gzq.uiframework.widget.core.Text
 import com.gzq.uiframework.widget.core.TextArea
@@ -333,6 +337,10 @@ private fun UiTreeBuilder.InputPage() {
     val passwordState = remember { mutableStateOf("") }
     val ageState = remember { mutableStateOf("3") }
     val bioState = remember { mutableStateOf("Built on virtual nodes, keyed diff, and Android View interop.") }
+    val notificationsEnabledState = remember { mutableStateOf(true) }
+    val analyticsEnabledState = remember { mutableStateOf(false) }
+    val selectedTierState = remember { mutableStateOf("Alpha") }
+    val intensityState = remember { mutableStateOf(32) }
     val summaryState = remember {
         derivedStateOf {
             "Preview: ${nameState.value.ifBlank { "Anonymous" }} · " +
@@ -342,7 +350,7 @@ private fun UiTreeBuilder.InputPage() {
     }
 
     LazyColumn(
-        items = listOf("intro", "form", "summary"),
+        items = listOf("intro", "form", "controls", "summary"),
         key = { it },
         modifier = Modifier.Empty.fillMaxSize(),
     ) { section ->
@@ -415,11 +423,67 @@ private fun UiTreeBuilder.InputPage() {
                 )
             }
 
+            "controls" -> DemoSection(
+                title = "Selection + Slider Controls",
+                subtitle = "Checkbox, switch, radio button, and slider now live in the same declarative input family.",
+            ) {
+                Checkbox(
+                    text = "Notifications",
+                    checked = notificationsEnabledState.value,
+                    onCheckedChange = { notificationsEnabledState.value = it },
+                    modifier = Modifier.Empty.margin(bottom = 8.dp),
+                )
+                Switch(
+                    text = "Analytics",
+                    checked = analyticsEnabledState.value,
+                    onCheckedChange = { analyticsEnabledState.value = it },
+                    modifier = Modifier.Empty.margin(bottom = 8.dp),
+                )
+                RadioButton(
+                    text = "Alpha tier",
+                    checked = selectedTierState.value == "Alpha",
+                    onCheckedChange = { checked ->
+                        if (checked) {
+                            selectedTierState.value = "Alpha"
+                        }
+                    },
+                    modifier = Modifier.Empty.margin(bottom = 8.dp),
+                )
+                RadioButton(
+                    text = "Beta tier",
+                    checked = selectedTierState.value == "Beta",
+                    onCheckedChange = { checked ->
+                        if (checked) {
+                            selectedTierState.value = "Beta"
+                        }
+                    },
+                    modifier = Modifier.Empty.margin(bottom = 8.dp),
+                )
+                Text(
+                    text = "Intensity: ${intensityState.value}",
+                    modifier = Modifier.Empty.padding(bottom = 6.dp),
+                )
+                Slider(
+                    value = intensityState.value,
+                    min = 0,
+                    max = 100,
+                    onValueChange = { intensityState.value = it },
+                    modifier = Modifier.Empty.fillMaxWidth(),
+                )
+            }
+
             else -> DemoSection(
                 title = "Derived Summary",
                 subtitle = "This section is driven by `derivedStateOf`, not duplicated imperative updates.",
             ) {
                 Text(text = summaryState.value)
+                Text(
+                    text = "Notifications=${notificationsEnabledState.value}, " +
+                        "Analytics=${analyticsEnabledState.value}, " +
+                        "Tier=${selectedTierState.value}, " +
+                        "Intensity=${intensityState.value}",
+                    style = UiTextStyle(fontSizeSp = 13.sp),
+                )
                 Text(
                     text = bioState.value,
                     style = UiTextStyle(fontSizeSp = 13.sp),
