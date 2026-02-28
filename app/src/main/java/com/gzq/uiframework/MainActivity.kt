@@ -390,6 +390,7 @@ private fun UiTreeBuilder.InputPage() {
                     value = passwordState.value,
                     onValueChange = { passwordState.value = it },
                     hint = "Password",
+                    isError = passwordState.value.isBlank(),
                     modifier = Modifier.Empty
                         .fillMaxWidth()
                         .margin(bottom = 12.dp),
@@ -398,6 +399,15 @@ private fun UiTreeBuilder.InputPage() {
                     value = ageState.value,
                     onValueChange = { ageState.value = it },
                     hint = "Version age",
+                    modifier = Modifier.Empty
+                        .fillMaxWidth()
+                        .margin(bottom = 12.dp),
+                )
+                EmailField(
+                    value = "disabled@uiframework.dev",
+                    onValueChange = {},
+                    hint = "Disabled email",
+                    enabled = false,
                     modifier = Modifier.Empty
                         .fillMaxWidth()
                         .margin(bottom = 12.dp),

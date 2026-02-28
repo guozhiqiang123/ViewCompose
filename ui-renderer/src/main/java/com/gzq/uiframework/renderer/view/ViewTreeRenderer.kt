@@ -1,6 +1,7 @@
 package com.gzq.uiframework.renderer.view
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.InputType
@@ -395,6 +396,7 @@ object ViewTreeRenderer {
             view.setSelection(value.length)
         }
         view.hint = readFieldHint(node)
+        view.isEnabled = readEnabled(node)
         view.isSingleLine = readFieldSingleLine(node)
         view.inputType = resolveInputType(
             type = readFieldType(node),
@@ -440,6 +442,12 @@ object ViewTreeRenderer {
         view.text = node.props.values[PropKeys.TEXT] as? CharSequence
         view.isEnabled = readEnabled(node)
         view.isChecked = readChecked(node)
+        val tint = ColorStateList.valueOf(readControlColor(node))
+        view.buttonTintList = tint
+        if (view is Switch) {
+            view.thumbTintList = tint
+            view.trackTintList = tint
+        }
         view.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked != readChecked(node)) {
                 readOnCheckedChange(node)?.invoke(isChecked)
@@ -458,6 +466,9 @@ object ViewTreeRenderer {
         view.max = (max - min).coerceAtLeast(0)
         view.progress = value - min
         view.isEnabled = readEnabled(node)
+        val tint = ColorStateList.valueOf(readControlColor(node))
+        view.progressTintList = tint
+        view.thumbTintList = tint
         val nextListener = object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 val resolvedValue = min + progress
@@ -700,6 +711,10 @@ object ViewTreeRenderer {
 
     private fun readEnabled(node: VNode): Boolean {
         return node.props.values[PropKeys.ENABLED] as? Boolean ?: true
+    }
+
+    private fun readControlColor(node: VNode): Int {
+        return node.props.values[PropKeys.CONTROL_COLOR] as? Int ?: 0xFF000000.toInt()
     }
 
     private fun readFieldValue(node: VNode): String {

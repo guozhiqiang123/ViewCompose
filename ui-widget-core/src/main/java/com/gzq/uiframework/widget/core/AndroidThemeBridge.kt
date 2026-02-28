@@ -29,6 +29,22 @@ internal object ThemeTokenMapper {
                 textSecondary = readColor(android.R.attr.textColorSecondary) ?: fallback.textSecondary,
             ),
             typography = UiThemeDefaults.light().typography,
+            input = UiInputColors(
+                fieldContainer = readColor(com.google.android.material.R.attr.colorSurfaceContainerLow)
+                    ?: fallback.surface,
+                fieldContainerDisabled = readColor(com.google.android.material.R.attr.colorSurfaceVariant)
+                    ?: fallback.surfaceVariant,
+                fieldError = readColor(android.R.attr.colorError)
+                    ?: UiInputDefaults.fromColors(fallback).fieldError,
+                fieldText = readColor(android.R.attr.textColorPrimary) ?: fallback.textPrimary,
+                fieldTextDisabled = readColor(android.R.attr.textColorSecondary) ?: fallback.textSecondary,
+                fieldHint = readColor(android.R.attr.textColorHint) ?: fallback.textSecondary,
+                fieldHintDisabled = readColor(com.google.android.material.R.attr.colorOutline)
+                    ?: fallback.divider,
+                control = readColor(androidx.appcompat.R.attr.colorPrimary) ?: fallback.primary,
+                controlDisabled = readColor(com.google.android.material.R.attr.colorOutline)
+                    ?: fallback.divider,
+            ),
         )
     }
 }

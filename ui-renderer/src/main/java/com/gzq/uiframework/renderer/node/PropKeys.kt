@@ -5,6 +5,8 @@ object PropKeys {
     const val VALUE: String = "value"
     const val CHECKED: String = "checked"
     const val ENABLED: String = "enabled"
+    const val IS_ERROR: String = "is_error"
+    const val CONTROL_COLOR: String = "control_color"
     const val ON_CLICK: String = "on_click"
     const val ON_VALUE_CHANGE: String = "on_value_change"
     const val ON_CHECKED_CHANGE: String = "on_checked_change"

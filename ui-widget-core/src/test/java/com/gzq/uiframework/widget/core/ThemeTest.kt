@@ -209,6 +209,56 @@ class ThemeTest {
         assertEquals(customTheme.colors.divider, divider)
     }
 
+    @Test
+    fun `input defaults reflect current theme`() {
+        val customTheme = UiThemeTokens(
+            colors = UiColors(
+                background = 1,
+                surface = 22,
+                surfaceVariant = 33,
+                primary = 44,
+                accent = 55,
+                divider = 66,
+                textPrimary = 77,
+                textSecondary = 88,
+            ),
+            typography = UiTypography(
+                title = UiTextStyle(fontSizeSp = 31),
+                body = UiTextStyle(fontSizeSp = 19),
+                label = UiTextStyle(fontSizeSp = 13),
+            ),
+            input = UiInputColors(
+                fieldContainer = 101,
+                fieldContainerDisabled = 102,
+                fieldError = 103,
+                fieldText = 104,
+                fieldTextDisabled = 105,
+                fieldHint = 106,
+                fieldHintDisabled = 107,
+                control = 108,
+                controlDisabled = 109,
+            ),
+        )
+        var container = 0
+        var disabledContainer = 0
+        var errorColor = 0
+        var controlColor = 0
+
+        buildVNodeTree {
+            UiTheme(customTheme) {
+                container = TextFieldDefaults.containerColor()
+                disabledContainer = TextFieldDefaults.containerColor(enabled = false)
+                errorColor = TextFieldDefaults.hintColor(isError = true)
+                controlColor = InputControlDefaults.controlColor()
+            }
+        }
+
+        assertEquals(101, container)
+        assertEquals(102, disabledContainer)
+        assertEquals(103, errorColor)
+        assertEquals(108, controlColor)
+    }
+
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {
         val field = javaClass.getDeclaredField("elements")
         field.isAccessible = true

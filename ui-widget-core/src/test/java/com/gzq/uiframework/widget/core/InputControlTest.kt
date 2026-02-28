@@ -45,6 +45,7 @@ class InputControlTest {
         assertEquals("Enable logs", node.props.values[PropKeys.TEXT])
         assertEquals(true, node.props.values[PropKeys.CHECKED])
         assertEquals(true, node.props.values[PropKeys.ENABLED])
+        assertEquals(customTheme.input.control, node.props.values[PropKeys.CONTROL_COLOR])
         assertEquals(
             customTheme.colors.textPrimary,
             (elements.last { it is TextColorModifierElement } as TextColorModifierElement).color,

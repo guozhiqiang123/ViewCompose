@@ -1,5 +1,6 @@
 package com.gzq.uiframework.widget.core
 
+import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
 import com.gzq.uiframework.renderer.modifier.TextColorModifierElement
 import com.gzq.uiframework.renderer.modifier.TextSizeModifierElement
 import com.gzq.uiframework.renderer.node.NodeType
@@ -56,6 +57,11 @@ class TextFieldTest {
             customTheme.typography.body.fontSizeSp,
             (elements.last { it is TextSizeModifierElement } as TextSizeModifierElement).sizeSp,
         )
+        assertEquals(
+            customTheme.input.fieldContainer,
+            (elements.last { it is BackgroundColorModifierElement } as BackgroundColorModifierElement).color,
+        )
+        assertEquals(true, node.props.values[PropKeys.ENABLED])
     }
 
     @Test

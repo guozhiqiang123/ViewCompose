@@ -47,6 +47,8 @@ fun UiTreeBuilder.TextField(
     hint: String = "",
     singleLine: Boolean = true,
     type: TextFieldType = TextFieldType.Text,
+    enabled: Boolean = true,
+    isError: Boolean = false,
     style: UiTextStyle = TextFieldDefaults.textStyle(),
     key: Any? = null,
     modifier: Modifier = Modifier.Empty,
@@ -61,11 +63,22 @@ fun UiTreeBuilder.TextField(
                 PropKeys.HINT to hint,
                 PropKeys.SINGLE_LINE to singleLine,
                 PropKeys.TEXT_FIELD_TYPE to type,
-                PropKeys.HINT_TEXT_COLOR to TextFieldDefaults.hintColor(),
+                PropKeys.ENABLED to enabled,
+                PropKeys.IS_ERROR to isError,
+                PropKeys.HINT_TEXT_COLOR to TextFieldDefaults.hintColor(
+                    enabled = enabled,
+                    isError = isError,
+                ),
             ),
         ),
         modifier = Modifier.Empty
-            .textColor(TextFieldDefaults.textColor())
+            .backgroundColor(
+                TextFieldDefaults.containerColor(
+                    enabled = enabled,
+                    isError = isError,
+                ),
+            )
+            .textColor(TextFieldDefaults.textColor(enabled))
             .textSize(style.fontSizeSp)
             .then(modifier),
     )
@@ -75,6 +88,8 @@ fun UiTreeBuilder.PasswordField(
     value: String,
     onValueChange: (String) -> Unit,
     hint: String = "",
+    enabled: Boolean = true,
+    isError: Boolean = false,
     style: UiTextStyle = TextFieldDefaults.textStyle(),
     key: Any? = null,
     modifier: Modifier = Modifier.Empty,
@@ -85,6 +100,8 @@ fun UiTreeBuilder.PasswordField(
         hint = hint,
         singleLine = true,
         type = TextFieldType.Password,
+        enabled = enabled,
+        isError = isError,
         style = style,
         key = key,
         modifier = modifier,
@@ -109,10 +126,11 @@ fun UiTreeBuilder.Checkbox(
                 PropKeys.CHECKED to checked,
                 PropKeys.ON_CHECKED_CHANGE to onCheckedChange,
                 PropKeys.ENABLED to enabled,
+                PropKeys.CONTROL_COLOR to InputControlDefaults.controlColor(enabled),
             ),
         ),
         modifier = Modifier.Empty
-            .textColor(InputControlDefaults.labelColor())
+            .textColor(InputControlDefaults.labelColor(enabled))
             .textSize(style.fontSizeSp)
             .then(modifier),
     )
@@ -136,10 +154,11 @@ fun UiTreeBuilder.Switch(
                 PropKeys.CHECKED to checked,
                 PropKeys.ON_CHECKED_CHANGE to onCheckedChange,
                 PropKeys.ENABLED to enabled,
+                PropKeys.CONTROL_COLOR to InputControlDefaults.controlColor(enabled),
             ),
         ),
         modifier = Modifier.Empty
-            .textColor(InputControlDefaults.labelColor())
+            .textColor(InputControlDefaults.labelColor(enabled))
             .textSize(style.fontSizeSp)
             .then(modifier),
     )
@@ -163,10 +182,11 @@ fun UiTreeBuilder.RadioButton(
                 PropKeys.CHECKED to checked,
                 PropKeys.ON_CHECKED_CHANGE to onCheckedChange,
                 PropKeys.ENABLED to enabled,
+                PropKeys.CONTROL_COLOR to InputControlDefaults.controlColor(enabled),
             ),
         ),
         modifier = Modifier.Empty
-            .textColor(InputControlDefaults.labelColor())
+            .textColor(InputControlDefaults.labelColor(enabled))
             .textSize(style.fontSizeSp)
             .then(modifier),
     )
@@ -190,6 +210,7 @@ fun UiTreeBuilder.Slider(
                 PropKeys.MIN_VALUE to min,
                 PropKeys.MAX_VALUE to max,
                 PropKeys.ENABLED to enabled,
+                PropKeys.CONTROL_COLOR to InputControlDefaults.controlColor(enabled),
                 PropKeys.ON_SLIDER_VALUE_CHANGE to onValueChange,
             ),
         ),
@@ -201,6 +222,7 @@ fun UiTreeBuilder.EmailField(
     value: String,
     onValueChange: (String) -> Unit,
     hint: String = "",
+    enabled: Boolean = true,
     style: UiTextStyle = TextFieldDefaults.textStyle(),
     key: Any? = null,
     modifier: Modifier = Modifier.Empty,
@@ -211,6 +233,7 @@ fun UiTreeBuilder.EmailField(
         hint = hint,
         singleLine = true,
         type = TextFieldType.Email,
+        enabled = enabled,
         style = style,
         key = key,
         modifier = modifier,
@@ -221,6 +244,7 @@ fun UiTreeBuilder.NumberField(
     value: String,
     onValueChange: (String) -> Unit,
     hint: String = "",
+    enabled: Boolean = true,
     style: UiTextStyle = TextFieldDefaults.textStyle(),
     key: Any? = null,
     modifier: Modifier = Modifier.Empty,
@@ -231,6 +255,7 @@ fun UiTreeBuilder.NumberField(
         hint = hint,
         singleLine = true,
         type = TextFieldType.Number,
+        enabled = enabled,
         style = style,
         key = key,
         modifier = modifier,
@@ -241,6 +266,8 @@ fun UiTreeBuilder.TextArea(
     value: String,
     onValueChange: (String) -> Unit,
     hint: String = "",
+    enabled: Boolean = true,
+    isError: Boolean = false,
     style: UiTextStyle = TextFieldDefaults.textStyle(),
     key: Any? = null,
     modifier: Modifier = Modifier.Empty,
@@ -251,6 +278,8 @@ fun UiTreeBuilder.TextArea(
         hint = hint,
         singleLine = false,
         type = TextFieldType.Text,
+        enabled = enabled,
+        isError = isError,
         style = style,
         key = key,
         modifier = modifier,

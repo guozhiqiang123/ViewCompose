@@ -13,6 +13,18 @@ data class UiColors(
     val textSecondary: Int,
 )
 
+data class UiInputColors(
+    val fieldContainer: Int,
+    val fieldContainerDisabled: Int,
+    val fieldError: Int,
+    val fieldText: Int,
+    val fieldTextDisabled: Int,
+    val fieldHint: Int,
+    val fieldHintDisabled: Int,
+    val control: Int,
+    val controlDisabled: Int,
+)
+
 data class UiTextStyle(
     val fontSizeSp: Int,
 )
@@ -26,7 +38,24 @@ data class UiTypography(
 data class UiThemeTokens(
     val colors: UiColors,
     val typography: UiTypography,
+    val input: UiInputColors = UiInputDefaults.fromColors(colors),
 )
+
+object UiInputDefaults {
+    fun fromColors(colors: UiColors): UiInputColors {
+        return UiInputColors(
+            fieldContainer = colors.surface,
+            fieldContainerDisabled = colors.surfaceVariant,
+            fieldError = 0xFFB3261E.toInt(),
+            fieldText = colors.textPrimary,
+            fieldTextDisabled = colors.textSecondary,
+            fieldHint = colors.textSecondary,
+            fieldHintDisabled = colors.divider,
+            control = colors.primary,
+            controlDisabled = colors.divider,
+        )
+    }
+}
 
 object UiThemeDefaults {
     fun light(): UiThemeTokens {
@@ -78,6 +107,9 @@ object Theme {
 
     val typography: UiTypography
         get() = LocalContext.current(LocalTheme).typography
+
+    val input: UiInputColors
+        get() = LocalContext.current(LocalTheme).input
 }
 
 fun UiTreeBuilder.UiTheme(
