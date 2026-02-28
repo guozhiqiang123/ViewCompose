@@ -66,10 +66,17 @@ data class UiSegmentedControlSizing(
     val largeVerticalPadding: Int,
 )
 
+data class UiProgressIndicatorSizing(
+    val linearTrackThickness: Int,
+    val circularSize: Int,
+    val circularTrackThickness: Int,
+)
+
 data class UiControlSizing(
     val button: UiButtonSizing,
     val textField: UiTextFieldSizing,
     val segmentedControl: UiSegmentedControlSizing,
+    val progressIndicator: UiProgressIndicatorSizing,
 )
 
 data class UiButtonStyles(
@@ -140,6 +147,13 @@ data class UiSliderStyles(
     val controlDisabled: Int,
 )
 
+data class UiProgressIndicatorStyles(
+    val linearIndicator: Int,
+    val linearTrack: Int,
+    val circularIndicator: Int,
+    val circularTrack: Int,
+)
+
 data class UiTabPagerStyles(
     val background: Int,
     val indicator: Int,
@@ -155,6 +169,7 @@ data class UiComponentStyles(
     val switchControl: UiSwitchStyles,
     val radioButton: UiRadioButtonStyles,
     val slider: UiSliderStyles,
+    val progressIndicator: UiProgressIndicatorStyles,
     val tabPager: UiTabPagerStyles,
 )
 
@@ -275,6 +290,11 @@ object UiControlSizeDefaults {
                 mediumVerticalPadding = 8.dp,
                 largeVerticalPadding = 10.dp,
             ),
+            progressIndicator = UiProgressIndicatorSizing(
+                linearTrackThickness = 6.dp,
+                circularSize = 32.dp,
+                circularTrackThickness = 4.dp,
+            ),
         )
     }
 }
@@ -345,6 +365,12 @@ object UiComponentStyleDefaults {
             slider = UiSliderStyles(
                 control = input.control,
                 controlDisabled = input.controlDisabled,
+            ),
+            progressIndicator = UiProgressIndicatorStyles(
+                linearIndicator = colors.primary,
+                linearTrack = colors.divider,
+                circularIndicator = colors.primary,
+                circularTrack = colors.divider,
             ),
             tabPager = UiTabPagerStyles(
                 background = colors.surfaceVariant,

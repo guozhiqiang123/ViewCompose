@@ -324,6 +324,7 @@ class ThemeTest {
                 switchControl = baseTheme.components.switchControl,
                 radioButton = baseTheme.components.radioButton,
                 slider = baseTheme.components.slider,
+                progressIndicator = baseTheme.components.progressIndicator,
                 tabPager = baseTheme.components.tabPager,
             ),
         )
@@ -392,6 +393,7 @@ class ThemeTest {
                 ),
                 textField = UiControlSizeDefaults.default().textField,
                 segmentedControl = UiControlSizeDefaults.default().segmentedControl,
+                progressIndicator = UiControlSizeDefaults.default().progressIndicator,
             ),
         )
         var compactHeight = 0
@@ -470,6 +472,12 @@ class ThemeTest {
                     control = 222,
                     controlDisabled = 223,
                 ),
+                progressIndicator = UiProgressIndicatorStyles(
+                    linearIndicator = 224,
+                    linearTrack = 225,
+                    circularIndicator = 226,
+                    circularTrack = 227,
+                ),
                 segmentedControl = UiSegmentedControlStyles(
                     background = 301,
                     backgroundDisabled = 305,
@@ -495,6 +503,7 @@ class ThemeTest {
         var textFieldError = 0
         var checkboxDisabled = 0
         var sliderDisabled = 0
+        var linearProgressTrack = 0
         var segmentedIndicator = 0
         var segmentedDisabledText = 0
         var tabPagerText = 0
@@ -508,6 +517,7 @@ class ThemeTest {
                 textFieldError = TextFieldDefaults.borderColor(TextFieldVariant.Outlined, isError = true)
                 checkboxDisabled = InputControlDefaults.checkboxControlColor(enabled = false)
                 sliderDisabled = InputControlDefaults.sliderControlColor(enabled = false)
+                linearProgressTrack = ProgressIndicatorDefaults.linearTrackColor()
                 segmentedIndicator = SegmentedControlDefaults.indicatorColor()
                 segmentedDisabledText = SegmentedControlDefaults.textColor(enabled = false)
                 tabPagerText = TabPagerDefaults.unselectedTextColor()
@@ -521,6 +531,7 @@ class ThemeTest {
         assertEquals(209, textFieldError)
         assertEquals(213, checkboxDisabled)
         assertEquals(223, sliderDisabled)
+        assertEquals(225, linearProgressTrack)
         assertEquals(306, segmentedIndicator)
         assertEquals(309, segmentedDisabledText)
         assertEquals(314, tabPagerText)
@@ -720,6 +731,7 @@ class ThemeTest {
                     largeVerticalPadding = 9,
                 ),
                 segmentedControl = UiControlSizeDefaults.default().segmentedControl,
+                progressIndicator = UiControlSizeDefaults.default().progressIndicator,
             ),
         )
         var compactHeight = 0

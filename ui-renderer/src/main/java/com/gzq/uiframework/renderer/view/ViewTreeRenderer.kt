@@ -22,12 +22,16 @@ import android.widget.CompoundButton
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.RadioButton
 import android.widget.SeekBar
 import android.widget.Switch
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.progressindicator.BaseProgressIndicator
+import com.google.android.material.progressindicator.CircularProgressIndicator
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.gzq.uiframework.renderer.layout.BoxAlignment
 import com.gzq.uiframework.renderer.layout.HorizontalAlignment
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
@@ -69,6 +73,7 @@ import com.gzq.uiframework.renderer.reconcile.RemovePatch
 import com.gzq.uiframework.renderer.reconcile.RenderPatch
 import com.gzq.uiframework.renderer.reconcile.ReusePatch
 import com.gzq.uiframework.renderer.R
+import kotlin.math.roundToInt
 
 object ViewTreeRenderer {
     private const val DEFAULT_RIPPLE_COLOR: Int = 0x22000000
@@ -179,6 +184,8 @@ object ViewTreeRenderer {
             NodeType.Switch -> Switch(context)
             NodeType.RadioButton -> RadioButton(context)
             NodeType.Slider -> SeekBar(context)
+            NodeType.LinearProgressIndicator -> LinearProgressIndicator(context)
+            NodeType.CircularProgressIndicator -> CircularProgressIndicator(context)
             NodeType.Button -> Button(context)
             NodeType.Row -> DeclarativeLinearLayout(context).apply {
                 orientation = LinearLayout.HORIZONTAL
@@ -246,6 +253,14 @@ object ViewTreeRenderer {
 
             NodeType.Slider -> {
                 bindSlider(view as SeekBar, node)
+            }
+
+            NodeType.LinearProgressIndicator -> {
+                bindLinearProgressIndicator(view as LinearProgressIndicator, node)
+            }
+
+            NodeType.CircularProgressIndicator -> {
+                bindCircularProgressIndicator(view as CircularProgressIndicator, node)
             }
 
             NodeType.Button -> {
@@ -658,6 +673,48 @@ object ViewTreeRenderer {
         view.setTag(R.id.ui_framework_seek_listener, nextListener)
     }
 
+    private fun bindLinearProgressIndicator(
+        view: LinearProgressIndicator,
+        node: VNode,
+    ) {
+        bindProgressIndicator(view, node)
+    }
+
+    private fun bindCircularProgressIndicator(
+        view: CircularProgressIndicator,
+        node: VNode,
+    ) {
+        bindProgressIndicator(view, node)
+        view.indicatorSize = readProgressIndicatorSize(node)
+    }
+
+    private fun bindProgressIndicator(
+        view: ProgressBar,
+        node: VNode,
+    ) {
+        val progress = readProgressFraction(node)
+        val indicatorColor = ColorStateList.valueOf(readProgressIndicatorColor(node))
+        val trackColor = readProgressTrackColor(node)
+
+        view.isEnabled = readEnabled(node)
+        view.isIndeterminate = progress == null
+        view.progressTintList = indicatorColor
+        view.indeterminateTintList = indicatorColor
+
+        if (view is BaseProgressIndicator<*>) {
+            view.trackColor = trackColor
+            view.trackThickness = readProgressTrackThickness(node)
+            view.setIndicatorColor(readProgressIndicatorColor(node))
+        } else {
+            view.progressBackgroundTintList = ColorStateList.valueOf(trackColor)
+        }
+
+        if (progress != null) {
+            view.max = 10_000
+            view.progress = (progress.coerceIn(0f, 1f) * 10_000f).roundToInt()
+        }
+    }
+
     private fun resolveInputType(type: TextFieldType, singleLine: Boolean): Int {
         val baseType = when (type) {
             TextFieldType.Text -> InputType.TYPE_CLASS_TEXT
@@ -693,6 +750,7 @@ object ViewTreeRenderer {
             NodeType.Checkbox,
             NodeType.Switch,
             NodeType.RadioButton,
+            NodeType.CircularProgressIndicator,
             NodeType.Button,
             NodeType.SegmentedControl,
             -> ViewGroup.LayoutParams.WRAP_CONTENT
@@ -999,6 +1057,26 @@ object ViewTreeRenderer {
 
     private fun readSliderValue(node: VNode): Int {
         return node.props.values[PropKeys.SLIDER_VALUE] as? Int ?: 0
+    }
+
+    private fun readProgressFraction(node: VNode): Float? {
+        return node.props.values[PropKeys.PROGRESS_FRACTION] as? Float
+    }
+
+    private fun readProgressIndicatorColor(node: VNode): Int {
+        return node.props.values[PropKeys.PROGRESS_INDICATOR_COLOR] as? Int ?: 0xFF000000.toInt()
+    }
+
+    private fun readProgressTrackColor(node: VNode): Int {
+        return node.props.values[PropKeys.PROGRESS_TRACK_COLOR] as? Int ?: 0x33000000
+    }
+
+    private fun readProgressTrackThickness(node: VNode): Int {
+        return node.props.values[PropKeys.PROGRESS_TRACK_THICKNESS] as? Int ?: 4
+    }
+
+    private fun readProgressIndicatorSize(node: VNode): Int {
+        return node.props.values[PropKeys.PROGRESS_INDICATOR_SIZE] as? Int ?: 32
     }
 
     private fun readMinValue(node: VNode): Int {

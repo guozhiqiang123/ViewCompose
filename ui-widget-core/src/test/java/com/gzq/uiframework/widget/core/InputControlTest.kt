@@ -53,6 +53,7 @@ class InputControlTest {
                     controlDisabled = 104,
                 ),
                 segmentedControl = UiThemeDefaults.light().components.segmentedControl,
+                progressIndicator = UiThemeDefaults.light().components.progressIndicator,
                 tabPager = UiThemeDefaults.light().components.tabPager,
             ),
         )
@@ -149,6 +150,7 @@ class InputControlTest {
                 radioButton = baseTheme.components.radioButton,
                 slider = baseTheme.components.slider,
                 segmentedControl = baseTheme.components.segmentedControl,
+                progressIndicator = baseTheme.components.progressIndicator,
                 tabPager = baseTheme.components.tabPager,
             ),
         )
@@ -207,6 +209,7 @@ class InputControlTest {
                     controlDisabled = 214,
                 ),
                 segmentedControl = baseTheme.components.segmentedControl,
+                progressIndicator = baseTheme.components.progressIndicator,
                 tabPager = baseTheme.components.tabPager,
             ),
         )

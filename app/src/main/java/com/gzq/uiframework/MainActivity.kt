@@ -43,7 +43,9 @@ import com.gzq.uiframework.widget.core.EmailField
 import com.gzq.uiframework.widget.core.Environment
 import com.gzq.uiframework.widget.core.FlexibleSpacer
 import com.gzq.uiframework.widget.core.Checkbox
+import com.gzq.uiframework.widget.core.CircularProgressIndicator
 import com.gzq.uiframework.widget.core.LazyColumn
+import com.gzq.uiframework.widget.core.LinearProgressIndicator
 import com.gzq.uiframework.widget.core.NumberField
 import com.gzq.uiframework.widget.core.PasswordField
 import com.gzq.uiframework.widget.core.RadioButton
@@ -216,7 +218,7 @@ private fun UiTreeBuilder.OverviewPage(
     selectedTabState: MutableState<Int>,
 ) {
     LazyColumn(
-        items = listOf("intro", "theme", "overrides", "jump", "surface"),
+        items = listOf("intro", "theme", "overrides", "progress", "jump", "surface"),
         key = { it },
         modifier = Modifier.Empty.fillMaxSize(),
     ) { section ->
@@ -476,6 +478,35 @@ private fun UiTreeBuilder.OverviewPage(
                 )
             }
 
+            "progress" -> DemoSection(
+                title = "Progress Indicators",
+                subtitle = "These are mapped virtual controls backed by Material View widgets, but styled through framework defaults.",
+            ) {
+                Text(
+                    text = "The linear indicator follows the current component tokens, while circular can run determinate or indeterminate.",
+                    style = UiTextStyle(fontSizeSp = 13.sp),
+                    modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+                )
+                LinearProgressIndicator(
+                    progress = 0.68f,
+                    modifier = Modifier.Empty
+                        .fillMaxWidth()
+                        .margin(top = 12.dp, bottom = 12.dp),
+                )
+                Row(
+                    spacing = 16.dp,
+                    verticalAlignment = VerticalAlignment.Center,
+                    modifier = Modifier.Empty.fillMaxWidth(),
+                ) {
+                    CircularProgressIndicator(progress = 0.42f)
+                    CircularProgressIndicator()
+                    Text(
+                        text = "Progress family is now part of the P1 widget surface.",
+                        modifier = Modifier.Empty.weight(1f),
+                    )
+                }
+            }
+
             "jump" -> DemoSection(
                 title = "Jump To A Capability",
                 subtitle = "These buttons drive the selected pager tab through framework state.",
@@ -538,7 +569,7 @@ private fun UiTreeBuilder.OverviewPage(
                 }
                 Text(text = "Text, TextField, EmailField, PasswordField, NumberField, TextArea")
                 Text(text = "Row, Column, Box, Divider, Spacer, FlexibleSpacer, LazyColumn")
-                Text(text = "AndroidView interop, TabPager, state runtime, effect runtime")
+                Text(text = "Progress indicators, AndroidView interop, TabPager, state runtime, effect runtime")
             }
         }
     }

@@ -7,6 +7,7 @@ import com.gzq.uiframework.widget.core.UiControlSizing
 import com.gzq.uiframework.widget.core.UiButtonSizing
 import com.gzq.uiframework.widget.core.UiInputColors
 import com.gzq.uiframework.widget.core.UiInteractionColors
+import com.gzq.uiframework.widget.core.UiProgressIndicatorSizing
 import com.gzq.uiframework.widget.core.UiSegmentedControlSizing
 import com.gzq.uiframework.widget.core.UiShapes
 import com.gzq.uiframework.widget.core.UiTextStyle
@@ -88,6 +89,11 @@ object DemoThemeTokens {
                 mediumVerticalPadding = 8.dp,
                 largeVerticalPadding = 10.dp,
             ),
+            progressIndicator = UiProgressIndicatorSizing(
+                linearTrackThickness = 6.dp,
+                circularSize = 36.dp,
+                circularTrackThickness = 4.dp,
+            ),
         ),
         interactions = UiInteractionColors(
             pressedOverlay = 0x1A2F241B,
@@ -158,6 +164,11 @@ object DemoThemeTokens {
                 compactVerticalPadding = 6.dp,
                 mediumVerticalPadding = 8.dp,
                 largeVerticalPadding = 10.dp,
+            ),
+            progressIndicator = UiProgressIndicatorSizing(
+                linearTrackThickness = 6.dp,
+                circularSize = 36.dp,
+                circularTrackThickness = 4.dp,
             ),
         ),
         interactions = UiInteractionColors(

@@ -73,6 +73,7 @@ class TabPagerTest {
                 switchControl = baseTheme.components.switchControl,
                 radioButton = baseTheme.components.radioButton,
                 slider = baseTheme.components.slider,
+                progressIndicator = baseTheme.components.progressIndicator,
                 tabPager = UiTabPagerStyles(
                     background = 601,
                     indicator = 602,

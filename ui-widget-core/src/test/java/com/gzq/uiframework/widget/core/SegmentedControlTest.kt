@@ -67,6 +67,7 @@ class SegmentedControlTest {
                 switchControl = baseTheme.components.switchControl,
                 radioButton = baseTheme.components.radioButton,
                 slider = baseTheme.components.slider,
+                progressIndicator = baseTheme.components.progressIndicator,
                 segmentedControl = UiSegmentedControlStyles(
                     background = 401,
                     backgroundDisabled = 405,
@@ -113,6 +114,7 @@ class SegmentedControlTest {
                 switchControl = baseTheme.components.switchControl,
                 radioButton = baseTheme.components.radioButton,
                 slider = baseTheme.components.slider,
+                progressIndicator = baseTheme.components.progressIndicator,
                 segmentedControl = UiSegmentedControlStyles(
                     background = 501,
                     backgroundDisabled = 502,

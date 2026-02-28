@@ -159,6 +159,7 @@ class TextFieldTest {
                 radioButton = baseTheme.components.radioButton,
                 slider = baseTheme.components.slider,
                 segmentedControl = baseTheme.components.segmentedControl,
+                progressIndicator = baseTheme.components.progressIndicator,
                 tabPager = baseTheme.components.tabPager,
             ),
         )

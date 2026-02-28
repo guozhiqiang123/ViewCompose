@@ -12,10 +12,12 @@ import com.gzq.uiframework.renderer.modifier.backgroundColor
 import com.gzq.uiframework.renderer.modifier.border
 import com.gzq.uiframework.renderer.modifier.clickable
 import com.gzq.uiframework.renderer.modifier.cornerRadius
+import com.gzq.uiframework.renderer.modifier.fillMaxWidth
 import com.gzq.uiframework.renderer.modifier.height
 import com.gzq.uiframework.renderer.modifier.minHeight
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.renderer.modifier.rippleColor
+import com.gzq.uiframework.renderer.modifier.size
 import com.gzq.uiframework.renderer.modifier.textColor
 import com.gzq.uiframework.renderer.modifier.textSize
 import com.gzq.uiframework.renderer.modifier.weight
@@ -255,6 +257,59 @@ fun UiTreeBuilder.Slider(
             ),
         ),
         modifier = modifier,
+    )
+}
+
+fun UiTreeBuilder.LinearProgressIndicator(
+    progress: Float? = null,
+    indicatorColor: Int = ProgressIndicatorDefaults.linearIndicatorColor(),
+    trackColor: Int = ProgressIndicatorDefaults.linearTrackColor(),
+    trackThickness: Int = ProgressIndicatorDefaults.linearTrackThickness(),
+    key: Any? = null,
+    modifier: Modifier = Modifier.Empty,
+) {
+    emit(
+        type = NodeType.LinearProgressIndicator,
+        key = key,
+        props = Props(
+            values = mapOf(
+                PropKeys.PROGRESS_FRACTION to progress,
+                PropKeys.PROGRESS_INDICATOR_COLOR to indicatorColor,
+                PropKeys.PROGRESS_TRACK_COLOR to trackColor,
+                PropKeys.PROGRESS_TRACK_THICKNESS to trackThickness,
+            ),
+        ),
+        modifier = Modifier.Empty
+            .fillMaxWidth()
+            .height(trackThickness)
+            .then(modifier),
+    )
+}
+
+fun UiTreeBuilder.CircularProgressIndicator(
+    progress: Float? = null,
+    indicatorColor: Int = ProgressIndicatorDefaults.circularIndicatorColor(),
+    trackColor: Int = ProgressIndicatorDefaults.circularTrackColor(),
+    size: Int = ProgressIndicatorDefaults.circularSize(),
+    trackThickness: Int = ProgressIndicatorDefaults.circularTrackThickness(),
+    key: Any? = null,
+    modifier: Modifier = Modifier.Empty,
+) {
+    emit(
+        type = NodeType.CircularProgressIndicator,
+        key = key,
+        props = Props(
+            values = mapOf(
+                PropKeys.PROGRESS_FRACTION to progress,
+                PropKeys.PROGRESS_INDICATOR_COLOR to indicatorColor,
+                PropKeys.PROGRESS_TRACK_COLOR to trackColor,
+                PropKeys.PROGRESS_TRACK_THICKNESS to trackThickness,
+                PropKeys.PROGRESS_INDICATOR_SIZE to size,
+            ),
+        ),
+        modifier = Modifier.Empty
+            .size(width = size, height = size)
+            .then(modifier),
     )
 }
 
