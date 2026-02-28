@@ -542,11 +542,15 @@
 - 已实现章节统一增加了页面目标说明
 - 已实现章节统一增加了 `Verification Notes`
 - `Foundations / Input / Layouts / State / Collections / Interop / Diagnostics` 已有章内 page filter
+- `Layouts` 已补布局压力页，用于验证 `wrap / weight / nested surface`
+- `Collections` 已补列表压力页，用于验证 keyed reorder、插入项和 item session 稳定性
+- `Diagnostics` 已具备运行时/主题 token/渲染模型的基础状态面板
 
 未完成：
 
 - 还没有把所有 chapter 进一步拆成更细的稳定 page 目录
 - 还没有系统化的“边界场景 / 压力场景”矩阵
+- `Input / State / Interop` 还缺更重的压力态页面
 - 还没有把验证说明收成更结构化的测试模板或导出能力
 
 ### 11.3 Phase C
