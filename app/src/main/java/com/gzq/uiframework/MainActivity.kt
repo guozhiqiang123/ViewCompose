@@ -316,8 +316,14 @@ private fun UiTreeBuilder.DemoRoot(root: ViewGroup) {
 private fun UiTreeBuilder.OverviewPage(
     selectedChapterState: MutableState<Int>,
 ) {
+    val selectedPageState = remember { mutableStateOf(0) }
+    val pageItems = when (selectedPageState.value) {
+        0 -> listOf("page", "page_filter", "intro", "jump", "surface", "verify")
+        1 -> listOf("page", "page_filter", "theme", "overrides", "verify")
+        else -> listOf("page", "page_filter", "progress", "media", "verify")
+    }
     LazyColumn(
-        items = listOf("page", "intro", "theme", "overrides", "progress", "media", "jump", "surface", "verify"),
+        items = pageItems,
         key = { it },
         modifier = Modifier.Empty.fillMaxSize(),
     ) { section ->
@@ -326,6 +332,12 @@ private fun UiTreeBuilder.OverviewPage(
                 title = "Foundations",
                 goal = "Verify the core visual primitives, theme scopes, component defaults, and media widgets before moving into more advanced runtime scenarios.",
                 modules = listOf("ui-widget-core", "ui-renderer", "theme locals", "component defaults"),
+            )
+
+            "page_filter" -> ChapterPageFilterSection(
+                pages = listOf("Guide", "Theme", "Media"),
+                selectedIndex = selectedPageState.value,
+                onSelectionChange = { selectedPageState.value = it },
             )
 
             "intro" -> DemoSection(
@@ -997,9 +1009,15 @@ private fun UiTreeBuilder.InputPage() {
                 "${ageState.value.ifBlank { "-" }}y"
         }
     }
+    val selectedPageState = remember { mutableStateOf(0) }
+    val pageItems = when (selectedPageState.value) {
+        0 -> listOf("page", "page_filter", "intro", "form", "verify")
+        1 -> listOf("page", "page_filter", "controls", "verify")
+        else -> listOf("page", "page_filter", "summary", "verify")
+    }
 
     LazyColumn(
-        items = listOf("page", "intro", "form", "controls", "summary", "verify"),
+        items = pageItems,
         key = { it },
         modifier = Modifier.Empty.fillMaxSize(),
     ) { section ->
@@ -1008,6 +1026,12 @@ private fun UiTreeBuilder.InputPage() {
                 title = "Input",
                 goal = "Verify that text fields and selection controls stay declarative across value updates, error states, variants, and local theme overrides.",
                 modules = listOf("TextField family", "selection widgets", "input defaults", "theme components"),
+            )
+
+            "page_filter" -> ChapterPageFilterSection(
+                pages = listOf("Fields", "Selection", "Summary"),
+                selectedIndex = selectedPageState.value,
+                onSelectionChange = { selectedPageState.value = it },
             )
 
             "intro" -> DemoSection(
@@ -1781,6 +1805,24 @@ private fun UiTreeBuilder.ChapterPageOverviewSection(
         ChecklistGroup(
             title = "Framework Modules",
             items = modules,
+        )
+    }
+}
+
+private fun UiTreeBuilder.ChapterPageFilterSection(
+    pages: List<String>,
+    selectedIndex: Int,
+    onSelectionChange: (Int) -> Unit,
+) {
+    DemoSection(
+        title = "Chapter Pages",
+        subtitle = "Use the local page switcher to isolate one manual test path at a time within the current chapter.",
+    ) {
+        SegmentedControl(
+            items = pages,
+            selectedIndex = selectedIndex,
+            onSelectionChange = onSelectionChange,
+            modifier = Modifier.Empty.fillMaxWidth(),
         )
     }
 }
