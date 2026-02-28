@@ -48,14 +48,14 @@ internal class EffectStore {
             }
         }
         while (slots.size > nextIndex) {
-            slots.removeLast().onDispose?.invoke()
+            slots.removeAt(slots.lastIndex).onDispose?.invoke()
         }
         pendingOperations.clear()
     }
 
     fun disposeAll() {
         while (slots.isNotEmpty()) {
-            slots.removeLast().onDispose?.invoke()
+            slots.removeAt(slots.lastIndex).onDispose?.invoke()
         }
         pendingOperations.clear()
         nextIndex = 0
