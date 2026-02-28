@@ -18,6 +18,7 @@ class RenderSession internal constructor(
     private var mountedNodes: List<MountedNode> = emptyList()
     private var observation: Observation? = null
     private var renderScheduled: Boolean = false
+    private val renderRunnable = Runnable { render() }
     private val rememberStore = RememberStore()
     private val effectStore = EffectStore()
     private val sideEffectStore = SideEffectStore()
@@ -55,6 +56,7 @@ class RenderSession internal constructor(
     fun dispose() {
         observation?.dispose()
         observation = null
+        container.removeCallbacks(renderRunnable)
         ViewTreeRenderer.disposeMounted(
             container = container,
             mountedNodes = mountedNodes,
@@ -70,6 +72,6 @@ class RenderSession internal constructor(
             return
         }
         renderScheduled = true
-        container.post(::render)
+        container.post(renderRunnable)
     }
 }
