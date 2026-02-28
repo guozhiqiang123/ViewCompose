@@ -1,18 +1,17 @@
 package com.gzq.uiframework.renderer.reconcile
 
 import com.gzq.uiframework.renderer.node.VNode
-import com.gzq.uiframework.renderer.view.MountedNode
 
-data class ReconcileResult(
-    val patches: List<RenderPatch>,
-    val removals: List<RemovePatch>,
+data class ReconcileResult<T>(
+    val patches: List<RenderPatch<T>>,
+    val removals: List<RemovePatch<T>>,
 )
 
 object ChildReconciler {
-    fun reconcile(
-        previous: List<MountedNode>,
+    fun <T> reconcile(
+        previous: List<ReconcileNode<T>>,
         nodes: List<VNode>,
-    ): ReconcileResult {
+    ): ReconcileResult<T> {
         val usedPrevious = BooleanArray(previous.size)
         val patches = buildList {
             nodes.forEachIndexed { index, node ->
@@ -29,7 +28,7 @@ object ChildReconciler {
                         ReusePatch(
                             targetIndex = index,
                             previousIndex = reusableIndex,
-                            mountedNode = previousNode,
+                            payload = previousNode.payload,
                             nextVNode = node,
                         ),
                     )
@@ -49,7 +48,7 @@ object ChildReconciler {
                     add(
                         RemovePatch(
                             previousIndex = index,
-                            mountedNode = mountedNode,
+                            payload = mountedNode.payload,
                         ),
                     )
                 }
@@ -61,8 +60,8 @@ object ChildReconciler {
         )
     }
 
-    private fun findReusableIndex(
-        previous: List<MountedNode>,
+    private fun <T> findReusableIndex(
+        previous: List<ReconcileNode<T>>,
         usedPrevious: BooleanArray,
         targetIndex: Int,
         node: VNode,

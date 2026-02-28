@@ -1,25 +1,29 @@
 package com.gzq.uiframework.renderer.reconcile
 
 import com.gzq.uiframework.renderer.node.VNode
-import com.gzq.uiframework.renderer.view.MountedNode
 
-sealed interface RenderPatch {
+data class ReconcileNode<T>(
+    val vnode: VNode,
+    val payload: T,
+)
+
+sealed interface RenderPatch<T> {
     val targetIndex: Int
 }
 
-data class ReusePatch(
+data class ReusePatch<T>(
     override val targetIndex: Int,
     val previousIndex: Int,
-    val mountedNode: MountedNode,
+    val payload: T,
     val nextVNode: VNode,
-) : RenderPatch
+) : RenderPatch<T>
 
-data class InsertPatch(
+data class InsertPatch<T>(
     override val targetIndex: Int,
     val nextVNode: VNode,
-) : RenderPatch
+) : RenderPatch<T>
 
-data class RemovePatch(
+data class RemovePatch<T>(
     val previousIndex: Int,
-    val mountedNode: MountedNode,
+    val payload: T,
 )

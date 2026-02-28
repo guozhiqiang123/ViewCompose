@@ -13,6 +13,7 @@ import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.reconcile.ChildReconciler
 import com.gzq.uiframework.renderer.reconcile.InsertPatch
+import com.gzq.uiframework.renderer.reconcile.ReconcileNode
 import com.gzq.uiframework.renderer.reconcile.RemovePatch
 import com.gzq.uiframework.renderer.reconcile.RenderPatch
 import com.gzq.uiframework.renderer.reconcile.ReusePatch
@@ -24,7 +25,12 @@ object ViewTreeRenderer {
         nodes: List<VNode>,
     ): List<MountedNode> {
         val reconcileResult = ChildReconciler.reconcile(
-            previous = previous,
+            previous = previous.map { mountedNode ->
+                ReconcileNode(
+                    vnode = mountedNode.vnode,
+                    payload = mountedNode,
+                )
+            },
             nodes = nodes,
         )
         val nextMounted = mutableListOf<MountedNode>()
@@ -45,7 +51,7 @@ object ViewTreeRenderer {
 
     private fun applyPatch(
         container: ViewGroup,
-        patch: RenderPatch,
+        patch: RenderPatch<MountedNode>,
     ): MountedNode {
         return when (patch) {
             is InsertPatch -> {
@@ -59,7 +65,7 @@ object ViewTreeRenderer {
             }
 
             is ReusePatch -> {
-                val mountedNode = patch.mountedNode
+                val mountedNode = patch.payload
                 bindView(mountedNode.view, patch.nextVNode)
                 mountedNode.view.layoutParams = createLayoutParams(container, patch.nextVNode)
                 mountedNode.children = reconcileChildren(
@@ -80,9 +86,9 @@ object ViewTreeRenderer {
 
     private fun applyRemoval(
         container: ViewGroup,
-        removal: RemovePatch,
+        removal: RemovePatch<MountedNode>,
     ) {
-        container.removeView(removal.mountedNode.view)
+        container.removeView(removal.payload.view)
     }
 
     private fun reconcileChildren(
