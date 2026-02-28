@@ -528,7 +528,7 @@ private fun UiTreeBuilder.OverviewPage(
                     modifier = Modifier.Empty.fillMaxWidth().margin(bottom = 12.dp),
                 ) {
                     Image(
-                        source = ImageSource.Resource(R.mipmap.ic_launcher),
+                        source = ImageSource.Resource(R.drawable.demo_media_image),
                         contentDescription = "Launcher image",
                         contentScale = ImageContentScale.Crop,
                         modifier = Modifier.Empty
@@ -553,7 +553,8 @@ private fun UiTreeBuilder.OverviewPage(
                     contentScale = ImageContentScale.Crop,
                     modifier = Modifier.Empty
                         .fillMaxWidth()
-                        .height(180.dp)
+                        .height(140.dp)
+                        .backgroundColor(SurfaceDefaults.variantBackgroundColor())
                         .cornerRadius(Theme.shapes.cardCornerRadius)
                         .margin(bottom = 12.dp),
                 )
@@ -562,14 +563,14 @@ private fun UiTreeBuilder.OverviewPage(
                     verticalAlignment = VerticalAlignment.Center,
                     modifier = Modifier.Empty.fillMaxWidth(),
                 ) {
-                    Surface(
-                        modifier = Modifier.Empty.padding(8.dp),
-                    ) {
-                        Icon(
-                            source = ImageSource.Resource(R.drawable.ic_launcher_foreground),
-                            contentDescription = "Foreground icon",
-                        )
-                    }
+                        Surface(
+                            modifier = Modifier.Empty.padding(8.dp),
+                        ) {
+                            Icon(
+                                source = ImageSource.Resource(R.drawable.demo_media_icon),
+                                contentDescription = "Foreground icon",
+                            )
+                        }
                     UiThemeOverride(
                         colors = {
                             copy(textPrimary = accent)
@@ -580,7 +581,7 @@ private fun UiTreeBuilder.OverviewPage(
                             modifier = Modifier.Empty.padding(8.dp),
                         ) {
                             Icon(
-                                source = ImageSource.Resource(R.drawable.ic_launcher_foreground),
+                                source = ImageSource.Resource(R.drawable.demo_media_icon),
                                 contentDescription = "Accent icon",
                             )
                         }
@@ -595,22 +596,22 @@ private fun UiTreeBuilder.OverviewPage(
                     modifier = Modifier.Empty.fillMaxWidth().margin(top = 12.dp),
                 ) {
                     IconButton(
-                        icon = ImageSource.Resource(R.drawable.ic_launcher_foreground),
+                        icon = ImageSource.Resource(R.drawable.demo_media_icon),
                         contentDescription = "Primary icon button",
                         modifier = Modifier.Empty,
                     )
                     IconButton(
-                        icon = ImageSource.Resource(R.drawable.ic_launcher_foreground),
+                        icon = ImageSource.Resource(R.drawable.demo_media_icon),
                         contentDescription = "Tonal icon button",
                         variant = ButtonVariant.Tonal,
                     )
                     IconButton(
-                        icon = ImageSource.Resource(R.drawable.ic_launcher_foreground),
+                        icon = ImageSource.Resource(R.drawable.demo_media_icon),
                         contentDescription = "Outlined icon button",
                         variant = ButtonVariant.Outlined,
                     )
                     IconButton(
-                        icon = ImageSource.Resource(R.drawable.ic_launcher_foreground),
+                        icon = ImageSource.Resource(R.drawable.demo_media_icon),
                         contentDescription = "Disabled icon button",
                         enabled = false,
                     )
