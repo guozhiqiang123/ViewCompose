@@ -34,6 +34,7 @@ import com.gzq.uiframework.widget.core.Button
 import com.gzq.uiframework.widget.core.Column
 import com.gzq.uiframework.widget.core.Divider
 import com.gzq.uiframework.widget.core.DisposableEffect
+import com.gzq.uiframework.widget.core.FlexibleSpacer
 import com.gzq.uiframework.widget.core.LazyColumn
 import com.gzq.uiframework.widget.core.Row
 import com.gzq.uiframework.widget.core.SideEffect
@@ -166,7 +167,7 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
                 Row(
-                    arrangement = MainAxisArrangement.SpaceEvenly,
+                    arrangement = MainAxisArrangement.Start,
                     spacing = 0,
                     verticalAlignment = VerticalAlignment.Center,
                     modifier = Modifier.Empty
@@ -178,16 +179,14 @@ class MainActivity : AppCompatActivity() {
                         modifier = Modifier.Empty
                             .align(VerticalAlignment.Top)
                             .backgroundColor(Color.parseColor("#DCEBFF"))
-                            .weight(1f)
                             .padding(12),
                     )
-                    Spacer(modifier = Modifier.Empty.width(12))
+                    FlexibleSpacer(modifier = Modifier.Empty.width(12))
                     Text(
                         text = "Right pane",
                         modifier = Modifier.Empty
                             .align(VerticalAlignment.Bottom)
                             .backgroundColor(Color.parseColor("#FFE4D6"))
-                            .weight(1f)
                             .padding(12),
                     )
                 }

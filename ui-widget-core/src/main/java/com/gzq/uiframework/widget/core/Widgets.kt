@@ -7,6 +7,7 @@ import com.gzq.uiframework.renderer.layout.HorizontalAlignment
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.modifier.Modifier
+import com.gzq.uiframework.renderer.modifier.weight
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.LazyListItemSession
 import com.gzq.uiframework.renderer.node.LazyListItemSessionFactory
@@ -96,6 +97,17 @@ fun UiTreeBuilder.Spacer(
         type = NodeType.Spacer,
         key = key,
         modifier = modifier,
+    )
+}
+
+fun UiTreeBuilder.FlexibleSpacer(
+    weight: Float = 1f,
+    key: Any? = null,
+    modifier: Modifier = Modifier.Empty,
+) {
+    Spacer(
+        key = key,
+        modifier = modifier.weight(weight),
     )
 }
 
