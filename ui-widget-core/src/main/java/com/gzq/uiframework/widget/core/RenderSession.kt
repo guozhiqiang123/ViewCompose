@@ -13,6 +13,7 @@ class RenderSession internal constructor(
     private var mountedNodes: List<MountedNode> = emptyList()
     private var observation: Observation? = null
     private var renderScheduled: Boolean = false
+    private val rememberStore = RememberStore()
 
     fun render() {
         renderScheduled = false
@@ -20,7 +21,9 @@ class RenderSession internal constructor(
         val (tree, nextObservation) = RuntimeObservation.observeReads(
             onInvalidated = ::scheduleRender,
         ) {
-            buildVNodeTree(content)
+            RememberContext.withStore(rememberStore) {
+                buildVNodeTree(content)
+            }
         }
         observation = nextObservation
         mountedNodes = ViewTreeRenderer.renderInto(

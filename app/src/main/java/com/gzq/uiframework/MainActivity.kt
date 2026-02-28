@@ -12,21 +12,11 @@ import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.Button
 import com.gzq.uiframework.widget.core.Column
 import com.gzq.uiframework.widget.core.Text
+import com.gzq.uiframework.widget.core.remember
 import com.gzq.uiframework.widget.core.renderInto
 
 class MainActivity : AppCompatActivity() {
-    private val clickCountState = mutableStateOf(0)
     private val reversedState = mutableStateOf(false)
-    private val clickSummaryState = derivedStateOf {
-        val clickCount = clickCountState.value
-        if (clickCount == 0) {
-            "No clicks yet"
-        } else if (clickCount % 2 == 0) {
-            "Even clicks: $clickCount"
-        } else {
-            "Odd clicks: $clickCount"
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +30,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         renderInto(root) {
+            val clickCountState = remember { mutableStateOf(0) }
+            val clickSummaryState = remember {
+                derivedStateOf {
+                    val clickCount = clickCountState.value
+                    if (clickCount == 0) {
+                        "No clicks yet"
+                    } else if (clickCount % 2 == 0) {
+                        "Even clicks: $clickCount"
+                    } else {
+                        "Odd clicks: $clickCount"
+                    }
+                }
+            }
             Column(
                 modifier = Modifier.Empty.padding(24),
             ) {
