@@ -32,6 +32,16 @@ import com.gzq.uiframework.renderer.reconcile.RenderPatch
 import com.gzq.uiframework.renderer.reconcile.ReusePatch
 
 object ViewTreeRenderer {
+    fun disposeMounted(
+        container: ViewGroup,
+        mountedNodes: List<MountedNode>,
+    ) {
+        mountedNodes.forEach { mountedNode ->
+            disposeMountedNode(mountedNode)
+            container.removeView(mountedNode.view)
+        }
+    }
+
     fun renderInto(
         container: ViewGroup,
         previous: List<MountedNode>,
@@ -103,11 +113,7 @@ object ViewTreeRenderer {
         container: ViewGroup,
         removal: RemovePatch<MountedNode>,
     ) {
-        (removal.payload.view as? RecyclerView)
-            ?.adapter
-            ?.let { adapter ->
-                (adapter as? LazyColumnAdapter)?.disposeAll()
-            }
+        disposeMountedNode(removal.payload)
         container.removeView(removal.payload.view)
     }
 
@@ -314,5 +320,17 @@ object ViewTreeRenderer {
     @Suppress("UNCHECKED_CAST")
     private fun readLazyItems(node: VNode): List<LazyListItem> {
         return node.props.values[PropKeys.LAZY_ITEMS] as? List<LazyListItem> ?: emptyList()
+    }
+
+    private fun disposeMountedNode(
+        mountedNode: MountedNode,
+    ) {
+        mountedNode.children.forEach(::disposeMountedNode)
+        (mountedNode.view as? RecyclerView)
+            ?.adapter
+            ?.let { adapter ->
+                (adapter as? LazyColumnAdapter)?.disposeAll()
+            }
+        mountedNode.children = emptyList()
     }
 }

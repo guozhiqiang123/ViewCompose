@@ -55,6 +55,10 @@ class RenderSession internal constructor(
     fun dispose() {
         observation?.dispose()
         observation = null
+        ViewTreeRenderer.disposeMounted(
+            container = container,
+            mountedNodes = mountedNodes,
+        )
         mountedNodes = emptyList()
         effectStore.disposeAll()
         sideEffectStore.disposeAll()
