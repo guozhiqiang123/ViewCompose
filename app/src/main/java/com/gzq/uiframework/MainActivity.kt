@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-            DisposableEffect(key = clickSummaryState.value) {
+            DisposableEffect(clickSummaryState.value) {
                 title = "UIFramework - ${clickSummaryState.value}"
                 {
                     if (title == "UIFramework - ${clickSummaryState.value}") {

@@ -11,18 +11,18 @@ internal class EffectStore {
     }
 
     fun register(
-        key: Any?,
+        keys: List<Any?>,
         effect: () -> (() -> Unit),
     ) {
         val index = nextIndex++
         val existing = slots.getOrNull(index)
-        if (existing != null && existing.key == key) {
+        if (existing != null && existing.keys == keys) {
             pendingOperations += EffectOperation.Keep(index)
             return
         }
         pendingOperations += EffectOperation.Start(
             index = index,
-            key = key,
+            keys = keys,
             effect = effect,
         )
     }
@@ -36,7 +36,7 @@ internal class EffectStore {
                     previous?.onDispose?.invoke()
                     val onDispose = operation.effect()
                     val nextSlot = EffectSlot(
-                        key = operation.key,
+                        keys = operation.keys,
                         onDispose = onDispose,
                     )
                     if (operation.index < slots.size) {
@@ -63,7 +63,7 @@ internal class EffectStore {
 }
 
 private data class EffectSlot(
-    val key: Any?,
+    val keys: List<Any?>,
     val onDispose: (() -> Unit)?,
 )
 
@@ -74,7 +74,7 @@ private sealed interface EffectOperation {
 
     data class Start(
         val index: Int,
-        val key: Any?,
+        val keys: List<Any?>,
         val effect: () -> (() -> Unit),
     ) : EffectOperation
 }
@@ -100,8 +100,11 @@ internal object EffectContext {
 }
 
 fun DisposableEffect(
-    key: Any? = Unit,
+    vararg keys: Any?,
     effect: () -> (() -> Unit),
 ) {
-    EffectContext.currentStore()?.register(key, effect)
+    EffectContext.currentStore()?.register(
+        keys = keys.toList(),
+        effect = effect,
+    )
 }

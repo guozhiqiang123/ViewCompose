@@ -61,16 +61,73 @@ class DisposableEffectTest {
         )
     }
 
+    @Test
+    fun `reuses effect when composite keys are unchanged`() {
+        val store = EffectStore()
+        val events = mutableListOf<String>()
+
+        renderEffect(
+            store = store,
+            events = events,
+            keys = arrayOf("user", 1),
+        )
+        renderEffect(
+            store = store,
+            events = events,
+            keys = arrayOf("user", 1),
+        )
+
+        assertEquals(
+            listOf("start:user-1"),
+            events,
+        )
+    }
+
+    @Test
+    fun `restarts effect when any composite key changes`() {
+        val store = EffectStore()
+        val events = mutableListOf<String>()
+
+        renderEffect(
+            store = store,
+            events = events,
+            keys = arrayOf("user", 1),
+        )
+        renderEffect(
+            store = store,
+            events = events,
+            keys = arrayOf("user", 2),
+        )
+
+        assertEquals(
+            listOf("start:user-1", "dispose:user-1", "start:user-2"),
+            events,
+        )
+    }
+
     private fun renderEffect(
         store: EffectStore,
         key: String,
         events: MutableList<String>,
     ) {
+        renderEffect(
+            store = store,
+            events = events,
+            keys = arrayOf(key),
+        )
+    }
+
+    private fun renderEffect(
+        store: EffectStore,
+        events: MutableList<String>,
+        keys: Array<out Any?>,
+    ) {
+        val label = keys.joinToString(separator = "-")
         EffectContext.withStore(store) {
-            DisposableEffect(key = key) {
-                events += "start:$key"
+            DisposableEffect(*keys) {
+                events += "start:$label"
                 {
-                    events += "dispose:$key"
+                    events += "dispose:$label"
                 }
             }
         }
