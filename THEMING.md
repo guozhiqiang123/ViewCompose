@@ -6,6 +6,13 @@
 
 这份文档是后续主题相关实现的基线。若实现需要偏离本文档，必须先更新本文档再继续开发。
 
+当前实现状态：
+
+- `Phase 1` 已完成
+- `Phase 2` 已完成
+- `Phase 3` 已完成
+- `Phase 4` 未开始
+
 ## 2. 结论
 
 `UIFramework` 有必要和 Android View 主题系统打通，但不能直接把 Android `Theme` 当成框架主题系统本身。
@@ -62,7 +69,7 @@
 
 框架内部维护自己的主题 token 数据结构。
 
-v1 推荐最小结构：
+当前已实现结构：
 
 ```kotlin
 data class UiColors(
@@ -76,20 +83,33 @@ data class UiColors(
     val textSecondary: Int,
 )
 
+data class UiTextStyle(
+    val fontSizeSp: Int,
+)
+
+data class UiTypography(
+    val title: UiTextStyle,
+    val body: UiTextStyle,
+    val label: UiTextStyle,
+)
+
 data class UiThemeTokens(
     val colors: UiColors,
+    val typography: UiTypography,
 )
 ```
 
 说明：
 
-- 先从 `colors` 起步
-- `typography`、`shapes`、`spacing` 后续再补
+- 当前已完成 `colors` + `typography`
+- `shapes`、`spacing` 后续再补
 - token 名称用语义化命名，不用 `red500`、`gray90` 这种原始视觉值命名
 
 ### 6.2 Theme Scope Layer
 
 主题应该像 `remember` / `key` 一样，具备显式子树作用域。
+
+当前实现已经从专用 `ThemeContext` 收敛到通用 local 机制，后续可复用到其他上下文。
 
 示例：
 
@@ -249,6 +269,8 @@ fun UiTheme(
 
 ### Phase 1
 
+状态：已完成
+
 目标：
 
 - 引入 `UiColors`、`UiThemeTokens`
@@ -265,6 +287,8 @@ fun UiTheme(
 
 ### Phase 2
 
+状态：已完成
+
 目标：
 
 - 引入 `AndroidThemeBridge.fromContext(context)`
@@ -273,11 +297,22 @@ fun UiTheme(
 
 ### Phase 3
 
+状态：已完成
+
 目标：
 
 - 增加 `UiTypography`
 - 增加 widget 默认主题样式
 - 增加 `ButtonDefaults`、`TextDefaults` 这类默认值入口
+
+当前实现补充：
+
+- 已新增 `ButtonDefaults`
+- 已新增 `TextDefaults`
+- 已新增 `DividerDefaults`
+- 已新增 `SurfaceDefaults`
+- `Text` / `Button` / `Divider` 已接入默认主题样式
+- sample 已基本收口到默认值入口
 
 ### Phase 4
 
