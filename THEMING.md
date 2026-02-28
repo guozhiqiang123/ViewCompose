@@ -143,6 +143,7 @@ UiTheme(AppTheme.light()) {
 
 - `UiTheme(tokens = ...)` 用于整套主题切换
 - `UiThemeOverride(...)` 用于父主题基础上的局部 patch
+- `Theme.components` 用于承载组件默认样式 token
 
 ### 6.3 Widget/Modifier Consumption Layer
 
@@ -238,12 +239,32 @@ UiTheme(AppTheme.light()) {
 }
 ```
 
+组件默认样式覆盖：
+
+```kotlin
+UiTheme(AppTheme.light()) {
+    UiThemeOverride(
+        components = {
+            copy(
+                button = button.copy(
+                    primaryContainer = 0xFF1F1F1F.toInt(),
+                    primaryContent = 0xFFFFFFFF.toInt(),
+                )
+            )
+        },
+    ) {
+        Button(text = "Scoped Button Default")
+    }
+}
+```
+
 ### 8.2 推荐对象
 
 ```kotlin
 object Theme {
     val current: UiThemeTokens
     val colors: UiColors
+    val components: UiComponentStyles
 }
 ```
 
@@ -284,6 +305,7 @@ UiThemeOverride(
 
 - 页面或模块切换品牌主题时，用 `UiTheme(tokens = ...)`
 - 某个 section 只改局部颜色/圆角/点击态时，用 `UiThemeOverride(...)`
+- 某组按钮、输入框、分段控件只改组件默认样式时，用 `UiThemeOverride(components = ...)`
 - 单个控件有特殊视觉要求时，用显式组件参数或 `Modifier`
 
 不推荐：

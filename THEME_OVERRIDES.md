@@ -72,6 +72,7 @@
   - `input`
   - `shapes`
   - `controls`
+  - `components`
   - `interactions`
 - 覆盖行为是声明式的，作用于当前子树
 - 没有显式 override 时，保持父主题继承
@@ -159,6 +160,7 @@ fun UiTreeBuilder.UiThemeOverride(
     input: UiInputColors? = null,
     shapes: UiShapes? = null,
     controls: UiControlSizing? = null,
+    components: UiComponentStyles? = null,
     interactions: UiInteractionColors? = null,
     content: UiTreeBuilder.() -> Unit,
 )
@@ -177,7 +179,11 @@ fun UiTreeBuilder.UiThemeOverride(
 ```kotlin
 fun UiTreeBuilder.UiThemeOverride(
     colors: (UiColors.() -> UiColors)? = null,
+    typography: (UiTypography.() -> UiTypography)? = null,
+    input: (UiInputColors.() -> UiInputColors)? = null,
     shapes: (UiShapes.() -> UiShapes)? = null,
+    controls: (UiControlSizing.() -> UiControlSizing)? = null,
+    components: (UiComponentStyles.() -> UiComponentStyles)? = null,
     interactions: (UiInteractionColors.() -> UiInteractionColors)? = null,
     content: UiTreeBuilder.() -> Unit,
 )
@@ -451,3 +457,8 @@ UiThemeOverride(
 - `Phase 2` 已完成
 - `Phase 3` 已完成
 - `Phase 4` 已完成
+
+补充实现状态：
+
+- `Theme.components` 已完成
+- `Button/TextField/SegmentedControl` 已切到组件默认样式 token
