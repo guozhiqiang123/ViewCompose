@@ -24,4 +24,5 @@ include(":app")
 include(":ui-runtime")
 include(":ui-renderer")
 include(":ui-widget-core")
+include(":ui-image-coil")
  

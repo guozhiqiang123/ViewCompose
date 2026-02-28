@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.gzq.uiframework.image.coil.CoilRemoteImageLoader
 import com.gzq.uiframework.renderer.layout.BoxAlignment
 import com.gzq.uiframework.renderer.layout.HorizontalAlignment
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
@@ -52,6 +53,7 @@ import com.gzq.uiframework.widget.core.LazyColumn
 import com.gzq.uiframework.widget.core.LinearProgressIndicator
 import com.gzq.uiframework.widget.core.NumberField
 import com.gzq.uiframework.widget.core.PasswordField
+import com.gzq.uiframework.widget.core.ProvideRemoteImageLoader
 import com.gzq.uiframework.widget.core.RadioButton
 import com.gzq.uiframework.widget.core.Row
 import com.gzq.uiframework.widget.core.SegmentedControl
@@ -124,13 +126,15 @@ class MainActivity : AppCompatActivity() {
 private fun UiTreeBuilder.DemoRoot(root: ViewGroup) {
     val selectedTabState = remember { mutableStateOf(TAB_OVERVIEW) }
     val themeModeState = remember { mutableStateOf(DemoThemeMode.System) }
+    val remoteImageLoader = remember { CoilRemoteImageLoader(root.context.applicationContext) }
     val activity = root.context as? AppCompatActivity
     UiEnvironment(androidContext = root.context) {
         val resolvedTheme = DemoThemeTokens.resolve(
             mode = themeModeState.value,
             context = root.context,
         )
-        UiTheme(tokens = resolvedTheme) {
+        ProvideRemoteImageLoader(remoteImageLoader) {
+            UiTheme(tokens = resolvedTheme) {
             val environmentLabel = "Env: ${Environment.localeTags.firstOrNull() ?: "und"} · " +
                 "${Environment.layoutDirection.name} · " +
                 "${"%.2f".format(Locale.US, Environment.density.density)}x · " +
@@ -215,6 +219,7 @@ private fun UiTreeBuilder.DemoRoot(root: ViewGroup) {
                         CollectionPage()
                     }
                 }
+            }
             }
         }
     }
@@ -536,12 +541,22 @@ private fun UiTreeBuilder.OverviewPage(
                     ) {
                         Text(text = "Image uses a typed source and content scale.")
                         Text(
-                            text = "Remote loading can be provided later through a scoped loader without changing the Image API.",
+                            text = "Remote loading is now provided by an optional Coil integration module without changing the Image API.",
                             style = UiTextStyle(fontSizeSp = 13.sp),
                             modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
                         )
                     }
                 }
+                Image(
+                    source = ImageSource.Remote("https://picsum.photos/seed/uiframework-demo/640/360"),
+                    contentDescription = "Remote image",
+                    contentScale = ImageContentScale.Crop,
+                    modifier = Modifier.Empty
+                        .fillMaxWidth()
+                        .height(180.dp)
+                        .cornerRadius(Theme.shapes.cardCornerRadius)
+                        .margin(bottom = 12.dp),
+                )
                 Row(
                     spacing = 12.dp,
                     verticalAlignment = VerticalAlignment.Center,
