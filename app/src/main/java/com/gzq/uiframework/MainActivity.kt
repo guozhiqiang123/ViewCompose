@@ -1,5 +1,6 @@
 package com.gzq.uiframework
 
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -7,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.gzq.uiframework.renderer.modifier.Modifier
+import com.gzq.uiframework.renderer.modifier.backgroundColor
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.runtime.derivedStateOf
 import com.gzq.uiframework.runtime.mutableStateOf
@@ -56,11 +58,15 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             Column(
-                modifier = Modifier.Empty.padding(24),
+                modifier = Modifier.Empty
+                    .backgroundColor(Color.parseColor("#F4F1EA"))
+                    .padding(24),
             ) {
                 Text(
                     text = "UIFramework",
-                    modifier = Modifier.Empty.padding(8),
+                    modifier = Modifier.Empty
+                        .backgroundColor(Color.parseColor("#E6D9C6"))
+                        .padding(8),
                 )
                 Text(
                     text = "Declarative UI on Android Views",

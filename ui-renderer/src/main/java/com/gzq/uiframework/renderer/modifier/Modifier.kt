@@ -19,6 +19,10 @@ data class PaddingModifierElement(
     val bottom: Int,
 ) : ModifierElement
 
+data class BackgroundColorModifierElement(
+    val color: Int,
+) : ModifierElement
+
 fun Modifier.padding(all: Int): Modifier {
     return then(
         PaddingModifierElement(
@@ -27,5 +31,11 @@ fun Modifier.padding(all: Int): Modifier {
             right = all,
             bottom = all,
         ),
+    )
+}
+
+fun Modifier.backgroundColor(color: Int): Modifier {
+    return then(
+        BackgroundColorModifierElement(color),
     )
 }

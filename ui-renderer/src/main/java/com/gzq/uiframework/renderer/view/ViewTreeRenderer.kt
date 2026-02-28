@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
 import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.NodeType
@@ -183,7 +184,10 @@ object ViewTreeRenderer {
     }
 
     private fun applyModifier(view: View, node: VNode) {
+        val backgroundColor = node.modifier.elements
+            .lastOrNull { it is BackgroundColorModifierElement } as? BackgroundColorModifierElement
         val padding = node.modifier.elements.lastOrNull { it is PaddingModifierElement } as? PaddingModifierElement
+        view.setBackgroundColor(backgroundColor?.color ?: 0x00000000)
         if (padding == null) {
             view.setPadding(0, 0, 0, 0)
             return
