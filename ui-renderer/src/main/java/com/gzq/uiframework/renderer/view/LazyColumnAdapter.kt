@@ -4,7 +4,6 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.gzq.uiframework.renderer.node.LazyListItem
-import com.gzq.uiframework.renderer.node.LazyListItemSession
 import com.gzq.uiframework.renderer.reconcile.LazyListDiff
 import com.gzq.uiframework.renderer.reconcile.LazyListUpdate
 
@@ -67,26 +66,18 @@ internal class LazyColumnAdapter : RecyclerView.Adapter<LazyColumnViewHolder>() 
 internal class LazyColumnViewHolder(
     private val container: FrameLayout,
 ) : RecyclerView.ViewHolder(container) {
-    private var currentKey: Any? = null
-    private var currentContentToken: Any? = null
-    private var session: LazyListItemSession? = null
+    private val controller = LazyItemSessionController(
+        createSession = { item ->
+            item.sessionFactory.create(container)
+        },
+        clearContainer = container::removeAllViews,
+    )
 
     fun bind(item: LazyListItem) {
-        if (session == null || currentKey != item.key || currentContentToken != item.contentToken) {
-            session?.dispose()
-            container.removeAllViews()
-            session = item.sessionFactory.create(container)
-            currentKey = item.key
-            currentContentToken = item.contentToken
-        }
-        session?.render()
+        controller.bind(item)
     }
 
     fun recycle() {
-        session?.dispose()
-        session = null
-        currentKey = null
-        currentContentToken = null
-        container.removeAllViews()
+        controller.recycle()
     }
 }
