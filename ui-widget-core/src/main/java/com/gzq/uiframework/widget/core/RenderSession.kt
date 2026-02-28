@@ -20,6 +20,7 @@ class RenderSession internal constructor(
     private var renderScheduled: Boolean = false
     private val rememberStore = RememberStore()
     private val effectStore = EffectStore()
+    private val sideEffectStore = SideEffectStore()
 
     fun render() {
         renderScheduled = false
@@ -27,9 +28,11 @@ class RenderSession internal constructor(
         val (tree, nextObservation) = RuntimeObservation.observeReads(
             onInvalidated = ::scheduleRender,
         ) {
-            EffectContext.withStore(effectStore) {
-                RememberContext.withStore(rememberStore) {
-                    buildVNodeTree(content)
+            SideEffectContext.withStore(sideEffectStore) {
+                EffectContext.withStore(effectStore) {
+                    RememberContext.withStore(rememberStore) {
+                        buildVNodeTree(content)
+                    }
                 }
             }
         }
@@ -46,6 +49,7 @@ class RenderSession internal constructor(
             },
         )
         effectStore.commit()
+        sideEffectStore.commit()
     }
 
     fun dispose() {
@@ -53,6 +57,7 @@ class RenderSession internal constructor(
         observation = null
         mountedNodes = emptyList()
         effectStore.disposeAll()
+        sideEffectStore.disposeAll()
         renderScheduled = false
     }
 
