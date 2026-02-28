@@ -17,6 +17,11 @@
 - `Phase 3` 已完成
 - `Phase 4` 已完成
 
+主题覆盖补充状态：
+
+- 对象级 `UiThemeOverride(...)` 已完成
+- builder 风格 `UiThemeOverride(...)` 已完成
+
 ## 2. 结论
 
 `UIFramework` 有必要和 Android View 主题系统打通，但不能直接把 Android `Theme` 当成框架主题系统本身。
@@ -134,6 +139,11 @@ UiTheme(AppTheme.light()) {
 - 子树可以局部覆盖主题
 - 没有显式主题时，使用框架默认主题
 
+当前补充能力：
+
+- `UiTheme(tokens = ...)` 用于整套主题切换
+- `UiThemeOverride(...)` 用于父主题基础上的局部 patch
+
 ### 6.3 Widget/Modifier Consumption Layer
 
 主题不能只存在于 DSL 外围，必须能被具体节点消费。
@@ -203,10 +213,36 @@ UiTheme(AppTheme.light()) {
 }
 ```
 
+局部覆盖推荐 API：
+
+```kotlin
+UiTheme(AppTheme.light()) {
+    UiThemeOverride(
+        colors = Theme.colors.copy(primary = 0xFF5C8DFF.toInt())
+    ) {
+        Button(text = "Scoped Primary")
+    }
+}
+```
+
+builder 风格：
+
+```kotlin
+UiTheme(AppTheme.light()) {
+    UiThemeOverride(
+        colors = { copy(primary = 0xFF5C8DFF.toInt()) },
+        shapes = { copy(controlCornerRadius = 24.dp) },
+    ) {
+        Button(text = "Scoped Primary")
+    }
+}
+```
+
 ### 8.2 推荐对象
 
 ```kotlin
 object Theme {
+    val current: UiThemeTokens
     val colors: UiColors
 }
 ```
@@ -218,7 +254,45 @@ object AppTheme {
 }
 ```
 
-### 8.3 为什么 v1 不直接上泛型 CompositionLocal
+## 8.3 覆盖优先级
+
+主题系统当前遵循下面的优先级：
+
+1. 组件显式参数 / `Modifier`
+2. 当前子树 `UiThemeOverride(...)`
+3. 父主题 / 当前 `UiTheme(...)`
+4. 框架默认主题
+
+示例：
+
+```kotlin
+UiThemeOverride(
+    colors = Theme.colors.copy(primary = green)
+) {
+    Button(
+        text = "Delete",
+        modifier = Modifier.backgroundColor(red)
+    )
+}
+```
+
+上面这个例子里，按钮最终背景应以显式 `Modifier.backgroundColor(red)` 为准，而不是 override 后的 `primary`。
+
+## 8.4 使用边界
+
+推荐：
+
+- 页面或模块切换品牌主题时，用 `UiTheme(tokens = ...)`
+- 某个 section 只改局部颜色/圆角/点击态时，用 `UiThemeOverride(...)`
+- 单个控件有特殊视觉要求时，用显式组件参数或 `Modifier`
+
+不推荐：
+
+- 为了只改一个字段，重新手写一整套 `UiThemeTokens`
+- 在业务层同时大量混用主题 override 和硬编码样式
+- 在 override API 里直接耦合 Android attr 解析
+
+### 8.5 为什么 v1 不直接上泛型 CompositionLocal
 
 当前项目仍然没有必要一开始就引入完整的 `CompositionLocal<T>` 抽象。
 

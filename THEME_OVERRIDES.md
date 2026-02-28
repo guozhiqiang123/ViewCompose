@@ -18,15 +18,14 @@
   - 已有对象级 `UiThemeTokens.override(...)`
   - 已有对象级 `UiThemeOverride(...)`
 - 当前缺口：
-  - demo 还缺少局部主题覆盖示例
-  - 还缺少主题覆盖优先级和反例的文档收口
+  - 当前专题范围内已无实现缺口
 
 文档更新：
 
 - `Phase 1` 已完成
 - `Phase 2` 已完成
 - `Phase 3` 已完成
-- `Phase 4` 未开始
+- `Phase 4` 已完成
 
 ## 2. 结论
 
@@ -451,4 +450,4 @@ UiThemeOverride(
 - `Phase 1` 已完成
 - `Phase 2` 已完成
 - `Phase 3` 已完成
-- `Phase 4` 未开始
+- `Phase 4` 已完成
