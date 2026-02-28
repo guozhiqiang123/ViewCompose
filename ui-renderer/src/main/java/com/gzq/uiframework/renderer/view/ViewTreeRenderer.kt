@@ -16,6 +16,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.CompoundButton
@@ -71,6 +72,7 @@ import com.gzq.uiframework.renderer.node.RemoteImageLoader
 import com.gzq.uiframework.renderer.node.RemoteImageRequest
 import com.gzq.uiframework.renderer.node.SegmentedControlItem
 import com.gzq.uiframework.renderer.node.TextFieldType
+import com.gzq.uiframework.renderer.node.TextFieldImeAction
 import com.gzq.uiframework.renderer.node.TextAlign
 import com.gzq.uiframework.renderer.node.TextOverflow
 import com.gzq.uiframework.renderer.node.TabPage
@@ -189,7 +191,7 @@ object ViewTreeRenderer {
     private fun mountNode(context: Context, node: VNode): MountedNode {
         val view = when (node.type) {
             NodeType.Text -> TextView(context)
-            NodeType.TextField -> EditText(context)
+            NodeType.TextField -> DeclarativeTextFieldLayout(context)
             NodeType.Checkbox -> CheckBox(context)
             NodeType.Switch -> Switch(context)
             NodeType.RadioButton -> RadioButton(context)
@@ -255,7 +257,7 @@ object ViewTreeRenderer {
             }
 
             NodeType.TextField -> {
-                bindTextField(view as EditText, node)
+                bindTextField(view as DeclarativeTextFieldLayout, node)
             }
 
             NodeType.Checkbox -> {
@@ -442,6 +444,33 @@ object ViewTreeRenderer {
         val zIndex = node.modifier.elements
             .lastOrNull { it is ZIndexModifierElement } as? ZIndexModifierElement
         view.alpha = alpha?.alpha ?: 1f
+        if (view is DeclarativeTextFieldLayout) {
+            view.visibility = when (visibility?.visibility ?: Visibility.Visible) {
+                Visibility.Visible -> View.VISIBLE
+                Visibility.Invisible -> View.INVISIBLE
+                Visibility.Gone -> View.GONE
+            }
+            view.translationX = offset?.x ?: 0f
+            view.translationY = offset?.y ?: 0f
+            view.z = zIndex?.zIndex ?: 0f
+            view.isClickable = false
+            view.setOnClickListener(null)
+            view.minimumHeight = 0
+            view.setPadding(0, 0, 0, 0)
+            applyTextFieldModifier(
+                layout = view,
+                backgroundColor = backgroundColor?.color,
+                borderWidth = border?.width ?: 0,
+                borderColor = border?.color ?: Color.TRANSPARENT,
+                cornerRadius = cornerRadius?.radius ?: 0,
+                rippleColor = rippleColor?.color ?: DEFAULT_RIPPLE_COLOR,
+                padding = padding,
+                minHeight = minHeight?.minHeight ?: 0,
+                textColor = textColor?.color,
+                textSizeSp = textSize?.sizeSp,
+            )
+            return
+        }
         applyBackgroundAndInteraction(
             view = view,
             backgroundColor = backgroundColor?.color,
@@ -627,21 +656,39 @@ object ViewTreeRenderer {
         )
     }
 
-    private fun bindTextField(view: EditText, node: VNode) {
+    private fun bindTextField(view: DeclarativeTextFieldLayout, node: VNode) {
+        val input = view.inputView
         val value = readFieldValue(node)
-        if (view.text?.toString() != value) {
-            view.setText(value)
-            view.setSelection(value.length)
+        if (input.text?.toString() != value) {
+            input.setText(value)
+            input.setSelection(value.length)
         }
-        view.hint = readFieldHint(node)
-        view.isEnabled = readEnabled(node)
-        view.isSingleLine = readFieldSingleLine(node)
-        view.inputType = resolveInputType(
+        view.setLabel(
+            text = readFieldLabel(node),
+            color = readFieldLabelColor(node),
+            textSizeSp = readFieldLabelTextSize(node),
+        )
+        view.setSupportingText(
+            text = readFieldSupportingText(node),
+            color = readFieldSupportingTextColor(node),
+            textSizeSp = readFieldSupportingTextSize(node),
+        )
+        input.hint = readFieldPlaceholder(node)
+        input.isEnabled = readEnabled(node)
+        input.isSingleLine = readFieldSingleLine(node)
+        input.minLines = if (readFieldSingleLine(node)) 1 else readFieldMinLines(node)
+        input.maxLines = if (readFieldSingleLine(node)) 1 else readFieldMaxLines(node)
+        input.inputType = resolveInputType(
             type = readFieldType(node),
             singleLine = readFieldSingleLine(node),
         )
-        view.setHintTextColor(readFieldHintColor(node))
-        bindTextWatcher(view, node)
+        input.imeOptions = readFieldImeAction(node).toEditorAction()
+        input.setHintTextColor(readFieldHintColor(node))
+        applyReadOnly(
+            view = input,
+            readOnly = readFieldReadOnly(node),
+        )
+        bindTextWatcher(input, node)
     }
 
     private fun applyLazyListPadding(
@@ -665,6 +712,55 @@ object ViewTreeRenderer {
         val decoration = LazyItemSpacingDecoration(spacing)
         recyclerView.setTag(R.id.ui_framework_lazy_spacing_decoration, decoration)
         recyclerView.addItemDecoration(decoration)
+    }
+
+    private fun applyTextFieldModifier(
+        layout: DeclarativeTextFieldLayout,
+        backgroundColor: Int?,
+        borderWidth: Int,
+        borderColor: Int,
+        cornerRadius: Int,
+        rippleColor: Int,
+        padding: PaddingModifierElement?,
+        minHeight: Int,
+        textColor: Int?,
+        textSizeSp: Int?,
+    ) {
+        applyBackgroundAndInteraction(
+            view = layout.fieldContainer,
+            backgroundColor = backgroundColor,
+            borderWidth = borderWidth,
+            borderColor = borderColor,
+            cornerRadius = cornerRadius,
+            rippleColor = rippleColor,
+            clickable = false,
+        )
+        if (padding == null) {
+            layout.fieldContainer.setPadding(0, 0, 0, 0)
+        } else {
+            layout.fieldContainer.setPadding(
+                padding.left,
+                padding.top,
+                padding.right,
+                padding.bottom,
+            )
+        }
+        layout.fieldContainer.minimumHeight = minHeight
+        textColor?.let(layout.inputView::setTextColor)
+        if (textSizeSp != null) {
+            layout.inputView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp.toFloat())
+        }
+    }
+
+    private fun applyReadOnly(
+        view: EditText,
+        readOnly: Boolean,
+    ) {
+        view.isFocusable = !readOnly
+        view.isFocusableInTouchMode = !readOnly
+        view.isCursorVisible = !readOnly
+        view.isLongClickable = !readOnly
+        view.setTextIsSelectable(readOnly)
     }
 
     private fun bindTextWatcher(view: EditText, node: VNode) {
@@ -1208,8 +1304,20 @@ object ViewTreeRenderer {
         return node.props.values[PropKeys.VALUE] as? String ?: ""
     }
 
+    private fun readFieldLabel(node: VNode): String {
+        return node.props.values[PropKeys.LABEL] as? String ?: ""
+    }
+
     private fun readFieldHint(node: VNode): String {
         return node.props.values[PropKeys.HINT] as? String ?: ""
+    }
+
+    private fun readFieldPlaceholder(node: VNode): String {
+        return node.props.values[PropKeys.PLACEHOLDER] as? String ?: readFieldHint(node)
+    }
+
+    private fun readFieldSupportingText(node: VNode): String {
+        return node.props.values[PropKeys.SUPPORTING_TEXT] as? String ?: ""
     }
 
     private fun readFieldSingleLine(node: VNode): Boolean {
@@ -1222,6 +1330,38 @@ object ViewTreeRenderer {
 
     private fun readFieldHintColor(node: VNode): Int {
         return node.props.values[PropKeys.HINT_TEXT_COLOR] as? Int ?: 0xFF888888.toInt()
+    }
+
+    private fun readFieldReadOnly(node: VNode): Boolean {
+        return node.props.values[PropKeys.READ_ONLY] as? Boolean ?: false
+    }
+
+    private fun readFieldMaxLines(node: VNode): Int {
+        return node.props.values[PropKeys.MAX_LINES] as? Int ?: Int.MAX_VALUE
+    }
+
+    private fun readFieldMinLines(node: VNode): Int {
+        return node.props.values[PropKeys.MIN_LINES] as? Int ?: 1
+    }
+
+    private fun readFieldImeAction(node: VNode): TextFieldImeAction {
+        return node.props.values[PropKeys.IME_ACTION] as? TextFieldImeAction ?: TextFieldImeAction.Default
+    }
+
+    private fun readFieldLabelColor(node: VNode): Int {
+        return node.props.values[PropKeys.LABEL_TEXT_COLOR] as? Int ?: readFieldHintColor(node)
+    }
+
+    private fun readFieldSupportingTextColor(node: VNode): Int {
+        return node.props.values[PropKeys.SUPPORTING_TEXT_COLOR] as? Int ?: readFieldHintColor(node)
+    }
+
+    private fun readFieldLabelTextSize(node: VNode): Int {
+        return node.props.values[PropKeys.LABEL_TEXT_SIZE_SP] as? Int ?: 12
+    }
+
+    private fun readFieldSupportingTextSize(node: VNode): Int {
+        return node.props.values[PropKeys.SUPPORTING_TEXT_SIZE_SP] as? Int ?: 12
     }
 
     private fun readSliderValue(node: VNode): Int {
@@ -1308,6 +1448,17 @@ object ViewTreeRenderer {
             TextAlign.Start -> Gravity.START or Gravity.CENTER_VERTICAL
             TextAlign.Center -> Gravity.CENTER
             TextAlign.End -> Gravity.END or Gravity.CENTER_VERTICAL
+        }
+    }
+
+    private fun TextFieldImeAction.toEditorAction(): Int {
+        return when (this) {
+            TextFieldImeAction.Default -> EditorInfo.IME_ACTION_UNSPECIFIED
+            TextFieldImeAction.Next -> EditorInfo.IME_ACTION_NEXT
+            TextFieldImeAction.Done -> EditorInfo.IME_ACTION_DONE
+            TextFieldImeAction.Go -> EditorInfo.IME_ACTION_GO
+            TextFieldImeAction.Search -> EditorInfo.IME_ACTION_SEARCH
+            TextFieldImeAction.Send -> EditorInfo.IME_ACTION_SEND
         }
     }
 

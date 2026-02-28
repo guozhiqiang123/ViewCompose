@@ -7,6 +7,7 @@ import com.gzq.uiframework.renderer.modifier.HeightModifierElement
 import com.gzq.uiframework.renderer.modifier.RippleColorModifierElement
 import com.gzq.uiframework.renderer.modifier.TextColorModifierElement
 import com.gzq.uiframework.renderer.modifier.TextSizeModifierElement
+import com.gzq.uiframework.renderer.node.TextFieldImeAction
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.TextFieldType
@@ -40,6 +41,10 @@ class TextFieldTest {
                     value = "hello",
                     onValueChange = {},
                     hint = "Type here",
+                    label = "Display name",
+                    supportingText = "Shown in profile",
+                    maxLines = 3,
+                    imeAction = TextFieldImeAction.Next,
                 )
             }
         }
@@ -50,8 +55,13 @@ class TextFieldTest {
         assertEquals(NodeType.TextField, node.type)
         assertEquals("hello", node.props.values[PropKeys.VALUE])
         assertEquals("Type here", node.props.values[PropKeys.HINT])
+        assertEquals("Display name", node.props.values[PropKeys.LABEL])
+        assertEquals("Type here", node.props.values[PropKeys.PLACEHOLDER])
+        assertEquals("Shown in profile", node.props.values[PropKeys.SUPPORTING_TEXT])
         assertEquals(true, node.props.values[PropKeys.SINGLE_LINE])
         assertEquals(TextFieldType.Text, node.props.values[PropKeys.TEXT_FIELD_TYPE])
+        assertEquals(3, node.props.values[PropKeys.MAX_LINES])
+        assertEquals(TextFieldImeAction.Next, node.props.values[PropKeys.IME_ACTION])
         assertEquals(customTheme.colors.textSecondary, node.props.values[PropKeys.HINT_TEXT_COLOR])
         assertEquals(
             customTheme.colors.textPrimary,
@@ -83,6 +93,8 @@ class TextFieldTest {
                 value = "secret",
                 onValueChange = {},
                 hint = "Password",
+                label = "Password",
+                supportingText = "At least 8 characters",
             )
         }
 
@@ -90,7 +102,35 @@ class TextFieldTest {
 
         assertEquals(NodeType.TextField, node.type)
         assertEquals(TextFieldType.Password, node.props.values[PropKeys.TEXT_FIELD_TYPE])
+        assertEquals("Password", node.props.values[PropKeys.LABEL])
+        assertEquals("At least 8 characters", node.props.values[PropKeys.SUPPORTING_TEXT])
         assertTrue(node.props.values[PropKeys.SINGLE_LINE] as Boolean)
+    }
+
+    @Test
+    fun `text area exposes read only and multiline semantics`() {
+        val tree = buildVNodeTree {
+            TextArea(
+                value = "Line 1",
+                onValueChange = {},
+                label = "Bio",
+                supportingText = "Visible to collaborators",
+                readOnly = true,
+                minLines = 4,
+                maxLines = 6,
+                imeAction = TextFieldImeAction.Done,
+            )
+        }
+
+        val node = tree.single()
+
+        assertEquals(false, node.props.values[PropKeys.SINGLE_LINE])
+        assertEquals(true, node.props.values[PropKeys.READ_ONLY])
+        assertEquals(4, node.props.values[PropKeys.MIN_LINES])
+        assertEquals(6, node.props.values[PropKeys.MAX_LINES])
+        assertEquals(TextFieldImeAction.Done, node.props.values[PropKeys.IME_ACTION])
+        assertEquals("Bio", node.props.values[PropKeys.LABEL])
+        assertEquals("Visible to collaborators", node.props.values[PropKeys.SUPPORTING_TEXT])
     }
 
     @Test

@@ -85,6 +85,7 @@ import com.gzq.uiframework.widget.core.renderInto
 import com.gzq.uiframework.widget.core.sp
 import com.gzq.uiframework.renderer.node.ImageContentScale
 import com.gzq.uiframework.renderer.node.ImageSource
+import com.gzq.uiframework.renderer.node.TextFieldImeAction
 import java.util.Locale
 
 private val DEMO_TABS = listOf(
@@ -881,6 +882,9 @@ private fun UiTreeBuilder.InputPage() {
                     value = nameState.value,
                     onValueChange = { nameState.value = it },
                     hint = "Name",
+                    label = "Display name",
+                    supportingText = "Shown in your profile header",
+                    imeAction = TextFieldImeAction.Next,
                     variant = TextFieldVariant.Filled,
                     size = TextFieldSize.Large,
                     modifier = Modifier.Empty
@@ -891,6 +895,9 @@ private fun UiTreeBuilder.InputPage() {
                     value = emailState.value,
                     onValueChange = { emailState.value = it },
                     hint = "Email",
+                    label = "Work email",
+                    supportingText = "Used for notifications only",
+                    imeAction = TextFieldImeAction.Next,
                     variant = TextFieldVariant.Tonal,
                     size = TextFieldSize.Medium,
                     modifier = Modifier.Empty
@@ -901,6 +908,9 @@ private fun UiTreeBuilder.InputPage() {
                     value = passwordState.value,
                     onValueChange = { passwordState.value = it },
                     hint = "Password",
+                    label = "Access key",
+                    supportingText = "Blank keeps the current password",
+                    imeAction = TextFieldImeAction.Done,
                     variant = TextFieldVariant.Outlined,
                     size = TextFieldSize.Medium,
                     isError = passwordState.value.isBlank(),
@@ -912,6 +922,8 @@ private fun UiTreeBuilder.InputPage() {
                     value = ageState.value,
                     onValueChange = { ageState.value = it },
                     hint = "Version age",
+                    label = "Project age",
+                    supportingText = "Semantic version generations",
                     variant = TextFieldVariant.Outlined,
                     size = TextFieldSize.Compact,
                     modifier = Modifier.Empty
@@ -922,6 +934,8 @@ private fun UiTreeBuilder.InputPage() {
                     value = "disabled@uiframework.dev",
                     onValueChange = {},
                     hint = "Disabled email",
+                    label = "Readonly contact",
+                    supportingText = "Inherited from organization settings",
                     variant = TextFieldVariant.Tonal,
                     size = TextFieldSize.Medium,
                     enabled = false,
@@ -933,6 +947,10 @@ private fun UiTreeBuilder.InputPage() {
                     value = bioState.value,
                     onValueChange = { bioState.value = it },
                     hint = "Short bio",
+                    label = "Summary",
+                    supportingText = "Supports multiline notes and local state updates",
+                    maxLines = 6,
+                    imeAction = TextFieldImeAction.Done,
                     variant = TextFieldVariant.Filled,
                     size = TextFieldSize.Large,
                     modifier = Modifier.Empty

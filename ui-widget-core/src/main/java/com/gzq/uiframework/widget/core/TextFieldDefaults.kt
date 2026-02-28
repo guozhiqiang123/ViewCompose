@@ -43,6 +43,20 @@ object TextFieldDefaults {
         }
     }
 
+    fun labelColor(
+        enabled: Boolean = true,
+        isError: Boolean = false,
+    ): Int = hintColor(enabled = enabled, isError = isError)
+
+    fun supportingTextColor(
+        enabled: Boolean = true,
+        isError: Boolean = false,
+    ): Int = hintColor(enabled = enabled, isError = isError)
+
+    fun labelTextStyle(): UiTextStyle = Theme.typography.label
+
+    fun supportingTextStyle(): UiTextStyle = Theme.typography.label
+
     fun containerColor(
         variant: TextFieldVariant = TextFieldVariant.Filled,
         enabled: Boolean = true,
