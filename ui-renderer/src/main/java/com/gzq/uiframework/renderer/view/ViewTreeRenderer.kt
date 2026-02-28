@@ -12,11 +12,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.gzq.uiframework.renderer.modifier.AlphaModifierElement
 import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
 import com.gzq.uiframework.renderer.modifier.ClickableModifierElement
+import com.gzq.uiframework.renderer.modifier.HeightModifierElement
 import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
 import com.gzq.uiframework.renderer.modifier.SizeModifierElement
 import com.gzq.uiframework.renderer.modifier.Visibility
 import com.gzq.uiframework.renderer.modifier.VisibilityModifierElement
 import com.gzq.uiframework.renderer.modifier.WeightModifierElement
+import com.gzq.uiframework.renderer.modifier.WidthModifierElement
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
@@ -247,6 +249,8 @@ object ViewTreeRenderer {
 
     private fun createLayoutParams(parent: ViewGroup, node: VNode): ViewGroup.LayoutParams {
         val size = node.modifier.elements.lastOrNull { it is SizeModifierElement } as? SizeModifierElement
+        val widthModifier = node.modifier.elements.lastOrNull { it is WidthModifierElement } as? WidthModifierElement
+        val heightModifier = node.modifier.elements.lastOrNull { it is HeightModifierElement } as? HeightModifierElement
         val weight = node.modifier.elements.lastOrNull { it is WeightModifierElement } as? WeightModifierElement
         val defaultWidth = if (node.type == NodeType.Text || node.type == NodeType.Button) {
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -254,13 +258,14 @@ object ViewTreeRenderer {
             ViewGroup.LayoutParams.MATCH_PARENT
         }
         val defaultHeight = ViewGroup.LayoutParams.WRAP_CONTENT
-        val width = size?.width ?: defaultWidth
-        val height = size?.height ?: defaultHeight
+        val width = widthModifier?.width ?: size?.width ?: defaultWidth
+        val height = heightModifier?.height ?: size?.height ?: defaultHeight
         return when (parent) {
             is LinearLayout -> {
                 val resolvedWidth = if (
                     weight != null &&
                     parent.orientation == LinearLayout.HORIZONTAL &&
+                    widthModifier == null &&
                     size?.width == null
                 ) {
                     0
@@ -270,6 +275,7 @@ object ViewTreeRenderer {
                 val resolvedHeight = if (
                     weight != null &&
                     parent.orientation == LinearLayout.VERTICAL &&
+                    heightModifier == null &&
                     size?.height == null
                 ) {
                     0

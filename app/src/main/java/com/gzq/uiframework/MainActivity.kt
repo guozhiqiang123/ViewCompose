@@ -7,14 +7,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import android.view.ViewGroup
 import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.modifier.Visibility
 import com.gzq.uiframework.renderer.modifier.alpha
 import com.gzq.uiframework.renderer.modifier.backgroundColor
 import com.gzq.uiframework.renderer.modifier.clickable
+import com.gzq.uiframework.renderer.modifier.fillMaxWidth
+import com.gzq.uiframework.renderer.modifier.height
 import com.gzq.uiframework.renderer.modifier.padding
-import com.gzq.uiframework.renderer.modifier.size
 import com.gzq.uiframework.renderer.modifier.visibility
 import com.gzq.uiframework.renderer.modifier.weight
 import com.gzq.uiframework.runtime.derivedStateOf
@@ -105,7 +105,9 @@ class MainActivity : AppCompatActivity() {
                         .padding(8),
                 )
                 Row(
-                    modifier = Modifier.Empty.padding(8),
+                    modifier = Modifier.Empty
+                        .fillMaxWidth()
+                        .padding(8),
                 ) {
                     Text(
                         text = "Left pane",
@@ -163,10 +165,8 @@ class MainActivity : AppCompatActivity() {
                     items = keyedItems,
                     key = { item -> item },
                     modifier = Modifier.Empty
-                        .size(
-                            width = ViewGroup.LayoutParams.MATCH_PARENT,
-                            height = 220,
-                        )
+                        .fillMaxWidth()
+                        .height(220)
                         .padding(8),
                 ) { item ->
                     val itemCountState = remember { mutableStateOf(0) }

@@ -28,6 +28,14 @@ data class SizeModifierElement(
     val height: Int,
 ) : ModifierElement
 
+data class WidthModifierElement(
+    val width: Int,
+) : ModifierElement
+
+data class HeightModifierElement(
+    val height: Int,
+) : ModifierElement
+
 data class AlphaModifierElement(
     val alpha: Float,
 ) : ModifierElement
@@ -79,6 +87,18 @@ fun Modifier.size(
     )
 }
 
+fun Modifier.width(width: Int): Modifier {
+    return then(
+        WidthModifierElement(width),
+    )
+}
+
+fun Modifier.height(height: Int): Modifier {
+    return then(
+        HeightModifierElement(height),
+    )
+}
+
 fun Modifier.alpha(alpha: Float): Modifier {
     return then(
         AlphaModifierElement(alpha),
@@ -103,5 +123,20 @@ fun Modifier.weight(weight: Float): Modifier {
     }
     return then(
         WeightModifierElement(weight),
+    )
+}
+
+fun Modifier.fillMaxWidth(): Modifier {
+    return width(android.view.ViewGroup.LayoutParams.MATCH_PARENT)
+}
+
+fun Modifier.fillMaxHeight(): Modifier {
+    return height(android.view.ViewGroup.LayoutParams.MATCH_PARENT)
+}
+
+fun Modifier.fillMaxSize(): Modifier {
+    return size(
+        width = android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+        height = android.view.ViewGroup.LayoutParams.MATCH_PARENT,
     )
 }
