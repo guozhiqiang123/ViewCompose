@@ -25,4 +25,5 @@ dependencies {
     implementation(project(":ui-runtime"))
     implementation(project(":ui-renderer"))
     implementation(libs.androidx.core.ktx)
+    testImplementation(libs.junit)
 }
