@@ -318,6 +318,7 @@ class ThemeTest {
                 ),
                 textField = baseTheme.components.textField,
                 segmentedControl = baseTheme.components.segmentedControl,
+                inputControl = baseTheme.components.inputControl,
             ),
         )
 
@@ -441,6 +442,12 @@ class ThemeTest {
                     outlinedDisabledBorder = 208,
                     outlinedErrorBorder = 209,
                 ),
+                inputControl = UiInputControlStyles(
+                    label = 210,
+                    labelDisabled = 211,
+                    control = 212,
+                    controlDisabled = 213,
+                ),
                 segmentedControl = UiSegmentedControlStyles(
                     background = 301,
                     indicator = 302,
@@ -454,6 +461,7 @@ class ThemeTest {
         var disabledPrimary = 0
         var textFieldTonal = 0
         var textFieldError = 0
+        var inputControlDisabled = 0
         var segmentedIndicator = 0
 
         buildVNodeTree {
@@ -463,6 +471,7 @@ class ThemeTest {
                 disabledPrimary = ButtonDefaults.containerColor(ButtonVariant.Primary, enabled = false)
                 textFieldTonal = TextFieldDefaults.containerColor(TextFieldVariant.Tonal)
                 textFieldError = TextFieldDefaults.borderColor(TextFieldVariant.Outlined, isError = true)
+                inputControlDisabled = InputControlDefaults.controlColor(enabled = false)
                 segmentedIndicator = SegmentedControlDefaults.indicatorColor()
             }
         }
@@ -472,6 +481,7 @@ class ThemeTest {
         assertEquals(109, disabledPrimary)
         assertEquals(202, textFieldTonal)
         assertEquals(209, textFieldError)
+        assertEquals(213, inputControlDisabled)
         assertEquals(302, segmentedIndicator)
     }
 
@@ -670,6 +680,7 @@ class ThemeTest {
         val baseTheme = UiThemeDefaults.light()
         var buttonPrimary = 0
         var segmentedIndicator = 0
+        var disabledControl = 0
         var baseTextField = 0
 
         buildVNodeTree {
@@ -680,6 +691,9 @@ class ThemeTest {
                             button = button.copy(
                                 primaryContainer = 0xFF778899.toInt(),
                             ),
+                            inputControl = inputControl.copy(
+                                controlDisabled = 0xFF556677.toInt(),
+                            ),
                             segmentedControl = segmentedControl.copy(
                                 indicator = 0xFF998877.toInt(),
                             ),
@@ -688,6 +702,7 @@ class ThemeTest {
                 ) {
                     buttonPrimary = ButtonDefaults.containerColor(ButtonVariant.Primary)
                     segmentedIndicator = SegmentedControlDefaults.indicatorColor()
+                    disabledControl = InputControlDefaults.controlColor(enabled = false)
                     baseTextField = TextFieldDefaults.containerColor(TextFieldVariant.Filled)
                 }
             }
@@ -695,6 +710,7 @@ class ThemeTest {
 
         assertEquals(0xFF778899.toInt(), buttonPrimary)
         assertEquals(0xFF998877.toInt(), segmentedIndicator)
+        assertEquals(0xFF556677.toInt(), disabledControl)
         assertEquals(baseTheme.components.textField.filledContainer, baseTextField)
     }
 

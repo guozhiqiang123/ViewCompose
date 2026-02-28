@@ -5,17 +5,17 @@ object InputControlDefaults {
 
     fun labelColor(enabled: Boolean = true): Int {
         return if (enabled) {
-            Theme.input.fieldText
+            Theme.components.inputControl.label
         } else {
-            Theme.input.fieldTextDisabled
+            Theme.components.inputControl.labelDisabled
         }
     }
 
     fun controlColor(enabled: Boolean = true): Int {
         return if (enabled) {
-            Theme.input.control
+            Theme.components.inputControl.control
         } else {
-            Theme.input.controlDisabled
+            Theme.components.inputControl.controlDisabled
         }
     }
 

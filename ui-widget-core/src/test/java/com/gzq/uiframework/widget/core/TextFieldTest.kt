@@ -154,6 +154,7 @@ class TextFieldTest {
                     outlinedDisabledBorder = 208,
                     outlinedErrorBorder = 209,
                 ),
+                inputControl = baseTheme.components.inputControl,
                 segmentedControl = baseTheme.components.segmentedControl,
             ),
         )

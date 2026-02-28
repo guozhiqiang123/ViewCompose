@@ -830,6 +830,53 @@ private fun UiTreeBuilder.InputPage() {
                     onValueChange = { intensityState.value = it },
                     modifier = Modifier.Empty.fillMaxWidth(),
                 )
+                UiThemeOverride(
+                    components = {
+                        copy(
+                            inputControl = inputControl.copy(
+                                control = Theme.colors.accent,
+                                controlDisabled = Theme.colors.divider,
+                                label = Theme.colors.textPrimary,
+                                labelDisabled = Theme.colors.textSecondary,
+                            ),
+                        )
+                    },
+                ) {
+                    Column(
+                        spacing = 8.dp,
+                        modifier = Modifier.Empty
+                            .fillMaxWidth()
+                            .backgroundColor(SurfaceDefaults.backgroundColor())
+                            .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                            .padding(12.dp),
+                    ) {
+                        Text(text = "Input Control Override")
+                        Checkbox(
+                            text = "Local Accent Checkbox",
+                            checked = true,
+                            onCheckedChange = {},
+                        )
+                        Switch(
+                            text = "Disabled Accent Switch",
+                            checked = false,
+                            enabled = false,
+                            onCheckedChange = {},
+                        )
+                        RadioButton(
+                            text = "Local Accent Radio",
+                            checked = true,
+                            onCheckedChange = {},
+                        )
+                        Slider(
+                            value = 56,
+                            min = 0,
+                            max = 100,
+                            enabled = false,
+                            onValueChange = {},
+                            modifier = Modifier.Empty.fillMaxWidth(),
+                        )
+                    }
+                }
             }
 
             else -> DemoSection(

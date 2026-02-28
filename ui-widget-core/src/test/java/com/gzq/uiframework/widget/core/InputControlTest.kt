@@ -27,6 +27,17 @@ class InputControlTest {
                 body = UiTextStyle(fontSizeSp = 19),
                 label = UiTextStyle(fontSizeSp = 13),
             ),
+            components = UiComponentStyles(
+                button = UiThemeDefaults.light().components.button,
+                textField = UiThemeDefaults.light().components.textField,
+                inputControl = UiInputControlStyles(
+                    label = 91,
+                    labelDisabled = 92,
+                    control = 93,
+                    controlDisabled = 94,
+                ),
+                segmentedControl = UiThemeDefaults.light().components.segmentedControl,
+            ),
         )
         val tree = buildVNodeTree {
             UiTheme(customTheme) {
@@ -45,9 +56,9 @@ class InputControlTest {
         assertEquals("Enable logs", node.props.values[PropKeys.TEXT])
         assertEquals(true, node.props.values[PropKeys.CHECKED])
         assertEquals(true, node.props.values[PropKeys.ENABLED])
-        assertEquals(customTheme.input.control, node.props.values[PropKeys.CONTROL_COLOR])
+        assertEquals(93, node.props.values[PropKeys.CONTROL_COLOR])
         assertEquals(
-            customTheme.colors.textPrimary,
+            91,
             (elements.last { it is TextColorModifierElement } as TextColorModifierElement).color,
         )
         assertEquals(
@@ -99,6 +110,47 @@ class InputControlTest {
         assertEquals(NodeType.Switch, tree[0].children[1].type)
         assertEquals(false, tree[0].children[0].props.values[PropKeys.ENABLED])
         assertTrue(tree[0].children[1].props.values[PropKeys.ENABLED] as Boolean)
+    }
+
+    @Test
+    fun `input control component styles support disabled state override`() {
+        val baseTheme = UiThemeDefaults.light()
+        val customTheme = UiThemeTokens(
+            colors = baseTheme.colors,
+            typography = baseTheme.typography,
+            input = baseTheme.input,
+            components = UiComponentStyles(
+                button = baseTheme.components.button,
+                textField = baseTheme.components.textField,
+                inputControl = UiInputControlStyles(
+                    label = 101,
+                    labelDisabled = 102,
+                    control = 103,
+                    controlDisabled = 104,
+                ),
+                segmentedControl = baseTheme.components.segmentedControl,
+            ),
+        )
+
+        val tree = buildVNodeTree {
+            UiTheme(customTheme) {
+                Checkbox(
+                    text = "Disabled",
+                    checked = false,
+                    enabled = false,
+                    onCheckedChange = {},
+                )
+            }
+        }
+
+        val node = tree.single()
+        val elements = node.modifier.readModifierElements()
+
+        assertEquals(104, node.props.values[PropKeys.CONTROL_COLOR])
+        assertEquals(
+            102,
+            (elements.last { it is TextColorModifierElement } as TextColorModifierElement).color,
+        )
     }
 
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {

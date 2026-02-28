@@ -63,6 +63,7 @@ class SegmentedControlTest {
             components = UiComponentStyles(
                 button = baseTheme.components.button,
                 textField = baseTheme.components.textField,
+                inputControl = baseTheme.components.inputControl,
                 segmentedControl = UiSegmentedControlStyles(
                     background = 401,
                     indicator = 402,

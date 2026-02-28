@@ -110,10 +110,18 @@ data class UiSegmentedControlStyles(
     val selectedText: Int,
 )
 
+data class UiInputControlStyles(
+    val label: Int,
+    val labelDisabled: Int,
+    val control: Int,
+    val controlDisabled: Int,
+)
+
 data class UiComponentStyles(
     val button: UiButtonStyles,
     val textField: UiTextFieldStyles,
     val segmentedControl: UiSegmentedControlStyles,
+    val inputControl: UiInputControlStyles,
 )
 
 data class UiInteractionColors(
@@ -277,6 +285,12 @@ object UiComponentStyleDefaults {
                 indicator = colors.primary,
                 text = colors.textSecondary,
                 selectedText = contentColorFor(colors.primary),
+            ),
+            inputControl = UiInputControlStyles(
+                label = input.fieldText,
+                labelDisabled = input.fieldTextDisabled,
+                control = input.control,
+                controlDisabled = input.controlDisabled,
             ),
         )
     }
