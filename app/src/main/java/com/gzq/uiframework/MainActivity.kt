@@ -15,6 +15,7 @@ import com.gzq.uiframework.widget.core.renderInto
 
 class MainActivity : AppCompatActivity() {
     private val clickCountState = mutableStateOf(0)
+    private val reversedState = mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +48,25 @@ class MainActivity : AppCompatActivity() {
                         clickCountState.value = clickCountState.value + 1
                     },
                 )
+                Button(
+                    text = if (reversedState.value) "Show A-B-C" else "Show C-B-A",
+                    modifier = Modifier.Empty.padding(8),
+                    onClick = {
+                        reversedState.value = !reversedState.value
+                    },
+                )
+                val keyedItems = if (reversedState.value) {
+                    listOf("C", "B", "A")
+                } else {
+                    listOf("A", "B", "C")
+                }
+                keyedItems.forEach { item ->
+                    Text(
+                        text = "Keyed item $item",
+                        key = item,
+                        modifier = Modifier.Empty.padding(8),
+                    )
+                }
             }
         }
     }

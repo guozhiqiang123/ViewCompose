@@ -18,36 +18,43 @@ object ViewTreeRenderer {
         previous: List<MountedNode>,
         nodes: List<VNode>,
     ): List<MountedNode> {
+        val usedPrevious = BooleanArray(previous.size)
         val nextMounted = mutableListOf<MountedNode>()
         nodes.forEachIndexed { index, node ->
-            val previousNode = previous.getOrNull(index)
-            if (previousNode != null && canReuse(previousNode.vnode, node)) {
+            val reusableIndex = findReusableIndex(
+                previous = previous,
+                usedPrevious = usedPrevious,
+                targetIndex = index,
+                node = node,
+            )
+            val previousNode = reusableIndex?.let(previous::get)
+            if (previousNode != null) {
+                usedPrevious[reusableIndex] = true
                 bindView(previousNode.view, node)
                 previousNode.view.layoutParams = createLayoutParams(container, node)
                 previousNode.children = reconcileChildren(previousNode.view, previousNode.children, node)
                 previousNode.vnode = node
+                moveViewToIndex(
+                    container = container,
+                    view = previousNode.view,
+                    targetIndex = index,
+                )
                 nextMounted += previousNode
             } else {
                 val mountedNode = mountNode(container.context, node)
-                if (previousNode == null) {
-                    container.addView(
-                        mountedNode.view,
-                        createLayoutParams(container, node),
-                    )
-                } else {
-                    container.removeViewAt(index)
-                    container.addView(
-                        mountedNode.view,
-                        index,
-                        createLayoutParams(container, node),
-                    )
-                }
+                container.addView(
+                    mountedNode.view,
+                    index.coerceAtMost(container.childCount),
+                    createLayoutParams(container, node),
+                )
                 nextMounted += mountedNode
             }
         }
 
-        for (index in previous.lastIndex downTo nodes.size) {
-            container.removeViewAt(index)
+        previous.forEachIndexed { index, mountedNode ->
+            if (!usedPrevious[index]) {
+                container.removeView(mountedNode.view)
+            }
         }
 
         return nextMounted
@@ -146,6 +153,45 @@ object ViewTreeRenderer {
             return false
         }
         return previous.key == next.key
+    }
+
+    private fun findReusableIndex(
+        previous: List<MountedNode>,
+        usedPrevious: BooleanArray,
+        targetIndex: Int,
+        node: VNode,
+    ): Int? {
+        if (node.key != null) {
+            previous.forEachIndexed { index, mountedNode ->
+                if (!usedPrevious[index] && canReuse(mountedNode.vnode, node)) {
+                    return index
+                }
+            }
+            return null
+        }
+
+        val candidate = previous.getOrNull(targetIndex) ?: return null
+        return if (!usedPrevious[targetIndex] && canReuse(candidate.vnode, node)) {
+            targetIndex
+        } else {
+            null
+        }
+    }
+
+    private fun moveViewToIndex(
+        container: ViewGroup,
+        view: View,
+        targetIndex: Int,
+    ) {
+        val currentIndex = container.indexOfChild(view)
+        if (currentIndex == -1 || currentIndex == targetIndex) {
+            return
+        }
+        container.removeViewAt(currentIndex)
+        container.addView(
+            view,
+            targetIndex.coerceAtMost(container.childCount),
+        )
     }
 
     private fun createLayoutParams(parent: ViewGroup, node: VNode): ViewGroup.LayoutParams {
