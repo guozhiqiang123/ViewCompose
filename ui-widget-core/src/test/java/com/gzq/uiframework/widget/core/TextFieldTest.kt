@@ -134,6 +134,59 @@ class TextFieldTest {
         assertEquals(Theme.typography.label.fontSizeSp, textSize.sizeSp)
     }
 
+    @Test
+    fun `disabled and error text field states use themed component styles`() {
+        val baseTheme = UiThemeDefaults.light()
+        val customTheme = UiThemeTokens(
+            colors = baseTheme.colors,
+            typography = baseTheme.typography,
+            input = baseTheme.input,
+            components = UiComponentStyles(
+                button = baseTheme.components.button,
+                textField = UiTextFieldStyles(
+                    filledContainer = 201,
+                    filledDisabledContainer = 202,
+                    filledErrorContainer = 203,
+                    tonalContainer = 204,
+                    tonalDisabledContainer = 205,
+                    tonalErrorContainer = 206,
+                    outlinedBorder = 207,
+                    outlinedDisabledBorder = 208,
+                    outlinedErrorBorder = 209,
+                ),
+                segmentedControl = baseTheme.components.segmentedControl,
+            ),
+        )
+
+        val disabledTree = buildVNodeTree {
+            UiTheme(customTheme) {
+                TextField(
+                    value = "hello",
+                    onValueChange = {},
+                    enabled = false,
+                )
+            }
+        }
+        val errorTree = buildVNodeTree {
+            UiTheme(customTheme) {
+                TextField(
+                    value = "hello",
+                    onValueChange = {},
+                    variant = TextFieldVariant.Outlined,
+                    isError = true,
+                )
+            }
+        }
+
+        val disabledElements = disabledTree.single().modifier.readModifierElements()
+        val disabledBackground = disabledElements.last { it is BackgroundColorModifierElement } as BackgroundColorModifierElement
+        val errorElements = errorTree.single().modifier.readModifierElements()
+        val errorBorder = errorElements.last { it is BorderModifierElement } as BorderModifierElement
+
+        assertEquals(202, disabledBackground.color)
+        assertEquals(209, errorBorder.color)
+    }
+
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {
         val field = javaClass.getDeclaredField("elements")
         field.isAccessible = true

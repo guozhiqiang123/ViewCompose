@@ -383,7 +383,14 @@ private fun UiTreeBuilder.OverviewPage(
                             button = button.copy(
                                 primaryContainer = Theme.colors.textPrimary,
                                 primaryContent = Theme.colors.background,
+                                primaryDisabledContainer = Theme.colors.divider,
+                                primaryDisabledContent = Theme.colors.textSecondary,
                                 outlinedBorder = Theme.colors.accent,
+                                outlinedDisabledBorder = Theme.colors.textSecondary,
+                            ),
+                            textField = textField.copy(
+                                filledDisabledContainer = Theme.colors.surfaceVariant,
+                                outlinedErrorBorder = Theme.colors.accent,
                             ),
                             segmentedControl = segmentedControl.copy(
                                 indicator = Theme.colors.accent,
@@ -426,6 +433,29 @@ private fun UiTreeBuilder.OverviewPage(
                                 modifier = Modifier.Empty.weight(1f),
                             )
                         }
+                        Row(
+                            spacing = 8.dp,
+                            modifier = Modifier.Empty.fillMaxWidth(),
+                        ) {
+                            Button(
+                                text = "Disabled Primary",
+                                enabled = false,
+                                modifier = Modifier.Empty.weight(1f),
+                            )
+                            Button(
+                                text = "Disabled Outline",
+                                variant = ButtonVariant.Outlined,
+                                enabled = false,
+                                modifier = Modifier.Empty.weight(1f),
+                            )
+                        }
+                        TextField(
+                            value = "error@token.dev",
+                            onValueChange = {},
+                            variant = TextFieldVariant.Outlined,
+                            isError = true,
+                            modifier = Modifier.Empty.fillMaxWidth(),
+                        )
                     }
                 }
                 Text(

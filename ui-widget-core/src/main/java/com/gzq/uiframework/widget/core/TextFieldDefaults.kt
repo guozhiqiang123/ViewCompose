@@ -50,11 +50,12 @@ object TextFieldDefaults {
     ): Int {
         return when {
             variant == TextFieldVariant.Outlined -> 0x00000000
-            isError -> Theme.input.fieldError
+            isError && variant == TextFieldVariant.Tonal -> Theme.components.textField.tonalErrorContainer
+            isError -> Theme.components.textField.filledErrorContainer
             variant == TextFieldVariant.Tonal && enabled -> Theme.components.textField.tonalContainer
-            variant == TextFieldVariant.Tonal -> Theme.input.fieldContainerDisabled
+            variant == TextFieldVariant.Tonal -> Theme.components.textField.tonalDisabledContainer
             enabled -> Theme.components.textField.filledContainer
-            else -> Theme.input.fieldContainerDisabled
+            else -> Theme.components.textField.filledDisabledContainer
         }
     }
 
@@ -64,9 +65,9 @@ object TextFieldDefaults {
         isError: Boolean = false,
     ): Int {
         return when {
-            isError -> Theme.input.fieldError
+            isError -> Theme.components.textField.outlinedErrorBorder
             variant == TextFieldVariant.Outlined && enabled -> Theme.components.textField.outlinedBorder
-            variant == TextFieldVariant.Outlined -> Theme.input.controlDisabled
+            variant == TextFieldVariant.Outlined -> Theme.components.textField.outlinedDisabledBorder
             else -> 0x00000000
         }
     }

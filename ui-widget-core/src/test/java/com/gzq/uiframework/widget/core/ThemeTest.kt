@@ -291,6 +291,56 @@ class ThemeTest {
     }
 
     @Test
+    fun `disabled button emits enabled prop and themed disabled styles`() {
+        val baseTheme = UiThemeDefaults.light()
+        val customTheme = UiThemeTokens(
+            colors = baseTheme.colors,
+            typography = baseTheme.typography,
+            input = baseTheme.input,
+            components = UiComponentStyles(
+                button = UiButtonStyles(
+                    primaryContainer = 101,
+                    primaryContent = 102,
+                    primaryDisabledContainer = 103,
+                    primaryDisabledContent = 104,
+                    secondaryContainer = 105,
+                    secondaryContent = 106,
+                    secondaryDisabledContainer = 107,
+                    secondaryDisabledContent = 108,
+                    tonalContainer = 109,
+                    tonalContent = 110,
+                    tonalDisabledContainer = 111,
+                    tonalDisabledContent = 112,
+                    outlinedContent = 113,
+                    outlinedBorder = 114,
+                    outlinedDisabledContent = 115,
+                    outlinedDisabledBorder = 116,
+                ),
+                textField = baseTheme.components.textField,
+                segmentedControl = baseTheme.components.segmentedControl,
+            ),
+        )
+
+        val tree = buildVNodeTree {
+            UiTheme(customTheme) {
+                Button(
+                    text = "Disabled",
+                    enabled = false,
+                )
+            }
+        }
+
+        val node = tree.single()
+        val elements = node.modifier.readModifierElements()
+        val background = elements.last { it is BackgroundColorModifierElement } as BackgroundColorModifierElement
+        val textColor = elements.last { it is TextColorModifierElement } as TextColorModifierElement
+
+        assertEquals(false, node.props.values[PropKeys.ENABLED])
+        assertEquals(103, background.color)
+        assertEquals(104, textColor.color)
+    }
+
+    @Test
     fun `explicit button modifier overrides theme override background`() {
         val overriddenPrimary = 0xFF123456.toInt()
         val explicitBackground = 0xFF654321.toInt()
@@ -365,17 +415,31 @@ class ThemeTest {
                 button = UiButtonStyles(
                     primaryContainer = 101,
                     primaryContent = 102,
+                    primaryDisabledContainer = 109,
+                    primaryDisabledContent = 110,
                     secondaryContainer = 103,
                     secondaryContent = 104,
+                    secondaryDisabledContainer = 111,
+                    secondaryDisabledContent = 112,
                     tonalContainer = 105,
                     tonalContent = 106,
+                    tonalDisabledContainer = 113,
+                    tonalDisabledContent = 114,
                     outlinedContent = 107,
                     outlinedBorder = 108,
+                    outlinedDisabledContent = 115,
+                    outlinedDisabledBorder = 116,
                 ),
                 textField = UiTextFieldStyles(
                     filledContainer = 201,
+                    filledDisabledContainer = 204,
+                    filledErrorContainer = 205,
                     tonalContainer = 202,
+                    tonalDisabledContainer = 206,
+                    tonalErrorContainer = 207,
                     outlinedBorder = 203,
+                    outlinedDisabledBorder = 208,
+                    outlinedErrorBorder = 209,
                 ),
                 segmentedControl = UiSegmentedControlStyles(
                     background = 301,
@@ -387,21 +451,27 @@ class ThemeTest {
         )
         var buttonTonal = 0
         var outlinedBorder = 0
+        var disabledPrimary = 0
         var textFieldTonal = 0
+        var textFieldError = 0
         var segmentedIndicator = 0
 
         buildVNodeTree {
             UiTheme(customTheme) {
                 buttonTonal = ButtonDefaults.containerColor(ButtonVariant.Tonal)
                 outlinedBorder = ButtonDefaults.borderColor(ButtonVariant.Outlined)
+                disabledPrimary = ButtonDefaults.containerColor(ButtonVariant.Primary, enabled = false)
                 textFieldTonal = TextFieldDefaults.containerColor(TextFieldVariant.Tonal)
+                textFieldError = TextFieldDefaults.borderColor(TextFieldVariant.Outlined, isError = true)
                 segmentedIndicator = SegmentedControlDefaults.indicatorColor()
             }
         }
 
         assertEquals(105, buttonTonal)
         assertEquals(108, outlinedBorder)
+        assertEquals(109, disabledPrimary)
         assertEquals(202, textFieldTonal)
+        assertEquals(209, textFieldError)
         assertEquals(302, segmentedIndicator)
     }
 
@@ -626,6 +696,49 @@ class ThemeTest {
         assertEquals(0xFF778899.toInt(), buttonPrimary)
         assertEquals(0xFF998877.toInt(), segmentedIndicator)
         assertEquals(baseTheme.components.textField.filledContainer, baseTextField)
+    }
+
+    @Test
+    fun `component style override supports disabled button and text field states`() {
+        val baseTheme = UiThemeDefaults.light()
+        var disabledButton = 0
+        var disabledField = 0
+        var errorField = 0
+
+        buildVNodeTree {
+            UiTheme(baseTheme) {
+                UiThemeOverride(
+                    components = {
+                        copy(
+                            button = button.copy(
+                                primaryDisabledContainer = 0xFF111122.toInt(),
+                            ),
+                            textField = textField.copy(
+                                filledDisabledContainer = 0xFF222233.toInt(),
+                                outlinedErrorBorder = 0xFF333344.toInt(),
+                            ),
+                        )
+                    },
+                ) {
+                    disabledButton = ButtonDefaults.containerColor(
+                        variant = ButtonVariant.Primary,
+                        enabled = false,
+                    )
+                    disabledField = TextFieldDefaults.containerColor(
+                        variant = TextFieldVariant.Filled,
+                        enabled = false,
+                    )
+                    errorField = TextFieldDefaults.borderColor(
+                        variant = TextFieldVariant.Outlined,
+                        isError = true,
+                    )
+                }
+            }
+        }
+
+        assertEquals(0xFF111122.toInt(), disabledButton)
+        assertEquals(0xFF222233.toInt(), disabledField)
+        assertEquals(0xFF333344.toInt(), errorField)
     }
 
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {

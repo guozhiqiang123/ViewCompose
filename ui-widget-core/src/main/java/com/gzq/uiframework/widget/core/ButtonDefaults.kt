@@ -16,31 +16,73 @@ enum class ButtonSize {
 object ButtonDefaults {
     fun containerColor(
         variant: ButtonVariant = ButtonVariant.Primary,
+        enabled: Boolean = true,
     ): Int {
         return when (variant) {
-            ButtonVariant.Primary -> Theme.components.button.primaryContainer
-            ButtonVariant.Secondary -> Theme.components.button.secondaryContainer
-            ButtonVariant.Tonal -> Theme.components.button.tonalContainer
+            ButtonVariant.Primary -> if (enabled) {
+                Theme.components.button.primaryContainer
+            } else {
+                Theme.components.button.primaryDisabledContainer
+            }
+
+            ButtonVariant.Secondary -> if (enabled) {
+                Theme.components.button.secondaryContainer
+            } else {
+                Theme.components.button.secondaryDisabledContainer
+            }
+
+            ButtonVariant.Tonal -> if (enabled) {
+                Theme.components.button.tonalContainer
+            } else {
+                Theme.components.button.tonalDisabledContainer
+            }
+
             ButtonVariant.Outlined -> 0x00000000
         }
     }
 
     fun contentColor(
         variant: ButtonVariant = ButtonVariant.Primary,
+        enabled: Boolean = true,
     ): Int {
         return when (variant) {
-            ButtonVariant.Primary -> Theme.components.button.primaryContent
-            ButtonVariant.Secondary -> Theme.components.button.secondaryContent
-            ButtonVariant.Tonal -> Theme.components.button.tonalContent
-            ButtonVariant.Outlined -> Theme.components.button.outlinedContent
+            ButtonVariant.Primary -> if (enabled) {
+                Theme.components.button.primaryContent
+            } else {
+                Theme.components.button.primaryDisabledContent
+            }
+
+            ButtonVariant.Secondary -> if (enabled) {
+                Theme.components.button.secondaryContent
+            } else {
+                Theme.components.button.secondaryDisabledContent
+            }
+
+            ButtonVariant.Tonal -> if (enabled) {
+                Theme.components.button.tonalContent
+            } else {
+                Theme.components.button.tonalDisabledContent
+            }
+
+            ButtonVariant.Outlined -> if (enabled) {
+                Theme.components.button.outlinedContent
+            } else {
+                Theme.components.button.outlinedDisabledContent
+            }
         }
     }
 
     fun borderColor(
         variant: ButtonVariant = ButtonVariant.Primary,
+        enabled: Boolean = true,
     ): Int {
         return when (variant) {
-            ButtonVariant.Outlined -> Theme.components.button.outlinedBorder
+            ButtonVariant.Outlined -> if (enabled) {
+                Theme.components.button.outlinedBorder
+            } else {
+                Theme.components.button.outlinedDisabledBorder
+            }
+
             else -> 0x00000000
         }
     }

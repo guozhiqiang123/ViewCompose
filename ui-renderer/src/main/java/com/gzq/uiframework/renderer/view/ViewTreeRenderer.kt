@@ -250,6 +250,7 @@ object ViewTreeRenderer {
             NodeType.Button -> {
                 (view as Button).apply {
                     text = node.props.values[PropKeys.TEXT] as? CharSequence
+                    isEnabled = readEnabled(node)
                     isAllCaps = false
                     setSingleLine(false)
                     maxLines = 2
@@ -258,7 +259,9 @@ object ViewTreeRenderer {
                     minimumWidth = 0
                     minWidth = 0
                     setOnClickListener {
-                        readOnClick(node)?.invoke()
+                        if (readEnabled(node)) {
+                            readOnClick(node)?.invoke()
+                        }
                     }
                 }
             }

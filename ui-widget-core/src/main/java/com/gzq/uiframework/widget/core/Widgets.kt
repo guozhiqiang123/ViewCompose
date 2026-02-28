@@ -341,6 +341,7 @@ fun UiTreeBuilder.Button(
     onClick: (() -> Unit)? = null,
     variant: ButtonVariant = ButtonVariant.Primary,
     size: ButtonSize = ButtonSize.Medium,
+    enabled: Boolean = true,
     style: UiTextStyle = ButtonDefaults.textStyle(size),
     key: Any? = null,
     modifier: Modifier = Modifier.Empty,
@@ -352,6 +353,7 @@ fun UiTreeBuilder.Button(
             values = buildMap {
                 put(PropKeys.TEXT, text)
                 put(PropKeys.ON_CLICK, onClick)
+                put(PropKeys.ENABLED, enabled)
             },
         ),
         modifier = Modifier.Empty
@@ -360,14 +362,14 @@ fun UiTreeBuilder.Button(
                 horizontal = ButtonDefaults.horizontalPadding(size),
                 vertical = ButtonDefaults.verticalPadding(size),
             )
-            .backgroundColor(ButtonDefaults.containerColor(variant))
+            .backgroundColor(ButtonDefaults.containerColor(variant, enabled))
             .border(
                 width = ButtonDefaults.borderWidth(variant),
-                color = ButtonDefaults.borderColor(variant),
+                color = ButtonDefaults.borderColor(variant, enabled),
             )
             .cornerRadius(ButtonDefaults.cornerRadius())
             .rippleColor(ButtonDefaults.pressedColor())
-            .textColor(ButtonDefaults.contentColor(variant))
+            .textColor(ButtonDefaults.contentColor(variant, enabled))
             .textSize(style.fontSizeSp)
             .then(modifier),
     )
