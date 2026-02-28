@@ -144,6 +144,7 @@ UiTheme(AppTheme.light()) {
 - `UiTheme(tokens = ...)` 用于整套主题切换
 - `UiThemeOverride(...)` 用于父主题基础上的局部 patch
 - `Theme.components` 用于承载组件默认样式 token
+- `Theme.components` 当前已覆盖 `button`、`textField`、`segmentedControl`、`inputControl`
 
 ### 6.3 Widget/Modifier Consumption Layer
 
@@ -258,6 +259,29 @@ UiTheme(AppTheme.light()) {
 }
 ```
 
+输入控件默认样式覆盖：
+
+```kotlin
+UiTheme(AppTheme.light()) {
+    UiThemeOverride(
+        components = {
+            copy(
+                inputControl = inputControl.copy(
+                    control = 0xFF3F8CFF.toInt(),
+                    controlDisabled = 0xFF9EB6D8.toInt(),
+                )
+            )
+        },
+    ) {
+        Checkbox(
+            text = "Scoped Accent",
+            checked = true,
+            onCheckedChange = {},
+        )
+    }
+}
+```
+
 ### 8.2 推荐对象
 
 ```kotlin
@@ -306,6 +330,7 @@ UiThemeOverride(
 - 页面或模块切换品牌主题时，用 `UiTheme(tokens = ...)`
 - 某个 section 只改局部颜色/圆角/点击态时，用 `UiThemeOverride(...)`
 - 某组按钮、输入框、分段控件只改组件默认样式时，用 `UiThemeOverride(components = ...)`
+- 勾选框、开关、单选框、滑块这类输入控件组，只改强调色或禁用态时，也走 `UiThemeOverride(components = ...)`
 - 单个控件有特殊视觉要求时，用显式组件参数或 `Modifier`
 
 不推荐：
