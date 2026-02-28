@@ -518,4 +518,52 @@
 3. 但我们不能直接照抄 Compose 页面，而应加入 `Interop` 和 `Diagnostics` 这两个更适合当前框架的章节
 4. `P1` 基础控件层已经闭环，下一阶段更适合转向 demo 体系化和能力差距驱动开发
 
+## 11. 当前推进状态
+
+截至当前版本，demo 改造状态如下：
+
+### 11.1 Phase A
+
+状态：已完成
+
+已落地：
+
+- 顶层 demo 已从原来的 5 个 tab 重构为 11 个 chapter
+- `Foundations / State / Layouts / Input / Collections / Interop / Diagnostics` 已有实际内容
+- `Gestures / Animation / Graphics / Navigation` 已建立占位 chapter
+- 顶层 `TabPager` 已切到可滚动模式，能承载更长章节列表
+
+### 11.2 Phase B
+
+状态：进行中
+
+已落地：
+
+- 已实现章节统一增加了页面目标说明
+- 已实现章节统一增加了 `Verification Notes`
+- `Foundations / Input / Layouts / State / Collections / Interop / Diagnostics` 已有章内 page filter
+
+未完成：
+
+- 还没有把所有 chapter 进一步拆成更细的稳定 page 目录
+- 还没有系统化的“边界场景 / 压力场景”矩阵
+- 还没有把验证说明收成更结构化的测试模板或导出能力
+
+### 11.3 Phase C
+
+状态：已完成
+
+已落地：
+
+- 缺失能力章节已经有固定入口
+- 占位页中已标明 planned pages 和 current gaps
+
+### 11.4 下一步建议
+
+最自然的延续方向是：
+
+1. 继续把每个已实现 chapter 细化成更清晰的 page 目录，而不是只靠 section 过滤
+2. 为布局、输入、集合三大章补更多边界态和压力态场景
+3. 把 `Diagnostics` 继续往可人工使用的调试台推进，例如 locals、render tree、patch 与 key 警告的可视化
+
 后续只要继续做 demo，就默认按本文档推进。
