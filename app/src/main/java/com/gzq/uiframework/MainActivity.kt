@@ -37,6 +37,7 @@ import com.gzq.uiframework.widget.core.FlexibleSpacer
 import com.gzq.uiframework.widget.core.LazyColumn
 import com.gzq.uiframework.widget.core.Row
 import com.gzq.uiframework.widget.core.SideEffect
+import com.gzq.uiframework.widget.core.SurfaceDefaults
 import com.gzq.uiframework.widget.core.Theme
 import com.gzq.uiframework.widget.core.Text
 import com.gzq.uiframework.widget.core.TextDefaults
@@ -112,7 +113,7 @@ class MainActivity : AppCompatActivity() {
                         text = "UIFramework",
                         style = TextDefaults.titleStyle(),
                         modifier = Modifier.Empty
-                            .backgroundColor(Theme.colors.surface)
+                            .backgroundColor(SurfaceDefaults.backgroundColor())
                             .padding(8),
                     )
                     Text(
@@ -153,7 +154,7 @@ class MainActivity : AppCompatActivity() {
                         modifier = Modifier.Empty
                             .fillMaxWidth()
                             .height(72)
-                            .backgroundColor(Theme.colors.surfaceVariant)
+                            .backgroundColor(SurfaceDefaults.variantBackgroundColor())
                             .margin(vertical = 8),
                     ) {
                         Text(
@@ -184,7 +185,7 @@ class MainActivity : AppCompatActivity() {
                             text = "Left pane",
                             modifier = Modifier.Empty
                                 .align(VerticalAlignment.Top)
-                                .backgroundColor(Theme.colors.surface)
+                                .backgroundColor(SurfaceDefaults.backgroundColor())
                                 .padding(12),
                         )
                         FlexibleSpacer(modifier = Modifier.Empty.width(12))
@@ -252,7 +253,7 @@ class MainActivity : AppCompatActivity() {
                                 horizontalAlignment = HorizontalAlignment.Center,
                                 spacing = 4,
                                 modifier = Modifier.Empty
-                                    .backgroundColor(Theme.colors.surfaceVariant)
+                                    .backgroundColor(SurfaceDefaults.variantBackgroundColor())
                                     .margin(vertical = 8)
                                     .padding(8),
                             ) {
@@ -306,7 +307,7 @@ class MainActivity : AppCompatActivity() {
                         Column(
                             key = item.id,
                             modifier = Modifier.Empty
-                                .backgroundColor(Theme.colors.surface)
+                                .backgroundColor(SurfaceDefaults.backgroundColor())
                                 .padding(8),
                         ) {
                             Text(

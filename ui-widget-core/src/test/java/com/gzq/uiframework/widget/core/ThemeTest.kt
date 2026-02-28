@@ -173,6 +173,42 @@ class ThemeTest {
         assertEquals(customTheme.typography.title.fontSizeSp, titleSize)
     }
 
+    @Test
+    fun `surface and divider defaults reflect current theme`() {
+        val customTheme = UiThemeTokens(
+            colors = UiColors(
+                background = 1,
+                surface = 22,
+                surfaceVariant = 33,
+                primary = 4,
+                accent = 5,
+                divider = 66,
+                textPrimary = 70,
+                textSecondary = 80,
+            ),
+            typography = UiTypography(
+                title = UiTextStyle(fontSizeSp = 31),
+                body = UiTextStyle(fontSizeSp = 19),
+                label = UiTextStyle(fontSizeSp = 13),
+            ),
+        )
+        var surface = 0
+        var surfaceVariant = 0
+        var divider = 0
+
+        buildVNodeTree {
+            UiTheme(customTheme) {
+                surface = SurfaceDefaults.backgroundColor()
+                surfaceVariant = SurfaceDefaults.variantBackgroundColor()
+                divider = DividerDefaults.color()
+            }
+        }
+
+        assertEquals(customTheme.colors.surface, surface)
+        assertEquals(customTheme.colors.surfaceVariant, surfaceVariant)
+        assertEquals(customTheme.colors.divider, divider)
+    }
+
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {
         val field = javaClass.getDeclaredField("elements")
         field.isAccessible = true

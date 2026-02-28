@@ -124,8 +124,8 @@ fun UiTreeBuilder.FlexibleSpacer(
 }
 
 fun UiTreeBuilder.Divider(
-    color: Int = Theme.colors.divider,
-    thickness: Int = 1,
+    color: Int = DividerDefaults.color(),
+    thickness: Int = DividerDefaults.thickness(),
     key: Any? = null,
     modifier: Modifier = Modifier.Empty,
 ) {
