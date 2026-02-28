@@ -88,19 +88,36 @@ import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.renderer.node.TextFieldImeAction
 import java.util.Locale
 
-private val DEMO_TABS = listOf(
-    "Overview",
-    "Layout",
-    "Input",
-    "State",
-    "Collection",
+private data class DemoChapter(
+    val key: String,
+    val title: String,
 )
 
-private const val TAB_OVERVIEW = 0
-private const val TAB_LAYOUT = 1
-private const val TAB_INPUT = 2
-private const val TAB_STATE = 3
-private const val TAB_COLLECTION = 4
+private val DEMO_CHAPTERS = listOf(
+    DemoChapter(key = "foundations", title = "Foundations"),
+    DemoChapter(key = "state", title = "State"),
+    DemoChapter(key = "layouts", title = "Layouts"),
+    DemoChapter(key = "input", title = "Input"),
+    DemoChapter(key = "collections", title = "Collections"),
+    DemoChapter(key = "gestures", title = "Gestures"),
+    DemoChapter(key = "animation", title = "Animation"),
+    DemoChapter(key = "graphics", title = "Graphics"),
+    DemoChapter(key = "navigation", title = "Navigation"),
+    DemoChapter(key = "interop", title = "Interop"),
+    DemoChapter(key = "diagnostics", title = "Diagnostics"),
+)
+
+private const val CHAPTER_FOUNDATIONS = 0
+private const val CHAPTER_STATE = 1
+private const val CHAPTER_LAYOUTS = 2
+private const val CHAPTER_INPUT = 3
+private const val CHAPTER_COLLECTIONS = 4
+private const val CHAPTER_GESTURES = 5
+private const val CHAPTER_ANIMATION = 6
+private const val CHAPTER_GRAPHICS = 7
+private const val CHAPTER_NAVIGATION = 8
+private const val CHAPTER_INTEROP = 9
+private const val CHAPTER_DIAGNOSTICS = 10
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -125,7 +142,7 @@ class MainActivity : AppCompatActivity() {
 }
 
 private fun UiTreeBuilder.DemoRoot(root: ViewGroup) {
-    val selectedTabState = remember { mutableStateOf(TAB_OVERVIEW) }
+    val selectedChapterState = remember { mutableStateOf(CHAPTER_FOUNDATIONS) }
     val themeModeState = remember { mutableStateOf(DemoThemeMode.System) }
     val remoteImageLoader = remember { CoilRemoteImageLoader(root.context.applicationContext) }
     val activity = root.context as? AppCompatActivity
@@ -141,7 +158,7 @@ private fun UiTreeBuilder.DemoRoot(root: ViewGroup) {
                 "${"%.2f".format(Locale.US, Environment.density.density)}x · " +
                 DemoThemeTokens.modeLabel(themeModeState.value, root.context)
             SideEffect {
-                activity?.title = "UIFramework - ${DEMO_TABS[selectedTabState.value]} - " +
+                activity?.title = "UIFramework - ${DEMO_CHAPTERS[selectedChapterState.value].title} - " +
                     DemoThemeTokens.modeLabel(themeModeState.value, root.context)
             }
             DisposableEffect {
@@ -161,7 +178,7 @@ private fun UiTreeBuilder.DemoRoot(root: ViewGroup) {
                     style = UiTextStyle(fontSizeSp = 30.sp),
                 )
                 Text(
-                    text = "Declarative UI runtime on Android Views, regrouped by capability.",
+                    text = "Declarative UI runtime on Android Views, regrouped into chapter-driven manual test paths.",
                     style = UiTextStyle(fontSizeSp = 14.sp),
                     modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
                 )
@@ -195,29 +212,99 @@ private fun UiTreeBuilder.DemoRoot(root: ViewGroup) {
                     )
                 }
                 TabPager(
-                    selectedTabIndex = selectedTabState.value,
+                    selectedTabIndex = selectedChapterState.value,
                     onTabSelected = { index ->
-                        selectedTabState.value = index
+                        selectedChapterState.value = index
                     },
                     modifier = Modifier.Empty
                         .fillMaxWidth()
                         .weight(1f)
                         .margin(top = 12.dp),
                 ) {
-                    Page(title = DEMO_TABS[TAB_OVERVIEW], key = "overview") {
-                        OverviewPage(selectedTabState)
+                    Page(title = DEMO_CHAPTERS[CHAPTER_FOUNDATIONS].title, key = DEMO_CHAPTERS[CHAPTER_FOUNDATIONS].key) {
+                        OverviewPage(selectedChapterState)
                     }
-                    Page(title = DEMO_TABS[TAB_LAYOUT], key = "layout") {
-                        LayoutPage()
-                    }
-                    Page(title = DEMO_TABS[TAB_INPUT], key = "input") {
-                        InputPage()
-                    }
-                    Page(title = DEMO_TABS[TAB_STATE], key = "state") {
+                    Page(title = DEMO_CHAPTERS[CHAPTER_STATE].title, key = DEMO_CHAPTERS[CHAPTER_STATE].key) {
                         StatePage()
                     }
-                    Page(title = DEMO_TABS[TAB_COLLECTION], key = "collection") {
+                    Page(title = DEMO_CHAPTERS[CHAPTER_LAYOUTS].title, key = DEMO_CHAPTERS[CHAPTER_LAYOUTS].key) {
+                        LayoutPage()
+                    }
+                    Page(title = DEMO_CHAPTERS[CHAPTER_INPUT].title, key = DEMO_CHAPTERS[CHAPTER_INPUT].key) {
+                        InputPage()
+                    }
+                    Page(title = DEMO_CHAPTERS[CHAPTER_COLLECTIONS].title, key = DEMO_CHAPTERS[CHAPTER_COLLECTIONS].key) {
                         CollectionPage()
+                    }
+                    Page(title = DEMO_CHAPTERS[CHAPTER_GESTURES].title, key = DEMO_CHAPTERS[CHAPTER_GESTURES].key) {
+                        ChapterPlaceholderPage(
+                            title = "Gestures",
+                            subtitle = "This chapter is reserved for pointer and gesture scenarios that the framework has not implemented yet.",
+                            plannedPages = listOf(
+                                "Click / Long press",
+                                "Drag / Swipe",
+                                "Nested scroll conflicts",
+                            ),
+                            currentGaps = listOf(
+                                "No unified gesture DSL",
+                                "No drag or swipe semantics",
+                                "No nested scroll coordination",
+                            ),
+                        )
+                    }
+                    Page(title = DEMO_CHAPTERS[CHAPTER_ANIMATION].title, key = DEMO_CHAPTERS[CHAPTER_ANIMATION].key) {
+                        ChapterPlaceholderPage(
+                            title = "Animation",
+                            subtitle = "This chapter will track state-driven motion once the framework has a formal animation runtime.",
+                            plannedPages = listOf(
+                                "Animated visibility",
+                                "Value interpolation",
+                                "List item transitions",
+                            ),
+                            currentGaps = listOf(
+                                "No animation runtime",
+                                "No transition DSL",
+                                "No enter/exit list animations",
+                            ),
+                        )
+                    }
+                    Page(title = DEMO_CHAPTERS[CHAPTER_GRAPHICS].title, key = DEMO_CHAPTERS[CHAPTER_GRAPHICS].key) {
+                        ChapterPlaceholderPage(
+                            title = "Graphics",
+                            subtitle = "This chapter is reserved for future drawing primitives and custom rendering surfaces.",
+                            plannedPages = listOf(
+                                "Canvas basics",
+                                "Paths and gradients",
+                                "Custom badges and charts",
+                            ),
+                            currentGaps = listOf(
+                                "No canvas DSL",
+                                "No draw modifier pipeline",
+                                "No custom graphics node layer",
+                            ),
+                        )
+                    }
+                    Page(title = DEMO_CHAPTERS[CHAPTER_NAVIGATION].title, key = DEMO_CHAPTERS[CHAPTER_NAVIGATION].key) {
+                        ChapterPlaceholderPage(
+                            title = "Navigation",
+                            subtitle = "This chapter will host future navigation experiments once host integration and screen models are formalized.",
+                            plannedPages = listOf(
+                                "Host integration",
+                                "Screen state switching",
+                                "Page stack model",
+                            ),
+                            currentGaps = listOf(
+                                "No framework router",
+                                "No page stack abstraction",
+                                "No navigation-level state restoration",
+                            ),
+                        )
+                    }
+                    Page(title = DEMO_CHAPTERS[CHAPTER_INTEROP].title, key = DEMO_CHAPTERS[CHAPTER_INTEROP].key) {
+                        InteropPage()
+                    }
+                    Page(title = DEMO_CHAPTERS[CHAPTER_DIAGNOSTICS].title, key = DEMO_CHAPTERS[CHAPTER_DIAGNOSTICS].key) {
+                        DiagnosticsPage()
                     }
                 }
             }
@@ -227,7 +314,7 @@ private fun UiTreeBuilder.DemoRoot(root: ViewGroup) {
 }
 
 private fun UiTreeBuilder.OverviewPage(
-    selectedTabState: MutableState<Int>,
+    selectedChapterState: MutableState<Int>,
 ) {
     LazyColumn(
         items = listOf("intro", "theme", "overrides", "progress", "media", "jump", "surface"),
@@ -638,33 +725,40 @@ private fun UiTreeBuilder.OverviewPage(
 
             "jump" -> DemoSection(
                 title = "Jump To A Capability",
-                subtitle = "These buttons drive the selected pager tab through framework state.",
+                subtitle = "These buttons now navigate between the top-level demo chapters, so manual testing follows stable paths.",
             ) {
                 Button(
-                    text = "Open Layout",
+                    text = "Open Layouts",
                     modifier = Modifier.Empty.margin(bottom = 8.dp),
                     onClick = {
-                        selectedTabState.value = TAB_LAYOUT
+                        selectedChapterState.value = CHAPTER_LAYOUTS
                     },
                 )
                 Button(
                     text = "Open Input",
                     modifier = Modifier.Empty.margin(bottom = 8.dp),
                     onClick = {
-                        selectedTabState.value = TAB_INPUT
+                        selectedChapterState.value = CHAPTER_INPUT
                     },
                 )
                 Button(
                     text = "Open State",
                     modifier = Modifier.Empty.margin(bottom = 8.dp),
                     onClick = {
-                        selectedTabState.value = TAB_STATE
+                        selectedChapterState.value = CHAPTER_STATE
                     },
                 )
                 Button(
-                    text = "Open Collection",
+                    text = "Open Collections",
                     onClick = {
-                        selectedTabState.value = TAB_COLLECTION
+                        selectedChapterState.value = CHAPTER_COLLECTIONS
+                    },
+                )
+                Button(
+                    text = "Open Interop",
+                    modifier = Modifier.Empty.margin(top = 8.dp),
+                    onClick = {
+                        selectedChapterState.value = CHAPTER_INTEROP
                     },
                 )
             }
@@ -1323,6 +1417,156 @@ private fun UiTreeBuilder.CollectionPage() {
                             },
                         )
                     }
+                }
+            }
+        }
+    }
+}
+
+private fun UiTreeBuilder.InteropPage() {
+    val alternateLabelsState = remember { mutableStateOf(false) }
+    LazyColumn(
+        items = listOf("basics", "theme_bridge", "why_it_matters"),
+        key = { it },
+        modifier = Modifier.Empty.fillMaxSize(),
+    ) { section ->
+        when (section) {
+            "basics" -> DemoSection(
+                title = "AndroidView Basics",
+                subtitle = "Legacy native views still mount inside the same declarative tree and can react to framework state.",
+            ) {
+                Row(
+                    spacing = 8.dp,
+                    modifier = Modifier.Empty.margin(bottom = 12.dp),
+                ) {
+                    Button(
+                        text = if (alternateLabelsState.value) "Show Primary Copy" else "Show Alternate Copy",
+                        onClick = {
+                            alternateLabelsState.value = !alternateLabelsState.value
+                        },
+                    )
+                }
+                AndroidView(
+                    key = "interop_text_view",
+                    modifier = Modifier.Empty
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    factory = { context ->
+                        TextView(context)
+                    },
+                    update = { view ->
+                        val textView = view as TextView
+                        textView.text = if (alternateLabelsState.value) {
+                            "Native TextView mirror: alternate content enabled"
+                        } else {
+                            "Native TextView mirror: primary content enabled"
+                        }
+                    },
+                )
+            }
+
+            "theme_bridge" -> DemoSection(
+                title = "Theme Bridge",
+                subtitle = "Interop pages should prove that framework theme locals and Android view defaults can coexist instead of fighting each other.",
+            ) {
+                Text(
+                    text = "Current chapter keeps AndroidView inside the same theme container so text, spacing, and surrounding surfaces are still driven by UIFramework tokens.",
+                )
+                Text(
+                    text = "Later this page should verify themed native widgets, custom view adapters, and fragment host containers.",
+                    style = UiTextStyle(fontSizeSp = 13.sp),
+                    modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+                )
+            }
+
+            else -> DemoSection(
+                title = "Why Interop Matters",
+                subtitle = "Interop is one of the biggest practical advantages of this framework compared with a pure Compose rewrite path.",
+            ) {
+                Text(
+                    text = "Use this chapter to validate gradual migration: existing custom views, business widgets, and SDK surfaces should still be mountable without rewriting them first.",
+                )
+            }
+        }
+    }
+}
+
+private fun UiTreeBuilder.DiagnosticsPage() {
+    LazyColumn(
+        items = listOf("runtime", "renderer", "gaps"),
+        key = { it },
+        modifier = Modifier.Empty.fillMaxSize(),
+    ) { section ->
+        when (section) {
+            "runtime" -> DemoSection(
+                title = "Runtime Snapshot",
+                subtitle = "This chapter will become the manual inspection home for state invalidation, local propagation, and effect boundaries.",
+            ) {
+                Text(text = "Theme mode: ${Theme.colors.primary.toUInt().toString(16)} primary token active")
+                Text(
+                    text = "Environment: ${Environment.localeTags.firstOrNull() ?: "und"} · ${Environment.layoutDirection.name}",
+                    style = UiTextStyle(fontSizeSp = 13.sp),
+                    modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+                )
+            }
+
+            "renderer" -> DemoSection(
+                title = "Renderer Hooks",
+                subtitle = "The sample currently runs with debug logging enabled, but there is no visual inspector yet.",
+            ) {
+                Text(
+                    text = "Near-term goal: expose render tree, patch summary, key warnings, and local snapshots in a more explicit diagnostics surface.",
+                )
+            }
+
+            else -> DemoSection(
+                title = "Known Gaps",
+                subtitle = "These gaps are intentionally visible so the diagnostics chapter can guide future framework work.",
+            ) {
+                Text(text = "No visual render tree inspector")
+                Text(text = "No patch timeline UI")
+                Text(text = "No performance counters page")
+            }
+        }
+    }
+}
+
+private fun UiTreeBuilder.ChapterPlaceholderPage(
+    title: String,
+    subtitle: String,
+    plannedPages: List<String>,
+    currentGaps: List<String>,
+) {
+    LazyColumn(
+        items = listOf("intro", "planned", "gaps"),
+        key = { it },
+        modifier = Modifier.Empty.fillMaxSize(),
+    ) { section ->
+        when (section) {
+            "intro" -> DemoSection(
+                title = title,
+                subtitle = subtitle,
+            ) {
+                Text(
+                    text = "This chapter is intentionally present now so the demo structure stays stable while framework capability catches up.",
+                )
+            }
+
+            "planned" -> DemoSection(
+                title = "Planned Pages",
+                subtitle = "These are the first page groups reserved for this chapter.",
+            ) {
+                plannedPages.forEach { page ->
+                    Text(text = "• $page")
+                }
+            }
+
+            else -> DemoSection(
+                title = "Current Gaps",
+                subtitle = "These gaps map directly to framework work that is still missing compared with Compose.",
+            ) {
+                currentGaps.forEach { gap ->
+                    Text(text = "• $gap")
                 }
             }
         }

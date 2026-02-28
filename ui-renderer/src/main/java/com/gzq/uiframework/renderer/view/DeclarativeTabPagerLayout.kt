@@ -35,6 +35,7 @@ internal class DeclarativeTabPagerLayout(
 
     init {
         orientation = VERTICAL
+        tabLayout.tabMode = TabLayout.MODE_SCROLLABLE
         tabLayout.layoutParams = LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT,
