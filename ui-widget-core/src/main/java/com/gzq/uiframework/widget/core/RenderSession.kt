@@ -1,6 +1,9 @@
 package com.gzq.uiframework.widget.core
 
+import android.util.Log
 import android.view.ViewGroup
+import com.gzq.uiframework.renderer.debug.debugSummary
+import com.gzq.uiframework.renderer.debug.debugTree
 import com.gzq.uiframework.renderer.view.MountedNode
 import com.gzq.uiframework.renderer.view.ViewTreeRenderer
 import com.gzq.uiframework.runtime.Observation
@@ -9,6 +12,8 @@ import com.gzq.uiframework.runtime.RuntimeObservation
 class RenderSession internal constructor(
     private val container: ViewGroup,
     private val content: UiTreeBuilder.() -> Unit,
+    private val debug: Boolean = false,
+    private val debugTag: String = "UIFramework",
 ) {
     private var mountedNodes: List<MountedNode> = emptyList()
     private var observation: Observation? = null
@@ -33,6 +38,12 @@ class RenderSession internal constructor(
             container = container,
             previous = mountedNodes,
             nodes = tree,
+            onReconcile = { reconcileResult ->
+                if (debug) {
+                    Log.d(debugTag, "VNode tree\n${tree.debugTree()}")
+                    Log.d(debugTag, "Reconcile\n${reconcileResult.debugSummary()}")
+                }
+            },
         )
         effectStore.commit()
     }

@@ -18,6 +18,7 @@ import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.reconcile.ChildReconciler
 import com.gzq.uiframework.renderer.reconcile.InsertPatch
 import com.gzq.uiframework.renderer.reconcile.ReconcileNode
+import com.gzq.uiframework.renderer.reconcile.ReconcileResult
 import com.gzq.uiframework.renderer.reconcile.RemovePatch
 import com.gzq.uiframework.renderer.reconcile.RenderPatch
 import com.gzq.uiframework.renderer.reconcile.ReusePatch
@@ -27,6 +28,7 @@ object ViewTreeRenderer {
         container: ViewGroup,
         previous: List<MountedNode>,
         nodes: List<VNode>,
+        onReconcile: ((ReconcileResult<MountedNode>) -> Unit)? = null,
     ): List<MountedNode> {
         val reconcileResult = ChildReconciler.reconcile(
             previous = previous.map { mountedNode ->
@@ -37,6 +39,7 @@ object ViewTreeRenderer {
             },
             nodes = nodes,
         )
+        onReconcile?.invoke(reconcileResult)
         val nextMounted = mutableListOf<MountedNode>()
         reconcileResult.patches.forEach { patch ->
             nextMounted += applyPatch(

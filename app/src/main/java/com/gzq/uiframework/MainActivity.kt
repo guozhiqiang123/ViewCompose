@@ -35,7 +35,11 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        renderInto(root) {
+        renderInto(
+            container = root,
+            debug = true,
+            debugTag = "UIFrameworkSample",
+        ) {
             val clickCountState = remember { mutableStateOf(0) }
             val clickSummaryState = remember {
                 derivedStateOf {
