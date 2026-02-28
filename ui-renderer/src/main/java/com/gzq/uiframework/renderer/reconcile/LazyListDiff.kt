@@ -81,14 +81,7 @@ object LazyListDiff {
         previous: List<LazyListItem>,
         next: List<LazyListItem>,
     ): Boolean {
-        return previous.hasDistinctNonNullKeys() && next.hasDistinctNonNullKeys()
-    }
-
-    private fun List<LazyListItem>.hasDistinctNonNullKeys(): Boolean {
-        if (isEmpty()) {
-            return true
-        }
-        val keys = mapNotNull { it.key }
-        return keys.size == size && keys.toSet().size == size
+        return LazyListIdentityInspector.analyze(previous).supportsKeyedDiff &&
+            LazyListIdentityInspector.analyze(next).supportsKeyedDiff
     }
 }

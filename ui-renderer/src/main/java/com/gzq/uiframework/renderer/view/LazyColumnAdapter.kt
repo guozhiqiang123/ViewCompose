@@ -1,15 +1,18 @@
 package com.gzq.uiframework.renderer.view
 
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.reconcile.LazyListDiff
+import com.gzq.uiframework.renderer.reconcile.LazyListIdentityInspector
 import com.gzq.uiframework.renderer.reconcile.LazyListUpdate
 
 internal class LazyColumnAdapter : RecyclerView.Adapter<LazyColumnViewHolder>() {
     private var items: List<LazyListItem> = emptyList()
     private val attachedHolders = LinkedHashSet<LazyColumnViewHolder>()
+    private var lastIdentityWarning: String? = null
 
     init {
         setHasStableIds(true)
@@ -58,6 +61,7 @@ internal class LazyColumnAdapter : RecyclerView.Adapter<LazyColumnViewHolder>() 
     }
 
     fun submitItems(items: List<LazyListItem>) {
+        warnAboutIdentityIssues(items)
         val result = LazyListDiff.calculate(
             previous = this.items,
             next = items,
@@ -72,6 +76,21 @@ internal class LazyColumnAdapter : RecyclerView.Adapter<LazyColumnViewHolder>() 
                 LazyListUpdate.ReloadAll -> notifyDataSetChanged()
             }
         }
+    }
+
+    private fun warnAboutIdentityIssues(items: List<LazyListItem>) {
+        val warning = LazyListIdentityInspector
+            .analyze(items)
+            .warningMessage(listName = "items")
+        if (warning == null) {
+            lastIdentityWarning = null
+            return
+        }
+        if (warning == lastIdentityWarning) {
+            return
+        }
+        lastIdentityWarning = warning
+        Log.w("UIFramework", warning)
     }
 
     fun disposeAll() {
