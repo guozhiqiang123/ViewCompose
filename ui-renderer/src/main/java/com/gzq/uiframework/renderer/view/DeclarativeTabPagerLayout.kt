@@ -7,6 +7,9 @@ import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.gzq.uiframework.renderer.node.TabPage
+import com.gzq.uiframework.renderer.reconcile.TabPagerDiff
+import com.gzq.uiframework.renderer.reconcile.TabPagerSelectionResolver
+import com.gzq.uiframework.renderer.reconcile.TabPagerUpdate
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -17,6 +20,7 @@ internal class DeclarativeTabPagerLayout(
     private val viewPager = ViewPager2(context)
     private val adapter = TabPagerAdapter()
     private var mediator: TabLayoutMediator? = null
+    private var pages: List<TabPage> = emptyList()
     private var onTabSelected: ((Int) -> Unit)? = null
     private var suppressSelectionCallback: Boolean = false
     private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
@@ -40,6 +44,9 @@ internal class DeclarativeTabPagerLayout(
         )
         viewPager.adapter = adapter
         viewPager.registerOnPageChangeCallback(pageChangeCallback)
+        mediator = TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            tab.text = pages.getOrNull(position)?.title.orEmpty()
+        }.also { it.attach() }
         addView(tabLayout)
         addView(viewPager)
     }
@@ -50,13 +57,14 @@ internal class DeclarativeTabPagerLayout(
         onTabSelected: ((Int) -> Unit)?,
     ) {
         this.onTabSelected = onTabSelected
+        this.pages = pages
         viewPager.offscreenPageLimit = pages.size.coerceAtLeast(1)
         adapter.submitPages(pages)
-        attachMediator(pages)
-        if (pages.isEmpty()) {
+        syncTabs()
+        val resolvedIndex = TabPagerSelectionResolver.resolve(pages, selectedTabIndex)
+        if (resolvedIndex == null) {
             return
         }
-        val resolvedIndex = selectedTabIndex.coerceIn(0, pages.lastIndex)
         if (viewPager.currentItem == resolvedIndex) {
             return
         }
@@ -72,11 +80,16 @@ internal class DeclarativeTabPagerLayout(
         adapter.disposeAll()
     }
 
-    private fun attachMediator(pages: List<TabPage>) {
-        mediator?.detach()
-        mediator = TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.text = pages.getOrNull(position)?.title.orEmpty()
-        }.also { it.attach() }
+    private fun syncTabs() {
+        if (tabLayout.tabCount != pages.size) {
+            return
+        }
+        pages.forEachIndexed { index, page ->
+            val tab = tabLayout.getTabAt(index)
+            if (tab != null && tab.text != page.title) {
+                tab.text = page.title
+            }
+        }
     }
 }
 
@@ -133,8 +146,20 @@ internal class TabPagerAdapter : RecyclerView.Adapter<TabPagerViewHolder>() {
     }
 
     fun submitPages(pages: List<TabPage>) {
-        this.pages = pages
-        notifyDataSetChanged()
+        val result = TabPagerDiff.calculate(
+            previous = this.pages,
+            next = pages,
+        )
+        this.pages = result.pages
+        result.updates.forEach { update ->
+            when (update) {
+                is TabPagerUpdate.Insert -> notifyItemInserted(update.index)
+                is TabPagerUpdate.Remove -> notifyItemRemoved(update.index)
+                is TabPagerUpdate.Move -> notifyItemMoved(update.fromIndex, update.toIndex)
+                is TabPagerUpdate.Change -> notifyItemChanged(update.index)
+                TabPagerUpdate.ReloadAll -> notifyDataSetChanged()
+            }
+        }
     }
 
     fun disposeAll() {
