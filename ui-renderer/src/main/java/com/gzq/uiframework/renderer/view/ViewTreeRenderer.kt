@@ -118,7 +118,7 @@ object ViewTreeRenderer {
 
             NodeType.Box -> FrameLayout(context)
             NodeType.Image -> View(context)
-            NodeType.AndroidView -> View(context)
+            NodeType.AndroidView -> readViewFactory(node)?.invoke(context) ?: View(context)
             NodeType.LazyColumn -> FrameLayout(context)
         }
 
@@ -159,9 +159,12 @@ object ViewTreeRenderer {
             NodeType.Column -> (view as LinearLayout).orientation = LinearLayout.VERTICAL
             NodeType.Box,
             NodeType.Image,
-            NodeType.AndroidView,
             NodeType.LazyColumn,
             -> Unit
+
+            NodeType.AndroidView -> {
+                readViewUpdate(node)?.invoke(view)
+            }
         }
     }
 
@@ -212,5 +215,15 @@ object ViewTreeRenderer {
     @Suppress("UNCHECKED_CAST")
     private fun readOnClick(node: VNode): (() -> Unit)? {
         return node.props.values[PropKeys.ON_CLICK] as? (() -> Unit)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun readViewFactory(node: VNode): ((Context) -> View)? {
+        return node.props.values[PropKeys.VIEW_FACTORY] as? ((Context) -> View)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun readViewUpdate(node: VNode): ((View) -> Unit)? {
+        return node.props.values[PropKeys.VIEW_UPDATE] as? ((View) -> Unit)
     }
 }

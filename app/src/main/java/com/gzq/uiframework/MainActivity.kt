@@ -1,6 +1,7 @@
 package com.gzq.uiframework
 
 import android.os.Bundle
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -9,6 +10,7 @@ import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.runtime.derivedStateOf
 import com.gzq.uiframework.runtime.mutableStateOf
+import com.gzq.uiframework.widget.core.AndroidView
 import com.gzq.uiframework.widget.core.Button
 import com.gzq.uiframework.widget.core.Column
 import com.gzq.uiframework.widget.core.Text
@@ -58,6 +60,16 @@ class MainActivity : AppCompatActivity() {
                 Text(
                     text = clickSummaryState.value,
                     modifier = Modifier.Empty.padding(8),
+                )
+                AndroidView(
+                    key = "legacy_summary",
+                    modifier = Modifier.Empty.padding(8),
+                    factory = { context ->
+                        TextView(context)
+                    },
+                    update = { view ->
+                        (view as TextView).text = "Legacy TextView mirror: ${clickSummaryState.value}"
+                    },
                 )
                 Button(
                     text = "Increment",

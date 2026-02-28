@@ -1,5 +1,7 @@
 package com.gzq.uiframework.widget.core
 
+import android.content.Context
+import android.view.View
 import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
@@ -36,6 +38,25 @@ fun UiTreeBuilder.Button(
                 put(PropKeys.TEXT, text)
                 put(PropKeys.ON_CLICK, onClick)
             },
+        ),
+        modifier = modifier,
+    )
+}
+
+fun UiTreeBuilder.AndroidView(
+    factory: (Context) -> View,
+    update: (View) -> Unit = {},
+    key: Any? = null,
+    modifier: Modifier = Modifier.Empty,
+) {
+    emit(
+        type = NodeType.AndroidView,
+        key = key,
+        props = Props(
+            values = mapOf(
+                PropKeys.VIEW_FACTORY to factory,
+                PropKeys.VIEW_UPDATE to update,
+            ),
         ),
         modifier = modifier,
     )
