@@ -7,6 +7,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.modifier.padding
+import com.gzq.uiframework.runtime.derivedStateOf
 import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.Button
 import com.gzq.uiframework.widget.core.Column
@@ -16,6 +17,16 @@ import com.gzq.uiframework.widget.core.renderInto
 class MainActivity : AppCompatActivity() {
     private val clickCountState = mutableStateOf(0)
     private val reversedState = mutableStateOf(false)
+    private val clickSummaryState = derivedStateOf {
+        val clickCount = clickCountState.value
+        if (clickCount == 0) {
+            "No clicks yet"
+        } else if (clickCount % 2 == 0) {
+            "Even clicks: $clickCount"
+        } else {
+            "Odd clicks: $clickCount"
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +52,10 @@ class MainActivity : AppCompatActivity() {
                     modifier = Modifier.Empty.padding(8),
                 )
                 Text(text = "Clicks: ${clickCountState.value}")
+                Text(
+                    text = clickSummaryState.value,
+                    modifier = Modifier.Empty.padding(8),
+                )
                 Button(
                     text = "Increment",
                     modifier = Modifier.Empty.padding(8),

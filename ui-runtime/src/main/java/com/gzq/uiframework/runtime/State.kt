@@ -9,3 +9,5 @@ interface MutableState<T> : State<T> {
 }
 
 fun <T> mutableStateOf(value: T): MutableState<T> = MutableStateImpl(value)
+
+fun <T> derivedStateOf(block: () -> T): State<T> = DerivedStateImpl(block)
