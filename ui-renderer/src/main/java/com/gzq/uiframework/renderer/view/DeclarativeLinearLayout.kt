@@ -9,11 +9,13 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
+import com.gzq.uiframework.renderer.layout.CrossAxisPlacementCalculator
+import com.gzq.uiframework.renderer.layout.HorizontalAlignment
 import com.gzq.uiframework.renderer.layout.LinearArrangementCalculator
 import com.gzq.uiframework.renderer.layout.LinearChildSpec
 import com.gzq.uiframework.renderer.layout.LinearPlacementCalculator
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
-import kotlin.math.max
+import com.gzq.uiframework.renderer.layout.VerticalAlignment
 
 internal class DeclarativeLinearLayout @JvmOverloads constructor(
     context: Context,
@@ -127,14 +129,13 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
         params: MarginLayoutParams,
         innerHeight: Int,
     ): Int {
-        val verticalGravity = gravity and Gravity.VERTICAL_GRAVITY_MASK
-        val consumedHeight = child.measuredHeight + params.topMargin + params.bottomMargin
-        val extra = max(0, innerHeight - consumedHeight)
-        return when (verticalGravity) {
-            Gravity.CENTER_VERTICAL -> extra / 2 + params.topMargin
-            Gravity.BOTTOM -> extra + params.topMargin
-            else -> params.topMargin
-        }
+        return CrossAxisPlacementCalculator.calculateVertical(
+            containerSize = innerHeight,
+            childSize = child.measuredHeight,
+            leadingMargin = params.topMargin,
+            trailingMargin = params.bottomMargin,
+            alignment = gravity.toVerticalAlignment(),
+        )
     }
 
     private fun resolveHorizontalGravity(
@@ -142,14 +143,13 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
         params: MarginLayoutParams,
         innerWidth: Int,
     ): Int {
-        val horizontalGravity = gravity and Gravity.HORIZONTAL_GRAVITY_MASK
-        val consumedWidth = child.measuredWidth + params.leftMargin + params.rightMargin
-        val extra = max(0, innerWidth - consumedWidth)
-        return when (horizontalGravity) {
-            Gravity.CENTER_HORIZONTAL -> extra / 2 + params.leftMargin
-            Gravity.END -> extra + params.leftMargin
-            else -> params.leftMargin
-        }
+        return CrossAxisPlacementCalculator.calculateHorizontal(
+            containerSize = innerWidth,
+            childSize = child.measuredWidth,
+            leadingMargin = params.leftMargin,
+            trailingMargin = params.rightMargin,
+            alignment = gravity.toHorizontalAlignment(),
+        )
     }
 
     private fun updateSpacingDivider() {
@@ -188,5 +188,21 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
         override fun getIntrinsicWidth(): Int = width
 
         override fun getIntrinsicHeight(): Int = height
+    }
+
+    private fun Int.toVerticalAlignment(): VerticalAlignment {
+        return when (this and Gravity.VERTICAL_GRAVITY_MASK) {
+            Gravity.CENTER_VERTICAL -> VerticalAlignment.Center
+            Gravity.BOTTOM -> VerticalAlignment.Bottom
+            else -> VerticalAlignment.Top
+        }
+    }
+
+    private fun Int.toHorizontalAlignment(): HorizontalAlignment {
+        return when (this and Gravity.HORIZONTAL_GRAVITY_MASK) {
+            Gravity.CENTER_HORIZONTAL -> HorizontalAlignment.Center
+            Gravity.END -> HorizontalAlignment.End
+            else -> HorizontalAlignment.Start
+        }
     }
 }
