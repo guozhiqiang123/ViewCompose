@@ -14,6 +14,7 @@ import com.gzq.uiframework.widget.core.AndroidView
 import com.gzq.uiframework.widget.core.Button
 import com.gzq.uiframework.widget.core.Column
 import com.gzq.uiframework.widget.core.DisposableEffect
+import com.gzq.uiframework.widget.core.LazyColumn
 import com.gzq.uiframework.widget.core.Text
 import com.gzq.uiframework.widget.core.remember
 import com.gzq.uiframework.widget.core.renderInto
@@ -99,9 +100,13 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     listOf("A", "B", "C")
                 }
-                keyedItems.forEach { item ->
+                LazyColumn(
+                    items = keyedItems,
+                    key = { item -> item },
+                    modifier = Modifier.Empty.padding(8),
+                ) { item ->
                     Text(
-                        text = "Keyed item $item",
+                        text = "Lazy item $item",
                         key = item,
                         modifier = Modifier.Empty.padding(8),
                     )

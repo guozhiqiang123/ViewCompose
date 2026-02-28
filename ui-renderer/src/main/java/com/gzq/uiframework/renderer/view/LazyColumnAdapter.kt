@@ -1,0 +1,60 @@
+package com.gzq.uiframework.renderer.view
+
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import androidx.recyclerview.widget.RecyclerView
+import com.gzq.uiframework.renderer.node.LazyListItem
+
+internal class LazyColumnAdapter : RecyclerView.Adapter<LazyColumnViewHolder>() {
+    private var items: List<LazyListItem> = emptyList()
+
+    init {
+        setHasStableIds(true)
+    }
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): LazyColumnViewHolder {
+        val container = FrameLayout(parent.context).apply {
+            layoutParams = RecyclerView.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+            )
+        }
+        return LazyColumnViewHolder(container)
+    }
+
+    override fun onBindViewHolder(
+        holder: LazyColumnViewHolder,
+        position: Int,
+    ) {
+        holder.bind(items[position])
+    }
+
+    override fun getItemCount(): Int = items.size
+
+    override fun getItemId(position: Int): Long {
+        val key = items[position].key
+        return key?.hashCode()?.toLong() ?: position.toLong()
+    }
+
+    fun submitItems(items: List<LazyListItem>) {
+        this.items = items
+        notifyDataSetChanged()
+    }
+}
+
+internal class LazyColumnViewHolder(
+    private val container: FrameLayout,
+) : RecyclerView.ViewHolder(container) {
+    private var mountedNodes: List<MountedNode> = emptyList()
+
+    fun bind(item: LazyListItem) {
+        mountedNodes = ViewTreeRenderer.renderInto(
+            container = container,
+            previous = mountedNodes,
+            nodes = item.nodes,
+        )
+    }
+}

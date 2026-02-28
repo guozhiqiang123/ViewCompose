@@ -24,5 +24,6 @@ android {
 dependencies {
     implementation(project(":ui-runtime"))
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.recyclerview)
     testImplementation(libs.junit)
 }

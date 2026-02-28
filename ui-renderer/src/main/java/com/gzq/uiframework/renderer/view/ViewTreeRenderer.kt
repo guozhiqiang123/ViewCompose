@@ -7,7 +7,10 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
+import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.VNode
@@ -119,7 +122,10 @@ object ViewTreeRenderer {
             NodeType.Box -> FrameLayout(context)
             NodeType.Image -> View(context)
             NodeType.AndroidView -> readViewFactory(node)?.invoke(context) ?: View(context)
-            NodeType.LazyColumn -> FrameLayout(context)
+            NodeType.LazyColumn -> RecyclerView(context).apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = LazyColumnAdapter()
+            }
         }
 
         bindView(view, node)
@@ -159,11 +165,19 @@ object ViewTreeRenderer {
             NodeType.Column -> (view as LinearLayout).orientation = LinearLayout.VERTICAL
             NodeType.Box,
             NodeType.Image,
-            NodeType.LazyColumn,
             -> Unit
 
             NodeType.AndroidView -> {
                 readViewUpdate(node)?.invoke(view)
+            }
+
+            NodeType.LazyColumn -> {
+                (view as RecyclerView).let { recyclerView ->
+                    val adapter = recyclerView.adapter as? LazyColumnAdapter ?: LazyColumnAdapter().also {
+                        recyclerView.adapter = it
+                    }
+                    adapter.submitItems(readLazyItems(node))
+                }
             }
         }
     }
@@ -225,5 +239,10 @@ object ViewTreeRenderer {
     @Suppress("UNCHECKED_CAST")
     private fun readViewUpdate(node: VNode): ((View) -> Unit)? {
         return node.props.values[PropKeys.VIEW_UPDATE] as? ((View) -> Unit)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun readLazyItems(node: VNode): List<LazyListItem> {
+        return node.props.values[PropKeys.LAZY_ITEMS] as? List<LazyListItem> ?: emptyList()
     }
 }

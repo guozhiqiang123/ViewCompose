@@ -3,6 +3,7 @@ package com.gzq.uiframework.widget.core
 import android.content.Context
 import android.view.View
 import com.gzq.uiframework.renderer.modifier.Modifier
+import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.Props
@@ -98,5 +99,29 @@ fun UiTreeBuilder.Column(
         key = key,
         modifier = modifier,
         content = content,
+    )
+}
+
+fun <T> UiTreeBuilder.LazyColumn(
+    items: List<T>,
+    key: ((T) -> Any)? = null,
+    modifier: Modifier = Modifier.Empty,
+    itemContent: UiTreeBuilder.(T) -> Unit,
+) {
+    emit(
+        type = NodeType.LazyColumn,
+        props = Props(
+            values = mapOf(
+                PropKeys.LAZY_ITEMS to items.map { item ->
+                    LazyListItem(
+                        key = key?.invoke(item),
+                        nodes = buildVNodeTree {
+                            itemContent(item)
+                        },
+                    )
+                },
+            ),
+        ),
+        modifier = modifier,
     )
 }
