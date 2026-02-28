@@ -36,6 +36,9 @@ android {
 }
 
 dependencies {
+    implementation(project(":ui-runtime"))
+    implementation(project(":ui-renderer"))
+    implementation(project(":ui-widget-core"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

@@ -21,4 +21,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "UIFramework"
 include(":app")
+include(":ui-runtime")
+include(":ui-renderer")
+include(":ui-widget-core")
  
