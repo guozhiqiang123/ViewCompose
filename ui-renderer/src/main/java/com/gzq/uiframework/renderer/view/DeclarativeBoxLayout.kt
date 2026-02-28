@@ -10,6 +10,10 @@ internal class DeclarativeBoxLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
 ) : FrameLayout(context, attrs) {
+    companion object {
+        const val UNSET_GRAVITY: Int = -1
+    }
+
     var contentGravity: Int = Gravity.TOP or Gravity.START
         set(value) {
             field = value
@@ -46,7 +50,7 @@ internal class DeclarativeBoxLayout @JvmOverloads constructor(
         child: View,
     ) {
         val params = child.layoutParams as? LayoutParams ?: return
-        if (params.gravity != contentGravity) {
+        if (params.gravity == UNSET_GRAVITY) {
             params.gravity = contentGravity
             child.layoutParams = params
         }

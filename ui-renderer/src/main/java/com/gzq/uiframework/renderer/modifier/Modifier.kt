@@ -1,5 +1,7 @@
 package com.gzq.uiframework.renderer.modifier
 
+import com.gzq.uiframework.renderer.layout.BoxAlignment
+
 class Modifier private constructor(
     internal val elements: List<ModifierElement>,
 ) {
@@ -57,6 +59,10 @@ data class ClickableModifierElement(
 
 data class WeightModifierElement(
     val weight: Float,
+) : ModifierElement
+
+data class BoxAlignModifierElement(
+    val alignment: BoxAlignment,
 ) : ModifierElement
 
 enum class Visibility {
@@ -189,6 +195,12 @@ fun Modifier.weight(weight: Float): Modifier {
     }
     return then(
         WeightModifierElement(weight),
+    )
+}
+
+fun Modifier.align(alignment: BoxAlignment): Modifier {
+    return then(
+        BoxAlignModifierElement(alignment),
     )
 }
 

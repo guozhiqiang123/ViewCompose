@@ -14,6 +14,7 @@ import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.modifier.Visibility
 import com.gzq.uiframework.renderer.modifier.alpha
+import com.gzq.uiframework.renderer.modifier.align
 import com.gzq.uiframework.renderer.modifier.backgroundColor
 import com.gzq.uiframework.renderer.modifier.clickable
 import com.gzq.uiframework.renderer.modifier.fillMaxWidth
@@ -143,6 +144,13 @@ class MainActivity : AppCompatActivity() {
                         modifier = Modifier.Empty
                             .backgroundColor(Color.parseColor("#BFD8A6"))
                             .padding(horizontal = 12, vertical = 8),
+                    )
+                    Text(
+                        text = "Pinned",
+                        modifier = Modifier.Empty
+                            .align(BoxAlignment.BottomEnd)
+                            .backgroundColor(Color.parseColor("#D6C6F0"))
+                            .padding(horizontal = 8, vertical = 4),
                     )
                 }
                 Row(

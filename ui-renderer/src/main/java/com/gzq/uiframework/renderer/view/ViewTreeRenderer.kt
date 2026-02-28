@@ -16,6 +16,7 @@ import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.modifier.AlphaModifierElement
 import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
+import com.gzq.uiframework.renderer.modifier.BoxAlignModifierElement
 import com.gzq.uiframework.renderer.modifier.ClickableModifierElement
 import com.gzq.uiframework.renderer.modifier.HeightModifierElement
 import com.gzq.uiframework.renderer.modifier.MarginModifierElement
@@ -283,6 +284,7 @@ object ViewTreeRenderer {
     }
 
     private fun createLayoutParams(parent: ViewGroup, node: VNode): ViewGroup.LayoutParams {
+        val boxAlign = node.modifier.elements.lastOrNull { it is BoxAlignModifierElement } as? BoxAlignModifierElement
         val margin = node.modifier.elements.lastOrNull { it is MarginModifierElement } as? MarginModifierElement
         val size = node.modifier.elements.lastOrNull { it is SizeModifierElement } as? SizeModifierElement
         val widthModifier = node.modifier.elements.lastOrNull { it is WidthModifierElement } as? WidthModifierElement
@@ -323,6 +325,11 @@ object ViewTreeRenderer {
                 ) {
                     this.weight = weight?.weight ?: 0f
                 }
+            }
+            is DeclarativeBoxLayout -> FrameLayout.LayoutParams(width, height).applyLayoutParams(
+                margin = margin,
+            ) {
+                gravity = boxAlign?.alignment?.toGravity() ?: DeclarativeBoxLayout.UNSET_GRAVITY
             }
             is FrameLayout -> FrameLayout.LayoutParams(width, height).applyLayoutParams(margin = margin)
             else -> ViewGroup.MarginLayoutParams(width, height).applyMargin(margin)
