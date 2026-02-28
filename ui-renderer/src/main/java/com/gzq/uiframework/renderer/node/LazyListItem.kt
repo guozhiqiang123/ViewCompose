@@ -6,6 +6,7 @@ class LazyListItem(
     val key: Any?,
     val contentToken: Any?,
     val sessionFactory: LazyListItemSessionFactory,
+    val sessionUpdater: ((LazyListItemSession) -> Unit)? = null,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

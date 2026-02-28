@@ -12,12 +12,23 @@ internal class LazyItemSessionController(
     private var session: LazyListItemSession? = null
 
     fun bind(item: LazyListItem) {
-        if (session == null || currentKey != item.key || currentContentToken != item.contentToken) {
+        if (session == null || currentKey != item.key) {
             session?.dispose()
             clearContainer()
             session = createSession(item)
             currentKey = item.key
             currentContentToken = item.contentToken
+        } else if (currentContentToken != item.contentToken) {
+            val currentSession = session
+            if (currentSession != null && item.sessionUpdater != null) {
+                item.sessionUpdater.invoke(currentSession)
+                currentContentToken = item.contentToken
+            } else {
+                currentSession?.dispose()
+                clearContainer()
+                session = createSession(item)
+                currentContentToken = item.contentToken
+            }
         }
         session?.render()
     }

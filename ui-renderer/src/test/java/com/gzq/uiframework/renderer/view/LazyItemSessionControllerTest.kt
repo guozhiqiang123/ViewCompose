@@ -45,6 +45,42 @@ class LazyItemSessionControllerTest {
     }
 
     @Test
+    fun `updates existing session when content token changes but key is stable`() {
+        val events = mutableListOf<String>()
+        val controller = createController(events)
+
+        controller.bind(
+            item(
+                key = "A",
+                contentToken = 1,
+                sessionUpdater = { session ->
+                    (session as RecordingSession).updateLabel("A:1")
+                },
+            ),
+        )
+        controller.bind(
+            item(
+                key = "A",
+                contentToken = 2,
+                sessionUpdater = { session ->
+                    (session as RecordingSession).updateLabel("A:2")
+                },
+            ),
+        )
+
+        assertEquals(
+            listOf(
+                "clear",
+                "create:A:1",
+                "render:A:1",
+                "update:A:2",
+                "render:A:2",
+            ),
+            events,
+        )
+    }
+
+    @Test
     fun `recycle disposes active session`() {
         val events = mutableListOf<String>()
         val controller = createController(events)
@@ -83,6 +119,7 @@ class LazyItemSessionControllerTest {
     private fun item(
         key: Any?,
         contentToken: Any?,
+        sessionUpdater: ((LazyListItemSession) -> Unit)? = null,
     ): LazyListItem {
         return LazyListItem(
             key = key,
@@ -90,11 +127,12 @@ class LazyItemSessionControllerTest {
             sessionFactory = LazyListItemSessionFactory {
                 error("sessionFactory should not be used in controller tests")
             },
+            sessionUpdater = sessionUpdater,
         )
     }
 
     private class RecordingSession(
-        private val label: String,
+        private var label: String,
         private val events: MutableList<String>,
     ) : LazyListItemSession {
         init {
@@ -107,6 +145,13 @@ class LazyItemSessionControllerTest {
 
         override fun dispose() {
             events += "dispose:$label"
+        }
+
+        fun updateLabel(
+            label: String,
+        ) {
+            this.label = label
+            events += "update:$label"
         }
     }
 }

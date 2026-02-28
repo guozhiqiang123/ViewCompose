@@ -126,6 +126,11 @@ fun <T> UiTreeBuilder.LazyColumn(
                                 },
                             )
                         },
+                        sessionUpdater = { session ->
+                            (session as? WidgetLazyListItemSession)?.updateContent {
+                                itemContent(item)
+                            }
+                        },
                     )
                 },
             ),
@@ -138,9 +143,12 @@ private class WidgetLazyListItemSession(
     container: android.view.ViewGroup,
     content: UiTreeBuilder.() -> Unit,
 ) : LazyListItemSession {
+    private var renderContent = content
     private val session = RenderSession(
         container = container,
-        content = content,
+        content = {
+            renderContent()
+        },
     )
 
     override fun render() {
@@ -149,5 +157,11 @@ private class WidgetLazyListItemSession(
 
     override fun dispose() {
         session.dispose()
+    }
+
+    fun updateContent(
+        content: UiTreeBuilder.() -> Unit,
+    ) {
+        renderContent = content
     }
 }
