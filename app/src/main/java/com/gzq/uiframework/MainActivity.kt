@@ -33,6 +33,7 @@ import com.gzq.uiframework.widget.core.Button
 import com.gzq.uiframework.widget.core.Column
 import com.gzq.uiframework.widget.core.Divider
 import com.gzq.uiframework.widget.core.DisposableEffect
+import com.gzq.uiframework.widget.core.Environment
 import com.gzq.uiframework.widget.core.FlexibleSpacer
 import com.gzq.uiframework.widget.core.LazyColumn
 import com.gzq.uiframework.widget.core.Row
@@ -41,11 +42,13 @@ import com.gzq.uiframework.widget.core.SurfaceDefaults
 import com.gzq.uiframework.widget.core.Theme
 import com.gzq.uiframework.widget.core.Text
 import com.gzq.uiframework.widget.core.TextDefaults
+import com.gzq.uiframework.widget.core.UiEnvironment
 import com.gzq.uiframework.widget.core.UiTheme
 import com.gzq.uiframework.widget.core.key
 import com.gzq.uiframework.widget.core.produceState
 import com.gzq.uiframework.widget.core.remember
 import com.gzq.uiframework.widget.core.renderInto
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
     private val reversedState = mutableStateOf(false)
@@ -101,20 +104,30 @@ class MainActivity : AppCompatActivity() {
                     title = "UIFramework"
                 }
             }
-            UiTheme(
-                androidContext = root.context,
-            ) {
-                Column(
-                    modifier = Modifier.Empty
-                        .backgroundColor(Theme.colors.background)
-                        .padding(24),
+            UiEnvironment(androidContext = root.context) {
+                val density = Environment.density
+                val pagePadding = density.dp(24)
+                val blockPadding = density.dp(8)
+                val cardPadding = density.dp(12)
+                val boxHeight = density.dp(72)
+                val listHeight = density.dp(220)
+                val environmentLabel = "Env: ${Environment.localeTags.firstOrNull() ?: "und"} · " +
+                    "${Environment.layoutDirection.name} · " +
+                    "${"%.2f".format(Locale.US, density.density)}x"
+                UiTheme(
+                    androidContext = root.context,
                 ) {
+                    Column(
+                        modifier = Modifier.Empty
+                            .backgroundColor(Theme.colors.background)
+                            .padding(pagePadding),
+                    ) {
                     Text(
                         text = "UIFramework",
                         style = TextDefaults.titleStyle(),
                         modifier = Modifier.Empty
                             .backgroundColor(SurfaceDefaults.backgroundColor())
-                            .padding(8),
+                            .padding(blockPadding),
                     )
                     Text(
                         text = "Declarative UI on Android Views",
@@ -123,7 +136,13 @@ class MainActivity : AppCompatActivity() {
                             .clickable {
                                 textToggleState.value = !textToggleState.value
                             }
-                            .padding(8),
+                            .padding(blockPadding),
+                        )
+                    Text(
+                        text = environmentLabel,
+                        modifier = Modifier.Empty
+                            .textColor(TextDefaults.secondaryColor())
+                            .padding(blockPadding),
                     )
                     Text(
                         text = if (textToggleState.value) {
@@ -131,7 +150,10 @@ class MainActivity : AppCompatActivity() {
                         } else {
                             "Text modifier click: OFF"
                         },
-                        modifier = Modifier.Empty.padding(horizontal = 8, vertical = 4),
+                        modifier = Modifier.Empty.padding(
+                            horizontal = blockPadding,
+                            vertical = density.dp(4),
+                        ),
                     )
                     Text(text = "Clicks: ${clickCountState.value}")
                     Text(
@@ -139,38 +161,38 @@ class MainActivity : AppCompatActivity() {
                         modifier = Modifier.Empty
                             .textColor(TextDefaults.secondaryColor())
                             .alpha(0.7f)
-                            .padding(8),
+                            .padding(blockPadding),
                     )
                     Text(
                         text = listOrderState.value,
-                        modifier = Modifier.Empty.padding(8),
+                        modifier = Modifier.Empty.padding(blockPadding),
                     )
                     Divider(
                         thickness = 1,
-                        modifier = Modifier.Empty.margin(vertical = 8),
+                        modifier = Modifier.Empty.margin(vertical = blockPadding),
                     )
                     Box(
                         contentAlignment = BoxAlignment.Center,
                         modifier = Modifier.Empty
                             .fillMaxWidth()
-                            .height(72)
+                            .height(boxHeight)
                             .backgroundColor(SurfaceDefaults.variantBackgroundColor())
-                            .margin(vertical = 8),
+                            .margin(vertical = blockPadding),
                     ) {
                         Text(
                             text = "Centered in Box",
                             modifier = Modifier.Empty
                                 .backgroundColor(Theme.colors.primary)
-                                .padding(horizontal = 12, vertical = 8),
+                                .padding(horizontal = cardPadding, vertical = blockPadding),
                         )
                         Text(
                             text = "Pinned",
                             modifier = Modifier.Empty
                                 .align(BoxAlignment.BottomEnd)
-                                .offset(x = -8f, y = -8f)
+                                .offset(x = -blockPadding.toFloat(), y = -blockPadding.toFloat())
                                 .zIndex(1f)
                                 .backgroundColor(Theme.colors.accent)
-                                .padding(horizontal = 8, vertical = 4),
+                                .padding(horizontal = blockPadding, vertical = density.dp(4)),
                         )
                     }
                     Row(
@@ -179,29 +201,29 @@ class MainActivity : AppCompatActivity() {
                         verticalAlignment = VerticalAlignment.Center,
                         modifier = Modifier.Empty
                             .fillMaxWidth()
-                            .padding(horizontal = 8, vertical = 4),
+                            .padding(horizontal = blockPadding, vertical = density.dp(4)),
                     ) {
                         Text(
                             text = "Left pane",
                             modifier = Modifier.Empty
                                 .align(VerticalAlignment.Top)
                                 .backgroundColor(SurfaceDefaults.backgroundColor())
-                                .padding(12),
+                                .padding(cardPadding),
                         )
-                        FlexibleSpacer(modifier = Modifier.Empty.width(12))
+                        FlexibleSpacer(modifier = Modifier.Empty.width(cardPadding))
                         Text(
                             text = "Right pane",
                             modifier = Modifier.Empty
                                 .align(VerticalAlignment.Bottom)
                                 .backgroundColor(Theme.colors.accent)
-                                .padding(12),
+                                .padding(cardPadding),
                         )
                     }
                     AndroidView(
                         key = "legacy_summary",
                         modifier = Modifier.Empty
                             .alpha(0.85f)
-                            .padding(8),
+                            .padding(blockPadding),
                         factory = { context ->
                             TextView(context)
                         },
@@ -211,14 +233,14 @@ class MainActivity : AppCompatActivity() {
                     )
                     Button(
                         text = "Increment",
-                        modifier = Modifier.Empty.padding(8),
+                        modifier = Modifier.Empty.padding(blockPadding),
                         onClick = {
                             clickCountState.value = clickCountState.value + 1
                         },
                     )
                     Button(
                         text = if (reversedState.value) "Show A-B-C" else "Show C-B-A",
-                        modifier = Modifier.Empty.padding(8),
+                        modifier = Modifier.Empty.padding(blockPadding),
                         onClick = {
                             reversedState.value = !reversedState.value
                         },
@@ -229,7 +251,7 @@ class MainActivity : AppCompatActivity() {
                         } else {
                             "Show alternate labels"
                         },
-                        modifier = Modifier.Empty.padding(8),
+                        modifier = Modifier.Empty.padding(blockPadding),
                         onClick = {
                             alternateLabelsState.value = !alternateLabelsState.value
                         },
@@ -240,7 +262,7 @@ class MainActivity : AppCompatActivity() {
                         } else {
                             "Show transient panel"
                         },
-                        modifier = Modifier.Empty.padding(8),
+                        modifier = Modifier.Empty.padding(blockPadding),
                         onClick = {
                             transientPanelVisibleState.value = !transientPanelVisibleState.value
                         },
@@ -254,20 +276,20 @@ class MainActivity : AppCompatActivity() {
                                 spacing = 4,
                                 modifier = Modifier.Empty
                                     .backgroundColor(SurfaceDefaults.variantBackgroundColor())
-                                    .margin(vertical = 8)
-                                    .padding(8),
+                                    .margin(vertical = blockPadding)
+                                    .padding(blockPadding),
                             ) {
                                 Text(
                                     text = "Transient keyed panel",
                                     modifier = Modifier.Empty
                                         .align(HorizontalAlignment.Start)
-                                        .padding(4),
+                                        .padding(density.dp(4)),
                                 )
                                 Button(
                                     text = "Panel taps: ${panelTapState.value}",
                                     modifier = Modifier.Empty
                                         .align(HorizontalAlignment.End)
-                                        .padding(4),
+                                        .padding(density.dp(4)),
                                     onClick = {
                                         panelTapState.value = panelTapState.value + 1
                                     },
@@ -279,7 +301,7 @@ class MainActivity : AppCompatActivity() {
                         text = "Visibility sample: hidden when reversed",
                         modifier = Modifier.Empty
                             .visibility(if (reversedState.value) Visibility.Gone else Visibility.Visible)
-                            .padding(8),
+                            .padding(blockPadding),
                     )
                     val keyedItems = if (reversedState.value) {
                         listOf("C", "B", "A")
@@ -300,29 +322,30 @@ class MainActivity : AppCompatActivity() {
                         key = { item -> item.id },
                         modifier = Modifier.Empty
                             .fillMaxWidth()
-                            .height(220)
-                            .padding(8),
+                            .height(listHeight)
+                            .padding(blockPadding),
                     ) { item ->
                         val itemCountState = remember { mutableStateOf(0) }
                         Column(
                             key = item.id,
                             modifier = Modifier.Empty
                                 .backgroundColor(SurfaceDefaults.backgroundColor())
-                                .padding(8),
+                                .padding(blockPadding),
                         ) {
                             Text(
                                 text = item.title,
-                                modifier = Modifier.Empty.padding(4),
+                                modifier = Modifier.Empty.padding(density.dp(4)),
                             )
                             Button(
                                 text = "Item ${item.id} taps: ${itemCountState.value}",
-                                modifier = Modifier.Empty.padding(4),
+                                modifier = Modifier.Empty.padding(density.dp(4)),
                                 onClick = {
                                     itemCountState.value = itemCountState.value + 1
                                 },
                             )
                         }
                     }
+                }
                 }
             }
         }
