@@ -7,6 +7,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.gzq.uiframework.renderer.layout.HorizontalAlignment
+import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.modifier.Visibility
 import com.gzq.uiframework.renderer.modifier.alpha
@@ -127,6 +129,7 @@ class MainActivity : AppCompatActivity() {
                 )
                 Row(
                     spacing = 12,
+                    verticalAlignment = VerticalAlignment.Center,
                     modifier = Modifier.Empty
                         .fillMaxWidth()
                         .padding(horizontal = 8, vertical = 4),
@@ -198,6 +201,7 @@ class MainActivity : AppCompatActivity() {
                     key("transient-panel") {
                         val panelTapState = remember { mutableStateOf(0) }
                         Column(
+                            horizontalAlignment = HorizontalAlignment.Center,
                             spacing = 4,
                             modifier = Modifier.Empty
                                 .backgroundColor(Color.parseColor("#FDECC8"))

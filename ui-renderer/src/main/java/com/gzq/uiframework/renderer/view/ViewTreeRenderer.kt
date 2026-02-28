@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.ColorFilter
 import android.graphics.PixelFormat
 import android.graphics.drawable.Drawable
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -13,6 +14,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.gzq.uiframework.renderer.layout.HorizontalAlignment
+import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.modifier.AlphaModifierElement
 import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
 import com.gzq.uiframework.renderer.modifier.ClickableModifierElement
@@ -193,6 +196,7 @@ object ViewTreeRenderer {
                 (view as LinearLayout).apply {
                     orientation = LinearLayout.HORIZONTAL
                     applyLinearSpacing(readLinearSpacing(node))
+                    gravity = readRowVerticalAlignment(node).toGravity()
                 }
             }
 
@@ -200,6 +204,7 @@ object ViewTreeRenderer {
                 (view as LinearLayout).apply {
                     orientation = LinearLayout.VERTICAL
                     applyLinearSpacing(readLinearSpacing(node))
+                    gravity = readColumnHorizontalAlignment(node).toGravity()
                 }
             }
             NodeType.Box,
@@ -370,6 +375,16 @@ object ViewTreeRenderer {
         return node.props.values[PropKeys.LINEAR_SPACING] as? Int ?: 0
     }
 
+    private fun readRowVerticalAlignment(node: VNode): VerticalAlignment {
+        return node.props.values[PropKeys.ROW_VERTICAL_ALIGNMENT] as? VerticalAlignment
+            ?: VerticalAlignment.Top
+    }
+
+    private fun readColumnHorizontalAlignment(node: VNode): HorizontalAlignment {
+        return node.props.values[PropKeys.COLUMN_HORIZONTAL_ALIGNMENT] as? HorizontalAlignment
+            ?: HorizontalAlignment.Start
+    }
+
     private fun disposeMountedNode(
         mountedNode: MountedNode,
     ) {
@@ -420,5 +435,21 @@ object ViewTreeRenderer {
         override fun getIntrinsicWidth(): Int = width
 
         override fun getIntrinsicHeight(): Int = height
+    }
+
+    private fun VerticalAlignment.toGravity(): Int {
+        return when (this) {
+            VerticalAlignment.Top -> Gravity.TOP
+            VerticalAlignment.Center -> Gravity.CENTER_VERTICAL
+            VerticalAlignment.Bottom -> Gravity.BOTTOM
+        }
+    }
+
+    private fun HorizontalAlignment.toGravity(): Int {
+        return when (this) {
+            HorizontalAlignment.Start -> Gravity.START
+            HorizontalAlignment.Center -> Gravity.CENTER_HORIZONTAL
+            HorizontalAlignment.End -> Gravity.END
+        }
     }
 }
