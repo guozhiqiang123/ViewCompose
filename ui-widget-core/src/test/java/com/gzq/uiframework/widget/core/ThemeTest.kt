@@ -1,5 +1,6 @@
 package com.gzq.uiframework.widget.core
 
+import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
 import com.gzq.uiframework.renderer.modifier.TextColorModifierElement
 import com.gzq.uiframework.renderer.modifier.TextSizeModifierElement
 import com.gzq.uiframework.renderer.node.PropKeys
@@ -98,6 +99,42 @@ class ThemeTest {
         assertEquals(innerTheme.colors.textPrimary, innerColor)
         assertEquals(outerTheme.typography.body.fontSizeSp, outerSize)
         assertEquals(innerTheme.typography.body.fontSizeSp, innerSize)
+    }
+
+    @Test
+    fun `button uses themed container and readable content colors`() {
+        val customTheme = UiThemeTokens(
+            colors = UiColors(
+                background = 1,
+                surface = 2,
+                surfaceVariant = 3,
+                primary = 0xFF102030.toInt(),
+                accent = 5,
+                divider = 6,
+                textPrimary = 7,
+                textSecondary = 8,
+            ),
+            typography = UiTypography(
+                title = UiTextStyle(fontSizeSp = 30),
+                body = UiTextStyle(fontSizeSp = 18),
+                label = UiTextStyle(fontSizeSp = 12),
+            ),
+        )
+
+        val tree = buildVNodeTree {
+            UiTheme(customTheme) {
+                Button("Tap")
+            }
+        }
+
+        val elements = tree.single().modifier.readModifierElements()
+        val background = elements.last { it is BackgroundColorModifierElement } as BackgroundColorModifierElement
+        val textColor = elements.last { it is TextColorModifierElement } as TextColorModifierElement
+        val textSize = elements.last { it is TextSizeModifierElement } as TextSizeModifierElement
+
+        assertEquals(customTheme.colors.primary, background.color)
+        assertEquals(0xFFFFFFFF.toInt(), textColor.color)
+        assertEquals(customTheme.typography.label.fontSizeSp, textSize.sizeSp)
     }
 
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {

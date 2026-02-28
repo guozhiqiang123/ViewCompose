@@ -7,6 +7,7 @@ import com.gzq.uiframework.renderer.layout.HorizontalAlignment
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.modifier.Modifier
+import com.gzq.uiframework.renderer.modifier.backgroundColor
 import com.gzq.uiframework.renderer.modifier.textColor
 import com.gzq.uiframework.renderer.modifier.textSize
 import com.gzq.uiframework.renderer.modifier.weight
@@ -55,7 +56,8 @@ fun UiTreeBuilder.Button(
             },
         ),
         modifier = Modifier.Empty
-            .textColor(Theme.colors.textPrimary)
+            .backgroundColor(ButtonDefaults.containerColor())
+            .textColor(ButtonDefaults.contentColor())
             .textSize(style.fontSizeSp)
             .then(modifier),
     )
