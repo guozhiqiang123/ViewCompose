@@ -140,5 +140,25 @@ object ButtonDefaults {
         }
     }
 
+    fun iconSize(
+        size: ButtonSize = ButtonSize.Medium,
+    ): Int {
+        return when (size) {
+            ButtonSize.Compact -> 16.dp
+            ButtonSize.Medium -> 18.dp
+            ButtonSize.Large -> 20.dp
+        }
+    }
+
+    fun iconSpacing(
+        size: ButtonSize = ButtonSize.Medium,
+    ): Int {
+        return when (size) {
+            ButtonSize.Compact -> 6.dp
+            ButtonSize.Medium -> 8.dp
+            ButtonSize.Large -> 10.dp
+        }
+    }
+
     fun pressedColor(): Int = Theme.interactions.pressedOverlay
 }

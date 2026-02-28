@@ -449,10 +449,12 @@ private fun UiTreeBuilder.OverviewPage(
                         ) {
                             Button(
                                 text = "Primary Token",
+                                leadingIcon = ImageSource.Resource(R.drawable.demo_media_icon),
                                 modifier = Modifier.Empty.weight(1f),
                             )
                             Button(
                                 text = "Outlined Token",
+                                trailingIcon = ImageSource.Resource(R.drawable.demo_media_icon),
                                 variant = ButtonVariant.Outlined,
                                 modifier = Modifier.Empty.weight(1f),
                             )
@@ -940,6 +942,8 @@ private fun UiTreeBuilder.InputPage() {
                 )
                 Button(
                     text = "Reset Form",
+                    leadingIcon = ImageSource.Resource(R.drawable.demo_media_icon),
+                    trailingIcon = ImageSource.Resource(R.drawable.demo_media_icon),
                     size = ButtonSize.Large,
                     onClick = {
                         nameState.value = "GZQ"

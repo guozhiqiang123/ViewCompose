@@ -448,6 +448,8 @@ fun UiTreeBuilder.TextArea(
 fun UiTreeBuilder.Button(
     text: String,
     onClick: (() -> Unit)? = null,
+    leadingIcon: ImageSource.Resource? = null,
+    trailingIcon: ImageSource.Resource? = null,
     variant: ButtonVariant = ButtonVariant.Primary,
     size: ButtonSize = ButtonSize.Medium,
     enabled: Boolean = true,
@@ -463,6 +465,10 @@ fun UiTreeBuilder.Button(
                 put(PropKeys.TEXT, text)
                 put(PropKeys.ON_CLICK, onClick)
                 put(PropKeys.ENABLED, enabled)
+                put(PropKeys.BUTTON_ICON_SIZE, ButtonDefaults.iconSize(size))
+                put(PropKeys.BUTTON_ICON_SPACING, ButtonDefaults.iconSpacing(size))
+                leadingIcon?.let { put(PropKeys.BUTTON_LEADING_ICON, it) }
+                trailingIcon?.let { put(PropKeys.BUTTON_TRAILING_ICON, it) }
             },
         ),
         modifier = Modifier.Empty

@@ -283,6 +283,23 @@ object ViewTreeRenderer {
                     gravity = Gravity.CENTER
                     minimumWidth = 0
                     minWidth = 0
+                    compoundDrawablePadding = readButtonIconSpacing(node)
+                    setCompoundDrawablesRelative(
+                        resolveButtonIconDrawable(
+                            context = context,
+                            source = readButtonLeadingIcon(node),
+                            tint = readButtonContentColor(node),
+                            size = readButtonIconSize(node),
+                        ),
+                        null,
+                        resolveButtonIconDrawable(
+                            context = context,
+                            source = readButtonTrailingIcon(node),
+                            tint = readButtonContentColor(node),
+                            size = readButtonIconSize(node),
+                        ),
+                        null,
+                    )
                     setOnClickListener {
                         if (readEnabled(node)) {
                             readOnClick(node)?.invoke()
@@ -777,6 +794,18 @@ object ViewTreeRenderer {
         view.adjustViewBounds = false
     }
 
+    private fun resolveButtonIconDrawable(
+        context: Context,
+        source: ImageSource.Resource?,
+        tint: Int,
+        size: Int,
+    ): Drawable? {
+        val drawable = source?.let { ContextCompat.getDrawable(context, it.resId) }?.mutate() ?: return null
+        drawable.setTint(tint)
+        drawable.setBounds(0, 0, size, size)
+        return drawable
+    }
+
     private fun bindProgressIndicator(
         view: ProgressBar,
         node: VNode,
@@ -1171,6 +1200,26 @@ object ViewTreeRenderer {
         return node.props.values[PropKeys.IMAGE_REMOTE_LOADER] as? RemoteImageLoader
     }
 
+    private fun readButtonLeadingIcon(node: VNode): ImageSource.Resource? {
+        return node.props.values[PropKeys.BUTTON_LEADING_ICON] as? ImageSource.Resource
+    }
+
+    private fun readButtonTrailingIcon(node: VNode): ImageSource.Resource? {
+        return node.props.values[PropKeys.BUTTON_TRAILING_ICON] as? ImageSource.Resource
+    }
+
+    private fun readButtonIconSize(node: VNode): Int {
+        return node.props.values[PropKeys.BUTTON_ICON_SIZE] as? Int ?: 18
+    }
+
+    private fun readButtonIconSpacing(node: VNode): Int {
+        return node.props.values[PropKeys.BUTTON_ICON_SPACING] as? Int ?: 8
+    }
+
+    private fun readButtonContentColor(node: VNode): Int {
+        return readTextColor(node) ?: Color.BLACK
+    }
+
     private fun readImagePlaceholder(node: VNode): ImageSource.Resource? {
         return node.props.values[PropKeys.IMAGE_PLACEHOLDER] as? ImageSource.Resource
     }
@@ -1185,6 +1234,12 @@ object ViewTreeRenderer {
 
     private fun readProgressIndicatorColor(node: VNode): Int {
         return node.props.values[PropKeys.PROGRESS_INDICATOR_COLOR] as? Int ?: 0xFF000000.toInt()
+    }
+
+    private fun readTextColor(node: VNode): Int? {
+        return (node.modifier.elements
+            .lastOrNull { it is TextColorModifierElement } as? TextColorModifierElement)
+            ?.color
     }
 
     private fun readProgressTrackColor(node: VNode): Int {
