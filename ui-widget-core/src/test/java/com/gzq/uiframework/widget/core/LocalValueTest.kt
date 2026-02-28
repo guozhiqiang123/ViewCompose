@@ -30,4 +30,21 @@ class LocalValueTest {
         assertEquals("inner", inner)
         assertEquals("outer", restored)
     }
+
+    @Test
+    fun `captured snapshot can restore deferred locals`() {
+        val local = LocalValue { "default" }
+        var captured: LocalSnapshot? = null
+        var restored = ""
+
+        LocalContext.provide(local, "deferred") {
+            captured = LocalContext.snapshot()
+        }
+        LocalContext.withSnapshot(captured!!) {
+            restored = LocalContext.current(local)
+        }
+
+        assertEquals("deferred", restored)
+        assertEquals("default", LocalContext.current(local))
+    }
 }

@@ -739,6 +739,7 @@ fun <T> UiTreeBuilder.LazyColumn(
     modifier: Modifier = Modifier.Empty,
     itemContent: UiTreeBuilder.(T) -> Unit,
 ) {
+    val localSnapshot = LocalContext.snapshot()
     emit(
         type = NodeType.LazyColumn,
         props = Props(
@@ -750,15 +751,19 @@ fun <T> UiTreeBuilder.LazyColumn(
                         sessionFactory = LazyListItemSessionFactory { container ->
                             WidgetLazyListItemSession(
                                 container = container,
+                                localSnapshot = localSnapshot,
                                 content = {
                                     itemContent(item)
                                 },
                             )
                         },
                         sessionUpdater = { session ->
-                            (session as? WidgetLazyListItemSession)?.updateContent {
-                                itemContent(item)
-                            }
+                            (session as? WidgetLazyListItemSession)?.updateContent(
+                                localSnapshot = localSnapshot,
+                                content = {
+                                    itemContent(item)
+                                },
+                            )
                         },
                     )
                 },
@@ -806,6 +811,7 @@ fun UiTreeBuilder.TabPager(
     pages: TabPagerScope.() -> Unit,
 ) {
     val builtPages = TabPagerScope().apply(pages).build()
+    val localSnapshot = LocalContext.snapshot()
     emit(
         type = NodeType.TabPager,
         key = key,
@@ -831,11 +837,15 @@ fun UiTreeBuilder.TabPager(
                             sessionFactory = LazyListItemSessionFactory { container ->
                                 WidgetLazyListItemSession(
                                     container = container,
+                                    localSnapshot = localSnapshot,
                                     content = page.content,
                                 )
                             },
                             sessionUpdater = { session ->
-                                (session as? WidgetLazyListItemSession)?.updateContent(page.content)
+                                (session as? WidgetLazyListItemSession)?.updateContent(
+                                    localSnapshot = localSnapshot,
+                                    content = page.content,
+                                )
                             },
                         ),
                     )
@@ -848,13 +858,17 @@ fun UiTreeBuilder.TabPager(
 
 private class WidgetLazyListItemSession(
     container: android.view.ViewGroup,
+    localSnapshot: LocalSnapshot,
     content: UiTreeBuilder.() -> Unit,
 ) : LazyListItemSession {
+    private var capturedLocals = localSnapshot
     private var renderContent = content
     private val session = RenderSession(
         container = container,
         content = {
-            renderContent()
+            LocalContext.withSnapshot(capturedLocals) {
+                renderContent()
+            }
         },
     )
 
@@ -867,8 +881,10 @@ private class WidgetLazyListItemSession(
     }
 
     fun updateContent(
+        localSnapshot: LocalSnapshot,
         content: UiTreeBuilder.() -> Unit,
     ) {
+        capturedLocals = localSnapshot
         renderContent = content
     }
 }
