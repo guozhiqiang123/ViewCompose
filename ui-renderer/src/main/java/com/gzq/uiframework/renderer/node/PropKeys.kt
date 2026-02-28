@@ -2,7 +2,13 @@ package com.gzq.uiframework.renderer.node
 
 object PropKeys {
     const val TEXT: String = "text"
+    const val VALUE: String = "value"
     const val ON_CLICK: String = "on_click"
+    const val ON_VALUE_CHANGE: String = "on_value_change"
+    const val HINT: String = "hint"
+    const val SINGLE_LINE: String = "single_line"
+    const val TEXT_FIELD_TYPE: String = "text_field_type"
+    const val HINT_TEXT_COLOR: String = "hint_text_color"
     const val VIEW_FACTORY: String = "view_factory"
     const val VIEW_UPDATE: String = "view_update"
     const val BOX_ALIGNMENT: String = "box_alignment"

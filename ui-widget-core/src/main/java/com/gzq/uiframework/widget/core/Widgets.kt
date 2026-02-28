@@ -17,6 +17,7 @@ import com.gzq.uiframework.renderer.node.LazyListItemSessionFactory
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.Props
+import com.gzq.uiframework.renderer.node.TextFieldType
 
 fun UiTreeBuilder.Text(
     text: String,
@@ -36,6 +37,116 @@ fun UiTreeBuilder.Text(
             .textColor(TextDefaults.primaryColor())
             .textSize(style.fontSizeSp)
             .then(modifier),
+    )
+}
+
+fun UiTreeBuilder.TextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    hint: String = "",
+    singleLine: Boolean = true,
+    type: TextFieldType = TextFieldType.Text,
+    style: UiTextStyle = TextFieldDefaults.textStyle(),
+    key: Any? = null,
+    modifier: Modifier = Modifier.Empty,
+) {
+    emit(
+        type = NodeType.TextField,
+        key = key,
+        props = Props(
+            values = mapOf(
+                PropKeys.VALUE to value,
+                PropKeys.ON_VALUE_CHANGE to onValueChange,
+                PropKeys.HINT to hint,
+                PropKeys.SINGLE_LINE to singleLine,
+                PropKeys.TEXT_FIELD_TYPE to type,
+                PropKeys.HINT_TEXT_COLOR to TextFieldDefaults.hintColor(),
+            ),
+        ),
+        modifier = Modifier.Empty
+            .textColor(TextFieldDefaults.textColor())
+            .textSize(style.fontSizeSp)
+            .then(modifier),
+    )
+}
+
+fun UiTreeBuilder.PasswordField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    hint: String = "",
+    style: UiTextStyle = TextFieldDefaults.textStyle(),
+    key: Any? = null,
+    modifier: Modifier = Modifier.Empty,
+) {
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        hint = hint,
+        singleLine = true,
+        type = TextFieldType.Password,
+        style = style,
+        key = key,
+        modifier = modifier,
+    )
+}
+
+fun UiTreeBuilder.EmailField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    hint: String = "",
+    style: UiTextStyle = TextFieldDefaults.textStyle(),
+    key: Any? = null,
+    modifier: Modifier = Modifier.Empty,
+) {
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        hint = hint,
+        singleLine = true,
+        type = TextFieldType.Email,
+        style = style,
+        key = key,
+        modifier = modifier,
+    )
+}
+
+fun UiTreeBuilder.NumberField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    hint: String = "",
+    style: UiTextStyle = TextFieldDefaults.textStyle(),
+    key: Any? = null,
+    modifier: Modifier = Modifier.Empty,
+) {
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        hint = hint,
+        singleLine = true,
+        type = TextFieldType.Number,
+        style = style,
+        key = key,
+        modifier = modifier,
+    )
+}
+
+fun UiTreeBuilder.TextArea(
+    value: String,
+    onValueChange: (String) -> Unit,
+    hint: String = "",
+    style: UiTextStyle = TextFieldDefaults.textStyle(),
+    key: Any? = null,
+    modifier: Modifier = Modifier.Empty,
+) {
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        hint = hint,
+        singleLine = false,
+        type = TextFieldType.Text,
+        style = style,
+        key = key,
+        modifier = modifier,
     )
 }
 

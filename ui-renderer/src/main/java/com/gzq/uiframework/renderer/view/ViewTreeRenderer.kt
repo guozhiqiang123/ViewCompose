@@ -2,11 +2,15 @@ package com.gzq.uiframework.renderer.view
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.text.Editable
+import android.text.InputType
+import android.text.TextWatcher
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -37,6 +41,7 @@ import com.gzq.uiframework.renderer.modifier.ZIndexModifierElement
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
+import com.gzq.uiframework.renderer.node.TextFieldType
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.reconcile.ChildReconciler
 import com.gzq.uiframework.renderer.reconcile.InsertPatch
@@ -149,6 +154,7 @@ object ViewTreeRenderer {
     private fun mountNode(context: Context, node: VNode): MountedNode {
         val view = when (node.type) {
             NodeType.Text -> TextView(context)
+            NodeType.TextField -> EditText(context)
             NodeType.Button -> Button(context)
             NodeType.Row -> DeclarativeLinearLayout(context).apply {
                 orientation = LinearLayout.HORIZONTAL
@@ -192,6 +198,10 @@ object ViewTreeRenderer {
         when (node.type) {
             NodeType.Text -> {
                 (view as TextView).text = node.props.values[PropKeys.TEXT] as? CharSequence
+            }
+
+            NodeType.TextField -> {
+                bindTextField(view as EditText, node)
             }
 
             NodeType.Button -> {
@@ -289,14 +299,14 @@ object ViewTreeRenderer {
         )
         if (padding == null) {
             view.setPadding(0, 0, 0, 0)
-            return
+        } else {
+            view.setPadding(
+                padding.left,
+                padding.top,
+                padding.right,
+                padding.bottom,
+            )
         }
-        view.setPadding(
-            padding.left,
-            padding.top,
-            padding.right,
-            padding.bottom,
-        )
         if (view is TextView) {
             if (textColor != null) {
                 view.setTextColor(textColor.color)
@@ -343,6 +353,71 @@ object ViewTreeRenderer {
         )
     }
 
+    private fun bindTextField(view: EditText, node: VNode) {
+        val value = readFieldValue(node)
+        if (view.text?.toString() != value) {
+            view.setText(value)
+            view.setSelection(value.length)
+        }
+        view.hint = readFieldHint(node)
+        view.isSingleLine = readFieldSingleLine(node)
+        view.inputType = resolveInputType(
+            type = readFieldType(node),
+            singleLine = readFieldSingleLine(node),
+        )
+        view.setHintTextColor(readFieldHintColor(node))
+        bindTextWatcher(view, node)
+    }
+
+    private fun bindTextWatcher(view: EditText, node: VNode) {
+        val previousWatcher = view.getTag(R.id.ui_framework_text_watcher) as? TextWatcher
+        if (previousWatcher != null) {
+            view.removeTextChangedListener(previousWatcher)
+        }
+        val watcher = object : TextWatcher {
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int,
+            ) = Unit
+
+            override fun onTextChanged(
+                s: CharSequence?,
+                start: Int,
+                before: Int,
+                count: Int,
+            ) = Unit
+
+            override fun afterTextChanged(s: Editable?) {
+                val nextValue = s?.toString().orEmpty()
+                if (nextValue != readFieldValue(node)) {
+                    readOnValueChange(node)?.invoke(nextValue)
+                }
+            }
+        }
+        view.addTextChangedListener(watcher)
+        view.setTag(R.id.ui_framework_text_watcher, watcher)
+    }
+
+    private fun resolveInputType(type: TextFieldType, singleLine: Boolean): Int {
+        val baseType = when (type) {
+            TextFieldType.Text -> InputType.TYPE_CLASS_TEXT
+            TextFieldType.Password -> {
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            }
+            TextFieldType.Email -> {
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+            }
+            TextFieldType.Number -> InputType.TYPE_CLASS_NUMBER
+        }
+        return if (singleLine) {
+            baseType
+        } else {
+            baseType or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+        }
+    }
+
     private fun createLayoutParams(parent: ViewGroup, node: VNode): ViewGroup.LayoutParams {
         val boxAlign = node.modifier.elements.lastOrNull { it is BoxAlignModifierElement } as? BoxAlignModifierElement
         val margin = node.modifier.elements.lastOrNull { it is MarginModifierElement } as? MarginModifierElement
@@ -356,6 +431,7 @@ object ViewTreeRenderer {
             .lastOrNull { it is VerticalAlignModifierElement } as? VerticalAlignModifierElement
         val defaultWidth = when (node.type) {
             NodeType.Text,
+            NodeType.TextField,
             NodeType.Button,
             -> ViewGroup.LayoutParams.WRAP_CONTENT
 
@@ -443,6 +519,11 @@ object ViewTreeRenderer {
     }
 
     @Suppress("UNCHECKED_CAST")
+    private fun readOnValueChange(node: VNode): ((String) -> Unit)? {
+        return node.props.values[PropKeys.ON_VALUE_CHANGE] as? ((String) -> Unit)
+    }
+
+    @Suppress("UNCHECKED_CAST")
     private fun readViewFactory(node: VNode): ((Context) -> View)? {
         return node.props.values[PropKeys.VIEW_FACTORY] as? ((Context) -> View)
     }
@@ -510,6 +591,26 @@ object ViewTreeRenderer {
 
     private fun readDividerThickness(node: VNode): Int {
         return node.props.values[PropKeys.DIVIDER_THICKNESS] as? Int ?: 1
+    }
+
+    private fun readFieldValue(node: VNode): String {
+        return node.props.values[PropKeys.VALUE] as? String ?: ""
+    }
+
+    private fun readFieldHint(node: VNode): String {
+        return node.props.values[PropKeys.HINT] as? String ?: ""
+    }
+
+    private fun readFieldSingleLine(node: VNode): Boolean {
+        return node.props.values[PropKeys.SINGLE_LINE] as? Boolean ?: true
+    }
+
+    private fun readFieldType(node: VNode): TextFieldType {
+        return node.props.values[PropKeys.TEXT_FIELD_TYPE] as? TextFieldType ?: TextFieldType.Text
+    }
+
+    private fun readFieldHintColor(node: VNode): Int {
+        return node.props.values[PropKeys.HINT_TEXT_COLOR] as? Int ?: 0xFF888888.toInt()
     }
 
     private fun disposeMountedNode(
