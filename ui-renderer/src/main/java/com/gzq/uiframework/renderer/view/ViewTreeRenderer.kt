@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.gzq.uiframework.renderer.layout.BoxAlignment
 import com.gzq.uiframework.renderer.layout.HorizontalAlignment
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
@@ -147,7 +148,7 @@ object ViewTreeRenderer {
                 orientation = LinearLayout.VERTICAL
             }
 
-            NodeType.Box -> FrameLayout(context)
+            NodeType.Box -> DeclarativeBoxLayout(context)
             NodeType.Image -> View(context)
             NodeType.AndroidView -> readViewFactory(node)?.invoke(context) ?: View(context)
             NodeType.LazyColumn -> RecyclerView(context).apply {
@@ -206,7 +207,10 @@ object ViewTreeRenderer {
                     gravity = readColumnHorizontalAlignment(node).toGravity()
                 }
             }
-            NodeType.Box,
+            NodeType.Box -> {
+                (view as DeclarativeBoxLayout).contentGravity = readBoxAlignment(node).toGravity()
+            }
+
             NodeType.Image,
             -> Unit
 
@@ -374,6 +378,11 @@ object ViewTreeRenderer {
         return node.props.values[PropKeys.LINEAR_SPACING] as? Int ?: 0
     }
 
+    private fun readBoxAlignment(node: VNode): BoxAlignment {
+        return node.props.values[PropKeys.BOX_ALIGNMENT] as? BoxAlignment
+            ?: BoxAlignment.TopStart
+    }
+
     private fun readRowVerticalAlignment(node: VNode): VerticalAlignment {
         return node.props.values[PropKeys.ROW_VERTICAL_ALIGNMENT] as? VerticalAlignment
             ?: VerticalAlignment.Top
@@ -419,6 +428,20 @@ object ViewTreeRenderer {
             HorizontalAlignment.Start -> Gravity.START
             HorizontalAlignment.Center -> Gravity.CENTER_HORIZONTAL
             HorizontalAlignment.End -> Gravity.END
+        }
+    }
+
+    private fun BoxAlignment.toGravity(): Int {
+        return when (this) {
+            BoxAlignment.TopStart -> Gravity.TOP or Gravity.START
+            BoxAlignment.TopCenter -> Gravity.TOP or Gravity.CENTER_HORIZONTAL
+            BoxAlignment.TopEnd -> Gravity.TOP or Gravity.END
+            BoxAlignment.CenterStart -> Gravity.CENTER_VERTICAL or Gravity.START
+            BoxAlignment.Center -> Gravity.CENTER
+            BoxAlignment.CenterEnd -> Gravity.CENTER_VERTICAL or Gravity.END
+            BoxAlignment.BottomStart -> Gravity.BOTTOM or Gravity.START
+            BoxAlignment.BottomCenter -> Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+            BoxAlignment.BottomEnd -> Gravity.BOTTOM or Gravity.END
         }
     }
 }

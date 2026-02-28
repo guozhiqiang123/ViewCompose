@@ -2,6 +2,7 @@ package com.gzq.uiframework.widget.core
 
 import android.content.Context
 import android.view.View
+import com.gzq.uiframework.renderer.layout.BoxAlignment
 import com.gzq.uiframework.renderer.layout.HorizontalAlignment
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
@@ -70,12 +71,18 @@ fun UiTreeBuilder.AndroidView(
 
 fun UiTreeBuilder.Box(
     key: Any? = null,
+    contentAlignment: BoxAlignment = BoxAlignment.TopStart,
     modifier: Modifier = Modifier.Empty,
     content: UiTreeBuilder.() -> Unit,
 ) {
     emit(
         type = NodeType.Box,
         key = key,
+        props = Props(
+            values = mapOf(
+                PropKeys.BOX_ALIGNMENT to contentAlignment,
+            ),
+        ),
         modifier = modifier,
         content = content,
     )

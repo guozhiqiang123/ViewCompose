@@ -5,6 +5,7 @@ object PropKeys {
     const val ON_CLICK: String = "on_click"
     const val VIEW_FACTORY: String = "view_factory"
     const val VIEW_UPDATE: String = "view_update"
+    const val BOX_ALIGNMENT: String = "box_alignment"
     const val LAZY_ITEMS: String = "lazy_items"
     const val LINEAR_SPACING: String = "linear_spacing"
     const val ROW_MAIN_AXIS_ARRANGEMENT: String = "row_main_axis_arrangement"

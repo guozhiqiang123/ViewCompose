@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.gzq.uiframework.renderer.layout.BoxAlignment
 import com.gzq.uiframework.renderer.layout.HorizontalAlignment
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
@@ -24,6 +25,7 @@ import com.gzq.uiframework.renderer.modifier.weight
 import com.gzq.uiframework.runtime.derivedStateOf
 import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.AndroidView
+import com.gzq.uiframework.widget.core.Box
 import com.gzq.uiframework.widget.core.Button
 import com.gzq.uiframework.widget.core.Column
 import com.gzq.uiframework.widget.core.DisposableEffect
@@ -128,6 +130,21 @@ class MainActivity : AppCompatActivity() {
                     text = listOrderState.value,
                     modifier = Modifier.Empty.padding(8),
                 )
+                Box(
+                    contentAlignment = BoxAlignment.Center,
+                    modifier = Modifier.Empty
+                        .fillMaxWidth()
+                        .height(72)
+                        .backgroundColor(Color.parseColor("#E8F0D8"))
+                        .margin(vertical = 8),
+                ) {
+                    Text(
+                        text = "Centered in Box",
+                        modifier = Modifier.Empty
+                            .backgroundColor(Color.parseColor("#BFD8A6"))
+                            .padding(horizontal = 12, vertical = 8),
+                    )
+                }
                 Row(
                     arrangement = MainAxisArrangement.SpaceBetween,
                     spacing = 12,
