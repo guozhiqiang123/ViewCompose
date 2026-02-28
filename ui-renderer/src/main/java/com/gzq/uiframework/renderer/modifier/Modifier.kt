@@ -23,6 +23,25 @@ data class BackgroundColorModifierElement(
     val color: Int,
 ) : ModifierElement
 
+data class SizeModifierElement(
+    val width: Int,
+    val height: Int,
+) : ModifierElement
+
+data class AlphaModifierElement(
+    val alpha: Float,
+) : ModifierElement
+
+data class VisibilityModifierElement(
+    val visibility: Visibility,
+) : ModifierElement
+
+enum class Visibility {
+    Visible,
+    Invisible,
+    Gone,
+}
+
 fun Modifier.padding(all: Int): Modifier {
     return then(
         PaddingModifierElement(
@@ -37,5 +56,29 @@ fun Modifier.padding(all: Int): Modifier {
 fun Modifier.backgroundColor(color: Int): Modifier {
     return then(
         BackgroundColorModifierElement(color),
+    )
+}
+
+fun Modifier.size(
+    width: Int,
+    height: Int,
+): Modifier {
+    return then(
+        SizeModifierElement(
+            width = width,
+            height = height,
+        ),
+    )
+}
+
+fun Modifier.alpha(alpha: Float): Modifier {
+    return then(
+        AlphaModifierElement(alpha),
+    )
+}
+
+fun Modifier.visibility(visibility: Visibility): Modifier {
+    return then(
+        VisibilityModifierElement(visibility),
     )
 }

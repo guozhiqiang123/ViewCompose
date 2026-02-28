@@ -9,8 +9,12 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.gzq.uiframework.renderer.modifier.AlphaModifierElement
 import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
 import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
+import com.gzq.uiframework.renderer.modifier.SizeModifierElement
+import com.gzq.uiframework.renderer.modifier.Visibility
+import com.gzq.uiframework.renderer.modifier.VisibilityModifierElement
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
@@ -187,10 +191,20 @@ object ViewTreeRenderer {
     }
 
     private fun applyModifier(view: View, node: VNode) {
+        val alpha = node.modifier.elements
+            .lastOrNull { it is AlphaModifierElement } as? AlphaModifierElement
         val backgroundColor = node.modifier.elements
             .lastOrNull { it is BackgroundColorModifierElement } as? BackgroundColorModifierElement
         val padding = node.modifier.elements.lastOrNull { it is PaddingModifierElement } as? PaddingModifierElement
+        val visibility = node.modifier.elements
+            .lastOrNull { it is VisibilityModifierElement } as? VisibilityModifierElement
+        view.alpha = alpha?.alpha ?: 1f
         view.setBackgroundColor(backgroundColor?.color ?: 0x00000000)
+        view.visibility = when (visibility?.visibility ?: Visibility.Visible) {
+            Visibility.Visible -> View.VISIBLE
+            Visibility.Invisible -> View.INVISIBLE
+            Visibility.Gone -> View.GONE
+        }
         if (padding == null) {
             view.setPadding(0, 0, 0, 0)
             return
@@ -220,12 +234,13 @@ object ViewTreeRenderer {
     }
 
     private fun createLayoutParams(parent: ViewGroup, node: VNode): ViewGroup.LayoutParams {
-        val width = if (node.type == NodeType.Text || node.type == NodeType.Button) {
+        val size = node.modifier.elements.lastOrNull { it is SizeModifierElement } as? SizeModifierElement
+        val width = size?.width ?: if (node.type == NodeType.Text || node.type == NodeType.Button) {
             ViewGroup.LayoutParams.WRAP_CONTENT
         } else {
             ViewGroup.LayoutParams.MATCH_PARENT
         }
-        val height = ViewGroup.LayoutParams.WRAP_CONTENT
+        val height = size?.height ?: ViewGroup.LayoutParams.WRAP_CONTENT
         return when (parent) {
             is LinearLayout -> LinearLayout.LayoutParams(width, height)
             is FrameLayout -> FrameLayout.LayoutParams(width, height)

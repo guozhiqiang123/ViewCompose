@@ -7,9 +7,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import android.view.ViewGroup
 import com.gzq.uiframework.renderer.modifier.Modifier
+import com.gzq.uiframework.renderer.modifier.Visibility
+import com.gzq.uiframework.renderer.modifier.alpha
 import com.gzq.uiframework.renderer.modifier.backgroundColor
 import com.gzq.uiframework.renderer.modifier.padding
+import com.gzq.uiframework.renderer.modifier.size
+import com.gzq.uiframework.renderer.modifier.visibility
 import com.gzq.uiframework.runtime.derivedStateOf
 import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.AndroidView
@@ -79,11 +84,15 @@ class MainActivity : AppCompatActivity() {
                 Text(text = "Clicks: ${clickCountState.value}")
                 Text(
                     text = clickSummaryState.value,
-                    modifier = Modifier.Empty.padding(8),
+                    modifier = Modifier.Empty
+                        .alpha(0.7f)
+                        .padding(8),
                 )
                 AndroidView(
                     key = "legacy_summary",
-                    modifier = Modifier.Empty.padding(8),
+                    modifier = Modifier.Empty
+                        .alpha(0.85f)
+                        .padding(8),
                     factory = { context ->
                         TextView(context)
                     },
@@ -105,6 +114,12 @@ class MainActivity : AppCompatActivity() {
                         reversedState.value = !reversedState.value
                     },
                 )
+                Text(
+                    text = "Visibility sample: hidden when reversed",
+                    modifier = Modifier.Empty
+                        .visibility(if (reversedState.value) Visibility.Gone else Visibility.Visible)
+                        .padding(8),
+                )
                 val keyedItems = if (reversedState.value) {
                     listOf("C", "B", "A")
                 } else {
@@ -113,7 +128,12 @@ class MainActivity : AppCompatActivity() {
                 LazyColumn(
                     items = keyedItems,
                     key = { item -> item },
-                    modifier = Modifier.Empty.padding(8),
+                    modifier = Modifier.Empty
+                        .size(
+                            width = ViewGroup.LayoutParams.MATCH_PARENT,
+                            height = 220,
+                        )
+                        .padding(8),
                 ) { item ->
                     val itemCountState = remember { mutableStateOf(0) }
                     Column(
