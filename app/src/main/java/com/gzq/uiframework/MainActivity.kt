@@ -34,6 +34,7 @@ import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.AndroidView
 import com.gzq.uiframework.widget.core.Box
 import com.gzq.uiframework.widget.core.Button
+import com.gzq.uiframework.widget.core.ButtonVariant
 import com.gzq.uiframework.widget.core.Column
 import com.gzq.uiframework.widget.core.DisposableEffect
 import com.gzq.uiframework.widget.core.Divider
@@ -60,6 +61,7 @@ import com.gzq.uiframework.widget.core.UiTreeBuilder
 import com.gzq.uiframework.widget.core.UiEnvironment
 import com.gzq.uiframework.widget.core.UiTextStyle
 import com.gzq.uiframework.widget.core.UiTheme
+import com.gzq.uiframework.widget.core.TextFieldVariant
 import com.gzq.uiframework.widget.core.dp
 import com.gzq.uiframework.widget.core.key
 import com.gzq.uiframework.widget.core.produceState
@@ -221,6 +223,7 @@ private fun UiTreeBuilder.ThemeModeButton(
 ) {
     Button(
         text = if (active) "$label *" else label,
+        variant = if (active) ButtonVariant.Secondary else ButtonVariant.Outlined,
         modifier = Modifier.Empty.weight(1f),
         onClick = onClick,
     )
@@ -314,6 +317,26 @@ private fun UiTreeBuilder.OverviewPage(
                 title = "Current Surface",
                 subtitle = "The first vertical slice now includes the following framework controls.",
             ) {
+                Row(
+                    spacing = 8.dp,
+                    modifier = Modifier.Empty.fillMaxWidth().margin(bottom = 8.dp),
+                ) {
+                    Button(
+                        text = "Primary",
+                        variant = ButtonVariant.Primary,
+                        modifier = Modifier.Empty.weight(1f),
+                    )
+                    Button(
+                        text = "Tonal",
+                        variant = ButtonVariant.Tonal,
+                        modifier = Modifier.Empty.weight(1f),
+                    )
+                    Button(
+                        text = "Outline",
+                        variant = ButtonVariant.Outlined,
+                        modifier = Modifier.Empty.weight(1f),
+                    )
+                }
                 Text(text = "Text, TextField, EmailField, PasswordField, NumberField, TextArea")
                 Text(text = "Row, Column, Box, Divider, Spacer, FlexibleSpacer, LazyColumn")
                 Text(text = "AndroidView interop, TabPager, state runtime, effect runtime")
@@ -500,6 +523,7 @@ private fun UiTreeBuilder.InputPage() {
                     value = nameState.value,
                     onValueChange = { nameState.value = it },
                     hint = "Name",
+                    variant = TextFieldVariant.Filled,
                     modifier = Modifier.Empty
                         .fillMaxWidth()
                         .margin(bottom = 12.dp),
@@ -508,6 +532,7 @@ private fun UiTreeBuilder.InputPage() {
                     value = emailState.value,
                     onValueChange = { emailState.value = it },
                     hint = "Email",
+                    variant = TextFieldVariant.Tonal,
                     modifier = Modifier.Empty
                         .fillMaxWidth()
                         .margin(bottom = 12.dp),
@@ -516,6 +541,7 @@ private fun UiTreeBuilder.InputPage() {
                     value = passwordState.value,
                     onValueChange = { passwordState.value = it },
                     hint = "Password",
+                    variant = TextFieldVariant.Outlined,
                     isError = passwordState.value.isBlank(),
                     modifier = Modifier.Empty
                         .fillMaxWidth()
@@ -525,6 +551,7 @@ private fun UiTreeBuilder.InputPage() {
                     value = ageState.value,
                     onValueChange = { ageState.value = it },
                     hint = "Version age",
+                    variant = TextFieldVariant.Outlined,
                     modifier = Modifier.Empty
                         .fillMaxWidth()
                         .margin(bottom = 12.dp),
@@ -533,6 +560,7 @@ private fun UiTreeBuilder.InputPage() {
                     value = "disabled@uiframework.dev",
                     onValueChange = {},
                     hint = "Disabled email",
+                    variant = TextFieldVariant.Tonal,
                     enabled = false,
                     modifier = Modifier.Empty
                         .fillMaxWidth()
@@ -542,6 +570,7 @@ private fun UiTreeBuilder.InputPage() {
                     value = bioState.value,
                     onValueChange = { bioState.value = it },
                     hint = "Short bio",
+                    variant = TextFieldVariant.Filled,
                     modifier = Modifier.Empty
                         .fillMaxWidth()
                         .height(120.dp)

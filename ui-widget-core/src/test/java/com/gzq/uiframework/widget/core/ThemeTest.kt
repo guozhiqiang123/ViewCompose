@@ -1,6 +1,7 @@
 package com.gzq.uiframework.widget.core
 
 import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
+import com.gzq.uiframework.renderer.modifier.BorderModifierElement
 import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
 import com.gzq.uiframework.renderer.modifier.RippleColorModifierElement
 import com.gzq.uiframework.renderer.modifier.TextColorModifierElement
@@ -141,6 +142,28 @@ class ThemeTest {
         assertEquals(customTheme.interactions.pressedOverlay, rippleColor.color)
         assertEquals(0xFFFFFFFF.toInt(), textColor.color)
         assertEquals(customTheme.typography.label.fontSizeSp, textSize.sizeSp)
+    }
+
+    @Test
+    fun `outlined button uses transparent container and divider border`() {
+        val tree = buildVNodeTree {
+            UiTheme(UiThemeDefaults.light()) {
+                Button(
+                    text = "Outline",
+                    variant = ButtonVariant.Outlined,
+                )
+            }
+        }
+
+        val elements = tree.single().modifier.readModifierElements()
+        val background = elements.last { it is BackgroundColorModifierElement } as BackgroundColorModifierElement
+        val border = elements.last { it is BorderModifierElement } as BorderModifierElement
+        val textColor = elements.last { it is TextColorModifierElement } as TextColorModifierElement
+
+        assertEquals(0x00000000, background.color)
+        assertEquals(Theme.colors.divider, border.color)
+        assertEquals(1.dp, border.width)
+        assertEquals(Theme.colors.textPrimary, textColor.color)
     }
 
     @Test

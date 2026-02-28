@@ -8,6 +8,7 @@ import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.modifier.backgroundColor
+import com.gzq.uiframework.renderer.modifier.border
 import com.gzq.uiframework.renderer.modifier.cornerRadius
 import com.gzq.uiframework.renderer.modifier.rippleColor
 import com.gzq.uiframework.renderer.modifier.textColor
@@ -49,6 +50,7 @@ fun UiTreeBuilder.TextField(
     hint: String = "",
     singleLine: Boolean = true,
     type: TextFieldType = TextFieldType.Text,
+    variant: TextFieldVariant = TextFieldVariant.Filled,
     enabled: Boolean = true,
     isError: Boolean = false,
     style: UiTextStyle = TextFieldDefaults.textStyle(),
@@ -76,6 +78,15 @@ fun UiTreeBuilder.TextField(
         modifier = Modifier.Empty
             .backgroundColor(
                 TextFieldDefaults.containerColor(
+                    variant = variant,
+                    enabled = enabled,
+                    isError = isError,
+                ),
+            )
+            .border(
+                width = TextFieldDefaults.borderWidth(variant),
+                color = TextFieldDefaults.borderColor(
+                    variant = variant,
                     enabled = enabled,
                     isError = isError,
                 ),
@@ -92,6 +103,7 @@ fun UiTreeBuilder.PasswordField(
     value: String,
     onValueChange: (String) -> Unit,
     hint: String = "",
+    variant: TextFieldVariant = TextFieldVariant.Filled,
     enabled: Boolean = true,
     isError: Boolean = false,
     style: UiTextStyle = TextFieldDefaults.textStyle(),
@@ -104,6 +116,7 @@ fun UiTreeBuilder.PasswordField(
         hint = hint,
         singleLine = true,
         type = TextFieldType.Password,
+        variant = variant,
         enabled = enabled,
         isError = isError,
         style = style,
@@ -229,6 +242,7 @@ fun UiTreeBuilder.EmailField(
     value: String,
     onValueChange: (String) -> Unit,
     hint: String = "",
+    variant: TextFieldVariant = TextFieldVariant.Filled,
     enabled: Boolean = true,
     style: UiTextStyle = TextFieldDefaults.textStyle(),
     key: Any? = null,
@@ -240,6 +254,7 @@ fun UiTreeBuilder.EmailField(
         hint = hint,
         singleLine = true,
         type = TextFieldType.Email,
+        variant = variant,
         enabled = enabled,
         style = style,
         key = key,
@@ -251,6 +266,7 @@ fun UiTreeBuilder.NumberField(
     value: String,
     onValueChange: (String) -> Unit,
     hint: String = "",
+    variant: TextFieldVariant = TextFieldVariant.Filled,
     enabled: Boolean = true,
     style: UiTextStyle = TextFieldDefaults.textStyle(),
     key: Any? = null,
@@ -262,6 +278,7 @@ fun UiTreeBuilder.NumberField(
         hint = hint,
         singleLine = true,
         type = TextFieldType.Number,
+        variant = variant,
         enabled = enabled,
         style = style,
         key = key,
@@ -273,6 +290,7 @@ fun UiTreeBuilder.TextArea(
     value: String,
     onValueChange: (String) -> Unit,
     hint: String = "",
+    variant: TextFieldVariant = TextFieldVariant.Filled,
     enabled: Boolean = true,
     isError: Boolean = false,
     style: UiTextStyle = TextFieldDefaults.textStyle(),
@@ -285,6 +303,7 @@ fun UiTreeBuilder.TextArea(
         hint = hint,
         singleLine = false,
         type = TextFieldType.Text,
+        variant = variant,
         enabled = enabled,
         isError = isError,
         style = style,
@@ -296,6 +315,7 @@ fun UiTreeBuilder.TextArea(
 fun UiTreeBuilder.Button(
     text: String,
     onClick: (() -> Unit)? = null,
+    variant: ButtonVariant = ButtonVariant.Primary,
     style: UiTextStyle = Theme.typography.label,
     key: Any? = null,
     modifier: Modifier = Modifier.Empty,
@@ -310,10 +330,14 @@ fun UiTreeBuilder.Button(
             },
         ),
         modifier = Modifier.Empty
-            .backgroundColor(ButtonDefaults.containerColor())
+            .backgroundColor(ButtonDefaults.containerColor(variant))
+            .border(
+                width = ButtonDefaults.borderWidth(variant),
+                color = ButtonDefaults.borderColor(variant),
+            )
             .cornerRadius(ButtonDefaults.cornerRadius())
             .rippleColor(ButtonDefaults.pressedColor())
-            .textColor(ButtonDefaults.contentColor())
+            .textColor(ButtonDefaults.contentColor(variant))
             .textSize(style.fontSizeSp)
             .then(modifier),
     )

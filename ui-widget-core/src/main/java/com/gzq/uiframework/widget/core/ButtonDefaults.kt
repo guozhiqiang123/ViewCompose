@@ -1,9 +1,53 @@
 package com.gzq.uiframework.widget.core
 
-object ButtonDefaults {
-    fun containerColor(): Int = Theme.colors.primary
+enum class ButtonVariant {
+    Primary,
+    Secondary,
+    Tonal,
+    Outlined,
+}
 
-    fun contentColor(): Int = contentColorFor(containerColor())
+object ButtonDefaults {
+    fun containerColor(
+        variant: ButtonVariant = ButtonVariant.Primary,
+    ): Int {
+        return when (variant) {
+            ButtonVariant.Primary -> Theme.colors.primary
+            ButtonVariant.Secondary -> Theme.colors.accent
+            ButtonVariant.Tonal -> Theme.colors.surfaceVariant
+            ButtonVariant.Outlined -> 0x00000000
+        }
+    }
+
+    fun contentColor(
+        variant: ButtonVariant = ButtonVariant.Primary,
+    ): Int {
+        return when (variant) {
+            ButtonVariant.Tonal,
+            ButtonVariant.Outlined,
+            -> Theme.colors.textPrimary
+
+            else -> contentColorFor(containerColor(variant))
+        }
+    }
+
+    fun borderColor(
+        variant: ButtonVariant = ButtonVariant.Primary,
+    ): Int {
+        return when (variant) {
+            ButtonVariant.Outlined -> Theme.colors.divider
+            else -> 0x00000000
+        }
+    }
+
+    fun borderWidth(
+        variant: ButtonVariant = ButtonVariant.Primary,
+    ): Int {
+        return when (variant) {
+            ButtonVariant.Outlined -> 1.dp
+            else -> 0
+        }
+    }
 
     fun cornerRadius(): Int = Theme.shapes.controlCornerRadius
 

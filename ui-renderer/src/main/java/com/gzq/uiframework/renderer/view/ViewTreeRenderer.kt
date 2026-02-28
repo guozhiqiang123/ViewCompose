@@ -33,6 +33,7 @@ import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.modifier.AlphaModifierElement
 import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
+import com.gzq.uiframework.renderer.modifier.BorderModifierElement
 import com.gzq.uiframework.renderer.modifier.BoxAlignModifierElement
 import com.gzq.uiframework.renderer.modifier.ClickableModifierElement
 import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
@@ -315,6 +316,8 @@ object ViewTreeRenderer {
             .lastOrNull { it is BackgroundColorModifierElement } as? BackgroundColorModifierElement
         val clickable = node.modifier.elements
             .lastOrNull { it is ClickableModifierElement } as? ClickableModifierElement
+        val border = node.modifier.elements
+            .lastOrNull { it is BorderModifierElement } as? BorderModifierElement
         val cornerRadius = node.modifier.elements
             .lastOrNull { it is CornerRadiusModifierElement } as? CornerRadiusModifierElement
         val offset = node.modifier.elements
@@ -334,6 +337,8 @@ object ViewTreeRenderer {
         applyBackgroundAndInteraction(
             view = view,
             backgroundColor = backgroundColor?.color,
+            borderWidth = border?.width ?: 0,
+            borderColor = border?.color ?: Color.TRANSPARENT,
             cornerRadius = cornerRadius?.radius ?: 0,
             rippleColor = rippleColor?.color ?: DEFAULT_RIPPLE_COLOR,
             clickable = clickable != null,
@@ -413,14 +418,18 @@ object ViewTreeRenderer {
     private fun applyBackgroundAndInteraction(
         view: View,
         backgroundColor: Int?,
+        borderWidth: Int,
+        borderColor: Int,
         cornerRadius: Int,
         rippleColor: Int,
         clickable: Boolean,
     ) {
-        val hasCustomShape = backgroundColor != null || cornerRadius > 0
+        val hasCustomShape = backgroundColor != null || cornerRadius > 0 || borderWidth > 0
         if (hasCustomShape) {
             view.background = createBackgroundDrawable(
                 backgroundColor = backgroundColor ?: Color.TRANSPARENT,
+                borderWidth = borderWidth,
+                borderColor = borderColor,
                 cornerRadiusPx = cornerRadius,
                 rippleColor = rippleColor,
                 clickable = clickable,
@@ -443,6 +452,8 @@ object ViewTreeRenderer {
 
     private fun createBackgroundDrawable(
         backgroundColor: Int,
+        borderWidth: Int,
+        borderColor: Int,
         cornerRadiusPx: Int,
         rippleColor: Int,
         clickable: Boolean,
@@ -450,6 +461,9 @@ object ViewTreeRenderer {
         val content = GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
             setColor(backgroundColor)
+            if (borderWidth > 0) {
+                setStroke(borderWidth, borderColor)
+            }
             cornerRadius = cornerRadiusPx.toFloat()
         }
         if (!clickable) {
@@ -461,6 +475,9 @@ object ViewTreeRenderer {
             GradientDrawable().apply {
                 shape = GradientDrawable.RECTANGLE
                 setColor(Color.WHITE)
+                if (borderWidth > 0) {
+                    setStroke(borderWidth, borderColor)
+                }
                 cornerRadius = cornerRadiusPx.toFloat()
             },
         )

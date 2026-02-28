@@ -36,6 +36,11 @@ data class BackgroundColorModifierElement(
     val color: Int,
 ) : ModifierElement
 
+data class BorderModifierElement(
+    val width: Int,
+    val color: Int,
+) : ModifierElement
+
 data class CornerRadiusModifierElement(
     val radius: Int,
 ) : ModifierElement
@@ -146,6 +151,18 @@ fun Modifier.padding(
 fun Modifier.backgroundColor(color: Int): Modifier {
     return then(
         BackgroundColorModifierElement(color),
+    )
+}
+
+fun Modifier.border(
+    width: Int,
+    color: Int,
+): Modifier {
+    return then(
+        BorderModifierElement(
+            width = width,
+            color = color,
+        ),
     )
 }
 

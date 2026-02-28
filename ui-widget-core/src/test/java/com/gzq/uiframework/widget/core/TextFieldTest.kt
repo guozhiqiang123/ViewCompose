@@ -1,6 +1,7 @@
 package com.gzq.uiframework.widget.core
 
 import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
+import com.gzq.uiframework.renderer.modifier.BorderModifierElement
 import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
 import com.gzq.uiframework.renderer.modifier.RippleColorModifierElement
 import com.gzq.uiframework.renderer.modifier.TextColorModifierElement
@@ -89,6 +90,27 @@ class TextFieldTest {
         assertEquals(NodeType.TextField, node.type)
         assertEquals(TextFieldType.Password, node.props.values[PropKeys.TEXT_FIELD_TYPE])
         assertTrue(node.props.values[PropKeys.SINGLE_LINE] as Boolean)
+    }
+
+    @Test
+    fun `outlined text field uses border variant`() {
+        val tree = buildVNodeTree {
+            UiTheme(UiThemeDefaults.light()) {
+                TextField(
+                    value = "hello",
+                    onValueChange = {},
+                    variant = TextFieldVariant.Outlined,
+                )
+            }
+        }
+
+        val elements = tree.single().modifier.readModifierElements()
+        val background = elements.last { it is BackgroundColorModifierElement } as BackgroundColorModifierElement
+        val border = elements.last { it is BorderModifierElement } as BorderModifierElement
+
+        assertEquals(0x00000000, background.color)
+        assertEquals(Theme.input.control, border.color)
+        assertEquals(1.dp, border.width)
     }
 
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {
