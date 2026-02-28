@@ -20,7 +20,7 @@ import com.gzq.uiframework.renderer.node.Props
 
 fun UiTreeBuilder.Text(
     text: String,
-    style: UiTextStyle = Theme.typography.body,
+    style: UiTextStyle = TextDefaults.bodyStyle(),
     key: Any? = null,
     modifier: Modifier = Modifier.Empty,
 ) {
@@ -33,7 +33,7 @@ fun UiTreeBuilder.Text(
             ),
         ),
         modifier = Modifier.Empty
-            .textColor(Theme.colors.textPrimary)
+            .textColor(TextDefaults.primaryColor())
             .textSize(style.fontSizeSp)
             .then(modifier),
     )

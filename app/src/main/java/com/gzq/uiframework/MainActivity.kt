@@ -39,6 +39,7 @@ import com.gzq.uiframework.widget.core.Row
 import com.gzq.uiframework.widget.core.SideEffect
 import com.gzq.uiframework.widget.core.Theme
 import com.gzq.uiframework.widget.core.Text
+import com.gzq.uiframework.widget.core.TextDefaults
 import com.gzq.uiframework.widget.core.UiTheme
 import com.gzq.uiframework.widget.core.key
 import com.gzq.uiframework.widget.core.produceState
@@ -109,7 +110,7 @@ class MainActivity : AppCompatActivity() {
                 ) {
                     Text(
                         text = "UIFramework",
-                        style = Theme.typography.title,
+                        style = TextDefaults.titleStyle(),
                         modifier = Modifier.Empty
                             .backgroundColor(Theme.colors.surface)
                             .padding(8),
@@ -117,7 +118,7 @@ class MainActivity : AppCompatActivity() {
                     Text(
                         text = "Declarative UI on Android Views",
                         modifier = Modifier.Empty
-                            .textColor(Theme.colors.textSecondary)
+                            .textColor(TextDefaults.secondaryColor())
                             .clickable {
                                 textToggleState.value = !textToggleState.value
                             }
@@ -135,7 +136,7 @@ class MainActivity : AppCompatActivity() {
                     Text(
                         text = clickSummaryState.value,
                         modifier = Modifier.Empty
-                            .textColor(Theme.colors.textSecondary)
+                            .textColor(TextDefaults.secondaryColor())
                             .alpha(0.7f)
                             .padding(8),
                     )
