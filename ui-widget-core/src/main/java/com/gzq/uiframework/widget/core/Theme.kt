@@ -1,5 +1,7 @@
 package com.gzq.uiframework.widget.core
 
+import android.content.Context
+
 data class UiColors(
     val background: Int,
     val surface: Int,
@@ -72,10 +74,14 @@ object Theme {
 }
 
 fun UiTreeBuilder.UiTheme(
-    tokens: UiThemeTokens = UiThemeDefaults.light(),
+    tokens: UiThemeTokens? = null,
+    androidContext: Context? = null,
     content: UiTreeBuilder.() -> Unit,
 ) {
-    ThemeContext.withTheme(tokens) {
+    val resolvedTokens = tokens
+        ?: androidContext?.let(AndroidThemeBridge::fromContext)
+        ?: UiThemeDefaults.light()
+    ThemeContext.withTheme(resolvedTokens) {
         content()
     }
 }

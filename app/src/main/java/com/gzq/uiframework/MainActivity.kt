@@ -40,7 +40,6 @@ import com.gzq.uiframework.widget.core.SideEffect
 import com.gzq.uiframework.widget.core.Theme
 import com.gzq.uiframework.widget.core.Text
 import com.gzq.uiframework.widget.core.UiTheme
-import com.gzq.uiframework.widget.core.UiThemeDefaults
 import com.gzq.uiframework.widget.core.key
 import com.gzq.uiframework.widget.core.produceState
 import com.gzq.uiframework.widget.core.remember
@@ -100,7 +99,9 @@ class MainActivity : AppCompatActivity() {
                     title = "UIFramework"
                 }
             }
-            UiTheme(UiThemeDefaults.light()) {
+            UiTheme(
+                androidContext = root.context,
+            ) {
                 Column(
                     modifier = Modifier.Empty
                         .backgroundColor(Theme.colors.background)
