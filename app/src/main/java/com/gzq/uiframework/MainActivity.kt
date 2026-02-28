@@ -1908,11 +1908,27 @@ private fun UiTreeBuilder.DiagnosticsPage() {
                 title = "Runtime Snapshot",
                 subtitle = "This chapter will become the manual inspection home for state invalidation, local propagation, and effect boundaries.",
             ) {
-                Text(text = "Theme mode: ${Theme.colors.primary.toUInt().toString(16)} primary token active")
-                Text(
-                    text = "Environment: ${Environment.localeTags.firstOrNull() ?: "und"} · ${Environment.layoutDirection.name}",
-                    style = UiTextStyle(fontSizeSp = 13.sp),
-                    modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+                DiagnosticFactGroup(
+                    title = "Runtime Facts",
+                    facts = listOf(
+                        DiagnosticFact("Debug logging", "Enabled (UIFrameworkSample)"),
+                        DiagnosticFact("Top chapters", "${DEMO_CHAPTERS.size}"),
+                        DiagnosticFact("Locale", Environment.localeTags.firstOrNull() ?: "und"),
+                        DiagnosticFact("Layout direction", Environment.layoutDirection.name),
+                        DiagnosticFact("Density", "${"%.2f".format(Locale.US, Environment.density.density)}x"),
+                        DiagnosticFact("Image loader", "Coil integration active in demo"),
+                    ),
+                )
+                DiagnosticFactGroup(
+                    title = "Theme Tokens",
+                    facts = listOf(
+                        DiagnosticFact("Background", Theme.colors.background.asColorHex()),
+                        DiagnosticFact("Surface", Theme.colors.surface.asColorHex()),
+                        DiagnosticFact("Primary", Theme.colors.primary.asColorHex()),
+                        DiagnosticFact("Accent", Theme.colors.accent.asColorHex()),
+                        DiagnosticFact("Pressed", Theme.interactions.pressedOverlay.asColorHex()),
+                        DiagnosticFact("Card radius", "${Theme.shapes.cardCornerRadius}px"),
+                    ),
                 )
             }
 
@@ -1920,8 +1936,24 @@ private fun UiTreeBuilder.DiagnosticsPage() {
                 title = "Renderer Hooks",
                 subtitle = "The sample currently runs with debug logging enabled, but there is no visual inspector yet.",
             ) {
-                Text(
-                    text = "Near-term goal: expose render tree, patch summary, key warnings, and local snapshots in a more explicit diagnostics surface.",
+                DiagnosticFactGroup(
+                    title = "Current Rendering Model",
+                    facts = listOf(
+                        DiagnosticFact("Render root", "Single root RenderSession"),
+                        DiagnosticFact("Update model", "Root rerender + keyed mounted reuse"),
+                        DiagnosticFact("Lazy containers", "Per-item lazy sessions"),
+                        DiagnosticFact("Top navigation", "TabPager mapped to ViewPager2 + TabLayout"),
+                        DiagnosticFact("Local propagation", "Captured across lazy and pager sessions"),
+                        DiagnosticFact("Visual inspector", "Not implemented"),
+                    ),
+                )
+                ChecklistGroup(
+                    title = "Manual Probes",
+                    items = listOf(
+                        "打开 Layouts / Collections 压力页，观察日志中 VNode tree 与 Reconcile 摘要是否稳定。",
+                        "切换章节并返回，确认 debug 日志仍持续输出到 UIFrameworkSample。",
+                        "遇到视觉 bug 时，先用这里的渲染模型判断问题更像 layout、list diff 还是 local 传播。",
+                    ),
                 )
             }
 
@@ -1929,9 +1961,30 @@ private fun UiTreeBuilder.DiagnosticsPage() {
                 title = "Known Gaps",
                 subtitle = "These gaps are intentionally visible so the diagnostics chapter can guide future framework work.",
             ) {
-                Text(text = "No visual render tree inspector")
-                Text(text = "No patch timeline UI")
-                Text(text = "No performance counters page")
+                ChecklistGroup(
+                    title = "Inspection",
+                    items = listOf(
+                        "No visual render tree inspector",
+                        "No patch timeline UI",
+                        "No local value explorer",
+                    ),
+                )
+                ChecklistGroup(
+                    title = "Performance",
+                    items = listOf(
+                        "No frame-time overlay",
+                        "No measure/layout counters page",
+                        "No diff cost summary UI",
+                    ),
+                )
+                ChecklistGroup(
+                    title = "Testing Hooks",
+                    items = listOf(
+                        "No semantics tree abstraction",
+                        "No scenario replay harness",
+                        "No screenshot/regression dashboard",
+                    ),
+                )
             }
 
             else -> VerificationNotesSection(
@@ -2111,6 +2164,42 @@ private fun UiTreeBuilder.ChecklistGroup(
     }
 }
 
+private fun UiTreeBuilder.DiagnosticFactGroup(
+    title: String,
+    facts: List<DiagnosticFact>,
+) {
+    Column(
+        spacing = 6.dp,
+        modifier = Modifier.Empty.margin(top = 8.dp),
+    ) {
+        Text(
+            text = title,
+            style = UiTextStyle(fontSizeSp = 13.sp),
+            modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+        )
+        facts.forEach { fact ->
+            Row(
+                spacing = 12.dp,
+                modifier = Modifier.Empty.fillMaxWidth(),
+            ) {
+                Text(
+                    text = fact.label,
+                    style = UiTextStyle(fontSizeSp = 13.sp),
+                    modifier = Modifier.Empty.width(136.dp).textColor(TextDefaults.secondaryColor()),
+                )
+                Text(
+                    text = fact.value,
+                    modifier = Modifier.Empty.weight(1f),
+                )
+            }
+        }
+    }
+}
+
+private fun Int.asColorHex(): String {
+    return "#${toUInt().toString(16).padStart(8, '0').uppercase(Locale.US)}"
+}
+
 private data class DemoListItem(
     val id: String,
     val title: String,
@@ -2119,4 +2208,9 @@ private data class DemoListItem(
 private data class ThemeSwatch(
     val label: String,
     val color: Int,
+)
+
+private data class DiagnosticFact(
+    val label: String,
+    val value: String,
 )
