@@ -1,0 +1,38 @@
+package com.gzq.uiframework.widget.core
+
+import com.gzq.uiframework.renderer.modifier.Modifier
+import com.gzq.uiframework.renderer.node.NodeType
+import com.gzq.uiframework.renderer.node.Props
+import com.gzq.uiframework.renderer.node.VNode
+
+@UiDslMarker
+class UiTreeBuilder {
+    private val children = mutableListOf<VNode>()
+
+    fun emit(
+        type: NodeType,
+        key: Any? = null,
+        props: Props = Props.Empty,
+        modifier: Modifier = Modifier.Empty,
+        content: (UiTreeBuilder.() -> Unit)? = null,
+    ) {
+        val nestedChildren = if (content == null) {
+            emptyList()
+        } else {
+            UiTreeBuilder().apply(content).build()
+        }
+        children += VNode(
+            type = type,
+            key = key,
+            props = props,
+            modifier = modifier,
+            children = nestedChildren,
+        )
+    }
+
+    internal fun build(): List<VNode> = children.toList()
+}
+
+fun buildVNodeTree(content: UiTreeBuilder.() -> Unit): List<VNode> {
+    return UiTreeBuilder().apply(content).build()
+}
