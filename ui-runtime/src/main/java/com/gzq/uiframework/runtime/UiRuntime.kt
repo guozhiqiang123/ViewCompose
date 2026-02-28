@@ -1,7 +1,7 @@
 package com.gzq.uiframework.runtime
 
 /**
- * Runtime entry marker for future state, scope, and scheduler APIs.
+ * Runtime entry marker for state, observation, and future scheduler APIs.
  */
 object UiRuntime {
     const val NAME: String = "ui-runtime"
