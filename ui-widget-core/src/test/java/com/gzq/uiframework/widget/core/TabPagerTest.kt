@@ -57,4 +57,46 @@ class TabPagerTest {
         assertEquals(0, selectedIndex)
         assertNotNull(pages[0].item.sessionFactory)
     }
+
+    @Test
+    fun `tab pager uses component style tokens`() {
+        val baseTheme = UiThemeDefaults.light()
+        val customTheme = UiThemeTokens(
+            colors = baseTheme.colors,
+            typography = baseTheme.typography,
+            input = baseTheme.input,
+            components = UiComponentStyles(
+                button = baseTheme.components.button,
+                textField = baseTheme.components.textField,
+                segmentedControl = baseTheme.components.segmentedControl,
+                inputControl = baseTheme.components.inputControl,
+                tabPager = UiTabPagerStyles(
+                    background = 601,
+                    indicator = 602,
+                    text = 603,
+                    selectedText = 604,
+                ),
+            ),
+        )
+
+        val tree = buildVNodeTree {
+            UiTheme(customTheme) {
+                TabPager(
+                    selectedTabIndex = 0,
+                    onTabSelected = {},
+                ) {
+                    Page(title = "Overview", key = "overview") {
+                        Text("Overview content")
+                    }
+                }
+            }
+        }
+
+        val node = tree.single()
+
+        assertEquals(601, node.props.values[PropKeys.TAB_BACKGROUND_COLOR])
+        assertEquals(602, node.props.values[PropKeys.TAB_INDICATOR_COLOR])
+        assertEquals(603, node.props.values[PropKeys.TAB_UNSELECTED_TEXT_COLOR])
+        assertEquals(604, node.props.values[PropKeys.TAB_SELECTED_TEXT_COLOR])
+    }
 }

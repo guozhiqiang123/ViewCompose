@@ -156,6 +156,7 @@ class TextFieldTest {
                 ),
                 inputControl = baseTheme.components.inputControl,
                 segmentedControl = baseTheme.components.segmentedControl,
+                tabPager = baseTheme.components.tabPager,
             ),
         )
 

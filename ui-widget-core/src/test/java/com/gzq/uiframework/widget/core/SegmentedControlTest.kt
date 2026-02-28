@@ -74,6 +74,7 @@ class SegmentedControlTest {
                     selectedText = 410,
                     selectedTextDisabled = 411,
                 ),
+                tabPager = baseTheme.components.tabPager,
             ),
         )
 
@@ -116,6 +117,7 @@ class SegmentedControlTest {
                     selectedText = 507,
                     selectedTextDisabled = 508,
                 ),
+                tabPager = baseTheme.components.tabPager,
             ),
         )
 

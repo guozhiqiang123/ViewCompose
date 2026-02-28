@@ -1,9 +1,9 @@
 package com.gzq.uiframework.widget.core
 
 object TabPagerDefaults {
-    fun backgroundColor(): Int = Theme.colors.surfaceVariant
+    fun backgroundColor(): Int = Theme.components.tabPager.background
 
-    fun indicatorColor(): Int = Theme.colors.primary
+    fun indicatorColor(): Int = Theme.components.tabPager.indicator
 
     fun cornerRadius(): Int = Theme.shapes.cardCornerRadius
 
@@ -13,9 +13,9 @@ object TabPagerDefaults {
 
     fun tabPaddingVertical(): Int = 10.dp
 
-    fun selectedTextColor(): Int = Theme.colors.textPrimary
+    fun selectedTextColor(): Int = Theme.components.tabPager.selectedText
 
-    fun unselectedTextColor(): Int = Theme.colors.textSecondary
+    fun unselectedTextColor(): Int = Theme.components.tabPager.text
 
     fun rippleColor(): Int = Theme.interactions.pressedOverlay
 }

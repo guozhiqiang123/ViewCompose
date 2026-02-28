@@ -37,6 +37,7 @@ class InputControlTest {
                     controlDisabled = 94,
                 ),
                 segmentedControl = UiThemeDefaults.light().components.segmentedControl,
+                tabPager = UiThemeDefaults.light().components.tabPager,
             ),
         )
         val tree = buildVNodeTree {
@@ -129,6 +130,7 @@ class InputControlTest {
                     controlDisabled = 104,
                 ),
                 segmentedControl = baseTheme.components.segmentedControl,
+                tabPager = baseTheme.components.tabPager,
             ),
         )
 

@@ -319,6 +319,7 @@ class ThemeTest {
                 textField = baseTheme.components.textField,
                 segmentedControl = baseTheme.components.segmentedControl,
                 inputControl = baseTheme.components.inputControl,
+                tabPager = baseTheme.components.tabPager,
             ),
         )
 
@@ -458,6 +459,12 @@ class ThemeTest {
                     selectedText = 310,
                     selectedTextDisabled = 311,
                 ),
+                tabPager = UiTabPagerStyles(
+                    background = 312,
+                    indicator = 313,
+                    text = 314,
+                    selectedText = 315,
+                ),
             ),
         )
         var buttonTonal = 0
@@ -468,6 +475,7 @@ class ThemeTest {
         var inputControlDisabled = 0
         var segmentedIndicator = 0
         var segmentedDisabledText = 0
+        var tabPagerText = 0
 
         buildVNodeTree {
             UiTheme(customTheme) {
@@ -479,6 +487,7 @@ class ThemeTest {
                 inputControlDisabled = InputControlDefaults.controlColor(enabled = false)
                 segmentedIndicator = SegmentedControlDefaults.indicatorColor()
                 segmentedDisabledText = SegmentedControlDefaults.textColor(enabled = false)
+                tabPagerText = TabPagerDefaults.unselectedTextColor()
             }
         }
 
@@ -490,6 +499,7 @@ class ThemeTest {
         assertEquals(213, inputControlDisabled)
         assertEquals(306, segmentedIndicator)
         assertEquals(309, segmentedDisabledText)
+        assertEquals(314, tabPagerText)
     }
 
     @Test

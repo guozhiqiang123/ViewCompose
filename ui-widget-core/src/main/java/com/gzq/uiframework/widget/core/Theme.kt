@@ -121,11 +121,19 @@ data class UiInputControlStyles(
     val controlDisabled: Int,
 )
 
+data class UiTabPagerStyles(
+    val background: Int,
+    val indicator: Int,
+    val text: Int,
+    val selectedText: Int,
+)
+
 data class UiComponentStyles(
     val button: UiButtonStyles,
     val textField: UiTextFieldStyles,
     val segmentedControl: UiSegmentedControlStyles,
     val inputControl: UiInputControlStyles,
+    val tabPager: UiTabPagerStyles,
 )
 
 data class UiInteractionColors(
@@ -299,6 +307,12 @@ object UiComponentStyleDefaults {
                 labelDisabled = input.fieldTextDisabled,
                 control = input.control,
                 controlDisabled = input.controlDisabled,
+            ),
+            tabPager = UiTabPagerStyles(
+                background = colors.surfaceVariant,
+                indicator = colors.primary,
+                text = colors.textSecondary,
+                selectedText = colors.textPrimary,
             ),
         )
     }
