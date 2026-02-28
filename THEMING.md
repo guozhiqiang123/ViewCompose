@@ -2,488 +2,472 @@
 
 ## 1. 文档定位
 
-本文档定义 `UIFramework` 的主题系统设计、分层关系、与 Android View 主题体系的边界，以及后续分阶段落地路径。
+本文档定义 `UIFramework` 的主题系统目标、分层模型、与 Android View / Compose 的边界，以及后续重构方向。
 
-这份文档是后续主题相关实现的基线。若实现需要偏离本文档，必须先更新本文档再继续开发。
+这份文档现在不再只是“记录当前实现”，而是同时承担两件事：
+
+1. 解释当前主题系统哪些部分已经成立
+2. 明确下一阶段应该往什么结构收敛，避免全局主题和局部复用继续耦合
 
 补充专题：
 
-- 主题公共属性单独覆盖规划见 [THEME_OVERRIDES.md](/Users/gzq/AndroidStudioProjects/UIFramework/THEME_OVERRIDES.md)
-
-当前实现状态：
-
-- `Phase 1` 已完成
-- `Phase 2` 已完成
-- `Phase 3` 已完成
-- `Phase 4` 已完成
-
-主题覆盖补充状态：
-
-- 对象级 `UiThemeOverride(...)` 已完成
-- builder 风格 `UiThemeOverride(...)` 已完成
+- 主题局部覆盖设计见 [THEME_OVERRIDES.md](/Users/gzq/AndroidStudioProjects/UIFramework/THEME_OVERRIDES.md)
+- 控件规划与属性分级见 [WIDGET_ROADMAP.md](/Users/gzq/AndroidStudioProjects/UIFramework/WIDGET_ROADMAP.md)
 
 ## 2. 结论
 
-`UIFramework` 有必要和 Android View 主题系统打通，但不能直接把 Android `Theme` 当成框架主题系统本身。
+当前主题系统的 `API 形态` 是合理的：
 
-正确分层应当是：
+- 有全局主题入口 `UiTheme(...)`
+- 有局部主题入口 `UiThemeOverride(...)`
+- 有统一上下文机制 `LocalValue / LocalContext`
+- 有语义 token 和组件默认值体系
 
-1. `UIFramework Theme`
-   - 框架自己的声明式 token 系统。
-   - 面向 DSL、`Modifier`、Widget 默认样式。
-2. `Android Theme Bridge`
-   - 把 Android `Context` / `Theme` / `TextAppearance` / 颜色资源映射到框架 token。
-   - 面向互操作和兼容现有 View 生态。
+但当前 `内部数据模型` 还不够理想。
+
+核心问题是：
+
+> 当前把 `components` 作为“已解析的组件默认值结果”直接存进 `UiThemeTokens`，这会让“基础主题变了，但组件默认值不一定自动跟着变”。
+
+更准确地说，当前模型把下面 3 件事绑得太紧了：
+
+1. 基础语义主题是什么
+2. 组件默认值如何从语义主题推导
+3. 局部想覆盖哪些组件默认值
+
+后续推荐收敛到更接近 Compose 的四层结构：
+
+1. `Semantic Theme`
+2. `Contextual Locals`
+3. `Component Default Resolvers`
+4. `Sparse Component Overrides`
 
 简化结论：
 
-> 框架主题系统是主模型，Android View 主题系统是桥接层。
+> 保留现在的 `UiTheme / UiThemeOverride` API 方向，但内部实现应逐步从“完整 resolved component tokens”演进到“语义主题 + 局部上下文 + 默认值按需计算 + 稀疏组件 override”。
 
-## 3. 为什么要做主题系统
+## 3. 为什么要调整
 
-当前项目已经出现了主题系统缺失的典型问题：
+当前主题系统已经支持：
 
-- sample 中直接散落 `Color.parseColor(...)`
-- `backgroundColor`、`Divider` 等样式值直接写死在业务节点里
-- 没有品牌切换、暗色模式、局部主题覆盖的统一入口
-- `AndroidView` 互操作以后，样式来源会进一步分裂
+- 全局主题切换
+- 暗色 / 亮色
+- Android Theme Bridge
+- 局部颜色 / 形状 / 组件默认值覆盖
 
-如果继续沿用“节点里直接写具体颜色”的方式，后续会出现这些问题：
+这些能力本身没有问题。
 
-- 业务层和视觉设计强耦合
-- 替换品牌色或增加夜间模式成本很高
-- 不同 widget 默认样式无法统一演进
-- 框架层无法提供“语义化样式”，只能暴露原始颜色值
+真正的问题出现在“主题改动的传导链”上。
 
-## 4. 设计目标
-
-- 提供框架级主题 token，而不是只暴露裸颜色值
-- 主题作用域是声明式的，可在子树局部覆盖
-- Widget 和 Modifier 可以读取当前主题作为默认值
-- 支持未来接入 Android `Theme`、`ContextThemeWrapper`、资源 attr 解析
-- 支持多主题切换、暗色模式和品牌定制
-- 不破坏现有 `VNode -> Reconciler -> ViewTreeRenderer` 结构
-
-## 5. 非目标
-
-- v1 不做完整 Material Design 体系复刻
-- v1 不做复杂排版系统和动态字体缩放策略
-- v1 不强制所有样式都必须来自主题
-- v1 不做 Android XML `style` 的双向自动同步
-- v1 不实现 Compose `CompositionLocal` 的完整泛型系统
-
-## 6. 分层设计
-
-### 6.1 Framework Theme Layer
-
-框架内部维护自己的主题 token 数据结构。
-
-当前已实现结构：
-
-```kotlin
-data class UiColors(
-    val background: Int,
-    val surface: Int,
-    val surfaceVariant: Int,
-    val primary: Int,
-    val accent: Int,
-    val divider: Int,
-    val textPrimary: Int,
-    val textSecondary: Int,
-)
-
-data class UiTextStyle(
-    val fontSizeSp: Int,
-)
-
-data class UiTypography(
-    val title: UiTextStyle,
-    val body: UiTextStyle,
-    val label: UiTextStyle,
-)
-
-data class UiThemeTokens(
-    val colors: UiColors,
-    val typography: UiTypography,
-)
-```
-
-说明：
-
-- 当前已完成 `colors` + `typography`
-- `shapes`、`spacing` 后续再补
-- token 名称用语义化命名，不用 `red500`、`gray90` 这种原始视觉值命名
-
-### 6.2 Theme Scope Layer
-
-主题应该像 `remember` / `key` 一样，具备显式子树作用域。
-
-当前实现已经从专用 `ThemeContext` 收敛到通用 local 机制，后续可复用到其他上下文。
-
-示例：
-
-```kotlin
-UiTheme(AppTheme.light()) {
-    Column {
-        Text(
-            text = "Title",
-            modifier = Modifier.textColor(Theme.colors.textPrimary)
-        )
-    }
-}
-```
-
-语义要求：
-
-- 子树默认继承父主题
-- 子树可以局部覆盖主题
-- 没有显式主题时，使用框架默认主题
-
-当前补充能力：
-
-- `UiTheme(tokens = ...)` 用于整套主题切换
-- `UiThemeOverride(...)` 用于父主题基础上的局部 patch
-- `Theme.components` 用于承载组件默认样式 token
-- `Theme.components` 当前已覆盖 `button`、`textField`、`segmentedControl`、`checkbox`、`switchControl`、`radioButton`、`slider`、`tabPager`
-- `button`、`textField`、`segmentedControl` 当前都已具备 disabled 等状态型组件 token
-- `tabPager` 当前已切到组件样式 token，但尺寸类默认值仍保留在 `TabPagerDefaults`
-
-### 6.3 Widget/Modifier Consumption Layer
-
-主题不能只存在于 DSL 外围，必须能被具体节点消费。
-
-v1 建议优先接入：
-
-- `Modifier.backgroundColor(...)`
-- `Modifier.textColor(...)`
-- `Divider(...)`
-- `Text(...)`
-- `Button(...)`
-
-原则：
-
-- 业务方可以显式传具体值覆盖主题默认值
-- 没有显式值时，widget 使用主题 token 作为默认值
-
-### 6.4 Android Theme Bridge Layer
-
-和 Android View 系统打通是必要的，但应该放在桥接层。
-
-桥接职责：
-
-- 从 `Context` 解析 `colorPrimary` 等 attr
-- 为 `AndroidView` / 自定义 `View` 提供主题化上下文
-- 允许框架主题由 Android `Theme` 派生
-- 允许未来做 `UiThemeTokens.fromContext(context)`
-
-不建议的做法：
-
-- 业务 DSL 直接满屏读取 Android attr
-- 把 Android `Theme` 当作框架主题数据结构
-- 让 `Modifier` 直接依赖 `Context` 才能工作
-
-## 7. 运行时模型
-
-主题系统不需要进入 `VNode` diff 作为单独节点类型。
-
-更合适的方式是：
-
-- 在构建 `VNode` 树时，使用 thread-local 主题上下文
-- `Theme.current()` 读取当前主题
-- `UiTheme {}` 在构建子树时压栈/出栈
-
-原因：
-
-- 主题本质上是声明式上下文，不是一个真实控件
-- 不需要额外挂载 View
-- 不需要引入专门的 theme patch 类型
-- 和现有 `RememberContext` / `GroupKeyContext` 模型一致
-
-## 8. API 设计
-
-### 8.1 v1 推荐 API
-
-```kotlin
-UiTheme(AppTheme.light()) {
-    Column(
-        modifier = Modifier.backgroundColor(Theme.colors.background)
-    ) {
-        Text(
-            text = "Hello",
-            modifier = Modifier.textColor(Theme.colors.textPrimary)
-        )
-        Divider(color = Theme.colors.divider)
-    }
-}
-```
-
-局部覆盖推荐 API：
-
-```kotlin
-UiTheme(AppTheme.light()) {
-    UiThemeOverride(
-        colors = Theme.colors.copy(primary = 0xFF5C8DFF.toInt())
-    ) {
-        Button(text = "Scoped Primary")
-    }
-}
-```
-
-builder 风格：
-
-```kotlin
-UiTheme(AppTheme.light()) {
-    UiThemeOverride(
-        colors = { copy(primary = 0xFF5C8DFF.toInt()) },
-        shapes = { copy(controlCornerRadius = 24.dp) },
-    ) {
-        Button(text = "Scoped Primary")
-    }
-}
-```
-
-组件默认样式覆盖：
-
-```kotlin
-UiTheme(AppTheme.light()) {
-    UiThemeOverride(
-        components = {
-            copy(
-                button = button.copy(
-                    primaryContainer = 0xFF1F1F1F.toInt(),
-                    primaryContent = 0xFFFFFFFF.toInt(),
-                )
-            )
-        },
-    ) {
-        Button(text = "Scoped Button Default")
-    }
-}
-```
-
-输入控件默认样式覆盖：
-
-```kotlin
-UiTheme(AppTheme.light()) {
-    UiThemeOverride(
-        components = {
-            copy(
-                checkbox = checkbox.copy(
-                    control = 0xFF3F8CFF.toInt(),
-                    controlDisabled = 0xFF9EB6D8.toInt(),
-                ),
-                switchControl = switchControl.copy(
-                    control = 0xFF3F8CFF.toInt(),
-                    controlDisabled = 0xFF9EB6D8.toInt(),
-                ),
-                radioButton = radioButton.copy(
-                    control = 0xFF3F8CFF.toInt(),
-                    controlDisabled = 0xFF9EB6D8.toInt(),
-                ),
-                slider = slider.copy(
-                    control = 0xFF3F8CFF.toInt(),
-                    controlDisabled = 0xFF9EB6D8.toInt(),
-                )
-            )
-        },
-    ) {
-        Checkbox(
-            text = "Scoped Accent",
-            checked = true,
-            onCheckedChange = {},
-        )
-    }
-}
-```
-
-### 8.2 推荐对象
-
-```kotlin
-object Theme {
-    val current: UiThemeTokens
-    val colors: UiColors
-    val components: UiComponentStyles
-}
-```
-
-```kotlin
-object AppTheme {
-    fun light(): UiThemeTokens
-    fun dark(): UiThemeTokens
-}
-```
-
-## 8.3 覆盖优先级
-
-主题系统当前遵循下面的优先级：
-
-1. 组件显式参数 / `Modifier`
-2. 当前子树 `UiThemeOverride(...)`
-3. 父主题 / 当前 `UiTheme(...)`
-4. 框架默认主题
-
-示例：
+例如：
 
 ```kotlin
 UiThemeOverride(
-    colors = Theme.colors.copy(primary = green)
+    colors = { copy(primary = brandRed) }
 ) {
-    Button(
-        text = "Delete",
-        modifier = Modifier.backgroundColor(red)
-    )
+    Button(text = "Delete")
 }
 ```
 
-上面这个例子里，按钮最终背景应以显式 `Modifier.backgroundColor(red)` 为准，而不是 override 后的 `primary`。
+按直觉：
 
-## 8.4 使用边界
+- 局部主色变成 `brandRed`
+- 默认按钮主色也应该一起变成 `brandRed`
 
-推荐：
+但如果 `ButtonDefaults` 读的是预先固化好的 `Theme.components.button.primaryContainer`，而不是基于当前 `Theme.colors` 动态解析，就可能出现：
 
-- 页面或模块切换品牌主题时，用 `UiTheme(tokens = ...)`
-- 某个 section 只改局部颜色/圆角/点击态时，用 `UiThemeOverride(...)`
-- 某组按钮、输入框、分段控件只改组件默认样式时，用 `UiThemeOverride(components = ...)`
-- 勾选框、开关、单选框、滑块这类输入控件组，只改强调色或禁用态时，也走 `UiThemeOverride(components = ...)`
-- 单个控件有特殊视觉要求时，用显式组件参数或 `Modifier`
+- `Theme.colors.primary` 已经变了
+- `ButtonDefaults` 仍然停在旧色
 
-不推荐：
+这会直接伤害两件事：
 
-- 为了只改一个字段，重新手写一整套 `UiThemeTokens`
-- 在业务层同时大量混用主题 override 和硬编码样式
-- 在 override API 里直接耦合 Android attr 解析
+1. 全局主题的可信度
+2. 局部复用的可预测性
 
-### 8.5 为什么 v1 不直接上泛型 CompositionLocal
+## 4. Compose 是如何解决这个问题的
 
-当前项目仍然没有必要一开始就引入完整的 `CompositionLocal<T>` 抽象。
+Jetpack Compose 的做法可以概括成：
 
-原因：
+### 4.1 只把“基础语义主题”放在顶层
 
-- 当前 runtime 还在早期
-- 先收敛“主题”这一类高价值上下文即可
-- 后续如果 theme/elevation/locale/density 都需要类似能力，再抽象成通用 local 系统更稳
+典型是：
 
-当前实现补充：
+- `colorScheme`
+- `typography`
+- `shapes`
 
-- 已有可复用的 `LocalValue` / `LocalContext`
-- `Theme` 已经迁到 local 机制
-- `UiEnvironment`、`Environment`、`AndroidEnvironmentBridge` 已落地
+### 4.2 用 `CompositionLocal` 承载局部上下文
 
-## 9. 与 Android View Theme 的关系
+例如：
 
-### 9.1 必须打通的场景
+- `LocalTextStyle`
+- `LocalContentColor`
+- `LocalIndication`
 
-- `AndroidView` 挂载已有业务 `View`
-- 复用已有自定义控件，它们依赖 `context.theme`
-- 从资源 attr 派生默认品牌色
-- 与宿主 Activity / Fragment 的夜间模式切换协同
+### 4.3 组件默认值不是提前整棵算死
 
-### 9.2 不应该强耦合的场景
+而是组件在读取默认值时，按当前：
 
-- 基础 `Text/Box/Row/Column` 的主题读取
-- 纯框架 DSL 的颜色/排版 token 分发
-- Widget 默认视觉语义
+- `MaterialTheme`
+- 对应 state
+- 局部 locals
 
-### 9.3 建议桥接方式
+动态计算出自己的默认样式。
 
-后续提供：
+### 4.4 更细粒度局部复用依赖更小的 local
+
+Compose 不会要求你每次为了局部文字风格调整都复制整套主题，而是更常用：
+
+- `ProvideTextStyle`
+- `LocalContentColor`
+- `LocalIndication`
+
+所以 Compose 的关键不是“有主题”，而是：
+
+> 它把“语义主题”和“组件默认值解析”分开了，同时允许更细的局部上下文参与默认值计算。
+
+## 5. 当前实现中已经成立的部分
+
+当前项目里，这几部分设计仍然是正确的，应当保留：
+
+### 5.1 `UiTheme(...)`
+
+- 作为整套主题切换入口是合理的
+- 它适合页面级、模块级、品牌级主题切换
+
+### 5.2 `UiThemeOverride(...)`
+
+- 作为局部主题 patch 入口是合理的
+- 它适合 section 级、卡片级、局部组件组级覆盖
+
+### 5.3 `Theme.xxx`
+
+- 作为读取当前主题的统一入口是合理的
+- 后续仍应保留 `Theme.colors / typography / shapes / controls / interactions`
+
+### 5.4 `LocalValue / LocalContext`
+
+- 当前 local 机制足以支撑 v1
+- 主题、环境、局部上下文都应继续基于它
+
+## 6. 推荐的主题分层
+
+后续主题系统应按以下 4 层设计。
+
+### 6.1 Semantic Theme Layer
+
+这层只存“全局语义主题”，不存完整的组件默认值结果。
+
+推荐保留的核心域：
+
+- `colors`
+- `typography`
+- `shapes`
+- `controls`
+- `interactions`
+- `input`
+
+其中：
+
+- `input` 可以保留，因为它本质上仍然是基础语义域
+- 但它不应被视为完整组件样式结果
+
+推荐形态：
 
 ```kotlin
-object AndroidThemeBridge {
-    fun fromContext(context: Context): UiThemeTokens
-}
-```
-
-以及：
-
-```kotlin
-fun UiTheme(
-    bridgeFromContext: Boolean = false,
-    tokens: UiThemeTokens? = null,
-    content: UiTreeBuilder.() -> Unit,
+data class UiThemeTokens(
+    val colors: UiColors,
+    val typography: UiTypography,
+    val shapes: UiShapes,
+    val controls: UiControlSizing,
+    val interactions: UiInteractionColors,
+    val input: UiInputColors,
 )
 ```
 
-规则建议：
+设计要求：
 
-- 显式 `tokens` 优先级最高
-- 若开启 `bridgeFromContext`，则从宿主 `Context` 派生默认 token
-- 两者都没有时，回落到框架内置默认主题
+- 这层只描述语义，不描述具体控件的最终 look
+- 覆盖 `primary`、`surface`、`controlCornerRadius` 时，组件默认值应自动重新跟随
 
-## 10. 分阶段落地
+### 6.2 Contextual Local Layer
 
-### Phase 1
+这层用于表达“比整套主题更细的局部语义”。
 
-状态：已完成
+推荐后续逐步补齐：
 
-目标：
+- `LocalTextStyle`
+- `LocalContentColor`
+- `LocalIndication`
+- `LocalContentAlpha` 或等效机制
 
-- 引入 `UiColors`、`UiThemeTokens`
-- 引入 `ThemeContext` / `Theme.colors`
-- 引入 `UiTheme {}` 作用域
-- 补 `Modifier.textColor(...)`
-- sample 改为使用主题 token
+当前已有：
 
-不做：
+- `Theme`
+- `Environment`
 
-- typography
-- Android attr 解析
-- 主题变化动画
+这说明 local 机制已经具备基础条件。
 
-### Phase 2
+设计目标：
 
-状态：已完成
+- 不要把所有局部复用都塞进 `UiThemeOverride`
+- 对文本、图标、点击态这类跨组件默认值，优先考虑 local
 
-目标：
+### 6.3 Component Default Resolver Layer
 
-- 引入 `AndroidThemeBridge.fromContext(context)`
-- 支持从宿主 `Activity` / `Fragment` 主题派生默认 token
-- 为 `AndroidView` 互操作提供主题化上下文约定
+这层是主题系统的真正关键。
 
-### Phase 3
+组件默认值应该通过 resolver 按当前上下文动态计算，而不是直接从“预先固化好的组件 token 树”读取。
 
-状态：已完成
+例如：
 
-目标：
+```kotlin
+object ButtonDefaults {
+    fun containerColor(
+        variant: ButtonVariant,
+        enabled: Boolean,
+    ): Int
+}
+```
 
-- 增加 `UiTypography`
-- 增加 widget 默认主题样式
-- 增加 `ButtonDefaults`、`TextDefaults` 这类默认值入口
+其解析来源应当是：
 
-当前实现补充：
+1. 当前 `Theme.colors`
+2. 当前 `Theme.shapes`
+3. 当前 `Theme.controls`
+4. 当前 `Theme.interactions`
+5. 当前局部 component override
+6. 当前局部 local（如 content color / indication）
 
-- 已新增 `ButtonDefaults`
-- 已新增 `TextDefaults`
-- 已新增 `DividerDefaults`
-- 已新增 `SurfaceDefaults`
-- `Text` / `Button` / `Divider` 已接入默认主题样式
-- sample 已基本收口到默认值入口
+这才是后期可扩展的结构。
 
-### Phase 4
+### 6.4 Sparse Component Override Layer
 
-状态：已完成
+这层不是“完整组件样式结果”，而是“局部 patch”。
 
-目标：
+推荐模型不是：
 
-- 抽象为更通用的 local/context 系统
-- 让 density、locale、layout direction 等上下文共享同一机制
+```kotlin
+data class UiComponentStyles(
+    val button: UiButtonStyles,
+    ...
+)
+```
 
-当前实现补充：
+而更接近：
 
-- 已新增通用 local 运行时
-- 已新增 `UiEnvironment`
-- 已新增 `Environment.density`
-- 已新增 `Environment.localeTags`
-- 已新增 `Environment.layoutDirection`
-- sample 已开始使用环境上下文和 density 驱动尺寸
+```kotlin
+data class UiComponentOverrides(
+    val button: UiButtonOverride? = null,
+    val textField: UiTextFieldOverride? = null,
+    ...
+)
+```
 
-## 11. 当前实现约束
+其中每个 override 应该尽量是 `nullable` 字段：
 
-按本项目当前状态，建议先做下面这条最短路径：
+```kotlin
+data class UiButtonOverride(
+    val primaryContainer: Int? = null,
+    val primaryContent: Int? = null,
+    val outlinedBorder: Int? = null,
+)
+```
 
-1. 先做框架主题，不直接依赖 Android `Theme`
-2. 用主题 token 替换 sample 中散落的颜色常量
-3. 补 `textColor`，让主题 token 能覆盖文本层
-4. 再做 Android 主题桥接
+好处：
 
-这是当前最稳的路线。因为如果现在直接先做 Android attr 解析，框架 DSL 层会被平台上下文反向侵入，主题系统会从一开始就失去独立性。
+- 只改一个字段，不需要重建完整组件 token
+- 未覆盖字段自动回落到语义主题解析结果
+- 局部主色改变后，未手动覆盖的按钮默认色仍可跟着变化
+
+## 7. 推荐 API 方向
+
+### 7.1 全局主题
+
+继续保留：
+
+```kotlin
+UiTheme(
+    tokens = appThemeTokens,
+) {
+    ...
+}
+```
+
+职责：
+
+- 整页换肤
+- 品牌切换
+- 暗色 / 亮色
+- Android Theme Bridge 入口
+
+### 7.2 局部主题
+
+继续保留：
+
+```kotlin
+UiThemeOverride(
+    colors = { copy(primary = brandRed) },
+    shapes = { copy(controlCornerRadius = 24.dp) },
+) {
+    ...
+}
+```
+
+职责：
+
+- section 级语义覆盖
+- 卡片区块主题变化
+- 页面局部品牌化
+
+### 7.3 组件默认值局部覆盖
+
+保留这个能力，但内部应改成 patch 语义。
+
+推荐长期形态：
+
+```kotlin
+UiThemeOverride(
+    componentOverrides = {
+        copy(
+            button = button.copy(
+                primaryContainer = brandRed,
+            ),
+        )
+    },
+) {
+    ...
+}
+```
+
+核心语义：
+
+- 这是“对组件默认值的局部补丁”
+- 不是“手工重建一整棵组件样式树”
+
+### 7.4 更细的上下文能力
+
+对于下面这些场景，优先考虑 local，而不是继续膨胀 `UiThemeOverride`：
+
+- 一段文本局部继承某个文字风格
+- 一个区域里的图标默认颜色一致
+- 某个区域统一替换点击态
+
+## 8. 优先级规则
+
+主题相关优先级应固定为：
+
+1. 组件显式参数 / `Modifier`
+2. 局部 component override
+3. 局部 semantic theme override
+4. 当前全局 `UiTheme`
+5. 框架默认值
+
+说明：
+
+- 显式传参永远优先
+- component override 只覆盖当前组件默认值
+- semantic override 负责改变默认推导来源
+
+## 9. 和控件属性设计的关系
+
+后续控件设计必须和主题设计一起看，不能分开演进。
+
+约束如下：
+
+### 9.1 通用视觉属性优先走 `Modifier`
+
+例如：
+
+- `background`
+- `border`
+- `cornerRadius`
+- `alpha`
+- `visibility`
+- `padding`
+- `margin`
+
+### 9.2 组件常用视觉语义优先走 `variant / size / state`
+
+不要给每个控件都暴露大量裸视觉参数。
+
+优先提供：
+
+- `variant`
+- `size`
+- `enabled`
+- `checked`
+- `isError`
+- `selected`
+
+### 9.3 主题负责默认值，不负责替代所有显式样式
+
+主题系统的职责是：
+
+- 给出默认值
+- 给出统一语义
+- 给出局部复用
+
+它不应该替代：
+
+- 单个组件的特殊展示
+- 少数实验性视觉
+- 所有 Android 原生 setter
+
+## 10. Android Theme Bridge 的边界
+
+这部分方向仍然正确：
+
+- Android `Theme` 是桥，不是主模型
+- 它负责从 `Context` 推导 `UiThemeTokens`
+- 它不应直接控制 DSL 行为
+
+后续即使内部主题结构重构，也不影响这个原则。
+
+## 11. 推荐重构路径
+
+不建议一次性推翻当前主题实现，推荐渐进迁移：
+
+### Phase A
+
+- 保留现有 `UiTheme / UiThemeOverride` API
+- 新文档冻结新的语义边界
+
+### Phase B
+
+- 把 `UiThemeTokens.components` 从“resolved values” 逐步迁到“override patches”
+- `ButtonDefaults / TextFieldDefaults / CheckboxDefaults` 改成动态解析
+
+### Phase C
+
+- 引入更细的 local：
+  - `LocalTextStyle`
+  - `LocalContentColor`
+  - `LocalIndication`
+
+### Phase D
+
+- 清理旧的“完整组件 token 树”思路
+- 文档与实现完全对齐
+
+## 12. 当前判断
+
+如果只问一句：
+
+> 现在这套全局主题 + 局部复用设计是否合理？
+
+我的判断是：
+
+- `方向合理`
+- `API 合理`
+- `内部模型需要重构`
+
+如果只问一句：
+
+> 后期是否容易扩展？
+
+我的判断是：
+
+- 按当前实现直接继续堆功能，不够理想
+- 按本文档推荐的分层重构后，会明显更稳
+

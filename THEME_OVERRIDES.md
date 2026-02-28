@@ -2,465 +2,338 @@
 
 ## 1. 文档定位
 
-本文档定义 `UIFramework` 中“主题公共属性单独覆盖”的设计目标、范围、API 方案、运行时模型与分阶段落地计划。
+本文档专门讨论 `UIFramework` 里的“局部主题复用与覆盖”。
 
-这份文档是后续主题覆盖能力实现的基线。后续实现默认遵循本文档；如果实现过程中需要偏离，必须先更新本文档中的对应章节，再继续开发。
+它回答 4 个问题：
 
-当前状态：
+1. 为什么需要局部主题覆盖
+2. 当前实现中真正的问题是什么
+3. 正确的 override 应该覆盖什么，而不应该覆盖什么
+4. 后续应该如何把 override 做成真正可扩展的能力
 
-- 日期：2026-02-28
-- 仓库：`/Users/gzq/AndroidStudioProjects/UIFramework`
-- 当前能力：
-  - 已有完整 `UiThemeTokens`
-  - 已有 `LocalValue` / `LocalContext`
-  - 已有 `Theme.colors / typography / input / shapes / controls / interactions`
-  - 已有组件级显式覆盖能力，例如 `Modifier.backgroundColor(...)`
-  - 已有对象级 `UiThemeTokens.override(...)`
-  - 已有对象级 `UiThemeOverride(...)`
-- 当前缺口：
-  - 当前专题范围内已无实现缺口
-
-文档更新：
-
-- `Phase 1` 已完成
-- `Phase 2` 已完成
-- `Phase 3` 已完成
-- `Phase 4` 已完成
+主文档见 [THEMING.md](/Users/gzq/AndroidStudioProjects/UIFramework/THEMING.md)。
 
 ## 2. 结论
 
-`UIFramework` 有必要支持“主题公共属性单独覆盖”，而且应该尽快做。
+局部主题覆盖是必须保留的能力。
 
-更准确地说，主题系统后续必须同时支持两层覆盖：
+但当前最需要纠正的不是“要不要 override”，而是：
 
-1. 组件级覆盖
-   - 组件调用时显式传值
-   - 例如 `Modifier.backgroundColor(...)`、`Text(style = ...)`
-2. 主题级局部覆盖
-   - 不改整套主题，只改当前子树需要的 token
-   - 例如只改 `primary`、`controlCornerRadius`、`pressedOverlay`
+> override 的对象应该是“语义主题 patch”和“组件默认值 patch”，而不是一整套预先解析好的组件样式结果。
 
-简化结论：
+后续正确方向应分为 3 类覆盖：
 
-> 组件级覆盖解决“单个控件”，主题级覆盖解决“子树语义”。
+1. `Semantic Theme Override`
+2. `Context Local Override`
+3. `Component Default Override`
 
-## 3. 为什么现在要做
+这三类覆盖不能继续混成一层。
 
-当前主题系统已经能支撑整页换肤，但还没有解决下面这些高频场景：
+## 3. 为什么必须有局部覆盖
 
-- 某个页面局部主色不同
-- 某个 section 想保留整体主题，只改 surface/background
-- 某组按钮想统一换成更大的圆角
-- 某个输入表单想统一改输入框容器色和 error 色
-- 某个实验模块想只改 pressed/ripple，而不复制一整套主题
-- 某张卡片或组件组想做局部品牌化，而不影响整页
+没有局部覆盖，业务层很快会退化成这些写法：
 
-如果不补主题级局部覆盖，业务侧很快会退回到这几种不理想写法：
+- 某个 section 整片手写 `Modifier.backgroundColor(...)`
+- 某组按钮每个都单独传颜色
+- 某个表单区域每个输入框都单独改 error / disabled 样式
+- 为了局部一处变化，复制整套主题对象
 
-- 到处写 `Theme.colors.copy(...)`
-- 每个局部都重新构造完整 `UiThemeTokens`
-- 继续在业务组件里塞大量 `Modifier` 显式值
-- 形成“样式在主题里一半，在节点上写死一半”的混合模型
+这会直接带来三个问题：
 
-这会让主题系统失去语义层价值。
+1. 样式逻辑分散
+2. 主题无法表达“子树语义”
+3. 后续大规模换肤和实验会很痛苦
 
-## 4. 设计目标
+所以 override 不是增强项，而是主题系统成立的前提。
 
-- 支持按 theme 子域单独覆盖：
-  - `colors`
-  - `typography`
-  - `input`
-  - `shapes`
-  - `controls`
-  - `components`
-  - `interactions`
-- 覆盖行为是声明式的，作用于当前子树
-- 没有显式 override 时，保持父主题继承
-- API 足够轻，不要求业务每次手写完整 token 树
-- 不破坏现有 `UiTheme(tokens = ...)` 用法
-- 能和现有 `LocalValue` 机制平滑衔接
-- 后续可扩展到 environment / component defaults / design tokens
+## 4. 当前实现中的结构性问题
 
-## 5. 非目标
+当前实现已经提供了：
 
-- v1 不做 Material 级 token alias 系统
-- v1 不做 CSS Variables 式字符串 token 查表
-- v1 不做运行时动画主题插值
-- v1 不做 XML style/theme 到 override 的自动双向映射
-- v1 不做无限细粒度的字段级 diff 优化
+- `UiTheme(tokens = ...)`
+- `UiThemeOverride(...)`
+- 对象级和 builder 风格覆盖
 
-## 6. 当前问题拆解
+这些 API 本身没有问题。
 
-### 6.1 当前 `UiTheme` 的能力边界
+真正的问题是当前的数据模型：
 
-当前 `UiTheme` 已支持：
+- `UiThemeTokens` 内直接持有 `components`
+- `components` 里保存的是完整组件样式结果
+- `override(colors = ...)` 时，组件默认值不会天然重算
 
-- 提供一整套 `UiThemeTokens`
-- 子树继承父主题
-- 使用 `Theme.xxx` 读取当前 token
+这会导致局部语义覆盖与组件默认值覆盖的职责不清。
 
-当前 `UiTheme` 不支持：
-
-- 只传 `colors = ...` 这种分项覆盖
-- 只改单字段，例如 `primary = xxx`
-- 局部 patch 父主题
-
-### 6.2 当前业务侧可行但不理想的做法
-
-理论上业务可以这样写：
+例子：
 
 ```kotlin
-UiTheme(
-    tokens = Theme.current.copy(
-        colors = Theme.colors.copy(primary = 0xFF123456.toInt())
-    )
+UiThemeOverride(
+    colors = { copy(primary = brandRed) }
 ) {
-    ...
+    Button(text = "Delete")
 }
 ```
 
-但这有几个问题：
+这段代码的直觉语义应该是：
 
-- `Theme.current` 目前没有正式公开对象
-- 覆盖逻辑太啰嗦
-- 很容易误复制不需要的字段
-- 不利于后面统一审查和优化 override 行为
+- 我改了这个子树的主色
+- 未显式覆盖的按钮默认主色应跟着变
 
-## 7. 核心设计
+如果按钮默认值来自一份旧的 resolved component styles，这个语义就会失真。
 
-### 7.1 总体策略
+## 5. 正确的 override 分层
 
-保留现有 `UiTheme(tokens = ...)` 作为“整套主题替换入口”，新增“分项 override 入口”。
+### 5.1 Semantic Theme Override
 
-两者关系如下：
+这类覆盖解决“这个子树的语义主题是什么”。
 
-- `UiTheme(tokens = ...)`
-  - 用于整套主题切换
-  - 例如浅色/深色/品牌主题切换
-- `UiThemeOverride(...)`
-  - 用于父主题基础上的局部 patch
-  - 例如局部改 `primary`、局部改 `controlCornerRadius`
+典型内容：
 
-### 7.2 推荐 API
-
-第一阶段推荐提供两个入口：
-
-```kotlin
-fun UiTreeBuilder.UiTheme(
-    tokens: UiThemeTokens? = null,
-    androidContext: Context? = null,
-    content: UiTreeBuilder.() -> Unit,
-)
-```
-
-```kotlin
-fun UiTreeBuilder.UiThemeOverride(
-    colors: UiColors? = null,
-    typography: UiTypography? = null,
-    input: UiInputColors? = null,
-    shapes: UiShapes? = null,
-    controls: UiControlSizing? = null,
-    components: UiComponentStyles? = null,
-    interactions: UiInteractionColors? = null,
-    content: UiTreeBuilder.() -> Unit,
-)
-```
-
-语义：
-
-- 如果某项传 `null`，继承父主题对应子域
-- 如果某项传具体对象，则只替换该子域
-- override 后形成一份新的 `UiThemeTokens`，压入当前子树 local
-
-### 7.3 更细一层的 API
-
-在 `UiThemeOverride(...)` 稳定后，再补一层字段级 builder API：
-
-```kotlin
-fun UiTreeBuilder.UiThemeOverride(
-    colors: (UiColors.() -> UiColors)? = null,
-    typography: (UiTypography.() -> UiTypography)? = null,
-    input: (UiInputColors.() -> UiInputColors)? = null,
-    shapes: (UiShapes.() -> UiShapes)? = null,
-    controls: (UiControlSizing.() -> UiControlSizing)? = null,
-    components: (UiComponentStyles.() -> UiComponentStyles)? = null,
-    interactions: (UiInteractionColors.() -> UiInteractionColors)? = null,
-    content: UiTreeBuilder.() -> Unit,
-)
-```
+- `colors`
+- `typography`
+- `shapes`
+- `controls`
+- `interactions`
+- `input`
 
 示例：
 
 ```kotlin
 UiThemeOverride(
-    colors = { copy(primary = 0xFF5C8DFF.toInt()) },
+    colors = { copy(primary = brandRed) },
     shapes = { copy(controlCornerRadius = 24.dp) },
 ) {
     ...
 }
 ```
 
-这个 API 比直接传完整对象更顺手，但不应当作为第一步。
+职责：
 
-原因：
+- 改变后续默认值的推导来源
+- 改变同一子树的整体语义
 
-- 先落对象级覆盖更简单
-- 运行时实现和测试边界更清楚
-- 后续可以在它上面再包装 DSL
+### 5.2 Context Local Override
 
-## 8. 运行时模型
+这类覆盖解决“比整套主题更细的上下文是什么”。
 
-主题 override 不需要新增节点类型，也不进入 `VNode` diff。
+后续建议承载：
 
-它仍然是构建期上下文行为：
+- 文本默认样式
+- 内容默认颜色
+- 点击态 / indication
 
-1. 读取当前主题 `baseTokens`
-2. 根据 override 参数构造 `nextTokens`
-3. 通过现有 `LocalValue` 机制把 `nextTokens` 压入子树
-4. 子树里 `Theme.xxx` 读取的就是 override 后结果
+示例心智：
 
-这意味着：
+- 一段内容默认文字是次要色
+- 一个区块里所有图标默认用强调色
 
-- 不需要新 View
-- 不需要新 patch 类型
-- 不增加 reconcile 复杂度
-- 与现有 `UiTheme` / `UiEnvironment` 模型一致
+这种需求不应全部塞进 `UiThemeOverride`。
 
-## 9. 数据模型建议
+### 5.3 Component Default Override
 
-### 9.1 维持 `UiThemeTokens` 不变
+这类覆盖解决“某个组件组的默认值需要局部 patch”。
 
-不建议为了 override 引入另一套平行 token 结构。
+例如：
 
-继续保留：
+- 这块区域里的按钮主色特殊
+- 这组输入框的 outlined border 特殊
+- 这个面板里的 checkbox / switch / slider 强调色统一替换
+
+关键原则：
+
+> 它是 patch，不是完整结果。
+
+## 6. 推荐的数据模型
+
+### 6.1 不推荐的形态
 
 ```kotlin
 data class UiThemeTokens(
     val colors: UiColors,
     val typography: UiTypography,
-    val input: UiInputColors,
-    val shapes: UiShapes,
-    val controls: UiControlSizing,
-    val interactions: UiInteractionColors,
+    val components: UiComponentStyles,
 )
 ```
 
-### 9.2 新增统一 patch 合并函数
+问题：
 
-建议新增：
+- `components` 太早被解析
+- semantic override 和 component override 容易互相打架
+- 扩展到更多控件后，维护成本会越来越高
+
+### 6.2 推荐的形态
 
 ```kotlin
-internal fun UiThemeTokens.override(
-    colors: UiColors? = null,
-    typography: UiTypography? = null,
-    input: UiInputColors? = null,
-    shapes: UiShapes? = null,
-    controls: UiControlSizing? = null,
-    interactions: UiInteractionColors? = null,
-): UiThemeTokens
+data class UiThemeTokens(
+    val colors: UiColors,
+    val typography: UiTypography,
+    val shapes: UiShapes,
+    val controls: UiControlSizing,
+    val interactions: UiInteractionColors,
+    val input: UiInputColors,
+)
 ```
 
-职责：
-
-- 把父主题和 override 合并成新的 token
-- 集中主题 patch 规则
-- 避免 merge 逻辑分散在 DSL 入口里
-
-后续如果要支持 builder override，再加：
+再配一层：
 
 ```kotlin
-internal fun UiThemeTokens.override(
-    colors: (UiColors.() -> UiColors)? = null,
+data class UiComponentOverrides(
+    val button: UiButtonOverride? = null,
+    val textField: UiTextFieldOverride? = null,
+    val checkbox: UiCheckboxOverride? = null,
     ...
-): UiThemeTokens
+)
 ```
 
-## 10. API 使用示例
-
-### 10.1 整个 section 改主色
+每个 override 对象应该尽量稀疏：
 
 ```kotlin
-UiThemeOverride(
-    colors = Theme.colors.copy(primary = 0xFF4B8B6E.toInt())
-) {
-    Button(text = "Save")
-    Slider(...)
+data class UiCheckboxOverride(
+    val control: Int? = null,
+    val controlDisabled: Int? = null,
+    val label: Int? = null,
+    val labelDisabled: Int? = null,
+)
+```
+
+语义：
+
+- `null` 表示“不覆盖，继续回落”
+- 非 `null` 才表示真正 patch
+
+## 7. 推荐 API
+
+### 7.1 全局主题
+
+```kotlin
+UiTheme(tokens = appThemeTokens) {
+    ...
 }
 ```
 
-### 10.2 整个卡片组改圆角
+### 7.2 局部语义覆盖
 
 ```kotlin
 UiThemeOverride(
-    shapes = Theme.shapes.copy(cardCornerRadius = 28.dp)
+    colors = { copy(primary = brandRed) },
+    shapes = { copy(controlCornerRadius = 24.dp) },
 ) {
-    DemoSection(...)
+    ...
 }
 ```
 
-### 10.3 整个输入区改 input token
+### 7.3 局部组件默认值覆盖
+
+推荐长期 API 方向：
 
 ```kotlin
 UiThemeOverride(
-    input = Theme.input.copy(
-        fieldContainer = Theme.colors.surfaceVariant,
-        fieldError = 0xFFD64545.toInt(),
-    )
+    componentOverrides = {
+        copy(
+            button = button.copy(
+                primaryContainer = brandRed,
+            ),
+        )
+    },
 ) {
-    InputPage()
+    ...
 }
 ```
 
-## 11. 与组件级覆盖的边界
+### 7.4 更细粒度局部上下文
 
-必须明确优先级：
-
-1. 组件显式参数 / `Modifier`
-2. 当前子树 override 后的 theme
-3. 父主题默认值
-
-例如：
+未来应补：
 
 ```kotlin
-UiThemeOverride(
-    colors = Theme.colors.copy(primary = green)
-) {
-    Button(
-        text = "Delete",
-        modifier = Modifier.backgroundColor(red)
-    )
-}
+ProvideTextStyle(...)
+ProvideContentColor(...)
+ProvideIndication(...)
 ```
 
-此时按钮背景应以显式 `Modifier.backgroundColor(red)` 为准，而不是 override 的 `primary`。
+这些能力可以减少 `UiThemeOverride` 的职责膨胀。
 
-## 12. 与 Android Theme Bridge 的关系
+## 8. override 优先级
 
-主题 override 应发生在 framework token 层，而不是 Android attr 层。
+后续推荐固定为：
 
-推荐顺序：
+1. 显式组件参数 / `Modifier`
+2. 局部 component override
+3. 局部 semantic theme override
+4. 当前全局主题
+5. 框架默认值
 
-1. `AndroidThemeBridge.fromContext(context)` 得到 `baseTokens`
-2. `UiTheme(baseTokens)` 进入子树
-3. 子树内局部使用 `UiThemeOverride(...)`
+说明：
 
-不建议：
+- 显式参数永远最强
+- component override 只改组件默认值
+- semantic override 改变默认值的推导来源
 
-- 在 override API 里直接读 Android `Theme`
-- 把 Android attr 和 framework override 混成一个入口
+## 9. 使用规则
 
-原因：
+### 9.1 什么场景应该用 semantic override
 
-- 会让 API 语义变脏
-- 不利于单测
-- 不利于未来跨宿主扩展
+- 某个页面局部品牌色不同
+- 某个卡片组需要不同 surface / accent
+- 某个模块整体圆角或点击态不同
 
-## 13. Demo 规划
+### 9.2 什么场景应该用 component override
 
-完成后 demo 需要至少补 3 类示例：
+- 只想让这块区域里的按钮默认更深
+- 只想让输入控件组的 border / label 色变化
+- 只想让一组 checkbox / switch / slider 使用实验色
 
-1. 局部颜色覆盖
-   - Overview 某个 section 改主色/按钮色
-2. 局部形状覆盖
-   - 某块卡片和输入框统一换圆角
-3. 局部交互覆盖
-   - 某组控件使用不同 pressed overlay
+### 9.3 什么场景不应该用 override
 
-目标：
+- 单个控件做一次性特殊视觉
+- 某个业务控件只改一个很少复用的颜色
+- Android 原生复杂控件的全部 setter 映射
 
-- 证明 override 生效范围只在当前子树
-- 证明离开 override 作用域后恢复父主题
-- 证明组件显式传值仍然拥有更高优先级
+这些场景更适合：
 
-## 14. 测试规划
+- 显式参数
+- `Modifier`
+- `AndroidView`
 
-### 14.1 单元测试
+## 10. 和控件扩展的关系
 
-需要新增测试覆盖：
+override 设计必须和控件规划联动。
 
-- `UiThemeOverride(colors = ...)` 只替换颜色，不影响其他 token
-- 嵌套 override 时，内层覆盖优先于外层
-- 离开作用域后，父主题恢复
-- 组件显式参数优先于 theme override
-- builder 风格 override 的 copy 结果正确
+原则：
 
-### 14.2 Sample 验证
+- `P1` 控件必须有稳定主题默认值和局部 override 入口
+- `P2` 控件可以先只依赖语义主题，不急着补完整 component override
+- `P3` 控件直接走 `AndroidView`，不强行纳入主题系统
 
-需要验证：
+更具体的控件分级见 [WIDGET_ROADMAP.md](/Users/gzq/AndroidStudioProjects/UIFramework/WIDGET_ROADMAP.md)。
 
-- Demo 里至少 3 处局部主题覆盖都能正确渲染
-- 主题切换和局部 override 同时存在时，override 仍正确工作
+## 11. 推荐迁移路径
 
-## 15. 分阶段落地计划
+### Phase 1
 
-### Phase 1：对象级 Theme Override
+- 保留现有 `UiThemeOverride(...)` API
+- 文档层冻结新的语义解释
 
-目标：
+### Phase 2
 
-- 新增 `UiThemeOverride(...)`
-- 新增 `UiThemeTokens.override(...)`
-- 支持 `colors / typography / input / shapes / controls / interactions` 分项覆盖
-- 补基础单测
+- 把当前 `components` 逐步从 resolved values 改成 sparse overrides
 
-完成标志：
+### Phase 3
 
-- 业务可以只改某个主题子域，而不重建整套主题
+- `ButtonDefaults / TextFieldDefaults / CheckboxDefaults / TabPagerDefaults` 等改成动态解析
 
-### Phase 2：Demo 验证
+### Phase 4
 
-目标：
+- 增加更细的 local，上下文复用不再只依赖 `UiThemeOverride`
 
-- 在 demo 中加入局部主题覆盖样例
-- 覆盖颜色、圆角、点击态至少三类
+## 12. 当前判断
 
-完成标志：
+当前 override 设计的结论是：
 
-- 可以从 sample 直观看到作用域覆盖效果
+- `方向正确`
+- `入口保留`
+- `内部模型必须调整`
 
-### Phase 3：字段级 Builder Override
+如果后续继续基于“完整 resolved component tokens”堆功能，局部复用会越来越难维护。
 
-目标：
+如果按本文档收敛，override 会更符合 Compose 心智，也更适合长期扩展。
 
-- 支持 `colors = { copy(primary = ...) }` 这类 API
-- 降低业务写法噪音
-
-完成标志：
-
-- 常见 override 不再需要手写完整对象
-
-### Phase 4：文档与约束收口
-
-目标：
-
-- 把 override 优先级、适用场景、反例写清楚
-- 视情况回写到 `THEMING.md`
-
-完成标志：
-
-- 主题系统与主题覆盖的边界清晰，不再混淆
-
-## 16. 当前推荐执行顺序
-
-建议严格按这个顺序推进：
-
-1. 先做 `UiThemeTokens.override(...)`
-2. 再做 `UiThemeOverride(...)`
-3. 先做对象级 override，不急着做 builder 风格
-4. 先补单测，再接 demo 示例
-5. 最后再决定是否把 override API 合并进 `UiTheme(...)`
-
-## 17. 当前状态标记
-
-当前阶段状态：
-
-- `Phase 1` 已完成
-- `Phase 2` 已完成
-- `Phase 3` 已完成
-- `Phase 4` 已完成
-
-补充实现状态：
-
-- `Theme.components` 已完成
-- `Button/TextField/SegmentedControl/Checkbox/Switch/RadioButton/Slider/TabPager` 已切到组件默认样式 token
-- `Button` 与 `TextField` 的 disabled/error/outlined 等状态组合已进入组件 token
-- `SegmentedControl` 的 disabled 颜色与交互态已进入组件 token
