@@ -144,8 +144,9 @@ UiTheme(AppTheme.light()) {
 - `UiTheme(tokens = ...)` 用于整套主题切换
 - `UiThemeOverride(...)` 用于父主题基础上的局部 patch
 - `Theme.components` 用于承载组件默认样式 token
-- `Theme.components` 当前已覆盖 `button`、`textField`、`segmentedControl`、`inputControl`
+- `Theme.components` 当前已覆盖 `button`、`textField`、`segmentedControl`、`inputControl`、`tabPager`
 - `button`、`textField`、`segmentedControl` 当前都已具备 disabled 等状态型组件 token
+- `tabPager` 当前已切到组件样式 token，但尺寸类默认值仍保留在 `TabPagerDefaults`
 
 ### 6.3 Widget/Modifier Consumption Layer
 
