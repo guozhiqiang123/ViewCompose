@@ -106,14 +106,21 @@ class MainActivity : AppCompatActivity() {
 
 private fun UiTreeBuilder.DemoRoot(root: ViewGroup) {
     val selectedTabState = remember { mutableStateOf(TAB_OVERVIEW) }
+    val themeModeState = remember { mutableStateOf(DemoThemeMode.System) }
     val activity = root.context as? AppCompatActivity
     UiEnvironment(androidContext = root.context) {
-        UiTheme(androidContext = root.context) {
+        val resolvedTheme = DemoThemeTokens.resolve(
+            mode = themeModeState.value,
+            context = root.context,
+        )
+        UiTheme(tokens = resolvedTheme) {
             val environmentLabel = "Env: ${Environment.localeTags.firstOrNull() ?: "und"} · " +
                 "${Environment.layoutDirection.name} · " +
-                "${"%.2f".format(Locale.US, Environment.density.density)}x"
+                "${"%.2f".format(Locale.US, Environment.density.density)}x · " +
+                DemoThemeTokens.modeLabel(themeModeState.value, root.context)
             SideEffect {
-                activity?.title = "UIFramework - ${DEMO_TABS[selectedTabState.value]}"
+                activity?.title = "UIFramework - ${DEMO_TABS[selectedTabState.value]} - " +
+                    DemoThemeTokens.modeLabel(themeModeState.value, root.context)
             }
             DisposableEffect {
                 {
@@ -143,6 +150,39 @@ private fun UiTreeBuilder.DemoRoot(root: ViewGroup) {
                         .textColor(TextDefaults.secondaryColor())
                         .padding(vertical = 4.dp),
                 )
+                Column(
+                    spacing = 8.dp,
+                    modifier = Modifier.Empty
+                        .fillMaxWidth()
+                        .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                        .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                        .padding(12.dp),
+                ) {
+                    Text(
+                        text = "Demo Theme",
+                        style = UiTextStyle(fontSizeSp = 14.sp),
+                    )
+                    Row(
+                        spacing = 8.dp,
+                        modifier = Modifier.Empty.fillMaxWidth(),
+                    ) {
+                        ThemeModeButton(
+                            label = "System",
+                            active = themeModeState.value == DemoThemeMode.System,
+                            onClick = { themeModeState.value = DemoThemeMode.System },
+                        )
+                        ThemeModeButton(
+                            label = "Light",
+                            active = themeModeState.value == DemoThemeMode.Light,
+                            onClick = { themeModeState.value = DemoThemeMode.Light },
+                        )
+                        ThemeModeButton(
+                            label = "Dark",
+                            active = themeModeState.value == DemoThemeMode.Dark,
+                            onClick = { themeModeState.value = DemoThemeMode.Dark },
+                        )
+                    }
+                }
                 TabPager(
                     selectedTabIndex = selectedTabState.value,
                     onTabSelected = { index ->
@@ -172,6 +212,18 @@ private fun UiTreeBuilder.DemoRoot(root: ViewGroup) {
             }
         }
     }
+}
+
+private fun UiTreeBuilder.ThemeModeButton(
+    label: String,
+    active: Boolean,
+    onClick: () -> Unit,
+) {
+    Button(
+        text = if (active) "$label *" else label,
+        modifier = Modifier.Empty.weight(1f),
+        onClick = onClick,
+    )
 }
 
 private fun UiTreeBuilder.OverviewPage(
