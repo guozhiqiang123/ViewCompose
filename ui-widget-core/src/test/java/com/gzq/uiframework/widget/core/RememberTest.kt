@@ -49,4 +49,36 @@ class RememberTest {
 
         assertNotSame(first, second)
     }
+
+    @Test
+    fun `remember with same key reuses slot value`() {
+        val store = RememberStore()
+        var first: Any? = null
+        var second: Any? = null
+
+        RememberContext.withStore(store) {
+            first = remember("stable-key") { Any() }
+        }
+        RememberContext.withStore(store) {
+            second = remember("stable-key") { Any() }
+        }
+
+        assertSame(first, second)
+    }
+
+    @Test
+    fun `remember with changed key recreates slot value`() {
+        val store = RememberStore()
+        var first: Any? = null
+        var second: Any? = null
+
+        RememberContext.withStore(store) {
+            first = remember("first-key") { Any() }
+        }
+        RememberContext.withStore(store) {
+            second = remember("second-key") { Any() }
+        }
+
+        assertNotSame(first, second)
+    }
 }

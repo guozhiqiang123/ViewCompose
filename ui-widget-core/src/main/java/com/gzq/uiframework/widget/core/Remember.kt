@@ -1,24 +1,45 @@
 package com.gzq.uiframework.widget.core
 
 internal class RememberStore {
-    private val slots = mutableListOf<Any?>()
+    private val slots = mutableListOf<RememberSlot>()
     private var nextIndex: Int = 0
 
     fun beginRender() {
         nextIndex = 0
     }
 
-    fun <T> remember(calculation: () -> T): T {
+    fun <T> remember(
+        keys: List<Any?>,
+        calculation: () -> T,
+    ): T {
         if (nextIndex < slots.size) {
-            @Suppress("UNCHECKED_CAST")
-            return slots[nextIndex++] as T
+            val slot = slots[nextIndex]
+            nextIndex += 1
+            if (slot.keys == keys) {
+                @Suppress("UNCHECKED_CAST")
+                return slot.value as T
+            }
+            val value = calculation()
+            slots[nextIndex - 1] = RememberSlot(
+                value = value,
+                keys = keys,
+            )
+            return value
         }
         val value = calculation()
-        slots += value
+        slots += RememberSlot(
+            value = value,
+            keys = keys,
+        )
         nextIndex += 1
         return value
     }
 }
+
+private data class RememberSlot(
+    val value: Any?,
+    val keys: List<Any?>,
+)
 
 internal object RememberContext {
     private val currentStore = ThreadLocal<RememberStore?>()
@@ -41,6 +62,16 @@ internal object RememberContext {
 }
 
 fun <T> remember(calculation: () -> T): T {
+    return remember(*emptyArray(), calculation = calculation)
+}
+
+fun <T> remember(
+    vararg keys: Any?,
+    calculation: () -> T,
+): T {
     val store = RememberContext.currentStore() ?: return calculation()
-    return store.remember(calculation)
+    return store.remember(
+        keys = keys.toList(),
+        calculation = calculation,
+    )
 }
