@@ -66,9 +66,13 @@ class SegmentedControlTest {
                 inputControl = baseTheme.components.inputControl,
                 segmentedControl = UiSegmentedControlStyles(
                     background = 401,
-                    indicator = 402,
-                    text = 403,
-                    selectedText = 404,
+                    backgroundDisabled = 405,
+                    indicator = 406,
+                    indicatorDisabled = 407,
+                    text = 408,
+                    textDisabled = 409,
+                    selectedText = 410,
+                    selectedTextDisabled = 411,
                 ),
             ),
         )
@@ -86,9 +90,54 @@ class SegmentedControlTest {
         val node = tree.single()
 
         assertEquals(401, node.props.values[PropKeys.SEGMENT_BACKGROUND_COLOR])
-        assertEquals(402, node.props.values[PropKeys.SEGMENT_INDICATOR_COLOR])
-        assertEquals(403, node.props.values[PropKeys.SEGMENT_TEXT_COLOR])
-        assertEquals(404, node.props.values[PropKeys.SEGMENT_SELECTED_TEXT_COLOR])
+        assertEquals(406, node.props.values[PropKeys.SEGMENT_INDICATOR_COLOR])
+        assertEquals(408, node.props.values[PropKeys.SEGMENT_TEXT_COLOR])
+        assertEquals(410, node.props.values[PropKeys.SEGMENT_SELECTED_TEXT_COLOR])
+    }
+
+    @Test
+    fun `segmented control uses disabled component style tokens`() {
+        val baseTheme = UiThemeDefaults.light()
+        val customTheme = UiThemeTokens(
+            colors = baseTheme.colors,
+            typography = baseTheme.typography,
+            input = baseTheme.input,
+            components = UiComponentStyles(
+                button = baseTheme.components.button,
+                textField = baseTheme.components.textField,
+                inputControl = baseTheme.components.inputControl,
+                segmentedControl = UiSegmentedControlStyles(
+                    background = 501,
+                    backgroundDisabled = 502,
+                    indicator = 503,
+                    indicatorDisabled = 504,
+                    text = 505,
+                    textDisabled = 506,
+                    selectedText = 507,
+                    selectedTextDisabled = 508,
+                ),
+            ),
+        )
+
+        val tree = buildVNodeTree {
+            UiTheme(customTheme) {
+                SegmentedControl(
+                    items = listOf("A", "B"),
+                    selectedIndex = 0,
+                    enabled = false,
+                    onSelectionChange = {},
+                )
+            }
+        }
+
+        val node = tree.single()
+
+        assertEquals(false, node.props.values[PropKeys.ENABLED])
+        assertEquals(502, node.props.values[PropKeys.SEGMENT_BACKGROUND_COLOR])
+        assertEquals(504, node.props.values[PropKeys.SEGMENT_INDICATOR_COLOR])
+        assertEquals(506, node.props.values[PropKeys.SEGMENT_TEXT_COLOR])
+        assertEquals(508, node.props.values[PropKeys.SEGMENT_SELECTED_TEXT_COLOR])
+        assertEquals(0x00000000, node.props.values[PropKeys.SEGMENT_RIPPLE_COLOR])
     }
 
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {

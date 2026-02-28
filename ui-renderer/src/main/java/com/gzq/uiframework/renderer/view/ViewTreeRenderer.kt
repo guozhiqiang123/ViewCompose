@@ -330,6 +330,7 @@ object ViewTreeRenderer {
                     items = readSegmentItems(node),
                     selectedIndex = readSegmentSelectedIndex(node),
                     onSelectionChange = readOnSegmentSelected(node),
+                    enabled = readEnabled(node),
                     backgroundColor = readSegmentBackgroundColor(node),
                     indicatorColor = readSegmentIndicatorColor(node),
                     cornerRadius = readSegmentCornerRadius(node),

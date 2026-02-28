@@ -450,9 +450,13 @@ class ThemeTest {
                 ),
                 segmentedControl = UiSegmentedControlStyles(
                     background = 301,
-                    indicator = 302,
-                    text = 303,
-                    selectedText = 304,
+                    backgroundDisabled = 305,
+                    indicator = 306,
+                    indicatorDisabled = 307,
+                    text = 308,
+                    textDisabled = 309,
+                    selectedText = 310,
+                    selectedTextDisabled = 311,
                 ),
             ),
         )
@@ -463,6 +467,7 @@ class ThemeTest {
         var textFieldError = 0
         var inputControlDisabled = 0
         var segmentedIndicator = 0
+        var segmentedDisabledText = 0
 
         buildVNodeTree {
             UiTheme(customTheme) {
@@ -473,6 +478,7 @@ class ThemeTest {
                 textFieldError = TextFieldDefaults.borderColor(TextFieldVariant.Outlined, isError = true)
                 inputControlDisabled = InputControlDefaults.controlColor(enabled = false)
                 segmentedIndicator = SegmentedControlDefaults.indicatorColor()
+                segmentedDisabledText = SegmentedControlDefaults.textColor(enabled = false)
             }
         }
 
@@ -482,7 +488,8 @@ class ThemeTest {
         assertEquals(202, textFieldTonal)
         assertEquals(209, textFieldError)
         assertEquals(213, inputControlDisabled)
-        assertEquals(302, segmentedIndicator)
+        assertEquals(306, segmentedIndicator)
+        assertEquals(309, segmentedDisabledText)
     }
 
     @Test

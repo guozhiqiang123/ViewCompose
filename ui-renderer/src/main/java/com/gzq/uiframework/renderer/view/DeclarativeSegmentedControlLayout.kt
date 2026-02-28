@@ -31,6 +31,7 @@ internal class DeclarativeSegmentedControlLayout(
         items: List<SegmentedControlItem>,
         selectedIndex: Int,
         onSelectionChange: ((Int) -> Unit)?,
+        enabled: Boolean,
         backgroundColor: Int,
         indicatorColor: Int,
         cornerRadius: Int,
@@ -53,6 +54,7 @@ internal class DeclarativeSegmentedControlLayout(
         this.items = items
         this.selectedIndex = selectedIndex
         updateChildren(
+            enabled = enabled,
             indicatorColor = indicatorColor,
             cornerRadius = cornerRadius,
             textColor = textColor,
@@ -74,7 +76,9 @@ internal class DeclarativeSegmentedControlLayout(
                     maxLines = 1
                     layoutParams = LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f)
                     setOnClickListener {
-                        onSelectionChange?.invoke(index)
+                        if (isEnabled) {
+                            onSelectionChange?.invoke(index)
+                        }
                     }
                 },
             )
@@ -82,6 +86,7 @@ internal class DeclarativeSegmentedControlLayout(
     }
 
     private fun updateChildren(
+        enabled: Boolean,
         indicatorColor: Int,
         cornerRadius: Int,
         textColor: Int,
@@ -96,6 +101,7 @@ internal class DeclarativeSegmentedControlLayout(
             val item = items.getOrNull(index) ?: continue
             val isSelected = index == selectedIndex
             child.text = item.label
+            child.isEnabled = enabled
             child.setTextColor(if (isSelected) selectedTextColor else textColor)
             child.textSize = textSizeSp.toFloat()
             child.setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding)
@@ -106,6 +112,7 @@ internal class DeclarativeSegmentedControlLayout(
                 bottomMargin = indicatorInset.toInt()
             }
             child.background = createSegmentBackground(
+                enabled = enabled,
                 selected = isSelected,
                 indicatorColor = indicatorColor,
                 rippleColor = rippleColor,
@@ -116,21 +123,30 @@ internal class DeclarativeSegmentedControlLayout(
     }
 
     private fun createSegmentBackground(
+        enabled: Boolean,
         selected: Boolean,
         indicatorColor: Int,
         rippleColor: Int,
         cornerRadius: Float,
-    ) = RippleDrawable(
-        ColorStateList.valueOf(rippleColor),
+    ) = if (enabled) {
+        RippleDrawable(
+            ColorStateList.valueOf(rippleColor),
+            GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                setColor(if (selected) indicatorColor else Color.TRANSPARENT)
+                this.cornerRadius = cornerRadius
+            },
+            GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                setColor(Color.WHITE)
+                this.cornerRadius = cornerRadius
+            },
+        )
+    } else {
         GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
             setColor(if (selected) indicatorColor else Color.TRANSPARENT)
             this.cornerRadius = cornerRadius
-        },
-        GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
-            setColor(Color.WHITE)
-            this.cornerRadius = cornerRadius
-        },
-    )
+        }
+    }
 }

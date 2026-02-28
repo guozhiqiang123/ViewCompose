@@ -394,7 +394,9 @@ private fun UiTreeBuilder.OverviewPage(
                             ),
                             segmentedControl = segmentedControl.copy(
                                 indicator = Theme.colors.accent,
+                                indicatorDisabled = Theme.colors.divider,
                                 selectedText = Theme.colors.background,
+                                selectedTextDisabled = Theme.colors.textSecondary,
                             ),
                         )
                     },
@@ -416,6 +418,13 @@ private fun UiTreeBuilder.OverviewPage(
                         SegmentedControl(
                             items = listOf("Alpha", "Beta", "Gamma"),
                             selectedIndex = 1,
+                            onSelectionChange = {},
+                            modifier = Modifier.Empty.fillMaxWidth(),
+                        )
+                        SegmentedControl(
+                            items = listOf("Disabled", "State"),
+                            selectedIndex = 0,
+                            enabled = false,
                             onSelectionChange = {},
                             modifier = Modifier.Empty.fillMaxWidth(),
                         )

@@ -7,17 +7,47 @@ enum class SegmentedControlSize {
 }
 
 object SegmentedControlDefaults {
-    fun backgroundColor(): Int = Theme.components.segmentedControl.background
+    fun backgroundColor(enabled: Boolean = true): Int {
+        return if (enabled) {
+            Theme.components.segmentedControl.background
+        } else {
+            Theme.components.segmentedControl.backgroundDisabled
+        }
+    }
 
-    fun indicatorColor(): Int = Theme.components.segmentedControl.indicator
+    fun indicatorColor(enabled: Boolean = true): Int {
+        return if (enabled) {
+            Theme.components.segmentedControl.indicator
+        } else {
+            Theme.components.segmentedControl.indicatorDisabled
+        }
+    }
 
     fun cornerRadius(): Int = Theme.shapes.controlCornerRadius
 
-    fun textColor(): Int = Theme.components.segmentedControl.text
+    fun textColor(enabled: Boolean = true): Int {
+        return if (enabled) {
+            Theme.components.segmentedControl.text
+        } else {
+            Theme.components.segmentedControl.textDisabled
+        }
+    }
 
-    fun selectedTextColor(): Int = Theme.components.segmentedControl.selectedText
+    fun selectedTextColor(enabled: Boolean = true): Int {
+        return if (enabled) {
+            Theme.components.segmentedControl.selectedText
+        } else {
+            Theme.components.segmentedControl.selectedTextDisabled
+        }
+    }
 
-    fun rippleColor(): Int = Theme.interactions.pressedOverlay
+    fun rippleColor(enabled: Boolean = true): Int {
+        return if (enabled) {
+            Theme.interactions.pressedOverlay
+        } else {
+            0x00000000
+        }
+    }
 
     fun textStyle(
         size: SegmentedControlSize = SegmentedControlSize.Medium,
