@@ -6,6 +6,7 @@ import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.RemoteImageLoader
+import com.gzq.uiframework.renderer.node.RemoteImageRequest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
@@ -57,6 +58,9 @@ class ImageTest {
             ProvideRemoteImageLoader(loader) {
                 Image(
                     source = ImageSource.Remote("https://example.com/demo.png"),
+                    placeholder = ImageSource.Resource(10),
+                    error = ImageSource.Resource(11),
+                    fallback = ImageSource.Resource(12),
                 )
             }
         }
@@ -65,6 +69,27 @@ class ImageTest {
 
         assertEquals(ImageSource.Remote("https://example.com/demo.png"), node.props.values[PropKeys.IMAGE_SOURCE])
         assertNotNull(node.props.values[PropKeys.IMAGE_REMOTE_LOADER])
+        assertEquals(ImageSource.Resource(10), node.props.values[PropKeys.IMAGE_PLACEHOLDER])
+        assertEquals(ImageSource.Resource(11), node.props.values[PropKeys.IMAGE_ERROR])
+        assertEquals(ImageSource.Resource(12), node.props.values[PropKeys.IMAGE_FALLBACK])
+    }
+
+    @Test
+    fun `remote image can emit nullable url for fallback handling`() {
+        val loader = RemoteImageLoader { _, _: RemoteImageRequest -> }
+        val tree = buildVNodeTree {
+            ProvideRemoteImageLoader(loader) {
+                Image(
+                    source = ImageSource.Remote(null),
+                    fallback = ImageSource.Resource(99),
+                )
+            }
+        }
+
+        val node = tree.single()
+
+        assertEquals(ImageSource.Remote(null), node.props.values[PropKeys.IMAGE_SOURCE])
+        assertEquals(ImageSource.Resource(99), node.props.values[PropKeys.IMAGE_FALLBACK])
     }
 
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {

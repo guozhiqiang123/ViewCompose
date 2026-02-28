@@ -59,6 +59,9 @@ fun UiTreeBuilder.Image(
     contentDescription: String? = null,
     contentScale: ImageContentScale = ImageContentScale.Fit,
     tint: Int? = null,
+    placeholder: ImageSource.Resource? = null,
+    error: ImageSource.Resource? = placeholder,
+    fallback: ImageSource.Resource? = placeholder,
     key: Any? = null,
     modifier: Modifier = Modifier.Empty,
 ) {
@@ -72,6 +75,9 @@ fun UiTreeBuilder.Image(
                 put(PropKeys.IMAGE_CONTENT_DESCRIPTION, contentDescription)
                 put(PropKeys.IMAGE_REMOTE_LOADER, ImageLoading.current)
                 tint?.let { put(PropKeys.IMAGE_TINT, it) }
+                placeholder?.let { put(PropKeys.IMAGE_PLACEHOLDER, it) }
+                error?.let { put(PropKeys.IMAGE_ERROR, it) }
+                fallback?.let { put(PropKeys.IMAGE_FALLBACK, it) }
             },
         ),
         modifier = modifier,

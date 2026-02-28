@@ -6,6 +6,6 @@ sealed interface ImageSource {
     ) : ImageSource
 
     data class Remote(
-        val url: String,
+        val url: String?,
     ) : ImageSource
 }

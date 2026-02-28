@@ -551,9 +551,24 @@ private fun UiTreeBuilder.OverviewPage(
                     source = ImageSource.Remote("https://picsum.photos/seed/uiframework-demo/640/360"),
                     contentDescription = "Remote image",
                     contentScale = ImageContentScale.Crop,
+                    placeholder = ImageSource.Resource(R.drawable.demo_media_image),
+                    error = ImageSource.Resource(R.drawable.demo_media_image),
+                    fallback = ImageSource.Resource(R.drawable.demo_media_image),
                     modifier = Modifier.Empty
                         .fillMaxWidth()
                         .height(140.dp)
+                        .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                        .cornerRadius(Theme.shapes.cardCornerRadius)
+                        .margin(bottom = 12.dp),
+                )
+                Image(
+                    source = ImageSource.Remote(null),
+                    contentDescription = "Fallback image",
+                    contentScale = ImageContentScale.Crop,
+                    fallback = ImageSource.Resource(R.drawable.demo_media_image),
+                    modifier = Modifier.Empty
+                        .fillMaxWidth()
+                        .height(88.dp)
                         .backgroundColor(SurfaceDefaults.variantBackgroundColor())
                         .cornerRadius(Theme.shapes.cardCornerRadius)
                         .margin(bottom = 12.dp),

@@ -5,6 +5,6 @@ import android.widget.ImageView
 fun interface RemoteImageLoader {
     fun load(
         imageView: ImageView,
-        url: String,
+        request: RemoteImageRequest,
     )
 }

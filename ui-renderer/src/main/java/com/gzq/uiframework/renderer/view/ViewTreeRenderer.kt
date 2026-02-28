@@ -31,6 +31,7 @@ import android.widget.Switch
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.core.content.ContextCompat
 import com.google.android.material.progressindicator.BaseProgressIndicator
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.progressindicator.LinearProgressIndicator
@@ -67,6 +68,7 @@ import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.RemoteImageLoader
+import com.gzq.uiframework.renderer.node.RemoteImageRequest
 import com.gzq.uiframework.renderer.node.SegmentedControlItem
 import com.gzq.uiframework.renderer.node.TextFieldType
 import com.gzq.uiframework.renderer.node.TabPage
@@ -715,14 +717,54 @@ object ViewTreeRenderer {
             }
 
             is ImageSource.Remote -> {
-                view.setImageDrawable(null)
-                readRemoteImageLoader(node)?.load(view, source.url)
+                val normalizedUrl = source.url?.takeIf { it.isNotBlank() }
+                if (normalizedUrl == null) {
+                    bindImagePlaceholder(
+                        view = view,
+                        source = readImageFallback(node),
+                    )
+                    return
+                }
+                val loader = readRemoteImageLoader(node)
+                if (loader == null) {
+                    bindImagePlaceholder(
+                        view = view,
+                        source = readImageError(node) ?: readImagePlaceholder(node) ?: readImageFallback(node),
+                    )
+                    return
+                }
+                bindImagePlaceholder(
+                    view = view,
+                    source = readImagePlaceholder(node),
+                )
+                loader.load(
+                    imageView = view,
+                    request = RemoteImageRequest(
+                        url = normalizedUrl,
+                        placeholderResId = readImagePlaceholder(node)?.resId,
+                        errorResId = readImageError(node)?.resId,
+                        fallbackResId = readImageFallback(node)?.resId,
+                    ),
+                )
             }
 
             null -> {
                 view.setImageDrawable(null)
             }
         }
+    }
+
+    private fun bindImagePlaceholder(
+        view: ImageView,
+        source: ImageSource.Resource?,
+    ) {
+        if (source == null) {
+            view.setImageDrawable(null)
+            return
+        }
+        view.setImageDrawable(
+            ContextCompat.getDrawable(view.context, source.resId),
+        )
     }
 
     private fun bindIconButton(
@@ -1127,6 +1169,18 @@ object ViewTreeRenderer {
 
     private fun readRemoteImageLoader(node: VNode): RemoteImageLoader? {
         return node.props.values[PropKeys.IMAGE_REMOTE_LOADER] as? RemoteImageLoader
+    }
+
+    private fun readImagePlaceholder(node: VNode): ImageSource.Resource? {
+        return node.props.values[PropKeys.IMAGE_PLACEHOLDER] as? ImageSource.Resource
+    }
+
+    private fun readImageError(node: VNode): ImageSource.Resource? {
+        return node.props.values[PropKeys.IMAGE_ERROR] as? ImageSource.Resource
+    }
+
+    private fun readImageFallback(node: VNode): ImageSource.Resource? {
+        return node.props.values[PropKeys.IMAGE_FALLBACK] as? ImageSource.Resource
     }
 
     private fun readProgressIndicatorColor(node: VNode): Int {
