@@ -52,7 +52,9 @@ import com.gzq.uiframework.widget.core.SegmentedControl
 import com.gzq.uiframework.widget.core.SegmentedControlSize
 import com.gzq.uiframework.widget.core.SideEffect
 import com.gzq.uiframework.widget.core.Slider
+import com.gzq.uiframework.widget.core.Surface
 import com.gzq.uiframework.widget.core.SurfaceDefaults
+import com.gzq.uiframework.widget.core.SurfaceVariant
 import com.gzq.uiframework.widget.core.Switch
 import com.gzq.uiframework.widget.core.TabPager
 import com.gzq.uiframework.widget.core.Text
@@ -1153,28 +1155,31 @@ private fun UiTreeBuilder.DemoSection(
     subtitle: String,
     content: UiTreeBuilder.() -> Unit,
 ) {
-    Column(
-        spacing = 8.dp,
+    Surface(
+        variant = SurfaceVariant.Default,
         modifier = Modifier.Empty
             .fillMaxWidth()
             .margin(bottom = 12.dp)
-            .backgroundColor(SurfaceDefaults.backgroundColor())
-            .cornerRadius(SurfaceDefaults.cardCornerRadius())
             .padding(16.dp),
     ) {
-        Text(
-            text = title,
-            style = UiTextStyle(fontSizeSp = 20.sp),
-        )
-        Text(
-            text = subtitle,
-            style = UiTextStyle(fontSizeSp = 13.sp),
-            modifier = Modifier.Empty
-                .textColor(TextDefaults.secondaryColor())
-                .padding(bottom = 4.dp),
-        )
-        Divider()
-        content()
+        Column(
+            spacing = 8.dp,
+            modifier = Modifier.Empty.fillMaxWidth(),
+        ) {
+            Text(
+                text = title,
+                style = UiTextStyle(fontSizeSp = 20.sp),
+            )
+            Text(
+                text = subtitle,
+                style = UiTextStyle(fontSizeSp = 13.sp),
+                modifier = Modifier.Empty
+                    .textColor(TextDefaults.secondaryColor())
+                    .padding(bottom = 4.dp),
+            )
+            Divider()
+            content()
+        }
     }
 }
 

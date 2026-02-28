@@ -7,7 +7,7 @@ object TextDefaults {
 
     fun labelStyle(): UiTextStyle = Theme.typography.label
 
-    fun primaryColor(): Int = Theme.colors.textPrimary
+    fun primaryColor(): Int = ContentColor.current
 
     fun secondaryColor(): Int = Theme.colors.textSecondary
 }

@@ -7,8 +7,10 @@ import com.gzq.uiframework.renderer.layout.HorizontalAlignment
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.modifier.Modifier
+import com.gzq.uiframework.renderer.modifier.alpha
 import com.gzq.uiframework.renderer.modifier.backgroundColor
 import com.gzq.uiframework.renderer.modifier.border
+import com.gzq.uiframework.renderer.modifier.clickable
 import com.gzq.uiframework.renderer.modifier.cornerRadius
 import com.gzq.uiframework.renderer.modifier.height
 import com.gzq.uiframework.renderer.modifier.minHeight
@@ -448,6 +450,50 @@ fun UiTreeBuilder.Box(
         modifier = modifier,
         content = content,
     )
+}
+
+fun UiTreeBuilder.Surface(
+    key: Any? = null,
+    variant: SurfaceVariant = SurfaceVariant.Default,
+    enabled: Boolean = true,
+    contentAlignment: BoxAlignment = BoxAlignment.TopStart,
+    contentColor: Int = SurfaceDefaults.contentColor(variant),
+    onClick: (() -> Unit)? = null,
+    modifier: Modifier = Modifier.Empty,
+    content: UiTreeBuilder.() -> Unit,
+) {
+    val semanticModifier = Modifier.Empty
+        .backgroundColor(SurfaceDefaults.backgroundColor(variant))
+        .cornerRadius(SurfaceDefaults.cardCornerRadius())
+        .rippleColor(SurfaceDefaults.pressedColor())
+        .then(
+            if (enabled) {
+                Modifier.Empty
+            } else {
+                Modifier.Empty.alpha(SurfaceDefaults.disabledAlpha())
+            },
+        )
+        .then(
+            if (enabled && onClick != null) {
+                Modifier.Empty.clickable(onClick)
+            } else {
+                Modifier.Empty
+            },
+        )
+        .then(modifier)
+    ProvideContentColor(contentColor) {
+        emit(
+            type = NodeType.Surface,
+            key = key,
+            props = Props(
+                values = mapOf(
+                    PropKeys.BOX_ALIGNMENT to contentAlignment,
+                ),
+            ),
+            modifier = semanticModifier,
+            content = content,
+        )
+    }
 }
 
 fun UiTreeBuilder.Spacer(

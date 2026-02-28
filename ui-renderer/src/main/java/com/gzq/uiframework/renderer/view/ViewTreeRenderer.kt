@@ -189,6 +189,7 @@ object ViewTreeRenderer {
             }
 
             NodeType.Box -> DeclarativeBoxLayout(context)
+            NodeType.Surface -> DeclarativeBoxLayout(context)
             NodeType.Spacer -> View(context)
             NodeType.Divider -> View(context)
             NodeType.Image -> View(context)
@@ -284,6 +285,10 @@ object ViewTreeRenderer {
                 }
             }
             NodeType.Box -> {
+                (view as DeclarativeBoxLayout).contentGravity = readBoxAlignment(node).toGravity()
+            }
+
+            NodeType.Surface -> {
                 (view as DeclarativeBoxLayout).contentGravity = readBoxAlignment(node).toGravity()
             }
 

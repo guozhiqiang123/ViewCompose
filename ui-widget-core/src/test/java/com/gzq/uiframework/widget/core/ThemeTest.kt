@@ -1,5 +1,6 @@
 package com.gzq.uiframework.widget.core
 
+import com.gzq.uiframework.renderer.modifier.AlphaModifierElement
 import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
 import com.gzq.uiframework.renderer.modifier.BorderModifierElement
 import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
@@ -9,6 +10,7 @@ import com.gzq.uiframework.renderer.modifier.RippleColorModifierElement
 import com.gzq.uiframework.renderer.modifier.TextColorModifierElement
 import com.gzq.uiframework.renderer.modifier.TextSizeModifierElement
 import com.gzq.uiframework.renderer.modifier.backgroundColor
+import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -594,6 +596,52 @@ class ThemeTest {
         assertEquals(customTheme.colors.surface, surface)
         assertEquals(customTheme.colors.surfaceVariant, surfaceVariant)
         assertEquals(customTheme.colors.divider, divider)
+    }
+
+    @Test
+    fun `surface emits semantic node with themed defaults`() {
+        val tree = buildVNodeTree {
+            UiTheme(UiThemeDefaults.light()) {
+                Surface(
+                    variant = SurfaceVariant.Variant,
+                    enabled = false,
+                ) {
+                    Text("Inside")
+                }
+            }
+        }
+
+        val surface = tree.single()
+        val elements = surface.modifier.readModifierElements()
+        val background = elements.last { it is BackgroundColorModifierElement } as BackgroundColorModifierElement
+        val cornerRadius = elements.last { it is CornerRadiusModifierElement } as CornerRadiusModifierElement
+        val ripple = elements.last { it is RippleColorModifierElement } as RippleColorModifierElement
+        val alpha = elements.last { it is AlphaModifierElement } as AlphaModifierElement
+
+        assertEquals(NodeType.Surface, surface.type)
+        assertEquals(SurfaceDefaults.variantBackgroundColor(), background.color)
+        assertEquals(SurfaceDefaults.cardCornerRadius(), cornerRadius.radius)
+        assertEquals(SurfaceDefaults.pressedColor(), ripple.color)
+        assertEquals(SurfaceDefaults.disabledAlpha(), alpha.alpha, 0.0f)
+    }
+
+    @Test
+    fun `surface provides local content color to nested text`() {
+        val tree = buildVNodeTree {
+            UiTheme(UiThemeDefaults.light()) {
+                Surface(
+                    variant = SurfaceVariant.Variant,
+                ) {
+                    Text("Inside")
+                }
+            }
+        }
+
+        val text = tree.single().children.single()
+        val textColor = text.modifier.readModifierElements()
+            .last { it is TextColorModifierElement } as TextColorModifierElement
+
+        assertEquals(SurfaceDefaults.variantContentColor(), textColor.color)
     }
 
     @Test
