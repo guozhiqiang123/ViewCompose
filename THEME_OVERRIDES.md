@@ -15,10 +15,18 @@
   - 已有 `LocalValue` / `LocalContext`
   - 已有 `Theme.colors / typography / input / shapes / controls / interactions`
   - 已有组件级显式覆盖能力，例如 `Modifier.backgroundColor(...)`
+  - 已有对象级 `UiThemeTokens.override(...)`
+  - 已有对象级 `UiThemeOverride(...)`
 - 当前缺口：
-  - 没有好用的主题级“局部只改一个字段”API
-  - 没有统一的主题 patch / override 模型
   - demo 还缺少局部主题覆盖示例
+  - 还没有字段级 builder 风格 override API
+
+文档更新：
+
+- `Phase 1` 已完成
+- `Phase 2` 未开始
+- `Phase 3` 未开始
+- `Phase 4` 未开始
 
 ## 2. 结论
 
@@ -438,9 +446,9 @@ UiThemeOverride(
 
 ## 17. 当前状态标记
 
-本文档创建时，阶段状态如下：
+当前阶段状态：
 
-- `Phase 1` 未开始
+- `Phase 1` 已完成
 - `Phase 2` 未开始
 - `Phase 3` 未开始
 - `Phase 4` 未开始

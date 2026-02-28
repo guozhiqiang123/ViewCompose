@@ -95,6 +95,24 @@ data class UiThemeTokens(
     val interactions: UiInteractionColors = UiInteractionDefaults.fromColors(colors),
 )
 
+fun UiThemeTokens.override(
+    colors: UiColors? = null,
+    typography: UiTypography? = null,
+    input: UiInputColors? = null,
+    shapes: UiShapes? = null,
+    controls: UiControlSizing? = null,
+    interactions: UiInteractionColors? = null,
+): UiThemeTokens {
+    return copy(
+        colors = colors ?: this.colors,
+        typography = typography ?: this.typography,
+        input = input ?: this.input,
+        shapes = shapes ?: this.shapes,
+        controls = controls ?: this.controls,
+        interactions = interactions ?: this.interactions,
+    )
+}
+
 object UiInputDefaults {
     fun fromColors(colors: UiColors): UiInputColors {
         return UiInputColors(
@@ -214,23 +232,26 @@ object UiThemeDefaults {
 private val LocalTheme = LocalValue(UiThemeDefaults::light)
 
 object Theme {
+    val current: UiThemeTokens
+        get() = LocalContext.current(LocalTheme)
+
     val colors: UiColors
-        get() = LocalContext.current(LocalTheme).colors
+        get() = current.colors
 
     val typography: UiTypography
-        get() = LocalContext.current(LocalTheme).typography
+        get() = current.typography
 
     val input: UiInputColors
-        get() = LocalContext.current(LocalTheme).input
+        get() = current.input
 
     val shapes: UiShapes
-        get() = LocalContext.current(LocalTheme).shapes
+        get() = current.shapes
 
     val controls: UiControlSizing
-        get() = LocalContext.current(LocalTheme).controls
+        get() = current.controls
 
     val interactions: UiInteractionColors
-        get() = LocalContext.current(LocalTheme).interactions
+        get() = current.interactions
 }
 
 fun UiTreeBuilder.UiTheme(
@@ -242,6 +263,30 @@ fun UiTreeBuilder.UiTheme(
         ?: androidContext?.let(AndroidThemeBridge::fromContext)
         ?: UiThemeDefaults.light()
     LocalContext.provide(LocalTheme, resolvedTokens) {
+        content()
+    }
+}
+
+fun UiTreeBuilder.UiThemeOverride(
+    colors: UiColors? = null,
+    typography: UiTypography? = null,
+    input: UiInputColors? = null,
+    shapes: UiShapes? = null,
+    controls: UiControlSizing? = null,
+    interactions: UiInteractionColors? = null,
+    content: UiTreeBuilder.() -> Unit,
+) {
+    LocalContext.provide(
+        local = LocalTheme,
+        value = Theme.current.override(
+            colors = colors,
+            typography = typography,
+            input = input,
+            shapes = shapes,
+            controls = controls,
+            interactions = interactions,
+        ),
+    ) {
         content()
     }
 }

@@ -4,9 +4,11 @@ import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
 import com.gzq.uiframework.renderer.modifier.BorderModifierElement
 import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
 import com.gzq.uiframework.renderer.modifier.MinHeightModifierElement
+import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.modifier.RippleColorModifierElement
 import com.gzq.uiframework.renderer.modifier.TextColorModifierElement
 import com.gzq.uiframework.renderer.modifier.TextSizeModifierElement
+import com.gzq.uiframework.renderer.modifier.backgroundColor
 import com.gzq.uiframework.renderer.node.PropKeys
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -106,6 +108,73 @@ class ThemeTest {
     }
 
     @Test
+    fun `theme override replaces only requested domain`() {
+        val baseTheme = UiThemeDefaults.light()
+        var primary = 0
+        var bodySize = 0
+        var controlColor = 0
+
+        buildVNodeTree {
+            UiTheme(baseTheme) {
+                UiThemeOverride(
+                    colors = baseTheme.colors.copy(primary = 0xFF225577.toInt()),
+                ) {
+                    primary = Theme.colors.primary
+                    bodySize = Theme.typography.body.fontSizeSp
+                    controlColor = Theme.input.control
+                }
+            }
+        }
+
+        assertEquals(0xFF225577.toInt(), primary)
+        assertEquals(baseTheme.typography.body.fontSizeSp, bodySize)
+        assertEquals(baseTheme.input.control, controlColor)
+    }
+
+    @Test
+    fun `nested theme override prefers innermost values`() {
+        val baseTheme = UiThemeDefaults.light()
+        var resolvedPrimary = 0
+
+        buildVNodeTree {
+            UiTheme(baseTheme) {
+                UiThemeOverride(
+                    colors = baseTheme.colors.copy(primary = 0xFF111111.toInt()),
+                ) {
+                    UiThemeOverride(
+                        colors = Theme.colors.copy(primary = 0xFF222222.toInt()),
+                    ) {
+                        resolvedPrimary = Theme.colors.primary
+                    }
+                }
+            }
+        }
+
+        assertEquals(0xFF222222.toInt(), resolvedPrimary)
+    }
+
+    @Test
+    fun `theme override scope restores parent theme after exit`() {
+        val baseTheme = UiThemeDefaults.light()
+        var insidePrimary = 0
+        var outsidePrimary = 0
+
+        buildVNodeTree {
+            UiTheme(baseTheme) {
+                UiThemeOverride(
+                    colors = baseTheme.colors.copy(primary = 0xFF335577.toInt()),
+                ) {
+                    insidePrimary = Theme.colors.primary
+                }
+                outsidePrimary = Theme.colors.primary
+            }
+        }
+
+        assertEquals(0xFF335577.toInt(), insidePrimary)
+        assertEquals(baseTheme.colors.primary, outsidePrimary)
+    }
+
+    @Test
     fun `button uses themed container and readable content colors`() {
         val customTheme = UiThemeTokens(
             colors = UiColors(
@@ -168,6 +237,31 @@ class ThemeTest {
         assertEquals(Theme.colors.divider, border.color)
         assertEquals(1.dp, border.width)
         assertEquals(Theme.colors.textPrimary, textColor.color)
+    }
+
+    @Test
+    fun `explicit button modifier overrides theme override background`() {
+        val overriddenPrimary = 0xFF123456.toInt()
+        val explicitBackground = 0xFF654321.toInt()
+
+        val tree = buildVNodeTree {
+            UiTheme(UiThemeDefaults.light()) {
+                UiThemeOverride(
+                    colors = Theme.colors.copy(primary = overriddenPrimary),
+                ) {
+                    Button(
+                        text = "Override",
+                        modifier = Modifier.Empty
+                            .backgroundColor(explicitBackground),
+                    )
+                }
+            }
+        }
+
+        val elements = tree.single().modifier.readModifierElements()
+        val background = elements.last { it is BackgroundColorModifierElement } as BackgroundColorModifierElement
+
+        assertEquals(explicitBackground, background.color)
     }
 
     @Test
@@ -374,6 +468,29 @@ class ThemeTest {
         assertEquals(35, compactHeight)
         assertEquals(7, mediumVerticalPadding)
         assertEquals(customTheme.typography.label.fontSizeSp, compactStyle)
+    }
+
+    @Test
+    fun `theme current exposes fully overridden tokens`() {
+        val baseTheme = UiThemeDefaults.light()
+        val overrideShapes = baseTheme.shapes.copy(controlCornerRadius = 99)
+        val overrideInteractions = baseTheme.interactions.copy(pressedOverlay = 0x12345678)
+        var current: UiThemeTokens? = null
+
+        buildVNodeTree {
+            UiTheme(baseTheme) {
+                UiThemeOverride(
+                    shapes = overrideShapes,
+                    interactions = overrideInteractions,
+                ) {
+                    current = Theme.current
+                }
+            }
+        }
+
+        assertEquals(overrideShapes, current?.shapes)
+        assertEquals(overrideInteractions, current?.interactions)
+        assertEquals(baseTheme.colors, current?.colors)
     }
 
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {
