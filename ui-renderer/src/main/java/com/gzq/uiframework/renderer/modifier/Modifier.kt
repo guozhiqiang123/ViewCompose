@@ -40,6 +40,10 @@ data class ClickableModifierElement(
     val onClick: () -> Unit,
 ) : ModifierElement
 
+data class WeightModifierElement(
+    val weight: Float,
+) : ModifierElement
+
 enum class Visibility {
     Visible,
     Invisible,
@@ -90,5 +94,14 @@ fun Modifier.visibility(visibility: Visibility): Modifier {
 fun Modifier.clickable(onClick: () -> Unit): Modifier {
     return then(
         ClickableModifierElement(onClick),
+    )
+}
+
+fun Modifier.weight(weight: Float): Modifier {
+    require(weight > 0f) {
+        "weight must be > 0"
+    }
+    return then(
+        WeightModifierElement(weight),
     )
 }

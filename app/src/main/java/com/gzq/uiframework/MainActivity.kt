@@ -16,6 +16,7 @@ import com.gzq.uiframework.renderer.modifier.clickable
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.renderer.modifier.size
 import com.gzq.uiframework.renderer.modifier.visibility
+import com.gzq.uiframework.renderer.modifier.weight
 import com.gzq.uiframework.runtime.derivedStateOf
 import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.AndroidView
@@ -23,6 +24,7 @@ import com.gzq.uiframework.widget.core.Button
 import com.gzq.uiframework.widget.core.Column
 import com.gzq.uiframework.widget.core.DisposableEffect
 import com.gzq.uiframework.widget.core.LazyColumn
+import com.gzq.uiframework.widget.core.Row
 import com.gzq.uiframework.widget.core.Text
 import com.gzq.uiframework.widget.core.remember
 import com.gzq.uiframework.widget.core.renderInto
@@ -102,6 +104,24 @@ class MainActivity : AppCompatActivity() {
                         .alpha(0.7f)
                         .padding(8),
                 )
+                Row(
+                    modifier = Modifier.Empty.padding(8),
+                ) {
+                    Text(
+                        text = "Left pane",
+                        modifier = Modifier.Empty
+                            .backgroundColor(Color.parseColor("#DCEBFF"))
+                            .weight(1f)
+                            .padding(12),
+                    )
+                    Text(
+                        text = "Right pane",
+                        modifier = Modifier.Empty
+                            .backgroundColor(Color.parseColor("#FFE4D6"))
+                            .weight(1f)
+                            .padding(12),
+                    )
+                }
                 AndroidView(
                     key = "legacy_summary",
                     modifier = Modifier.Empty

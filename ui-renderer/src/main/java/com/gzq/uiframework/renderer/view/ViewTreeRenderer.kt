@@ -16,6 +16,7 @@ import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
 import com.gzq.uiframework.renderer.modifier.SizeModifierElement
 import com.gzq.uiframework.renderer.modifier.Visibility
 import com.gzq.uiframework.renderer.modifier.VisibilityModifierElement
+import com.gzq.uiframework.renderer.modifier.WeightModifierElement
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
@@ -246,14 +247,39 @@ object ViewTreeRenderer {
 
     private fun createLayoutParams(parent: ViewGroup, node: VNode): ViewGroup.LayoutParams {
         val size = node.modifier.elements.lastOrNull { it is SizeModifierElement } as? SizeModifierElement
-        val width = size?.width ?: if (node.type == NodeType.Text || node.type == NodeType.Button) {
+        val weight = node.modifier.elements.lastOrNull { it is WeightModifierElement } as? WeightModifierElement
+        val defaultWidth = if (node.type == NodeType.Text || node.type == NodeType.Button) {
             ViewGroup.LayoutParams.WRAP_CONTENT
         } else {
             ViewGroup.LayoutParams.MATCH_PARENT
         }
-        val height = size?.height ?: ViewGroup.LayoutParams.WRAP_CONTENT
+        val defaultHeight = ViewGroup.LayoutParams.WRAP_CONTENT
+        val width = size?.width ?: defaultWidth
+        val height = size?.height ?: defaultHeight
         return when (parent) {
-            is LinearLayout -> LinearLayout.LayoutParams(width, height)
+            is LinearLayout -> {
+                val resolvedWidth = if (
+                    weight != null &&
+                    parent.orientation == LinearLayout.HORIZONTAL &&
+                    size?.width == null
+                ) {
+                    0
+                } else {
+                    width
+                }
+                val resolvedHeight = if (
+                    weight != null &&
+                    parent.orientation == LinearLayout.VERTICAL &&
+                    size?.height == null
+                ) {
+                    0
+                } else {
+                    height
+                }
+                LinearLayout.LayoutParams(resolvedWidth, resolvedHeight).apply {
+                    this.weight = weight?.weight ?: 0f
+                }
+            }
             is FrameLayout -> FrameLayout.LayoutParams(width, height)
             else -> ViewGroup.LayoutParams(width, height)
         }
