@@ -45,6 +45,20 @@ internal object ThemeTokenMapper {
                 controlDisabled = readColor(com.google.android.material.R.attr.colorOutline)
                     ?: fallback.divider,
             ),
+            shapes = UiShapeDefaults.default(),
+            interactions = UiInteractionDefaults.fromColors(
+                colors = UiColors(
+                    background = readColor(android.R.attr.colorBackground) ?: fallback.background,
+                    surface = readColor(com.google.android.material.R.attr.colorSurface) ?: fallback.surface,
+                    surfaceVariant = readColor(com.google.android.material.R.attr.colorSurfaceVariant)
+                        ?: fallback.surfaceVariant,
+                    primary = readColor(androidx.appcompat.R.attr.colorPrimary) ?: fallback.primary,
+                    accent = readColor(com.google.android.material.R.attr.colorSecondary) ?: fallback.accent,
+                    divider = readColor(com.google.android.material.R.attr.colorOutline) ?: fallback.divider,
+                    textPrimary = readColor(android.R.attr.textColorPrimary) ?: fallback.textPrimary,
+                    textSecondary = readColor(android.R.attr.textColorSecondary) ?: fallback.textSecondary,
+                ),
+            ),
         )
     }
 }

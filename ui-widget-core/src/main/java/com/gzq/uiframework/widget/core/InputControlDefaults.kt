@@ -18,4 +18,6 @@ object InputControlDefaults {
             Theme.input.controlDisabled
         }
     }
+
+    fun pressedColor(): Int = Theme.interactions.pressedOverlay
 }

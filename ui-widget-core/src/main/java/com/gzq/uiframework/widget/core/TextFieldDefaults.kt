@@ -32,4 +32,8 @@ object TextFieldDefaults {
             else -> Theme.input.fieldContainerDisabled
         }
     }
+
+    fun cornerRadius(): Int = Theme.shapes.controlCornerRadius
+
+    fun pressedColor(): Int = Theme.interactions.pressedOverlay
 }

@@ -1,6 +1,8 @@
 package com.gzq.uiframework.widget.core
 
 import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
+import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
+import com.gzq.uiframework.renderer.modifier.RippleColorModifierElement
 import com.gzq.uiframework.renderer.modifier.TextColorModifierElement
 import com.gzq.uiframework.renderer.modifier.TextSizeModifierElement
 import com.gzq.uiframework.renderer.node.PropKeys
@@ -129,10 +131,14 @@ class ThemeTest {
 
         val elements = tree.single().modifier.readModifierElements()
         val background = elements.last { it is BackgroundColorModifierElement } as BackgroundColorModifierElement
+        val cornerRadius = elements.last { it is CornerRadiusModifierElement } as CornerRadiusModifierElement
+        val rippleColor = elements.last { it is RippleColorModifierElement } as RippleColorModifierElement
         val textColor = elements.last { it is TextColorModifierElement } as TextColorModifierElement
         val textSize = elements.last { it is TextSizeModifierElement } as TextSizeModifierElement
 
         assertEquals(customTheme.colors.primary, background.color)
+        assertEquals(customTheme.shapes.controlCornerRadius, cornerRadius.radius)
+        assertEquals(customTheme.interactions.pressedOverlay, rippleColor.color)
         assertEquals(0xFFFFFFFF.toInt(), textColor.color)
         assertEquals(customTheme.typography.label.fontSizeSp, textSize.sizeSp)
     }
@@ -243,6 +249,8 @@ class ThemeTest {
         var disabledContainer = 0
         var errorColor = 0
         var controlColor = 0
+        var cardCornerRadius = 0
+        var pressedColor = 0
 
         buildVNodeTree {
             UiTheme(customTheme) {
@@ -250,6 +258,8 @@ class ThemeTest {
                 disabledContainer = TextFieldDefaults.containerColor(enabled = false)
                 errorColor = TextFieldDefaults.hintColor(isError = true)
                 controlColor = InputControlDefaults.controlColor()
+                cardCornerRadius = SurfaceDefaults.cardCornerRadius()
+                pressedColor = SurfaceDefaults.pressedColor()
             }
         }
 
@@ -257,6 +267,8 @@ class ThemeTest {
         assertEquals(102, disabledContainer)
         assertEquals(103, errorColor)
         assertEquals(108, controlColor)
+        assertEquals(customTheme.shapes.cardCornerRadius, cardCornerRadius)
+        assertEquals(customTheme.interactions.pressedOverlay, pressedColor)
     }
 
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {

@@ -1,6 +1,8 @@
 package com.gzq.uiframework.widget.core
 
 import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
+import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
+import com.gzq.uiframework.renderer.modifier.RippleColorModifierElement
 import com.gzq.uiframework.renderer.modifier.TextColorModifierElement
 import com.gzq.uiframework.renderer.modifier.TextSizeModifierElement
 import com.gzq.uiframework.renderer.node.NodeType
@@ -60,6 +62,14 @@ class TextFieldTest {
         assertEquals(
             customTheme.input.fieldContainer,
             (elements.last { it is BackgroundColorModifierElement } as BackgroundColorModifierElement).color,
+        )
+        assertEquals(
+            customTheme.shapes.controlCornerRadius,
+            (elements.last { it is CornerRadiusModifierElement } as CornerRadiusModifierElement).radius,
+        )
+        assertEquals(
+            customTheme.interactions.pressedOverlay,
+            (elements.last { it is RippleColorModifierElement } as RippleColorModifierElement).color,
         )
         assertEquals(true, node.props.values[PropKeys.ENABLED])
     }

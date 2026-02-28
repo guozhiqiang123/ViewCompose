@@ -25,6 +25,15 @@ data class UiInputColors(
     val controlDisabled: Int,
 )
 
+data class UiShapes(
+    val cardCornerRadius: Int,
+    val controlCornerRadius: Int,
+)
+
+data class UiInteractionColors(
+    val pressedOverlay: Int,
+)
+
 data class UiTextStyle(
     val fontSizeSp: Int,
 )
@@ -39,6 +48,8 @@ data class UiThemeTokens(
     val colors: UiColors,
     val typography: UiTypography,
     val input: UiInputColors = UiInputDefaults.fromColors(colors),
+    val shapes: UiShapes = UiShapeDefaults.default(),
+    val interactions: UiInteractionColors = UiInteractionDefaults.fromColors(colors),
 )
 
 object UiInputDefaults {
@@ -53,6 +64,24 @@ object UiInputDefaults {
             fieldHintDisabled = colors.divider,
             control = colors.primary,
             controlDisabled = colors.divider,
+        )
+    }
+}
+
+object UiShapeDefaults {
+    fun default(): UiShapes {
+        return UiShapes(
+            cardCornerRadius = 20.dp,
+            controlCornerRadius = 14.dp,
+        )
+    }
+}
+
+object UiInteractionDefaults {
+    fun fromColors(colors: UiColors): UiInteractionColors {
+        val base = colors.textPrimary and 0x00FFFFFF
+        return UiInteractionColors(
+            pressedOverlay = 0x22000000 or base,
         )
     }
 }
@@ -110,6 +139,12 @@ object Theme {
 
     val input: UiInputColors
         get() = LocalContext.current(LocalTheme).input
+
+    val shapes: UiShapes
+        get() = LocalContext.current(LocalTheme).shapes
+
+    val interactions: UiInteractionColors
+        get() = LocalContext.current(LocalTheme).interactions
 }
 
 fun UiTreeBuilder.UiTheme(

@@ -2,7 +2,11 @@ package com.gzq.uiframework.renderer.view
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.Outline
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.RippleDrawable
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
@@ -10,6 +14,7 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewOutlineProvider
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.CompoundButton
@@ -30,11 +35,13 @@ import com.gzq.uiframework.renderer.modifier.AlphaModifierElement
 import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
 import com.gzq.uiframework.renderer.modifier.BoxAlignModifierElement
 import com.gzq.uiframework.renderer.modifier.ClickableModifierElement
+import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
 import com.gzq.uiframework.renderer.modifier.HeightModifierElement
 import com.gzq.uiframework.renderer.modifier.HorizontalAlignModifierElement
 import com.gzq.uiframework.renderer.modifier.MarginModifierElement
 import com.gzq.uiframework.renderer.modifier.OffsetModifierElement
 import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
+import com.gzq.uiframework.renderer.modifier.RippleColorModifierElement
 import com.gzq.uiframework.renderer.modifier.SizeModifierElement
 import com.gzq.uiframework.renderer.modifier.TextColorModifierElement
 import com.gzq.uiframework.renderer.modifier.TextSizeModifierElement
@@ -60,6 +67,8 @@ import com.gzq.uiframework.renderer.reconcile.ReusePatch
 import com.gzq.uiframework.renderer.R
 
 object ViewTreeRenderer {
+    private const val DEFAULT_RIPPLE_COLOR: Int = 0x22000000
+
     fun disposeMounted(
         container: ViewGroup,
         mountedNodes: List<MountedNode>,
@@ -188,6 +197,7 @@ object ViewTreeRenderer {
         }
 
         cacheOriginalBackground(view)
+        cacheOriginalForeground(view)
         bindView(view, node)
         val children = if (view is ViewGroup) {
             renderInto(
@@ -300,9 +310,13 @@ object ViewTreeRenderer {
             .lastOrNull { it is BackgroundColorModifierElement } as? BackgroundColorModifierElement
         val clickable = node.modifier.elements
             .lastOrNull { it is ClickableModifierElement } as? ClickableModifierElement
+        val cornerRadius = node.modifier.elements
+            .lastOrNull { it is CornerRadiusModifierElement } as? CornerRadiusModifierElement
         val offset = node.modifier.elements
             .lastOrNull { it is OffsetModifierElement } as? OffsetModifierElement
         val padding = node.modifier.elements.lastOrNull { it is PaddingModifierElement } as? PaddingModifierElement
+        val rippleColor = node.modifier.elements
+            .lastOrNull { it is RippleColorModifierElement } as? RippleColorModifierElement
         val textColor = node.modifier.elements
             .lastOrNull { it is TextColorModifierElement } as? TextColorModifierElement
         val textSize = node.modifier.elements
@@ -312,11 +326,13 @@ object ViewTreeRenderer {
         val zIndex = node.modifier.elements
             .lastOrNull { it is ZIndexModifierElement } as? ZIndexModifierElement
         view.alpha = alpha?.alpha ?: 1f
-        if (backgroundColor == null) {
-            restoreOriginalBackground(view)
-        } else {
-            view.setBackgroundColor(backgroundColor.color)
-        }
+        applyBackgroundAndInteraction(
+            view = view,
+            backgroundColor = backgroundColor?.color,
+            cornerRadius = cornerRadius?.radius ?: 0,
+            rippleColor = rippleColor?.color ?: DEFAULT_RIPPLE_COLOR,
+            clickable = clickable != null,
+        )
         view.visibility = when (visibility?.visibility ?: Visibility.Visible) {
             Visibility.Visible -> View.VISIBLE
             Visibility.Invisible -> View.INVISIBLE
@@ -363,14 +379,105 @@ object ViewTreeRenderer {
         )
     }
 
+    private fun cacheOriginalForeground(view: View) {
+        if (view.getTag(R.id.ui_framework_original_foreground) != null) {
+            return
+        }
+        view.setTag(
+            R.id.ui_framework_original_foreground,
+            cloneDrawable(view.foreground),
+        )
+    }
+
     private fun restoreOriginalBackground(view: View) {
         view.background = cloneDrawable(
             view.getTag(R.id.ui_framework_original_background) as? Drawable,
         )
     }
 
+    private fun restoreOriginalForeground(view: View) {
+        view.foreground = cloneDrawable(
+            view.getTag(R.id.ui_framework_original_foreground) as? Drawable,
+        )
+    }
+
     private fun cloneDrawable(drawable: Drawable?): Drawable? {
         return drawable?.constantState?.newDrawable()?.mutate() ?: drawable?.mutate()
+    }
+
+    private fun applyBackgroundAndInteraction(
+        view: View,
+        backgroundColor: Int?,
+        cornerRadius: Int,
+        rippleColor: Int,
+        clickable: Boolean,
+    ) {
+        val hasCustomShape = backgroundColor != null || cornerRadius > 0
+        if (hasCustomShape) {
+            view.background = createBackgroundDrawable(
+                backgroundColor = backgroundColor ?: Color.TRANSPARENT,
+                cornerRadiusPx = cornerRadius,
+                rippleColor = rippleColor,
+                clickable = clickable,
+            )
+            view.foreground = null
+        } else {
+            restoreOriginalBackground(view)
+            if (clickable) {
+                view.foreground = RippleDrawable(
+                    ColorStateList.valueOf(rippleColor),
+                    null,
+                    null,
+                )
+            } else {
+                restoreOriginalForeground(view)
+            }
+        }
+        applyCornerOutline(view, cornerRadius)
+    }
+
+    private fun createBackgroundDrawable(
+        backgroundColor: Int,
+        cornerRadiusPx: Int,
+        rippleColor: Int,
+        clickable: Boolean,
+    ): Drawable {
+        val content = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            setColor(backgroundColor)
+            cornerRadius = cornerRadiusPx.toFloat()
+        }
+        if (!clickable) {
+            return content
+        }
+        return RippleDrawable(
+            ColorStateList.valueOf(rippleColor),
+            content,
+            GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                setColor(Color.WHITE)
+                cornerRadius = cornerRadiusPx.toFloat()
+            },
+        )
+    }
+
+    private fun applyCornerOutline(
+        view: View,
+        cornerRadius: Int,
+    ) {
+        if (cornerRadius <= 0) {
+            view.clipToOutline = false
+            view.outlineProvider = ViewOutlineProvider.BACKGROUND
+            view.invalidateOutline()
+            return
+        }
+        view.clipToOutline = true
+        view.outlineProvider = object : ViewOutlineProvider() {
+            override fun getOutline(view: View, outline: Outline) {
+                outline.setRoundRect(0, 0, view.width, view.height, cornerRadius.toFloat())
+            }
+        }
+        view.invalidateOutline()
     }
 
     private fun moveViewToIndex(

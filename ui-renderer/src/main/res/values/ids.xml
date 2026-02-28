@@ -1,5 +1,6 @@
 <resources>
     <item name="ui_framework_original_background" type="id" />
+    <item name="ui_framework_original_foreground" type="id" />
     <item name="ui_framework_text_watcher" type="id" />
     <item name="ui_framework_seek_listener" type="id" />
 </resources>

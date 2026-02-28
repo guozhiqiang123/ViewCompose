@@ -8,6 +8,8 @@ import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.modifier.backgroundColor
+import com.gzq.uiframework.renderer.modifier.cornerRadius
+import com.gzq.uiframework.renderer.modifier.rippleColor
 import com.gzq.uiframework.renderer.modifier.textColor
 import com.gzq.uiframework.renderer.modifier.textSize
 import com.gzq.uiframework.renderer.modifier.weight
@@ -78,6 +80,8 @@ fun UiTreeBuilder.TextField(
                     isError = isError,
                 ),
             )
+            .cornerRadius(TextFieldDefaults.cornerRadius())
+            .rippleColor(TextFieldDefaults.pressedColor())
             .textColor(TextFieldDefaults.textColor(enabled))
             .textSize(style.fontSizeSp)
             .then(modifier),
@@ -131,6 +135,7 @@ fun UiTreeBuilder.Checkbox(
         ),
         modifier = Modifier.Empty
             .textColor(InputControlDefaults.labelColor(enabled))
+            .rippleColor(InputControlDefaults.pressedColor())
             .textSize(style.fontSizeSp)
             .then(modifier),
     )
@@ -159,6 +164,7 @@ fun UiTreeBuilder.Switch(
         ),
         modifier = Modifier.Empty
             .textColor(InputControlDefaults.labelColor(enabled))
+            .rippleColor(InputControlDefaults.pressedColor())
             .textSize(style.fontSizeSp)
             .then(modifier),
     )
@@ -187,6 +193,7 @@ fun UiTreeBuilder.RadioButton(
         ),
         modifier = Modifier.Empty
             .textColor(InputControlDefaults.labelColor(enabled))
+            .rippleColor(InputControlDefaults.pressedColor())
             .textSize(style.fontSizeSp)
             .then(modifier),
     )
@@ -304,6 +311,8 @@ fun UiTreeBuilder.Button(
         ),
         modifier = Modifier.Empty
             .backgroundColor(ButtonDefaults.containerColor())
+            .cornerRadius(ButtonDefaults.cornerRadius())
+            .rippleColor(ButtonDefaults.pressedColor())
             .textColor(ButtonDefaults.contentColor())
             .textSize(style.fontSizeSp)
             .then(modifier),

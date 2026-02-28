@@ -36,6 +36,14 @@ data class BackgroundColorModifierElement(
     val color: Int,
 ) : ModifierElement
 
+data class CornerRadiusModifierElement(
+    val radius: Int,
+) : ModifierElement
+
+data class RippleColorModifierElement(
+    val color: Int,
+) : ModifierElement
+
 data class TextColorModifierElement(
     val color: Int,
 ) : ModifierElement
@@ -138,6 +146,18 @@ fun Modifier.padding(
 fun Modifier.backgroundColor(color: Int): Modifier {
     return then(
         BackgroundColorModifierElement(color),
+    )
+}
+
+fun Modifier.cornerRadius(radius: Int): Modifier {
+    return then(
+        CornerRadiusModifierElement(radius),
+    )
+}
+
+fun Modifier.rippleColor(color: Int): Modifier {
+    return then(
+        RippleColorModifierElement(color),
     )
 }
 

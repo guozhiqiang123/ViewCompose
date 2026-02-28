@@ -16,6 +16,7 @@ import com.gzq.uiframework.renderer.modifier.Visibility
 import com.gzq.uiframework.renderer.modifier.align
 import com.gzq.uiframework.renderer.modifier.backgroundColor
 import com.gzq.uiframework.renderer.modifier.clickable
+import com.gzq.uiframework.renderer.modifier.cornerRadius
 import com.gzq.uiframework.renderer.modifier.fillMaxSize
 import com.gzq.uiframework.renderer.modifier.fillMaxWidth
 import com.gzq.uiframework.renderer.modifier.height
@@ -241,6 +242,7 @@ private fun UiTreeBuilder.OverviewPage(
 }
 
 private fun UiTreeBuilder.LayoutPage() {
+    val boxTapState = remember { mutableStateOf(0) }
     LazyColumn(
         items = listOf("row", "box", "column"),
         key = { it },
@@ -287,10 +289,14 @@ private fun UiTreeBuilder.LayoutPage() {
                         .fillMaxWidth()
                         .height(140.dp)
                         .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                        .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                        .clickable {
+                            boxTapState.value = boxTapState.value + 1
+                        }
                         .padding(12.dp),
                 ) {
                     Text(
-                        text = "Centered surface",
+                        text = "Centered surface · taps ${boxTapState.value}",
                         modifier = Modifier.Empty
                             .backgroundColor(Theme.colors.primary)
                             .padding(horizontal = 12.dp, vertical = 8.dp),
@@ -737,6 +743,7 @@ private fun UiTreeBuilder.DemoSection(
             .fillMaxWidth()
             .margin(bottom = 12.dp)
             .backgroundColor(SurfaceDefaults.backgroundColor())
+            .cornerRadius(SurfaceDefaults.cardCornerRadius())
             .padding(16.dp),
     ) {
         Text(

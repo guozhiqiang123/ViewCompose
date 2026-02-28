@@ -4,6 +4,10 @@ object ButtonDefaults {
     fun containerColor(): Int = Theme.colors.primary
 
     fun contentColor(): Int = contentColorFor(containerColor())
+
+    fun cornerRadius(): Int = Theme.shapes.controlCornerRadius
+
+    fun pressedColor(): Int = Theme.interactions.pressedOverlay
 }
 
 internal fun contentColorFor(backgroundColor: Int): Int {

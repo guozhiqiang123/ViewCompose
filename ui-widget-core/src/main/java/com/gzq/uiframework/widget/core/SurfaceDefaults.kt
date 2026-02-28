@@ -5,7 +5,11 @@ object SurfaceDefaults {
 
     fun variantBackgroundColor(): Int = Theme.colors.surfaceVariant
 
+    fun cardCornerRadius(): Int = Theme.shapes.cardCornerRadius
+
     fun contentColor(): Int = TextDefaults.primaryColor()
 
     fun variantContentColor(): Int = TextDefaults.secondaryColor()
+
+    fun pressedColor(): Int = Theme.interactions.pressedOverlay
 }
