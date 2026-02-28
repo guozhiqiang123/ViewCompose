@@ -9,6 +9,7 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
+import com.gzq.uiframework.renderer.layout.LinearArrangementCalculator
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import kotlin.math.max
 
@@ -61,9 +62,14 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
         val baseSpacing = if (children.size > 1) itemSpacing * (children.size - 1) else 0
         val consumedWidth = totalChildrenWidth + baseSpacing
         val extraSpace = max(0, innerWidth - consumedWidth)
-        val arrangement = resolveArrangementMetrics(
+        val arrangement = LinearArrangementCalculator.calculate(
+            arrangement = mainAxisArrangement,
+            itemSpacing = itemSpacing,
             extraSpace = extraSpace,
             childCount = children.size,
+            hasWeightedChildren = children.any { child ->
+                ((child.layoutParams as? LayoutParams)?.weight ?: 0f) > 0f
+            },
         )
         var currentLeft = paddingLeft + arrangement.leadingSpace
         children.forEachIndexed { index, child ->
@@ -96,9 +102,14 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
         val baseSpacing = if (children.size > 1) itemSpacing * (children.size - 1) else 0
         val consumedHeight = totalChildrenHeight + baseSpacing
         val extraSpace = max(0, innerHeight - consumedHeight)
-        val arrangement = resolveArrangementMetrics(
+        val arrangement = LinearArrangementCalculator.calculate(
+            arrangement = mainAxisArrangement,
+            itemSpacing = itemSpacing,
             extraSpace = extraSpace,
             childCount = children.size,
+            hasWeightedChildren = children.any { child ->
+                ((child.layoutParams as? LayoutParams)?.weight ?: 0f) > 0f
+            },
         )
         var currentTop = paddingTop + arrangement.leadingSpace
         children.forEachIndexed { index, child ->
@@ -115,59 +126,6 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
             currentTop = childBottom + params.bottomMargin
             if (index != children.lastIndex) {
                 currentTop += arrangement.gap
-            }
-        }
-    }
-
-    private fun resolveArrangementMetrics(
-        extraSpace: Int,
-        childCount: Int,
-    ): ArrangementMetrics {
-        if (childCount <= 1) {
-            return ArrangementMetrics(
-                leadingSpace = when (mainAxisArrangement) {
-                    MainAxisArrangement.Center -> extraSpace / 2
-                    MainAxisArrangement.End -> extraSpace
-                    MainAxisArrangement.SpaceAround,
-                    MainAxisArrangement.SpaceEvenly,
-                    -> extraSpace / 2
-                    MainAxisArrangement.Start,
-                    MainAxisArrangement.SpaceBetween,
-                    -> 0
-                },
-                gap = itemSpacing,
-            )
-        }
-        return when (mainAxisArrangement) {
-            MainAxisArrangement.Start -> ArrangementMetrics(
-                leadingSpace = 0,
-                gap = itemSpacing,
-            )
-            MainAxisArrangement.Center -> ArrangementMetrics(
-                leadingSpace = extraSpace / 2,
-                gap = itemSpacing,
-            )
-            MainAxisArrangement.End -> ArrangementMetrics(
-                leadingSpace = extraSpace,
-                gap = itemSpacing,
-            )
-            MainAxisArrangement.SpaceBetween -> ArrangementMetrics(
-                leadingSpace = 0,
-                gap = itemSpacing + extraSpace / (childCount - 1),
-            )
-            MainAxisArrangement.SpaceAround -> {
-                val unit = extraSpace / (childCount * 2)
-                ArrangementMetrics(
-                    leadingSpace = unit,
-                    gap = itemSpacing + unit * 2,
-                )
-            }
-            MainAxisArrangement.SpaceEvenly -> {
-                val unit = extraSpace / (childCount + 1)
-                ArrangementMetrics(
-                    leadingSpace = unit,
-                    gap = itemSpacing + unit,
-                )
             }
         }
     }
@@ -239,9 +197,4 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
 
         override fun getIntrinsicHeight(): Int = height
     }
-
-    private data class ArrangementMetrics(
-        val leadingSpace: Int,
-        val gap: Int,
-    )
 }
