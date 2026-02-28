@@ -70,6 +70,10 @@ data class HeightModifierElement(
     val height: Int,
 ) : ModifierElement
 
+data class MinHeightModifierElement(
+    val minHeight: Int,
+) : ModifierElement
+
 data class AlphaModifierElement(
     val alpha: Float,
 ) : ModifierElement
@@ -246,6 +250,12 @@ fun Modifier.width(width: Int): Modifier {
 fun Modifier.height(height: Int): Modifier {
     return then(
         HeightModifierElement(height),
+    )
+}
+
+fun Modifier.minHeight(minHeight: Int): Modifier {
+    return then(
+        MinHeightModifierElement(minHeight),
     )
 }
 

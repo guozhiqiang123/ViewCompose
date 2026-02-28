@@ -11,6 +11,7 @@ import com.gzq.uiframework.renderer.modifier.backgroundColor
 import com.gzq.uiframework.renderer.modifier.border
 import com.gzq.uiframework.renderer.modifier.cornerRadius
 import com.gzq.uiframework.renderer.modifier.height
+import com.gzq.uiframework.renderer.modifier.minHeight
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.renderer.modifier.rippleColor
 import com.gzq.uiframework.renderer.modifier.textColor
@@ -354,7 +355,7 @@ fun UiTreeBuilder.Button(
             },
         ),
         modifier = Modifier.Empty
-            .height(ButtonDefaults.height(size))
+            .minHeight(ButtonDefaults.height(size))
             .padding(
                 horizontal = ButtonDefaults.horizontalPadding(size),
                 vertical = ButtonDefaults.verticalPadding(size),

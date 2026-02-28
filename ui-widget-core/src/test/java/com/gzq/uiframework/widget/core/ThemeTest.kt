@@ -3,6 +3,7 @@ package com.gzq.uiframework.widget.core
 import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
 import com.gzq.uiframework.renderer.modifier.BorderModifierElement
 import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
+import com.gzq.uiframework.renderer.modifier.MinHeightModifierElement
 import com.gzq.uiframework.renderer.modifier.RippleColorModifierElement
 import com.gzq.uiframework.renderer.modifier.TextColorModifierElement
 import com.gzq.uiframework.renderer.modifier.TextSizeModifierElement
@@ -136,6 +137,7 @@ class ThemeTest {
         val rippleColor = elements.last { it is RippleColorModifierElement } as RippleColorModifierElement
         val textColor = elements.last { it is TextColorModifierElement } as TextColorModifierElement
         val textSize = elements.last { it is TextSizeModifierElement } as TextSizeModifierElement
+        val minHeight = elements.last { it is MinHeightModifierElement } as MinHeightModifierElement
 
         assertEquals(customTheme.colors.primary, background.color)
         assertEquals(customTheme.shapes.controlCornerRadius, cornerRadius.radius)
@@ -143,6 +145,7 @@ class ThemeTest {
         assertEquals(0xFFFFFFFF.toInt(), textColor.color)
         assertEquals(customTheme.typography.label.fontSizeSp, textSize.sizeSp)
         assertEquals(customTheme.controls.button.mediumHeight, ButtonDefaults.height())
+        assertEquals(customTheme.controls.button.mediumHeight, minHeight.minHeight)
     }
 
     @Test

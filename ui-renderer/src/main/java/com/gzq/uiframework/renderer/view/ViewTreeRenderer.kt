@@ -9,6 +9,7 @@ import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
 import android.text.Editable
 import android.text.InputType
+import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.TypedValue
 import android.view.Gravity
@@ -40,6 +41,7 @@ import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
 import com.gzq.uiframework.renderer.modifier.HeightModifierElement
 import com.gzq.uiframework.renderer.modifier.HorizontalAlignModifierElement
 import com.gzq.uiframework.renderer.modifier.MarginModifierElement
+import com.gzq.uiframework.renderer.modifier.MinHeightModifierElement
 import com.gzq.uiframework.renderer.modifier.OffsetModifierElement
 import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
 import com.gzq.uiframework.renderer.modifier.RippleColorModifierElement
@@ -248,6 +250,13 @@ object ViewTreeRenderer {
             NodeType.Button -> {
                 (view as Button).apply {
                     text = node.props.values[PropKeys.TEXT] as? CharSequence
+                    isAllCaps = false
+                    setSingleLine(false)
+                    maxLines = 2
+                    ellipsize = TextUtils.TruncateAt.END
+                    gravity = Gravity.CENTER
+                    minimumWidth = 0
+                    minWidth = 0
                     setOnClickListener {
                         readOnClick(node)?.invoke()
                     }
@@ -346,6 +355,8 @@ object ViewTreeRenderer {
         val offset = node.modifier.elements
             .lastOrNull { it is OffsetModifierElement } as? OffsetModifierElement
         val padding = node.modifier.elements.lastOrNull { it is PaddingModifierElement } as? PaddingModifierElement
+        val minHeight = node.modifier.elements
+            .lastOrNull { it is MinHeightModifierElement } as? MinHeightModifierElement
         val rippleColor = node.modifier.elements
             .lastOrNull { it is RippleColorModifierElement } as? RippleColorModifierElement
         val textColor = node.modifier.elements
@@ -374,6 +385,7 @@ object ViewTreeRenderer {
         view.translationX = offset?.x ?: 0f
         view.translationY = offset?.y ?: 0f
         view.z = zIndex?.zIndex ?: 0f
+        view.minimumHeight = minHeight?.minHeight ?: 0
         view.isClickable = clickable != null
         view.setOnClickListener(
             if (clickable == null) {
