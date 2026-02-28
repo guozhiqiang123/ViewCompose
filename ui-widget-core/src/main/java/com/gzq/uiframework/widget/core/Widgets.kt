@@ -22,6 +22,25 @@ fun UiTreeBuilder.Text(
     )
 }
 
+fun UiTreeBuilder.Button(
+    text: String,
+    onClick: (() -> Unit)? = null,
+    key: Any? = null,
+    modifier: Modifier = Modifier.Empty,
+) {
+    emit(
+        type = NodeType.Button,
+        key = key,
+        props = Props(
+            values = buildMap {
+                put(PropKeys.TEXT, text)
+                put(PropKeys.ON_CLICK, onClick)
+            },
+        ),
+        modifier = modifier,
+    )
+}
+
 fun UiTreeBuilder.Box(
     key: Any? = null,
     modifier: Modifier = Modifier.Empty,

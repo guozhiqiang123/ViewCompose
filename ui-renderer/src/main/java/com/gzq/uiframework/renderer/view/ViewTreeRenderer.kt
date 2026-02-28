@@ -3,6 +3,7 @@ package com.gzq.uiframework.renderer.view
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -67,7 +68,7 @@ object ViewTreeRenderer {
     private fun mountNode(context: Context, node: VNode): MountedNode {
         val view = when (node.type) {
             NodeType.Text -> TextView(context)
-            NodeType.Button -> TextView(context)
+            NodeType.Button -> Button(context)
             NodeType.Row -> LinearLayout(context).apply {
                 orientation = LinearLayout.HORIZONTAL
             }
@@ -101,10 +102,17 @@ object ViewTreeRenderer {
 
     private fun bindView(view: View, node: VNode) {
         when (node.type) {
-            NodeType.Text,
-            NodeType.Button,
-            -> {
+            NodeType.Text -> {
                 (view as TextView).text = node.props.values[PropKeys.TEXT] as? CharSequence
+            }
+
+            NodeType.Button -> {
+                (view as Button).apply {
+                    text = node.props.values[PropKeys.TEXT] as? CharSequence
+                    setOnClickListener {
+                        readOnClick(node)?.invoke()
+                    }
+                }
             }
 
             NodeType.Row -> (view as LinearLayout).orientation = LinearLayout.HORIZONTAL
@@ -136,5 +144,10 @@ object ViewTreeRenderer {
             is FrameLayout -> FrameLayout.LayoutParams(width, height)
             else -> ViewGroup.LayoutParams(width, height)
         }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun readOnClick(node: VNode): (() -> Unit)? {
+        return node.props.values[PropKeys.ON_CLICK] as? (() -> Unit)
     }
 }
