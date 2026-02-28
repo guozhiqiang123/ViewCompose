@@ -144,7 +144,7 @@ UiTheme(AppTheme.light()) {
 - `UiTheme(tokens = ...)` 用于整套主题切换
 - `UiThemeOverride(...)` 用于父主题基础上的局部 patch
 - `Theme.components` 用于承载组件默认样式 token
-- `Theme.components` 当前已覆盖 `button`、`textField`、`segmentedControl`、`inputControl`、`tabPager`
+- `Theme.components` 当前已覆盖 `button`、`textField`、`segmentedControl`、`checkbox`、`switchControl`、`radioButton`、`slider`、`tabPager`
 - `button`、`textField`、`segmentedControl` 当前都已具备 disabled 等状态型组件 token
 - `tabPager` 当前已切到组件样式 token，但尺寸类默认值仍保留在 `TabPagerDefaults`
 
@@ -268,7 +268,19 @@ UiTheme(AppTheme.light()) {
     UiThemeOverride(
         components = {
             copy(
-                inputControl = inputControl.copy(
+                checkbox = checkbox.copy(
+                    control = 0xFF3F8CFF.toInt(),
+                    controlDisabled = 0xFF9EB6D8.toInt(),
+                ),
+                switchControl = switchControl.copy(
+                    control = 0xFF3F8CFF.toInt(),
+                    controlDisabled = 0xFF9EB6D8.toInt(),
+                ),
+                radioButton = radioButton.copy(
+                    control = 0xFF3F8CFF.toInt(),
+                    controlDisabled = 0xFF9EB6D8.toInt(),
+                ),
+                slider = slider.copy(
                     control = 0xFF3F8CFF.toInt(),
                     controlDisabled = 0xFF9EB6D8.toInt(),
                 )

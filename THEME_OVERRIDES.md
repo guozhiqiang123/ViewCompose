@@ -461,6 +461,6 @@ UiThemeOverride(
 补充实现状态：
 
 - `Theme.components` 已完成
-- `Button/TextField/SegmentedControl/InputControl/TabPager` 已切到组件默认样式 token
+- `Button/TextField/SegmentedControl/Checkbox/Switch/RadioButton/Slider/TabPager` 已切到组件默认样式 token
 - `Button` 与 `TextField` 的 disabled/error/outlined 等状态组合已进入组件 token
 - `SegmentedControl` 的 disabled 颜色与交互态已进入组件 token
