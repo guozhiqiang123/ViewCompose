@@ -1,6 +1,8 @@
 package com.gzq.uiframework.renderer.modifier
 
 import com.gzq.uiframework.renderer.layout.BoxAlignment
+import com.gzq.uiframework.renderer.layout.HorizontalAlignment
+import com.gzq.uiframework.renderer.layout.VerticalAlignment
 
 class Modifier private constructor(
     internal val elements: List<ModifierElement>,
@@ -63,6 +65,14 @@ data class WeightModifierElement(
 
 data class BoxAlignModifierElement(
     val alignment: BoxAlignment,
+) : ModifierElement
+
+data class HorizontalAlignModifierElement(
+    val alignment: HorizontalAlignment,
+) : ModifierElement
+
+data class VerticalAlignModifierElement(
+    val alignment: VerticalAlignment,
 ) : ModifierElement
 
 data class OffsetModifierElement(
@@ -210,6 +220,18 @@ fun Modifier.weight(weight: Float): Modifier {
 fun Modifier.align(alignment: BoxAlignment): Modifier {
     return then(
         BoxAlignModifierElement(alignment),
+    )
+}
+
+fun Modifier.align(alignment: HorizontalAlignment): Modifier {
+    return then(
+        HorizontalAlignModifierElement(alignment),
+    )
+}
+
+fun Modifier.align(alignment: VerticalAlignment): Modifier {
+    return then(
+        VerticalAlignModifierElement(alignment),
     )
 }
 

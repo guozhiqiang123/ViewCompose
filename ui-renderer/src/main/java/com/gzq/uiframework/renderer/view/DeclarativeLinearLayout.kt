@@ -6,21 +6,22 @@ import android.graphics.ColorFilter
 import android.graphics.PixelFormat
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
 import com.gzq.uiframework.renderer.layout.CrossAxisPlacementCalculator
-import com.gzq.uiframework.renderer.layout.HorizontalAlignment
-import com.gzq.uiframework.renderer.layout.LinearArrangementCalculator
+import com.gzq.uiframework.renderer.layout.LinearCrossAxisAlignmentResolver
 import com.gzq.uiframework.renderer.layout.LinearChildSpec
 import com.gzq.uiframework.renderer.layout.LinearPlacementCalculator
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
-import com.gzq.uiframework.renderer.layout.VerticalAlignment
 
 internal class DeclarativeLinearLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
 ) : LinearLayout(context, attrs) {
+    companion object {
+        private const val UNSPECIFIED_CHILD_GRAVITY: Int = -1
+    }
+
     var itemSpacing: Int = 0
         set(value) {
             field = value
@@ -134,7 +135,10 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
             childSize = child.measuredHeight,
             leadingMargin = params.topMargin,
             trailingMargin = params.bottomMargin,
-            alignment = gravity.toVerticalAlignment(),
+            alignment = LinearCrossAxisAlignmentResolver.resolveVertical(
+                containerGravity = gravity,
+                childGravity = readChildGravity(params),
+            ),
         )
     }
 
@@ -148,8 +152,16 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
             childSize = child.measuredWidth,
             leadingMargin = params.leftMargin,
             trailingMargin = params.rightMargin,
-            alignment = gravity.toHorizontalAlignment(),
+            alignment = LinearCrossAxisAlignmentResolver.resolveHorizontal(
+                containerGravity = gravity,
+                childGravity = readChildGravity(params),
+            ),
         )
+    }
+
+    private fun readChildGravity(params: MarginLayoutParams): Int? {
+        val gravity = (params as? LayoutParams)?.gravity ?: UNSPECIFIED_CHILD_GRAVITY
+        return gravity.takeUnless { it == UNSPECIFIED_CHILD_GRAVITY }
     }
 
     private fun updateSpacingDivider() {
@@ -188,21 +200,5 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
         override fun getIntrinsicWidth(): Int = width
 
         override fun getIntrinsicHeight(): Int = height
-    }
-
-    private fun Int.toVerticalAlignment(): VerticalAlignment {
-        return when (this and Gravity.VERTICAL_GRAVITY_MASK) {
-            Gravity.CENTER_VERTICAL -> VerticalAlignment.Center
-            Gravity.BOTTOM -> VerticalAlignment.Bottom
-            else -> VerticalAlignment.Top
-        }
-    }
-
-    private fun Int.toHorizontalAlignment(): HorizontalAlignment {
-        return when (this and Gravity.HORIZONTAL_GRAVITY_MASK) {
-            Gravity.CENTER_HORIZONTAL -> HorizontalAlignment.Center
-            Gravity.END -> HorizontalAlignment.End
-            else -> HorizontalAlignment.Start
-        }
     }
 }

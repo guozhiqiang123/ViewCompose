@@ -19,10 +19,12 @@ import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
 import com.gzq.uiframework.renderer.modifier.BoxAlignModifierElement
 import com.gzq.uiframework.renderer.modifier.ClickableModifierElement
 import com.gzq.uiframework.renderer.modifier.HeightModifierElement
+import com.gzq.uiframework.renderer.modifier.HorizontalAlignModifierElement
 import com.gzq.uiframework.renderer.modifier.MarginModifierElement
 import com.gzq.uiframework.renderer.modifier.OffsetModifierElement
 import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
 import com.gzq.uiframework.renderer.modifier.SizeModifierElement
+import com.gzq.uiframework.renderer.modifier.VerticalAlignModifierElement
 import com.gzq.uiframework.renderer.modifier.Visibility
 import com.gzq.uiframework.renderer.modifier.VisibilityModifierElement
 import com.gzq.uiframework.renderer.modifier.WeightModifierElement
@@ -299,6 +301,10 @@ object ViewTreeRenderer {
         val widthModifier = node.modifier.elements.lastOrNull { it is WidthModifierElement } as? WidthModifierElement
         val heightModifier = node.modifier.elements.lastOrNull { it is HeightModifierElement } as? HeightModifierElement
         val weight = node.modifier.elements.lastOrNull { it is WeightModifierElement } as? WeightModifierElement
+        val horizontalAlign = node.modifier.elements
+            .lastOrNull { it is HorizontalAlignModifierElement } as? HorizontalAlignModifierElement
+        val verticalAlign = node.modifier.elements
+            .lastOrNull { it is VerticalAlignModifierElement } as? VerticalAlignModifierElement
         val defaultWidth = if (node.type == NodeType.Text || node.type == NodeType.Button) {
             ViewGroup.LayoutParams.WRAP_CONTENT
         } else {
@@ -333,6 +339,10 @@ object ViewTreeRenderer {
                     margin = margin,
                 ) {
                     this.weight = weight?.weight ?: 0f
+                    gravity = when (parent.orientation) {
+                        LinearLayout.HORIZONTAL -> verticalAlign?.alignment?.toGravity() ?: -1
+                        else -> horizontalAlign?.alignment?.toGravity() ?: -1
+                    }
                 }
             }
             is DeclarativeBoxLayout -> FrameLayout.LayoutParams(width, height).applyLayoutParams(

@@ -168,6 +168,7 @@ class MainActivity : AppCompatActivity() {
                     Text(
                         text = "Left pane",
                         modifier = Modifier.Empty
+                            .align(VerticalAlignment.Top)
                             .backgroundColor(Color.parseColor("#DCEBFF"))
                             .weight(1f)
                             .padding(12),
@@ -175,6 +176,7 @@ class MainActivity : AppCompatActivity() {
                     Text(
                         text = "Right pane",
                         modifier = Modifier.Empty
+                            .align(VerticalAlignment.Bottom)
                             .backgroundColor(Color.parseColor("#FFE4D6"))
                             .weight(1f)
                             .padding(12),
@@ -242,11 +244,15 @@ class MainActivity : AppCompatActivity() {
                         ) {
                             Text(
                                 text = "Transient keyed panel",
-                                modifier = Modifier.Empty.padding(4),
+                                modifier = Modifier.Empty
+                                    .align(HorizontalAlignment.Start)
+                                    .padding(4),
                             )
                             Button(
                                 text = "Panel taps: ${panelTapState.value}",
-                                modifier = Modifier.Empty.padding(4),
+                                modifier = Modifier.Empty
+                                    .align(HorizontalAlignment.End)
+                                    .padding(4),
                                 onClick = {
                                     panelTapState.value = panelTapState.value + 1
                                 },
