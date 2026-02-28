@@ -301,6 +301,10 @@ object ViewTreeRenderer {
                     onTabSelected = readOnTabSelected(node),
                     backgroundColor = readTabBackgroundColor(node),
                     indicatorColor = readTabIndicatorColor(node),
+                    cornerRadius = readTabCornerRadius(node),
+                    indicatorHeight = readTabIndicatorHeight(node),
+                    tabPaddingHorizontal = readTabPaddingHorizontal(node),
+                    tabPaddingVertical = readTabPaddingVertical(node),
                     selectedTextColor = readTabSelectedTextColor(node),
                     unselectedTextColor = readTabUnselectedTextColor(node),
                     rippleColor = readTabRippleColor(node),
@@ -785,6 +789,22 @@ object ViewTreeRenderer {
 
     private fun readTabIndicatorColor(node: VNode): Int {
         return node.props.values[PropKeys.TAB_INDICATOR_COLOR] as? Int ?: 0
+    }
+
+    private fun readTabCornerRadius(node: VNode): Int {
+        return node.props.values[PropKeys.TAB_CORNER_RADIUS] as? Int ?: 0
+    }
+
+    private fun readTabIndicatorHeight(node: VNode): Int {
+        return node.props.values[PropKeys.TAB_INDICATOR_HEIGHT] as? Int ?: 0
+    }
+
+    private fun readTabPaddingHorizontal(node: VNode): Int {
+        return node.props.values[PropKeys.TAB_CONTENT_PADDING_HORIZONTAL] as? Int ?: 0
+    }
+
+    private fun readTabPaddingVertical(node: VNode): Int {
+        return node.props.values[PropKeys.TAB_CONTENT_PADDING_VERTICAL] as? Int ?: 0
     }
 
     private fun readTabSelectedTextColor(node: VNode): Int {

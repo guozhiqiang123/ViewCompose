@@ -2,6 +2,7 @@ package com.gzq.uiframework.renderer.view
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.drawable.GradientDrawable
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
@@ -58,6 +59,10 @@ internal class DeclarativeTabPagerLayout(
         onTabSelected: ((Int) -> Unit)?,
         backgroundColor: Int,
         indicatorColor: Int,
+        cornerRadius: Int,
+        indicatorHeight: Int,
+        tabPaddingHorizontal: Int,
+        tabPaddingVertical: Int,
         selectedTextColor: Int,
         unselectedTextColor: Int,
         rippleColor: Int,
@@ -66,12 +71,28 @@ internal class DeclarativeTabPagerLayout(
         this.pages = pages
         viewPager.offscreenPageLimit = pages.size.coerceAtLeast(1)
         adapter.submitPages(pages)
-        tabLayout.setBackgroundColor(backgroundColor)
+        tabLayout.background = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            setColor(backgroundColor)
+            this.cornerRadius = cornerRadius.toFloat()
+        }
         viewPager.setBackgroundColor(backgroundColor)
-        tabLayout.setSelectedTabIndicatorColor(indicatorColor)
+        tabLayout.setSelectedTabIndicator(
+            GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                setColor(indicatorColor)
+                this.cornerRadius = (indicatorHeight / 2f).coerceAtLeast(1f)
+                setSize(0, indicatorHeight)
+            },
+        )
         tabLayout.setTabTextColors(unselectedTextColor, selectedTextColor)
         tabLayout.tabRippleColor = ColorStateList.valueOf(rippleColor)
+        tabLayout.setTabIndicatorFullWidth(false)
         syncTabs()
+        applyTabItemPadding(
+            horizontal = tabPaddingHorizontal,
+            vertical = tabPaddingVertical,
+        )
         val resolvedIndex = TabPagerSelectionResolver.resolve(pages, selectedTabIndex)
         if (resolvedIndex == null) {
             return
@@ -100,6 +121,21 @@ internal class DeclarativeTabPagerLayout(
             if (tab != null && tab.text != page.title) {
                 tab.text = page.title
             }
+        }
+    }
+
+    private fun applyTabItemPadding(
+        horizontal: Int,
+        vertical: Int,
+    ) {
+        val strip = tabLayout.getChildAt(0) as? ViewGroup ?: return
+        for (index in 0 until strip.childCount) {
+            strip.getChildAt(index).setPadding(
+                horizontal,
+                vertical,
+                horizontal,
+                vertical,
+            )
         }
     }
 }
