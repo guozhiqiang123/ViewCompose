@@ -34,6 +34,7 @@ import com.gzq.uiframework.widget.core.renderInto
 
 class MainActivity : AppCompatActivity() {
     private val reversedState = mutableStateOf(false)
+    private val alternateLabelsState = mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -170,6 +171,17 @@ class MainActivity : AppCompatActivity() {
                     },
                 )
                 Button(
+                    text = if (alternateLabelsState.value) {
+                        "Show primary labels"
+                    } else {
+                        "Show alternate labels"
+                    },
+                    modifier = Modifier.Empty.padding(8),
+                    onClick = {
+                        alternateLabelsState.value = !alternateLabelsState.value
+                    },
+                )
+                Button(
                     text = if (transientPanelVisibleState.value) {
                         "Hide transient panel"
                     } else {
@@ -212,10 +224,19 @@ class MainActivity : AppCompatActivity() {
                     listOf("C", "B", "A")
                 } else {
                     listOf("A", "B", "C")
+                }.map { id ->
+                    DemoListItem(
+                        id = id,
+                        title = if (alternateLabelsState.value) {
+                            "Lazy item $id (alt)"
+                        } else {
+                            "Lazy item $id"
+                        },
+                    )
                 }
                 LazyColumn(
                     items = keyedItems,
-                    key = { item -> item },
+                    key = { item -> item.id },
                     modifier = Modifier.Empty
                         .fillMaxWidth()
                         .height(220)
@@ -223,17 +244,17 @@ class MainActivity : AppCompatActivity() {
                 ) { item ->
                     val itemCountState = remember { mutableStateOf(0) }
                     Column(
-                        key = item,
+                        key = item.id,
                         modifier = Modifier.Empty
                             .backgroundColor(Color.parseColor("#FFF7ED"))
                             .padding(8),
                     ) {
                         Text(
-                            text = "Lazy item $item",
+                            text = item.title,
                             modifier = Modifier.Empty.padding(4),
                         )
                         Button(
-                            text = "Item $item taps: ${itemCountState.value}",
+                            text = "Item ${item.id} taps: ${itemCountState.value}",
                             modifier = Modifier.Empty.padding(4),
                             onClick = {
                                 itemCountState.value = itemCountState.value + 1
@@ -244,4 +265,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    private data class DemoListItem(
+        val id: String,
+        val title: String,
+    )
 }
