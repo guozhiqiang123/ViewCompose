@@ -126,6 +126,7 @@ class MainActivity : AppCompatActivity() {
                     modifier = Modifier.Empty.padding(8),
                 )
                 Row(
+                    spacing = 12,
                     modifier = Modifier.Empty
                         .fillMaxWidth()
                         .padding(horizontal = 8, vertical = 4),
@@ -197,6 +198,7 @@ class MainActivity : AppCompatActivity() {
                     key("transient-panel") {
                         val panelTapState = remember { mutableStateOf(0) }
                         Column(
+                            spacing = 4,
                             modifier = Modifier.Empty
                                 .backgroundColor(Color.parseColor("#FDECC8"))
                                 .margin(vertical = 8)

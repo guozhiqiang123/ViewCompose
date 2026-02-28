@@ -80,12 +80,18 @@ fun UiTreeBuilder.Box(
 
 fun UiTreeBuilder.Row(
     key: Any? = null,
+    spacing: Int = 0,
     modifier: Modifier = Modifier.Empty,
     content: UiTreeBuilder.() -> Unit,
 ) {
     emit(
         type = NodeType.Row,
         key = key,
+        props = Props(
+            values = mapOf(
+                PropKeys.LINEAR_SPACING to spacing,
+            ),
+        ),
         modifier = modifier,
         content = content,
     )
@@ -93,12 +99,18 @@ fun UiTreeBuilder.Row(
 
 fun UiTreeBuilder.Column(
     key: Any? = null,
+    spacing: Int = 0,
     modifier: Modifier = Modifier.Empty,
     content: UiTreeBuilder.() -> Unit,
 ) {
     emit(
         type = NodeType.Column,
         key = key,
+        props = Props(
+            values = mapOf(
+                PropKeys.LINEAR_SPACING to spacing,
+            ),
+        ),
         modifier = modifier,
         content = content,
     )

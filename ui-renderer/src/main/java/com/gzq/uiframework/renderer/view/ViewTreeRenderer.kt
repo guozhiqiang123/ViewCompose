@@ -1,6 +1,10 @@
 package com.gzq.uiframework.renderer.view
 
 import android.content.Context
+import android.graphics.Canvas
+import android.graphics.ColorFilter
+import android.graphics.PixelFormat
+import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -185,8 +189,19 @@ object ViewTreeRenderer {
                 }
             }
 
-            NodeType.Row -> (view as LinearLayout).orientation = LinearLayout.HORIZONTAL
-            NodeType.Column -> (view as LinearLayout).orientation = LinearLayout.VERTICAL
+            NodeType.Row -> {
+                (view as LinearLayout).apply {
+                    orientation = LinearLayout.HORIZONTAL
+                    applyLinearSpacing(readLinearSpacing(node))
+                }
+            }
+
+            NodeType.Column -> {
+                (view as LinearLayout).apply {
+                    orientation = LinearLayout.VERTICAL
+                    applyLinearSpacing(readLinearSpacing(node))
+                }
+            }
             NodeType.Box,
             NodeType.Image,
             -> Unit
@@ -351,6 +366,10 @@ object ViewTreeRenderer {
         return node.props.values[PropKeys.LAZY_ITEMS] as? List<LazyListItem> ?: emptyList()
     }
 
+    private fun readLinearSpacing(node: VNode): Int {
+        return node.props.values[PropKeys.LINEAR_SPACING] as? Int ?: 0
+    }
+
     private fun disposeMountedNode(
         mountedNode: MountedNode,
     ) {
@@ -361,5 +380,45 @@ object ViewTreeRenderer {
                 (adapter as? LazyColumnAdapter)?.disposeAll()
             }
         mountedNode.children = emptyList()
+    }
+
+    private fun LinearLayout.applyLinearSpacing(
+        spacing: Int,
+    ) {
+        if (spacing <= 0) {
+            showDividers = LinearLayout.SHOW_DIVIDER_NONE
+            dividerDrawable = null
+            return
+        }
+        showDividers = LinearLayout.SHOW_DIVIDER_MIDDLE
+        dividerDrawable = if (orientation == LinearLayout.HORIZONTAL) {
+            SpacingDrawable(
+                width = spacing,
+                height = 0,
+            )
+        } else {
+            SpacingDrawable(
+                width = 0,
+                height = spacing,
+            )
+        }
+    }
+
+    private class SpacingDrawable(
+        private val width: Int,
+        private val height: Int,
+    ) : Drawable() {
+        override fun draw(canvas: Canvas) = Unit
+
+        override fun setAlpha(alpha: Int) = Unit
+
+        override fun setColorFilter(colorFilter: ColorFilter?) = Unit
+
+        @Deprecated("Deprecated in Java")
+        override fun getOpacity(): Int = PixelFormat.TRANSPARENT
+
+        override fun getIntrinsicWidth(): Int = width
+
+        override fun getIntrinsicHeight(): Int = height
     }
 }
