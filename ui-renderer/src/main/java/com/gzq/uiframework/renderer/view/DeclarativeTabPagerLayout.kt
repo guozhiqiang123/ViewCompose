@@ -1,0 +1,164 @@
+package com.gzq.uiframework.renderer.view
+
+import android.content.Context
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.LinearLayout
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
+import com.gzq.uiframework.renderer.node.TabPage
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
+
+internal class DeclarativeTabPagerLayout(
+    context: Context,
+) : LinearLayout(context) {
+    private val tabLayout = TabLayout(context)
+    private val viewPager = ViewPager2(context)
+    private val adapter = TabPagerAdapter()
+    private var mediator: TabLayoutMediator? = null
+    private var onTabSelected: ((Int) -> Unit)? = null
+    private var suppressSelectionCallback: Boolean = false
+    private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            if (!suppressSelectionCallback) {
+                onTabSelected?.invoke(position)
+            }
+        }
+    }
+
+    init {
+        orientation = VERTICAL
+        tabLayout.layoutParams = LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+        )
+        viewPager.layoutParams = LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            0,
+            1f,
+        )
+        viewPager.adapter = adapter
+        viewPager.registerOnPageChangeCallback(pageChangeCallback)
+        addView(tabLayout)
+        addView(viewPager)
+    }
+
+    fun bind(
+        pages: List<TabPage>,
+        selectedTabIndex: Int,
+        onTabSelected: ((Int) -> Unit)?,
+    ) {
+        this.onTabSelected = onTabSelected
+        viewPager.offscreenPageLimit = pages.size.coerceAtLeast(1)
+        adapter.submitPages(pages)
+        attachMediator(pages)
+        if (pages.isEmpty()) {
+            return
+        }
+        val resolvedIndex = selectedTabIndex.coerceIn(0, pages.lastIndex)
+        if (viewPager.currentItem == resolvedIndex) {
+            return
+        }
+        suppressSelectionCallback = true
+        viewPager.setCurrentItem(resolvedIndex, false)
+        suppressSelectionCallback = false
+    }
+
+    fun dispose() {
+        mediator?.detach()
+        mediator = null
+        viewPager.unregisterOnPageChangeCallback(pageChangeCallback)
+        adapter.disposeAll()
+    }
+
+    private fun attachMediator(pages: List<TabPage>) {
+        mediator?.detach()
+        mediator = TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            tab.text = pages.getOrNull(position)?.title.orEmpty()
+        }.also { it.attach() }
+    }
+}
+
+internal class TabPagerAdapter : RecyclerView.Adapter<TabPagerViewHolder>() {
+    private var pages: List<TabPage> = emptyList()
+    private val holderRegistry = LazyHolderRegistry<TabPagerViewHolder> { holder ->
+        holder.recycle()
+    }
+
+    init {
+        setHasStableIds(true)
+    }
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): TabPagerViewHolder {
+        val container = FrameLayout(parent.context).apply {
+            layoutParams = RecyclerView.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+            )
+        }
+        return TabPagerViewHolder(container)
+    }
+
+    override fun onBindViewHolder(
+        holder: TabPagerViewHolder,
+        position: Int,
+    ) {
+        holderRegistry.onBound(holder)
+        holder.bind(pages[position])
+    }
+
+    override fun onViewAttachedToWindow(holder: TabPagerViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        holderRegistry.onAttached(holder)
+    }
+
+    override fun onViewDetachedFromWindow(holder: TabPagerViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        holderRegistry.onDetached(holder)
+    }
+
+    override fun onViewRecycled(holder: TabPagerViewHolder) {
+        holderRegistry.onRecycled(holder)
+    }
+
+    override fun getItemCount(): Int = pages.size
+
+    override fun getItemId(position: Int): Long {
+        val key = pages[position].item.key
+        return key?.hashCode()?.toLong() ?: position.toLong()
+    }
+
+    fun submitPages(pages: List<TabPage>) {
+        this.pages = pages
+        notifyDataSetChanged()
+    }
+
+    fun disposeAll() {
+        holderRegistry.disposeAll()
+        pages = emptyList()
+        notifyDataSetChanged()
+    }
+}
+
+internal class TabPagerViewHolder(
+    private val container: FrameLayout,
+) : RecyclerView.ViewHolder(container) {
+    private val controller = LazyItemSessionController(
+        createSession = { item ->
+            item.sessionFactory.create(container)
+        },
+        clearContainer = container::removeAllViews,
+    )
+
+    fun bind(page: TabPage) {
+        controller.bind(page.item)
+    }
+
+    fun recycle() {
+        controller.recycle()
+    }
+}

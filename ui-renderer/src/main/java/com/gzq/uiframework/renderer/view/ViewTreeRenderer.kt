@@ -42,6 +42,7 @@ import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.TextFieldType
+import com.gzq.uiframework.renderer.node.TabPage
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.reconcile.ChildReconciler
 import com.gzq.uiframework.renderer.reconcile.InsertPatch
@@ -173,6 +174,7 @@ object ViewTreeRenderer {
                 layoutManager = LinearLayoutManager(context)
                 adapter = LazyColumnAdapter()
             }
+            NodeType.TabPager -> DeclarativeTabPagerLayout(context)
         }
 
         cacheOriginalBackground(view)
@@ -253,6 +255,14 @@ object ViewTreeRenderer {
                     }
                     adapter.submitItems(readLazyItems(node))
                 }
+            }
+
+            NodeType.TabPager -> {
+                (view as DeclarativeTabPagerLayout).bind(
+                    pages = readTabPages(node),
+                    selectedTabIndex = readSelectedTabIndex(node),
+                    onTabSelected = readOnTabSelected(node),
+                )
             }
         }
     }
@@ -538,6 +548,20 @@ object ViewTreeRenderer {
         return node.props.values[PropKeys.LAZY_ITEMS] as? List<LazyListItem> ?: emptyList()
     }
 
+    @Suppress("UNCHECKED_CAST")
+    private fun readTabPages(node: VNode): List<TabPage> {
+        return node.props.values[PropKeys.TAB_PAGES] as? List<TabPage> ?: emptyList()
+    }
+
+    private fun readSelectedTabIndex(node: VNode): Int {
+        return node.props.values[PropKeys.SELECTED_TAB_INDEX] as? Int ?: 0
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun readOnTabSelected(node: VNode): ((Int) -> Unit)? {
+        return node.props.values[PropKeys.ON_TAB_SELECTED] as? ((Int) -> Unit)
+    }
+
     private fun readLinearSpacing(node: VNode): Int {
         return node.props.values[PropKeys.LINEAR_SPACING] as? Int ?: 0
     }
@@ -617,6 +641,7 @@ object ViewTreeRenderer {
         mountedNode: MountedNode,
     ) {
         mountedNode.children.forEach(::disposeMountedNode)
+        (mountedNode.view as? DeclarativeTabPagerLayout)?.dispose()
         (mountedNode.view as? RecyclerView)
             ?.adapter
             ?.let { adapter ->

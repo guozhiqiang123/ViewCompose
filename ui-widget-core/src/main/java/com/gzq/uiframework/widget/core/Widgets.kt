@@ -17,6 +17,7 @@ import com.gzq.uiframework.renderer.node.LazyListItemSessionFactory
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.Props
+import com.gzq.uiframework.renderer.node.TabPage
 import com.gzq.uiframework.renderer.node.TextFieldType
 
 fun UiTreeBuilder.Text(
@@ -334,6 +335,66 @@ fun <T> UiTreeBuilder.LazyColumn(
     )
 }
 
+@UiDslMarker
+class TabPagerScope internal constructor() {
+    private val pages = mutableListOf<TabPagerPage>()
+
+    fun Page(
+        title: String,
+        key: Any? = title,
+        contentToken: Any? = title,
+        content: UiTreeBuilder.() -> Unit,
+    ) {
+        pages += TabPagerPage(
+            title = title,
+            key = key,
+            contentToken = contentToken,
+            content = content,
+        )
+    }
+
+    internal fun build(): List<TabPagerPage> = pages.toList()
+}
+
+fun UiTreeBuilder.TabPager(
+    selectedTabIndex: Int,
+    onTabSelected: (Int) -> Unit,
+    key: Any? = null,
+    modifier: Modifier = Modifier.Empty,
+    pages: TabPagerScope.() -> Unit,
+) {
+    val builtPages = TabPagerScope().apply(pages).build()
+    emit(
+        type = NodeType.TabPager,
+        key = key,
+        props = Props(
+            values = mapOf(
+                PropKeys.SELECTED_TAB_INDEX to selectedTabIndex,
+                PropKeys.ON_TAB_SELECTED to onTabSelected,
+                PropKeys.TAB_PAGES to builtPages.map { page ->
+                    TabPage(
+                        title = page.title,
+                        item = LazyListItem(
+                            key = page.key,
+                            contentToken = page.contentToken,
+                            sessionFactory = LazyListItemSessionFactory { container ->
+                                WidgetLazyListItemSession(
+                                    container = container,
+                                    content = page.content,
+                                )
+                            },
+                            sessionUpdater = { session ->
+                                (session as? WidgetLazyListItemSession)?.updateContent(page.content)
+                            },
+                        ),
+                    )
+                },
+            ),
+        ),
+        modifier = modifier,
+    )
+}
+
 private class WidgetLazyListItemSession(
     container: android.view.ViewGroup,
     content: UiTreeBuilder.() -> Unit,
@@ -360,3 +421,10 @@ private class WidgetLazyListItemSession(
         renderContent = content
     }
 }
+
+internal data class TabPagerPage(
+    val title: String,
+    val key: Any?,
+    val contentToken: Any?,
+    val content: UiTreeBuilder.() -> Unit,
+)
