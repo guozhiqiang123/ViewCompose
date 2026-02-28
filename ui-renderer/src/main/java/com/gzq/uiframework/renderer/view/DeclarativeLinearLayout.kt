@@ -10,6 +10,8 @@ import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
 import com.gzq.uiframework.renderer.layout.LinearArrangementCalculator
+import com.gzq.uiframework.renderer.layout.LinearChildSpec
+import com.gzq.uiframework.renderer.layout.LinearPlacementCalculator
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import kotlin.math.max
 
@@ -55,38 +57,33 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
     ) {
         val innerWidth = width - paddingLeft - paddingRight
         val innerHeight = height - paddingTop - paddingBottom
-        val totalChildrenWidth = children.sumOf { child ->
-            val params = child.layoutParams as MarginLayoutParams
-            child.measuredWidth + params.leftMargin + params.rightMargin
-        }
-        val baseSpacing = if (children.size > 1) itemSpacing * (children.size - 1) else 0
-        val consumedWidth = totalChildrenWidth + baseSpacing
-        val extraSpace = max(0, innerWidth - consumedWidth)
-        val arrangement = LinearArrangementCalculator.calculate(
+        val placements = LinearPlacementCalculator.calculate(
+            containerSize = innerWidth,
             arrangement = mainAxisArrangement,
             itemSpacing = itemSpacing,
-            extraSpace = extraSpace,
-            childCount = children.size,
             hasWeightedChildren = children.any { child ->
                 ((child.layoutParams as? LayoutParams)?.weight ?: 0f) > 0f
             },
+            children = children.map { child ->
+                val params = child.layoutParams as MarginLayoutParams
+                LinearChildSpec(
+                    size = child.measuredWidth,
+                    leadingMargin = params.leftMargin,
+                    trailingMargin = params.rightMargin,
+                )
+            },
         )
-        var currentLeft = paddingLeft + arrangement.leadingSpace
         children.forEachIndexed { index, child ->
             val params = child.layoutParams as MarginLayoutParams
-            currentLeft += params.leftMargin
             val childTop = paddingTop + resolveVerticalGravity(
                 child = child,
                 params = params,
                 innerHeight = innerHeight,
             )
-            val childRight = currentLeft + child.measuredWidth
+            val childLeft = paddingLeft + placements[index].leading
+            val childRight = paddingLeft + placements[index].trailing
             val childBottom = childTop + child.measuredHeight
-            child.layout(currentLeft, childTop, childRight, childBottom)
-            currentLeft = childRight + params.rightMargin
-            if (index != children.lastIndex) {
-                currentLeft += arrangement.gap
-            }
+            child.layout(childLeft, childTop, childRight, childBottom)
         }
     }
 
@@ -95,38 +92,33 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
     ) {
         val innerWidth = width - paddingLeft - paddingRight
         val innerHeight = height - paddingTop - paddingBottom
-        val totalChildrenHeight = children.sumOf { child ->
-            val params = child.layoutParams as MarginLayoutParams
-            child.measuredHeight + params.topMargin + params.bottomMargin
-        }
-        val baseSpacing = if (children.size > 1) itemSpacing * (children.size - 1) else 0
-        val consumedHeight = totalChildrenHeight + baseSpacing
-        val extraSpace = max(0, innerHeight - consumedHeight)
-        val arrangement = LinearArrangementCalculator.calculate(
+        val placements = LinearPlacementCalculator.calculate(
+            containerSize = innerHeight,
             arrangement = mainAxisArrangement,
             itemSpacing = itemSpacing,
-            extraSpace = extraSpace,
-            childCount = children.size,
             hasWeightedChildren = children.any { child ->
                 ((child.layoutParams as? LayoutParams)?.weight ?: 0f) > 0f
             },
+            children = children.map { child ->
+                val params = child.layoutParams as MarginLayoutParams
+                LinearChildSpec(
+                    size = child.measuredHeight,
+                    leadingMargin = params.topMargin,
+                    trailingMargin = params.bottomMargin,
+                )
+            },
         )
-        var currentTop = paddingTop + arrangement.leadingSpace
         children.forEachIndexed { index, child ->
             val params = child.layoutParams as MarginLayoutParams
-            currentTop += params.topMargin
             val childLeft = paddingLeft + resolveHorizontalGravity(
                 child = child,
                 params = params,
                 innerWidth = innerWidth,
             )
             val childRight = childLeft + child.measuredWidth
-            val childBottom = currentTop + child.measuredHeight
-            child.layout(childLeft, currentTop, childRight, childBottom)
-            currentTop = childBottom + params.bottomMargin
-            if (index != children.lastIndex) {
-                currentTop += arrangement.gap
-            }
+            val childTop = paddingTop + placements[index].leading
+            val childBottom = paddingTop + placements[index].trailing
+            child.layout(childLeft, childTop, childRight, childBottom)
         }
     }
 
