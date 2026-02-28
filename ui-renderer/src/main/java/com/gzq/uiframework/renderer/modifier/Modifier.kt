@@ -9,6 +9,8 @@ class Modifier private constructor(
 ) {
     fun then(element: ModifierElement): Modifier = Modifier(elements + element)
 
+    fun then(modifier: Modifier): Modifier = Modifier(elements + modifier.elements)
+
     companion object {
         val Empty: Modifier = Modifier(emptyList())
     }
@@ -31,6 +33,10 @@ data class MarginModifierElement(
 ) : ModifierElement
 
 data class BackgroundColorModifierElement(
+    val color: Int,
+) : ModifierElement
+
+data class TextColorModifierElement(
     val color: Int,
 ) : ModifierElement
 
@@ -128,6 +134,12 @@ fun Modifier.padding(
 fun Modifier.backgroundColor(color: Int): Modifier {
     return then(
         BackgroundColorModifierElement(color),
+    )
+}
+
+fun Modifier.textColor(color: Int): Modifier {
+    return then(
+        TextColorModifierElement(color),
     )
 }
 

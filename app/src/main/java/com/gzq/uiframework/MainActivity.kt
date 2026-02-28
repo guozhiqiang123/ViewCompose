@@ -1,6 +1,5 @@
 package com.gzq.uiframework
 
-import android.graphics.Color
 import android.os.Bundle
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -22,8 +21,8 @@ import com.gzq.uiframework.renderer.modifier.height
 import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.offset
 import com.gzq.uiframework.renderer.modifier.padding
+import com.gzq.uiframework.renderer.modifier.textColor
 import com.gzq.uiframework.renderer.modifier.visibility
-import com.gzq.uiframework.renderer.modifier.weight
 import com.gzq.uiframework.renderer.modifier.width
 import com.gzq.uiframework.renderer.modifier.zIndex
 import com.gzq.uiframework.runtime.derivedStateOf
@@ -38,8 +37,10 @@ import com.gzq.uiframework.widget.core.FlexibleSpacer
 import com.gzq.uiframework.widget.core.LazyColumn
 import com.gzq.uiframework.widget.core.Row
 import com.gzq.uiframework.widget.core.SideEffect
-import com.gzq.uiframework.widget.core.Spacer
+import com.gzq.uiframework.widget.core.Theme
 import com.gzq.uiframework.widget.core.Text
+import com.gzq.uiframework.widget.core.UiTheme
+import com.gzq.uiframework.widget.core.UiThemeDefaults
 import com.gzq.uiframework.widget.core.key
 import com.gzq.uiframework.widget.core.produceState
 import com.gzq.uiframework.widget.core.remember
@@ -99,221 +100,224 @@ class MainActivity : AppCompatActivity() {
                     title = "UIFramework"
                 }
             }
-            Column(
-                modifier = Modifier.Empty
-                    .backgroundColor(Color.parseColor("#F4F1EA"))
-                    .padding(24),
-            ) {
-                Text(
-                    text = "UIFramework",
+            UiTheme(UiThemeDefaults.light()) {
+                Column(
                     modifier = Modifier.Empty
-                        .backgroundColor(Color.parseColor("#E6D9C6"))
-                        .padding(8),
-                )
-                Text(
-                    text = "Declarative UI on Android Views",
-                    modifier = Modifier.Empty
-                        .clickable {
-                            textToggleState.value = !textToggleState.value
-                        }
-                        .padding(8),
-                )
-                Text(
-                    text = if (textToggleState.value) {
-                        "Text modifier click: ON"
-                    } else {
-                        "Text modifier click: OFF"
-                    },
-                    modifier = Modifier.Empty.padding(horizontal = 8, vertical = 4),
-                )
-                Text(text = "Clicks: ${clickCountState.value}")
-                Text(
-                    text = clickSummaryState.value,
-                    modifier = Modifier.Empty
-                        .alpha(0.7f)
-                        .padding(8),
-                )
-                Text(
-                    text = listOrderState.value,
-                    modifier = Modifier.Empty.padding(8),
-                )
-                Divider(
-                    color = Color.parseColor("#D8CCBA"),
-                    thickness = 1,
-                    modifier = Modifier.Empty.margin(vertical = 8),
-                )
-                Box(
-                    contentAlignment = BoxAlignment.Center,
-                    modifier = Modifier.Empty
-                        .fillMaxWidth()
-                        .height(72)
-                        .backgroundColor(Color.parseColor("#E8F0D8"))
-                        .margin(vertical = 8),
+                        .backgroundColor(Theme.colors.background)
+                        .padding(24),
                 ) {
                     Text(
-                        text = "Centered in Box",
+                        text = "UIFramework",
                         modifier = Modifier.Empty
-                            .backgroundColor(Color.parseColor("#BFD8A6"))
-                            .padding(horizontal = 12, vertical = 8),
+                            .backgroundColor(Theme.colors.surface)
+                            .padding(8),
                     )
                     Text(
-                        text = "Pinned",
+                        text = "Declarative UI on Android Views",
                         modifier = Modifier.Empty
-                            .align(BoxAlignment.BottomEnd)
-                            .offset(x = -8f, y = -8f)
-                            .zIndex(1f)
-                            .backgroundColor(Color.parseColor("#D6C6F0"))
-                            .padding(horizontal = 8, vertical = 4),
+                            .textColor(Theme.colors.textSecondary)
+                            .clickable {
+                                textToggleState.value = !textToggleState.value
+                            }
+                            .padding(8),
                     )
-                }
-                Row(
-                    arrangement = MainAxisArrangement.Start,
-                    spacing = 0,
-                    verticalAlignment = VerticalAlignment.Center,
-                    modifier = Modifier.Empty
-                        .fillMaxWidth()
-                        .padding(horizontal = 8, vertical = 4),
-                ) {
                     Text(
-                        text = "Left pane",
-                        modifier = Modifier.Empty
-                            .align(VerticalAlignment.Top)
-                            .backgroundColor(Color.parseColor("#DCEBFF"))
-                            .padding(12),
+                        text = if (textToggleState.value) {
+                            "Text modifier click: ON"
+                        } else {
+                            "Text modifier click: OFF"
+                        },
+                        modifier = Modifier.Empty.padding(horizontal = 8, vertical = 4),
                     )
-                    FlexibleSpacer(modifier = Modifier.Empty.width(12))
+                    Text(text = "Clicks: ${clickCountState.value}")
                     Text(
-                        text = "Right pane",
+                        text = clickSummaryState.value,
                         modifier = Modifier.Empty
-                            .align(VerticalAlignment.Bottom)
-                            .backgroundColor(Color.parseColor("#FFE4D6"))
-                            .padding(12),
+                            .textColor(Theme.colors.textSecondary)
+                            .alpha(0.7f)
+                            .padding(8),
                     )
-                }
-                AndroidView(
-                    key = "legacy_summary",
-                    modifier = Modifier.Empty
-                        .alpha(0.85f)
-                        .padding(8),
-                    factory = { context ->
-                        TextView(context)
-                    },
-                    update = { view ->
-                        (view as TextView).text = "Legacy TextView mirror: ${clickSummaryState.value}"
-                    },
-                )
-                Button(
-                    text = "Increment",
-                    modifier = Modifier.Empty.padding(8),
-                    onClick = {
-                        clickCountState.value = clickCountState.value + 1
-                    },
-                )
-                Button(
-                    text = if (reversedState.value) "Show A-B-C" else "Show C-B-A",
-                    modifier = Modifier.Empty.padding(8),
-                    onClick = {
-                        reversedState.value = !reversedState.value
-                    },
-                )
-                Button(
-                    text = if (alternateLabelsState.value) {
-                        "Show primary labels"
-                    } else {
-                        "Show alternate labels"
-                    },
-                    modifier = Modifier.Empty.padding(8),
-                    onClick = {
-                        alternateLabelsState.value = !alternateLabelsState.value
-                    },
-                )
-                Button(
-                    text = if (transientPanelVisibleState.value) {
-                        "Hide transient panel"
-                    } else {
-                        "Show transient panel"
-                    },
-                    modifier = Modifier.Empty.padding(8),
-                    onClick = {
-                        transientPanelVisibleState.value = !transientPanelVisibleState.value
-                    },
-                )
-                if (transientPanelVisibleState.value) {
-                    key("transient-panel") {
-                        val panelTapState = remember { mutableStateOf(0) }
-                        Column(
-                            arrangement = MainAxisArrangement.SpaceAround,
-                            horizontalAlignment = HorizontalAlignment.Center,
-                            spacing = 4,
+                    Text(
+                        text = listOrderState.value,
+                        modifier = Modifier.Empty.padding(8),
+                    )
+                    Divider(
+                        thickness = 1,
+                        modifier = Modifier.Empty.margin(vertical = 8),
+                    )
+                    Box(
+                        contentAlignment = BoxAlignment.Center,
+                        modifier = Modifier.Empty
+                            .fillMaxWidth()
+                            .height(72)
+                            .backgroundColor(Theme.colors.surfaceVariant)
+                            .margin(vertical = 8),
+                    ) {
+                        Text(
+                            text = "Centered in Box",
                             modifier = Modifier.Empty
-                                .backgroundColor(Color.parseColor("#FDECC8"))
-                                .margin(vertical = 8)
+                                .backgroundColor(Theme.colors.primary)
+                                .padding(horizontal = 12, vertical = 8),
+                        )
+                        Text(
+                            text = "Pinned",
+                            modifier = Modifier.Empty
+                                .align(BoxAlignment.BottomEnd)
+                                .offset(x = -8f, y = -8f)
+                                .zIndex(1f)
+                                .backgroundColor(Theme.colors.accent)
+                                .padding(horizontal = 8, vertical = 4),
+                        )
+                    }
+                    Row(
+                        arrangement = MainAxisArrangement.Start,
+                        spacing = 0,
+                        verticalAlignment = VerticalAlignment.Center,
+                        modifier = Modifier.Empty
+                            .fillMaxWidth()
+                            .padding(horizontal = 8, vertical = 4),
+                    ) {
+                        Text(
+                            text = "Left pane",
+                            modifier = Modifier.Empty
+                                .align(VerticalAlignment.Top)
+                                .backgroundColor(Theme.colors.surface)
+                                .padding(12),
+                        )
+                        FlexibleSpacer(modifier = Modifier.Empty.width(12))
+                        Text(
+                            text = "Right pane",
+                            modifier = Modifier.Empty
+                                .align(VerticalAlignment.Bottom)
+                                .backgroundColor(Theme.colors.accent)
+                                .padding(12),
+                        )
+                    }
+                    AndroidView(
+                        key = "legacy_summary",
+                        modifier = Modifier.Empty
+                            .alpha(0.85f)
+                            .padding(8),
+                        factory = { context ->
+                            TextView(context)
+                        },
+                        update = { view ->
+                            (view as TextView).text = "Legacy TextView mirror: ${clickSummaryState.value}"
+                        },
+                    )
+                    Button(
+                        text = "Increment",
+                        modifier = Modifier.Empty.padding(8),
+                        onClick = {
+                            clickCountState.value = clickCountState.value + 1
+                        },
+                    )
+                    Button(
+                        text = if (reversedState.value) "Show A-B-C" else "Show C-B-A",
+                        modifier = Modifier.Empty.padding(8),
+                        onClick = {
+                            reversedState.value = !reversedState.value
+                        },
+                    )
+                    Button(
+                        text = if (alternateLabelsState.value) {
+                            "Show primary labels"
+                        } else {
+                            "Show alternate labels"
+                        },
+                        modifier = Modifier.Empty.padding(8),
+                        onClick = {
+                            alternateLabelsState.value = !alternateLabelsState.value
+                        },
+                    )
+                    Button(
+                        text = if (transientPanelVisibleState.value) {
+                            "Hide transient panel"
+                        } else {
+                            "Show transient panel"
+                        },
+                        modifier = Modifier.Empty.padding(8),
+                        onClick = {
+                            transientPanelVisibleState.value = !transientPanelVisibleState.value
+                        },
+                    )
+                    if (transientPanelVisibleState.value) {
+                        key("transient-panel") {
+                            val panelTapState = remember { mutableStateOf(0) }
+                            Column(
+                                arrangement = MainAxisArrangement.SpaceAround,
+                                horizontalAlignment = HorizontalAlignment.Center,
+                                spacing = 4,
+                                modifier = Modifier.Empty
+                                    .backgroundColor(Theme.colors.surfaceVariant)
+                                    .margin(vertical = 8)
+                                    .padding(8),
+                            ) {
+                                Text(
+                                    text = "Transient keyed panel",
+                                    modifier = Modifier.Empty
+                                        .align(HorizontalAlignment.Start)
+                                        .padding(4),
+                                )
+                                Button(
+                                    text = "Panel taps: ${panelTapState.value}",
+                                    modifier = Modifier.Empty
+                                        .align(HorizontalAlignment.End)
+                                        .padding(4),
+                                    onClick = {
+                                        panelTapState.value = panelTapState.value + 1
+                                    },
+                                )
+                            }
+                        }
+                    }
+                    Text(
+                        text = "Visibility sample: hidden when reversed",
+                        modifier = Modifier.Empty
+                            .visibility(if (reversedState.value) Visibility.Gone else Visibility.Visible)
+                            .padding(8),
+                    )
+                    val keyedItems = if (reversedState.value) {
+                        listOf("C", "B", "A")
+                    } else {
+                        listOf("A", "B", "C")
+                    }.map { id ->
+                        DemoListItem(
+                            id = id,
+                            title = if (alternateLabelsState.value) {
+                                "Lazy item $id (alt)"
+                            } else {
+                                "Lazy item $id"
+                            },
+                        )
+                    }
+                    LazyColumn(
+                        items = keyedItems,
+                        key = { item -> item.id },
+                        modifier = Modifier.Empty
+                            .fillMaxWidth()
+                            .height(220)
+                            .padding(8),
+                    ) { item ->
+                        val itemCountState = remember { mutableStateOf(0) }
+                        Column(
+                            key = item.id,
+                            modifier = Modifier.Empty
+                                .backgroundColor(Theme.colors.surface)
                                 .padding(8),
                         ) {
                             Text(
-                                text = "Transient keyed panel",
-                                modifier = Modifier.Empty
-                                    .align(HorizontalAlignment.Start)
-                                    .padding(4),
+                                text = item.title,
+                                modifier = Modifier.Empty.padding(4),
                             )
                             Button(
-                                text = "Panel taps: ${panelTapState.value}",
-                                modifier = Modifier.Empty
-                                    .align(HorizontalAlignment.End)
-                                    .padding(4),
+                                text = "Item ${item.id} taps: ${itemCountState.value}",
+                                modifier = Modifier.Empty.padding(4),
                                 onClick = {
-                                    panelTapState.value = panelTapState.value + 1
+                                    itemCountState.value = itemCountState.value + 1
                                 },
                             )
                         }
-                    }
-                }
-                Text(
-                    text = "Visibility sample: hidden when reversed",
-                    modifier = Modifier.Empty
-                        .visibility(if (reversedState.value) Visibility.Gone else Visibility.Visible)
-                        .padding(8),
-                )
-                val keyedItems = if (reversedState.value) {
-                    listOf("C", "B", "A")
-                } else {
-                    listOf("A", "B", "C")
-                }.map { id ->
-                    DemoListItem(
-                        id = id,
-                        title = if (alternateLabelsState.value) {
-                            "Lazy item $id (alt)"
-                        } else {
-                            "Lazy item $id"
-                        },
-                    )
-                }
-                LazyColumn(
-                    items = keyedItems,
-                    key = { item -> item.id },
-                    modifier = Modifier.Empty
-                        .fillMaxWidth()
-                        .height(220)
-                        .padding(8),
-                ) { item ->
-                    val itemCountState = remember { mutableStateOf(0) }
-                    Column(
-                        key = item.id,
-                        modifier = Modifier.Empty
-                            .backgroundColor(Color.parseColor("#FFF7ED"))
-                            .padding(8),
-                    ) {
-                        Text(
-                            text = item.title,
-                            modifier = Modifier.Empty.padding(4),
-                        )
-                        Button(
-                            text = "Item ${item.id} taps: ${itemCountState.value}",
-                            modifier = Modifier.Empty.padding(4),
-                            onClick = {
-                                itemCountState.value = itemCountState.value + 1
-                            },
-                        )
                     }
                 }
             }

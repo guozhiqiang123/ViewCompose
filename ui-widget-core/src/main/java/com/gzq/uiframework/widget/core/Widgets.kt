@@ -7,6 +7,7 @@ import com.gzq.uiframework.renderer.layout.HorizontalAlignment
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.modifier.Modifier
+import com.gzq.uiframework.renderer.modifier.textColor
 import com.gzq.uiframework.renderer.modifier.weight
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.LazyListItemSession
@@ -28,7 +29,9 @@ fun UiTreeBuilder.Text(
                 PropKeys.TEXT to text,
             ),
         ),
-        modifier = modifier,
+        modifier = Modifier.Empty
+            .textColor(Theme.colors.textPrimary)
+            .then(modifier),
     )
 }
 
@@ -47,7 +50,9 @@ fun UiTreeBuilder.Button(
                 put(PropKeys.ON_CLICK, onClick)
             },
         ),
-        modifier = modifier,
+        modifier = Modifier.Empty
+            .textColor(Theme.colors.textPrimary)
+            .then(modifier),
     )
 }
 
@@ -112,7 +117,7 @@ fun UiTreeBuilder.FlexibleSpacer(
 }
 
 fun UiTreeBuilder.Divider(
-    color: Int,
+    color: Int = Theme.colors.divider,
     thickness: Int = 1,
     key: Any? = null,
     modifier: Modifier = Modifier.Empty,

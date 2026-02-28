@@ -24,6 +24,7 @@ import com.gzq.uiframework.renderer.modifier.MarginModifierElement
 import com.gzq.uiframework.renderer.modifier.OffsetModifierElement
 import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
 import com.gzq.uiframework.renderer.modifier.SizeModifierElement
+import com.gzq.uiframework.renderer.modifier.TextColorModifierElement
 import com.gzq.uiframework.renderer.modifier.VerticalAlignModifierElement
 import com.gzq.uiframework.renderer.modifier.Visibility
 import com.gzq.uiframework.renderer.modifier.VisibilityModifierElement
@@ -251,6 +252,8 @@ object ViewTreeRenderer {
         val offset = node.modifier.elements
             .lastOrNull { it is OffsetModifierElement } as? OffsetModifierElement
         val padding = node.modifier.elements.lastOrNull { it is PaddingModifierElement } as? PaddingModifierElement
+        val textColor = node.modifier.elements
+            .lastOrNull { it is TextColorModifierElement } as? TextColorModifierElement
         val visibility = node.modifier.elements
             .lastOrNull { it is VisibilityModifierElement } as? VisibilityModifierElement
         val zIndex = node.modifier.elements
@@ -283,6 +286,9 @@ object ViewTreeRenderer {
             padding.right,
             padding.bottom,
         )
+        if (view is TextView && textColor != null) {
+            view.setTextColor(textColor.color)
+        }
     }
 
     private fun moveViewToIndex(
