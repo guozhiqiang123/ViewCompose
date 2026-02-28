@@ -71,6 +71,8 @@ import com.gzq.uiframework.renderer.node.RemoteImageLoader
 import com.gzq.uiframework.renderer.node.RemoteImageRequest
 import com.gzq.uiframework.renderer.node.SegmentedControlItem
 import com.gzq.uiframework.renderer.node.TextFieldType
+import com.gzq.uiframework.renderer.node.TextAlign
+import com.gzq.uiframework.renderer.node.TextOverflow
 import com.gzq.uiframework.renderer.node.TabPage
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.reconcile.ChildReconciler
@@ -241,7 +243,15 @@ object ViewTreeRenderer {
         applyModifier(view, node)
         when (node.type) {
             NodeType.Text -> {
-                (view as TextView).text = node.props.values[PropKeys.TEXT] as? CharSequence
+                (view as TextView).apply {
+                    text = node.props.values[PropKeys.TEXT] as? CharSequence
+                    maxLines = readTextMaxLines(node)
+                    ellipsize = when (readTextOverflow(node)) {
+                        TextOverflow.Clip -> null
+                        TextOverflow.Ellipsis -> TextUtils.TruncateAt.END
+                    }
+                    gravity = readTextAlign(node).toTextGravity()
+                }
             }
 
             NodeType.TextField -> {
@@ -356,6 +366,14 @@ object ViewTreeRenderer {
                     val adapter = recyclerView.adapter as? LazyColumnAdapter ?: LazyColumnAdapter().also {
                         recyclerView.adapter = it
                     }
+                    applyLazyListPadding(
+                        recyclerView = recyclerView,
+                        padding = readLazyContentPadding(node),
+                    )
+                    applyLazyListSpacing(
+                        recyclerView = recyclerView,
+                        spacing = readLazySpacing(node),
+                    )
                     adapter.submitItems(readLazyItems(node))
                 }
             }
@@ -624,6 +642,29 @@ object ViewTreeRenderer {
         )
         view.setHintTextColor(readFieldHintColor(node))
         bindTextWatcher(view, node)
+    }
+
+    private fun applyLazyListPadding(
+        recyclerView: RecyclerView,
+        padding: Int,
+    ) {
+        recyclerView.setPadding(padding, padding, padding, padding)
+        recyclerView.clipToPadding = padding == 0
+    }
+
+    private fun applyLazyListSpacing(
+        recyclerView: RecyclerView,
+        spacing: Int,
+    ) {
+        val existing = recyclerView.getTag(R.id.ui_framework_lazy_spacing_decoration) as? LazyItemSpacingDecoration
+        if (existing != null) {
+            existing.updateSpacing(spacing)
+            recyclerView.invalidateItemDecorations()
+            return
+        }
+        val decoration = LazyItemSpacingDecoration(spacing)
+        recyclerView.setTag(R.id.ui_framework_lazy_spacing_decoration, decoration)
+        recyclerView.addItemDecoration(decoration)
     }
 
     private fun bindTextWatcher(view: EditText, node: VNode) {
@@ -1143,6 +1184,18 @@ object ViewTreeRenderer {
         return node.props.values[PropKeys.CHECKED] as? Boolean ?: false
     }
 
+    private fun readTextMaxLines(node: VNode): Int {
+        return node.props.values[PropKeys.TEXT_MAX_LINES] as? Int ?: Int.MAX_VALUE
+    }
+
+    private fun readTextOverflow(node: VNode): TextOverflow {
+        return node.props.values[PropKeys.TEXT_OVERFLOW] as? TextOverflow ?: TextOverflow.Clip
+    }
+
+    private fun readTextAlign(node: VNode): TextAlign {
+        return node.props.values[PropKeys.TEXT_ALIGN] as? TextAlign ?: TextAlign.Start
+    }
+
     private fun readEnabled(node: VNode): Boolean {
         return node.props.values[PropKeys.ENABLED] as? Boolean ?: true
     }
@@ -1177,6 +1230,14 @@ object ViewTreeRenderer {
 
     private fun readProgressFraction(node: VNode): Float? {
         return node.props.values[PropKeys.PROGRESS_FRACTION] as? Float
+    }
+
+    private fun readLazyContentPadding(node: VNode): Int {
+        return node.props.values[PropKeys.LAZY_CONTENT_PADDING] as? Int ?: 0
+    }
+
+    private fun readLazySpacing(node: VNode): Int {
+        return node.props.values[PropKeys.LAZY_SPACING] as? Int ?: 0
     }
 
     private fun readImageSource(node: VNode): ImageSource? {
@@ -1240,6 +1301,14 @@ object ViewTreeRenderer {
         return (node.modifier.elements
             .lastOrNull { it is TextColorModifierElement } as? TextColorModifierElement)
             ?.color
+    }
+
+    private fun TextAlign.toTextGravity(): Int {
+        return when (this) {
+            TextAlign.Start -> Gravity.START or Gravity.CENTER_VERTICAL
+            TextAlign.Center -> Gravity.CENTER
+            TextAlign.End -> Gravity.END or Gravity.CENTER_VERTICAL
+        }
     }
 
     private fun readProgressTrackColor(node: VNode): Int {

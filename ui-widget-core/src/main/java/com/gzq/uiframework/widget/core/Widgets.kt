@@ -31,11 +31,16 @@ import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.Props
 import com.gzq.uiframework.renderer.node.SegmentedControlItem
 import com.gzq.uiframework.renderer.node.TabPage
+import com.gzq.uiframework.renderer.node.TextAlign
 import com.gzq.uiframework.renderer.node.TextFieldType
+import com.gzq.uiframework.renderer.node.TextOverflow
 
 fun UiTreeBuilder.Text(
     text: String,
     style: UiTextStyle = TextDefaults.bodyStyle(),
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip,
+    textAlign: TextAlign = TextAlign.Start,
     key: Any? = null,
     modifier: Modifier = Modifier.Empty,
 ) {
@@ -45,6 +50,9 @@ fun UiTreeBuilder.Text(
         props = Props(
             values = mapOf(
                 PropKeys.TEXT to text,
+                PropKeys.TEXT_MAX_LINES to maxLines,
+                PropKeys.TEXT_OVERFLOW to overflow,
+                PropKeys.TEXT_ALIGN to textAlign,
             ),
         ),
         modifier = Modifier.Empty
@@ -748,6 +756,8 @@ fun UiTreeBuilder.Column(
 fun <T> UiTreeBuilder.LazyColumn(
     items: List<T>,
     key: ((T) -> Any)? = null,
+    contentPadding: Int = 0,
+    spacing: Int = 0,
     modifier: Modifier = Modifier.Empty,
     itemContent: UiTreeBuilder.(T) -> Unit,
 ) {
@@ -756,6 +766,8 @@ fun <T> UiTreeBuilder.LazyColumn(
         type = NodeType.LazyColumn,
         props = Props(
             values = mapOf(
+                PropKeys.LAZY_CONTENT_PADDING to contentPadding,
+                PropKeys.LAZY_SPACING to spacing,
                 PropKeys.LAZY_ITEMS to items.map { item ->
                     LazyListItem(
                         key = key?.invoke(item),

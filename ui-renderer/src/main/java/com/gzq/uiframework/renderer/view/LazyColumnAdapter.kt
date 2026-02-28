@@ -1,6 +1,7 @@
 package com.gzq.uiframework.renderer.view
 
 import android.util.Log
+import android.graphics.Rect
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
@@ -103,6 +104,32 @@ internal class LazyColumnAdapter : RecyclerView.Adapter<LazyColumnViewHolder>() 
     fun disposeAll() {
         holderRegistry.disposeAll()
         items = emptyList()
+    }
+}
+
+internal class LazyItemSpacingDecoration(
+    private var spacing: Int,
+) : RecyclerView.ItemDecoration() {
+    fun updateSpacing(spacing: Int) {
+        this.spacing = spacing
+    }
+
+    override fun getItemOffsets(
+        outRect: Rect,
+        view: android.view.View,
+        parent: RecyclerView,
+        state: RecyclerView.State,
+    ) {
+        if (spacing <= 0) {
+            outRect.setEmpty()
+            return
+        }
+        val position = parent.getChildAdapterPosition(view)
+        if (position == RecyclerView.NO_POSITION) {
+            outRect.setEmpty()
+            return
+        }
+        outRect.top = if (position == 0) 0 else spacing
     }
 }
 

@@ -2,6 +2,9 @@ package com.gzq.uiframework.renderer.node
 
 object PropKeys {
     const val TEXT: String = "text"
+    const val TEXT_MAX_LINES: String = "text_max_lines"
+    const val TEXT_OVERFLOW: String = "text_overflow"
+    const val TEXT_ALIGN: String = "text_align"
     const val VALUE: String = "value"
     const val CHECKED: String = "checked"
     const val ENABLED: String = "enabled"
@@ -39,6 +42,8 @@ object PropKeys {
     const val VIEW_UPDATE: String = "view_update"
     const val BOX_ALIGNMENT: String = "box_alignment"
     const val LAZY_ITEMS: String = "lazy_items"
+    const val LAZY_CONTENT_PADDING: String = "lazy_content_padding"
+    const val LAZY_SPACING: String = "lazy_spacing"
     const val TAB_PAGES: String = "tab_pages"
     const val SELECTED_TAB_INDEX: String = "selected_tab_index"
     const val ON_TAB_SELECTED: String = "on_tab_selected"

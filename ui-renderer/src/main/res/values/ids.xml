@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="ui_framework_original_background" type="id" />
     <item name="ui_framework_original_foreground" type="id" />
     <item name="ui_framework_text_watcher" type="id" />
     <item name="ui_framework_seek_listener" type="id" />
+    <item name="ui_framework_lazy_spacing_decoration" type="id" />
 </resources>
