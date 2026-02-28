@@ -355,6 +355,57 @@ class ThemeTest {
     }
 
     @Test
+    fun `component style defaults reflect current theme`() {
+        val baseTheme = UiThemeDefaults.light()
+        val customTheme = UiThemeTokens(
+            colors = baseTheme.colors,
+            typography = baseTheme.typography,
+            input = baseTheme.input,
+            components = UiComponentStyles(
+                button = UiButtonStyles(
+                    primaryContainer = 101,
+                    primaryContent = 102,
+                    secondaryContainer = 103,
+                    secondaryContent = 104,
+                    tonalContainer = 105,
+                    tonalContent = 106,
+                    outlinedContent = 107,
+                    outlinedBorder = 108,
+                ),
+                textField = UiTextFieldStyles(
+                    filledContainer = 201,
+                    tonalContainer = 202,
+                    outlinedBorder = 203,
+                ),
+                segmentedControl = UiSegmentedControlStyles(
+                    background = 301,
+                    indicator = 302,
+                    text = 303,
+                    selectedText = 304,
+                ),
+            ),
+        )
+        var buttonTonal = 0
+        var outlinedBorder = 0
+        var textFieldTonal = 0
+        var segmentedIndicator = 0
+
+        buildVNodeTree {
+            UiTheme(customTheme) {
+                buttonTonal = ButtonDefaults.containerColor(ButtonVariant.Tonal)
+                outlinedBorder = ButtonDefaults.borderColor(ButtonVariant.Outlined)
+                textFieldTonal = TextFieldDefaults.containerColor(TextFieldVariant.Tonal)
+                segmentedIndicator = SegmentedControlDefaults.indicatorColor()
+            }
+        }
+
+        assertEquals(105, buttonTonal)
+        assertEquals(108, outlinedBorder)
+        assertEquals(202, textFieldTonal)
+        assertEquals(302, segmentedIndicator)
+    }
+
+    @Test
     fun `text defaults reflect current theme`() {
         val customTheme = UiThemeTokens(
             colors = UiColors(
@@ -542,6 +593,39 @@ class ThemeTest {
         assertEquals(overrideShapes, current?.shapes)
         assertEquals(overrideInteractions, current?.interactions)
         assertEquals(baseTheme.colors, current?.colors)
+    }
+
+    @Test
+    fun `component style override only changes targeted component domain`() {
+        val baseTheme = UiThemeDefaults.light()
+        var buttonPrimary = 0
+        var segmentedIndicator = 0
+        var baseTextField = 0
+
+        buildVNodeTree {
+            UiTheme(baseTheme) {
+                UiThemeOverride(
+                    components = {
+                        copy(
+                            button = button.copy(
+                                primaryContainer = 0xFF778899.toInt(),
+                            ),
+                            segmentedControl = segmentedControl.copy(
+                                indicator = 0xFF998877.toInt(),
+                            ),
+                        )
+                    },
+                ) {
+                    buttonPrimary = ButtonDefaults.containerColor(ButtonVariant.Primary)
+                    segmentedIndicator = SegmentedControlDefaults.indicatorColor()
+                    baseTextField = TextFieldDefaults.containerColor(TextFieldVariant.Filled)
+                }
+            }
+        }
+
+        assertEquals(0xFF778899.toInt(), buttonPrimary)
+        assertEquals(0xFF998877.toInt(), segmentedIndicator)
+        assertEquals(baseTheme.components.textField.filledContainer, baseTextField)
     }
 
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {

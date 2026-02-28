@@ -7,15 +7,15 @@ enum class SegmentedControlSize {
 }
 
 object SegmentedControlDefaults {
-    fun backgroundColor(): Int = Theme.colors.surfaceVariant
+    fun backgroundColor(): Int = Theme.components.segmentedControl.background
 
-    fun indicatorColor(): Int = Theme.colors.primary
+    fun indicatorColor(): Int = Theme.components.segmentedControl.indicator
 
     fun cornerRadius(): Int = Theme.shapes.controlCornerRadius
 
-    fun textColor(): Int = Theme.colors.textSecondary
+    fun textColor(): Int = Theme.components.segmentedControl.text
 
-    fun selectedTextColor(): Int = contentColorFor(indicatorColor())
+    fun selectedTextColor(): Int = Theme.components.segmentedControl.selectedText
 
     fun rippleColor(): Int = Theme.interactions.pressedOverlay
 

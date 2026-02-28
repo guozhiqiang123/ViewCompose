@@ -51,9 +51,9 @@ object TextFieldDefaults {
         return when {
             variant == TextFieldVariant.Outlined -> 0x00000000
             isError -> Theme.input.fieldError
-            variant == TextFieldVariant.Tonal && enabled -> Theme.colors.surfaceVariant
+            variant == TextFieldVariant.Tonal && enabled -> Theme.components.textField.tonalContainer
             variant == TextFieldVariant.Tonal -> Theme.input.fieldContainerDisabled
-            enabled -> Theme.input.fieldContainer
+            enabled -> Theme.components.textField.filledContainer
             else -> Theme.input.fieldContainerDisabled
         }
     }
@@ -65,7 +65,7 @@ object TextFieldDefaults {
     ): Int {
         return when {
             isError -> Theme.input.fieldError
-            variant == TextFieldVariant.Outlined && enabled -> Theme.input.control
+            variant == TextFieldVariant.Outlined && enabled -> Theme.components.textField.outlinedBorder
             variant == TextFieldVariant.Outlined -> Theme.input.controlDisabled
             else -> 0x00000000
         }

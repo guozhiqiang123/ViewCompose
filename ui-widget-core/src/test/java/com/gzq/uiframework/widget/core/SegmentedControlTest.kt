@@ -53,6 +53,43 @@ class SegmentedControlTest {
         assertEquals(2, selectedIndex)
     }
 
+    @Test
+    fun `segmented control uses component style tokens`() {
+        val baseTheme = UiThemeDefaults.light()
+        val customTheme = UiThemeTokens(
+            colors = baseTheme.colors,
+            typography = baseTheme.typography,
+            input = baseTheme.input,
+            components = UiComponentStyles(
+                button = baseTheme.components.button,
+                textField = baseTheme.components.textField,
+                segmentedControl = UiSegmentedControlStyles(
+                    background = 401,
+                    indicator = 402,
+                    text = 403,
+                    selectedText = 404,
+                ),
+            ),
+        )
+
+        val tree = buildVNodeTree {
+            UiTheme(customTheme) {
+                SegmentedControl(
+                    items = listOf("A", "B"),
+                    selectedIndex = 0,
+                    onSelectionChange = {},
+                )
+            }
+        }
+
+        val node = tree.single()
+
+        assertEquals(401, node.props.values[PropKeys.SEGMENT_BACKGROUND_COLOR])
+        assertEquals(402, node.props.values[PropKeys.SEGMENT_INDICATOR_COLOR])
+        assertEquals(403, node.props.values[PropKeys.SEGMENT_TEXT_COLOR])
+        assertEquals(404, node.props.values[PropKeys.SEGMENT_SELECTED_TEXT_COLOR])
+    }
+
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {
         val field = javaClass.getDeclaredField("elements")
         field.isAccessible = true

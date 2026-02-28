@@ -72,6 +72,36 @@ data class UiControlSizing(
     val segmentedControl: UiSegmentedControlSizing,
 )
 
+data class UiButtonStyles(
+    val primaryContainer: Int,
+    val primaryContent: Int,
+    val secondaryContainer: Int,
+    val secondaryContent: Int,
+    val tonalContainer: Int,
+    val tonalContent: Int,
+    val outlinedContent: Int,
+    val outlinedBorder: Int,
+)
+
+data class UiTextFieldStyles(
+    val filledContainer: Int,
+    val tonalContainer: Int,
+    val outlinedBorder: Int,
+)
+
+data class UiSegmentedControlStyles(
+    val background: Int,
+    val indicator: Int,
+    val text: Int,
+    val selectedText: Int,
+)
+
+data class UiComponentStyles(
+    val button: UiButtonStyles,
+    val textField: UiTextFieldStyles,
+    val segmentedControl: UiSegmentedControlStyles,
+)
+
 data class UiInteractionColors(
     val pressedOverlay: Int,
 )
@@ -92,8 +122,21 @@ data class UiThemeTokens(
     val input: UiInputColors = UiInputDefaults.fromColors(colors),
     val shapes: UiShapes = UiShapeDefaults.default(),
     val controls: UiControlSizing = UiControlSizeDefaults.default(),
+    val components: UiComponentStyles = UiComponentStyleDefaults.fromTheme(colors, input),
     val interactions: UiInteractionColors = UiInteractionDefaults.fromColors(colors),
 )
+
+internal fun contentColorFor(backgroundColor: Int): Int {
+    val red = backgroundColor shr 16 and 0xFF
+    val green = backgroundColor shr 8 and 0xFF
+    val blue = backgroundColor and 0xFF
+    val luma = 0.299 * red + 0.587 * green + 0.114 * blue
+    return if (luma >= 186) {
+        0xFF000000.toInt()
+    } else {
+        0xFFFFFFFF.toInt()
+    }
+}
 
 fun UiThemeTokens.override(
     colors: UiColors? = null,
@@ -101,6 +144,7 @@ fun UiThemeTokens.override(
     input: UiInputColors? = null,
     shapes: UiShapes? = null,
     controls: UiControlSizing? = null,
+    components: UiComponentStyles? = null,
     interactions: UiInteractionColors? = null,
 ): UiThemeTokens {
     return copy(
@@ -109,6 +153,7 @@ fun UiThemeTokens.override(
         input = input ?: this.input,
         shapes = shapes ?: this.shapes,
         controls = controls ?: this.controls,
+        components = components ?: this.components,
         interactions = interactions ?: this.interactions,
     )
 }
@@ -173,6 +218,37 @@ object UiControlSizeDefaults {
                 compactVerticalPadding = 6.dp,
                 mediumVerticalPadding = 8.dp,
                 largeVerticalPadding = 10.dp,
+            ),
+        )
+    }
+}
+
+object UiComponentStyleDefaults {
+    fun fromTheme(
+        colors: UiColors,
+        input: UiInputColors,
+    ): UiComponentStyles {
+        return UiComponentStyles(
+            button = UiButtonStyles(
+                primaryContainer = colors.primary,
+                primaryContent = contentColorFor(colors.primary),
+                secondaryContainer = colors.accent,
+                secondaryContent = contentColorFor(colors.accent),
+                tonalContainer = colors.surfaceVariant,
+                tonalContent = colors.textPrimary,
+                outlinedContent = colors.textPrimary,
+                outlinedBorder = colors.divider,
+            ),
+            textField = UiTextFieldStyles(
+                filledContainer = input.fieldContainer,
+                tonalContainer = colors.surfaceVariant,
+                outlinedBorder = input.control,
+            ),
+            segmentedControl = UiSegmentedControlStyles(
+                background = colors.surfaceVariant,
+                indicator = colors.primary,
+                text = colors.textSecondary,
+                selectedText = contentColorFor(colors.primary),
             ),
         )
     }
@@ -250,6 +326,9 @@ object Theme {
     val controls: UiControlSizing
         get() = current.controls
 
+    val components: UiComponentStyles
+        get() = current.components
+
     val interactions: UiInteractionColors
         get() = current.interactions
 }
@@ -273,6 +352,7 @@ fun UiTreeBuilder.UiThemeOverride(
     input: UiInputColors? = null,
     shapes: UiShapes? = null,
     controls: UiControlSizing? = null,
+    components: UiComponentStyles? = null,
     interactions: UiInteractionColors? = null,
     content: UiTreeBuilder.() -> Unit,
 ) {
@@ -284,6 +364,7 @@ fun UiTreeBuilder.UiThemeOverride(
             input = input,
             shapes = shapes,
             controls = controls,
+            components = components,
             interactions = interactions,
         ),
     ) {
@@ -297,6 +378,7 @@ fun UiTreeBuilder.UiThemeOverride(
     input: (UiInputColors.() -> UiInputColors)? = null,
     shapes: (UiShapes.() -> UiShapes)? = null,
     controls: (UiControlSizing.() -> UiControlSizing)? = null,
+    components: (UiComponentStyles.() -> UiComponentStyles)? = null,
     interactions: (UiInteractionColors.() -> UiInteractionColors)? = null,
     content: UiTreeBuilder.() -> Unit,
 ) {
@@ -306,6 +388,7 @@ fun UiTreeBuilder.UiThemeOverride(
         input = input?.invoke(Theme.input),
         shapes = shapes?.invoke(Theme.shapes),
         controls = controls?.invoke(Theme.controls),
+        components = components?.invoke(Theme.components),
         interactions = interactions?.invoke(Theme.interactions),
         content = content,
     )

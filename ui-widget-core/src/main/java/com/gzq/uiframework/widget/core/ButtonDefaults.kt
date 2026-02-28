@@ -18,9 +18,9 @@ object ButtonDefaults {
         variant: ButtonVariant = ButtonVariant.Primary,
     ): Int {
         return when (variant) {
-            ButtonVariant.Primary -> Theme.colors.primary
-            ButtonVariant.Secondary -> Theme.colors.accent
-            ButtonVariant.Tonal -> Theme.colors.surfaceVariant
+            ButtonVariant.Primary -> Theme.components.button.primaryContainer
+            ButtonVariant.Secondary -> Theme.components.button.secondaryContainer
+            ButtonVariant.Tonal -> Theme.components.button.tonalContainer
             ButtonVariant.Outlined -> 0x00000000
         }
     }
@@ -29,11 +29,10 @@ object ButtonDefaults {
         variant: ButtonVariant = ButtonVariant.Primary,
     ): Int {
         return when (variant) {
-            ButtonVariant.Tonal,
-            ButtonVariant.Outlined,
-            -> Theme.colors.textPrimary
-
-            else -> contentColorFor(containerColor(variant))
+            ButtonVariant.Primary -> Theme.components.button.primaryContent
+            ButtonVariant.Secondary -> Theme.components.button.secondaryContent
+            ButtonVariant.Tonal -> Theme.components.button.tonalContent
+            ButtonVariant.Outlined -> Theme.components.button.outlinedContent
         }
     }
 
@@ -41,7 +40,7 @@ object ButtonDefaults {
         variant: ButtonVariant = ButtonVariant.Primary,
     ): Int {
         return when (variant) {
-            ButtonVariant.Outlined -> Theme.colors.divider
+            ButtonVariant.Outlined -> Theme.components.button.outlinedBorder
             else -> 0x00000000
         }
     }
@@ -100,16 +99,4 @@ object ButtonDefaults {
     }
 
     fun pressedColor(): Int = Theme.interactions.pressedOverlay
-}
-
-internal fun contentColorFor(backgroundColor: Int): Int {
-    val red = backgroundColor shr 16 and 0xFF
-    val green = backgroundColor shr 8 and 0xFF
-    val blue = backgroundColor and 0xFF
-    val luma = 0.299 * red + 0.587 * green + 0.114 * blue
-    return if (luma >= 186) {
-        0xFF000000.toInt()
-    } else {
-        0xFFFFFFFF.toInt()
-    }
 }

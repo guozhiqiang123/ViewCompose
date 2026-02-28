@@ -377,6 +377,57 @@ private fun UiTreeBuilder.OverviewPage(
                         }
                     }
                 }
+                UiThemeOverride(
+                    components = {
+                        copy(
+                            button = button.copy(
+                                primaryContainer = Theme.colors.textPrimary,
+                                primaryContent = Theme.colors.background,
+                                outlinedBorder = Theme.colors.accent,
+                            ),
+                            segmentedControl = segmentedControl.copy(
+                                indicator = Theme.colors.accent,
+                                selectedText = Theme.colors.background,
+                            ),
+                        )
+                    },
+                ) {
+                    Column(
+                        spacing = 8.dp,
+                        modifier = Modifier.Empty
+                            .fillMaxWidth()
+                            .backgroundColor(SurfaceDefaults.backgroundColor())
+                            .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                            .padding(12.dp),
+                    ) {
+                        Text(text = "Component Defaults Override")
+                        Text(
+                            text = "This block changes button and segmented defaults without changing the base color palette.",
+                            style = UiTextStyle(fontSizeSp = 13.sp),
+                            modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+                        )
+                        SegmentedControl(
+                            items = listOf("Alpha", "Beta", "Gamma"),
+                            selectedIndex = 1,
+                            onSelectionChange = {},
+                            modifier = Modifier.Empty.fillMaxWidth(),
+                        )
+                        Row(
+                            spacing = 8.dp,
+                            modifier = Modifier.Empty.fillMaxWidth(),
+                        ) {
+                            Button(
+                                text = "Primary Token",
+                                modifier = Modifier.Empty.weight(1f),
+                            )
+                            Button(
+                                text = "Outlined Token",
+                                variant = ButtonVariant.Outlined,
+                                modifier = Modifier.Empty.weight(1f),
+                            )
+                        }
+                    }
+                }
                 Text(
                     text = "Outside these blocks, the parent demo theme stays unchanged.",
                     style = UiTextStyle(fontSizeSp = 13.sp),
