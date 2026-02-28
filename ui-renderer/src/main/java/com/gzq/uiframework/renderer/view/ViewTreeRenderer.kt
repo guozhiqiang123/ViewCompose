@@ -1,6 +1,7 @@
 package com.gzq.uiframework.renderer.view
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -42,6 +43,7 @@ import com.gzq.uiframework.renderer.reconcile.ReconcileResult
 import com.gzq.uiframework.renderer.reconcile.RemovePatch
 import com.gzq.uiframework.renderer.reconcile.RenderPatch
 import com.gzq.uiframework.renderer.reconcile.ReusePatch
+import com.gzq.uiframework.renderer.R
 
 object ViewTreeRenderer {
     fun disposeMounted(
@@ -165,6 +167,7 @@ object ViewTreeRenderer {
             }
         }
 
+        cacheOriginalBackground(view)
         bindView(view, node)
         val children = if (view is ViewGroup) {
             renderInto(
@@ -259,7 +262,11 @@ object ViewTreeRenderer {
         val zIndex = node.modifier.elements
             .lastOrNull { it is ZIndexModifierElement } as? ZIndexModifierElement
         view.alpha = alpha?.alpha ?: 1f
-        view.setBackgroundColor(backgroundColor?.color ?: 0x00000000)
+        if (backgroundColor == null) {
+            restoreOriginalBackground(view)
+        } else {
+            view.setBackgroundColor(backgroundColor.color)
+        }
         view.visibility = when (visibility?.visibility ?: Visibility.Visible) {
             Visibility.Visible -> View.VISIBLE
             Visibility.Invisible -> View.INVISIBLE
@@ -289,6 +296,26 @@ object ViewTreeRenderer {
         if (view is TextView && textColor != null) {
             view.setTextColor(textColor.color)
         }
+    }
+
+    private fun cacheOriginalBackground(view: View) {
+        if (view.getTag(R.id.ui_framework_original_background) != null) {
+            return
+        }
+        view.setTag(
+            R.id.ui_framework_original_background,
+            cloneDrawable(view.background),
+        )
+    }
+
+    private fun restoreOriginalBackground(view: View) {
+        view.background = cloneDrawable(
+            view.getTag(R.id.ui_framework_original_background) as? Drawable,
+        )
+    }
+
+    private fun cloneDrawable(drawable: Drawable?): Drawable? {
+        return drawable?.constantState?.newDrawable()?.mutate() ?: drawable?.mutate()
     }
 
     private fun moveViewToIndex(
