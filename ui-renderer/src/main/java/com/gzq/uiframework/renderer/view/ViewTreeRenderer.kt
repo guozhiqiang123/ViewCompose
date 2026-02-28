@@ -22,6 +22,7 @@ import android.widget.CompoundButton
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.RadioButton
@@ -191,6 +192,7 @@ object ViewTreeRenderer {
             NodeType.LinearProgressIndicator -> LinearProgressIndicator(context)
             NodeType.CircularProgressIndicator -> CircularProgressIndicator(context)
             NodeType.Button -> Button(context)
+            NodeType.IconButton -> ImageButton(context)
             NodeType.Row -> DeclarativeLinearLayout(context).apply {
                 orientation = LinearLayout.HORIZONTAL
             }
@@ -284,6 +286,10 @@ object ViewTreeRenderer {
                         }
                     }
                 }
+            }
+
+            NodeType.IconButton -> {
+                bindIconButton(view as ImageButton, node)
             }
 
             NodeType.Row -> {
@@ -718,6 +724,16 @@ object ViewTreeRenderer {
         }
     }
 
+    private fun bindIconButton(
+        view: ImageButton,
+        node: VNode,
+    ) {
+        bindImage(view, node)
+        view.isEnabled = readEnabled(node)
+        view.scaleType = ImageView.ScaleType.CENTER_INSIDE
+        view.adjustViewBounds = false
+    }
+
     private fun bindProgressIndicator(
         view: ProgressBar,
         node: VNode,
@@ -782,6 +798,7 @@ object ViewTreeRenderer {
             NodeType.RadioButton,
             NodeType.CircularProgressIndicator,
             NodeType.Button,
+            NodeType.IconButton,
             NodeType.Image,
             NodeType.SegmentedControl,
             -> ViewGroup.LayoutParams.WRAP_CONTENT

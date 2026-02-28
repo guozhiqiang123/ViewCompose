@@ -10,6 +10,7 @@ sealed interface NodeType {
     data object LinearProgressIndicator : NodeType
     data object CircularProgressIndicator : NodeType
     data object Button : NodeType
+    data object IconButton : NodeType
     data object Row : NodeType
     data object Column : NodeType
     data object Box : NodeType

@@ -46,6 +46,7 @@ import com.gzq.uiframework.widget.core.FlexibleSpacer
 import com.gzq.uiframework.widget.core.Checkbox
 import com.gzq.uiframework.widget.core.CircularProgressIndicator
 import com.gzq.uiframework.widget.core.Icon
+import com.gzq.uiframework.widget.core.IconButton
 import com.gzq.uiframework.widget.core.Image
 import com.gzq.uiframework.widget.core.LazyColumn
 import com.gzq.uiframework.widget.core.LinearProgressIndicator
@@ -572,6 +573,31 @@ private fun UiTreeBuilder.OverviewPage(
                     Text(
                         text = "Icon defaults to ContentColor.current, so it naturally follows local surface/content scopes.",
                         modifier = Modifier.Empty.weight(1f),
+                    )
+                }
+                Row(
+                    spacing = 12.dp,
+                    modifier = Modifier.Empty.fillMaxWidth().margin(top = 12.dp),
+                ) {
+                    IconButton(
+                        icon = ImageSource.Resource(R.drawable.ic_launcher_foreground),
+                        contentDescription = "Primary icon button",
+                        modifier = Modifier.Empty,
+                    )
+                    IconButton(
+                        icon = ImageSource.Resource(R.drawable.ic_launcher_foreground),
+                        contentDescription = "Tonal icon button",
+                        variant = ButtonVariant.Tonal,
+                    )
+                    IconButton(
+                        icon = ImageSource.Resource(R.drawable.ic_launcher_foreground),
+                        contentDescription = "Outlined icon button",
+                        variant = ButtonVariant.Outlined,
+                    )
+                    IconButton(
+                        icon = ImageSource.Resource(R.drawable.ic_launcher_foreground),
+                        contentDescription = "Disabled icon button",
+                        enabled = false,
                     )
                 }
             }

@@ -478,6 +478,55 @@ fun UiTreeBuilder.Button(
     )
 }
 
+fun UiTreeBuilder.IconButton(
+    icon: ImageSource,
+    contentDescription: String? = null,
+    onClick: (() -> Unit)? = null,
+    variant: ButtonVariant = ButtonVariant.Primary,
+    size: ButtonSize = ButtonSize.Medium,
+    enabled: Boolean = true,
+    key: Any? = null,
+    modifier: Modifier = Modifier.Empty,
+) {
+    val semanticModifier = Modifier.Empty
+        .size(
+            width = IconButtonDefaults.size(size),
+            height = IconButtonDefaults.size(size),
+        )
+        .padding(IconButtonDefaults.contentPadding(size))
+        .backgroundColor(IconButtonDefaults.containerColor(variant, enabled))
+        .border(
+            width = IconButtonDefaults.borderWidth(variant),
+            color = IconButtonDefaults.borderColor(variant, enabled),
+        )
+        .cornerRadius(IconButtonDefaults.cornerRadius())
+        .rippleColor(IconButtonDefaults.pressedColor())
+        .then(
+            if (enabled && onClick != null) {
+                Modifier.Empty.clickable(onClick)
+            } else {
+                Modifier.Empty
+            },
+        )
+        .then(modifier)
+    emit(
+        type = NodeType.IconButton,
+        key = key,
+        props = Props(
+            values = buildMap {
+                put(PropKeys.IMAGE_SOURCE, icon)
+                put(PropKeys.IMAGE_CONTENT_DESCRIPTION, contentDescription)
+                put(PropKeys.IMAGE_CONTENT_SCALE, ImageContentScale.Inside)
+                put(PropKeys.IMAGE_TINT, IconButtonDefaults.contentColor(variant, enabled))
+                put(PropKeys.ON_CLICK, onClick)
+                put(PropKeys.ENABLED, enabled)
+                put(PropKeys.IMAGE_REMOTE_LOADER, ImageLoading.current)
+            },
+        ),
+        modifier = semanticModifier,
+    )
+}
+
 fun UiTreeBuilder.SegmentedControl(
     items: List<String>,
     selectedIndex: Int,
