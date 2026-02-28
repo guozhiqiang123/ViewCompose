@@ -40,6 +40,10 @@ data class TextColorModifierElement(
     val color: Int,
 ) : ModifierElement
 
+data class TextSizeModifierElement(
+    val sizeSp: Int,
+) : ModifierElement
+
 data class SizeModifierElement(
     val width: Int,
     val height: Int,
@@ -140,6 +144,12 @@ fun Modifier.backgroundColor(color: Int): Modifier {
 fun Modifier.textColor(color: Int): Modifier {
     return then(
         TextColorModifierElement(color),
+    )
+}
+
+fun Modifier.textSize(sizeSp: Int): Modifier {
+    return then(
+        TextSizeModifierElement(sizeSp),
     )
 }
 

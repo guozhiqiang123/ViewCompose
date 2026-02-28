@@ -1,6 +1,7 @@
 package com.gzq.uiframework.widget.core
 
 import com.gzq.uiframework.renderer.modifier.TextColorModifierElement
+import com.gzq.uiframework.renderer.modifier.TextSizeModifierElement
 import com.gzq.uiframework.renderer.node.PropKeys
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -19,6 +20,11 @@ class ThemeTest {
                 textPrimary = 7,
                 textSecondary = 8,
             ),
+            typography = UiTypography(
+                title = UiTextStyle(fontSizeSp = 30),
+                body = UiTextStyle(fontSizeSp = 18),
+                label = UiTextStyle(fontSizeSp = 12),
+            ),
         )
 
         val tree = buildVNodeTree {
@@ -32,6 +38,11 @@ class ThemeTest {
             .readModifierElements()
             .last { it is TextColorModifierElement } as TextColorModifierElement
         assertEquals(7, textColor.color)
+        val textSize = tree.single()
+            .modifier
+            .readModifierElements()
+            .last { it is TextSizeModifierElement } as TextSizeModifierElement
+        assertEquals(18, textSize.sizeSp)
     }
 
     @Test
@@ -46,6 +57,11 @@ class ThemeTest {
                 divider = 42,
                 textPrimary = 7,
                 textSecondary = 8,
+            ),
+            typography = UiTypography(
+                title = UiTextStyle(fontSizeSp = 30),
+                body = UiTextStyle(fontSizeSp = 18),
+                label = UiTextStyle(fontSizeSp = 12),
             ),
         )
 
@@ -64,18 +80,24 @@ class ThemeTest {
         val innerTheme = UiThemeDefaults.dark()
         var outerColor = 0
         var innerColor = 0
+        var outerSize = 0
+        var innerSize = 0
 
         buildVNodeTree {
             UiTheme(outerTheme) {
                 outerColor = Theme.colors.textPrimary
+                outerSize = Theme.typography.body.fontSizeSp
                 UiTheme(innerTheme) {
                     innerColor = Theme.colors.textPrimary
+                    innerSize = Theme.typography.body.fontSizeSp
                 }
             }
         }
 
         assertEquals(outerTheme.colors.textPrimary, outerColor)
         assertEquals(innerTheme.colors.textPrimary, innerColor)
+        assertEquals(outerTheme.typography.body.fontSizeSp, outerSize)
+        assertEquals(innerTheme.typography.body.fontSizeSp, innerSize)
     }
 
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {

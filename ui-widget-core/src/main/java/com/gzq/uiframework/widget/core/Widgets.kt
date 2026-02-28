@@ -8,6 +8,7 @@ import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.modifier.textColor
+import com.gzq.uiframework.renderer.modifier.textSize
 import com.gzq.uiframework.renderer.modifier.weight
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.LazyListItemSession
@@ -18,6 +19,7 @@ import com.gzq.uiframework.renderer.node.Props
 
 fun UiTreeBuilder.Text(
     text: String,
+    style: UiTextStyle = Theme.typography.body,
     key: Any? = null,
     modifier: Modifier = Modifier.Empty,
 ) {
@@ -31,6 +33,7 @@ fun UiTreeBuilder.Text(
         ),
         modifier = Modifier.Empty
             .textColor(Theme.colors.textPrimary)
+            .textSize(style.fontSizeSp)
             .then(modifier),
     )
 }
@@ -38,6 +41,7 @@ fun UiTreeBuilder.Text(
 fun UiTreeBuilder.Button(
     text: String,
     onClick: (() -> Unit)? = null,
+    style: UiTextStyle = Theme.typography.label,
     key: Any? = null,
     modifier: Modifier = Modifier.Empty,
 ) {
@@ -52,6 +56,7 @@ fun UiTreeBuilder.Button(
         ),
         modifier = Modifier.Empty
             .textColor(Theme.colors.textPrimary)
+            .textSize(style.fontSizeSp)
             .then(modifier),
     )
 }

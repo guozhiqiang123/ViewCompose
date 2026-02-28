@@ -28,6 +28,7 @@ internal object ThemeTokenMapper {
                 textPrimary = readColor(android.R.attr.textColorPrimary) ?: fallback.textPrimary,
                 textSecondary = readColor(android.R.attr.textColorSecondary) ?: fallback.textSecondary,
             ),
+            typography = UiThemeDefaults.light().typography,
         )
     }
 }

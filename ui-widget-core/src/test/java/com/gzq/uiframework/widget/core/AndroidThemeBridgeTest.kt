@@ -27,6 +27,7 @@ class AndroidThemeBridgeTest {
         assertEquals(6, tokens.colors.divider)
         assertEquals(7, tokens.colors.textPrimary)
         assertEquals(8, tokens.colors.textSecondary)
+        assertEquals(UiThemeDefaults.light().typography.title.fontSizeSp, tokens.typography.title.fontSizeSp)
     }
 
     @Test

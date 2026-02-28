@@ -13,8 +13,19 @@ data class UiColors(
     val textSecondary: Int,
 )
 
+data class UiTextStyle(
+    val fontSizeSp: Int,
+)
+
+data class UiTypography(
+    val title: UiTextStyle,
+    val body: UiTextStyle,
+    val label: UiTextStyle,
+)
+
 data class UiThemeTokens(
     val colors: UiColors,
+    val typography: UiTypography,
 )
 
 object UiThemeDefaults {
@@ -30,6 +41,11 @@ object UiThemeDefaults {
                 textPrimary = 0xFF2F241B.toInt(),
                 textSecondary = 0xFF6A5A4A.toInt(),
             ),
+            typography = UiTypography(
+                title = UiTextStyle(fontSizeSp = 24),
+                body = UiTextStyle(fontSizeSp = 16),
+                label = UiTextStyle(fontSizeSp = 14),
+            ),
         )
     }
 
@@ -44,6 +60,11 @@ object UiThemeDefaults {
                 divider = 0xFF51473E.toInt(),
                 textPrimary = 0xFFF4EFE8.toInt(),
                 textSecondary = 0xFFD0C4B6.toInt(),
+            ),
+            typography = UiTypography(
+                title = UiTextStyle(fontSizeSp = 24),
+                body = UiTextStyle(fontSizeSp = 16),
+                label = UiTextStyle(fontSizeSp = 14),
             ),
         )
     }
@@ -71,6 +92,9 @@ internal object ThemeContext {
 object Theme {
     val colors: UiColors
         get() = ThemeContext.current().colors
+
+    val typography: UiTypography
+        get() = ThemeContext.current().typography
 }
 
 fun UiTreeBuilder.UiTheme(

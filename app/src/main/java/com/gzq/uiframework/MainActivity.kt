@@ -109,6 +109,7 @@ class MainActivity : AppCompatActivity() {
                 ) {
                     Text(
                         text = "UIFramework",
+                        style = Theme.typography.title,
                         modifier = Modifier.Empty
                             .backgroundColor(Theme.colors.surface)
                             .padding(8),

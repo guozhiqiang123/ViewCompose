@@ -2,6 +2,7 @@ package com.gzq.uiframework.renderer.view
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +27,7 @@ import com.gzq.uiframework.renderer.modifier.OffsetModifierElement
 import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
 import com.gzq.uiframework.renderer.modifier.SizeModifierElement
 import com.gzq.uiframework.renderer.modifier.TextColorModifierElement
+import com.gzq.uiframework.renderer.modifier.TextSizeModifierElement
 import com.gzq.uiframework.renderer.modifier.VerticalAlignModifierElement
 import com.gzq.uiframework.renderer.modifier.Visibility
 import com.gzq.uiframework.renderer.modifier.VisibilityModifierElement
@@ -257,6 +259,8 @@ object ViewTreeRenderer {
         val padding = node.modifier.elements.lastOrNull { it is PaddingModifierElement } as? PaddingModifierElement
         val textColor = node.modifier.elements
             .lastOrNull { it is TextColorModifierElement } as? TextColorModifierElement
+        val textSize = node.modifier.elements
+            .lastOrNull { it is TextSizeModifierElement } as? TextSizeModifierElement
         val visibility = node.modifier.elements
             .lastOrNull { it is VisibilityModifierElement } as? VisibilityModifierElement
         val zIndex = node.modifier.elements
@@ -293,8 +297,13 @@ object ViewTreeRenderer {
             padding.right,
             padding.bottom,
         )
-        if (view is TextView && textColor != null) {
-            view.setTextColor(textColor.color)
+        if (view is TextView) {
+            if (textColor != null) {
+                view.setTextColor(textColor.color)
+            }
+            if (textSize != null) {
+                view.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize.sizeSp.toFloat())
+            }
         }
     }
 
