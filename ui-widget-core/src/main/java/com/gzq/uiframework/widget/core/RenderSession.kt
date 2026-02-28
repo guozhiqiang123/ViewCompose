@@ -14,6 +14,7 @@ class RenderSession internal constructor(
     private var observation: Observation? = null
     private var renderScheduled: Boolean = false
     private val rememberStore = RememberStore()
+    private val effectStore = EffectStore()
 
     fun render() {
         renderScheduled = false
@@ -21,8 +22,10 @@ class RenderSession internal constructor(
         val (tree, nextObservation) = RuntimeObservation.observeReads(
             onInvalidated = ::scheduleRender,
         ) {
-            RememberContext.withStore(rememberStore) {
-                buildVNodeTree(content)
+            EffectContext.withStore(effectStore) {
+                RememberContext.withStore(rememberStore) {
+                    buildVNodeTree(content)
+                }
             }
         }
         observation = nextObservation
@@ -31,12 +34,14 @@ class RenderSession internal constructor(
             previous = mountedNodes,
             nodes = tree,
         )
+        effectStore.commit()
     }
 
     fun dispose() {
         observation?.dispose()
         observation = null
         mountedNodes = emptyList()
+        effectStore.disposeAll()
         renderScheduled = false
     }
 

@@ -13,6 +13,7 @@ import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.AndroidView
 import com.gzq.uiframework.widget.core.Button
 import com.gzq.uiframework.widget.core.Column
+import com.gzq.uiframework.widget.core.DisposableEffect
 import com.gzq.uiframework.widget.core.Text
 import com.gzq.uiframework.widget.core.remember
 import com.gzq.uiframework.widget.core.renderInto
@@ -42,6 +43,14 @@ class MainActivity : AppCompatActivity() {
                         "Even clicks: $clickCount"
                     } else {
                         "Odd clicks: $clickCount"
+                    }
+                }
+            }
+            DisposableEffect(key = clickSummaryState.value) {
+                title = "UIFramework - ${clickSummaryState.value}"
+                {
+                    if (title == "UIFramework - ${clickSummaryState.value}") {
+                        title = "UIFramework"
                     }
                 }
             }
