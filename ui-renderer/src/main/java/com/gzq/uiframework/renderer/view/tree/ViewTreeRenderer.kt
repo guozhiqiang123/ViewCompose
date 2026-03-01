@@ -5,24 +5,8 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.LinearLayout
-import androidx.recyclerview.widget.RecyclerView
-import com.gzq.uiframework.renderer.layout.BoxAlignment
-import com.gzq.uiframework.renderer.layout.HorizontalAlignment
-import com.gzq.uiframework.renderer.layout.LayoutParamDefaultsResolver
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
-import com.gzq.uiframework.renderer.layout.ModifierParentDataValidator
-import com.gzq.uiframework.renderer.layout.VerticalAlignment
-import com.gzq.uiframework.renderer.modifier.BoxAlignModifierElement
-import com.gzq.uiframework.renderer.modifier.HeightModifierElement
-import com.gzq.uiframework.renderer.modifier.HorizontalAlignModifierElement
-import com.gzq.uiframework.renderer.modifier.MarginModifierElement
 import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
-import com.gzq.uiframework.renderer.modifier.SizeModifierElement
-import com.gzq.uiframework.renderer.modifier.VerticalAlignModifierElement
-import com.gzq.uiframework.renderer.modifier.WeightModifierElement
-import com.gzq.uiframework.renderer.modifier.WidthModifierElement
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.VNode
@@ -33,10 +17,6 @@ import com.gzq.uiframework.renderer.reconcile.ReconcileResult
 import com.gzq.uiframework.renderer.reconcile.RemovePatch
 import com.gzq.uiframework.renderer.reconcile.RenderPatch
 import com.gzq.uiframework.renderer.reconcile.ReusePatch
-import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
-import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
-import com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout
-import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
 
 object ViewTreeRenderer {
     private const val DEFAULT_RIPPLE_COLOR: Int = 0x22000000
@@ -55,7 +35,7 @@ object ViewTreeRenderer {
         mountedNodes: List<MountedNode>,
     ) {
         mountedNodes.forEach { mountedNode ->
-            disposeMountedNode(mountedNode)
+            ViewTreeDisposer.disposeMountedNode(mountedNode)
             container.removeView(mountedNode.view)
         }
     }
@@ -136,7 +116,12 @@ object ViewTreeRenderer {
                 container.addView(
                     mountedNode.view,
                     patch.targetIndex.coerceAtMost(container.childCount),
-                    createLayoutParams(container, patch.nextVNode),
+                    ViewLayoutParamsFactory.createLayoutParams(
+                        parent = container,
+                        node = patch.nextVNode,
+                        warningTag = WARNING_TAG,
+                        emittedModifierWarnings = emittedModifierWarnings,
+                    ),
                 )
                 PatchApplicationResult(
                     mountedNode = mountedNode,
@@ -155,7 +140,12 @@ object ViewTreeRenderer {
                         patch = bindingPlan.patch,
                     )
                 }
-                mountedNode.view.layoutParams = createLayoutParams(container, patch.nextVNode)
+                mountedNode.view.layoutParams = ViewLayoutParamsFactory.createLayoutParams(
+                    parent = container,
+                    node = patch.nextVNode,
+                    warningTag = WARNING_TAG,
+                    emittedModifierWarnings = emittedModifierWarnings,
+                )
                 val childResult = reconcileChildren(
                     view = mountedNode.view,
                     previousChildren = mountedNode.children,
@@ -186,7 +176,7 @@ object ViewTreeRenderer {
         container: ViewGroup,
         removal: RemovePatch<MountedNode>,
     ) {
-        disposeMountedNode(removal.payload)
+        ViewTreeDisposer.disposeMountedNode(removal.payload)
         container.removeView(removal.payload.view)
     }
 
@@ -283,185 +273,8 @@ object ViewTreeRenderer {
         )
     }
 
-    private fun createLayoutParams(parent: ViewGroup, node: VNode): ViewGroup.LayoutParams {
-        emitModifierWarnings(parent, node)
-        val boxAlign = node.modifier.elements.lastOrNull { it is BoxAlignModifierElement } as? BoxAlignModifierElement
-        val margin = node.modifier.elements.lastOrNull { it is MarginModifierElement } as? MarginModifierElement
-        val size = node.modifier.elements.lastOrNull { it is SizeModifierElement } as? SizeModifierElement
-        val widthModifier = node.modifier.elements.lastOrNull { it is WidthModifierElement } as? WidthModifierElement
-        val heightModifier = node.modifier.elements.lastOrNull { it is HeightModifierElement } as? HeightModifierElement
-        val weight = node.modifier.elements.lastOrNull { it is WeightModifierElement } as? WeightModifierElement
-        val horizontalAlign = node.modifier.elements
-            .lastOrNull { it is HorizontalAlignModifierElement } as? HorizontalAlignModifierElement
-        val verticalAlign = node.modifier.elements
-            .lastOrNull { it is VerticalAlignModifierElement } as? VerticalAlignModifierElement
-        val defaultWidth = if (node.type == NodeType.Divider) {
-            defaultDividerWidth(parent, node)
-        } else {
-            LayoutParamDefaultsResolver.defaultWidth(
-                nodeType = node.type,
-                parentIsLinearLayout = parent is DeclarativeLinearLayout,
-                linearOrientation = (parent as? DeclarativeLinearLayout)?.orientation,
-            )
-        }
-        val defaultHeight = if (node.type == NodeType.Divider) {
-            defaultDividerHeight(parent, node)
-        } else {
-            LayoutParamDefaultsResolver.defaultHeight(
-                nodeType = node.type,
-                parentIsLinearLayout = parent is DeclarativeLinearLayout,
-                linearOrientation = (parent as? DeclarativeLinearLayout)?.orientation,
-            )
-        }
-        val width = widthModifier?.width ?: size?.width ?: defaultWidth
-        val height = heightModifier?.height ?: size?.height ?: defaultHeight
-        return when (parent) {
-            is DeclarativeLinearLayout -> {
-                val resolvedWidth = if (
-                    weight != null &&
-                    parent.orientation == LinearLayout.HORIZONTAL &&
-                    widthModifier == null &&
-                    size?.width == null
-                ) {
-                    0
-                } else {
-                    width
-                }
-                val resolvedHeight = if (
-                    weight != null &&
-                    parent.orientation == LinearLayout.VERTICAL &&
-                    heightModifier == null &&
-                    size?.height == null
-                ) {
-                    0
-                } else {
-                    height
-                }
-                android.widget.LinearLayout.LayoutParams(resolvedWidth, resolvedHeight).applyLayoutParams(
-                    margin = margin,
-                ) {
-                    this.weight = weight?.weight ?: 0f
-                    gravity = when (parent.orientation) {
-                        LinearLayout.HORIZONTAL -> verticalAlign?.alignment?.toGravity() ?: -1
-                        else -> horizontalAlign?.alignment?.toGravity() ?: -1
-                    }
-                }
-            }
-            is DeclarativeBoxLayout -> FrameLayout.LayoutParams(width, height).applyLayoutParams(
-                margin = margin,
-            ) {
-                gravity = boxAlign?.alignment?.toGravity() ?: DeclarativeBoxLayout.UNSET_GRAVITY
-            }
-            is FrameLayout -> FrameLayout.LayoutParams(width, height).applyLayoutParams(margin = margin)
-            else -> ViewGroup.MarginLayoutParams(width, height).applyMargin(margin)
-        }
-    }
-
-    private fun emitModifierWarnings(
-        parent: ViewGroup,
-        node: VNode,
-    ) {
-        ModifierParentDataValidator.validate(parent, node).forEach { warning ->
-            val key = "${parent::class.java.name}|${node.type}|$warning"
-            if (emittedModifierWarnings.add(key)) {
-                Log.w(WARNING_TAG, warning)
-            }
-        }
-    }
-
-    private fun <T : ViewGroup.MarginLayoutParams> T.applyLayoutParams(
-        margin: MarginModifierElement?,
-        block: T.() -> Unit = {},
-    ): T {
-        applyMargin(margin)
-        block()
-        return this
-    }
-
-    private fun <T : ViewGroup.MarginLayoutParams> T.applyMargin(
-        margin: MarginModifierElement?,
-    ): T {
-        if (margin == null) {
-            setMargins(0, 0, 0, 0)
-            return this
-        }
-        setMargins(
-            margin.left,
-            margin.top,
-            margin.right,
-            margin.bottom,
-        )
-        return this
-    }
-
     private fun readViewFactory(node: VNode): ((Context) -> View)? {
         return (node.spec as? com.gzq.uiframework.renderer.node.spec.AndroidViewNodeProps)?.factory
             ?: node.props[TypedPropKeys.ViewFactory]
     }
-
-    private fun defaultDividerWidth(parent: ViewGroup, node: VNode): Int {
-        val thickness = readDividerThickness(node)
-        return if ((parent as? LinearLayout)?.orientation == LinearLayout.HORIZONTAL) {
-            thickness
-        } else {
-            ViewGroup.LayoutParams.MATCH_PARENT
-        }
-    }
-
-    private fun defaultDividerHeight(parent: ViewGroup, node: VNode): Int {
-        val thickness = readDividerThickness(node)
-        return if ((parent as? LinearLayout)?.orientation == LinearLayout.HORIZONTAL) {
-            ViewGroup.LayoutParams.MATCH_PARENT
-        } else {
-            thickness
-        }
-    }
-
-    private fun readDividerThickness(node: VNode): Int {
-        return ContainerViewBinder.readDividerSpec(node).thickness
-    }
-
-    private fun disposeMountedNode(
-        mountedNode: MountedNode,
-    ) {
-        mountedNode.children.forEach(::disposeMountedNode)
-        (mountedNode.view as? DeclarativeTabPagerLayout)?.dispose()
-        (mountedNode.view as? RecyclerView)
-            ?.adapter
-            ?.let { adapter ->
-                (adapter as? LazyColumnAdapter)?.disposeAll()
-            }
-        mountedNode.children = emptyList()
-    }
-
-    private fun VerticalAlignment.toGravity(): Int {
-        return when (this) {
-            VerticalAlignment.Top -> android.view.Gravity.TOP
-            VerticalAlignment.Center -> android.view.Gravity.CENTER_VERTICAL
-            VerticalAlignment.Bottom -> android.view.Gravity.BOTTOM
-        }
-    }
-
-    private fun HorizontalAlignment.toGravity(): Int {
-        return when (this) {
-            HorizontalAlignment.Start -> android.view.Gravity.START
-            HorizontalAlignment.Center -> android.view.Gravity.CENTER_HORIZONTAL
-            HorizontalAlignment.End -> android.view.Gravity.END
-        }
-    }
-
-    private fun BoxAlignment.toGravity(): Int {
-        return when (this) {
-            BoxAlignment.TopStart -> android.view.Gravity.TOP or android.view.Gravity.START
-            BoxAlignment.TopCenter -> android.view.Gravity.TOP or android.view.Gravity.CENTER_HORIZONTAL
-            BoxAlignment.TopEnd -> android.view.Gravity.TOP or android.view.Gravity.END
-            BoxAlignment.CenterStart -> android.view.Gravity.CENTER_VERTICAL or android.view.Gravity.START
-            BoxAlignment.Center -> android.view.Gravity.CENTER
-            BoxAlignment.CenterEnd -> android.view.Gravity.CENTER_VERTICAL or android.view.Gravity.END
-            BoxAlignment.BottomStart -> android.view.Gravity.BOTTOM or android.view.Gravity.START
-            BoxAlignment.BottomCenter -> android.view.Gravity.BOTTOM or android.view.Gravity.CENTER_HORIZONTAL
-            BoxAlignment.BottomEnd -> android.view.Gravity.BOTTOM or android.view.Gravity.END
-        }
-    }
-
 }
