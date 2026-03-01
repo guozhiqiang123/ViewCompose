@@ -152,6 +152,36 @@ class DemoVisualUiTest {
     }
 
     @Test
+    fun feedbackPage_triggersDialogFlow() {
+        launchDemoActivity(FeedbackActivity::class.java).use { scenario ->
+            waitForUiIdle()
+            scrollDeviceTextIntoView("Show Dialog")
+            scenario.onActivity { activity ->
+                val showDialog = activity.requireTextView("Show Dialog")
+                assertViewFullyVisible(showDialog)
+            }
+            clickDeviceText("Show Dialog")
+            assertDeviceTextVisible("Feedback Dialog 1")
+            assertDeviceTextVisible("Confirm Dialog")
+            captureDeviceScreenshot("feedback-dialog-light")
+            clickDeviceText("Confirm Dialog")
+            waitForUiIdle()
+            scrollDeviceTextIntoView("Last event: Dialog confirmed 1")
+            scenario.onActivity { activity ->
+                val lastEvent = activity.requireTextView("Last event: Dialog confirmed 1")
+                assertViewFullyVisible(lastEvent)
+                assertTextNotEllipsized(lastEvent)
+            }
+            scrollDeviceTextIntoView("Dialog count: 1")
+            scenario.onActivity { activity ->
+                val dialogCount = activity.requireTextView("Dialog count: 1")
+                assertViewFullyVisible(dialogCount)
+                assertTextNotEllipsized(dialogCount)
+            }
+        }
+    }
+
+    @Test
     fun inputStress_controlsRemainVisibleAndReadable() {
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),
