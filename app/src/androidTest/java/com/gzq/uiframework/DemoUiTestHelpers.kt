@@ -118,6 +118,27 @@ internal fun assertViewFullyVisible(view: View) {
     assertTrue("Expected measured height > 0", view.height > 0)
 }
 
+internal fun assertViewCompletelyVisible(view: View) {
+    assertViewFullyVisible(view)
+    val rect = Rect()
+    val visible = view.getGlobalVisibleRect(rect)
+    assertTrue("Expected view to have global rect", visible)
+    assertEquals("Expected full width to be visible", view.width, rect.width())
+    assertEquals("Expected full height to be visible", view.height, rect.height())
+}
+
+internal fun assertTextFitsVertically(textView: TextView) {
+    val layout = textView.layout
+    assertNotNull("Expected layout for text: ${textView.text}", layout)
+    layout ?: return
+    val contentBottom = layout.getLineBottom(layout.lineCount - 1)
+    val availableHeight = textView.height - textView.compoundPaddingTop - textView.compoundPaddingBottom
+    assertTrue(
+        "Expected text to fit vertically for text: ${textView.text}",
+        contentBottom <= availableHeight,
+    )
+}
+
 internal fun assertTextNotEllipsized(textView: TextView) {
     val layout = textView.layout
     assertNotNull("Expected layout for text: ${textView.text}", layout)

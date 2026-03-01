@@ -155,11 +155,6 @@ fun UiTreeBuilder.TextField(
     key: Any? = null,
     modifier: Modifier = Modifier,
 ) {
-    val sizeModifier = if (singleLine) {
-        Modifier.height(TextFieldDefaults.height(size))
-    } else {
-        Modifier
-    }
     val hintColor = TextFieldDefaults.hintColor(
         enabled = enabled,
         isError = isError,
@@ -192,6 +187,9 @@ fun UiTreeBuilder.TextField(
             set(TypedPropKeys.IsError, isError)
             set(TypedPropKeys.TextColor, TextFieldDefaults.textColor(enabled))
             set(TypedPropKeys.TextSizeSp, style.fontSizeSp)
+            if (singleLine) {
+                set(TypedPropKeys.StyleMinHeight, TextFieldDefaults.height(size))
+            }
             set(TypedPropKeys.StylePaddingLeft, TextFieldDefaults.horizontalPadding(size))
             set(TypedPropKeys.StylePaddingTop, TextFieldDefaults.verticalPadding(size))
             set(TypedPropKeys.StylePaddingRight, TextFieldDefaults.horizontalPadding(size))
@@ -240,9 +238,7 @@ fun UiTreeBuilder.TextField(
             readOnly = readOnly,
             onValueChange = onValueChange,
         ),
-        modifier = Modifier
-            .then(sizeModifier)
-            .then(modifier),
+        modifier = modifier,
     )
 }
 

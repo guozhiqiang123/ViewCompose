@@ -1,12 +1,12 @@
 package com.gzq.uiframework.widget.core
 
-import com.gzq.uiframework.renderer.modifier.HeightModifierElement
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TextFieldImeAction
 import com.gzq.uiframework.renderer.node.TextFieldType
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -144,9 +144,9 @@ class TextFieldTest {
         }
 
         val elements = tree.single().modifier.readModifierElements()
-        val height = elements.last { it is HeightModifierElement } as HeightModifierElement
 
-        assertEquals(TextFieldDefaults.height(TextFieldSize.Compact), height.height)
+        assertFalse(elements.any { it is com.gzq.uiframework.renderer.modifier.HeightModifierElement })
+        assertEquals(TextFieldDefaults.height(TextFieldSize.Compact), tree.single().props[TypedPropKeys.StyleMinHeight])
         assertEquals(Theme.typography.label.fontSizeSp, tree.single().props[TypedPropKeys.TextSizeSp])
     }
 

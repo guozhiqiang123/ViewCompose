@@ -94,6 +94,22 @@ class DemoVisualUiTest {
     }
 
     @Test
+    fun inputBenchmarkTextField_keepsLabelValueAndSupportingTextFullyVisible() {
+        launchDemoActivity(InputActivity::class.java).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val label = activity.requireTextView("Benchmark field")
+                val value = activity.requireTextView("Compact payload")
+                val supporting = activity.requireTextView("Compact supporting copy.")
+                assertViewCompletelyVisible(label)
+                assertViewCompletelyVisible(value)
+                assertViewCompletelyVisible(supporting)
+                assertTextFitsVertically(value)
+            }
+        }
+    }
+
+    @Test
     fun inputStress_controlsRemainVisibleAndReadable() {
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),
