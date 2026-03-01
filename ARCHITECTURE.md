@@ -129,6 +129,7 @@ renderer/
     tree/
       binder/
       diagnostics/
+      pipeline/
       patch/
 ```
 
@@ -152,13 +153,14 @@ renderer/
 - `view/lazy/` 放 `LazyColumn` 的 adapter/session/controller
 - `view/tree/binder/` 放 binder、binding plan、factory、registry
 - `view/tree/diagnostics/` 放 render stats、warning、layout pass 跟踪
+- `view/tree/pipeline/` 放 mounted dispose、layout params、patch/mount 主流程辅助对象
 - `view/tree/patch/` 放节点级 patch applier
 - `view/tree/` 根目录只保留 `ViewTreeRenderer`、`MountedNode` 这类树级核心对象
 
 评价：
 
 - renderer 的问题不再是“有没有目录”，而是“是否把不同语义层级继续堆在同一目录”
-- `ViewTreeRenderer` 仍然是单点复杂度中心，但 modifier、layout params、dispose、patch pipeline、binder/diagnostics 相关配套类已经开始拆出，不应再回流
+- `ViewTreeRenderer` 仍然是单点复杂度中心，但 modifier、layout params、dispose、patch pipeline、binder/diagnostics 相关配套类已经开始拆到子目录，不应再回流
 
 #### `ui-widget-core`
 
@@ -232,7 +234,7 @@ overlay/android/
 1. Android `View` / `Dialog` / `PopupWindow` / `Toast` 宿主代码，不进入 `ui-widget-core`
 2. ambient local 和主题上下文，不和 overlay/request DSL 混放
 3. renderer 的节点基础模型、媒体模型、输入模型、集合模型，不继续共用一个平铺目录
-4. `ViewTreeRenderer` 配套 binder/diagnostics/patch，不继续堆在 `view/tree/` 根目录
+4. `ViewTreeRenderer` 配套 binder/diagnostics/pipeline/patch，不继续堆在 `view/tree/` 根目录
 5. demo 专用页面和回归用例，不回流到框架模块
 
 如果现有目录无法承载某类职责，正确动作是先更新本文档，再新增目录，而不是继续把文件平铺进去。
