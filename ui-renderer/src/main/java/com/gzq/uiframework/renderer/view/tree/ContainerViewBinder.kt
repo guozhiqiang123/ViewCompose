@@ -124,6 +124,20 @@ internal object ContainerViewBinder {
         adapter.submitItems(spec.items)
     }
 
+    fun applyLazyColumnPatch(
+        view: RecyclerView,
+        patch: LazyColumnNodePatch,
+    ) {
+        bindLazyColumn(
+            view = view,
+            spec = LazyColumnSpec(
+                contentPadding = patch.next.contentPadding,
+                spacing = patch.next.spacing,
+                items = patch.next.items,
+            ),
+        )
+    }
+
     fun bindTabPager(
         view: DeclarativeTabPagerLayout,
         spec: TabPagerSpec,

@@ -8,6 +8,7 @@ import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.props
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextNodeProps
@@ -144,6 +145,17 @@ class NodeBindingDifferTest {
         assertTrue((plan as NodeBindingPlan.Patch).patch is SegmentedControlNodePatch)
     }
 
+    @Test
+    fun `patches lazy column semantic updates`() {
+        val previous = lazyColumnNode(spacing = 8)
+        val next = lazyColumnNode(spacing = 16)
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is LazyColumnNodePatch)
+    }
+
     private fun textNode(
         text: String = "value",
         modifier: Modifier = Modifier,
@@ -262,6 +274,21 @@ class NodeBindingDifferTest {
                 textSizeSp = 14,
                 horizontalPadding = 8,
                 verticalPadding = 6,
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun lazyColumnNode(
+        spacing: Int = 8,
+    ): VNode {
+        return VNode(
+            type = NodeType.LazyColumn,
+            props = Props.Empty,
+            spec = LazyColumnNodeProps(
+                contentPadding = 12,
+                spacing = spacing,
+                items = emptyList(),
             ),
             modifier = Modifier,
         )

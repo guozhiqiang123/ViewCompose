@@ -532,15 +532,15 @@ Compose 会：
 ### Phase 2：做节点级 diff
 
 1. 基于 `NodeSpec` 做 `areEquivalent / patch`
-2. 先覆盖 `Button / TextField / TabPager / LazyColumn / SegmentedControl`
+2. 先覆盖 `Button / Text / TextField / TabPager / LazyColumn / SegmentedControl`
 3. renderer 先支持“字段级跳过更新”
 
 当前状态：
 
 1. 已完成第一步“整节点 skip bind”
 2. 当前判断条件已经收敛为“modifier + 样式 props + NodeSpec”
-3. `Button`、`Text`、`TextField`、`TabPager` 和 `SegmentedControl` 已作为第一批高收益节点进入字段级 patch
-4. 下一步继续把 `LazyColumn` 从全量 rebind 推进到字段级 patch
+3. `Button`、`Text`、`TextField`、`TabPager`、`SegmentedControl` 和 `LazyColumn` 已作为第一批高收益节点进入字段级 patch
+4. 下一步不再是“继续补第一批节点”，而是开始把 patch 逻辑继续从 family binder 下沉，并为更细粒度统计和 benchmark 对照补场景
 
 ### Phase 3：补诊断能力
 

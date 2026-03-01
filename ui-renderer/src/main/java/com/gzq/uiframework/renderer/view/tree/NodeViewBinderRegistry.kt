@@ -201,6 +201,12 @@ internal object NodeViewBinderRegistry {
                     patch = patch,
                 )
             }
+            is LazyColumnNodePatch -> {
+                ContainerViewBinder.applyLazyColumnPatch(
+                    view = view as RecyclerView,
+                    patch = patch,
+                )
+            }
         }
     }
 
