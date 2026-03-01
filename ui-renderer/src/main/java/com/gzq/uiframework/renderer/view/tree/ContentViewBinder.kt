@@ -83,6 +83,54 @@ internal object ContentViewBinder {
         }
     }
 
+    fun applyButtonPatch(
+        view: Button,
+        patch: ButtonNodePatch,
+    ) {
+        if (patch.previous.text != patch.next.text) {
+            view.text = patch.next.text
+        }
+        if (patch.previous.enabled != patch.next.enabled) {
+            view.isEnabled = patch.next.enabled
+        }
+        if (patch.previous.iconSpacing != patch.next.iconSpacing) {
+            view.compoundDrawablePadding = patch.next.iconSpacing
+        }
+        if (
+            patch.previous.leadingIcon != patch.next.leadingIcon ||
+            patch.previous.trailingIcon != patch.next.trailingIcon ||
+            patch.previous.iconTint != patch.next.iconTint ||
+            patch.previous.iconSize != patch.next.iconSize
+        ) {
+            view.setCompoundDrawablesRelative(
+                resolveButtonIconDrawable(
+                    view = view,
+                    source = patch.next.leadingIcon,
+                    tint = patch.next.iconTint,
+                    size = patch.next.iconSize,
+                ),
+                null,
+                resolveButtonIconDrawable(
+                    view = view,
+                    source = patch.next.trailingIcon,
+                    tint = patch.next.iconTint,
+                    size = patch.next.iconSize,
+                ),
+                null,
+            )
+        }
+        if (
+            patch.previous.onClick != patch.next.onClick ||
+            patch.previous.enabled != patch.next.enabled
+        ) {
+            view.setOnClickListener {
+                if (patch.next.enabled) {
+                    patch.next.onClick?.invoke()
+                }
+            }
+        }
+    }
+
     fun readTextSpec(node: VNode): TextSpec {
         val spec = node.spec as? TextNodeProps
         if (spec != null) {

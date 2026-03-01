@@ -79,7 +79,8 @@ class DebugStringsTest {
                 reuses = 2,
                 removals = 3,
                 reboundNodes = 4,
-                skippedBindings = 5,
+                patchedNodes = 5,
+                skippedBindings = 6,
             ),
         )
 
@@ -87,7 +88,7 @@ class DebugStringsTest {
             """
             insert@0:Text
             --
-            inserts=1 reuses=2 removals=3 rebound=4 skipped=5
+            inserts=1 reuses=2 removals=3 rebound=4 patched=5 skipped=6
             """.trimIndent(),
             result.debugSummary(),
         )

@@ -5,8 +5,11 @@ import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.Props
 import com.gzq.uiframework.renderer.node.VNode
+import com.gzq.uiframework.renderer.node.TypedPropKeys
+import com.gzq.uiframework.renderer.node.props
+import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextNodeProps
-import org.junit.Assert.assertFalse
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -40,7 +43,7 @@ class NodeBindingDifferTest {
             ),
         )
 
-        assertFalse(NodeBindingDiffer.shouldRebind(previous, next))
+        assertSame(NodeBindingPlan.Skip, NodeBindingDiffer.plan(previous, next))
     }
 
     @Test
@@ -48,7 +51,7 @@ class NodeBindingDifferTest {
         val previous = textNode(text = "before")
         val next = textNode(text = "after")
 
-        assertTrue(NodeBindingDiffer.shouldRebind(previous, next))
+        assertSame(NodeBindingPlan.Rebind, NodeBindingDiffer.plan(previous, next))
     }
 
     @Test
@@ -56,7 +59,7 @@ class NodeBindingDifferTest {
         val previous = textNode()
         val next = textNode(modifier = Modifier.padding(8))
 
-        assertTrue(NodeBindingDiffer.shouldRebind(previous, next))
+        assertSame(NodeBindingPlan.Rebind, NodeBindingDiffer.plan(previous, next))
     }
 
     @Test
@@ -72,7 +75,26 @@ class NodeBindingDifferTest {
             modifier = Modifier,
         )
 
-        assertTrue(NodeBindingDiffer.shouldRebind(previous, next))
+        assertSame(NodeBindingPlan.Rebind, NodeBindingDiffer.plan(previous, next))
+    }
+
+    @Test
+    fun `patches button semantic updates when style is unchanged`() {
+        val previous = buttonNode(text = "Continue")
+        val next = buttonNode(text = "Continue now")
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is ButtonNodePatch)
+    }
+
+    @Test
+    fun `rebinds button when style props change`() {
+        val previous = buttonNode(textColor = 0xFF000000.toInt())
+        val next = buttonNode(textColor = 0xFFFF0000.toInt())
+
+        assertSame(NodeBindingPlan.Rebind, NodeBindingDiffer.plan(previous, next))
     }
 
     private fun textNode(
@@ -91,6 +113,29 @@ class NodeBindingDifferTest {
             ),
             modifier = modifier,
             children = children,
+        )
+    }
+
+    private fun buttonNode(
+        text: String = "Continue",
+        textColor: Int = 0xFF000000.toInt(),
+    ): VNode {
+        return VNode(
+            type = NodeType.Button,
+            props = props {
+                set(TypedPropKeys.TextColor, textColor)
+            },
+            spec = ButtonNodeProps(
+                text = text,
+                enabled = true,
+                iconSpacing = 8,
+                leadingIcon = null,
+                trailingIcon = null,
+                iconTint = textColor,
+                iconSize = 18,
+                onClick = null,
+            ),
+            modifier = Modifier,
         )
     }
 }

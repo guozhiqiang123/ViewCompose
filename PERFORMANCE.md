@@ -256,8 +256,9 @@ Compose 官方文档也明确把这类模式视为不理想，因为它会多跑
 当前已落地的第一步：
 
 1. [ViewTreeRenderer.kt](/Users/gzq/AndroidStudioProjects/UIFramework/ui-renderer/src/main/java/com/gzq/uiframework/renderer/view/tree/ViewTreeRenderer.kt) 会输出单次 render 的 `insert/reuse/removal/rebound/skipped` 统计
-2. [RenderSession.kt](/Users/gzq/AndroidStudioProjects/UIFramework/ui-widget-core/src/main/java/com/gzq/uiframework/widget/core/runtime/RenderSession.kt) 的 debug 日志已包含这些统计
-3. [DebugStrings.kt](/Users/gzq/AndroidStudioProjects/UIFramework/ui-renderer/src/main/java/com/gzq/uiframework/renderer/debug/DebugStrings.kt) 已能格式化 render 统计摘要
+2. 这些统计现在已经扩展为 `insert/reuse/removal/rebound/patched/skipped`
+3. [RenderSession.kt](/Users/gzq/AndroidStudioProjects/UIFramework/ui-widget-core/src/main/java/com/gzq/uiframework/widget/core/runtime/RenderSession.kt) 的 debug 日志已包含这些统计
+4. [DebugStrings.kt](/Users/gzq/AndroidStudioProjects/UIFramework/ui-renderer/src/main/java/com/gzq/uiframework/renderer/debug/DebugStrings.kt) 已能格式化 render 统计摘要
 
 ## 5. 架构设计层面的性能约束
 
@@ -537,8 +538,9 @@ Compose 会：
 当前状态：
 
 1. 已完成第一步“整节点 skip bind”
-2. 当前判断条件基于 `type + spec + props + modifier`
-3. 下一步才是把高收益节点推进到字段级 patch，而不是继续停留在全量 rebind / 全量 skip 之间
+2. 当前判断条件已经收敛为“modifier + 样式 props + NodeSpec”
+3. `Button` 已作为第一批高收益节点进入字段级 patch
+4. 下一步继续把 `TextField / TabPager / LazyColumn / SegmentedControl` 从全量 rebind 推进到字段级 patch
 
 ### Phase 3：补诊断能力
 

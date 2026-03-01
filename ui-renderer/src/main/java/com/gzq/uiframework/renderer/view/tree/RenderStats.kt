@@ -5,17 +5,19 @@ data class RenderStats(
     val reuses: Int = 0,
     val removals: Int = 0,
     val reboundNodes: Int = 0,
+    val patchedNodes: Int = 0,
     val skippedBindings: Int = 0,
 ) {
     fun withInsert(): RenderStats = copy(inserts = inserts + 1)
 
     fun withReuse(
-        rebound: Boolean,
+        result: ReuseBindingResult,
     ): RenderStats {
         return copy(
             reuses = reuses + 1,
-            reboundNodes = reboundNodes + if (rebound) 1 else 0,
-            skippedBindings = skippedBindings + if (rebound) 0 else 1,
+            reboundNodes = reboundNodes + if (result == ReuseBindingResult.Rebound) 1 else 0,
+            patchedNodes = patchedNodes + if (result == ReuseBindingResult.Patched) 1 else 0,
+            skippedBindings = skippedBindings + if (result == ReuseBindingResult.Skipped) 1 else 0,
         )
     }
 
@@ -27,3 +29,9 @@ data class RenderTreeResult(
     val reconcileResult: com.gzq.uiframework.renderer.reconcile.ReconcileResult<MountedNode>,
     val stats: RenderStats,
 )
+
+enum class ReuseBindingResult {
+    Rebound,
+    Patched,
+    Skipped,
+}

@@ -108,6 +108,7 @@ object ViewTreeRenderer {
                 reuses = stats.reuses + patchResult.stats.reuses,
                 removals = stats.removals + patchResult.stats.removals,
                 reboundNodes = stats.reboundNodes + patchResult.stats.reboundNodes,
+                patchedNodes = stats.patchedNodes + patchResult.stats.patchedNodes,
                 skippedBindings = stats.skippedBindings + patchResult.stats.skippedBindings,
             )
             nextMounted += patchResult.mountedNode
@@ -151,9 +152,14 @@ object ViewTreeRenderer {
 
             is ReusePatch -> {
                 val mountedNode = patch.payload
-                val shouldRebind = NodeBindingDiffer.shouldRebind(mountedNode.vnode, patch.nextVNode)
-                if (shouldRebind) {
-                    bindView(mountedNode.view, patch.nextVNode)
+                val bindingPlan = NodeBindingDiffer.plan(mountedNode.vnode, patch.nextVNode)
+                when (bindingPlan) {
+                    NodeBindingPlan.Rebind -> bindView(mountedNode.view, patch.nextVNode)
+                    NodeBindingPlan.Skip -> Unit
+                    is NodeBindingPlan.Patch -> NodeViewBinderRegistry.applyPatch(
+                        view = mountedNode.view,
+                        patch = bindingPlan.patch,
+                    )
                 }
                 mountedNode.view.layoutParams = createLayoutParams(container, patch.nextVNode)
                 val childResult = reconcileChildren(
@@ -170,7 +176,13 @@ object ViewTreeRenderer {
                 )
                 PatchApplicationResult(
                     mountedNode = mountedNode,
-                    stats = childResult.stats.withReuse(rebound = shouldRebind),
+                    stats = childResult.stats.withReuse(
+                        result = when (bindingPlan) {
+                            NodeBindingPlan.Rebind -> ReuseBindingResult.Rebound
+                            NodeBindingPlan.Skip -> ReuseBindingResult.Skipped
+                            is NodeBindingPlan.Patch -> ReuseBindingResult.Patched
+                        },
+                    ),
                 )
             }
         }

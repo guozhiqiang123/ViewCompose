@@ -47,7 +47,7 @@ fun RenderTreeResult.debugSummary(): String {
 }
 
 fun RenderStats.debugSummary(): String {
-    return "inserts=$inserts reuses=$reuses removals=$removals rebound=$reboundNodes skipped=$skippedBindings"
+    return "inserts=$inserts reuses=$reuses removals=$removals rebound=$reboundNodes patched=$patchedNodes skipped=$skippedBindings"
 }
 
 private fun VNode.debugTree(indent: Int): String {

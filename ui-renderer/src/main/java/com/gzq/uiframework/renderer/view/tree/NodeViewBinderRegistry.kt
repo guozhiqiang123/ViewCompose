@@ -166,6 +166,20 @@ internal object NodeViewBinderRegistry {
         binders.getValue(node.type).invoke(view, node)
     }
 
+    fun applyPatch(
+        view: View,
+        patch: NodeViewPatch,
+    ) {
+        when (patch) {
+            is ButtonNodePatch -> {
+                ContentViewBinder.applyButtonPatch(
+                    view = view as android.widget.Button,
+                    patch = patch,
+                )
+            }
+        }
+    }
+
     private fun readNodeTextColor(node: VNode): Int? {
         return node.props[TypedPropKeys.TextColor]
     }
