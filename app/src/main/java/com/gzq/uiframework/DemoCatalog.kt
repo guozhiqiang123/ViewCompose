@@ -7,6 +7,8 @@ internal enum class DemoModuleStatus {
     Planned,
 }
 
+internal const val EXTRA_DEMO_MODULE_KEY = "demo_module_key"
+
 internal data class DemoModule(
     val key: String,
     val title: String,
@@ -117,6 +119,9 @@ internal val DEMO_MODULES = listOf(
 
 internal val AVAILABLE_DEMO_MODULES = DEMO_MODULES.filter { it.status == DemoModuleStatus.Available }
 internal val PLANNED_DEMO_MODULES = DEMO_MODULES.filter { it.status == DemoModuleStatus.Planned }
+
+internal fun findAvailableDemoModuleByKey(key: String): DemoModule? =
+    AVAILABLE_DEMO_MODULES.firstOrNull { it.key == key }
 
 internal data class DemoListItem(
     val id: String,

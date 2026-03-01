@@ -22,7 +22,7 @@ class DemoInteractionBenchmark {
         iterations = DEFAULT_ITERATIONS,
         startupMode = StartupMode.WARM,
         setupBlock = {
-            startDemoAndWait()
+            startCatalogAndWait()
             waitForText("Capability Modules")
             waitForText("Open State")
             waitForText("Open Layouts")
@@ -43,7 +43,7 @@ class DemoInteractionBenchmark {
         iterations = DEFAULT_ITERATIONS,
         startupMode = StartupMode.WARM,
         setupBlock = {
-            startDemoAndWait()
+            startCatalogAndWait()
             waitForText("Demo Theme")
             waitForText("Light")
             waitForText("Dark")
@@ -63,7 +63,7 @@ class DemoInteractionBenchmark {
         iterations = DEFAULT_ITERATIONS,
         startupMode = StartupMode.WARM,
         setupBlock = {
-            startDemoAndWait()
+            startCatalogAndWait()
             openDemoModule("Collections")
             waitForText("Collections")
         },
@@ -81,7 +81,7 @@ class DemoInteractionBenchmark {
         iterations = DEFAULT_ITERATIONS,
         startupMode = StartupMode.WARM,
         setupBlock = {
-            startDemoAndWait()
+            startCatalogAndWait()
             openDemoModule("State")
             waitForText("Patch")
             clickText("Patch")
@@ -106,7 +106,7 @@ class DemoInteractionBenchmark {
         iterations = DEFAULT_ITERATIONS,
         startupMode = StartupMode.WARM,
         setupBlock = {
-            startDemoAndWait()
+            startCatalogAndWait()
             openDemoModule("State")
             waitForText("State & Effects")
             waitForText("Patch")

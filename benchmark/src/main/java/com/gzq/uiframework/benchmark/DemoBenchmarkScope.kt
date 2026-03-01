@@ -11,6 +11,34 @@ internal fun MacrobenchmarkScope.startDemoAndWait() {
     device.wait(Until.hasObject(By.text("Demo Theme")), UI_WAIT_TIMEOUT_MS)
 }
 
+internal fun MacrobenchmarkScope.startCatalogAndWait() {
+    startDemoAndWait()
+    if (!device.wait(Until.hasObject(By.text("Capability Modules")), 1_000)) {
+        val backNode = device.findObject(By.text("Back to catalog"))
+        if (backNode != null) {
+            backNode.click()
+            device.waitForIdle()
+        } else {
+            device.pressBack()
+            device.waitForIdle()
+        }
+    }
+    waitForText("Capability Modules")
+    scrollToPageTop()
+    waitForText("Capability Modules")
+}
+
+internal fun MacrobenchmarkScope.startDemoActivityAndWait(
+    moduleKey: String,
+    expectedText: String,
+) {
+    pressHome()
+    startActivityAndWait { intent ->
+        intent.putExtra("demo_module_key", moduleKey)
+    }
+    waitForText(expectedText)
+}
+
 internal fun MacrobenchmarkScope.waitForText(text: String) {
     device.wait(Until.hasObject(By.text(text)), UI_WAIT_TIMEOUT_MS)
 }

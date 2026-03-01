@@ -139,6 +139,24 @@ Compose 官方文档也明确把这类模式视为不理想，因为它会多跑
 ./gradlew :benchmark:assembleBenchmark :app:assembleBenchmark
 ```
 
+### 模块级 benchmark 入口状态
+
+多 Activity demo 现在已经具备稳定的“launcher extra -> 模块 Activity”转发入口，代码在：
+
+1. [MainActivity.kt](/Users/gzq/AndroidStudioProjects/UIFramework/app/src/main/java/com/gzq/uiframework/MainActivity.kt)
+2. [DemoCatalog.kt](/Users/gzq/AndroidStudioProjects/UIFramework/app/src/main/java/com/gzq/uiframework/DemoCatalog.kt)
+3. [DemoBenchmarkScope.kt](/Users/gzq/AndroidStudioProjects/UIFramework/benchmark/src/main/java/com/gzq/uiframework/benchmark/DemoBenchmarkScope.kt)
+
+这让宏基准后续可以不依赖目录页滚动去打开模块，而是通过 launcher Activity 安全转发到目标模块。
+
+当前判断：
+
+1. 路由基础设施已完成
+2. `Foundations / Layouts` 的模块专属 benchmark 场景还没有纳入稳定基线
+3. 原因不是路由缺失，而是这些页面里适合 UIAutomator 命中的稳定交互锚点还不足，尤其是 filter / button 文本在自动化上仍有不稳定因素
+
+后续应优先补“benchmark-only stable anchors”，再把这两个模块正式纳入基线。
+
 后续在真机运行宏基准的主要命令：
 
 ```bash
