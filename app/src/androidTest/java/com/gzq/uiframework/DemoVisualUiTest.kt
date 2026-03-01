@@ -182,6 +182,36 @@ class DemoVisualUiTest {
     }
 
     @Test
+    fun feedbackPage_triggersPopupFlow() {
+        launchDemoActivity(FeedbackActivity::class.java).use { scenario ->
+            waitForUiIdle()
+            scrollDeviceTextIntoView("Show Popup")
+            scenario.onActivity { activity ->
+                val showPopup = activity.requireTextView("Show Popup")
+                assertViewFullyVisible(showPopup)
+            }
+            clickDeviceText("Show Popup")
+            assertDeviceTextVisible("Feedback Popup 1")
+            assertDeviceTextVisible("Dismiss Popup")
+            captureDeviceScreenshot("feedback-popup-light")
+            clickDeviceText("Dismiss Popup")
+            waitForUiIdle()
+            scrollDeviceTextIntoView("Last event: Popup closed 1")
+            scenario.onActivity { activity ->
+                val lastEvent = activity.requireTextView("Last event: Popup closed 1")
+                assertViewFullyVisible(lastEvent)
+                assertTextNotEllipsized(lastEvent)
+            }
+            scrollDeviceTextIntoView("Popup count: 1")
+            scenario.onActivity { activity ->
+                val popupCount = activity.requireTextView("Popup count: 1")
+                assertViewFullyVisible(popupCount)
+                assertTextNotEllipsized(popupCount)
+            }
+        }
+    }
+
+    @Test
     fun inputStress_controlsRemainVisibleAndReadable() {
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),
