@@ -41,6 +41,7 @@ import com.gzq.uiframework.renderer.layout.BoxAlignment
 import com.gzq.uiframework.renderer.layout.HorizontalAlignment
 import com.gzq.uiframework.renderer.layout.LayoutParamDefaultsResolver
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
+import com.gzq.uiframework.renderer.layout.ModifierCompatibilityInspector
 import com.gzq.uiframework.renderer.layout.ModifierParentDataValidator
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.modifier.AlphaModifierElement
@@ -1082,6 +1083,12 @@ object ViewTreeRenderer {
     ) {
         ModifierParentDataValidator.validate(parent, node).forEach { warning ->
             val key = "${parent::class.java.name}|${node.type}|$warning"
+            if (emittedModifierWarnings.add(key)) {
+                Log.w(WARNING_TAG, warning)
+            }
+        }
+        ModifierCompatibilityInspector.warnings(node).forEach { warning ->
+            val key = "compat|${node.type}|$warning"
             if (emittedModifierWarnings.add(key)) {
                 Log.w(WARNING_TAG, warning)
             }

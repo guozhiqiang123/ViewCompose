@@ -191,6 +191,7 @@ Theme -> Modifier -> Renderer
 - `Text` 已提供显式 `color` 参数，demo 已不再依赖 `Modifier.textColor(...)`
 - `Button`、`TextField`、`Surface`、`IconButton` 的默认背景 / 描边 / 圆角 / ripple / 最小高度 / 内边距已开始通过 style props 下发
 - renderer 已实现“显式 modifier 覆盖 style props”的优先级规则，用于兼容现有外部调用
+- renderer 已开始对 `Modifier.textColor` / `Modifier.textSize` 输出一次性迁移 warning，避免旧兼容层继续被静默使用
 
 ### Phase 3
 
