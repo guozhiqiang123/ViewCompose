@@ -1,4 +1,4 @@
-package com.gzq.uiframework.renderer.view
+package com.gzq.uiframework.renderer.view.lazy
 
 import android.util.Log
 import android.graphics.Rect

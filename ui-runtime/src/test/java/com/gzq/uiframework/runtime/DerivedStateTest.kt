@@ -1,5 +1,6 @@
 package com.gzq.uiframework.runtime
 
+import com.gzq.uiframework.runtime.observation.RuntimeObservation
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

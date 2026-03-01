@@ -307,24 +307,32 @@ Compose 的优势在于：
 - 这不是当前最优先要解决的问题
 - 但它是长期扩展上限的核心瓶颈
 
-### 7.5 目录虽清晰，但 package 仍然扁平
+### 7.5 package 分层已开始，但 public API 仍需克制演进
 
-本次整理优先做的是“按文件夹归类”，没有同步做 package 大迁移。
+这一轮整理不再只是“按文件夹归类”，`ui-runtime` 和 `ui-renderer/view` 的内部实现已经开始和目录同步做 package 分层：
 
-这是当前合理取舍，因为：
+- `ui-runtime` 已拆成 `runtime.state` 和 `runtime.observation`
+- `ui-renderer/view` 已拆成 `view.container`、`view.lazy`、`view.tree`
 
-- 先降低回归风险
-- 先让代码阅读路径清晰
+这带来的直接收益是：
 
-但这也意味着：
+- 实现边界开始清晰
+- 测试和调用方更容易看出类型真实职责
+- 后续继续拆 renderer 单点复杂度时，有明确落点
 
-- 模块内的物理结构已经清楚
-- 类型命名空间还没有真正体现职责分层
+但这里仍然保留了一个刻意的边界：
+
+- `ui-widget-core` 作为当前 DSL 和默认值入口，public API package 还没有大规模拆散
+
+这是当前更合理的取舍，因为：
+
+- app/demo 和未来外部调用方大量依赖 `com.gzq.uiframework.widget.core`
+- 过早把 public DSL 全量打散，会带来高迁移成本，但不会立即提升能力上限
 
 结论：
 
-- 当前先保持 package 稳定
-- 未来如果继续演进到更成熟阶段，可以再评估 package 分层
+- 内部实现层的 package 分层应该继续
+- public widget API 应保持 facade 风格，而不是为了“目录对齐”过度碎片化
 
 ## 8. 和 Compose 的对比
 

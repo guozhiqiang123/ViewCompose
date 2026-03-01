@@ -1,5 +1,6 @@
 package com.gzq.uiframework.renderer.view
 
+import com.gzq.uiframework.renderer.view.lazy.LazyHolderRegistry
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

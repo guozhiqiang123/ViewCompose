@@ -1,4 +1,4 @@
-package com.gzq.uiframework.runtime
+package com.gzq.uiframework.runtime.observation
 
 internal interface ObservableState {
     fun addObserver(observer: Observation)

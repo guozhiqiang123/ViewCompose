@@ -1,4 +1,4 @@
-package com.gzq.uiframework.renderer.view
+package com.gzq.uiframework.renderer.view.lazy
 
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.LazyListItemSession

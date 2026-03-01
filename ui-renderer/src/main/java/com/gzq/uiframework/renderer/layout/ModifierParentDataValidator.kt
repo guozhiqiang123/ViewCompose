@@ -7,8 +7,8 @@ import com.gzq.uiframework.renderer.modifier.HorizontalAlignModifierElement
 import com.gzq.uiframework.renderer.modifier.VerticalAlignModifierElement
 import com.gzq.uiframework.renderer.modifier.WeightModifierElement
 import com.gzq.uiframework.renderer.node.VNode
-import com.gzq.uiframework.renderer.view.DeclarativeBoxLayout
-import com.gzq.uiframework.renderer.view.DeclarativeLinearLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
 
 internal enum class ParentDataHost {
     Row,

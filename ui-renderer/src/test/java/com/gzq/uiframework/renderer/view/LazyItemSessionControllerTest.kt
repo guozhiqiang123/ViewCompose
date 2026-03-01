@@ -3,6 +3,7 @@ package com.gzq.uiframework.renderer.view
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.LazyListItemSession
 import com.gzq.uiframework.renderer.node.LazyListItemSessionFactory
+import com.gzq.uiframework.renderer.view.lazy.LazyItemSessionController
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

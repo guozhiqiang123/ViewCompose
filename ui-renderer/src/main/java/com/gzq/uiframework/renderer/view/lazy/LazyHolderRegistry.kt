@@ -1,4 +1,4 @@
-package com.gzq.uiframework.renderer.view
+package com.gzq.uiframework.renderer.view.lazy
 
 internal class LazyHolderRegistry<T : Any>(
     private val onDispose: (T) -> Unit,

@@ -1,4 +1,4 @@
-package com.gzq.uiframework.renderer.view
+package com.gzq.uiframework.renderer.view.container
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -12,6 +12,8 @@ import com.gzq.uiframework.renderer.node.TabPage
 import com.gzq.uiframework.renderer.reconcile.TabPagerDiff
 import com.gzq.uiframework.renderer.reconcile.TabPagerSelectionResolver
 import com.gzq.uiframework.renderer.reconcile.TabPagerUpdate
+import com.gzq.uiframework.renderer.view.lazy.LazyHolderRegistry
+import com.gzq.uiframework.renderer.view.lazy.LazyItemSessionController
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
