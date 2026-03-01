@@ -552,6 +552,7 @@ Compose 会：
 ### Phase 3：补诊断能力
 
 1. render / patch 统计
+   - 已有 `Diagnostics -> Renderer` 手动快照入口，可查看最近一次 `RenderStats`
 2. View 深度统计
 3. 过深树 warning
 4. 无 key / 重复 key / 大量重建 warning
