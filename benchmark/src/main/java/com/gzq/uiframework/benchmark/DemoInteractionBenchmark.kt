@@ -23,14 +23,14 @@ class DemoInteractionBenchmark {
         startupMode = StartupMode.WARM,
         setupBlock = {
             startDemoAndWait()
-            waitForText("Foundations")
-            waitForText("Collections")
+            waitForText("State")
+            waitForText("Layouts")
         },
     ) {
-        clickText("Collections")
-        waitForText("Collections")
-        clickText("Foundations")
-        waitForText("Foundations")
+        clickText("State")
+        waitForText("State & Effects")
+        clickText("Layouts")
+        waitForText("Layouts")
     }
 
     @Test

@@ -143,6 +143,35 @@ Compose 官方文档也明确把这类模式视为不理想，因为它会多跑
 ./gradlew :benchmark:connectedBenchmarkAndroidTest
 ```
 
+### 第一轮真实设备基线
+
+已于 `2026-03-01` 在真机 `Pixel 4 XL (Android 13)` 跑过首轮宏基准。
+
+当前基线：
+
+1. `coldStartup`
+   - `timeToInitialDisplayMs` 中位数约 `428.9ms`
+2. `themeSwitch`
+   - `frameDurationCpuMs` P50 `2.6ms`
+   - `frameOverrunMs` P50 `-15.9ms`
+3. `collectionsScroll`
+   - `frameDurationCpuMs` P50 `2.9ms`
+   - `frameOverrunMs` P50 `-14.2ms`
+4. `chapterSwitch`
+   - `frameDurationCpuMs` P50 `2.7ms`
+   - `frameOverrunMs` P50 `-16.3ms`
+
+相关产物位置：
+
+1. [benchmarkData.json](/Users/gzq/AndroidStudioProjects/UIFramework/benchmark/build/outputs/connected_android_test_additional_output/benchmark/connected/Pixel%204%20XL%20-%2013/com.gzq.uiframework.benchmark-benchmarkData.json)
+2. `additionaltestoutput.benchmark.message_*`
+3. `*.perfetto-trace`
+
+说明：
+
+- 这只是第一版基线，不是优化结论
+- 它的价值在于给后续 `NodeSpec diff / skip update` 提供对照
+
 ## 4.1 需要两层基准
 
 ### A. Macrobenchmark

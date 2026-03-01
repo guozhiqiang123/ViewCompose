@@ -20,6 +20,7 @@ android {
         create("benchmark") {
             isDebuggable = true
             matchingFallbacks += listOf("benchmark", "release")
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 
