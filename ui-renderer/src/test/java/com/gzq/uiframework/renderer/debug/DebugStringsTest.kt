@@ -9,6 +9,7 @@ import com.gzq.uiframework.renderer.reconcile.ReconcileResult
 import com.gzq.uiframework.renderer.reconcile.RemovePatch
 import com.gzq.uiframework.renderer.reconcile.ReusePatch
 import com.gzq.uiframework.renderer.view.tree.RenderStats
+import com.gzq.uiframework.renderer.view.tree.RenderStructureStats
 import com.gzq.uiframework.renderer.view.tree.RenderTreeResult
 import com.gzq.uiframework.renderer.view.tree.MountedNode
 import org.junit.Assert.assertEquals
@@ -82,6 +83,13 @@ class DebugStringsTest {
                 patchedNodes = 5,
                 skippedBindings = 6,
             ),
+            structure = RenderStructureStats(
+                vnodeCount = 7,
+                mountedNodeCount = 8,
+                maxVNodeDepth = 3,
+                maxMountedDepth = 4,
+            ),
+            warnings = listOf("Deep mounted view tree detected: depth=12 exceeds recommended limit 10."),
         )
 
         assertEquals(
@@ -89,6 +97,8 @@ class DebugStringsTest {
             insert@0:Text
             --
             inserts=1 reuses=2 removals=3 rebound=4 patched=5 skipped=6
+            vnodeCount=7 mountedCount=8 vnodeDepth=3 mountedDepth=4
+            warning: Deep mounted view tree detected: depth=12 exceeds recommended limit 10.
             """.trimIndent(),
             result.debugSummary(),
         )

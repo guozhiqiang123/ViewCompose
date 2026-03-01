@@ -63,7 +63,9 @@ import com.gzq.uiframework.renderer.R
 object ViewTreeRenderer {
     private const val DEFAULT_RIPPLE_COLOR: Int = 0x22000000
     private const val WARNING_TAG: String = "UIFramework"
+    private const val DEEP_TREE_WARNING_DEPTH: Int = 10
     private val emittedModifierWarnings = mutableSetOf<String>()
+    private val emittedStructureWarnings = mutableSetOf<String>()
 
     init {
         NodeViewBinderRegistry.initialize(
@@ -120,10 +122,21 @@ object ViewTreeRenderer {
             )
             stats = stats.withRemoval()
         }
+        val structure = RenderStructureStats.from(
+            nodes = nodes,
+            mountedNodes = nextMounted,
+        )
+        val warnings = if (onReconcile == null) {
+            emptyList()
+        } else {
+            collectStructureWarnings(structure)
+        }
         return RenderTreeResult(
             mountedNodes = nextMounted,
             reconcileResult = reconcileResult,
             stats = stats,
+            structure = structure,
+            warnings = warnings,
         ).also { onReconcile?.invoke(it) }
     }
 
@@ -214,6 +227,22 @@ object ViewTreeRenderer {
             previous = previousChildren,
             nodes = node.children,
         )
+    }
+
+    private fun collectStructureWarnings(
+        structure: RenderStructureStats,
+    ): List<String> {
+        val warnings = mutableListOf<String>()
+        if (structure.maxMountedDepth > DEEP_TREE_WARNING_DEPTH) {
+            warnings += "Deep mounted view tree detected: depth=${structure.maxMountedDepth} exceeds recommended limit $DEEP_TREE_WARNING_DEPTH."
+        }
+        warnings.forEach { warning ->
+            val key = "structure|$warning"
+            if (emittedStructureWarnings.add(key)) {
+                Log.w(WARNING_TAG, warning)
+            }
+        }
+        return warnings
     }
 
     private fun mountNode(context: Context, node: VNode): MountedNode {

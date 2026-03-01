@@ -6,6 +6,7 @@ import com.gzq.uiframework.renderer.debug.debugSummary
 import com.gzq.uiframework.renderer.debug.debugTree
 import com.gzq.uiframework.renderer.view.tree.MountedNode
 import com.gzq.uiframework.renderer.view.tree.RenderStats
+import com.gzq.uiframework.renderer.view.tree.RenderTreeResult
 import com.gzq.uiframework.renderer.view.tree.ViewTreeRenderer
 import com.gzq.uiframework.runtime.observation.Observation
 import com.gzq.uiframework.runtime.observation.RuntimeObservation
@@ -16,6 +17,7 @@ class RenderSession internal constructor(
     private val debug: Boolean = false,
     private val debugTag: String = "UIFramework",
     private val onRenderStats: ((RenderStats) -> Unit)? = null,
+    private val onRenderResult: ((RenderTreeResult) -> Unit)? = null,
 ) {
     private var mountedNodes: List<MountedNode> = emptyList()
     private var observation: Observation? = null
@@ -53,6 +55,7 @@ class RenderSession internal constructor(
         )
         mountedNodes = renderResult.mountedNodes
         onRenderStats?.invoke(renderResult.stats)
+        onRenderResult?.invoke(renderResult)
         effectStore.commit()
         sideEffectStore.commit()
     }

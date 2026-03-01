@@ -19,10 +19,12 @@ import java.util.Locale
 internal fun UiTreeBuilder.DiagnosticsPage() {
     val selectedPageState = remember { mutableStateOf(0) }
     val pendingSnapshotRefreshState = remember { mutableStateOf(false) }
-    val renderSnapshotState = remember { mutableStateOf(DemoRenderDiagnosticsStore.snapshot()) }
+    val renderSnapshotState = remember { mutableStateOf(DemoRenderDiagnosticsStore.latestSnapshot()) }
+    val patchSnapshotState = remember { mutableStateOf(DemoRenderDiagnosticsStore.latestPatchActiveSnapshot()) }
     if (pendingSnapshotRefreshState.value) {
         SideEffect {
-            renderSnapshotState.value = DemoRenderDiagnosticsStore.snapshot()
+            renderSnapshotState.value = DemoRenderDiagnosticsStore.latestSnapshot()
+            patchSnapshotState.value = DemoRenderDiagnosticsStore.latestPatchActiveSnapshot()
             pendingSnapshotRefreshState.value = false
         }
     }
@@ -79,14 +81,15 @@ internal fun UiTreeBuilder.DiagnosticsPage() {
 
             "renderer" -> DemoSection(
                 title = "Renderer Hooks",
-                subtitle = "The sample now exposes the latest render snapshot manually so patch/rebind/skip behavior can be checked against the log stream.",
+                subtitle = "The sample now exposes recent render snapshots manually so patch/rebind/skip behavior and tree depth can be checked against the log stream.",
             ) {
                 val snapshot = renderSnapshotState.value
+                val patchSnapshot = patchSnapshotState.value
                 Button(
                     text = if (pendingSnapshotRefreshState.value) {
                         "Capturing renderer snapshot..."
                     } else {
-                        "Capture latest renderer snapshot"
+                        "Refresh renderer snapshots"
                     },
                     onClick = {
                         pendingSnapshotRefreshState.value = true
@@ -104,6 +107,21 @@ internal fun UiTreeBuilder.DiagnosticsPage() {
                         DiagnosticFact("Patched", snapshot.stats.patchedNodes.toString()),
                         DiagnosticFact("Rebound", snapshot.stats.reboundNodes.toString()),
                         DiagnosticFact("Skipped", snapshot.stats.skippedBindings.toString()),
+                        DiagnosticFact("VNode count", snapshot.structure.vnodeCount.toString()),
+                        DiagnosticFact("Mounted count", snapshot.structure.mountedNodeCount.toString()),
+                        DiagnosticFact("VNode depth", snapshot.structure.maxVNodeDepth.toString()),
+                        DiagnosticFact("Mounted depth", snapshot.structure.maxMountedDepth.toString()),
+                    ),
+                )
+                DiagnosticFactGroup(
+                    title = "Latest Patch-Active Snapshot",
+                    facts = listOf(
+                        DiagnosticFact("Captured", patchSnapshot?.updatedAtMillis?.formatDiagnosticsTime() ?: "Not captured yet"),
+                        DiagnosticFact("Patched", patchSnapshot?.stats?.patchedNodes?.toString() ?: "0"),
+                        DiagnosticFact("Rebound", patchSnapshot?.stats?.reboundNodes?.toString() ?: "0"),
+                        DiagnosticFact("Skipped", patchSnapshot?.stats?.skippedBindings?.toString() ?: "0"),
+                        DiagnosticFact("Mounted depth", patchSnapshot?.structure?.maxMountedDepth?.toString() ?: "0"),
+                        DiagnosticFact("Warnings", patchSnapshot?.warnings?.joinToString() ?: "None"),
                     ),
                 )
                 DiagnosticFactGroup(
@@ -120,7 +138,8 @@ internal fun UiTreeBuilder.DiagnosticsPage() {
                 ChecklistGroup(
                     title = "Manual Probes",
                     items = listOf(
-                        "先进入 State -> Patch Stress 做几次切换，再返回这里点击 Capture，确认 patched/skipped 开始增长。",
+                        "先进入 State -> Patch Stress 做几次切换，再返回这里点击 Refresh，确认 Latest Patch-Active Snapshot 里的 patched/skipped 开始增长。",
+                        "切到 Layouts 或 Collections 压力页后再回来，确认 mounted depth 和 vnode depth 会跟随复杂场景变化。",
                         "打开 Layouts / Collections 压力页，观察日志中 VNode tree 与 Reconcile 摘要是否稳定。",
                         "切换章节并返回，确认 debug 日志仍持续输出到 UIFrameworkSample。",
                         "遇到视觉 bug 时，先用这里的渲染模型判断问题更像 layout、list diff 还是 local 传播。",
@@ -162,18 +181,20 @@ internal fun UiTreeBuilder.DiagnosticsPage() {
                 what = "Diagnostics should be the first place to check before assuming a visual bug belongs to a widget, layout, or runtime layer.",
                 howToVerify = listOf(
                     "切换 theme mode 与章节，确认 runtime snapshot 始终反映当前 environment。",
-                    "在 State -> Patch Stress 执行几次更新后，返回 Renderer 页点击 Capture，确认 patched/skipped 不再始终为 0。",
+                    "在 State -> Patch Stress 执行几次更新后，返回 Renderer 页点击 Refresh，确认 patched/skipped 不再始终为 0。",
+                    "切到层级更复杂的章节后再次刷新，确认 Renderer 页能看到 vnode/mounted depth。",
                     "在出现渲染问题时，对照这里列出的 gaps 判断是已知缺口还是新回归。",
                     "结合日志观察 renderer 行为，并确认 diagnostics 页面描述与当前实现一致。",
                 ),
                 expected = listOf(
                     "该章节能快速告诉你当前框架还缺什么。",
                     "环境信息和主题信息不会在章节切换后失真。",
-                    "Renderer 页可以拿到最近一次 render 的统计快照。",
+                    "Renderer 页可以拿到最近一次 render 的统计快照和最近一次 patch-active 快照。",
                     "Diagnostics 会持续作为后续 inspector 的落点。",
                 ),
                 relatedGaps = listOf(
                     "还没有自动刷新的 render tree、patch timeline 和性能面板可视化。",
+                    "还没有 deepest path、measure/layout 次数和 frame timeline。",
                 ),
             )
         }

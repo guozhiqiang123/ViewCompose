@@ -554,7 +554,9 @@ Compose 会：
 1. render / patch 统计
    - 已有 `Diagnostics -> Renderer` 手动快照入口，可查看最近一次 `RenderStats`
 2. View 深度统计
+   - 已有 `vnodeCount / mountedNodeCount / maxVNodeDepth / maxMountedDepth`
 3. 过深树 warning
+   - 当前 mounted view depth 超过 `10` 时会输出 warning
 4. 无 key / 重复 key / 大量重建 warning
 
 ### Phase 4：收布局性能

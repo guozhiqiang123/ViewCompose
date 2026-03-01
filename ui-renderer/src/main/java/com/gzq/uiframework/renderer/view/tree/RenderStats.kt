@@ -28,6 +28,8 @@ data class RenderTreeResult(
     val mountedNodes: List<MountedNode>,
     val reconcileResult: com.gzq.uiframework.renderer.reconcile.ReconcileResult<MountedNode>,
     val stats: RenderStats,
+    val structure: RenderStructureStats = RenderStructureStats(),
+    val warnings: List<String> = emptyList(),
 )
 
 enum class ReuseBindingResult {

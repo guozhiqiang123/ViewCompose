@@ -6,6 +6,7 @@ import com.gzq.uiframework.renderer.reconcile.ReconcileResult
 import com.gzq.uiframework.renderer.reconcile.RemovePatch
 import com.gzq.uiframework.renderer.reconcile.ReusePatch
 import com.gzq.uiframework.renderer.view.tree.RenderStats
+import com.gzq.uiframework.renderer.view.tree.RenderStructureStats
 import com.gzq.uiframework.renderer.view.tree.RenderTreeResult
 
 fun List<VNode>.debugTree(): String {
@@ -39,15 +40,26 @@ fun <T> ReconcileResult<T>.debugSummary(): String {
 fun RenderTreeResult.debugSummary(): String {
     val reconcile = reconcileResult.debugSummary()
     val stats = stats.debugSummary()
+    val structure = structure.debugSummary()
     return buildString {
         append(reconcile)
         append("\n--\n")
         append(stats)
+        append("\n")
+        append(structure)
+        if (warnings.isNotEmpty()) {
+            append("\n")
+            append(warnings.joinToString(separator = "\n") { warning -> "warning: $warning" })
+        }
     }
 }
 
 fun RenderStats.debugSummary(): String {
     return "inserts=$inserts reuses=$reuses removals=$removals rebound=$reboundNodes patched=$patchedNodes skipped=$skippedBindings"
+}
+
+fun RenderStructureStats.debugSummary(): String {
+    return "vnodeCount=$vnodeCount mountedCount=$mountedNodeCount vnodeDepth=$maxVNodeDepth mountedDepth=$maxMountedDepth"
 }
 
 private fun VNode.debugTree(indent: Int): String {

@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
             container = root,
             debug = true,
             debugTag = "UIFrameworkSample",
-            onRenderStats = DemoRenderDiagnosticsStore::record,
+            onRenderResult = DemoRenderDiagnosticsStore::record,
         ) {
             DemoRoot(root)
         }
