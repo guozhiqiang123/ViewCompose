@@ -40,7 +40,9 @@ import com.gzq.uiframework.widget.core.sp
 import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.renderer.node.TextFieldImeAction
 
-internal fun UiTreeBuilder.InputPage() {
+internal fun UiTreeBuilder.InputPage(
+    initialPageIndex: Int = 0,
+) {
     val benchmarkExpandedState = remember { mutableStateOf(false) }
     val nameState = remember { mutableStateOf("GZQ") }
     val emailState = remember { mutableStateOf("demo@uiframework.dev") }
@@ -61,7 +63,7 @@ internal fun UiTreeBuilder.InputPage() {
                 "${ageState.value.ifBlank { "-" }}y"
         }
     }
-    val selectedPageState = remember { mutableStateOf(0) }
+    val selectedPageState = remember { mutableStateOf(initialPageIndex.coerceIn(0, 3)) }
     val pageItems = when (selectedPageState.value) {
         0 -> listOf("benchmark", "page", "page_filter", "intro", "form", "verify")
         1 -> listOf("page", "page_filter", "controls", "verify")

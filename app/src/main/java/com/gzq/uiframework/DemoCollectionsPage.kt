@@ -29,13 +29,15 @@ import com.gzq.uiframework.widget.core.produceState
 import com.gzq.uiframework.widget.core.remember
 import com.gzq.uiframework.widget.core.sp
 
-internal fun UiTreeBuilder.CollectionPage() {
+internal fun UiTreeBuilder.CollectionPage(
+    initialPageIndex: Int = 0,
+) {
     val benchmarkRotateState = remember { mutableStateOf(false) }
     val reversedState = remember { mutableStateOf(false) }
     val alternateLabelsState = remember { mutableStateOf(false) }
     val stressRotateState = remember { mutableStateOf(false) }
     val stressEdgeItemState = remember { mutableStateOf(false) }
-    val selectedPageState = remember { mutableStateOf(0) }
+    val selectedPageState = remember { mutableStateOf(initialPageIndex.coerceIn(0, 3)) }
     val listOrderState = produceState(
         initialValue = "List order: A-B-C",
         reversedState.value,

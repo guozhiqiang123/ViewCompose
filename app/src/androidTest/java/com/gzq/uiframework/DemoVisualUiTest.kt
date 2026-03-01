@@ -94,6 +94,36 @@ class DemoVisualUiTest {
     }
 
     @Test
+    fun inputStress_controlsRemainVisibleAndReadable() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            InputActivity::class.java,
+        ).putExtra(EXTRA_INPUT_PAGE_INDEX, 2)
+        launchDemoActivity<InputActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scrollDeviceTextIntoView("Expanded Copy")
+            captureDeviceScreenshot("input-stress-light")
+            scenario.onActivity { activity ->
+                val expanded = activity.requireTextView("Expanded Copy")
+                val readonly = activity.requireTextView("Editable Notes")
+                val error = activity.requireTextView("Clear Error")
+                assertViewFullyVisible(expanded)
+                assertViewFullyVisible(readonly)
+                assertViewFullyVisible(error)
+                assertTextNotEllipsized(expanded)
+                assertTextNotEllipsized(readonly)
+                assertTextNotEllipsized(error)
+            }
+            scrollDeviceTextIntoView("Protected field")
+            scenario.onActivity { activity ->
+                val protectedField = activity.requireTextView("Protected field")
+                assertViewFullyVisible(protectedField)
+                assertTextNotEllipsized(protectedField)
+            }
+        }
+    }
+
+    @Test
     fun scopedThemeOverride_updatesPrimaryButtonBackground() {
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),
@@ -156,6 +186,57 @@ class DemoVisualUiTest {
                 assertViewFullyVisible(remoteImage)
                 assertViewFullyVisible(fallbackImage)
                 assertViewFullyVisible(iconButton)
+            }
+        }
+    }
+
+    @Test
+    fun layoutsEdge_viewsRemainVisibleAfterPageJump() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            LayoutsActivity::class.java,
+        ).putExtra(EXTRA_LAYOUTS_PAGE_INDEX, 2)
+        launchDemoActivity<LayoutsActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scrollDeviceTextIntoView("Use Long Labels")
+            captureDeviceScreenshot("layouts-edge-light")
+            scenario.onActivity { activity ->
+                val toggle = activity.requireTextView("Use Long Labels")
+                val weighted = activity.requireTextView("Weighted")
+                val action = activity.requireTextView("Action")
+                val icon = activity.requireViewWithContentDescription("Layout probe icon")
+                assertViewFullyVisible(toggle)
+                assertViewFullyVisible(weighted)
+                assertViewFullyVisible(action)
+                assertViewFullyVisible(icon)
+                assertTextNotEllipsized(toggle)
+                assertTextNotEllipsized(weighted)
+                assertTextNotEllipsized(action)
+            }
+        }
+    }
+
+    @Test
+    fun collectionsStress_toggleUpdatesVisibleControls() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            CollectionsActivity::class.java,
+        ).putExtra(EXTRA_COLLECTIONS_PAGE_INDEX, 2)
+        launchDemoActivity<CollectionsActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scrollDeviceTextIntoView("Insert X")
+            scenario.onActivity { activity ->
+                activity.clickTextView("Insert X")
+            }
+            waitForUiIdle()
+            captureDeviceScreenshot("collections-stress-light")
+            scenario.onActivity { activity ->
+                val remove = activity.requireTextView("Remove X")
+                val rotate = activity.requireTextView("Rotate Order")
+                assertViewFullyVisible(remove)
+                assertViewFullyVisible(rotate)
+                assertTextNotEllipsized(remove)
+                assertTextNotEllipsized(rotate)
             }
         }
     }

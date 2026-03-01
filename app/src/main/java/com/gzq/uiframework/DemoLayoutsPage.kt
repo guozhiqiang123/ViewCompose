@@ -34,11 +34,13 @@ import com.gzq.uiframework.widget.core.dp
 import com.gzq.uiframework.widget.core.remember
 import com.gzq.uiframework.renderer.node.ImageSource
 
-internal fun UiTreeBuilder.LayoutPage() {
+internal fun UiTreeBuilder.LayoutPage(
+    initialPageIndex: Int = 0,
+) {
     val boxTapState = remember { mutableStateOf(0) }
     val benchmarkState = remember { mutableStateOf(false) }
     val useLongLabelsState = remember { mutableStateOf(false) }
-    val selectedPageState = remember { mutableStateOf(0) }
+    val selectedPageState = remember { mutableStateOf(initialPageIndex.coerceIn(0, 3)) }
     val pageItems = when (selectedPageState.value) {
         0 -> listOf("benchmark", "page", "page_filter", "row", "column", "verify")
         1 -> listOf("page", "page_filter", "box", "verify")

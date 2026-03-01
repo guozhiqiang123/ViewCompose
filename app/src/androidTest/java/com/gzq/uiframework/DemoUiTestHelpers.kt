@@ -9,6 +9,7 @@ import android.graphics.drawable.InsetDrawable
 import android.graphics.drawable.LayerDrawable
 import android.graphics.drawable.RippleDrawable
 import android.view.View
+import android.view.ViewParent
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.test.core.app.ActivityScenario
@@ -65,6 +66,7 @@ internal fun clickDeviceText(text: String) {
 }
 
 internal fun scrollDeviceTextIntoView(text: String) {
+    UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     val scrollable = UiScrollable(UiSelector().scrollable(true))
     scrollable.setAsVerticalList()
     val found = scrollable.scrollTextIntoView(text) || scrollable.scrollIntoView(UiSelector().text(text))
@@ -73,6 +75,7 @@ internal fun scrollDeviceTextIntoView(text: String) {
 }
 
 internal fun scrollDeviceDescriptionIntoView(description: String) {
+    UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     val scrollable = UiScrollable(UiSelector().scrollable(true))
     scrollable.setAsVerticalList()
     val found = scrollable.scrollDescriptionIntoView(description) ||
@@ -86,6 +89,15 @@ internal fun Activity.requireTextView(text: String): TextView {
     val view = findTextViewByText(root, text)
     assertNotNull("Expected to find TextView with text: $text", view)
     return view!!
+}
+
+internal fun Activity.clickTextView(text: String) {
+    var current: View? = requireTextView(text)
+    while (current != null && !current.isClickable) {
+        current = (current.parent as? View)
+    }
+    assertNotNull("Expected clickable host for text: $text", current)
+    current!!.performClick()
 }
 
 internal fun Activity.requireViewWithContentDescription(description: String): View {
