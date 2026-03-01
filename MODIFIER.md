@@ -216,7 +216,12 @@ Theme -> Modifier -> Renderer
 - `Modifier.Empty` 标记移除
 - `textColor` / `textSize` 等历史通用 modifier 彻底退场
 
-当前状态：未开始
+当前状态：已开始
+
+当前已完成的子项：
+
+- `Modifier.textColor` / `Modifier.textSize` 已升级为源码级禁用入口，阻止继续新增调用
+- renderer 保留一次性迁移 warning 与 legacy element 兼容读取，用于平滑处理旧调用链
 
 ## 8. 当前实施结论
 

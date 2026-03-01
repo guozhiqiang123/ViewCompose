@@ -188,6 +188,7 @@ fun Modifier.rippleColor(color: Int): Modifier {
 
 @Deprecated(
     message = "Text color is widget-specific. Prefer Text(color = ...) or widget props.",
+    level = DeprecationLevel.ERROR,
 )
 fun Modifier.textColor(color: Int): Modifier {
     return then(
@@ -197,6 +198,7 @@ fun Modifier.textColor(color: Int): Modifier {
 
 @Deprecated(
     message = "Text size is widget-specific. Prefer Text(style = ...) or widget props.",
+    level = DeprecationLevel.ERROR,
 )
 fun Modifier.textSize(sizeSp: Int): Modifier {
     return then(

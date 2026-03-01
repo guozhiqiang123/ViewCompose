@@ -1,14 +1,13 @@
 package com.gzq.uiframework.renderer.layout
 
 import com.gzq.uiframework.renderer.modifier.Modifier
-import com.gzq.uiframework.renderer.modifier.textColor
-import com.gzq.uiframework.renderer.modifier.textSize
+import com.gzq.uiframework.renderer.modifier.TextColorModifierElement
+import com.gzq.uiframework.renderer.modifier.TextSizeModifierElement
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.VNode
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-@Suppress("DEPRECATION")
 class ModifierCompatibilityInspectorTest {
     @Test
     fun `legacy text modifiers produce migration warnings`() {
@@ -16,8 +15,8 @@ class ModifierCompatibilityInspectorTest {
             node = VNode(
                 type = NodeType.Text,
                 modifier = Modifier
-                    .textColor(1)
-                    .textSize(12),
+                    .then(TextColorModifierElement(1))
+                    .then(TextSizeModifierElement(12)),
             ),
         )
 
