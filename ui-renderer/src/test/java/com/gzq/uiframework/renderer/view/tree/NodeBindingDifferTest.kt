@@ -9,6 +9,7 @@ import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.props
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextNodeProps
+import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -100,6 +101,25 @@ class NodeBindingDifferTest {
         assertSame(NodeBindingPlan.Rebind, NodeBindingDiffer.plan(previous, next))
     }
 
+    @Test
+    fun `patches text field semantic updates when style is unchanged`() {
+        val previous = textFieldNode(value = "before")
+        val next = textFieldNode(value = "after")
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is TextFieldNodePatch)
+    }
+
+    @Test
+    fun `rebinds text field when style props change`() {
+        val previous = textFieldNode(textColor = 0xFF000000.toInt())
+        val next = textFieldNode(textColor = 0xFFFF0000.toInt())
+
+        assertSame(NodeBindingPlan.Rebind, NodeBindingDiffer.plan(previous, next))
+    }
+
     private fun textNode(
         text: String = "value",
         modifier: Modifier = Modifier,
@@ -137,6 +157,38 @@ class NodeBindingDifferTest {
                 iconTint = textColor,
                 iconSize = 18,
                 onClick = null,
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun textFieldNode(
+        value: String = "hello",
+        textColor: Int = 0xFF000000.toInt(),
+    ): VNode {
+        return VNode(
+            type = NodeType.TextField,
+            props = props {
+                set(TypedPropKeys.TextColor, textColor)
+            },
+            spec = TextFieldNodeProps(
+                value = value,
+                label = "Label",
+                labelColor = 0xFF666666.toInt(),
+                labelTextSizeSp = 12,
+                supportingText = "Help",
+                supportingTextColor = 0xFF777777.toInt(),
+                supportingTextSizeSp = 12,
+                placeholder = "Hint",
+                enabled = true,
+                singleLine = true,
+                minLines = 1,
+                maxLines = 1,
+                keyboardType = com.gzq.uiframework.renderer.node.TextFieldType.Text,
+                imeAction = com.gzq.uiframework.renderer.node.TextFieldImeAction.Done,
+                hintColor = 0xFF888888.toInt(),
+                readOnly = false,
+                onValueChange = null,
             ),
             modifier = Modifier,
         )

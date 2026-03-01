@@ -4,6 +4,7 @@ import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextNodeProps
+import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
 
 internal object NodeBindingDiffer {
     fun plan(
@@ -40,6 +41,16 @@ internal object NodeBindingDiffer {
                     patch = TextNodePatch(
                         previous = previousText,
                         next = nextText,
+                    ),
+                )
+            }
+            val previousTextField = previous.spec as? TextFieldNodeProps
+            val nextTextField = next.spec as? TextFieldNodeProps
+            if (previousTextField != null && nextTextField != null) {
+                return NodeBindingPlan.Patch(
+                    patch = TextFieldNodePatch(
+                        previous = previousTextField,
+                        next = nextTextField,
                     ),
                 )
             }

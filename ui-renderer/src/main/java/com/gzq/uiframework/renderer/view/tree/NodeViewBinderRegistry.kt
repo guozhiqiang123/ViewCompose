@@ -183,6 +183,12 @@ internal object NodeViewBinderRegistry {
                     patch = patch,
                 )
             }
+            is TextFieldNodePatch -> {
+                InputViewBinder.applyTextFieldPatch(
+                    view = view as DeclarativeTextFieldLayout,
+                    patch = patch,
+                )
+            }
         }
     }
 

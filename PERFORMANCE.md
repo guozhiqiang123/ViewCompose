@@ -539,8 +539,8 @@ Compose 会：
 
 1. 已完成第一步“整节点 skip bind”
 2. 当前判断条件已经收敛为“modifier + 样式 props + NodeSpec”
-3. `Button` 和 `Text` 已作为第一批高收益节点进入字段级 patch
-4. 下一步继续把 `TextField / TabPager / LazyColumn / SegmentedControl` 从全量 rebind 推进到字段级 patch
+3. `Button`、`Text` 和 `TextField` 已作为第一批高收益节点进入字段级 patch
+4. 下一步继续把 `TabPager / LazyColumn / SegmentedControl` 从全量 rebind 推进到字段级 patch
 
 ### Phase 3：补诊断能力
 
