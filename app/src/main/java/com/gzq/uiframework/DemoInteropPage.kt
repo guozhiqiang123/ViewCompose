@@ -45,7 +45,8 @@ internal fun UiTreeBuilder.InteropPage() {
                 onSelectionChange = { selectedPageState.value = it },
             )
 
-            "basics" -> DemoSection(
+            "basics" -> ScenarioSection(
+                kind = ScenarioKind.Core,
                 title = "AndroidView Basics",
                 subtitle = "Legacy native views still mount inside the same declarative tree and can react to framework state.",
             ) {
@@ -79,7 +80,8 @@ internal fun UiTreeBuilder.InteropPage() {
                 )
             }
 
-            "theme_bridge" -> DemoSection(
+            "theme_bridge" -> ScenarioSection(
+                kind = ScenarioKind.Visual,
                 title = "Theme Bridge",
                 subtitle = "Interop pages should prove that framework theme locals and Android view defaults can coexist instead of fighting each other.",
             ) {
@@ -93,7 +95,8 @@ internal fun UiTreeBuilder.InteropPage() {
                 )
             }
 
-            "why_it_matters" -> DemoSection(
+            "why_it_matters" -> ScenarioSection(
+                kind = ScenarioKind.Guide,
                 title = "Why Interop Matters",
                 subtitle = "Interop is one of the biggest practical advantages of this framework compared with a pure Compose rewrite path.",
             ) {

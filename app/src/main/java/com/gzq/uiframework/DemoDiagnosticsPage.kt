@@ -57,7 +57,8 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                 onSelectionChange = { selectedPageState.value = it },
             )
 
-            "runtime" -> DemoSection(
+            "runtime" -> ScenarioSection(
+                kind = ScenarioKind.Core,
                 title = "Runtime Snapshot",
                 subtitle = "This chapter will become the manual inspection home for state invalidation, local propagation, and effect boundaries.",
             ) {
@@ -86,7 +87,8 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                 )
             }
 
-            "renderer_actions" -> DemoSection(
+            "renderer_actions" -> ScenarioSection(
+                kind = ScenarioKind.Benchmark,
                 title = "Renderer Actions",
                 subtitle = "Keep the manual probes near the top so diagnostics refresh stays easy to reach during repeated testing and benchmark runs.",
             ) {
@@ -113,7 +115,8 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                 )
             }
 
-            "renderer" -> DemoSection(
+            "renderer" -> ScenarioSection(
+                kind = ScenarioKind.Core,
                 title = "Renderer Hooks",
                 subtitle = "The sample now exposes recent render snapshots manually so patch/rebind/skip behavior and tree depth can be checked against the log stream.",
             ) {
@@ -189,7 +192,8 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                 )
             }
 
-            "gaps" -> DemoSection(
+            "gaps" -> ScenarioSection(
+                kind = ScenarioKind.Guide,
                 title = "Known Gaps",
                 subtitle = "These gaps are intentionally visible so the diagnostics chapter can guide future framework work.",
             ) {

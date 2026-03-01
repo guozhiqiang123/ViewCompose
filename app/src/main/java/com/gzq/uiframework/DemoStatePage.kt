@@ -80,7 +80,8 @@ internal fun UiTreeBuilder.StatePage(
                 onSelectionChange = { selectedPageState.value = it },
             )
 
-            "counter" -> DemoSection(
+            "counter" -> ScenarioSection(
+                kind = ScenarioKind.Core,
                 title = "remember + derivedStateOf + produceState",
                 subtitle = "This block shows local state, derived labels, and a small produced status string.",
             ) {
@@ -116,7 +117,8 @@ internal fun UiTreeBuilder.StatePage(
                 }
             }
 
-            "panel" -> DemoSection(
+            "panel" -> ScenarioSection(
+                kind = ScenarioKind.Visual,
                 title = "key Scope + Conditional UI",
                 subtitle = "The transient panel keeps its own state while visible, and is fully recreated when toggled back in.",
             ) {
@@ -161,7 +163,8 @@ internal fun UiTreeBuilder.StatePage(
                 }
             }
 
-            "patch" -> DemoSection(
+            "patch" -> ScenarioSection(
+                kind = ScenarioKind.Benchmark,
                 title = "Patch Stress",
                 subtitle = "Drive the first batch of node-level patch targets together so manual testing and benchmark runs hit the same update path.",
             ) {
