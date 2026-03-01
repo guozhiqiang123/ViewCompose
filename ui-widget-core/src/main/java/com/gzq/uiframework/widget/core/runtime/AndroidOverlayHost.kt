@@ -1,8 +1,11 @@
 package com.gzq.uiframework.widget.core
 
 import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.FrameLayout
 import com.gzq.uiframework.renderer.view.tree.MountedNode
 import com.gzq.uiframework.renderer.view.tree.ViewTreeRenderer
@@ -70,13 +73,16 @@ private class AndroidDialogOverlayHandle(
     private val dialogContainer = FrameLayout(rootView.context).apply {
         val inset = 24.dp(rootView)
         setPadding(inset, inset, inset, inset)
+        background = ColorDrawable(Color.TRANSPARENT)
         layoutParams = ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT,
         )
     }
     private val dialog = Dialog(rootView.context).apply {
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(dialogContainer)
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
     private var mountedNodes: List<MountedNode> = emptyList()
     private var currentSpec = spec
