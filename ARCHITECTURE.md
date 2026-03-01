@@ -242,22 +242,39 @@ flowchart TD
 
 当前 `ViewTreeRenderer` 同时负责：
 
-- `NodeType -> View` 创建
-- prop 绑定
-- modifier 应用
 - child patch 执行
-- 特殊容器桥接
+- layout params 解析
+- modifier 应用
+- props 读取和节点级调度
 
-这在当前阶段还能接受，但再继续长下去会带来三个风险：
+其中最重的 Android 侧细节已经开始拆出到内部 helper：
 
-- 单类回归面越来越大
-- 新节点接入成本越来越高
-- 很难引入更细的测试边界
+- `ViewNodeFactory`
+- `ContentViewBinder`
+- `InputViewBinder`
+- `MediaViewBinder`
+- `FeedbackViewBinder`
+- `ContainerViewBinder`
 
-结论：
+这一步的意义是：
 
-- 当前不建议上完整 adapter registry
-- 但下一阶段如果继续扩控件，应该先把 `create / bind / modifier apply / special host` 分成内部 helper
+- `ViewTreeRenderer` 开始更像“树调度器”
+- 控件族绑定逻辑有了独立测试和演进落点
+- 不必过早引入 adapter registry，也能先降低单点复杂度
+
+但它仍然没有彻底解决这些问题：
+
+- modifier 应用
+- props 读取仍集中在 `ViewTreeRenderer`
+- 新控件接入仍需要修改中心分发 `when`
+
+这意味着它已经从“所有事都在一个文件里”前进到了“调度器 + family binders”，但还没演进成真正可插拔的 renderer 扩展结构。
+
+当前阶段的结论是：
+
+- 现在不建议上完整 adapter registry
+- 这次拆分是合理中间态
+- 后续如果继续扩控件，应优先继续下沉 props 解析与节点 binder，而不是回到大文件堆逻辑
 
 ### 7.3 `VNode + Props` 仍然过于动态
 

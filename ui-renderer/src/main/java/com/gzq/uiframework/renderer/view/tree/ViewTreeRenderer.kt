@@ -7,34 +7,20 @@ import android.graphics.Outline
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
-import android.text.Editable
 import android.text.InputType
 import android.text.TextUtils
 import android.util.Log
-import android.text.TextWatcher
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
 import android.view.inputmethod.EditorInfo
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.CompoundButton
-import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.ImageButton
 import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.RadioButton
-import android.widget.SeekBar
-import android.widget.Switch
 import android.widget.TextView
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.core.content.ContextCompat
-import com.google.android.material.progressindicator.BaseProgressIndicator
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.gzq.uiframework.renderer.layout.BoxAlignment
@@ -69,13 +55,12 @@ import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.RemoteImageLoader
-import com.gzq.uiframework.renderer.node.RemoteImageRequest
 import com.gzq.uiframework.renderer.node.SegmentedControlItem
+import com.gzq.uiframework.renderer.node.TabPage
 import com.gzq.uiframework.renderer.node.TextFieldType
 import com.gzq.uiframework.renderer.node.TextFieldImeAction
 import com.gzq.uiframework.renderer.node.TextAlign
 import com.gzq.uiframework.renderer.node.TextOverflow
-import com.gzq.uiframework.renderer.node.TabPage
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.reconcile.ChildReconciler
 import com.gzq.uiframework.renderer.reconcile.InsertPatch
@@ -86,13 +71,10 @@ import com.gzq.uiframework.renderer.reconcile.RenderPatch
 import com.gzq.uiframework.renderer.reconcile.ReusePatch
 import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
-import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
 import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
-import com.gzq.uiframework.renderer.view.lazy.LazyItemSpacingDecoration
 import com.gzq.uiframework.renderer.R
-import kotlin.math.roundToInt
 
 object ViewTreeRenderer {
     private const val DEFAULT_RIPPLE_COLOR: Int = 0x22000000
@@ -198,38 +180,11 @@ object ViewTreeRenderer {
     }
 
     private fun mountNode(context: Context, node: VNode): MountedNode {
-        val view = when (node.type) {
-            NodeType.Text -> TextView(context)
-            NodeType.TextField -> DeclarativeTextFieldLayout(context)
-            NodeType.Checkbox -> CheckBox(context)
-            NodeType.Switch -> Switch(context)
-            NodeType.RadioButton -> RadioButton(context)
-            NodeType.Slider -> SeekBar(context)
-            NodeType.LinearProgressIndicator -> LinearProgressIndicator(context)
-            NodeType.CircularProgressIndicator -> CircularProgressIndicator(context)
-            NodeType.Button -> Button(context)
-            NodeType.IconButton -> ImageButton(context)
-            NodeType.Row -> DeclarativeLinearLayout(context).apply {
-                orientation = LinearLayout.HORIZONTAL
-            }
-
-            NodeType.Column -> DeclarativeLinearLayout(context).apply {
-                orientation = LinearLayout.VERTICAL
-            }
-
-            NodeType.Box -> DeclarativeBoxLayout(context)
-            NodeType.Surface -> DeclarativeBoxLayout(context)
-            NodeType.Spacer -> View(context)
-            NodeType.Divider -> View(context)
-            NodeType.Image -> ImageView(context)
-            NodeType.AndroidView -> readViewFactory(node)?.invoke(context) ?: View(context)
-            NodeType.LazyColumn -> RecyclerView(context).apply {
-                layoutManager = LinearLayoutManager(context)
-                adapter = LazyColumnAdapter()
-            }
-            NodeType.TabPager -> DeclarativeTabPagerLayout(context)
-            NodeType.SegmentedControl -> DeclarativeSegmentedControlLayout(context)
-        }
+        val view = ViewNodeFactory.createView(
+            context = context,
+            node = node,
+            createAndroidView = readViewFactory(node),
+        )
 
         cacheOriginalBackground(view)
         cacheOriginalForeground(view)
@@ -254,108 +209,170 @@ object ViewTreeRenderer {
         applyModifier(view, node)
         when (node.type) {
             NodeType.Text -> {
-                (view as TextView).apply {
-                    text = node.props.values[PropKeys.TEXT] as? CharSequence
-                    maxLines = readTextMaxLines(node)
-                    ellipsize = when (readTextOverflow(node)) {
-                        TextOverflow.Clip -> null
-                        TextOverflow.Ellipsis -> TextUtils.TruncateAt.END
-                    }
-                    gravity = readTextAlign(node).toTextGravity()
-                }
+                ContentViewBinder.bindText(
+                    view = view as TextView,
+                    text = node.props.values[PropKeys.TEXT] as? CharSequence,
+                    maxLines = readTextMaxLines(node),
+                    overflow = readTextOverflow(node),
+                    gravity = readTextAlign(node).toTextGravity(),
+                )
             }
 
             NodeType.TextField -> {
-                bindTextField(view as DeclarativeTextFieldLayout, node)
+                InputViewBinder.bindTextField(
+                    view = view as DeclarativeTextFieldLayout,
+                    value = readFieldValue(node),
+                    label = readFieldLabel(node),
+                    labelColor = readFieldLabelColor(node),
+                    labelTextSizeSp = readFieldLabelTextSize(node),
+                    supportingText = readFieldSupportingText(node),
+                    supportingTextColor = readFieldSupportingTextColor(node),
+                    supportingTextSizeSp = readFieldSupportingTextSize(node),
+                    placeholder = readFieldPlaceholder(node),
+                    enabled = readEnabled(node),
+                    singleLine = readFieldSingleLine(node),
+                    minLines = readFieldMinLines(node),
+                    maxLines = readFieldMaxLines(node),
+                    inputType = resolveInputType(
+                        type = readFieldType(node),
+                        singleLine = readFieldSingleLine(node),
+                    ),
+                    imeAction = readFieldImeAction(node).toEditorAction(),
+                    hintColor = readFieldHintColor(node),
+                    readOnly = readFieldReadOnly(node),
+                    onValueChange = readOnValueChange(node),
+                )
             }
 
             NodeType.Checkbox -> {
-                bindCompoundButton(view as CheckBox, node)
+                InputViewBinder.bindCheckbox(
+                    view = view as android.widget.CheckBox,
+                    text = node.props.values[PropKeys.TEXT] as? CharSequence,
+                    enabled = readEnabled(node),
+                    checked = readChecked(node),
+                    controlColor = readControlColor(node),
+                    onCheckedChange = readOnCheckedChange(node),
+                )
             }
 
             NodeType.Switch -> {
-                bindCompoundButton(view as Switch, node)
+                InputViewBinder.bindSwitch(
+                    view = view as android.widget.Switch,
+                    text = node.props.values[PropKeys.TEXT] as? CharSequence,
+                    enabled = readEnabled(node),
+                    checked = readChecked(node),
+                    controlColor = readControlColor(node),
+                    onCheckedChange = readOnCheckedChange(node),
+                )
             }
 
             NodeType.RadioButton -> {
-                bindCompoundButton(view as RadioButton, node)
+                InputViewBinder.bindRadioButton(
+                    view = view as android.widget.RadioButton,
+                    text = node.props.values[PropKeys.TEXT] as? CharSequence,
+                    enabled = readEnabled(node),
+                    checked = readChecked(node),
+                    controlColor = readControlColor(node),
+                    onCheckedChange = readOnCheckedChange(node),
+                )
             }
 
             NodeType.Slider -> {
-                bindSlider(view as SeekBar, node)
+                InputViewBinder.bindSlider(
+                    view = view as android.widget.SeekBar,
+                    min = readMinValue(node),
+                    max = readMaxValue(node),
+                    value = readSliderValue(node),
+                    enabled = readEnabled(node),
+                    tintColor = readControlColor(node),
+                    onValueChange = readOnSliderValueChange(node),
+                )
             }
 
             NodeType.LinearProgressIndicator -> {
-                bindLinearProgressIndicator(view as LinearProgressIndicator, node)
+                FeedbackViewBinder.bindLinearProgressIndicator(
+                    view = view as LinearProgressIndicator,
+                    enabled = readEnabled(node),
+                    progress = readProgressFraction(node),
+                    indicatorColor = readProgressIndicatorColor(node),
+                    trackColor = readProgressTrackColor(node),
+                    trackThickness = readProgressTrackThickness(node),
+                )
             }
 
             NodeType.CircularProgressIndicator -> {
-                bindCircularProgressIndicator(view as CircularProgressIndicator, node)
+                FeedbackViewBinder.bindCircularProgressIndicator(
+                    view = view as CircularProgressIndicator,
+                    enabled = readEnabled(node),
+                    progress = readProgressFraction(node),
+                    indicatorColor = readProgressIndicatorColor(node),
+                    trackColor = readProgressTrackColor(node),
+                    trackThickness = readProgressTrackThickness(node),
+                    indicatorSize = readProgressIndicatorSize(node),
+                )
             }
 
             NodeType.Button -> {
-                (view as Button).apply {
-                    text = node.props.values[PropKeys.TEXT] as? CharSequence
-                    isEnabled = readEnabled(node)
-                    isAllCaps = false
-                    setSingleLine(false)
-                    maxLines = 2
-                    ellipsize = TextUtils.TruncateAt.END
-                    gravity = Gravity.CENTER
-                    minimumWidth = 0
-                    minWidth = 0
-                    compoundDrawablePadding = readButtonIconSpacing(node)
-                    setCompoundDrawablesRelative(
-                        resolveButtonIconDrawable(
-                            context = context,
-                            source = readButtonLeadingIcon(node),
-                            tint = readButtonContentColor(node),
-                            size = readButtonIconSize(node),
-                        ),
-                        null,
-                        resolveButtonIconDrawable(
-                            context = context,
-                            source = readButtonTrailingIcon(node),
-                            tint = readButtonContentColor(node),
-                            size = readButtonIconSize(node),
-                        ),
-                        null,
-                    )
-                    setOnClickListener {
-                        if (readEnabled(node)) {
-                            readOnClick(node)?.invoke()
-                        }
-                    }
-                }
+                ContentViewBinder.bindButton(
+                    view = view as android.widget.Button,
+                    text = node.props.values[PropKeys.TEXT] as? CharSequence,
+                    enabled = readEnabled(node),
+                    iconSpacing = readButtonIconSpacing(node),
+                    leadingIcon = readButtonLeadingIcon(node),
+                    trailingIcon = readButtonTrailingIcon(node),
+                    iconTint = readButtonContentColor(node),
+                    iconSize = readButtonIconSize(node),
+                    onClick = readOnClick(node),
+                )
             }
 
             NodeType.IconButton -> {
-                bindIconButton(view as ImageButton, node)
+                MediaViewBinder.bindImage(
+                    view = view as ImageView,
+                    contentDescription = readImageContentDescription(node),
+                    scaleType = readImageContentScale(node).toScaleType(),
+                    tint = readImageTint(node),
+                    source = readImageSource(node),
+                    placeholder = readImagePlaceholder(node),
+                    error = readImageError(node),
+                    fallback = readImageFallback(node),
+                    remoteImageLoader = readRemoteImageLoader(node),
+                )
+                MediaViewBinder.bindIconButton(
+                    view = view as android.widget.ImageButton,
+                    enabled = readEnabled(node),
+                )
             }
 
             NodeType.Row -> {
-                (view as DeclarativeLinearLayout).apply {
-                    orientation = LinearLayout.HORIZONTAL
-                    itemSpacing = readLinearSpacing(node)
-                    mainAxisArrangement = readRowArrangement(node)
-                    gravity = readRowVerticalAlignment(node).toGravity()
-                }
+                ContainerViewBinder.bindRow(
+                    view = view as DeclarativeLinearLayout,
+                    spacing = readLinearSpacing(node),
+                    arrangement = readRowArrangement(node),
+                    gravity = readRowVerticalAlignment(node).toGravity(),
+                )
             }
 
             NodeType.Column -> {
-                (view as DeclarativeLinearLayout).apply {
-                    orientation = LinearLayout.VERTICAL
-                    itemSpacing = readLinearSpacing(node)
-                    mainAxisArrangement = readColumnArrangement(node)
-                    gravity = readColumnHorizontalAlignment(node).toGravity()
-                }
+                ContainerViewBinder.bindColumn(
+                    view = view as DeclarativeLinearLayout,
+                    spacing = readLinearSpacing(node),
+                    arrangement = readColumnArrangement(node),
+                    gravity = readColumnHorizontalAlignment(node).toGravity(),
+                )
             }
             NodeType.Box -> {
-                (view as DeclarativeBoxLayout).contentGravity = readBoxAlignment(node).toGravity()
+                ContainerViewBinder.bindBox(
+                    view = view as DeclarativeBoxLayout,
+                    gravity = readBoxAlignment(node).toGravity(),
+                )
             }
 
             NodeType.Surface -> {
-                (view as DeclarativeBoxLayout).contentGravity = readBoxAlignment(node).toGravity()
+                ContainerViewBinder.bindBox(
+                    view = view as DeclarativeBoxLayout,
+                    gravity = readBoxAlignment(node).toGravity(),
+                )
             }
 
             NodeType.Spacer -> Unit
@@ -365,7 +382,17 @@ object ViewTreeRenderer {
             }
 
             NodeType.Image -> {
-                bindImage(view as ImageView, node)
+                MediaViewBinder.bindImage(
+                    view = view as ImageView,
+                    contentDescription = readImageContentDescription(node),
+                    scaleType = readImageContentScale(node).toScaleType(),
+                    tint = readImageTint(node),
+                    source = readImageSource(node),
+                    placeholder = readImagePlaceholder(node),
+                    error = readImageError(node),
+                    fallback = readImageFallback(node),
+                    remoteImageLoader = readRemoteImageLoader(node),
+                )
             }
 
             NodeType.AndroidView -> {
@@ -373,24 +400,17 @@ object ViewTreeRenderer {
             }
 
             NodeType.LazyColumn -> {
-                (view as RecyclerView).let { recyclerView ->
-                    val adapter = recyclerView.adapter as? LazyColumnAdapter ?: LazyColumnAdapter().also {
-                        recyclerView.adapter = it
-                    }
-                    applyLazyListPadding(
-                        recyclerView = recyclerView,
-                        padding = readLazyContentPadding(node),
-                    )
-                    applyLazyListSpacing(
-                        recyclerView = recyclerView,
-                        spacing = readLazySpacing(node),
-                    )
-                    adapter.submitItems(readLazyItems(node))
-                }
+                ContainerViewBinder.bindLazyColumn(
+                    view = view as RecyclerView,
+                    contentPadding = readLazyContentPadding(node),
+                    spacing = readLazySpacing(node),
+                    items = readLazyItems(node),
+                )
             }
 
             NodeType.TabPager -> {
-                (view as DeclarativeTabPagerLayout).bind(
+                ContainerViewBinder.bindTabPager(
+                    view = view as com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout,
                     pages = readTabPages(node),
                     selectedTabIndex = readSelectedTabIndex(node),
                     onTabSelected = readOnTabSelected(node),
@@ -407,7 +427,8 @@ object ViewTreeRenderer {
             }
 
             NodeType.SegmentedControl -> {
-                (view as DeclarativeSegmentedControlLayout).bind(
+                ContainerViewBinder.bindSegmentedControl(
+                    view = view as com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout,
                     items = readSegmentItems(node),
                     selectedIndex = readSegmentSelectedIndex(node),
                     onSelectionChange = readOnSegmentSelected(node),
@@ -671,64 +692,6 @@ object ViewTreeRenderer {
         )
     }
 
-    private fun bindTextField(view: DeclarativeTextFieldLayout, node: VNode) {
-        val input = view.inputView
-        val value = readFieldValue(node)
-        if (input.text?.toString() != value) {
-            input.setText(value)
-            input.setSelection(value.length)
-        }
-        view.setLabel(
-            text = readFieldLabel(node),
-            color = readFieldLabelColor(node),
-            textSizeSp = readFieldLabelTextSize(node),
-        )
-        view.setSupportingText(
-            text = readFieldSupportingText(node),
-            color = readFieldSupportingTextColor(node),
-            textSizeSp = readFieldSupportingTextSize(node),
-        )
-        input.hint = readFieldPlaceholder(node)
-        input.isEnabled = readEnabled(node)
-        input.isSingleLine = readFieldSingleLine(node)
-        input.minLines = if (readFieldSingleLine(node)) 1 else readFieldMinLines(node)
-        input.maxLines = if (readFieldSingleLine(node)) 1 else readFieldMaxLines(node)
-        input.inputType = resolveInputType(
-            type = readFieldType(node),
-            singleLine = readFieldSingleLine(node),
-        )
-        input.imeOptions = readFieldImeAction(node).toEditorAction()
-        input.setHintTextColor(readFieldHintColor(node))
-        applyReadOnly(
-            view = input,
-            readOnly = readFieldReadOnly(node),
-        )
-        bindTextWatcher(input, node)
-    }
-
-    private fun applyLazyListPadding(
-        recyclerView: RecyclerView,
-        padding: Int,
-    ) {
-        recyclerView.setPadding(padding, padding, padding, padding)
-        recyclerView.clipToPadding = padding == 0
-    }
-
-    private fun applyLazyListSpacing(
-        recyclerView: RecyclerView,
-        spacing: Int,
-    ) {
-        val existing = recyclerView.getTag(R.id.ui_framework_lazy_spacing_decoration) as? LazyItemSpacingDecoration
-        if (existing != null) {
-            existing.updateSpacing(spacing)
-            recyclerView.invalidateItemDecorations()
-            return
-        }
-        val decoration = LazyItemSpacingDecoration(spacing)
-        recyclerView.setTag(R.id.ui_framework_lazy_spacing_decoration, decoration)
-        recyclerView.addItemDecoration(decoration)
-    }
-
     private fun applyTextFieldModifier(
         layout: DeclarativeTextFieldLayout,
         backgroundColor: Int?,
@@ -764,224 +727,6 @@ object ViewTreeRenderer {
         textColor?.let(layout.inputView::setTextColor)
         if (textSizeSp != null) {
             layout.inputView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp.toFloat())
-        }
-    }
-
-    private fun applyReadOnly(
-        view: EditText,
-        readOnly: Boolean,
-    ) {
-        view.isFocusable = !readOnly
-        view.isFocusableInTouchMode = !readOnly
-        view.isCursorVisible = !readOnly
-        view.isLongClickable = !readOnly
-        view.setTextIsSelectable(readOnly)
-    }
-
-    private fun bindTextWatcher(view: EditText, node: VNode) {
-        val previousWatcher = view.getTag(R.id.ui_framework_text_watcher) as? TextWatcher
-        if (previousWatcher != null) {
-            view.removeTextChangedListener(previousWatcher)
-        }
-        val watcher = object : TextWatcher {
-            override fun beforeTextChanged(
-                s: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int,
-            ) = Unit
-
-            override fun onTextChanged(
-                s: CharSequence?,
-                start: Int,
-                before: Int,
-                count: Int,
-            ) = Unit
-
-            override fun afterTextChanged(s: Editable?) {
-                val nextValue = s?.toString().orEmpty()
-                if (nextValue != readFieldValue(node)) {
-                    readOnValueChange(node)?.invoke(nextValue)
-                }
-            }
-        }
-        view.addTextChangedListener(watcher)
-        view.setTag(R.id.ui_framework_text_watcher, watcher)
-    }
-
-    private fun bindCompoundButton(view: CompoundButton, node: VNode) {
-        view.setOnCheckedChangeListener(null)
-        view.text = node.props.values[PropKeys.TEXT] as? CharSequence
-        view.isEnabled = readEnabled(node)
-        view.isChecked = readChecked(node)
-        val tint = ColorStateList.valueOf(readControlColor(node))
-        view.buttonTintList = tint
-        if (view is Switch) {
-            view.thumbTintList = tint
-            view.trackTintList = tint
-        }
-        view.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked != readChecked(node)) {
-                readOnCheckedChange(node)?.invoke(isChecked)
-            }
-        }
-    }
-
-    private fun bindSlider(view: SeekBar, node: VNode) {
-        val min = readMinValue(node)
-        val max = readMaxValue(node)
-        val value = readSliderValue(node).coerceIn(min, max)
-        val listener = view.getTag(R.id.ui_framework_seek_listener) as? SeekBar.OnSeekBarChangeListener
-        if (listener != null) {
-            view.setOnSeekBarChangeListener(null)
-        }
-        view.max = (max - min).coerceAtLeast(0)
-        view.progress = value - min
-        view.isEnabled = readEnabled(node)
-        val tint = ColorStateList.valueOf(readControlColor(node))
-        view.progressTintList = tint
-        view.thumbTintList = tint
-        val nextListener = object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val resolvedValue = min + progress
-                if (fromUser && resolvedValue != readSliderValue(node)) {
-                    readOnSliderValueChange(node)?.invoke(resolvedValue)
-                }
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
-        }
-        view.setOnSeekBarChangeListener(nextListener)
-        view.setTag(R.id.ui_framework_seek_listener, nextListener)
-    }
-
-    private fun bindLinearProgressIndicator(
-        view: LinearProgressIndicator,
-        node: VNode,
-    ) {
-        bindProgressIndicator(view, node)
-    }
-
-    private fun bindCircularProgressIndicator(
-        view: CircularProgressIndicator,
-        node: VNode,
-    ) {
-        bindProgressIndicator(view, node)
-        view.indicatorSize = readProgressIndicatorSize(node)
-    }
-
-    private fun bindImage(
-        view: ImageView,
-        node: VNode,
-    ) {
-        view.contentDescription = readImageContentDescription(node)
-        view.scaleType = readImageContentScale(node).toScaleType()
-        val tint = readImageTint(node)
-        view.imageTintList = tint?.let(ColorStateList::valueOf)
-        when (val source = readImageSource(node)) {
-            is ImageSource.Resource -> {
-                view.setImageResource(source.resId)
-            }
-
-            is ImageSource.Remote -> {
-                val normalizedUrl = source.url?.takeIf { it.isNotBlank() }
-                if (normalizedUrl == null) {
-                    bindImagePlaceholder(
-                        view = view,
-                        source = readImageFallback(node),
-                    )
-                    return
-                }
-                val loader = readRemoteImageLoader(node)
-                if (loader == null) {
-                    bindImagePlaceholder(
-                        view = view,
-                        source = readImageError(node) ?: readImagePlaceholder(node) ?: readImageFallback(node),
-                    )
-                    return
-                }
-                bindImagePlaceholder(
-                    view = view,
-                    source = readImagePlaceholder(node),
-                )
-                loader.load(
-                    imageView = view,
-                    request = RemoteImageRequest(
-                        url = normalizedUrl,
-                        placeholderResId = readImagePlaceholder(node)?.resId,
-                        errorResId = readImageError(node)?.resId,
-                        fallbackResId = readImageFallback(node)?.resId,
-                    ),
-                )
-            }
-
-            null -> {
-                view.setImageDrawable(null)
-            }
-        }
-    }
-
-    private fun bindImagePlaceholder(
-        view: ImageView,
-        source: ImageSource.Resource?,
-    ) {
-        if (source == null) {
-            view.setImageDrawable(null)
-            return
-        }
-        view.setImageDrawable(
-            ContextCompat.getDrawable(view.context, source.resId),
-        )
-    }
-
-    private fun bindIconButton(
-        view: ImageButton,
-        node: VNode,
-    ) {
-        bindImage(view, node)
-        view.isEnabled = readEnabled(node)
-        view.scaleType = ImageView.ScaleType.CENTER_INSIDE
-        view.adjustViewBounds = false
-    }
-
-    private fun resolveButtonIconDrawable(
-        context: Context,
-        source: ImageSource.Resource?,
-        tint: Int,
-        size: Int,
-    ): Drawable? {
-        val drawable = source?.let { ContextCompat.getDrawable(context, it.resId) }?.mutate() ?: return null
-        drawable.setTint(tint)
-        drawable.setBounds(0, 0, size, size)
-        return drawable
-    }
-
-    private fun bindProgressIndicator(
-        view: ProgressBar,
-        node: VNode,
-    ) {
-        val progress = readProgressFraction(node)
-        val indicatorColor = ColorStateList.valueOf(readProgressIndicatorColor(node))
-        val trackColor = readProgressTrackColor(node)
-
-        view.isEnabled = readEnabled(node)
-        view.isIndeterminate = progress == null
-        view.progressTintList = indicatorColor
-        view.indeterminateTintList = indicatorColor
-
-        if (view is BaseProgressIndicator<*>) {
-            view.trackColor = trackColor
-            view.trackThickness = readProgressTrackThickness(node)
-            view.setIndicatorColor(readProgressIndicatorColor(node))
-        } else {
-            view.progressBackgroundTintList = ColorStateList.valueOf(trackColor)
-        }
-
-        if (progress != null) {
-            view.max = 10_000
-            view.progress = (progress.coerceIn(0f, 1f) * 10_000f).roundToInt()
         }
     }
 
