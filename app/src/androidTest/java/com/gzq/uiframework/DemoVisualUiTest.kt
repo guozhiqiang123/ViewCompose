@@ -110,6 +110,48 @@ class DemoVisualUiTest {
     }
 
     @Test
+    fun feedbackPage_triggersSnackbarAndToastFlows() {
+        launchDemoActivity(FeedbackActivity::class.java).use { scenario ->
+            waitForUiIdle()
+            scrollDeviceTextIntoView("Show Snackbar")
+            scenario.onActivity { activity ->
+                val showSnackbar = activity.requireTextView("Show Snackbar")
+                val showToast = activity.requireTextView("Show Toast")
+                assertViewFullyVisible(showSnackbar)
+                assertViewFullyVisible(showToast)
+                activity.clickTextView("Show Snackbar")
+            }
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val message = activity.requireTextView("Feedback snackbar 1")
+                val action = activity.requireTextView("Acknowledge")
+                assertViewFullyVisible(message)
+                assertViewFullyVisible(action)
+                activity.clickTextView("Acknowledge")
+            }
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val lastEvent = activity.requireTextView("Last event: Snackbar action 1")
+                assertViewFullyVisible(lastEvent)
+                activity.clickTextView("Show Toast")
+            }
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val toastEvent = activity.requireTextView("Last event: Toast requested 1")
+                assertViewFullyVisible(toastEvent)
+                assertTextNotEllipsized(toastEvent)
+            }
+            scrollDeviceTextIntoView("Toast count: 1")
+            captureDeviceScreenshot("feedback-transient-light")
+            scenario.onActivity { activity ->
+                val toastCount = activity.requireTextView("Toast count: 1")
+                assertViewFullyVisible(toastCount)
+                assertTextNotEllipsized(toastCount)
+            }
+        }
+    }
+
+    @Test
     fun inputStress_controlsRemainVisibleAndReadable() {
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),
