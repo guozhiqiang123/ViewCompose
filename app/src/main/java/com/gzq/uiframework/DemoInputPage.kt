@@ -41,6 +41,7 @@ import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.renderer.node.TextFieldImeAction
 
 internal fun UiTreeBuilder.InputPage() {
+    val benchmarkExpandedState = remember { mutableStateOf(false) }
     val nameState = remember { mutableStateOf("GZQ") }
     val emailState = remember { mutableStateOf("demo@uiframework.dev") }
     val passwordState = remember { mutableStateOf("") }
@@ -62,7 +63,7 @@ internal fun UiTreeBuilder.InputPage() {
     }
     val selectedPageState = remember { mutableStateOf(0) }
     val pageItems = when (selectedPageState.value) {
-        0 -> listOf("page", "page_filter", "intro", "form", "verify")
+        0 -> listOf("benchmark", "page", "page_filter", "intro", "form", "verify")
         1 -> listOf("page", "page_filter", "controls", "verify")
         2 -> listOf("page", "page_filter", "stress", "verify")
         else -> listOf("page", "page_filter", "summary", "verify")
@@ -85,6 +86,60 @@ internal fun UiTreeBuilder.InputPage() {
                 selectedIndex = selectedPageState.value,
                 onSelectionChange = { selectedPageState.value = it },
             )
+
+            "benchmark" -> ScenarioSection(
+                kind = ScenarioKind.Benchmark,
+                title = "Input Benchmark Anchor",
+                subtitle = "This block stays on the default Fields page and keeps the benchmark controls inside the first viewport.",
+            ) {
+                Text(
+                    text = "Stable route: launcher -> input module -> benchmark anchor",
+                    style = UiTextStyle(fontSizeSp = 12.sp),
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier.margin(bottom = 8.dp),
+                )
+                Button(
+                    text = if (benchmarkExpandedState.value) {
+                        "Input Benchmark Expanded"
+                    } else {
+                        "Input Benchmark Compact"
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .margin(bottom = 8.dp),
+                    onClick = {
+                        benchmarkExpandedState.value = !benchmarkExpandedState.value
+                    },
+                )
+                Button(
+                    text = "Reset Input Benchmark",
+                    variant = ButtonVariant.Outlined,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .margin(bottom = 8.dp),
+                    onClick = {
+                        benchmarkExpandedState.value = false
+                    },
+                )
+                TextField(
+                    value = if (benchmarkExpandedState.value) {
+                        "Expanded benchmark payload"
+                    } else {
+                        "Compact payload"
+                    },
+                    onValueChange = {},
+                    label = "Benchmark field",
+                    supportingText = if (benchmarkExpandedState.value) {
+                        "Expanded supporting copy keeps this scenario deterministic while still stressing text field container layout."
+                    } else {
+                        "Compact supporting copy."
+                    },
+                    readOnly = true,
+                    variant = TextFieldVariant.Outlined,
+                    size = TextFieldSize.Medium,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
 
             "intro" -> ScenarioSection(
                 kind = ScenarioKind.Guide,

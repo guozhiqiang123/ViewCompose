@@ -30,6 +30,7 @@ import com.gzq.uiframework.widget.core.remember
 import com.gzq.uiframework.widget.core.sp
 
 internal fun UiTreeBuilder.CollectionPage() {
+    val benchmarkRotateState = remember { mutableStateOf(false) }
     val reversedState = remember { mutableStateOf(false) }
     val alternateLabelsState = remember { mutableStateOf(false) }
     val stressRotateState = remember { mutableStateOf(false) }
@@ -83,8 +84,22 @@ internal fun UiTreeBuilder.CollectionPage() {
             )
         }
     }
+    val benchmarkItems = if (benchmarkRotateState.value) {
+        listOf("C", "A", "B")
+    } else {
+        listOf("A", "B", "C")
+    }.map { id ->
+        DemoListItem(
+            id = id,
+            title = if (benchmarkRotateState.value) {
+                "Benchmark item $id expanded"
+            } else {
+                "Benchmark item $id"
+            },
+        )
+    }
     val pageItems = when (selectedPageState.value) {
-        0 -> listOf("page", "page_filter", "controls", "verify")
+        0 -> listOf("benchmark", "page", "page_filter", "controls", "verify")
         1 -> listOf("page", "page_filter", "list", "verify")
         2 -> listOf("page", "page_filter", "stress", "verify")
         else -> listOf("page", "page_filter", "interop", "verify")
@@ -107,6 +122,74 @@ internal fun UiTreeBuilder.CollectionPage() {
                 selectedIndex = selectedPageState.value,
                 onSelectionChange = { selectedPageState.value = it },
             )
+
+            "benchmark" -> ScenarioSection(
+                kind = ScenarioKind.Benchmark,
+                title = "Collections Benchmark Anchor",
+                subtitle = "This block stays on the default Controls page and keeps the benchmark controls inside the first viewport.",
+            ) {
+                Text(
+                    text = "Stable route: launcher -> collections module -> benchmark anchor",
+                    style = UiTextStyle(fontSizeSp = 12.sp),
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier.margin(bottom = 8.dp),
+                )
+                Button(
+                    text = if (benchmarkRotateState.value) {
+                        "Collections Benchmark C-A-B"
+                    } else {
+                        "Collections Benchmark A-B-C"
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .margin(bottom = 8.dp),
+                    onClick = {
+                        benchmarkRotateState.value = !benchmarkRotateState.value
+                    },
+                )
+                Button(
+                    text = "Reset Collections Benchmark",
+                    variant = com.gzq.uiframework.widget.core.ButtonVariant.Outlined,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .margin(bottom = 8.dp),
+                    onClick = {
+                        benchmarkRotateState.value = false
+                    },
+                )
+                LazyColumn(
+                    items = benchmarkItems,
+                    key = { item -> item.id },
+                    spacing = 8.dp,
+                    contentPadding = 8.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(180.dp)
+                        .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                        .cornerRadius(SurfaceDefaults.cardCornerRadius()),
+                ) { item ->
+                    Surface(
+                        variant = SurfaceVariant.Default,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Row(
+                            spacing = 8.dp,
+                            verticalAlignment = VerticalAlignment.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                        ) {
+                            Text(text = item.title)
+                            Text(
+                                text = "Stable key: ${item.id}",
+                                style = UiTextStyle(fontSizeSp = 12.sp),
+                                color = TextDefaults.secondaryColor(),
+                                modifier = Modifier.weight(1f),
+                            )
+                        }
+                    }
+                }
+            }
 
             "controls" -> ScenarioSection(
                 kind = ScenarioKind.Guide,

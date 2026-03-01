@@ -161,6 +161,8 @@ Compose 官方文档也明确把这类模式视为不理想，因为它会多跑
 
 1. `Foundations Benchmark Anchor`
 2. `Layouts Benchmark Anchor`
+3. `Input Benchmark Anchor`
+4. `Collections Benchmark Anchor`
 
 后续在真机运行宏基准的主要命令：
 
@@ -201,6 +203,14 @@ Compose 官方文档也明确把这类模式视为不理想，因为它会多跑
    - `frameDurationCpuMs` P50 `2.7ms`
    - `frameOverrunMs` P50 `-14.4ms`
    - 场景对应 `Launcher -> MainActivity(extra=layouts) -> Layouts -> Layouts Benchmark Anchor`
+9. `inputBenchmarkAnchor`
+   - `frameDurationCpuMs` P50 `2.5ms`
+   - `frameOverrunMs` P50 `-15.6ms`
+   - 场景对应 `Launcher -> MainActivity(extra=input) -> Input -> Input Benchmark Anchor`
+10. `collectionsBenchmarkAnchor`
+   - `frameDurationCpuMs` P50 `2.8ms`
+   - `frameOverrunMs` P50 `-14.1ms`
+   - 场景对应 `Launcher -> MainActivity(extra=collections) -> Collections -> Collections Benchmark Anchor`
 
 相关产物位置：
 

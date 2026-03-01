@@ -26,9 +26,7 @@ abstract class DemoRenderActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        redirectTargetIntent()?.let { targetIntent ->
-            startActivity(targetIntent)
-            finish()
+        if (consumeRedirectIfNeeded()) {
             return
         }
         enableEdgeToEdge()
@@ -54,5 +52,20 @@ abstract class DemoRenderActivity : AppCompatActivity() {
                 buildDemoContent(root, builder)
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        consumeRedirectIfNeeded()
+    }
+
+    private fun consumeRedirectIfNeeded(): Boolean {
+        redirectTargetIntent()?.let { targetIntent ->
+            startActivity(targetIntent)
+            finish()
+            return true
+        }
+        return false
     }
 }

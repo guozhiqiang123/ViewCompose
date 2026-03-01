@@ -67,8 +67,8 @@ class DemoInteractionBenchmark {
                 moduleKey = "foundations",
                 expectedText = "Foundations",
             )
-            waitForText("Foundations Benchmark Off")
-            waitForText("Reset Foundations Benchmark")
+            scrollUntilText("Foundations Benchmark Off")
+            scrollUntilText("Reset Foundations Benchmark")
         },
     ) {
         clickText("Foundations Benchmark Off")
@@ -89,14 +89,58 @@ class DemoInteractionBenchmark {
                 moduleKey = "layouts",
                 expectedText = "Layouts",
             )
-            waitForText("Layouts Benchmark Compact")
-            waitForText("Reset Layouts Benchmark")
+            scrollUntilText("Layouts Benchmark Compact")
+            scrollUntilText("Reset Layouts Benchmark")
         },
     ) {
         clickText("Layouts Benchmark Compact")
         waitForText("Layouts Benchmark Expanded")
         clickText("Reset Layouts Benchmark")
         waitForText("Layouts Benchmark Compact")
+    }
+
+    @Test
+    fun inputBenchmarkAnchor() = benchmarkRule.measureRepeated(
+        packageName = TARGET_PACKAGE,
+        metrics = listOf(FrameTimingMetric()),
+        compilationMode = CompilationMode.Partial(),
+        iterations = DEFAULT_ITERATIONS,
+        startupMode = StartupMode.WARM,
+        setupBlock = {
+            startDemoActivityAndWait(
+                moduleKey = "input",
+                expectedText = "Input",
+            )
+            scrollUntilText("Input Benchmark Compact")
+            scrollUntilText("Reset Input Benchmark")
+        },
+    ) {
+        clickText("Input Benchmark Compact")
+        waitForText("Input Benchmark Expanded")
+        clickText("Reset Input Benchmark")
+        waitForText("Input Benchmark Compact")
+    }
+
+    @Test
+    fun collectionsBenchmarkAnchor() = benchmarkRule.measureRepeated(
+        packageName = TARGET_PACKAGE,
+        metrics = listOf(FrameTimingMetric()),
+        compilationMode = CompilationMode.Partial(),
+        iterations = DEFAULT_ITERATIONS,
+        startupMode = StartupMode.WARM,
+        setupBlock = {
+            startDemoActivityAndWait(
+                moduleKey = "collections",
+                expectedText = "Collections",
+            )
+            scrollUntilText("Collections Benchmark A-B-C")
+            scrollUntilText("Reset Collections Benchmark")
+        },
+    ) {
+        clickText("Collections Benchmark A-B-C")
+        waitForText("Collections Benchmark C-A-B")
+        clickText("Reset Collections Benchmark")
+        waitForText("Collections Benchmark A-B-C")
     }
 
     @Test
