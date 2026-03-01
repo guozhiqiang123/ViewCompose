@@ -110,6 +110,38 @@ internal fun UiTreeBuilder.ScenarioSection(
     }
 }
 
+internal fun UiTreeBuilder.BenchmarkRouteCallout(
+    route: String,
+    stableTargets: List<String>,
+) {
+    Surface(
+        variant = SurfaceVariant.Variant,
+        modifier = Modifier
+            .fillMaxWidth()
+            .margin(bottom = 8.dp),
+    ) {
+        Column(
+            spacing = 6.dp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+        ) {
+            Text(
+                text = "Benchmark Route",
+                style = UiTextStyle(fontSizeSp = 13.sp),
+                color = TextDefaults.secondaryColor(),
+            )
+            Text(text = route)
+            if (stableTargets.isNotEmpty()) {
+                ChecklistGroup(
+                    title = "Stable Targets",
+                    items = stableTargets,
+                )
+            }
+        }
+    }
+}
+
 internal fun UiTreeBuilder.DemoSection(
     title: String,
     subtitle: String,

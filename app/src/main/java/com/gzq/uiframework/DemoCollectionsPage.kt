@@ -171,6 +171,14 @@ internal fun UiTreeBuilder.CollectionPage() {
                 title = "Lazy Stress Cases",
                 subtitle = "This page compresses reorder, insertion, label mutation, and constrained height into one repeatable manual test path.",
             ) {
+                BenchmarkRouteCallout(
+                    route = "Catalog -> Open Collections -> Stress page",
+                    stableTargets = listOf(
+                        "Linear Order / Rotate Order",
+                        "Insert X / Remove X",
+                        "Stable key: A/B/C/D/X",
+                    ),
+                )
                 Row(
                     spacing = 8.dp,
                     modifier = Modifier

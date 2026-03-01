@@ -479,6 +479,16 @@ internal fun UiTreeBuilder.OverviewPage(
                 title = "Jump To A Capability",
                 subtitle = "These buttons now navigate between the top-level demo chapters, so manual testing follows stable paths.",
             ) {
+                BenchmarkRouteCallout(
+                    route = "Catalog -> Open Foundations -> Guide page -> Jump To A Capability",
+                    stableTargets = listOf(
+                        "Open Layouts",
+                        "Open Input",
+                        "Open State",
+                        "Open Collections",
+                        "Open Interop",
+                    ),
+                )
                 Button(
                     text = "Open Layouts",
                     modifier = Modifier.margin(bottom = 8.dp),

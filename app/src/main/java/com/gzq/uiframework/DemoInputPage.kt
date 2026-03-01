@@ -316,6 +316,15 @@ internal fun UiTreeBuilder.InputPage() {
                 title = "Input Edge Cases",
                 subtitle = "This page focuses on long labels, read-only text, multiline growth, and persistent error styling under theme changes.",
             ) {
+                BenchmarkRouteCallout(
+                    route = "Catalog -> Open Input -> Stress page",
+                    stableTargets = listOf(
+                        "Expanded Copy / Compact Copy",
+                        "Editable Notes / Readonly Notes",
+                        "Clear Error / Show Error",
+                        "Protected field",
+                    ),
+                )
                 Row(
                     spacing = 8.dp,
                     modifier = Modifier.margin(bottom = 12.dp),

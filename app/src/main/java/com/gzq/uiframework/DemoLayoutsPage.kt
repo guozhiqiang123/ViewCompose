@@ -155,6 +155,15 @@ internal fun UiTreeBuilder.LayoutPage() {
                 title = "Layout Edge Cases",
                 subtitle = "This page compresses the combinations that previously exposed wrong defaults for wrap, weight, and nested container sizing.",
             ) {
+                BenchmarkRouteCallout(
+                    route = "Catalog -> Open Layouts -> Edges page",
+                    stableTargets = listOf(
+                        "Use Long Labels / Use Short Labels",
+                        "Weighted",
+                        "Action",
+                        "Wrap",
+                    ),
+                )
                 Button(
                     text = if (useLongLabelsState.value) "Use Short Labels" else "Use Long Labels",
                     modifier = Modifier.margin(bottom = 12.dp),
