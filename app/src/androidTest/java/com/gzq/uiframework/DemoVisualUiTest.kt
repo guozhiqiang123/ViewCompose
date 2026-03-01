@@ -115,6 +115,52 @@ class DemoVisualUiTest {
     }
 
     @Test
+    fun componentStyleOverride_updatesPrimaryTokenButtonBackground() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            FoundationsActivity::class.java,
+        ).putExtra(EXTRA_FOUNDATIONS_PAGE_INDEX, 1)
+        launchDemoActivity<FoundationsActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scrollDeviceTextIntoView("Primary Token")
+            captureDeviceScreenshot("foundations-component-override-light")
+            scenario.onActivity { activity ->
+                val tokenButton = activity.requireTextView("Primary Token")
+                assertViewFullyVisible(tokenButton)
+                assertTextNotEllipsized(tokenButton)
+                assertViewBackgroundColor(
+                    view = tokenButton,
+                    expectedColor = DemoThemeTokens.light.colors.textPrimary,
+                )
+            }
+        }
+    }
+
+    @Test
+    fun foundationsMedia_viewsRemainVisibleAfterScroll() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            FoundationsActivity::class.java,
+        ).putExtra(EXTRA_FOUNDATIONS_PAGE_INDEX, 2)
+        launchDemoActivity<FoundationsActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scrollDeviceTextIntoView("Image + Icon")
+            scrollDeviceDescriptionIntoView("Remote image")
+            scrollDeviceDescriptionIntoView("Fallback image")
+            scrollDeviceDescriptionIntoView("Primary icon button")
+            captureDeviceScreenshot("foundations-media-light")
+            scenario.onActivity { activity ->
+                val remoteImage = activity.requireViewWithContentDescription("Remote image")
+                val fallbackImage = activity.requireViewWithContentDescription("Fallback image")
+                val iconButton = activity.requireViewWithContentDescription("Primary icon button")
+                assertViewFullyVisible(remoteImage)
+                assertViewFullyVisible(fallbackImage)
+                assertViewFullyVisible(iconButton)
+            }
+        }
+    }
+
+    @Test
     fun darkTheme_appliesExpectedTitleColorOnFoundationsPage() {
         launchDemoActivity(FoundationsActivity::class.java, themeMode = DemoThemeMode.Light).use { scenario ->
             waitForUiIdle()

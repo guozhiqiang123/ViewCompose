@@ -15,6 +15,8 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiScrollable
+import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -62,10 +64,34 @@ internal fun clickDeviceText(text: String) {
     waitForUiIdle()
 }
 
+internal fun scrollDeviceTextIntoView(text: String) {
+    val scrollable = UiScrollable(UiSelector().scrollable(true))
+    scrollable.setAsVerticalList()
+    val found = scrollable.scrollTextIntoView(text) || scrollable.scrollIntoView(UiSelector().text(text))
+    assertTrue("Expected to scroll text target into view: $text", found)
+    waitForUiIdle()
+}
+
+internal fun scrollDeviceDescriptionIntoView(description: String) {
+    val scrollable = UiScrollable(UiSelector().scrollable(true))
+    scrollable.setAsVerticalList()
+    val found = scrollable.scrollDescriptionIntoView(description) ||
+        scrollable.scrollIntoView(UiSelector().description(description))
+    assertTrue("Expected to scroll description target into view: $description", found)
+    waitForUiIdle()
+}
+
 internal fun Activity.requireTextView(text: String): TextView {
     val root = findViewById<ViewGroup>(android.R.id.content)
     val view = findTextViewByText(root, text)
     assertNotNull("Expected to find TextView with text: $text", view)
+    return view!!
+}
+
+internal fun Activity.requireViewWithContentDescription(description: String): View {
+    val root = findViewById<ViewGroup>(android.R.id.content)
+    val view = findViewByContentDescription(root, description)
+    assertNotNull("Expected to find view with contentDescription: $description", view)
     return view!!
 }
 
@@ -104,6 +130,21 @@ internal fun findTextViewByText(root: View, text: String): TextView? {
     if (root is ViewGroup) {
         for (index in 0 until root.childCount) {
             val match = findTextViewByText(root.getChildAt(index), text)
+            if (match != null) {
+                return match
+            }
+        }
+    }
+    return null
+}
+
+internal fun findViewByContentDescription(root: View, description: String): View? {
+    if (root.contentDescription?.toString() == description) {
+        return root
+    }
+    if (root is ViewGroup) {
+        for (index in 0 until root.childCount) {
+            val match = findViewByContentDescription(root.getChildAt(index), description)
             if (match != null) {
                 return match
             }
