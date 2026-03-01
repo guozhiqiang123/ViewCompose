@@ -153,6 +153,12 @@ widget/core/
   context/
   defaults/
   dsl/
+    action/
+    collection/
+    content/
+    feedback/
+    input/
+    layout/
   overlay/
     runtime/
   runtime/
@@ -163,7 +169,13 @@ widget/core/
 - `bridge/` 放 Android theme/environment 桥接
 - `context/` 只放 local、theme、environment、content color、image loading 这类 ambient context
 - `defaults/` 放所有 widget 默认值解析
-- `dsl/` 放 `UiTreeBuilder`、`LayoutScopes`、`Dimensions` 以及按控件族拆分的 DSL 文件
+- `dsl/` 根目录放 `UiTreeBuilder`、`LayoutScopes`、`Dimensions`
+- `dsl/content/` 放 `Text`、`Image`、`Icon`、`AndroidView`
+- `dsl/input/` 放 `TextField`、`Checkbox`、`Slider` 等输入控件 DSL
+- `dsl/action/` 放 `Button`、`IconButton`、`SegmentedControl`
+- `dsl/feedback/` 放 progress、`Snackbar`、`Toast`、`Dialog`、`Popup`
+- `dsl/layout/` 放 `Box`、`Row`、`Column`、`Surface`、`Spacer`
+- `dsl/collection/` 放 `LazyColumn`、`TabPager` 等集合型 DSL
 - `overlay/` 放 overlay 的声明契约、spec、host contract
 - `overlay/runtime/` 放 overlay request、surface session、overlay host reducer
 - `runtime/` 只放 `RenderSession`、`RenderInto`、remember/effect 等 composition 表层
@@ -277,7 +289,8 @@ flowchart TD
 剩余问题：
 
 - 模块职责仍然偏重，后续可能需要继续从中拆出更明确的 composition/runtime 层
-- widget 声明层后续仍可继续细分，例如把 action/layout/feedback 再演进成子目录
+- widget 声明层目录已经按控件族拆到子目录，当前层次是合理的
+- 后续真正需要继续收敛的重点会从“文件平铺”转到“共享 helper 是否继续抽象”
 
 ### `ui-overlay-android`
 
