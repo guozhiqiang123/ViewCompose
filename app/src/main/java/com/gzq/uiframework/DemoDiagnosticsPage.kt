@@ -10,10 +10,13 @@ import com.gzq.uiframework.widget.core.Environment
 import com.gzq.uiframework.widget.core.LazyColumn
 import com.gzq.uiframework.widget.core.SideEffect
 import com.gzq.uiframework.widget.core.Text
+import com.gzq.uiframework.widget.core.TextDefaults
 import com.gzq.uiframework.widget.core.Theme
+import com.gzq.uiframework.widget.core.UiTextStyle
 import com.gzq.uiframework.widget.core.UiTreeBuilder
-import com.gzq.uiframework.widget.core.remember
 import com.gzq.uiframework.widget.core.dp
+import com.gzq.uiframework.widget.core.remember
+import com.gzq.uiframework.widget.core.sp
 import com.gzq.uiframework.runtime.MutableState
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -23,6 +26,7 @@ internal fun UiTreeBuilder.DiagnosticsPage(
     selectedPageState: MutableState<Int>,
 ) {
     val pendingSnapshotRefreshState = remember { mutableStateOf(false) }
+    val benchmarkRefreshCountState = remember { mutableStateOf(0) }
     val renderSnapshotState = remember { mutableStateOf(DemoRenderDiagnosticsStore.latestSnapshot()) }
     val patchSnapshotState = remember { mutableStateOf(DemoRenderDiagnosticsStore.latestPatchActiveSnapshot()) }
     val layoutSnapshotState = remember { mutableStateOf(LayoutPassTracker.snapshot()) }
@@ -35,7 +39,7 @@ internal fun UiTreeBuilder.DiagnosticsPage(
         }
     }
     val pageItems = when (selectedPageState.value) {
-        0 -> listOf("page", "page_filter", "runtime", "verify")
+        0 -> listOf("benchmark", "page", "page_filter", "runtime", "verify")
         1 -> listOf("page", "page_filter", "renderer_actions", "renderer", "verify")
         else -> listOf("page", "page_filter", "gaps", "verify")
     }
@@ -56,6 +60,38 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                 selectedIndex = selectedPageState.value,
                 onSelectionChange = { selectedPageState.value = it },
             )
+
+            "benchmark" -> ScenarioSection(
+                kind = ScenarioKind.Benchmark,
+                title = "Diagnostics Benchmark Anchor",
+                subtitle = "This block stays on the default Runtime page and keeps the benchmark controls inside the first viewport.",
+            ) {
+                Text(
+                    text = "Stable route: launcher -> diagnostics module -> benchmark anchor",
+                    style = UiTextStyle(fontSizeSp = 12.sp),
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier.padding(bottom = 8.dp),
+                )
+                Text(
+                    text = "Diagnostics refresh count ${benchmarkRefreshCountState.value}",
+                    modifier = Modifier.padding(bottom = 8.dp),
+                )
+                Button(
+                    text = "Refresh Diagnostics Benchmark",
+                    onClick = {
+                        benchmarkRefreshCountState.value = benchmarkRefreshCountState.value + 1
+                        pendingSnapshotRefreshState.value = true
+                    },
+                    modifier = Modifier.padding(bottom = 8.dp),
+                )
+                Button(
+                    text = "Reset Diagnostics Benchmark",
+                    onClick = {
+                        benchmarkRefreshCountState.value = 0
+                        pendingSnapshotRefreshState.value = true
+                    },
+                )
+            }
 
             "runtime" -> ScenarioSection(
                 kind = ScenarioKind.Core,

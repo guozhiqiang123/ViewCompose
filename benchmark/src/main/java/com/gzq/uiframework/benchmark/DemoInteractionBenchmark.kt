@@ -144,6 +144,50 @@ class DemoInteractionBenchmark {
     }
 
     @Test
+    fun stateBenchmarkAnchor() = benchmarkRule.measureRepeated(
+        packageName = TARGET_PACKAGE,
+        metrics = listOf(FrameTimingMetric()),
+        compilationMode = CompilationMode.Partial(),
+        iterations = DEFAULT_ITERATIONS,
+        startupMode = StartupMode.WARM,
+        setupBlock = {
+            startDemoActivityAndWait(
+                moduleKey = "state",
+                expectedText = "State & Effects",
+            )
+            scrollUntilText("Advance State Benchmark 0")
+            scrollUntilText("Reset State Benchmark")
+        },
+    ) {
+        clickText("Advance State Benchmark 0")
+        waitForText("Advance State Benchmark 1")
+        clickText("Reset State Benchmark")
+        waitForText("Advance State Benchmark 0")
+    }
+
+    @Test
+    fun diagnosticsBenchmarkAnchor() = benchmarkRule.measureRepeated(
+        packageName = TARGET_PACKAGE,
+        metrics = listOf(FrameTimingMetric()),
+        compilationMode = CompilationMode.Partial(),
+        iterations = DEFAULT_ITERATIONS,
+        startupMode = StartupMode.WARM,
+        setupBlock = {
+            startDemoActivityAndWait(
+                moduleKey = "diagnostics",
+                expectedText = "Diagnostics",
+            )
+            scrollUntilText("Refresh Diagnostics Benchmark")
+            scrollUntilText("Reset Diagnostics Benchmark")
+        },
+    ) {
+        clickText("Refresh Diagnostics Benchmark")
+        waitForText("Diagnostics refresh count 1")
+        clickText("Reset Diagnostics Benchmark")
+        waitForText("Diagnostics refresh count 0")
+    }
+
+    @Test
     fun collectionsScroll() = benchmarkRule.measureRepeated(
         packageName = TARGET_PACKAGE,
         metrics = listOf(FrameTimingMetric()),

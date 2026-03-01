@@ -31,6 +31,7 @@ import com.gzq.uiframework.widget.core.sp
 internal fun UiTreeBuilder.StatePage(
     onOpenDiagnostics: () -> Unit,
 ) {
+    val benchmarkStepState = remember { mutableStateOf(0) }
     val clickCountState = remember { mutableStateOf(0) }
     val panelVisibleState = remember { mutableStateOf(true) }
     val selectedPageState = remember { mutableStateOf(0) }
@@ -56,7 +57,7 @@ internal fun UiTreeBuilder.StatePage(
         null
     }
     val pageItems = when (selectedPageState.value) {
-        0 -> listOf("page", "page_filter", "counter", "verify")
+        0 -> listOf("benchmark", "page", "page_filter", "counter", "verify")
         1 -> listOf("page", "page_filter", "panel", "verify")
         2 -> listOf("page", "page_filter", "patch", "verify")
         else -> listOf("page", "page_filter", "verify")
@@ -79,6 +80,39 @@ internal fun UiTreeBuilder.StatePage(
                 selectedIndex = selectedPageState.value,
                 onSelectionChange = { selectedPageState.value = it },
             )
+
+            "benchmark" -> ScenarioSection(
+                kind = ScenarioKind.Benchmark,
+                title = "State Benchmark Anchor",
+                subtitle = "This block stays on the default Core page and keeps the benchmark controls inside the first viewport.",
+            ) {
+                Text(
+                    text = "Stable route: launcher -> state module -> benchmark anchor",
+                    style = UiTextStyle(fontSizeSp = 12.sp),
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier.margin(bottom = 8.dp),
+                )
+                Text(
+                    text = "Benchmark step ${benchmarkStepState.value}",
+                    modifier = Modifier.margin(bottom = 8.dp),
+                )
+                Button(
+                    text = "Advance State Benchmark ${benchmarkStepState.value}",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .margin(bottom = 8.dp),
+                    onClick = {
+                        benchmarkStepState.value = benchmarkStepState.value + 1
+                    },
+                )
+                Button(
+                    text = "Reset State Benchmark",
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        benchmarkStepState.value = 0
+                    },
+                )
+            }
 
             "counter" -> ScenarioSection(
                 kind = ScenarioKind.Core,
