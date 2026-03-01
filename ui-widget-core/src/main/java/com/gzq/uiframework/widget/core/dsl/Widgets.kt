@@ -851,6 +851,39 @@ fun UiTreeBuilder.Dialog(
     )
 }
 
+fun UiTreeBuilder.Popup(
+    visible: Boolean,
+    anchorId: String,
+    requestKey: String = "popup",
+    dismissOnClickOutside: Boolean = true,
+    focusable: Boolean = true,
+    offsetX: Int = 0,
+    offsetY: Int = 0,
+    onDismissRequest: (() -> Unit)? = null,
+    content: UiTreeBuilder.() -> Unit,
+) {
+    if (!visible) {
+        return
+    }
+    submitOverlayRequest(
+        OverlayRequest(
+            key = requestKey,
+            type = OverlayType.Popup,
+            payload = PopupOverlaySpec(
+                anchorId = anchorId,
+                dismissOnClickOutside = dismissOnClickOutside,
+                focusable = focusable,
+                offsetX = offsetX,
+                offsetY = offsetY,
+                onDismissRequest = onDismissRequest,
+            ),
+            contentToken = PopupOverlayContent(
+                nodes = buildVNodeTree(content),
+            ),
+        ),
+    )
+}
+
 fun UiTreeBuilder.Box(
     key: Any? = null,
     contentAlignment: BoxAlignment = BoxAlignment.TopStart,
