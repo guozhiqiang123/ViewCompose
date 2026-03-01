@@ -4,7 +4,7 @@ import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
 import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.modifier.backgroundColor
 import com.gzq.uiframework.renderer.node.NodeType
-import com.gzq.uiframework.renderer.node.PropKeys
+import com.gzq.uiframework.renderer.node.TypedPropKeys
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -35,8 +35,8 @@ class ThemeTest {
             }
         }
 
-        assertEquals(7, tree.single().props.values[PropKeys.TEXT_COLOR])
-        assertEquals(18, tree.single().props.values[PropKeys.TEXT_SIZE_SP])
+        assertEquals(7, tree.single().props[TypedPropKeys.TextColor])
+        assertEquals(18, tree.single().props[TypedPropKeys.TextSizeSp])
     }
 
     @Test
@@ -65,7 +65,7 @@ class ThemeTest {
             }
         }
 
-        assertEquals(42, tree.single().props.values[PropKeys.DIVIDER_COLOR])
+        assertEquals(42, tree.single().props[TypedPropKeys.DividerColor])
     }
 
     @Test
@@ -238,13 +238,13 @@ class ThemeTest {
             }
         }
 
-        assertEquals(customTheme.colors.primary, tree.single().props.values[PropKeys.STYLE_BACKGROUND_COLOR])
-        assertEquals(customTheme.shapes.controlCornerRadius, tree.single().props.values[PropKeys.STYLE_CORNER_RADIUS])
-        assertEquals(customTheme.interactions.pressedOverlay, tree.single().props.values[PropKeys.STYLE_RIPPLE_COLOR])
-        assertEquals(0xFFFFFFFF.toInt(), tree.single().props.values[PropKeys.TEXT_COLOR])
-        assertEquals(customTheme.typography.label.fontSizeSp, tree.single().props.values[PropKeys.TEXT_SIZE_SP])
+        assertEquals(customTheme.colors.primary, tree.single().props[TypedPropKeys.StyleBackgroundColor])
+        assertEquals(customTheme.shapes.controlCornerRadius, tree.single().props[TypedPropKeys.StyleCornerRadius])
+        assertEquals(customTheme.interactions.pressedOverlay, tree.single().props[TypedPropKeys.StyleRippleColor])
+        assertEquals(0xFFFFFFFF.toInt(), tree.single().props[TypedPropKeys.TextColor])
+        assertEquals(customTheme.typography.label.fontSizeSp, tree.single().props[TypedPropKeys.TextSizeSp])
         assertEquals(customTheme.controls.button.mediumHeight, ButtonDefaults.height())
-        assertEquals(customTheme.controls.button.mediumHeight, tree.single().props.values[PropKeys.STYLE_MIN_HEIGHT])
+        assertEquals(customTheme.controls.button.mediumHeight, tree.single().props[TypedPropKeys.StyleMinHeight])
     }
 
     @Test
@@ -258,10 +258,10 @@ class ThemeTest {
             }
         }
 
-        assertEquals(0x00000000, tree.single().props.values[PropKeys.STYLE_BACKGROUND_COLOR])
-        assertEquals(Theme.colors.divider, tree.single().props.values[PropKeys.STYLE_BORDER_COLOR])
-        assertEquals(1.dp, tree.single().props.values[PropKeys.STYLE_BORDER_WIDTH])
-        assertEquals(Theme.colors.textPrimary, tree.single().props.values[PropKeys.TEXT_COLOR])
+        assertEquals(0x00000000, tree.single().props[TypedPropKeys.StyleBackgroundColor])
+        assertEquals(Theme.colors.divider, tree.single().props[TypedPropKeys.StyleBorderColor])
+        assertEquals(1.dp, tree.single().props[TypedPropKeys.StyleBorderWidth])
+        assertEquals(Theme.colors.textPrimary, tree.single().props[TypedPropKeys.TextColor])
     }
 
     @Test
@@ -312,9 +312,9 @@ class ThemeTest {
 
         val node = tree.single()
 
-        assertEquals(false, node.props.values[PropKeys.ENABLED])
-        assertEquals(103, node.props.values[PropKeys.STYLE_BACKGROUND_COLOR])
-        assertEquals(104, node.props.values[PropKeys.TEXT_COLOR])
+        assertEquals(false, node.props[TypedPropKeys.Enabled])
+        assertEquals(103, node.props[TypedPropKeys.StyleBackgroundColor])
+        assertEquals(104, node.props[TypedPropKeys.TextColor])
     }
 
     @Test
@@ -594,10 +594,10 @@ class ThemeTest {
         val surface = tree.single()
 
         assertEquals(NodeType.Surface, surface.type)
-        assertEquals(SurfaceDefaults.variantBackgroundColor(), surface.props.values[PropKeys.STYLE_BACKGROUND_COLOR])
-        assertEquals(SurfaceDefaults.cardCornerRadius(), surface.props.values[PropKeys.STYLE_CORNER_RADIUS])
-        assertEquals(SurfaceDefaults.pressedColor(), surface.props.values[PropKeys.STYLE_RIPPLE_COLOR])
-        assertEquals(SurfaceDefaults.disabledAlpha(), surface.props.values[PropKeys.STYLE_ALPHA])
+        assertEquals(SurfaceDefaults.variantBackgroundColor(), surface.props[TypedPropKeys.StyleBackgroundColor])
+        assertEquals(SurfaceDefaults.cardCornerRadius(), surface.props[TypedPropKeys.StyleCornerRadius])
+        assertEquals(SurfaceDefaults.pressedColor(), surface.props[TypedPropKeys.StyleRippleColor])
+        assertEquals(SurfaceDefaults.disabledAlpha(), surface.props[TypedPropKeys.StyleAlpha])
     }
 
     @Test
@@ -614,7 +614,7 @@ class ThemeTest {
 
         val text = tree.single().children.single()
 
-        assertEquals(SurfaceDefaults.variantContentColor(), text.props.values[PropKeys.TEXT_COLOR])
+        assertEquals(SurfaceDefaults.variantContentColor(), text.props[TypedPropKeys.TextColor])
     }
 
     @Test

@@ -1,7 +1,7 @@
 package com.gzq.uiframework.widget.core
 
 import com.gzq.uiframework.renderer.node.NodeType
-import com.gzq.uiframework.renderer.node.PropKeys
+import com.gzq.uiframework.renderer.node.TypedPropKeys
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -68,13 +68,13 @@ class InputControlTest {
         val node = tree.single()
 
         assertEquals(NodeType.Checkbox, node.type)
-        assertEquals("Enable logs", node.props.values[PropKeys.TEXT])
-        assertEquals(true, node.props.values[PropKeys.CHECKED])
-        assertEquals(true, node.props.values[PropKeys.ENABLED])
-        assertEquals(93, node.props.values[PropKeys.CONTROL_COLOR])
-        assertEquals(91, node.props.values[PropKeys.TEXT_COLOR])
-        assertEquals(customTheme.typography.body.fontSizeSp, node.props.values[PropKeys.TEXT_SIZE_SP])
-        assertEquals(customTheme.interactions.pressedOverlay, node.props.values[PropKeys.STYLE_RIPPLE_COLOR])
+        assertEquals("Enable logs", node.props[TypedPropKeys.Text])
+        assertEquals(true, node.props[TypedPropKeys.Checked])
+        assertEquals(true, node.props[TypedPropKeys.Enabled])
+        assertEquals(93, node.props[TypedPropKeys.ControlColor])
+        assertEquals(91, node.props[TypedPropKeys.TextColor])
+        assertEquals(customTheme.typography.body.fontSizeSp, node.props[TypedPropKeys.TextSizeSp])
+        assertEquals(customTheme.interactions.pressedOverlay, node.props[TypedPropKeys.StyleRippleColor])
     }
 
     @Test
@@ -92,10 +92,10 @@ class InputControlTest {
         val node = tree.single()
 
         assertEquals(NodeType.Slider, node.type)
-        assertEquals(24, node.props.values[PropKeys.SLIDER_VALUE])
-        assertEquals(10, node.props.values[PropKeys.MIN_VALUE])
-        assertEquals(60, node.props.values[PropKeys.MAX_VALUE])
-        assertEquals(false, node.props.values[PropKeys.ENABLED])
+        assertEquals(24, node.props[TypedPropKeys.SliderValue])
+        assertEquals(10, node.props[TypedPropKeys.MinValue])
+        assertEquals(60, node.props[TypedPropKeys.MaxValue])
+        assertEquals(false, node.props[TypedPropKeys.Enabled])
     }
 
     @Test
@@ -118,10 +118,10 @@ class InputControlTest {
 
         assertEquals(NodeType.RadioButton, tree[0].children[0].type)
         assertEquals(NodeType.Switch, tree[0].children[1].type)
-        assertEquals(false, tree[0].children[0].props.values[PropKeys.ENABLED])
-        assertTrue(tree[0].children[1].props.values[PropKeys.ENABLED] as Boolean)
-        assertEquals(InputControlDefaults.pressedColor(), tree[0].children[0].props.values[PropKeys.STYLE_RIPPLE_COLOR])
-        assertEquals(InputControlDefaults.pressedColor(), tree[0].children[1].props.values[PropKeys.STYLE_RIPPLE_COLOR])
+        assertEquals(false, tree[0].children[0].props[TypedPropKeys.Enabled])
+        assertTrue(tree[0].children[1].props[TypedPropKeys.Enabled] as Boolean)
+        assertEquals(InputControlDefaults.pressedColor(), tree[0].children[0].props[TypedPropKeys.StyleRippleColor])
+        assertEquals(InputControlDefaults.pressedColor(), tree[0].children[1].props[TypedPropKeys.StyleRippleColor])
     }
 
     @Test
@@ -162,8 +162,8 @@ class InputControlTest {
 
         val node = tree.single()
 
-        assertEquals(104, node.props.values[PropKeys.CONTROL_COLOR])
-        assertEquals(102, node.props.values[PropKeys.TEXT_COLOR])
+        assertEquals(104, node.props[TypedPropKeys.ControlColor])
+        assertEquals(102, node.props[TypedPropKeys.TextColor])
     }
 
     @Test
@@ -236,9 +236,9 @@ class InputControlTest {
         val radioButton = root.children[2]
         val slider = root.children[3]
 
-        assertEquals(203, checkbox.props.values[PropKeys.CONTROL_COLOR])
-        assertEquals(207, switchControl.props.values[PropKeys.CONTROL_COLOR])
-        assertEquals(211, radioButton.props.values[PropKeys.CONTROL_COLOR])
-        assertEquals(213, slider.props.values[PropKeys.CONTROL_COLOR])
+        assertEquals(203, checkbox.props[TypedPropKeys.ControlColor])
+        assertEquals(207, switchControl.props[TypedPropKeys.ControlColor])
+        assertEquals(211, radioButton.props[TypedPropKeys.ControlColor])
+        assertEquals(213, slider.props[TypedPropKeys.ControlColor])
     }
 }
