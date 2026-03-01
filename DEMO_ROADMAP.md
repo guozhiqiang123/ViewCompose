@@ -25,7 +25,7 @@
 当前 demo 已经完成第一轮多 Activity 重构，并且已实现模块基本切到了统一的 scenario 模板，但仍然有明显问题：
 
 1. 虽然页面已经统一到 `Guide / Core / Visual / Stress / Benchmark` 模板，但部分章节仍然偏 sample 展示，而不是更强的 testbed。
-2. 目前只有已实现模块独立成章，planned 模块还停留在目录卡片，能力地图仍需持续补齐。
+2. planned 模块虽然已经有独立 placeholder Activity，但还没有进入真实能力验证阶段，能力地图仍需持续补齐。
 3. benchmark 入口已经稳定到“目录页 -> 模块 Activity”，并且所有已实现模块都已有同等级的 benchmark-friendly scenario；后续新增模块也必须按同一标准补齐。
 4. demo 与 Compose 的能力差距虽然已经文档化，但场景覆盖还没完全对齐文档结构。
 5. Diagnostics 仍然更像调试面板，而不是完整 inspector。

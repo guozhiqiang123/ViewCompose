@@ -20,10 +20,19 @@
             android:name=".CollectionsActivity"
             android:exported="false" />
         <activity
+            android:name=".AnimationActivity"
+            android:exported="false" />
+        <activity
             android:name=".DiagnosticsActivity"
             android:exported="false" />
         <activity
             android:name=".FoundationsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".GesturesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".GraphicsActivity"
             android:exported="false" />
         <activity
             android:name=".InputActivity"
@@ -43,6 +52,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".NavigationActivity"
+            android:exported="false" />
         <activity
             android:name=".StateActivity"
             android:exported="false" />

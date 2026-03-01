@@ -14,7 +14,7 @@ class MainActivity : DemoRenderActivity() {
 
     override fun redirectTargetIntent(): Intent? {
         val moduleKey = intent?.getStringExtra(EXTRA_DEMO_MODULE_KEY)
-        val targetActivity = moduleKey?.let(::findAvailableDemoModuleByKey)?.activityClass
+        val targetActivity = moduleKey?.let(::findDemoModuleByKey)?.activityClass
         return targetActivity?.let { Intent(this, it) }
     }
 

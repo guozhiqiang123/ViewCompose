@@ -89,7 +89,8 @@ internal val DEMO_MODULES = listOf(
         subtitle = "Click, drag, swipe, and nested gesture scenarios planned after input/runtime work.",
         status = DemoModuleStatus.Planned,
         manualFocus = "pointer input and nested gesture conflicts",
-        benchmarkPath = "Planned",
+        benchmarkPath = "Preview placeholder",
+        activityClass = GesturesActivity::class.java,
     ),
     DemoModule(
         key = "animation",
@@ -97,7 +98,8 @@ internal val DEMO_MODULES = listOf(
         subtitle = "State-driven motion, transitions, and list animations planned after runtime stabilizes.",
         status = DemoModuleStatus.Planned,
         manualFocus = "state transitions, content animation, list motion",
-        benchmarkPath = "Planned",
+        benchmarkPath = "Preview placeholder",
+        activityClass = AnimationActivity::class.java,
     ),
     DemoModule(
         key = "graphics",
@@ -105,7 +107,8 @@ internal val DEMO_MODULES = listOf(
         subtitle = "Canvas, draw pipeline, gradients, and custom graphics primitives are still missing.",
         status = DemoModuleStatus.Planned,
         manualFocus = "draw modifiers, canvas primitives, custom graphics",
-        benchmarkPath = "Planned",
+        benchmarkPath = "Preview placeholder",
+        activityClass = GraphicsActivity::class.java,
     ),
     DemoModule(
         key = "navigation",
@@ -113,12 +116,16 @@ internal val DEMO_MODULES = listOf(
         subtitle = "Host integration and navigation model experiments will start after demo shell settles.",
         status = DemoModuleStatus.Planned,
         manualFocus = "host stack, screen switching, state preservation",
-        benchmarkPath = "Planned",
+        benchmarkPath = "Preview placeholder",
+        activityClass = NavigationActivity::class.java,
     ),
 )
 
 internal val AVAILABLE_DEMO_MODULES = DEMO_MODULES.filter { it.status == DemoModuleStatus.Available }
 internal val PLANNED_DEMO_MODULES = DEMO_MODULES.filter { it.status == DemoModuleStatus.Planned }
+
+internal fun findDemoModuleByKey(key: String): DemoModule? =
+    DEMO_MODULES.firstOrNull { it.key == key }
 
 internal fun findAvailableDemoModuleByKey(key: String): DemoModule? =
     AVAILABLE_DEMO_MODULES.firstOrNull { it.key == key }

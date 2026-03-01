@@ -66,9 +66,12 @@ internal fun UiTreeBuilder.DemoCatalogPage(
                 PLANNED_DEMO_MODULES.forEach { module ->
                     ModuleCard(
                         module = module,
-                        actionLabel = "Planned",
+                        actionLabel = "Preview",
                         actionVariant = ButtonVariant.Outlined,
-                        onClick = {},
+                        onClick = {
+                            val target = module.activityClass ?: return@ModuleCard
+                            activity?.startActivity(Intent(activity, target))
+                        },
                     )
                 }
             }
