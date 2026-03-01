@@ -1,12 +1,7 @@
 package com.gzq.uiframework.widget.core
 
-import com.gzq.uiframework.renderer.modifier.AlphaModifierElement
 import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
-import com.gzq.uiframework.renderer.modifier.BorderModifierElement
-import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
-import com.gzq.uiframework.renderer.modifier.MinHeightModifierElement
 import com.gzq.uiframework.renderer.modifier.Modifier
-import com.gzq.uiframework.renderer.modifier.RippleColorModifierElement
 import com.gzq.uiframework.renderer.modifier.backgroundColor
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
@@ -243,19 +238,13 @@ class ThemeTest {
             }
         }
 
-        val elements = tree.single().modifier.readModifierElements()
-        val background = elements.last { it is BackgroundColorModifierElement } as BackgroundColorModifierElement
-        val cornerRadius = elements.last { it is CornerRadiusModifierElement } as CornerRadiusModifierElement
-        val rippleColor = elements.last { it is RippleColorModifierElement } as RippleColorModifierElement
-        val minHeight = elements.last { it is MinHeightModifierElement } as MinHeightModifierElement
-
-        assertEquals(customTheme.colors.primary, background.color)
-        assertEquals(customTheme.shapes.controlCornerRadius, cornerRadius.radius)
-        assertEquals(customTheme.interactions.pressedOverlay, rippleColor.color)
+        assertEquals(customTheme.colors.primary, tree.single().props.values[PropKeys.STYLE_BACKGROUND_COLOR])
+        assertEquals(customTheme.shapes.controlCornerRadius, tree.single().props.values[PropKeys.STYLE_CORNER_RADIUS])
+        assertEquals(customTheme.interactions.pressedOverlay, tree.single().props.values[PropKeys.STYLE_RIPPLE_COLOR])
         assertEquals(0xFFFFFFFF.toInt(), tree.single().props.values[PropKeys.TEXT_COLOR])
         assertEquals(customTheme.typography.label.fontSizeSp, tree.single().props.values[PropKeys.TEXT_SIZE_SP])
         assertEquals(customTheme.controls.button.mediumHeight, ButtonDefaults.height())
-        assertEquals(customTheme.controls.button.mediumHeight, minHeight.minHeight)
+        assertEquals(customTheme.controls.button.mediumHeight, tree.single().props.values[PropKeys.STYLE_MIN_HEIGHT])
     }
 
     @Test
@@ -269,13 +258,9 @@ class ThemeTest {
             }
         }
 
-        val elements = tree.single().modifier.readModifierElements()
-        val background = elements.last { it is BackgroundColorModifierElement } as BackgroundColorModifierElement
-        val border = elements.last { it is BorderModifierElement } as BorderModifierElement
-
-        assertEquals(0x00000000, background.color)
-        assertEquals(Theme.colors.divider, border.color)
-        assertEquals(1.dp, border.width)
+        assertEquals(0x00000000, tree.single().props.values[PropKeys.STYLE_BACKGROUND_COLOR])
+        assertEquals(Theme.colors.divider, tree.single().props.values[PropKeys.STYLE_BORDER_COLOR])
+        assertEquals(1.dp, tree.single().props.values[PropKeys.STYLE_BORDER_WIDTH])
         assertEquals(Theme.colors.textPrimary, tree.single().props.values[PropKeys.TEXT_COLOR])
     }
 
@@ -326,11 +311,9 @@ class ThemeTest {
         }
 
         val node = tree.single()
-        val elements = node.modifier.readModifierElements()
-        val background = elements.last { it is BackgroundColorModifierElement } as BackgroundColorModifierElement
 
         assertEquals(false, node.props.values[PropKeys.ENABLED])
-        assertEquals(103, background.color)
+        assertEquals(103, node.props.values[PropKeys.STYLE_BACKGROUND_COLOR])
         assertEquals(104, node.props.values[PropKeys.TEXT_COLOR])
     }
 
@@ -609,17 +592,12 @@ class ThemeTest {
         }
 
         val surface = tree.single()
-        val elements = surface.modifier.readModifierElements()
-        val background = elements.last { it is BackgroundColorModifierElement } as BackgroundColorModifierElement
-        val cornerRadius = elements.last { it is CornerRadiusModifierElement } as CornerRadiusModifierElement
-        val ripple = elements.last { it is RippleColorModifierElement } as RippleColorModifierElement
-        val alpha = elements.last { it is AlphaModifierElement } as AlphaModifierElement
 
         assertEquals(NodeType.Surface, surface.type)
-        assertEquals(SurfaceDefaults.variantBackgroundColor(), background.color)
-        assertEquals(SurfaceDefaults.cardCornerRadius(), cornerRadius.radius)
-        assertEquals(SurfaceDefaults.pressedColor(), ripple.color)
-        assertEquals(SurfaceDefaults.disabledAlpha(), alpha.alpha, 0.0f)
+        assertEquals(SurfaceDefaults.variantBackgroundColor(), surface.props.values[PropKeys.STYLE_BACKGROUND_COLOR])
+        assertEquals(SurfaceDefaults.cardCornerRadius(), surface.props.values[PropKeys.STYLE_CORNER_RADIUS])
+        assertEquals(SurfaceDefaults.pressedColor(), surface.props.values[PropKeys.STYLE_RIPPLE_COLOR])
+        assertEquals(SurfaceDefaults.disabledAlpha(), surface.props.values[PropKeys.STYLE_ALPHA])
     }
 
     @Test

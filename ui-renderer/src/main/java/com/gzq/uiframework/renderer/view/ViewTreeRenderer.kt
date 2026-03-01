@@ -447,9 +447,17 @@ object ViewTreeRenderer {
             .lastOrNull { it is VisibilityModifierElement } as? VisibilityModifierElement
         val zIndex = node.modifier.elements
             .lastOrNull { it is ZIndexModifierElement } as? ZIndexModifierElement
+        val resolvedAlpha = alpha?.alpha ?: readNodeAlpha(node) ?: 1f
+        val resolvedBackgroundColor = backgroundColor?.color ?: readNodeBackgroundColor(node)
+        val resolvedBorderWidth = border?.width ?: readNodeBorderWidth(node) ?: 0
+        val resolvedBorderColor = border?.color ?: readNodeBorderColor(node) ?: Color.TRANSPARENT
+        val resolvedCornerRadius = cornerRadius?.radius ?: readNodeCornerRadius(node) ?: 0
+        val resolvedPadding = padding ?: readNodePadding(node)
+        val resolvedMinHeight = minHeight?.minHeight ?: readNodeMinHeight(node) ?: 0
+        val resolvedRippleColor = rippleColor?.color ?: readNodeRippleColor(node) ?: DEFAULT_RIPPLE_COLOR
         val textColor = readNodeTextColor(node) ?: legacyTextColor?.color
         val textSizeSp = readNodeTextSize(node) ?: legacyTextSize?.sizeSp
-        view.alpha = alpha?.alpha ?: 1f
+        view.alpha = resolvedAlpha
         if (view is DeclarativeTextFieldLayout) {
             view.visibility = when (visibility?.visibility ?: Visibility.Visible) {
                 Visibility.Visible -> View.VISIBLE
@@ -465,13 +473,13 @@ object ViewTreeRenderer {
             view.setPadding(0, 0, 0, 0)
             applyTextFieldModifier(
                 layout = view,
-                backgroundColor = backgroundColor?.color,
-                borderWidth = border?.width ?: 0,
-                borderColor = border?.color ?: Color.TRANSPARENT,
-                cornerRadius = cornerRadius?.radius ?: 0,
-                rippleColor = rippleColor?.color ?: DEFAULT_RIPPLE_COLOR,
-                padding = padding,
-                minHeight = minHeight?.minHeight ?: 0,
+                backgroundColor = resolvedBackgroundColor,
+                borderWidth = resolvedBorderWidth,
+                borderColor = resolvedBorderColor,
+                cornerRadius = resolvedCornerRadius,
+                rippleColor = resolvedRippleColor,
+                padding = resolvedPadding,
+                minHeight = resolvedMinHeight,
                 textColor = textColor,
                 textSizeSp = textSizeSp,
             )
@@ -479,11 +487,11 @@ object ViewTreeRenderer {
         }
         applyBackgroundAndInteraction(
             view = view,
-            backgroundColor = backgroundColor?.color,
-            borderWidth = border?.width ?: 0,
-            borderColor = border?.color ?: Color.TRANSPARENT,
-            cornerRadius = cornerRadius?.radius ?: 0,
-            rippleColor = rippleColor?.color ?: DEFAULT_RIPPLE_COLOR,
+            backgroundColor = resolvedBackgroundColor,
+            borderWidth = resolvedBorderWidth,
+            borderColor = resolvedBorderColor,
+            cornerRadius = resolvedCornerRadius,
+            rippleColor = resolvedRippleColor,
             clickable = clickable != null,
         )
         view.visibility = when (visibility?.visibility ?: Visibility.Visible) {
@@ -494,7 +502,7 @@ object ViewTreeRenderer {
         view.translationX = offset?.x ?: 0f
         view.translationY = offset?.y ?: 0f
         view.z = zIndex?.zIndex ?: 0f
-        view.minimumHeight = minHeight?.minHeight ?: 0
+        view.minimumHeight = resolvedMinHeight
         view.isClickable = clickable != null
         view.setOnClickListener(
             if (clickable == null) {
@@ -503,14 +511,14 @@ object ViewTreeRenderer {
                 View.OnClickListener { clickable.onClick() }
             },
         )
-        if (padding == null) {
+        if (resolvedPadding == null) {
             view.setPadding(0, 0, 0, 0)
         } else {
             view.setPadding(
-                padding.left,
-                padding.top,
-                padding.right,
-                padding.bottom,
+                resolvedPadding.left,
+                resolvedPadding.top,
+                resolvedPadding.right,
+                resolvedPadding.bottom,
             )
         }
         if (view is TextView) {
@@ -1462,6 +1470,47 @@ object ViewTreeRenderer {
 
     private fun readNodeTextSize(node: VNode): Int? {
         return node.props.values[PropKeys.TEXT_SIZE_SP] as? Int
+    }
+
+    private fun readNodeAlpha(node: VNode): Float? {
+        return node.props.values[PropKeys.STYLE_ALPHA] as? Float
+    }
+
+    private fun readNodeBackgroundColor(node: VNode): Int? {
+        return node.props.values[PropKeys.STYLE_BACKGROUND_COLOR] as? Int
+    }
+
+    private fun readNodeBorderWidth(node: VNode): Int? {
+        return node.props.values[PropKeys.STYLE_BORDER_WIDTH] as? Int
+    }
+
+    private fun readNodeBorderColor(node: VNode): Int? {
+        return node.props.values[PropKeys.STYLE_BORDER_COLOR] as? Int
+    }
+
+    private fun readNodeCornerRadius(node: VNode): Int? {
+        return node.props.values[PropKeys.STYLE_CORNER_RADIUS] as? Int
+    }
+
+    private fun readNodeRippleColor(node: VNode): Int? {
+        return node.props.values[PropKeys.STYLE_RIPPLE_COLOR] as? Int
+    }
+
+    private fun readNodeMinHeight(node: VNode): Int? {
+        return node.props.values[PropKeys.STYLE_MIN_HEIGHT] as? Int
+    }
+
+    private fun readNodePadding(node: VNode): PaddingModifierElement? {
+        val left = node.props.values[PropKeys.STYLE_PADDING_LEFT] as? Int ?: return null
+        val top = node.props.values[PropKeys.STYLE_PADDING_TOP] as? Int ?: return null
+        val right = node.props.values[PropKeys.STYLE_PADDING_RIGHT] as? Int ?: return null
+        val bottom = node.props.values[PropKeys.STYLE_PADDING_BOTTOM] as? Int ?: return null
+        return PaddingModifierElement(
+            left = left,
+            top = top,
+            right = right,
+            bottom = bottom,
+        )
     }
 
     private fun readLegacyModifierTextColor(node: VNode): Int? {

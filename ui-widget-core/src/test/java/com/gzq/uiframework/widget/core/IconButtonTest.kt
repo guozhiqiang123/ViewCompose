@@ -1,8 +1,5 @@
 package com.gzq.uiframework.widget.core
 
-import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
-import com.gzq.uiframework.renderer.modifier.BorderModifierElement
-import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
 import com.gzq.uiframework.renderer.modifier.SizeModifierElement
 import com.gzq.uiframework.renderer.node.ImageContentScale
 import com.gzq.uiframework.renderer.node.ImageSource
@@ -24,8 +21,6 @@ class IconButtonTest {
         val node = tree.single()
         val elements = node.modifier.readModifierElements()
         val size = elements.last { it is SizeModifierElement } as SizeModifierElement
-        val background = elements.last { it is BackgroundColorModifierElement } as BackgroundColorModifierElement
-        val cornerRadius = elements.last { it is CornerRadiusModifierElement } as CornerRadiusModifierElement
 
         assertEquals(NodeType.IconButton, node.type)
         assertEquals(ImageSource.Resource(42), node.props.values[PropKeys.IMAGE_SOURCE])
@@ -34,8 +29,8 @@ class IconButtonTest {
         assertEquals(IconButtonDefaults.contentColor(), node.props.values[PropKeys.IMAGE_TINT])
         assertEquals(IconButtonDefaults.size(), size.width)
         assertEquals(IconButtonDefaults.size(), size.height)
-        assertEquals(IconButtonDefaults.containerColor(), background.color)
-        assertEquals(IconButtonDefaults.cornerRadius(), cornerRadius.radius)
+        assertEquals(IconButtonDefaults.containerColor(), node.props.values[PropKeys.STYLE_BACKGROUND_COLOR])
+        assertEquals(IconButtonDefaults.cornerRadius(), node.props.values[PropKeys.STYLE_CORNER_RADIUS])
         assertEquals(true, node.props.values[PropKeys.ENABLED])
     }
 
@@ -50,14 +45,12 @@ class IconButtonTest {
         }
 
         val node = tree.single()
-        val elements = node.modifier.readModifierElements()
-        val border = elements.last { it is BorderModifierElement } as BorderModifierElement
 
         assertEquals(false, node.props.values[PropKeys.ENABLED])
-        assertEquals(IconButtonDefaults.borderWidth(ButtonVariant.Outlined), border.width)
+        assertEquals(IconButtonDefaults.borderWidth(ButtonVariant.Outlined), node.props.values[PropKeys.STYLE_BORDER_WIDTH])
         assertEquals(
             IconButtonDefaults.borderColor(ButtonVariant.Outlined, enabled = false),
-            border.color,
+            node.props.values[PropKeys.STYLE_BORDER_COLOR],
         )
         assertEquals(
             IconButtonDefaults.contentColor(ButtonVariant.Outlined, enabled = false),

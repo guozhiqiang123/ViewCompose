@@ -7,15 +7,9 @@ import com.gzq.uiframework.renderer.layout.HorizontalAlignment
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.modifier.Modifier
-import com.gzq.uiframework.renderer.modifier.alpha
-import com.gzq.uiframework.renderer.modifier.backgroundColor
-import com.gzq.uiframework.renderer.modifier.border
 import com.gzq.uiframework.renderer.modifier.clickable
-import com.gzq.uiframework.renderer.modifier.cornerRadius
 import com.gzq.uiframework.renderer.modifier.fillMaxWidth
 import com.gzq.uiframework.renderer.modifier.height
-import com.gzq.uiframework.renderer.modifier.minHeight
-import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.renderer.modifier.rippleColor
 import com.gzq.uiframework.renderer.modifier.size
 import com.gzq.uiframework.renderer.modifier.weight
@@ -132,15 +126,10 @@ fun UiTreeBuilder.TextField(
     key: Any? = null,
     modifier: Modifier = Modifier,
 ) {
-    val defaultModifier = Modifier
-        .padding(
-            horizontal = TextFieldDefaults.horizontalPadding(size),
-            vertical = TextFieldDefaults.verticalPadding(size),
-        )
     val sizeModifier = if (singleLine) {
-        defaultModifier.height(TextFieldDefaults.height(size))
+        Modifier.height(TextFieldDefaults.height(size))
     } else {
-        defaultModifier
+        Modifier
     }
     emit(
         type = NodeType.TextField,
@@ -163,6 +152,23 @@ fun UiTreeBuilder.TextField(
                 PropKeys.IS_ERROR to isError,
                 PropKeys.TEXT_COLOR to TextFieldDefaults.textColor(enabled),
                 PropKeys.TEXT_SIZE_SP to style.fontSizeSp,
+                PropKeys.STYLE_PADDING_LEFT to TextFieldDefaults.horizontalPadding(size),
+                PropKeys.STYLE_PADDING_TOP to TextFieldDefaults.verticalPadding(size),
+                PropKeys.STYLE_PADDING_RIGHT to TextFieldDefaults.horizontalPadding(size),
+                PropKeys.STYLE_PADDING_BOTTOM to TextFieldDefaults.verticalPadding(size),
+                PropKeys.STYLE_BACKGROUND_COLOR to TextFieldDefaults.containerColor(
+                    variant = variant,
+                    enabled = enabled,
+                    isError = isError,
+                ),
+                PropKeys.STYLE_BORDER_WIDTH to TextFieldDefaults.borderWidth(variant),
+                PropKeys.STYLE_BORDER_COLOR to TextFieldDefaults.borderColor(
+                    variant = variant,
+                    enabled = enabled,
+                    isError = isError,
+                ),
+                PropKeys.STYLE_CORNER_RADIUS to TextFieldDefaults.cornerRadius(),
+                PropKeys.STYLE_RIPPLE_COLOR to TextFieldDefaults.pressedColor(),
                 PropKeys.HINT_TEXT_COLOR to TextFieldDefaults.hintColor(
                     enabled = enabled,
                     isError = isError,
@@ -181,23 +187,6 @@ fun UiTreeBuilder.TextField(
         ),
         modifier = Modifier
             .then(sizeModifier)
-            .backgroundColor(
-                TextFieldDefaults.containerColor(
-                    variant = variant,
-                    enabled = enabled,
-                    isError = isError,
-                ),
-            )
-            .border(
-                width = TextFieldDefaults.borderWidth(variant),
-                color = TextFieldDefaults.borderColor(
-                    variant = variant,
-                    enabled = enabled,
-                    isError = isError,
-                ),
-            )
-            .cornerRadius(TextFieldDefaults.cornerRadius())
-            .rippleColor(TextFieldDefaults.pressedColor())
             .then(modifier),
     )
 }
@@ -530,26 +519,23 @@ fun UiTreeBuilder.Button(
                 put(PropKeys.ENABLED, enabled)
                 put(PropKeys.TEXT_COLOR, ButtonDefaults.contentColor(variant, enabled))
                 put(PropKeys.TEXT_SIZE_SP, style.fontSizeSp)
+                put(PropKeys.STYLE_MIN_HEIGHT, ButtonDefaults.height(size))
+                put(PropKeys.STYLE_PADDING_LEFT, ButtonDefaults.horizontalPadding(size))
+                put(PropKeys.STYLE_PADDING_TOP, ButtonDefaults.verticalPadding(size))
+                put(PropKeys.STYLE_PADDING_RIGHT, ButtonDefaults.horizontalPadding(size))
+                put(PropKeys.STYLE_PADDING_BOTTOM, ButtonDefaults.verticalPadding(size))
+                put(PropKeys.STYLE_BACKGROUND_COLOR, ButtonDefaults.containerColor(variant, enabled))
+                put(PropKeys.STYLE_BORDER_WIDTH, ButtonDefaults.borderWidth(variant))
+                put(PropKeys.STYLE_BORDER_COLOR, ButtonDefaults.borderColor(variant, enabled))
+                put(PropKeys.STYLE_CORNER_RADIUS, ButtonDefaults.cornerRadius())
+                put(PropKeys.STYLE_RIPPLE_COLOR, ButtonDefaults.pressedColor())
                 put(PropKeys.BUTTON_ICON_SIZE, ButtonDefaults.iconSize(size))
                 put(PropKeys.BUTTON_ICON_SPACING, ButtonDefaults.iconSpacing(size))
                 leadingIcon?.let { put(PropKeys.BUTTON_LEADING_ICON, it) }
                 trailingIcon?.let { put(PropKeys.BUTTON_TRAILING_ICON, it) }
             },
         ),
-        modifier = Modifier
-            .minHeight(ButtonDefaults.height(size))
-            .padding(
-                horizontal = ButtonDefaults.horizontalPadding(size),
-                vertical = ButtonDefaults.verticalPadding(size),
-            )
-            .backgroundColor(ButtonDefaults.containerColor(variant, enabled))
-            .border(
-                width = ButtonDefaults.borderWidth(variant),
-                color = ButtonDefaults.borderColor(variant, enabled),
-            )
-            .cornerRadius(ButtonDefaults.cornerRadius())
-            .rippleColor(ButtonDefaults.pressedColor())
-            .then(modifier),
+        modifier = modifier,
     )
 }
 
@@ -568,14 +554,6 @@ fun UiTreeBuilder.IconButton(
             width = IconButtonDefaults.size(size),
             height = IconButtonDefaults.size(size),
         )
-        .padding(IconButtonDefaults.contentPadding(size))
-        .backgroundColor(IconButtonDefaults.containerColor(variant, enabled))
-        .border(
-            width = IconButtonDefaults.borderWidth(variant),
-            color = IconButtonDefaults.borderColor(variant, enabled),
-        )
-        .cornerRadius(IconButtonDefaults.cornerRadius())
-        .rippleColor(IconButtonDefaults.pressedColor())
         .then(
             if (enabled && onClick != null) {
                 Modifier.clickable(onClick)
@@ -596,6 +574,15 @@ fun UiTreeBuilder.IconButton(
                 put(PropKeys.ON_CLICK, onClick)
                 put(PropKeys.ENABLED, enabled)
                 put(PropKeys.IMAGE_REMOTE_LOADER, ImageLoading.current)
+                put(PropKeys.STYLE_PADDING_LEFT, IconButtonDefaults.contentPadding(size))
+                put(PropKeys.STYLE_PADDING_TOP, IconButtonDefaults.contentPadding(size))
+                put(PropKeys.STYLE_PADDING_RIGHT, IconButtonDefaults.contentPadding(size))
+                put(PropKeys.STYLE_PADDING_BOTTOM, IconButtonDefaults.contentPadding(size))
+                put(PropKeys.STYLE_BACKGROUND_COLOR, IconButtonDefaults.containerColor(variant, enabled))
+                put(PropKeys.STYLE_BORDER_WIDTH, IconButtonDefaults.borderWidth(variant))
+                put(PropKeys.STYLE_BORDER_COLOR, IconButtonDefaults.borderColor(variant, enabled))
+                put(PropKeys.STYLE_CORNER_RADIUS, IconButtonDefaults.cornerRadius())
+                put(PropKeys.STYLE_RIPPLE_COLOR, IconButtonDefaults.pressedColor())
             },
         ),
         modifier = semanticModifier,
@@ -688,16 +675,6 @@ fun UiTreeBuilder.Surface(
     content: BoxScope.() -> Unit,
 ) {
     val semanticModifier = Modifier
-        .backgroundColor(SurfaceDefaults.backgroundColor(variant))
-        .cornerRadius(SurfaceDefaults.cardCornerRadius())
-        .rippleColor(SurfaceDefaults.pressedColor())
-        .then(
-            if (enabled) {
-                Modifier
-            } else {
-                Modifier.alpha(SurfaceDefaults.disabledAlpha())
-            },
-        )
         .then(
             if (enabled && onClick != null) {
                 Modifier.clickable(onClick)
@@ -711,9 +688,15 @@ fun UiTreeBuilder.Surface(
             type = NodeType.Surface,
             key = key,
             props = Props(
-                values = mapOf(
-                    PropKeys.BOX_ALIGNMENT to contentAlignment,
-                ),
+                values = buildMap {
+                    put(PropKeys.BOX_ALIGNMENT, contentAlignment)
+                    put(PropKeys.STYLE_BACKGROUND_COLOR, SurfaceDefaults.backgroundColor(variant))
+                    put(PropKeys.STYLE_CORNER_RADIUS, SurfaceDefaults.cardCornerRadius())
+                    put(PropKeys.STYLE_RIPPLE_COLOR, SurfaceDefaults.pressedColor())
+                    if (!enabled) {
+                        put(PropKeys.STYLE_ALPHA, SurfaceDefaults.disabledAlpha())
+                    }
+                },
             ),
             modifier = semanticModifier,
             children = BoxScope().apply(content).build(),

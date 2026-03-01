@@ -188,6 +188,8 @@ Theme -> Modifier -> Renderer
 - 内置 `Text`、`Button`、`TextField`、`Checkbox`、`Switch`、`RadioButton` 的文本颜色 / 字号默认值已优先走 `Prop`
 - renderer 已实现“优先读 `Prop`，兼容旧 modifier”的过渡逻辑
 - `Text` 已提供显式 `color` 参数，demo 已不再依赖 `Modifier.textColor(...)`
+- `Button`、`TextField`、`Surface`、`IconButton` 的默认背景 / 描边 / 圆角 / ripple / 最小高度 / 内边距已开始通过 style props 下发
+- renderer 已实现“显式 modifier 覆盖 style props”的优先级规则，用于兼容现有外部调用
 
 ### Phase 3
 

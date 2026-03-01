@@ -1,6 +1,17 @@
 package com.gzq.uiframework.renderer.node
 
 object PropKeys {
+    const val STYLE_ALPHA: String = "style_alpha"
+    const val STYLE_BACKGROUND_COLOR: String = "style_background_color"
+    const val STYLE_BORDER_WIDTH: String = "style_border_width"
+    const val STYLE_BORDER_COLOR: String = "style_border_color"
+    const val STYLE_CORNER_RADIUS: String = "style_corner_radius"
+    const val STYLE_RIPPLE_COLOR: String = "style_ripple_color"
+    const val STYLE_PADDING_LEFT: String = "style_padding_left"
+    const val STYLE_PADDING_TOP: String = "style_padding_top"
+    const val STYLE_PADDING_RIGHT: String = "style_padding_right"
+    const val STYLE_PADDING_BOTTOM: String = "style_padding_bottom"
+    const val STYLE_MIN_HEIGHT: String = "style_min_height"
     const val TEXT: String = "text"
     const val TEXT_COLOR: String = "text_color"
     const val TEXT_SIZE_SP: String = "text_size_sp"

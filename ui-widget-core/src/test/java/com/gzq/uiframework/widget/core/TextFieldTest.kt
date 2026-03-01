@@ -1,10 +1,6 @@
 package com.gzq.uiframework.widget.core
 
-import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
-import com.gzq.uiframework.renderer.modifier.BorderModifierElement
-import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
 import com.gzq.uiframework.renderer.modifier.HeightModifierElement
-import com.gzq.uiframework.renderer.modifier.RippleColorModifierElement
 import com.gzq.uiframework.renderer.node.TextFieldImeAction
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
@@ -48,8 +44,6 @@ class TextFieldTest {
         }
 
         val node = tree.single()
-        val elements = node.modifier.readModifierElements()
-
         assertEquals(NodeType.TextField, node.type)
         assertEquals("hello", node.props.values[PropKeys.VALUE])
         assertEquals("Type here", node.props.values[PropKeys.HINT])
@@ -63,18 +57,9 @@ class TextFieldTest {
         assertEquals(customTheme.colors.textSecondary, node.props.values[PropKeys.HINT_TEXT_COLOR])
         assertEquals(customTheme.colors.textPrimary, node.props.values[PropKeys.TEXT_COLOR])
         assertEquals(customTheme.typography.body.fontSizeSp, node.props.values[PropKeys.TEXT_SIZE_SP])
-        assertEquals(
-            customTheme.input.fieldContainer,
-            (elements.last { it is BackgroundColorModifierElement } as BackgroundColorModifierElement).color,
-        )
-        assertEquals(
-            customTheme.shapes.controlCornerRadius,
-            (elements.last { it is CornerRadiusModifierElement } as CornerRadiusModifierElement).radius,
-        )
-        assertEquals(
-            customTheme.interactions.pressedOverlay,
-            (elements.last { it is RippleColorModifierElement } as RippleColorModifierElement).color,
-        )
+        assertEquals(customTheme.input.fieldContainer, node.props.values[PropKeys.STYLE_BACKGROUND_COLOR])
+        assertEquals(customTheme.shapes.controlCornerRadius, node.props.values[PropKeys.STYLE_CORNER_RADIUS])
+        assertEquals(customTheme.interactions.pressedOverlay, node.props.values[PropKeys.STYLE_RIPPLE_COLOR])
         assertEquals(true, node.props.values[PropKeys.ENABLED])
     }
 
@@ -137,13 +122,11 @@ class TextFieldTest {
             }
         }
 
-        val elements = tree.single().modifier.readModifierElements()
-        val background = elements.last { it is BackgroundColorModifierElement } as BackgroundColorModifierElement
-        val border = elements.last { it is BorderModifierElement } as BorderModifierElement
+        val node = tree.single()
 
-        assertEquals(0x00000000, background.color)
-        assertEquals(Theme.input.control, border.color)
-        assertEquals(1.dp, border.width)
+        assertEquals(0x00000000, node.props.values[PropKeys.STYLE_BACKGROUND_COLOR])
+        assertEquals(Theme.input.control, node.props.values[PropKeys.STYLE_BORDER_COLOR])
+        assertEquals(1.dp, node.props.values[PropKeys.STYLE_BORDER_WIDTH])
     }
 
     @Test
@@ -215,13 +198,8 @@ class TextFieldTest {
             }
         }
 
-        val disabledElements = disabledTree.single().modifier.readModifierElements()
-        val disabledBackground = disabledElements.last { it is BackgroundColorModifierElement } as BackgroundColorModifierElement
-        val errorElements = errorTree.single().modifier.readModifierElements()
-        val errorBorder = errorElements.last { it is BorderModifierElement } as BorderModifierElement
-
-        assertEquals(202, disabledBackground.color)
-        assertEquals(209, errorBorder.color)
+        assertEquals(202, disabledTree.single().props.values[PropKeys.STYLE_BACKGROUND_COLOR])
+        assertEquals(209, errorTree.single().props.values[PropKeys.STYLE_BORDER_COLOR])
     }
 
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {
