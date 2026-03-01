@@ -112,4 +112,5 @@ object TypedPropKeys {
 
     val ViewFactory = PropKey<(android.content.Context) -> android.view.View>(PropKeys.VIEW_FACTORY)
     val ViewUpdate = PropKey<(android.view.View) -> Unit>(PropKeys.VIEW_UPDATE)
+    val AnchorId = PropKey<String>(PropKeys.ANCHOR_ID)
 }

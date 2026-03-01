@@ -871,6 +871,28 @@ fun UiTreeBuilder.Box(
     )
 }
 
+fun UiTreeBuilder.AnchorTarget(
+    anchorId: String,
+    key: Any? = null,
+    contentAlignment: BoxAlignment = BoxAlignment.TopStart,
+    modifier: Modifier = Modifier,
+    content: BoxScope.() -> Unit,
+) {
+    emitResolved(
+        type = NodeType.Box,
+        key = key,
+        props = props {
+            set(TypedPropKeys.BoxAlignment, contentAlignment)
+            set(TypedPropKeys.AnchorId, anchorId)
+        },
+        spec = BoxNodeProps(
+            contentAlignment = contentAlignment,
+        ),
+        modifier = modifier,
+        children = BoxScope().apply(content).build(),
+    )
+}
+
 fun UiTreeBuilder.Surface(
     key: Any? = null,
     variant: SurfaceVariant = SurfaceVariant.Default,

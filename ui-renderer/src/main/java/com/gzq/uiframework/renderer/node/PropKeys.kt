@@ -64,6 +64,7 @@ object PropKeys {
     const val IMAGE_FALLBACK: String = "image_fallback"
     const val VIEW_FACTORY: String = "view_factory"
     const val VIEW_UPDATE: String = "view_update"
+    const val ANCHOR_ID: String = "anchor_id"
     const val BOX_ALIGNMENT: String = "box_alignment"
     const val LAZY_ITEMS: String = "lazy_items"
     const val LAZY_CONTENT_PADDING: String = "lazy_content_padding"

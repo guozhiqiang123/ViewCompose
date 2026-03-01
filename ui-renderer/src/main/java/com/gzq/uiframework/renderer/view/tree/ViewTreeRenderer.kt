@@ -314,8 +314,10 @@ object ViewTreeRenderer {
         val resolvedRippleColor = rippleColor?.color ?: readNodeRippleColor(node) ?: DEFAULT_RIPPLE_COLOR
         val textColor = readNodeTextColor(node)
         val textSizeSp = readNodeTextSize(node)
+        val anchorId = readAnchorId(node)
         view.alpha = resolvedAlpha
         if (view is DeclarativeTextFieldLayout) {
+            applyAnchorId(view, anchorId)
             view.visibility = when (visibility?.visibility ?: Visibility.Visible) {
                 Visibility.Visible -> View.VISIBLE
                 Visibility.Invisible -> View.INVISIBLE
@@ -351,6 +353,7 @@ object ViewTreeRenderer {
             rippleColor = resolvedRippleColor,
             clickable = clickable != null,
         )
+        applyAnchorId(view, anchorId)
         view.visibility = when (visibility?.visibility ?: Visibility.Visible) {
             Visibility.Visible -> View.VISIBLE
             Visibility.Invisible -> View.INVISIBLE
@@ -422,6 +425,13 @@ object ViewTreeRenderer {
 
     private fun cloneDrawable(drawable: Drawable?): Drawable? {
         return drawable?.constantState?.newDrawable()?.mutate() ?: drawable?.mutate()
+    }
+
+    private fun applyAnchorId(
+        view: View,
+        anchorId: String?,
+    ) {
+        view.setTag(R.id.ui_framework_anchor_id, anchorId)
     }
 
     private fun applyBackgroundAndInteraction(
@@ -750,6 +760,10 @@ object ViewTreeRenderer {
             right = right,
             bottom = bottom,
         )
+    }
+
+    private fun readAnchorId(node: VNode): String? {
+        return node.props[TypedPropKeys.AnchorId]
     }
 
     private fun disposeMountedNode(
