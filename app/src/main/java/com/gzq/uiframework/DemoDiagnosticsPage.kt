@@ -9,16 +9,19 @@ import com.gzq.uiframework.widget.core.Button
 import com.gzq.uiframework.widget.core.Environment
 import com.gzq.uiframework.widget.core.LazyColumn
 import com.gzq.uiframework.widget.core.SideEffect
+import com.gzq.uiframework.widget.core.Text
 import com.gzq.uiframework.widget.core.Theme
 import com.gzq.uiframework.widget.core.UiTreeBuilder
 import com.gzq.uiframework.widget.core.remember
 import com.gzq.uiframework.widget.core.dp
+import com.gzq.uiframework.runtime.MutableState
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-internal fun UiTreeBuilder.DiagnosticsPage() {
-    val selectedPageState = remember { mutableStateOf(0) }
+internal fun UiTreeBuilder.DiagnosticsPage(
+    selectedPageState: MutableState<Int>,
+) {
     val pendingSnapshotRefreshState = remember { mutableStateOf(false) }
     val renderSnapshotState = remember { mutableStateOf(DemoRenderDiagnosticsStore.latestSnapshot()) }
     val patchSnapshotState = remember { mutableStateOf(DemoRenderDiagnosticsStore.latestPatchActiveSnapshot()) }
@@ -33,7 +36,7 @@ internal fun UiTreeBuilder.DiagnosticsPage() {
     }
     val pageItems = when (selectedPageState.value) {
         0 -> listOf("page", "page_filter", "runtime", "verify")
-        1 -> listOf("page", "page_filter", "renderer", "verify")
+        1 -> listOf("page", "page_filter", "renderer_actions", "renderer", "verify")
         else -> listOf("page", "page_filter", "gaps", "verify")
     }
     LazyColumn(
@@ -82,24 +85,23 @@ internal fun UiTreeBuilder.DiagnosticsPage() {
                 )
             }
 
-            "renderer" -> DemoSection(
-                title = "Renderer Hooks",
-                subtitle = "The sample now exposes recent render snapshots manually so patch/rebind/skip behavior and tree depth can be checked against the log stream.",
+            "renderer_actions" -> DemoSection(
+                title = "Renderer Actions",
+                subtitle = "Keep the manual probes near the top so diagnostics refresh stays easy to reach during repeated testing and benchmark runs.",
             ) {
-                val snapshot = renderSnapshotState.value
-                val patchSnapshot = patchSnapshotState.value
-                val layoutSnapshot = layoutSnapshotState.value
                 Button(
-                    text = if (pendingSnapshotRefreshState.value) {
-                        "Capturing renderer snapshot..."
-                    } else {
-                        "Refresh renderer snapshots"
-                    },
+                    text = "Refresh renderer snapshots",
                     onClick = {
                         pendingSnapshotRefreshState.value = true
                     },
                     modifier = Modifier.padding(bottom = 8.dp),
                 )
+                if (pendingSnapshotRefreshState.value) {
+                    Text(
+                        text = "Capturing renderer snapshot...",
+                        modifier = Modifier.padding(bottom = 8.dp),
+                    )
+                }
                 Button(
                     text = "Reset layout counters",
                     onClick = {
@@ -108,6 +110,15 @@ internal fun UiTreeBuilder.DiagnosticsPage() {
                     },
                     modifier = Modifier.padding(bottom = 8.dp),
                 )
+            }
+
+            "renderer" -> DemoSection(
+                title = "Renderer Hooks",
+                subtitle = "The sample now exposes recent render snapshots manually so patch/rebind/skip behavior and tree depth can be checked against the log stream.",
+            ) {
+                val snapshot = renderSnapshotState.value
+                val patchSnapshot = patchSnapshotState.value
+                val layoutSnapshot = layoutSnapshotState.value
                 DiagnosticFactGroup(
                     title = "Latest Render Snapshot",
                     facts = listOf(

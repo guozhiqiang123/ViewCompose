@@ -95,4 +95,28 @@ class DemoInteractionBenchmark {
         clickText("Reset patch state")
         waitForText("Advance patch state 0")
     }
+
+    @Test
+    fun diagnosticsRefreshAfterPatch() = benchmarkRule.measureRepeated(
+        packageName = TARGET_PACKAGE,
+        metrics = listOf(FrameTimingMetric()),
+        compilationMode = CompilationMode.Partial(),
+        iterations = DEFAULT_ITERATIONS,
+        startupMode = StartupMode.WARM,
+        setupBlock = {
+            startDemoAndWait()
+            clickTextIfExists("Back to chapter tabs")
+            clickText("State")
+            waitForText("State & Effects")
+            waitForText("Patch")
+            clickText("Patch")
+            waitForText("Patch Stress")
+            waitForText("Advance patch state 0")
+            clickText("Advance patch state 0")
+            waitForText("Advance patch state 1")
+        },
+    ) {
+        clickText("Open diagnostics renderer")
+        scrollUntilText("Latest Patch-Active Snapshot")
+    }
 }

@@ -28,7 +28,9 @@ import com.gzq.uiframework.widget.core.produceState
 import com.gzq.uiframework.widget.core.remember
 import com.gzq.uiframework.widget.core.sp
 
-internal fun UiTreeBuilder.StatePage() {
+internal fun UiTreeBuilder.StatePage(
+    onOpenDiagnostics: () -> Unit,
+) {
     val clickCountState = remember { mutableStateOf(0) }
     val panelVisibleState = remember { mutableStateOf(true) }
     val selectedPageState = remember { mutableStateOf(0) }
@@ -199,6 +201,11 @@ internal fun UiTreeBuilder.StatePage() {
                 Button(
                     text = "Patch action $step",
                     onClick = {},
+                    modifier = Modifier.margin(bottom = 12.dp),
+                )
+                Button(
+                    text = "Open diagnostics renderer",
+                    onClick = onOpenDiagnostics,
                     modifier = Modifier.margin(bottom = 12.dp),
                 )
                 TextField(

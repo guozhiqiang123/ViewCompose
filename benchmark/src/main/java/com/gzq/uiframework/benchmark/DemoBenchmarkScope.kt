@@ -38,6 +38,36 @@ internal fun MacrobenchmarkScope.clickText(text: String) {
     device.waitForIdle()
 }
 
+internal fun MacrobenchmarkScope.clickTextIfExists(text: String): Boolean {
+    val node = device.findObject(By.text(text)) ?: return false
+    node.click()
+    device.waitForIdle()
+    return true
+}
+
+internal fun MacrobenchmarkScope.clickChapterTab(text: String) {
+    scrollTabStripUntilText(text)
+    val node = device.findObject(By.text(text))
+    assertNotNull("Expected to find chapter tab: $text", node)
+    node!!.click()
+    device.waitForIdle()
+}
+
+internal fun MacrobenchmarkScope.scrollTabStripUntilText(
+    text: String,
+    maxSwipes: Int = 6,
+) {
+    repeat(maxSwipes + 1) { attempt ->
+        if (device.hasObject(By.text(text))) {
+            return
+        }
+        if (attempt < maxSwipes) {
+            swipeTabStripLeft()
+        }
+    }
+    waitForText(text)
+}
+
 internal fun MacrobenchmarkScope.swipePageUp() {
     val width = device.displayWidth
     val height = device.displayHeight
@@ -47,6 +77,41 @@ internal fun MacrobenchmarkScope.swipePageUp() {
         width / 2,
         (height * 0.22f).toInt(),
         20,
+    )
+    device.waitForIdle()
+}
+
+internal fun MacrobenchmarkScope.swipePageDown() {
+    val width = device.displayWidth
+    val height = device.displayHeight
+    device.swipe(
+        width / 2,
+        (height * 0.22f).toInt(),
+        width / 2,
+        (height * 0.78f).toInt(),
+        20,
+    )
+    device.waitForIdle()
+}
+
+internal fun MacrobenchmarkScope.scrollToPageTop(
+    attempts: Int = 4,
+) {
+    repeat(attempts) {
+        swipePageDown()
+    }
+}
+
+internal fun MacrobenchmarkScope.swipeTabStripLeft() {
+    val width = device.displayWidth
+    val height = device.displayHeight
+    val y = (height * 0.32f).toInt()
+    device.swipe(
+        (width * 0.82f).toInt(),
+        y,
+        (width * 0.18f).toInt(),
+        y,
+        16,
     )
     device.waitForIdle()
 }

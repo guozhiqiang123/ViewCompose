@@ -166,6 +166,10 @@ Compose 官方文档也明确把这类模式视为不理想，因为它会多跑
    - `frameDurationCpuMs` P50 `3.0ms`
    - `frameOverrunMs` P50 `-15.3ms`
    - 场景对应 `State -> Patch Stress`，当前命中 `Text / Button / TextField / SegmentedControl / TabPager` 第一批字段级 patch 节点
+6. `diagnosticsRefreshAfterPatch`
+   - `frameDurationCpuMs` P50 `2.7ms`
+   - `frameOverrunMs` P50 `-15.2ms`
+   - 场景对应 `State -> Patch Stress -> Open diagnostics renderer`，用于验证 patch 之后进入 diagnostics renderer 的人工测试链路和 benchmark 链路一致
 
 相关产物位置：
 
@@ -206,6 +210,7 @@ Compose 官方文档也明确把这类模式视为不理想，因为它会多跑
 7. `Theme switch`
 8. `Media page scroll + remote image`
 9. `Patch stress updates`
+10. `Diagnostics refresh after patch`
 
 核心指标：
 
@@ -547,7 +552,8 @@ Compose 会：
 2. 当前判断条件已经收敛为“modifier + 样式 props + NodeSpec”
 3. `Button`、`Text`、`TextField`、`TabPager`、`SegmentedControl` 和 `LazyColumn` 已作为第一批高收益节点进入字段级 patch
 4. `State -> Patch Stress` 已成为第一条专门压测 patch 路径的 demo/benchmark 场景
-5. 下一步不再是“继续补第一批节点”，而是开始把 patch 逻辑继续从 family binder 下沉，并为更细粒度统计和 benchmark 对照补场景
+5. `State -> Patch Stress -> Open diagnostics renderer` 已补成第二条对照场景，用来把 patch 压测和 diagnostics 面板串起来
+6. 下一步不再是“继续补第一批节点”，而是开始把 patch 逻辑继续从 family binder 下沉，并为更细粒度统计和 benchmark 对照补场景
 
 ### Phase 3：补诊断能力
 

@@ -12,6 +12,7 @@ import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.runtime.MutableState
 import com.gzq.uiframework.runtime.mutableStateOf
+import com.gzq.uiframework.widget.core.Button
 import com.gzq.uiframework.widget.core.Column
 import com.gzq.uiframework.widget.core.ColumnScope
 import com.gzq.uiframework.widget.core.DisposableEffect
@@ -36,6 +37,8 @@ import java.util.Locale
 
 internal fun UiTreeBuilder.DemoRoot(root: ViewGroup) {
     val selectedChapterState = remember { mutableStateOf(CHAPTER_FOUNDATIONS) }
+    val selectedDiagnosticsPageState = remember { mutableStateOf(0) }
+    val diagnosticsFocusState = remember { mutableStateOf(false) }
     val themeModeState = remember { mutableStateOf(DemoThemeMode.System) }
     val remoteImageLoader = remember { CoilRemoteImageLoader(root.context.applicationContext) }
     val activity = root.context as? AppCompatActivity
@@ -104,7 +107,38 @@ internal fun UiTreeBuilder.DemoRoot(root: ViewGroup) {
                             modifier = Modifier.fillMaxWidth(),
                         )
                     }
-                    DemoChapterPager(selectedChapterState = selectedChapterState)
+                    if (diagnosticsFocusState.value) {
+                        Column(
+                            spacing = 8.dp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                                .margin(top = 12.dp),
+                        ) {
+                            Text(
+                                text = "Diagnostics focus mode",
+                                style = UiTextStyle(fontSizeSp = 16.sp),
+                            )
+                            Text(
+                                text = "Direct renderer diagnostics path for manual regression checks and benchmark scenarios.",
+                                style = UiTextStyle(fontSizeSp = 13.sp),
+                                color = TextDefaults.secondaryColor(),
+                            )
+                            Button(
+                                text = "Back to chapter tabs",
+                                onClick = {
+                                    diagnosticsFocusState.value = false
+                                },
+                            )
+                            DiagnosticsPage(selectedPageState = selectedDiagnosticsPageState)
+                        }
+                    } else {
+                        DemoChapterPager(
+                            selectedChapterState = selectedChapterState,
+                            selectedDiagnosticsPageState = selectedDiagnosticsPageState,
+                            diagnosticsFocusState = diagnosticsFocusState,
+                        )
+                    }
                 }
             }
         }
@@ -113,6 +147,8 @@ internal fun UiTreeBuilder.DemoRoot(root: ViewGroup) {
 
 private fun ColumnScope.DemoChapterPager(
     selectedChapterState: MutableState<Int>,
+    selectedDiagnosticsPageState: MutableState<Int>,
+    diagnosticsFocusState: MutableState<Boolean>,
 ) {
     TabPager(
         selectedTabIndex = selectedChapterState.value,
@@ -128,7 +164,13 @@ private fun ColumnScope.DemoChapterPager(
             OverviewPage(selectedChapterState)
         }
         Page(title = DEMO_CHAPTERS[CHAPTER_STATE].title, key = DEMO_CHAPTERS[CHAPTER_STATE].key) {
-            StatePage()
+            StatePage(
+                onOpenDiagnostics = {
+                    selectedDiagnosticsPageState.value = 1
+                    selectedChapterState.value = CHAPTER_DIAGNOSTICS
+                    diagnosticsFocusState.value = true
+                },
+            )
         }
         Page(title = DEMO_CHAPTERS[CHAPTER_LAYOUTS].title, key = DEMO_CHAPTERS[CHAPTER_LAYOUTS].key) {
             LayoutPage()
@@ -207,7 +249,7 @@ private fun ColumnScope.DemoChapterPager(
             InteropPage()
         }
         Page(title = DEMO_CHAPTERS[CHAPTER_DIAGNOSTICS].title, key = DEMO_CHAPTERS[CHAPTER_DIAGNOSTICS].key) {
-            DiagnosticsPage()
+            DiagnosticsPage(selectedPageState = selectedDiagnosticsPageState)
         }
     }
 }
