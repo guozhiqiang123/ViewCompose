@@ -47,7 +47,7 @@ internal fun UiTreeBuilder.OverviewPage(
     val selectedPageState = remember { mutableStateOf(0) }
     val benchmarkState = remember { mutableStateOf(false) }
     val pageItems = when (selectedPageState.value) {
-        0 -> listOf("page", "page_filter", "benchmark", "intro", "jump", "surface", "verify")
+        0 -> listOf("benchmark", "page", "page_filter", "intro", "jump", "surface", "verify")
         1 -> listOf("page", "page_filter", "theme", "overrides", "verify")
         else -> listOf("page", "page_filter", "progress", "media", "verify")
     }
@@ -88,13 +88,6 @@ internal fun UiTreeBuilder.OverviewPage(
                 title = "Foundations Benchmark Anchor",
                 subtitle = "This block stays on the default page and uses short, stable labels so macrobenchmark can enter Foundations without segmented-page drift.",
             ) {
-                BenchmarkRouteCallout(
-                    route = "Launcher -> MainActivity(extra=foundations) -> Foundations -> Foundations Benchmark Anchor",
-                    stableTargets = listOf(
-                        "Foundations Benchmark Off / Foundations Benchmark On",
-                        "Reset Foundations Benchmark",
-                    ),
-                )
                 Button(
                     text = if (benchmarkState.value) {
                         "Foundations Benchmark On"
@@ -113,6 +106,13 @@ internal fun UiTreeBuilder.OverviewPage(
                     onClick = {
                         benchmarkState.value = false
                     },
+                )
+                BenchmarkRouteCallout(
+                    route = "Launcher -> MainActivity(extra=foundations) -> Foundations -> Foundations Benchmark Anchor",
+                    stableTargets = listOf(
+                        "Foundations Benchmark Off / Foundations Benchmark On",
+                        "Reset Foundations Benchmark",
+                    ),
                 )
             }
 
