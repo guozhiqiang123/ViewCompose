@@ -12,6 +12,8 @@ internal data class DemoModule(
     val title: String,
     val subtitle: String,
     val status: DemoModuleStatus,
+    val manualFocus: String,
+    val benchmarkPath: String,
     val activityClass: Class<out AppCompatActivity>? = null,
 )
 
@@ -21,6 +23,8 @@ internal val DEMO_MODULES = listOf(
         title = "Foundations",
         subtitle = "Text, surface, theme, media, buttons, and feedback primitives.",
         status = DemoModuleStatus.Available,
+        manualFocus = "theme tokens, surface/content color, media fallback, visual defaults",
+        benchmarkPath = "Catalog -> Open Foundations -> Guide/Theme/Media pages",
         activityClass = FoundationsActivity::class.java,
     ),
     DemoModule(
@@ -28,6 +32,8 @@ internal val DEMO_MODULES = listOf(
         title = "State",
         subtitle = "remember, derived state, effects, key identity, and patch stress.",
         status = DemoModuleStatus.Available,
+        manualFocus = "state invalidation, key identity, patch-active updates",
+        benchmarkPath = "Catalog -> Open State -> Patch page",
         activityClass = StateActivity::class.java,
     ),
     DemoModule(
@@ -35,6 +41,8 @@ internal val DEMO_MODULES = listOf(
         title = "Layouts",
         subtitle = "Row, Column, Box, spacing, alignment, and layout edge cases.",
         status = DemoModuleStatus.Available,
+        manualFocus = "measure/layout stability, wrap vs weight, child alignment",
+        benchmarkPath = "Catalog -> Open Layouts -> Linear/Edges pages",
         activityClass = LayoutsActivity::class.java,
     ),
     DemoModule(
@@ -42,6 +50,8 @@ internal val DEMO_MODULES = listOf(
         title = "Input",
         subtitle = "Text fields, selection controls, disabled states, and form stress.",
         status = DemoModuleStatus.Available,
+        manualFocus = "field chrome, multiline/error states, control theme defaults",
+        benchmarkPath = "Catalog -> Open Input -> Fields/Stress pages",
         activityClass = InputActivity::class.java,
     ),
     DemoModule(
@@ -49,6 +59,8 @@ internal val DEMO_MODULES = listOf(
         title = "Collections",
         subtitle = "LazyColumn, keyed reorder, item state, and collection stress paths.",
         status = DemoModuleStatus.Available,
+        manualFocus = "key retention, lazy item session stability, interop in lists",
+        benchmarkPath = "Catalog -> Open Collections -> Stress page",
         activityClass = CollectionsActivity::class.java,
     ),
     DemoModule(
@@ -56,6 +68,8 @@ internal val DEMO_MODULES = listOf(
         title = "Interop",
         subtitle = "AndroidView, themed native views, and framework interop boundaries.",
         status = DemoModuleStatus.Available,
+        manualFocus = "local propagation, native view updates, theme bridge behavior",
+        benchmarkPath = "Catalog -> Open Interop -> core scenarios",
         activityClass = InteropActivity::class.java,
     ),
     DemoModule(
@@ -63,6 +77,8 @@ internal val DEMO_MODULES = listOf(
         title = "Diagnostics",
         subtitle = "Renderer snapshots, structure stats, warnings, and layout pass counters.",
         status = DemoModuleStatus.Available,
+        manualFocus = "render stats, patch snapshots, layout hot spots, warnings",
+        benchmarkPath = "Catalog -> Open Diagnostics -> Renderer page",
         activityClass = DiagnosticsActivity::class.java,
     ),
     DemoModule(
@@ -70,24 +86,32 @@ internal val DEMO_MODULES = listOf(
         title = "Gestures",
         subtitle = "Click, drag, swipe, and nested gesture scenarios planned after input/runtime work.",
         status = DemoModuleStatus.Planned,
+        manualFocus = "pointer input and nested gesture conflicts",
+        benchmarkPath = "Planned",
     ),
     DemoModule(
         key = "animation",
         title = "Animation",
         subtitle = "State-driven motion, transitions, and list animations planned after runtime stabilizes.",
         status = DemoModuleStatus.Planned,
+        manualFocus = "state transitions, content animation, list motion",
+        benchmarkPath = "Planned",
     ),
     DemoModule(
         key = "graphics",
         title = "Graphics",
         subtitle = "Canvas, draw pipeline, gradients, and custom graphics primitives are still missing.",
         status = DemoModuleStatus.Planned,
+        manualFocus = "draw modifiers, canvas primitives, custom graphics",
+        benchmarkPath = "Planned",
     ),
     DemoModule(
         key = "navigation",
         title = "Navigation",
         subtitle = "Host integration and navigation model experiments will start after demo shell settles.",
         status = DemoModuleStatus.Planned,
+        manualFocus = "host stack, screen switching, state preservation",
+        benchmarkPath = "Planned",
     ),
 )
 

@@ -103,6 +103,14 @@ private fun UiTreeBuilder.ModuleCard(
                 text = module.subtitle,
                 color = TextDefaults.secondaryColor(),
             )
+            Text(
+                text = "Manual focus: ${module.manualFocus}",
+                color = TextDefaults.secondaryColor(),
+            )
+            Text(
+                text = "Benchmark path: ${module.benchmarkPath}",
+                color = TextDefaults.secondaryColor(),
+            )
             Button(
                 text = actionLabel,
                 variant = actionVariant,
