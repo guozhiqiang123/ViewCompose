@@ -94,6 +94,27 @@
 
 这些拆分都还为时过早。现在继续拆，只会增加跨模块维护成本。
 
+## 4.3 Modifier / Prop / Theme 边界
+
+当前实现里的一个主要结构风险是 `Modifier` 边界过宽。
+
+现状问题：
+
+- `Modifier` 中同时存在布局修饰、外观修饰、交互修饰，以及 `textColor`、`textSize` 这类明显依赖具体控件的语义
+- 一部分默认样式链路是 `Theme -> Defaults -> Modifier -> Renderer`
+- `weight`、`align` 这类依赖父布局的能力仍以全局 modifier 形式暴露
+
+这对 v1 不构成立即阻塞，但已经是后续扩展的主要风险之一。
+
+当前基线应明确为：
+
+- `Modifier` 负责跨节点通用修饰
+- 控件自身语义应进入 `Prop`
+- 父布局相关布局数据后续应进入 scoped modifier
+- 主题负责默认值，不直接承担通用 modifier 语义
+
+这条线的详细设计和重构路线见 [MODIFIER.md](/Users/gzq/AndroidStudioProjects/UIFramework/MODIFIER.md)。
+
 ## 5. 当前核心调用链
 
 当前真实调用链如下：
@@ -488,4 +509,3 @@ sequenceDiagram
    - 过细模块拆分
 
 这条路线最符合当前项目的真实成熟度。
-
