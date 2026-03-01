@@ -25,8 +25,12 @@ internal class DeclarativeBoxLayout @JvmOverloads constructor(
         widthMeasureSpec: Int,
         heightMeasureSpec: Int,
     ) {
-        LayoutPassTracker.recordMeasure(javaClass.simpleName)
+        val startNs = System.nanoTime()
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        LayoutPassTracker.recordMeasure(
+            viewName = javaClass.simpleName,
+            durationNs = System.nanoTime() - startNs,
+        )
     }
 
     override fun onViewAdded(child: View) {
@@ -45,9 +49,13 @@ internal class DeclarativeBoxLayout @JvmOverloads constructor(
         right: Int,
         bottom: Int,
     ) {
-        LayoutPassTracker.recordLayout(javaClass.simpleName)
+        val startNs = System.nanoTime()
         applyGravityToChildren()
         super.onLayout(changed, left, top, right, bottom)
+        LayoutPassTracker.recordLayout(
+            viewName = javaClass.simpleName,
+            durationNs = System.nanoTime() - startNs,
+        )
     }
 
     private fun applyGravityToChildren() {

@@ -141,12 +141,15 @@ internal fun UiTreeBuilder.DiagnosticsPage() {
                     facts = listOf(
                         DiagnosticFact("Total measure", layoutSnapshot.totalMeasureCount.toString()),
                         DiagnosticFact("Total layout", layoutSnapshot.totalLayoutCount.toString()),
+                        DiagnosticFact("Measure time", layoutSnapshot.totalMeasureNs.formatNsAsMs()),
+                        DiagnosticFact("Layout time", layoutSnapshot.totalLayoutNs.formatNsAsMs()),
                     ) + layoutSnapshot.entries
                         .take(6)
                         .map { entry ->
                             DiagnosticFact(
                                 entry.viewName,
-                                "measure=${entry.measureCount}, layout=${entry.layoutCount}",
+                                "measure=${entry.measureCount} (${entry.totalMeasureNs.formatNsAsMs()}), " +
+                                    "layout=${entry.layoutCount} (${entry.totalLayoutNs.formatNsAsMs()})",
                             )
                         },
                 )
@@ -210,6 +213,7 @@ internal fun UiTreeBuilder.DiagnosticsPage() {
                     "切换 theme mode 与章节，确认 runtime snapshot 始终反映当前 environment。",
                     "在 State -> Patch Stress 执行几次更新后，返回 Renderer 页点击 Refresh，确认 patched/skipped 不再始终为 0。",
                     "点击 Reset layout counters，再进入一个复杂章节操作后返回，确认 Layout Pass Counters 出现新的 measure/layout 增长。",
+                    "对比不同章节后刷新，确认热点排序会把更贵的容器排到前面，而不是只按次数排。",
                     "切到层级更复杂的章节后再次刷新，确认 Renderer 页能看到 vnode/mounted depth。",
                     "在出现渲染问题时，对照这里列出的 gaps 判断是已知缺口还是新回归。",
                     "结合日志观察 renderer 行为，并确认 diagnostics 页面描述与当前实现一致。",
@@ -218,7 +222,7 @@ internal fun UiTreeBuilder.DiagnosticsPage() {
                     "该章节能快速告诉你当前框架还缺什么。",
                     "环境信息和主题信息不会在章节切换后失真。",
                     "Renderer 页可以拿到最近一次 render 的统计快照和最近一次 patch-active 快照。",
-                    "Renderer 页可以看到自定义容器的 measure/layout 计数。",
+                    "Renderer 页可以看到自定义容器的 measure/layout 次数和累计耗时。",
                     "Diagnostics 会持续作为后续 inspector 的落点。",
                 ),
                 relatedGaps = listOf(
@@ -235,4 +239,8 @@ private fun Long.formatDiagnosticsTime(): String {
         return "Not captured yet"
     }
     return SimpleDateFormat("HH:mm:ss", Locale.US).format(Date(this))
+}
+
+private fun Long.formatNsAsMs(): String {
+    return String.format(Locale.US, "%.2f ms", this / 1_000_000f)
 }

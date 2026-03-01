@@ -269,6 +269,7 @@ flowchart TD
 - `RenderTreeResult` 也开始承载 `RenderStats + RenderStructureStats + warnings`，Diagnostics 和性能路线终于有了统一数据口
 - renderer warning 也开始统一收口到同一产物里，不再只依赖零散 `Log.w(...)`
 - 自定义容器也开始通过 `LayoutPassTracker` 暴露 `measure/layout` 观测入口
+- 观测维度已经从“次数”扩展到“累计耗时 + 热点排序”
 - 不必过早引入 adapter registry，也能先降低单点复杂度
 
 但它仍然没有彻底解决这些问题：
