@@ -14,8 +14,10 @@ import com.gzq.uiframework.widget.core.Button
 import com.gzq.uiframework.widget.core.ButtonVariant
 import com.gzq.uiframework.widget.core.Column
 import com.gzq.uiframework.widget.core.Dialog
+import com.gzq.uiframework.widget.core.DialogPosition
 import com.gzq.uiframework.widget.core.LazyColumn
 import com.gzq.uiframework.widget.core.Popup
+import com.gzq.uiframework.widget.core.PopupAlignment
 import com.gzq.uiframework.widget.core.Row
 import com.gzq.uiframework.widget.core.Snackbar
 import com.gzq.uiframework.widget.core.SnackbarDuration
@@ -43,6 +45,8 @@ internal fun UiTreeBuilder.FeedbackPage() {
     Dialog(
         visible = dialogVisibleState.value,
         requestKey = "feedback_dialog",
+        position = DialogPosition.Bottom,
+        scrimOpacity = 0.48f,
         onDismissRequest = {
             if (dialogVisibleState.value) {
                 dialogVisibleState.value = false
@@ -94,6 +98,7 @@ internal fun UiTreeBuilder.FeedbackPage() {
         visible = popupVisibleState.value,
         anchorId = popupAnchorId,
         requestKey = "feedback_popup",
+        alignment = PopupAlignment.AboveStart,
         offsetY = 8.dp,
         onDismissRequest = {
             if (popupVisibleState.value) {
@@ -287,13 +292,13 @@ internal fun UiTreeBuilder.FeedbackPage() {
                     "点击 Show Snackbar，确认底部 snackbar 出现，并带有 Acknowledge action。",
                     "点击 Hide Snackbar 或等待 dismiss，确认页面里的 Last event 会同步更新。",
                     "连续点击 Show Toast，确认短暂提示会重复触发，而不会卡死在第一次请求上。",
-                    "点击 Show Dialog，确认弹窗内容可见，且点击 Confirm Dialog / Close Dialog 后页面状态会同步更新。",
-                    "点击 Show Popup，确认 anchored popup 出现在按钮下方，并且点击 Dismiss Popup 后页面状态会同步更新。",
+                    "点击 Show Dialog，确认弹窗以 bottom position 出现，蒙层加深，并且点击 Confirm Dialog / Close Dialog 后页面状态会同步更新。",
+                    "点击 Show Popup，确认 anchored popup 以 above-start 对齐方式出现在按钮上方，并且点击 Dismiss Popup 后页面状态会同步更新。",
                     "点击 Reset Feedback，确认状态计数和当前 snackbar 都回到初始状态。",
                 ),
                 expected = listOf(
-                    "Dialog 通过 overlay host 渲染，而不是作为页面内联节点出现。",
-                    "PopupWindow 通过 anchor target 挂到稳定节点，而不是硬编码坐标。",
+                    "Dialog 通过 overlay host 渲染，并支持位置和 scrim 强度配置。",
+                    "PopupWindow 通过 anchor target 挂到稳定节点，并支持对齐方式配置。",
                     "Snackbar 和 Toast 都通过同一套 overlay host 流程触发。",
                     "Snackbar dismiss 后不会继续残留在页面底部。",
                     "demo 会话结束时，不应残留悬挂的 transient overlay。",
