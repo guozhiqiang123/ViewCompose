@@ -10,9 +10,9 @@ import android.widget.RadioButton
 import android.widget.SeekBar
 import android.widget.Switch
 import com.gzq.uiframework.renderer.R
-import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.TextFieldImeAction
 import com.gzq.uiframework.renderer.node.TextFieldType
+import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
 import android.text.InputType
@@ -175,54 +175,54 @@ internal object InputViewBinder {
 
     @Suppress("UNCHECKED_CAST")
     fun readTextFieldSpec(node: VNode): TextFieldSpec {
-        val hintColor = node.props.values[PropKeys.HINT_TEXT_COLOR] as? Int ?: 0xFF888888.toInt()
-        val singleLine = node.props.values[PropKeys.SINGLE_LINE] as? Boolean ?: true
+        val hintColor = node.props[TypedPropKeys.HintTextColor] ?: 0xFF888888.toInt()
+        val singleLine = node.props[TypedPropKeys.SingleLine] ?: true
         return TextFieldSpec(
-            value = node.props.values[PropKeys.VALUE] as? String ?: "",
-            label = node.props.values[PropKeys.LABEL] as? String ?: "",
-            labelColor = node.props.values[PropKeys.LABEL_TEXT_COLOR] as? Int ?: hintColor,
-            labelTextSizeSp = node.props.values[PropKeys.LABEL_TEXT_SIZE_SP] as? Int ?: 12,
-            supportingText = node.props.values[PropKeys.SUPPORTING_TEXT] as? String ?: "",
-            supportingTextColor = node.props.values[PropKeys.SUPPORTING_TEXT_COLOR] as? Int ?: hintColor,
-            supportingTextSizeSp = node.props.values[PropKeys.SUPPORTING_TEXT_SIZE_SP] as? Int ?: 12,
-            placeholder = node.props.values[PropKeys.PLACEHOLDER] as? String
-                ?: (node.props.values[PropKeys.HINT] as? String ?: ""),
-            enabled = node.props.values[PropKeys.ENABLED] as? Boolean ?: true,
+            value = node.props[TypedPropKeys.Value] ?: "",
+            label = node.props[TypedPropKeys.Label] ?: "",
+            labelColor = node.props[TypedPropKeys.LabelTextColor] ?: hintColor,
+            labelTextSizeSp = node.props[TypedPropKeys.LabelTextSizeSp] ?: 12,
+            supportingText = node.props[TypedPropKeys.SupportingText] ?: "",
+            supportingTextColor = node.props[TypedPropKeys.SupportingTextColor] ?: hintColor,
+            supportingTextSizeSp = node.props[TypedPropKeys.SupportingTextSizeSp] ?: 12,
+            placeholder = node.props[TypedPropKeys.Placeholder]
+                ?: (node.props[TypedPropKeys.Hint] ?: ""),
+            enabled = node.props[TypedPropKeys.Enabled] ?: true,
             singleLine = singleLine,
-            minLines = node.props.values[PropKeys.MIN_LINES] as? Int ?: 1,
-            maxLines = node.props.values[PropKeys.MAX_LINES] as? Int ?: Int.MAX_VALUE,
+            minLines = node.props[TypedPropKeys.MinLines] ?: 1,
+            maxLines = node.props[TypedPropKeys.MaxLines] ?: Int.MAX_VALUE,
             inputType = resolveInputType(
-                type = node.props.values[PropKeys.TEXT_FIELD_TYPE] as? TextFieldType ?: TextFieldType.Text,
+                type = node.props[TypedPropKeys.TextFieldType] ?: TextFieldType.Text,
                 singleLine = singleLine,
             ),
-            imeAction = (node.props.values[PropKeys.IME_ACTION] as? TextFieldImeAction
+            imeAction = (node.props[TypedPropKeys.ImeAction]
                 ?: TextFieldImeAction.Default).toEditorAction(),
             hintColor = hintColor,
-            readOnly = node.props.values[PropKeys.READ_ONLY] as? Boolean ?: false,
-            onValueChange = node.props.values[PropKeys.ON_VALUE_CHANGE] as? ((String) -> Unit),
+            readOnly = node.props[TypedPropKeys.ReadOnly] ?: false,
+            onValueChange = node.props[TypedPropKeys.OnValueChange],
         )
     }
 
     @Suppress("UNCHECKED_CAST")
     fun readToggleSpec(node: VNode): ToggleSpec {
         return ToggleSpec(
-            text = node.props.values[PropKeys.TEXT] as? CharSequence,
-            enabled = node.props.values[PropKeys.ENABLED] as? Boolean ?: true,
-            checked = node.props.values[PropKeys.CHECKED] as? Boolean ?: false,
-            controlColor = node.props.values[PropKeys.CONTROL_COLOR] as? Int ?: 0xFF000000.toInt(),
-            onCheckedChange = node.props.values[PropKeys.ON_CHECKED_CHANGE] as? ((Boolean) -> Unit),
+            text = node.props[TypedPropKeys.Text],
+            enabled = node.props[TypedPropKeys.Enabled] ?: true,
+            checked = node.props.values[com.gzq.uiframework.renderer.node.PropKeys.CHECKED] as? Boolean ?: false,
+            controlColor = node.props.values[com.gzq.uiframework.renderer.node.PropKeys.CONTROL_COLOR] as? Int ?: 0xFF000000.toInt(),
+            onCheckedChange = node.props.values[com.gzq.uiframework.renderer.node.PropKeys.ON_CHECKED_CHANGE] as? ((Boolean) -> Unit),
         )
     }
 
     @Suppress("UNCHECKED_CAST")
     fun readSliderSpec(node: VNode): SliderSpec {
         return SliderSpec(
-            min = node.props.values[PropKeys.MIN_VALUE] as? Int ?: 0,
-            max = node.props.values[PropKeys.MAX_VALUE] as? Int ?: 100,
-            value = node.props.values[PropKeys.SLIDER_VALUE] as? Int ?: 0,
-            enabled = node.props.values[PropKeys.ENABLED] as? Boolean ?: true,
-            tintColor = node.props.values[PropKeys.CONTROL_COLOR] as? Int ?: 0xFF000000.toInt(),
-            onValueChange = node.props.values[PropKeys.ON_SLIDER_VALUE_CHANGE] as? ((Int) -> Unit),
+            min = node.props.values[com.gzq.uiframework.renderer.node.PropKeys.MIN_VALUE] as? Int ?: 0,
+            max = node.props.values[com.gzq.uiframework.renderer.node.PropKeys.MAX_VALUE] as? Int ?: 100,
+            value = node.props.values[com.gzq.uiframework.renderer.node.PropKeys.SLIDER_VALUE] as? Int ?: 0,
+            enabled = node.props[TypedPropKeys.Enabled] ?: true,
+            tintColor = node.props.values[com.gzq.uiframework.renderer.node.PropKeys.CONTROL_COLOR] as? Int ?: 0xFF000000.toInt(),
+            onValueChange = node.props.values[com.gzq.uiframework.renderer.node.PropKeys.ON_SLIDER_VALUE_CHANGE] as? ((Int) -> Unit),
         )
     }
 

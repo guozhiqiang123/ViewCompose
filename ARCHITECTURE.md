@@ -281,7 +281,12 @@ flowchart TD
 
 ### 7.3 `VNode + Props` 仍然过于动态
 
-当前 `Props` 本质上仍是 `Map<String, Any?>`。
+当前 `Props` 的底层仍是 `Map<String, Any?>`，但已经开始引入渐进式类型边界：
+
+- `PropKey<T>`
+- `Props.get(key: PropKey<T>)`
+- `props { set(...) }`
+- 高频控件开始迁移到 typed prop keys
 
 这会带来：
 
@@ -297,12 +302,13 @@ Compose 的优势在于：
 - 编译期就知道哪些组件接受哪些语义
 - 默认值、slot、scope 都受类型系统约束
 
-而我们当前更多依赖约定和测试。
+而我们当前仍然较多依赖约定和测试，只是已经有了可渐进迁移的入口。
 
 结论：
 
-- 当前 `Props` 设计适合 v1 快速演进
-- 但如果未来继续做大，必须考虑逐步引入 typed prop model，而不是永远停留在 string key map
+- 现在的 typed prop 方向是合理的
+- 但它目前还是“typed key 包裹动态 map”，不是完整强类型节点参数模型
+- 下一阶段应继续把高频控件和 renderer 读取链路迁到 typed props，逐步压缩裸字符串 key 的使用面
 
 ### 7.4 通用页面节点更新粒度仍偏粗
 

@@ -5,11 +5,11 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import com.gzq.uiframework.renderer.node.ImageSource
-import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.RemoteImageLoader
 import com.gzq.uiframework.renderer.node.RemoteImageRequest
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.node.ImageContentScale
+import com.gzq.uiframework.renderer.node.TypedPropKeys
 
 internal object MediaViewBinder {
     data class ImageSpec(
@@ -63,16 +63,16 @@ internal object MediaViewBinder {
     }
 
     fun readImageSpec(node: VNode): ImageSpec {
-        val scale = node.props.values[PropKeys.IMAGE_CONTENT_SCALE] as? ImageContentScale ?: ImageContentScale.Fit
+        val scale = node.props[TypedPropKeys.ImageContentScale] ?: ImageContentScale.Fit
         return ImageSpec(
-            contentDescription = node.props.values[PropKeys.IMAGE_CONTENT_DESCRIPTION] as? String,
+            contentDescription = node.props[TypedPropKeys.ImageContentDescription],
             scaleType = scale.toScaleType(),
-            tint = node.props.values[PropKeys.IMAGE_TINT] as? Int,
-            source = node.props.values[PropKeys.IMAGE_SOURCE] as? ImageSource,
-            placeholder = node.props.values[PropKeys.IMAGE_PLACEHOLDER] as? ImageSource.Resource,
-            error = node.props.values[PropKeys.IMAGE_ERROR] as? ImageSource.Resource,
-            fallback = node.props.values[PropKeys.IMAGE_FALLBACK] as? ImageSource.Resource,
-            remoteImageLoader = node.props.values[PropKeys.IMAGE_REMOTE_LOADER] as? RemoteImageLoader,
+            tint = node.props[TypedPropKeys.ImageTint],
+            source = node.props[TypedPropKeys.ImageSource],
+            placeholder = node.props[TypedPropKeys.ImagePlaceholder],
+            error = node.props[TypedPropKeys.ImageError],
+            fallback = node.props[TypedPropKeys.ImageFallback],
+            remoteImageLoader = node.props[TypedPropKeys.ImageRemoteLoader],
         )
     }
 

@@ -20,6 +20,8 @@ import com.gzq.uiframework.renderer.node.LazyListItemSessionFactory
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.Props
+import com.gzq.uiframework.renderer.node.TypedPropKeys
+import com.gzq.uiframework.renderer.node.props
 import com.gzq.uiframework.renderer.node.SegmentedControlItem
 import com.gzq.uiframework.renderer.node.TabPage
 import com.gzq.uiframework.renderer.node.TextAlign
@@ -40,16 +42,14 @@ fun UiTreeBuilder.Text(
     emit(
         type = NodeType.Text,
         key = key,
-        props = Props(
-            values = mapOf(
-                PropKeys.TEXT to text,
-                PropKeys.TEXT_COLOR to color,
-                PropKeys.TEXT_SIZE_SP to style.fontSizeSp,
-                PropKeys.TEXT_MAX_LINES to maxLines,
-                PropKeys.TEXT_OVERFLOW to overflow,
-                PropKeys.TEXT_ALIGN to textAlign,
-            ),
-        ),
+        props = props {
+            set(TypedPropKeys.Text, text)
+            set(TypedPropKeys.TextColor, color)
+            set(TypedPropKeys.TextSizeSp, style.fontSizeSp)
+            set(TypedPropKeys.TextMaxLines, maxLines)
+            set(TypedPropKeys.TextOverflow, overflow)
+            set(TypedPropKeys.TextAlign, textAlign)
+        },
         modifier = modifier,
     )
 }
@@ -68,18 +68,16 @@ fun UiTreeBuilder.Image(
     emit(
         type = NodeType.Image,
         key = key,
-        props = Props(
-            values = buildMap {
-                put(PropKeys.IMAGE_SOURCE, source)
-                put(PropKeys.IMAGE_CONTENT_SCALE, contentScale)
-                put(PropKeys.IMAGE_CONTENT_DESCRIPTION, contentDescription)
-                put(PropKeys.IMAGE_REMOTE_LOADER, ImageLoading.current)
-                tint?.let { put(PropKeys.IMAGE_TINT, it) }
-                placeholder?.let { put(PropKeys.IMAGE_PLACEHOLDER, it) }
-                error?.let { put(PropKeys.IMAGE_ERROR, it) }
-                fallback?.let { put(PropKeys.IMAGE_FALLBACK, it) }
-            },
-        ),
+        props = props {
+            set(TypedPropKeys.ImageSource, source)
+            set(TypedPropKeys.ImageContentScale, contentScale)
+            set(TypedPropKeys.ImageContentDescription, contentDescription)
+            set(TypedPropKeys.ImageRemoteLoader, ImageLoading.current)
+            set(TypedPropKeys.ImageTint, tint)
+            set(TypedPropKeys.ImagePlaceholder, placeholder)
+            set(TypedPropKeys.ImageError, error)
+            set(TypedPropKeys.ImageFallback, fallback)
+        },
         modifier = modifier,
     )
 }
@@ -133,57 +131,70 @@ fun UiTreeBuilder.TextField(
     emit(
         type = NodeType.TextField,
         key = key,
-        props = Props(
-            values = mapOf(
-                PropKeys.VALUE to value,
-                PropKeys.ON_VALUE_CHANGE to onValueChange,
-                PropKeys.HINT to hint,
-                PropKeys.LABEL to label,
-                PropKeys.PLACEHOLDER to placeholder,
-                PropKeys.SUPPORTING_TEXT to supportingText,
-                PropKeys.SINGLE_LINE to singleLine,
-                PropKeys.TEXT_FIELD_TYPE to keyboardType,
-                PropKeys.READ_ONLY to readOnly,
-                PropKeys.MAX_LINES to maxLines,
-                PropKeys.MIN_LINES to minLines,
-                PropKeys.IME_ACTION to imeAction,
-                PropKeys.ENABLED to enabled,
-                PropKeys.IS_ERROR to isError,
-                PropKeys.TEXT_COLOR to TextFieldDefaults.textColor(enabled),
-                PropKeys.TEXT_SIZE_SP to style.fontSizeSp,
-                PropKeys.STYLE_PADDING_LEFT to TextFieldDefaults.horizontalPadding(size),
-                PropKeys.STYLE_PADDING_TOP to TextFieldDefaults.verticalPadding(size),
-                PropKeys.STYLE_PADDING_RIGHT to TextFieldDefaults.horizontalPadding(size),
-                PropKeys.STYLE_PADDING_BOTTOM to TextFieldDefaults.verticalPadding(size),
-                PropKeys.STYLE_BACKGROUND_COLOR to TextFieldDefaults.containerColor(
+        props = props {
+            set(TypedPropKeys.Value, value)
+            set(TypedPropKeys.OnValueChange, onValueChange)
+            set(TypedPropKeys.Hint, hint)
+            set(TypedPropKeys.Label, label)
+            set(TypedPropKeys.Placeholder, placeholder)
+            set(TypedPropKeys.SupportingText, supportingText)
+            set(TypedPropKeys.SingleLine, singleLine)
+            set(TypedPropKeys.TextFieldType, keyboardType)
+            set(TypedPropKeys.ReadOnly, readOnly)
+            set(TypedPropKeys.MaxLines, maxLines)
+            set(TypedPropKeys.MinLines, minLines)
+            set(TypedPropKeys.ImeAction, imeAction)
+            set(TypedPropKeys.Enabled, enabled)
+            setRaw(PropKeys.IS_ERROR, isError)
+            set(TypedPropKeys.TextColor, TextFieldDefaults.textColor(enabled))
+            set(TypedPropKeys.TextSizeSp, style.fontSizeSp)
+            set(TypedPropKeys.StylePaddingLeft, TextFieldDefaults.horizontalPadding(size))
+            set(TypedPropKeys.StylePaddingTop, TextFieldDefaults.verticalPadding(size))
+            set(TypedPropKeys.StylePaddingRight, TextFieldDefaults.horizontalPadding(size))
+            set(TypedPropKeys.StylePaddingBottom, TextFieldDefaults.verticalPadding(size))
+            set(
+                TypedPropKeys.StyleBackgroundColor,
+                TextFieldDefaults.containerColor(
                     variant = variant,
                     enabled = enabled,
                     isError = isError,
                 ),
-                PropKeys.STYLE_BORDER_WIDTH to TextFieldDefaults.borderWidth(variant),
-                PropKeys.STYLE_BORDER_COLOR to TextFieldDefaults.borderColor(
+            )
+            set(TypedPropKeys.StyleBorderWidth, TextFieldDefaults.borderWidth(variant))
+            set(
+                TypedPropKeys.StyleBorderColor,
+                TextFieldDefaults.borderColor(
                     variant = variant,
                     enabled = enabled,
                     isError = isError,
                 ),
-                PropKeys.STYLE_CORNER_RADIUS to TextFieldDefaults.cornerRadius(),
-                PropKeys.STYLE_RIPPLE_COLOR to TextFieldDefaults.pressedColor(),
-                PropKeys.HINT_TEXT_COLOR to TextFieldDefaults.hintColor(
+            )
+            set(TypedPropKeys.StyleCornerRadius, TextFieldDefaults.cornerRadius())
+            set(TypedPropKeys.StyleRippleColor, TextFieldDefaults.pressedColor())
+            set(
+                TypedPropKeys.HintTextColor,
+                TextFieldDefaults.hintColor(
                     enabled = enabled,
                     isError = isError,
                 ),
-                PropKeys.LABEL_TEXT_COLOR to TextFieldDefaults.labelColor(
+            )
+            set(
+                TypedPropKeys.LabelTextColor,
+                TextFieldDefaults.labelColor(
                     enabled = enabled,
                     isError = isError,
                 ),
-                PropKeys.SUPPORTING_TEXT_COLOR to TextFieldDefaults.supportingTextColor(
+            )
+            set(
+                TypedPropKeys.SupportingTextColor,
+                TextFieldDefaults.supportingTextColor(
                     enabled = enabled,
                     isError = isError,
                 ),
-                PropKeys.LABEL_TEXT_SIZE_SP to TextFieldDefaults.labelTextStyle().fontSizeSp,
-                PropKeys.SUPPORTING_TEXT_SIZE_SP to TextFieldDefaults.supportingTextStyle().fontSizeSp,
-            ),
-        ),
+            )
+            set(TypedPropKeys.LabelTextSizeSp, TextFieldDefaults.labelTextStyle().fontSizeSp)
+            set(TypedPropKeys.SupportingTextSizeSp, TextFieldDefaults.supportingTextStyle().fontSizeSp)
+        },
         modifier = Modifier
             .then(sizeModifier)
             .then(modifier),
@@ -508,29 +519,27 @@ fun UiTreeBuilder.Button(
     emit(
         type = NodeType.Button,
         key = key,
-        props = Props(
-            values = buildMap {
-                put(PropKeys.TEXT, text)
-                put(PropKeys.ON_CLICK, onClick)
-                put(PropKeys.ENABLED, enabled)
-                put(PropKeys.TEXT_COLOR, ButtonDefaults.contentColor(variant, enabled))
-                put(PropKeys.TEXT_SIZE_SP, style.fontSizeSp)
-                put(PropKeys.STYLE_MIN_HEIGHT, ButtonDefaults.height(size))
-                put(PropKeys.STYLE_PADDING_LEFT, ButtonDefaults.horizontalPadding(size))
-                put(PropKeys.STYLE_PADDING_TOP, ButtonDefaults.verticalPadding(size))
-                put(PropKeys.STYLE_PADDING_RIGHT, ButtonDefaults.horizontalPadding(size))
-                put(PropKeys.STYLE_PADDING_BOTTOM, ButtonDefaults.verticalPadding(size))
-                put(PropKeys.STYLE_BACKGROUND_COLOR, ButtonDefaults.containerColor(variant, enabled))
-                put(PropKeys.STYLE_BORDER_WIDTH, ButtonDefaults.borderWidth(variant))
-                put(PropKeys.STYLE_BORDER_COLOR, ButtonDefaults.borderColor(variant, enabled))
-                put(PropKeys.STYLE_CORNER_RADIUS, ButtonDefaults.cornerRadius())
-                put(PropKeys.STYLE_RIPPLE_COLOR, ButtonDefaults.pressedColor())
-                put(PropKeys.BUTTON_ICON_SIZE, ButtonDefaults.iconSize(size))
-                put(PropKeys.BUTTON_ICON_SPACING, ButtonDefaults.iconSpacing(size))
-                leadingIcon?.let { put(PropKeys.BUTTON_LEADING_ICON, it) }
-                trailingIcon?.let { put(PropKeys.BUTTON_TRAILING_ICON, it) }
-            },
-        ),
+        props = props {
+            set(TypedPropKeys.Text, text)
+            set(TypedPropKeys.OnClick, onClick)
+            set(TypedPropKeys.Enabled, enabled)
+            set(TypedPropKeys.TextColor, ButtonDefaults.contentColor(variant, enabled))
+            set(TypedPropKeys.TextSizeSp, style.fontSizeSp)
+            set(TypedPropKeys.StyleMinHeight, ButtonDefaults.height(size))
+            set(TypedPropKeys.StylePaddingLeft, ButtonDefaults.horizontalPadding(size))
+            set(TypedPropKeys.StylePaddingTop, ButtonDefaults.verticalPadding(size))
+            set(TypedPropKeys.StylePaddingRight, ButtonDefaults.horizontalPadding(size))
+            set(TypedPropKeys.StylePaddingBottom, ButtonDefaults.verticalPadding(size))
+            set(TypedPropKeys.StyleBackgroundColor, ButtonDefaults.containerColor(variant, enabled))
+            set(TypedPropKeys.StyleBorderWidth, ButtonDefaults.borderWidth(variant))
+            set(TypedPropKeys.StyleBorderColor, ButtonDefaults.borderColor(variant, enabled))
+            set(TypedPropKeys.StyleCornerRadius, ButtonDefaults.cornerRadius())
+            set(TypedPropKeys.StyleRippleColor, ButtonDefaults.pressedColor())
+            set(TypedPropKeys.ButtonIconSize, ButtonDefaults.iconSize(size))
+            set(TypedPropKeys.ButtonIconSpacing, ButtonDefaults.iconSpacing(size))
+            set(TypedPropKeys.ButtonLeadingIcon, leadingIcon)
+            set(TypedPropKeys.ButtonTrailingIcon, trailingIcon)
+        },
         modifier = modifier,
     )
 }
@@ -561,26 +570,24 @@ fun UiTreeBuilder.IconButton(
     emit(
         type = NodeType.IconButton,
         key = key,
-        props = Props(
-            values = buildMap {
-                put(PropKeys.IMAGE_SOURCE, icon)
-                put(PropKeys.IMAGE_CONTENT_DESCRIPTION, contentDescription)
-                put(PropKeys.IMAGE_CONTENT_SCALE, ImageContentScale.Inside)
-                put(PropKeys.IMAGE_TINT, IconButtonDefaults.contentColor(variant, enabled))
-                put(PropKeys.ON_CLICK, onClick)
-                put(PropKeys.ENABLED, enabled)
-                put(PropKeys.IMAGE_REMOTE_LOADER, ImageLoading.current)
-                put(PropKeys.STYLE_PADDING_LEFT, IconButtonDefaults.contentPadding(size))
-                put(PropKeys.STYLE_PADDING_TOP, IconButtonDefaults.contentPadding(size))
-                put(PropKeys.STYLE_PADDING_RIGHT, IconButtonDefaults.contentPadding(size))
-                put(PropKeys.STYLE_PADDING_BOTTOM, IconButtonDefaults.contentPadding(size))
-                put(PropKeys.STYLE_BACKGROUND_COLOR, IconButtonDefaults.containerColor(variant, enabled))
-                put(PropKeys.STYLE_BORDER_WIDTH, IconButtonDefaults.borderWidth(variant))
-                put(PropKeys.STYLE_BORDER_COLOR, IconButtonDefaults.borderColor(variant, enabled))
-                put(PropKeys.STYLE_CORNER_RADIUS, IconButtonDefaults.cornerRadius())
-                put(PropKeys.STYLE_RIPPLE_COLOR, IconButtonDefaults.pressedColor())
-            },
-        ),
+        props = props {
+            set(TypedPropKeys.ImageSource, icon)
+            set(TypedPropKeys.ImageContentDescription, contentDescription)
+            set(TypedPropKeys.ImageContentScale, ImageContentScale.Inside)
+            set(TypedPropKeys.ImageTint, IconButtonDefaults.contentColor(variant, enabled))
+            set(TypedPropKeys.OnClick, onClick)
+            set(TypedPropKeys.Enabled, enabled)
+            set(TypedPropKeys.ImageRemoteLoader, ImageLoading.current)
+            set(TypedPropKeys.StylePaddingLeft, IconButtonDefaults.contentPadding(size))
+            set(TypedPropKeys.StylePaddingTop, IconButtonDefaults.contentPadding(size))
+            set(TypedPropKeys.StylePaddingRight, IconButtonDefaults.contentPadding(size))
+            set(TypedPropKeys.StylePaddingBottom, IconButtonDefaults.contentPadding(size))
+            set(TypedPropKeys.StyleBackgroundColor, IconButtonDefaults.containerColor(variant, enabled))
+            set(TypedPropKeys.StyleBorderWidth, IconButtonDefaults.borderWidth(variant))
+            set(TypedPropKeys.StyleBorderColor, IconButtonDefaults.borderColor(variant, enabled))
+            set(TypedPropKeys.StyleCornerRadius, IconButtonDefaults.cornerRadius())
+            set(TypedPropKeys.StyleRippleColor, IconButtonDefaults.pressedColor())
+        },
         modifier = semanticModifier,
     )
 }

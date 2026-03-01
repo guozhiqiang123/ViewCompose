@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.renderer.node.PropKeys
+import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.TextOverflow
 import com.gzq.uiframework.renderer.node.VNode
 
@@ -82,10 +83,10 @@ internal object ContentViewBinder {
 
     fun readTextSpec(node: VNode): TextSpec {
         return TextSpec(
-            text = node.props.values[PropKeys.TEXT] as? CharSequence,
-            maxLines = node.props.values[PropKeys.TEXT_MAX_LINES] as? Int ?: Int.MAX_VALUE,
-            overflow = node.props.values[PropKeys.TEXT_OVERFLOW] as? TextOverflow ?: TextOverflow.Clip,
-            gravity = (node.props.values[PropKeys.TEXT_ALIGN] as? com.gzq.uiframework.renderer.node.TextAlign
+            text = node.props[TypedPropKeys.Text],
+            maxLines = node.props[TypedPropKeys.TextMaxLines] ?: Int.MAX_VALUE,
+            overflow = node.props[TypedPropKeys.TextOverflow] ?: TextOverflow.Clip,
+            gravity = (node.props[TypedPropKeys.TextAlign]
                 ?: com.gzq.uiframework.renderer.node.TextAlign.Start).toTextGravity(),
         )
     }
@@ -93,14 +94,14 @@ internal object ContentViewBinder {
     @Suppress("UNCHECKED_CAST")
     fun readButtonSpec(node: VNode, contentColor: Int): ButtonSpec {
         return ButtonSpec(
-            text = node.props.values[PropKeys.TEXT] as? CharSequence,
-            enabled = node.props.values[PropKeys.ENABLED] as? Boolean ?: true,
-            iconSpacing = node.props.values[PropKeys.BUTTON_ICON_SPACING] as? Int ?: 8,
-            leadingIcon = node.props.values[PropKeys.BUTTON_LEADING_ICON] as? ImageSource.Resource,
-            trailingIcon = node.props.values[PropKeys.BUTTON_TRAILING_ICON] as? ImageSource.Resource,
+            text = node.props[TypedPropKeys.Text],
+            enabled = node.props[TypedPropKeys.Enabled] ?: true,
+            iconSpacing = node.props[TypedPropKeys.ButtonIconSpacing] ?: 8,
+            leadingIcon = node.props[TypedPropKeys.ButtonLeadingIcon],
+            trailingIcon = node.props[TypedPropKeys.ButtonTrailingIcon],
             iconTint = contentColor,
-            iconSize = node.props.values[PropKeys.BUTTON_ICON_SIZE] as? Int ?: 18,
-            onClick = node.props.values[PropKeys.ON_CLICK] as? (() -> Unit),
+            iconSize = node.props[TypedPropKeys.ButtonIconSize] ?: 18,
+            onClick = node.props[TypedPropKeys.OnClick],
         )
     }
 
