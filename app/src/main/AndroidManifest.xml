@@ -17,6 +17,24 @@
             android:shell="true"
             tools:targetApi="29" />
         <activity
+            android:name=".CollectionsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DiagnosticsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FoundationsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".InputActivity"
+            android:exported="false" />
+        <activity
+            android:name=".InteropActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LayoutsActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -25,6 +43,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".StateActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

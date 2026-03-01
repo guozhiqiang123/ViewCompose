@@ -22,13 +22,13 @@
 
 ## 2. 当前问题
 
-当前 demo 已经比最早版本清晰，但仍然有明显问题：
+当前 demo 已经完成第一轮多 Activity 重构，但仍然有明显问题：
 
-1. 页面仍按“当前已做能力”分组，而不是按“人工测试路径”分组。
-2. 很多示例是能力堆叠，难以快速定位 bug 属于布局、状态、主题还是 renderer。
-3. 当前 demo 更像 sample，而不是 testbed。
-4. 当前章节数量偏少，无法承接后续 `P2` 能力扩展。
-5. demo 与 Compose 的能力地图没有建立映射，后续优化方向不够直观。
+1. 模块 Activity 已经拆出来了，但章内 page 和 scenario 仍然有不少能力堆叠，定位问题还不够直接。
+2. 一部分页面仍然偏 sample 展示，而不是 benchmark 友好的 testbed。
+3. 目前只有已实现模块独立成章，planned 模块还停留在目录卡片，能力地图仍需持续补齐。
+4. benchmark 入口已经稳定到“目录页 -> 模块 Activity”，但页面内部的手测路径还需要继续标准化。
+5. demo 与 Compose 的能力差距虽然已经文档化，但场景覆盖还没完全对齐文档结构。
 
 ## 3. 设计原则
 
@@ -48,13 +48,15 @@
 
 建议层级固定为：
 
-1. `Chapter`
-2. `Page`
-3. `Scenario`
+1. `CatalogActivity`
+2. `ChapterActivity`
+3. `Page`
+4. `Scenario`
 
 解释：
 
-- `Chapter` 对应一类框架能力，例如 `State & Effects`
+- `CatalogActivity` 负责能力目录、主题切换、roadmap 可视化
+- `ChapterActivity` 对应一类框架能力，例如 `State & Effects`
 - `Page` 对应该能力下的一组具体主题，例如 `remember / derivedStateOf`
 - `Scenario` 对应一个可手动操作的验证片段
 
@@ -106,8 +108,8 @@
 
 当前状态：
 
-- 已有基础能力
-- 需要重排 demo，而不是继续堆新 section
+- 已拆成独立 `FoundationsActivity`
+- 仍需要继续把 scenario 变成更强的人工测试入口
 
 ### 4.2 Chapter 2: State & Effects
 
@@ -123,8 +125,9 @@
 
 当前状态：
 
-- 核心 runtime 已有
-- demo 不够系统
+- 已拆成独立 `StateActivity`
+- 已有 patch stress 路径
+- 仍需继续丰富 effect / identity 压力场景
 
 ### 4.3 Chapter 3: Layouts
 
@@ -140,8 +143,9 @@
 
 当前状态：
 
-- 已有较多能力
-- 还缺系统化的“布局压力测试页”
+- 已拆成独立 `LayoutsActivity`
+- 已有布局压力页
+- 仍需继续细化热点容器对照场景
 
 ### 4.4 Chapter 4: Input
 
@@ -157,6 +161,7 @@
 
 当前状态：
 
+- 已拆成独立 `InputActivity`
 - `P1` 语义已基本到位
 - 还缺 focus、表单态、校验态的系统 demo
 
@@ -174,6 +179,7 @@
 
 当前状态：
 
+- 已拆成独立 `CollectionsActivity`
 - `LazyColumn` 可用
 - `TabPager` 已实现但应视为实验能力
 - 还缺 `LazyRow / LazyGrid / sticky headers / list state`
@@ -258,6 +264,7 @@
 
 当前状态：
 
+- 已拆成独立 `InteropActivity`
 - `AndroidView` 已有
 - 这是当前框架相对 Compose 的现实优势
 
@@ -275,37 +282,45 @@
 
 当前状态：
 
-- 只有基础 debug 日志
-- 需要继续做成可人工使用的调试入口
+- 已拆成独立 `DiagnosticsActivity`
+- 已有 render stats、warning、layout pass counters
+- 仍需继续补 inspector 级可视化
 
 ## 5. 建议的 Demo App 壳结构
 
-建议新的 demo 结构不要再只保留 5 个顶级 tab。
+从当前阶段开始，demo 宿主结构切换为：
 
-推荐改成两级导航：
+1. `MainActivity`
+   - 作为目录页
+   - 负责展示已实现模块与 planned 模块
+   - 作为 benchmark 的稳定启动入口
+2. `ChapterActivity`
+   - 每个已实现能力模块一个独立 Activity
+   - 当前包括：
+   - `FoundationsActivity`
+   - `StateActivity`
+   - `LayoutsActivity`
+   - `InputActivity`
+   - `CollectionsActivity`
+   - `InteropActivity`
+   - `DiagnosticsActivity`
+3. `Page`
+   - Activity 内部再按 page filter 组织子主题
+4. `Scenario`
+   - 每页包含明确的人工验证块和压力块
 
-1. 顶层 `Chapter` 导航
-2. 章内 `Page` 导航
+实现原则：
 
-建议顶层章节：
+- 顶层不再依赖单一 giant pager
+- 章内仍可继续使用 `SegmentedControl / TabPager / LazyColumn`
+- 未实现能力先在目录页保留 roadmap 卡片，不急着创建空 Activity
 
-1. `Foundations`
-2. `State`
-3. `Layouts`
-4. `Input`
-5. `Collections`
-6. `Gestures`
-7. `Animation`
-8. `Graphics`
-9. `Navigation`
-10. `Interop`
-11. `Diagnostics`
+这样做的原因：
 
-实现建议：
-
-- 第一版可以继续沿用现有 `TabPager`
-- 如果顶层页签过多，建议改成 `LazyColumn + segmented filter` 或左侧目录 + 内容区
-- 章内页面仍可使用 `TabPager` 或 `SegmentedControl`
+1. 不依赖框架内路由
+2. Activity 级入口更贴近 Android 真实宿主集成
+3. benchmark setup 可以固定为“目录页 -> 模块 Activity -> 模块页”
+4. 每个能力模块都能独立演进，不会再把所有入口绑在同一页状态上
 
 ## 6. 每个页面的固定模板
 
@@ -462,7 +477,7 @@
 
 目标：
 
-- 把 demo 从现有 5 个大 tab 重构成稳定章节结构
+- 把 demo 从单页章节壳重构成稳定的目录页 + 模块 Activity 结构
 
 优先章节：
 
@@ -473,9 +488,10 @@
 5. `Collections`
 6. `Interop`
 
-说明：
+当前状态：
 
-- 这些章节直接基于当前能力即可落地
+- 已完成 `Foundations / State / Layouts / Input / Collections / Interop / Diagnostics` 多 Activity 落地
+- planned 模块仍保留在目录页
 
 ### Phase B: 把现有 sample 重写成 testbed
 
@@ -504,19 +520,20 @@
 
 如果按这份文档继续推进，建议顺序如下：
 
-1. 先把 demo 顶层结构按 11 个章节重构
-2. 再把现有 `Overview / Layout / Input / State / Collection` 内容迁移到新章节
-3. 然后补 `Diagnostics` 页面，作为人工回归入口
-4. 最后为 `Gestures / Animation / Graphics / Navigation` 建立占位页和 gap 标注
+1. 继续把现有模块页面按能力和压力场景细化，不再往单页里堆 section
+2. 保持 benchmark 全部走“目录页 -> 模块 Activity -> 模块页”的稳定路径
+3. 为 `Gestures / Animation / Graphics / Navigation` 继续保留 roadmap 卡片，并在能力落地时再升为独立 Activity
+4. 后续新增 demo 一律按当前多 Activity 结构接入，不再回退到 giant pager
 
 ## 10. 当前结论
 
 结论很明确：
 
 1. demo 现在必须从“sample 展示”升级到“能力验证平台”
-2. 参考 Compose 教程仓库的章节组织方式是合理的
-3. 但我们不能直接照抄 Compose 页面，而应加入 `Interop` 和 `Diagnostics` 这两个更适合当前框架的章节
-4. `P1` 基础控件层已经闭环，下一阶段更适合转向 demo 体系化和能力差距驱动开发
+2. 参考 Compose 教程仓库按能力模块分章是合理的
+3. 但在当前无路由前提下，`CatalogActivity + ChapterActivity` 比 giant pager 更适合 Android View 宿主
+4. `Interop` 和 `Diagnostics` 仍然是当前框架比直接照抄 Compose 更重要的两章
+5. `P1` 基础控件层已经闭环，下一阶段更适合转向 demo 体系化和 benchmark 友好的入口治理
 
 ## 11. 当前推进状态
 

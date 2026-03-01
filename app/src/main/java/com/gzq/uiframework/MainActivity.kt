@@ -1,32 +1,20 @@
 package com.gzq.uiframework
 
-import android.os.Bundle
 import android.view.ViewGroup
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.gzq.uiframework.widget.core.renderInto
+import com.gzq.uiframework.widget.core.UiTreeBuilder
 
-class MainActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        val root = findViewById<ViewGroup>(R.id.main)
-        ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+class MainActivity : DemoRenderActivity() {
+    override val showBackButton: Boolean = false
 
-        renderInto(
-            container = root,
-            debug = true,
-            debugTag = "UIFrameworkSample",
-            onRenderResult = DemoRenderDiagnosticsStore::record,
-        ) {
-            DemoRoot(root)
-        }
+    override val demoTitle: String = "UIFramework Demo"
+
+    override val demoSubtitle: String =
+        "Module catalog aligned with Compose Tutorials categories and optimized for manual testing plus benchmark entry."
+
+    override fun buildDemoContent(
+        root: ViewGroup,
+        builder: UiTreeBuilder,
+    ) {
+        builder.DemoCatalogPage(root)
     }
 }

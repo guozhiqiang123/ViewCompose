@@ -10,7 +10,6 @@ import com.gzq.uiframework.renderer.modifier.height
 import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.renderer.modifier.size
-import com.gzq.uiframework.runtime.MutableState
 import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.Box
 import com.gzq.uiframework.widget.core.Button
@@ -43,7 +42,7 @@ import com.gzq.uiframework.renderer.node.ImageContentScale
 import com.gzq.uiframework.renderer.node.ImageSource
 
 internal fun UiTreeBuilder.OverviewPage(
-    selectedChapterState: MutableState<Int>,
+    onOpenCapability: (Class<out androidx.appcompat.app.AppCompatActivity>) -> Unit,
 ) {
     val selectedPageState = remember { mutableStateOf(0) }
     val pageItems = when (selectedPageState.value) {
@@ -478,34 +477,34 @@ internal fun UiTreeBuilder.OverviewPage(
                     text = "Open Layouts",
                     modifier = Modifier.margin(bottom = 8.dp),
                     onClick = {
-                        selectedChapterState.value = CHAPTER_LAYOUTS
+                        onOpenCapability(LayoutsActivity::class.java)
                     },
                 )
                 Button(
                     text = "Open Input",
                     modifier = Modifier.margin(bottom = 8.dp),
                     onClick = {
-                        selectedChapterState.value = CHAPTER_INPUT
+                        onOpenCapability(InputActivity::class.java)
                     },
                 )
                 Button(
                     text = "Open State",
                     modifier = Modifier.margin(bottom = 8.dp),
                     onClick = {
-                        selectedChapterState.value = CHAPTER_STATE
+                        onOpenCapability(StateActivity::class.java)
                     },
                 )
                 Button(
                     text = "Open Collections",
                     onClick = {
-                        selectedChapterState.value = CHAPTER_COLLECTIONS
+                        onOpenCapability(CollectionsActivity::class.java)
                     },
                 )
                 Button(
                     text = "Open Interop",
                     modifier = Modifier.margin(top = 8.dp),
                     onClick = {
-                        selectedChapterState.value = CHAPTER_INTEROP
+                        onOpenCapability(InteropActivity::class.java)
                     },
                 )
             }

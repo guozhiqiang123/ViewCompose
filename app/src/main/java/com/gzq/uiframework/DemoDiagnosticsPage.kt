@@ -65,7 +65,8 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                     title = "Runtime Facts",
                     facts = listOf(
                         DiagnosticFact("Debug logging", "Enabled (UIFrameworkSample)"),
-                        DiagnosticFact("Top chapters", "${DEMO_CHAPTERS.size}"),
+                        DiagnosticFact("Available modules", "${AVAILABLE_DEMO_MODULES.size}"),
+                        DiagnosticFact("Planned modules", "${PLANNED_DEMO_MODULES.size}"),
                         DiagnosticFact("Locale", Environment.localeTags.firstOrNull() ?: "und"),
                         DiagnosticFact("Layout direction", Environment.layoutDirection.name),
                         DiagnosticFact("Density", "${"%.2f".format(Locale.US, Environment.density.density)}x"),
