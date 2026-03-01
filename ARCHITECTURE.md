@@ -237,6 +237,72 @@ flowchart TD
 
 后续所有架构讨论都应围绕这条真实主链，而不是围绕早期未落地的抽象。
 
+## 5.1 本轮模块审查结论
+
+基于当前源码目录和最近 overlay 改造，这一轮审查结论固定如下。
+
+### `ui-runtime`
+
+结论：
+
+- 当前放置基本合理
+- `state/`、`observation/` 边界清楚
+
+剩余问题：
+
+- 模块仍偏薄，暂时更像“状态观察内核”而不是完整组合 runtime
+
+### `ui-renderer`
+
+结论：
+
+- 目录已经收敛到 `node/core|collection|input|media|spec`
+- `view/tree` 也已经按 `binder/diagnostics/patch` 拆层
+- 当前类落点整体合理
+
+剩余问题：
+
+- `ViewTreeRenderer` 仍然是核心复杂度热点
+- `spec/` 目前仍按控件类型平铺，后续如果继续增长，可以再按 `content/input/container/media` 细分
+
+### `ui-widget-core`
+
+结论：
+
+- `context/` 现在重新回到“ambient context”职责
+- overlay 相关契约和 reducer 已经移到 `overlay/`、`overlay/runtime/`
+- 当前比之前更符合“DSL + session + defaults + overlay contracts”的真实边界
+
+剩余问题：
+
+- 模块职责仍然偏重，后续可能需要继续从中拆出更明确的 composition/runtime 层
+- `Widgets.kt` 仍然很大，这是当前 widget 声明层最明显的复杂度热点
+
+### `ui-overlay-android`
+
+结论：
+
+- `host/`、`presenter/` 的职责是合理的
+- Android `Dialog`、`PopupWindow`、`Snackbar`、`Toast` 代码继续留在这里是正确的
+
+剩余问题：
+
+- 如果 overlay 能力继续增加，应优先拆 `presenter/surface`、`presenter/feedback`、`positioning`
+
+### `ui-image-coil`
+
+结论：
+
+- 当前位置和职责合理
+- 继续保持“可选桥接模块”定位，不回流到核心模块
+
+### `app`
+
+结论：
+
+- 作为 demo、人工回归和 instrumentation 入口是合理的
+- 只要坚持 demo 代码不回流到框架模块，当前边界就没有问题
+
 ## 6. 当前合理点
 
 当前架构里，有几件事是正确的，不应该推倒重来。
