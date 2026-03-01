@@ -189,6 +189,12 @@ internal object NodeViewBinderRegistry {
                     patch = patch,
                 )
             }
+            is TabPagerNodePatch -> {
+                ContainerViewBinder.applyTabPagerPatch(
+                    view = view as DeclarativeTabPagerLayout,
+                    patch = patch,
+                )
+            }
         }
     }
 

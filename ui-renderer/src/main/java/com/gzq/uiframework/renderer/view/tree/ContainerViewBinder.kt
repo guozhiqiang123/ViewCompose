@@ -144,6 +144,29 @@ internal object ContainerViewBinder {
         )
     }
 
+    fun applyTabPagerPatch(
+        view: DeclarativeTabPagerLayout,
+        patch: TabPagerNodePatch,
+    ) {
+        bindTabPager(
+            view = view,
+            spec = TabPagerSpec(
+                pages = patch.next.pages,
+                selectedTabIndex = patch.next.selectedTabIndex,
+                onTabSelected = patch.next.onTabSelected,
+                backgroundColor = patch.next.backgroundColor,
+                indicatorColor = patch.next.indicatorColor,
+                cornerRadius = patch.next.cornerRadius,
+                indicatorHeight = patch.next.indicatorHeight,
+                tabPaddingHorizontal = patch.next.tabPaddingHorizontal,
+                tabPaddingVertical = patch.next.tabPaddingVertical,
+                selectedTextColor = patch.next.selectedTextColor,
+                unselectedTextColor = patch.next.unselectedTextColor,
+                rippleColor = patch.next.rippleColor,
+            ),
+        )
+    }
+
     fun bindSegmentedControl(
         view: DeclarativeSegmentedControlLayout,
         spec: SegmentedControlSpec,

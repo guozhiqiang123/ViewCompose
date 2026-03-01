@@ -8,6 +8,7 @@ import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.props
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
 import org.junit.Assert.assertSame
@@ -120,6 +121,17 @@ class NodeBindingDifferTest {
         assertSame(NodeBindingPlan.Rebind, NodeBindingDiffer.plan(previous, next))
     }
 
+    @Test
+    fun `patches tab pager semantic updates`() {
+        val previous = tabPagerNode(selectedTabIndex = 0)
+        val next = tabPagerNode(selectedTabIndex = 1)
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is TabPagerNodePatch)
+    }
+
     private fun textNode(
         text: String = "value",
         modifier: Modifier = Modifier,
@@ -189,6 +201,30 @@ class NodeBindingDifferTest {
                 hintColor = 0xFF888888.toInt(),
                 readOnly = false,
                 onValueChange = null,
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun tabPagerNode(
+        selectedTabIndex: Int = 0,
+    ): VNode {
+        return VNode(
+            type = NodeType.TabPager,
+            props = Props.Empty,
+            spec = TabPagerNodeProps(
+                pages = emptyList(),
+                selectedTabIndex = selectedTabIndex,
+                onTabSelected = null,
+                backgroundColor = 1,
+                indicatorColor = 2,
+                cornerRadius = 3,
+                indicatorHeight = 4,
+                tabPaddingHorizontal = 5,
+                tabPaddingVertical = 6,
+                selectedTextColor = 7,
+                unselectedTextColor = 8,
+                rippleColor = 9,
             ),
             modifier = Modifier,
         )
