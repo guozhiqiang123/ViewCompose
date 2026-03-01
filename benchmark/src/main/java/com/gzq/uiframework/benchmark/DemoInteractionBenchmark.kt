@@ -188,6 +188,28 @@ class DemoInteractionBenchmark {
     }
 
     @Test
+    fun interopBenchmarkAnchor() = benchmarkRule.measureRepeated(
+        packageName = TARGET_PACKAGE,
+        metrics = listOf(FrameTimingMetric()),
+        compilationMode = CompilationMode.Partial(),
+        iterations = DEFAULT_ITERATIONS,
+        startupMode = StartupMode.WARM,
+        setupBlock = {
+            startDemoActivityAndWait(
+                moduleKey = "interop",
+                expectedText = "Interop",
+            )
+            scrollUntilText("Interop Benchmark Primary")
+            scrollUntilText("Reset Interop Benchmark")
+        },
+    ) {
+        clickText("Interop Benchmark Primary")
+        waitForText("Interop Benchmark Alternate")
+        clickText("Reset Interop Benchmark")
+        waitForText("Interop Benchmark Primary")
+    }
+
+    @Test
     fun collectionsScroll() = benchmarkRule.measureRepeated(
         packageName = TARGET_PACKAGE,
         metrics = listOf(FrameTimingMetric()),

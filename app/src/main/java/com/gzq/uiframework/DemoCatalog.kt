@@ -35,7 +35,7 @@ internal val DEMO_MODULES = listOf(
         subtitle = "remember, derived state, effects, key identity, and patch stress.",
         status = DemoModuleStatus.Available,
         manualFocus = "state invalidation, key identity, patch-active updates",
-        benchmarkPath = "Catalog -> Open State -> Patch page",
+        benchmarkPath = "Catalog -> Open State -> State Benchmark Anchor / Patch page",
         activityClass = StateActivity::class.java,
     ),
     DemoModule(
@@ -71,7 +71,7 @@ internal val DEMO_MODULES = listOf(
         subtitle = "AndroidView, themed native views, and framework interop boundaries.",
         status = DemoModuleStatus.Available,
         manualFocus = "local propagation, native view updates, theme bridge behavior",
-        benchmarkPath = "Catalog -> Open Interop -> core scenarios",
+        benchmarkPath = "Catalog -> Open Interop -> Interop Benchmark Anchor",
         activityClass = InteropActivity::class.java,
     ),
     DemoModule(
@@ -80,7 +80,7 @@ internal val DEMO_MODULES = listOf(
         subtitle = "Renderer snapshots, structure stats, warnings, and layout pass counters.",
         status = DemoModuleStatus.Available,
         manualFocus = "render stats, patch snapshots, layout hot spots, warnings",
-        benchmarkPath = "Catalog -> Open Diagnostics -> Renderer page",
+        benchmarkPath = "Catalog -> Open Diagnostics -> Diagnostics Benchmark Anchor / Renderer page",
         activityClass = DiagnosticsActivity::class.java,
     ),
     DemoModule(

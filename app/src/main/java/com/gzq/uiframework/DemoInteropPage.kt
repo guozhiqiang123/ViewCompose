@@ -21,9 +21,10 @@ import com.gzq.uiframework.widget.core.sp
 
 internal fun UiTreeBuilder.InteropPage() {
     val alternateLabelsState = remember { mutableStateOf(false) }
+    val benchmarkToggleState = remember { mutableStateOf(false) }
     val selectedPageState = remember { mutableStateOf(0) }
     val pageItems = when (selectedPageState.value) {
-        0 -> listOf("page", "page_filter", "basics", "verify")
+        0 -> listOf("benchmark", "page", "page_filter", "basics", "verify")
         1 -> listOf("page", "page_filter", "theme_bridge", "verify")
         else -> listOf("page", "page_filter", "why_it_matters", "verify")
     }
@@ -44,6 +45,64 @@ internal fun UiTreeBuilder.InteropPage() {
                 selectedIndex = selectedPageState.value,
                 onSelectionChange = { selectedPageState.value = it },
             )
+
+            "benchmark" -> ScenarioSection(
+                kind = ScenarioKind.Benchmark,
+                title = "Interop Benchmark Anchor",
+                subtitle = "Keep a native TextView interop update path visible in the first viewport so benchmark runs do not depend on the longer guide content below.",
+            ) {
+                Text(
+                    text = "Stable route: launcher -> interop module -> benchmark anchor",
+                    style = UiTextStyle(fontSizeSp = 12.sp),
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier.margin(bottom = 8.dp),
+                )
+                Text(
+                    text = if (benchmarkToggleState.value) {
+                        "Interop benchmark native state: alternate"
+                    } else {
+                        "Interop benchmark native state: primary"
+                    },
+                    modifier = Modifier.margin(bottom = 8.dp),
+                )
+                Button(
+                    text = if (benchmarkToggleState.value) {
+                        "Interop Benchmark Alternate"
+                    } else {
+                        "Interop Benchmark Primary"
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .margin(bottom = 8.dp),
+                    onClick = {
+                        benchmarkToggleState.value = !benchmarkToggleState.value
+                    },
+                )
+                Button(
+                    text = "Reset Interop Benchmark",
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        benchmarkToggleState.value = false
+                    },
+                )
+                AndroidView(
+                    key = "interop_benchmark_text_view",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    factory = { context ->
+                        TextView(context)
+                    },
+                    update = { view ->
+                        val textView = view as TextView
+                        textView.text = if (benchmarkToggleState.value) {
+                            "Native benchmark TextView: alternate"
+                        } else {
+                            "Native benchmark TextView: primary"
+                        }
+                    },
+                )
+            }
 
             "basics" -> ScenarioSection(
                 kind = ScenarioKind.Core,
