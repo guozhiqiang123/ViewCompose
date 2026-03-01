@@ -29,13 +29,15 @@
 - 已经能稳定支撑“声明式 API + View 互操作 + keyed 更新 + demo/manual test”
 - 复杂度仍然可控
 - 和 Android View 主线程模型是兼容的
+- `typed props` 已经足够支撑下一步在高收益节点上试点 `NodeProps`
 
-但它还不是最终形态。和 Compose 相比，当前架构仍然有 4 个明显短板：
+但它还不是最终形态。和 Compose 相比，当前架构仍然有 5 个明显短板：
 
 1. 更新粒度仍然偏粗，通用页面节点仍以“根级重跑 + keyed 复用”为主
 2. renderer 仍然过于集中，`ViewTreeRenderer` 是明显的大类
 3. 组合运行时还主要住在 `ui-widget-core`，`ui-runtime` 仍然过薄
 4. `VNode + Props` 仍然偏动态，类型约束和错误发现能力弱于 Compose
+5. 高收益节点还没有进入真正的结构化 `NodeProps`，typed props 仍是当前上限
 
 所以正确结论不是“架构已经成熟”，而是：
 
@@ -309,6 +311,24 @@ Compose 的优势在于：
 - 现在的 typed prop 方向是合理的
 - 但它目前还是“typed key 包裹动态 map”，不是完整强类型节点参数模型
 - 下一阶段应继续把高频控件和 renderer 读取链路迁到 typed props，逐步压缩裸字符串 key 的使用面
+- 在此基础上，应只对高收益节点试点 `NodeProps`，而不是立即全量推广
+
+### 7.35 `typed props` 还不是长期终态
+
+当前 `PropKey<T> + Props(Map)` 已经明显优于纯字符串 key，但它仍然是动态容器。
+
+问题在于：
+
+- 复杂节点仍然缺少集中结构
+- 节点不变式仍然分散
+- 后续做调试、schema、节点级优化时，结构约束不够强
+
+因此当前更合理的下一步不是“继续堆更多 typed key”，而是：
+
+- 保留 `typed props` 作为底层兼容层
+- 在高收益节点上逐步引入 `NodeProps`
+
+详细方案见 [NODE_PROPS.md](/Users/gzq/AndroidStudioProjects/UIFramework/NODE_PROPS.md)。
 
 ### 7.4 通用页面节点更新粒度仍偏粗
 
