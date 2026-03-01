@@ -18,8 +18,6 @@ import com.gzq.uiframework.renderer.modifier.minHeight
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.renderer.modifier.rippleColor
 import com.gzq.uiframework.renderer.modifier.size
-import com.gzq.uiframework.renderer.modifier.textColor
-import com.gzq.uiframework.renderer.modifier.textSize
 import com.gzq.uiframework.renderer.modifier.weight
 import com.gzq.uiframework.renderer.node.ImageContentScale
 import com.gzq.uiframework.renderer.node.ImageSource
@@ -51,15 +49,14 @@ fun UiTreeBuilder.Text(
         props = Props(
             values = mapOf(
                 PropKeys.TEXT to text,
+                PropKeys.TEXT_COLOR to TextDefaults.primaryColor(),
+                PropKeys.TEXT_SIZE_SP to style.fontSizeSp,
                 PropKeys.TEXT_MAX_LINES to maxLines,
                 PropKeys.TEXT_OVERFLOW to overflow,
                 PropKeys.TEXT_ALIGN to textAlign,
             ),
         ),
-        modifier = Modifier
-            .textColor(TextDefaults.primaryColor())
-            .textSize(style.fontSizeSp)
-            .then(modifier),
+        modifier = modifier,
     )
 }
 
@@ -163,6 +160,8 @@ fun UiTreeBuilder.TextField(
                 PropKeys.IME_ACTION to imeAction,
                 PropKeys.ENABLED to enabled,
                 PropKeys.IS_ERROR to isError,
+                PropKeys.TEXT_COLOR to TextFieldDefaults.textColor(enabled),
+                PropKeys.TEXT_SIZE_SP to style.fontSizeSp,
                 PropKeys.HINT_TEXT_COLOR to TextFieldDefaults.hintColor(
                     enabled = enabled,
                     isError = isError,
@@ -198,8 +197,6 @@ fun UiTreeBuilder.TextField(
             )
             .cornerRadius(TextFieldDefaults.cornerRadius())
             .rippleColor(TextFieldDefaults.pressedColor())
-            .textColor(TextFieldDefaults.textColor(enabled))
-            .textSize(style.fontSizeSp)
             .then(modifier),
     )
 }
@@ -257,12 +254,12 @@ fun UiTreeBuilder.Checkbox(
                 PropKeys.ON_CHECKED_CHANGE to onCheckedChange,
                 PropKeys.ENABLED to enabled,
                 PropKeys.CONTROL_COLOR to InputControlDefaults.checkboxControlColor(enabled),
+                PropKeys.TEXT_COLOR to InputControlDefaults.checkboxLabelColor(enabled),
+                PropKeys.TEXT_SIZE_SP to style.fontSizeSp,
             ),
         ),
         modifier = Modifier
-            .textColor(InputControlDefaults.checkboxLabelColor(enabled))
             .rippleColor(InputControlDefaults.pressedColor())
-            .textSize(style.fontSizeSp)
             .then(modifier),
     )
 }
@@ -286,12 +283,12 @@ fun UiTreeBuilder.Switch(
                 PropKeys.ON_CHECKED_CHANGE to onCheckedChange,
                 PropKeys.ENABLED to enabled,
                 PropKeys.CONTROL_COLOR to InputControlDefaults.switchControlColor(enabled),
+                PropKeys.TEXT_COLOR to InputControlDefaults.switchLabelColor(enabled),
+                PropKeys.TEXT_SIZE_SP to style.fontSizeSp,
             ),
         ),
         modifier = Modifier
-            .textColor(InputControlDefaults.switchLabelColor(enabled))
             .rippleColor(InputControlDefaults.pressedColor())
-            .textSize(style.fontSizeSp)
             .then(modifier),
     )
 }
@@ -315,12 +312,12 @@ fun UiTreeBuilder.RadioButton(
                 PropKeys.ON_CHECKED_CHANGE to onCheckedChange,
                 PropKeys.ENABLED to enabled,
                 PropKeys.CONTROL_COLOR to InputControlDefaults.radioButtonControlColor(enabled),
+                PropKeys.TEXT_COLOR to InputControlDefaults.radioButtonLabelColor(enabled),
+                PropKeys.TEXT_SIZE_SP to style.fontSizeSp,
             ),
         ),
         modifier = Modifier
-            .textColor(InputControlDefaults.radioButtonLabelColor(enabled))
             .rippleColor(InputControlDefaults.pressedColor())
-            .textSize(style.fontSizeSp)
             .then(modifier),
     )
 }
@@ -530,6 +527,8 @@ fun UiTreeBuilder.Button(
                 put(PropKeys.TEXT, text)
                 put(PropKeys.ON_CLICK, onClick)
                 put(PropKeys.ENABLED, enabled)
+                put(PropKeys.TEXT_COLOR, ButtonDefaults.contentColor(variant, enabled))
+                put(PropKeys.TEXT_SIZE_SP, style.fontSizeSp)
                 put(PropKeys.BUTTON_ICON_SIZE, ButtonDefaults.iconSize(size))
                 put(PropKeys.BUTTON_ICON_SPACING, ButtonDefaults.iconSpacing(size))
                 leadingIcon?.let { put(PropKeys.BUTTON_LEADING_ICON, it) }
@@ -549,8 +548,6 @@ fun UiTreeBuilder.Button(
             )
             .cornerRadius(ButtonDefaults.cornerRadius())
             .rippleColor(ButtonDefaults.pressedColor())
-            .textColor(ButtonDefaults.contentColor(variant, enabled))
-            .textSize(style.fontSizeSp)
             .then(modifier),
     )
 }

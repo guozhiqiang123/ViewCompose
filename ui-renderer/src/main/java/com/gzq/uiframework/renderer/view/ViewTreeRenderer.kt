@@ -435,14 +435,16 @@ object ViewTreeRenderer {
             .lastOrNull { it is MinHeightModifierElement } as? MinHeightModifierElement
         val rippleColor = node.modifier.elements
             .lastOrNull { it is RippleColorModifierElement } as? RippleColorModifierElement
-        val textColor = node.modifier.elements
+        val legacyTextColor = node.modifier.elements
             .lastOrNull { it is TextColorModifierElement } as? TextColorModifierElement
-        val textSize = node.modifier.elements
+        val legacyTextSize = node.modifier.elements
             .lastOrNull { it is TextSizeModifierElement } as? TextSizeModifierElement
         val visibility = node.modifier.elements
             .lastOrNull { it is VisibilityModifierElement } as? VisibilityModifierElement
         val zIndex = node.modifier.elements
             .lastOrNull { it is ZIndexModifierElement } as? ZIndexModifierElement
+        val textColor = readNodeTextColor(node) ?: legacyTextColor?.color
+        val textSizeSp = readNodeTextSize(node) ?: legacyTextSize?.sizeSp
         view.alpha = alpha?.alpha ?: 1f
         if (view is DeclarativeTextFieldLayout) {
             view.visibility = when (visibility?.visibility ?: Visibility.Visible) {
@@ -466,8 +468,8 @@ object ViewTreeRenderer {
                 rippleColor = rippleColor?.color ?: DEFAULT_RIPPLE_COLOR,
                 padding = padding,
                 minHeight = minHeight?.minHeight ?: 0,
-                textColor = textColor?.color,
-                textSizeSp = textSize?.sizeSp,
+                textColor = textColor,
+                textSizeSp = textSizeSp,
             )
             return
         }
@@ -509,10 +511,10 @@ object ViewTreeRenderer {
         }
         if (view is TextView) {
             if (textColor != null) {
-                view.setTextColor(textColor.color)
+                view.setTextColor(textColor)
             }
-            if (textSize != null) {
-                view.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize.sizeSp.toFloat())
+            if (textSizeSp != null) {
+                view.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp.toFloat())
             }
         }
     }
@@ -1418,7 +1420,7 @@ object ViewTreeRenderer {
     }
 
     private fun readButtonContentColor(node: VNode): Int {
-        return readTextColor(node) ?: Color.BLACK
+        return readNodeTextColor(node) ?: readLegacyModifierTextColor(node) ?: Color.BLACK
     }
 
     private fun readImagePlaceholder(node: VNode): ImageSource.Resource? {
@@ -1437,7 +1439,15 @@ object ViewTreeRenderer {
         return node.props.values[PropKeys.PROGRESS_INDICATOR_COLOR] as? Int ?: 0xFF000000.toInt()
     }
 
-    private fun readTextColor(node: VNode): Int? {
+    private fun readNodeTextColor(node: VNode): Int? {
+        return node.props.values[PropKeys.TEXT_COLOR] as? Int
+    }
+
+    private fun readNodeTextSize(node: VNode): Int? {
+        return node.props.values[PropKeys.TEXT_SIZE_SP] as? Int
+    }
+
+    private fun readLegacyModifierTextColor(node: VNode): Int? {
         return (node.modifier.elements
             .lastOrNull { it is TextColorModifierElement } as? TextColorModifierElement)
             ?.color

@@ -5,8 +5,6 @@ import com.gzq.uiframework.renderer.modifier.BorderModifierElement
 import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
 import com.gzq.uiframework.renderer.modifier.HeightModifierElement
 import com.gzq.uiframework.renderer.modifier.RippleColorModifierElement
-import com.gzq.uiframework.renderer.modifier.TextColorModifierElement
-import com.gzq.uiframework.renderer.modifier.TextSizeModifierElement
 import com.gzq.uiframework.renderer.node.TextFieldImeAction
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
@@ -17,7 +15,7 @@ import org.junit.Test
 
 class TextFieldTest {
     @Test
-    fun `text field emits expected props and themed modifiers`() {
+    fun `text field emits expected props and themed defaults`() {
         val customTheme = UiThemeTokens(
             colors = UiColors(
                 background = 1,
@@ -63,14 +61,8 @@ class TextFieldTest {
         assertEquals(3, node.props.values[PropKeys.MAX_LINES])
         assertEquals(TextFieldImeAction.Next, node.props.values[PropKeys.IME_ACTION])
         assertEquals(customTheme.colors.textSecondary, node.props.values[PropKeys.HINT_TEXT_COLOR])
-        assertEquals(
-            customTheme.colors.textPrimary,
-            (elements.last { it is TextColorModifierElement } as TextColorModifierElement).color,
-        )
-        assertEquals(
-            customTheme.typography.body.fontSizeSp,
-            (elements.last { it is TextSizeModifierElement } as TextSizeModifierElement).sizeSp,
-        )
+        assertEquals(customTheme.colors.textPrimary, node.props.values[PropKeys.TEXT_COLOR])
+        assertEquals(customTheme.typography.body.fontSizeSp, node.props.values[PropKeys.TEXT_SIZE_SP])
         assertEquals(
             customTheme.input.fieldContainer,
             (elements.last { it is BackgroundColorModifierElement } as BackgroundColorModifierElement).color,
@@ -168,10 +160,9 @@ class TextFieldTest {
 
         val elements = tree.single().modifier.readModifierElements()
         val height = elements.last { it is HeightModifierElement } as HeightModifierElement
-        val textSize = elements.last { it is TextSizeModifierElement } as TextSizeModifierElement
 
         assertEquals(TextFieldDefaults.height(TextFieldSize.Compact), height.height)
-        assertEquals(Theme.typography.label.fontSizeSp, textSize.sizeSp)
+        assertEquals(Theme.typography.label.fontSizeSp, tree.single().props.values[PropKeys.TEXT_SIZE_SP])
     }
 
     @Test
@@ -234,7 +225,7 @@ class TextFieldTest {
     }
 
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {
-        val field = javaClass.getDeclaredField("elements")
+        val field = com.gzq.uiframework.renderer.modifier.Modifier::class.java.getDeclaredField("elements")
         field.isAccessible = true
         @Suppress("UNCHECKED_CAST")
         return field.get(this) as List<Any?>

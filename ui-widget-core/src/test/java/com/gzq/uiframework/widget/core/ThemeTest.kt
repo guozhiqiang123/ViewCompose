@@ -7,8 +7,6 @@ import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
 import com.gzq.uiframework.renderer.modifier.MinHeightModifierElement
 import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.modifier.RippleColorModifierElement
-import com.gzq.uiframework.renderer.modifier.TextColorModifierElement
-import com.gzq.uiframework.renderer.modifier.TextSizeModifierElement
 import com.gzq.uiframework.renderer.modifier.backgroundColor
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
@@ -42,16 +40,8 @@ class ThemeTest {
             }
         }
 
-        val textColor = tree.single()
-            .modifier
-            .readModifierElements()
-            .last { it is TextColorModifierElement } as TextColorModifierElement
-        assertEquals(7, textColor.color)
-        val textSize = tree.single()
-            .modifier
-            .readModifierElements()
-            .last { it is TextSizeModifierElement } as TextSizeModifierElement
-        assertEquals(18, textSize.sizeSp)
+        assertEquals(7, tree.single().props.values[PropKeys.TEXT_COLOR])
+        assertEquals(18, tree.single().props.values[PropKeys.TEXT_SIZE_SP])
     }
 
     @Test
@@ -257,15 +247,13 @@ class ThemeTest {
         val background = elements.last { it is BackgroundColorModifierElement } as BackgroundColorModifierElement
         val cornerRadius = elements.last { it is CornerRadiusModifierElement } as CornerRadiusModifierElement
         val rippleColor = elements.last { it is RippleColorModifierElement } as RippleColorModifierElement
-        val textColor = elements.last { it is TextColorModifierElement } as TextColorModifierElement
-        val textSize = elements.last { it is TextSizeModifierElement } as TextSizeModifierElement
         val minHeight = elements.last { it is MinHeightModifierElement } as MinHeightModifierElement
 
         assertEquals(customTheme.colors.primary, background.color)
         assertEquals(customTheme.shapes.controlCornerRadius, cornerRadius.radius)
         assertEquals(customTheme.interactions.pressedOverlay, rippleColor.color)
-        assertEquals(0xFFFFFFFF.toInt(), textColor.color)
-        assertEquals(customTheme.typography.label.fontSizeSp, textSize.sizeSp)
+        assertEquals(0xFFFFFFFF.toInt(), tree.single().props.values[PropKeys.TEXT_COLOR])
+        assertEquals(customTheme.typography.label.fontSizeSp, tree.single().props.values[PropKeys.TEXT_SIZE_SP])
         assertEquals(customTheme.controls.button.mediumHeight, ButtonDefaults.height())
         assertEquals(customTheme.controls.button.mediumHeight, minHeight.minHeight)
     }
@@ -284,12 +272,11 @@ class ThemeTest {
         val elements = tree.single().modifier.readModifierElements()
         val background = elements.last { it is BackgroundColorModifierElement } as BackgroundColorModifierElement
         val border = elements.last { it is BorderModifierElement } as BorderModifierElement
-        val textColor = elements.last { it is TextColorModifierElement } as TextColorModifierElement
 
         assertEquals(0x00000000, background.color)
         assertEquals(Theme.colors.divider, border.color)
         assertEquals(1.dp, border.width)
-        assertEquals(Theme.colors.textPrimary, textColor.color)
+        assertEquals(Theme.colors.textPrimary, tree.single().props.values[PropKeys.TEXT_COLOR])
     }
 
     @Test
@@ -341,11 +328,10 @@ class ThemeTest {
         val node = tree.single()
         val elements = node.modifier.readModifierElements()
         val background = elements.last { it is BackgroundColorModifierElement } as BackgroundColorModifierElement
-        val textColor = elements.last { it is TextColorModifierElement } as TextColorModifierElement
 
         assertEquals(false, node.props.values[PropKeys.ENABLED])
         assertEquals(103, background.color)
-        assertEquals(104, textColor.color)
+        assertEquals(104, node.props.values[PropKeys.TEXT_COLOR])
     }
 
     @Test
@@ -649,10 +635,8 @@ class ThemeTest {
         }
 
         val text = tree.single().children.single()
-        val textColor = text.modifier.readModifierElements()
-            .last { it is TextColorModifierElement } as TextColorModifierElement
 
-        assertEquals(SurfaceDefaults.variantContentColor(), textColor.color)
+        assertEquals(SurfaceDefaults.variantContentColor(), text.props.values[PropKeys.TEXT_COLOR])
     }
 
     @Test
@@ -857,7 +841,7 @@ class ThemeTest {
     }
 
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {
-        val field = javaClass.getDeclaredField("elements")
+        val field = com.gzq.uiframework.renderer.modifier.Modifier::class.java.getDeclaredField("elements")
         field.isAccessible = true
         @Suppress("UNCHECKED_CAST")
         return field.get(this) as List<Any?>

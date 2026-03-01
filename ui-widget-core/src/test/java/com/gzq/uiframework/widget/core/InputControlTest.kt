@@ -1,7 +1,5 @@
 package com.gzq.uiframework.widget.core
 
-import com.gzq.uiframework.renderer.modifier.TextColorModifierElement
-import com.gzq.uiframework.renderer.modifier.TextSizeModifierElement
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
 import org.junit.Assert.assertEquals
@@ -10,7 +8,7 @@ import org.junit.Test
 
 class InputControlTest {
     @Test
-    fun `checkbox emits checked props and themed text modifiers`() {
+    fun `checkbox emits checked props and themed text props`() {
         val customTheme = UiThemeTokens(
             colors = UiColors(
                 background = 1,
@@ -68,21 +66,14 @@ class InputControlTest {
         }
 
         val node = tree.single()
-        val elements = node.modifier.readModifierElements()
 
         assertEquals(NodeType.Checkbox, node.type)
         assertEquals("Enable logs", node.props.values[PropKeys.TEXT])
         assertEquals(true, node.props.values[PropKeys.CHECKED])
         assertEquals(true, node.props.values[PropKeys.ENABLED])
         assertEquals(93, node.props.values[PropKeys.CONTROL_COLOR])
-        assertEquals(
-            91,
-            (elements.last { it is TextColorModifierElement } as TextColorModifierElement).color,
-        )
-        assertEquals(
-            customTheme.typography.body.fontSizeSp,
-            (elements.last { it is TextSizeModifierElement } as TextSizeModifierElement).sizeSp,
-        )
+        assertEquals(91, node.props.values[PropKeys.TEXT_COLOR])
+        assertEquals(customTheme.typography.body.fontSizeSp, node.props.values[PropKeys.TEXT_SIZE_SP])
     }
 
     @Test
@@ -167,13 +158,9 @@ class InputControlTest {
         }
 
         val node = tree.single()
-        val elements = node.modifier.readModifierElements()
 
         assertEquals(104, node.props.values[PropKeys.CONTROL_COLOR])
-        assertEquals(
-            102,
-            (elements.last { it is TextColorModifierElement } as TextColorModifierElement).color,
-        )
+        assertEquals(102, node.props.values[PropKeys.TEXT_COLOR])
     }
 
     @Test
@@ -253,7 +240,7 @@ class InputControlTest {
     }
 
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {
-        val field = javaClass.getDeclaredField("elements")
+        val field = com.gzq.uiframework.renderer.modifier.Modifier::class.java.getDeclaredField("elements")
         field.isAccessible = true
         @Suppress("UNCHECKED_CAST")
         return field.get(this) as List<Any?>

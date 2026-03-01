@@ -2,6 +2,8 @@ package com.gzq.uiframework.renderer.node
 
 object PropKeys {
     const val TEXT: String = "text"
+    const val TEXT_COLOR: String = "text_color"
+    const val TEXT_SIZE_SP: String = "text_size_sp"
     const val TEXT_MAX_LINES: String = "text_max_lines"
     const val TEXT_OVERFLOW: String = "text_overflow"
     const val TEXT_ALIGN: String = "text_align"

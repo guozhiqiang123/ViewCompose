@@ -181,7 +181,12 @@ Theme -> Modifier -> Renderer
 - 新增能力优先回到控件参数 / `Prop`
 - 文本、输入、按钮等控件默认值链路逐步从 `Modifier` 转为 `Prop`
 
-当前状态：未开始
+当前状态：已开始
+
+当前已完成的子项：
+
+- 内置 `Text`、`Button`、`TextField`、`Checkbox`、`Switch`、`RadioButton` 的文本颜色 / 字号默认值已优先走 `Prop`
+- renderer 已实现“优先读 `Prop`，兼容旧 modifier”的过渡逻辑
 
 ### Phase 3
 
