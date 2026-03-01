@@ -74,6 +74,7 @@ class InputControlTest {
         assertEquals(93, node.props.values[PropKeys.CONTROL_COLOR])
         assertEquals(91, node.props.values[PropKeys.TEXT_COLOR])
         assertEquals(customTheme.typography.body.fontSizeSp, node.props.values[PropKeys.TEXT_SIZE_SP])
+        assertEquals(customTheme.interactions.pressedOverlay, node.props.values[PropKeys.STYLE_RIPPLE_COLOR])
     }
 
     @Test
@@ -119,6 +120,8 @@ class InputControlTest {
         assertEquals(NodeType.Switch, tree[0].children[1].type)
         assertEquals(false, tree[0].children[0].props.values[PropKeys.ENABLED])
         assertTrue(tree[0].children[1].props.values[PropKeys.ENABLED] as Boolean)
+        assertEquals(InputControlDefaults.pressedColor(), tree[0].children[0].props.values[PropKeys.STYLE_RIPPLE_COLOR])
+        assertEquals(InputControlDefaults.pressedColor(), tree[0].children[1].props.values[PropKeys.STYLE_RIPPLE_COLOR])
     }
 
     @Test
@@ -237,12 +240,5 @@ class InputControlTest {
         assertEquals(207, switchControl.props.values[PropKeys.CONTROL_COLOR])
         assertEquals(211, radioButton.props.values[PropKeys.CONTROL_COLOR])
         assertEquals(213, slider.props.values[PropKeys.CONTROL_COLOR])
-    }
-
-    private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {
-        val field = com.gzq.uiframework.renderer.modifier.Modifier::class.java.getDeclaredField("elements")
-        field.isAccessible = true
-        @Suppress("UNCHECKED_CAST")
-        return field.get(this) as List<Any?>
     }
 }

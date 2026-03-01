@@ -10,7 +10,6 @@ import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.modifier.clickable
 import com.gzq.uiframework.renderer.modifier.fillMaxWidth
 import com.gzq.uiframework.renderer.modifier.height
-import com.gzq.uiframework.renderer.modifier.rippleColor
 import com.gzq.uiframework.renderer.modifier.size
 import com.gzq.uiframework.renderer.modifier.weight
 import com.gzq.uiframework.renderer.node.ImageContentScale
@@ -246,11 +245,10 @@ fun UiTreeBuilder.Checkbox(
                 PropKeys.CONTROL_COLOR to InputControlDefaults.checkboxControlColor(enabled),
                 PropKeys.TEXT_COLOR to InputControlDefaults.checkboxLabelColor(enabled),
                 PropKeys.TEXT_SIZE_SP to style.fontSizeSp,
+                PropKeys.STYLE_RIPPLE_COLOR to InputControlDefaults.pressedColor(),
             ),
         ),
-        modifier = Modifier
-            .rippleColor(InputControlDefaults.pressedColor())
-            .then(modifier),
+        modifier = modifier,
     )
 }
 
@@ -275,11 +273,10 @@ fun UiTreeBuilder.Switch(
                 PropKeys.CONTROL_COLOR to InputControlDefaults.switchControlColor(enabled),
                 PropKeys.TEXT_COLOR to InputControlDefaults.switchLabelColor(enabled),
                 PropKeys.TEXT_SIZE_SP to style.fontSizeSp,
+                PropKeys.STYLE_RIPPLE_COLOR to InputControlDefaults.pressedColor(),
             ),
         ),
-        modifier = Modifier
-            .rippleColor(InputControlDefaults.pressedColor())
-            .then(modifier),
+        modifier = modifier,
     )
 }
 
@@ -304,11 +301,10 @@ fun UiTreeBuilder.RadioButton(
                 PropKeys.CONTROL_COLOR to InputControlDefaults.radioButtonControlColor(enabled),
                 PropKeys.TEXT_COLOR to InputControlDefaults.radioButtonLabelColor(enabled),
                 PropKeys.TEXT_SIZE_SP to style.fontSizeSp,
+                PropKeys.STYLE_RIPPLE_COLOR to InputControlDefaults.pressedColor(),
             ),
         ),
-        modifier = Modifier
-            .rippleColor(InputControlDefaults.pressedColor())
-            .then(modifier),
+        modifier = modifier,
     )
 }
 
