@@ -36,10 +36,11 @@ import com.gzq.uiframework.renderer.node.ImageSource
 
 internal fun UiTreeBuilder.LayoutPage() {
     val boxTapState = remember { mutableStateOf(0) }
+    val benchmarkState = remember { mutableStateOf(false) }
     val useLongLabelsState = remember { mutableStateOf(false) }
     val selectedPageState = remember { mutableStateOf(0) }
     val pageItems = when (selectedPageState.value) {
-        0 -> listOf("page", "page_filter", "row", "column", "verify")
+        0 -> listOf("page", "page_filter", "benchmark", "row", "column", "verify")
         1 -> listOf("page", "page_filter", "box", "verify")
         2 -> listOf("page", "page_filter", "edge", "verify")
         else -> listOf("page", "page_filter", "verify")
@@ -61,6 +62,57 @@ internal fun UiTreeBuilder.LayoutPage() {
                 selectedIndex = selectedPageState.value,
                 onSelectionChange = { selectedPageState.value = it },
             )
+
+            "benchmark" -> ScenarioSection(
+                kind = ScenarioKind.Benchmark,
+                title = "Layouts Benchmark Anchor",
+                subtitle = "This block sits on the default Linear page so layout benchmarks do not depend on segmented filter accessibility.",
+            ) {
+                BenchmarkRouteCallout(
+                    route = "Launcher -> MainActivity(extra=layouts) -> Layouts -> Layouts Benchmark Anchor",
+                    stableTargets = listOf(
+                        "Layouts Benchmark Compact / Layouts Benchmark Expanded",
+                        "Reset Layouts Benchmark",
+                    ),
+                )
+                Button(
+                    text = if (benchmarkState.value) {
+                        "Layouts Benchmark Expanded"
+                    } else {
+                        "Layouts Benchmark Compact"
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        benchmarkState.value = !benchmarkState.value
+                    },
+                )
+                Row(
+                    spacing = 8.dp,
+                    verticalAlignment = VerticalAlignment.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .backgroundColor(SurfaceDefaults.backgroundColor())
+                        .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                        .padding(12.dp),
+                ) {
+                    Text(text = "Leading")
+                    Button(
+                        text = if (benchmarkState.value) {
+                            "Expanded benchmark label that should still keep sibling layout stable"
+                        } else {
+                            "Compact"
+                        },
+                        modifier = Modifier.weight(1f),
+                    )
+                    Button(
+                        text = "Reset Layouts Benchmark",
+                        variant = ButtonVariant.Outlined,
+                        onClick = {
+                            benchmarkState.value = false
+                        },
+                    )
+                }
+            }
 
             "row" -> ScenarioSection(
                 kind = ScenarioKind.Core,

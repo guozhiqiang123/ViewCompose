@@ -56,6 +56,50 @@ class DemoInteractionBenchmark {
     }
 
     @Test
+    fun foundationsBenchmarkAnchor() = benchmarkRule.measureRepeated(
+        packageName = TARGET_PACKAGE,
+        metrics = listOf(FrameTimingMetric()),
+        compilationMode = CompilationMode.Partial(),
+        iterations = DEFAULT_ITERATIONS,
+        startupMode = StartupMode.WARM,
+        setupBlock = {
+            startDemoActivityAndWait(
+                moduleKey = "foundations",
+                expectedText = "Foundations",
+            )
+            waitForText("Foundations Benchmark Off")
+            waitForText("Reset Foundations Benchmark")
+        },
+    ) {
+        clickText("Foundations Benchmark Off")
+        waitForText("Foundations Benchmark On")
+        clickText("Reset Foundations Benchmark")
+        waitForText("Foundations Benchmark Off")
+    }
+
+    @Test
+    fun layoutsBenchmarkAnchor() = benchmarkRule.measureRepeated(
+        packageName = TARGET_PACKAGE,
+        metrics = listOf(FrameTimingMetric()),
+        compilationMode = CompilationMode.Partial(),
+        iterations = DEFAULT_ITERATIONS,
+        startupMode = StartupMode.WARM,
+        setupBlock = {
+            startDemoActivityAndWait(
+                moduleKey = "layouts",
+                expectedText = "Layouts",
+            )
+            waitForText("Layouts Benchmark Compact")
+            waitForText("Reset Layouts Benchmark")
+        },
+    ) {
+        clickText("Layouts Benchmark Compact")
+        waitForText("Layouts Benchmark Expanded")
+        clickText("Reset Layouts Benchmark")
+        waitForText("Layouts Benchmark Compact")
+    }
+
+    @Test
     fun collectionsScroll() = benchmarkRule.measureRepeated(
         packageName = TARGET_PACKAGE,
         metrics = listOf(FrameTimingMetric()),

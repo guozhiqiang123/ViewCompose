@@ -152,10 +152,15 @@ Compose 官方文档也明确把这类模式视为不理想，因为它会多跑
 当前判断：
 
 1. 路由基础设施已完成
-2. `Foundations / Layouts` 的模块专属 benchmark 场景还没有纳入稳定基线
-3. 原因不是路由缺失，而是这些页面里适合 UIAutomator 命中的稳定交互锚点还不足，尤其是 filter / button 文本在自动化上仍有不稳定因素
+2. `Foundations / Layouts` 已补齐 benchmark-only stable anchors，并已纳入稳定基线
+3. 当前模块级 benchmark 统一走：
+   - `Launcher -> MainActivity(extra=module_key) -> Module Activity -> Benchmark Anchor`
+4. 后续新增模块 benchmark 时，不应再依赖目录页滚动或分段过滤器命中，而应优先补短文案、固定位置、可重置的 benchmark anchor
 
-后续应优先补“benchmark-only stable anchors”，再把这两个模块正式纳入基线。
+当前已稳定的模块级场景：
+
+1. `Foundations Benchmark Anchor`
+2. `Layouts Benchmark Anchor`
 
 后续在真机运行宏基准的主要命令：
 
@@ -188,6 +193,14 @@ Compose 官方文档也明确把这类模式视为不理想，因为它会多跑
    - `frameDurationCpuMs` P50 `2.7ms`
    - `frameOverrunMs` P50 `-15.2ms`
    - 场景对应 `State -> Patch Stress -> Open diagnostics renderer`，用于验证 patch 之后进入 diagnostics renderer 的人工测试链路和 benchmark 链路一致
+7. `foundationsBenchmarkAnchor`
+   - `frameDurationCpuMs` P50 `2.6ms`
+   - `frameOverrunMs` P50 `-14.4ms`
+   - 场景对应 `Launcher -> MainActivity(extra=foundations) -> Foundations -> Foundations Benchmark Anchor`
+8. `layoutsBenchmarkAnchor`
+   - `frameDurationCpuMs` P50 `2.7ms`
+   - `frameOverrunMs` P50 `-14.4ms`
+   - 场景对应 `Launcher -> MainActivity(extra=layouts) -> Layouts -> Layouts Benchmark Anchor`
 
 相关产物位置：
 

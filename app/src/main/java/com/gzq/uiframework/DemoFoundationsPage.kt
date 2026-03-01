@@ -45,8 +45,9 @@ internal fun UiTreeBuilder.OverviewPage(
     onOpenCapability: (Class<out androidx.appcompat.app.AppCompatActivity>) -> Unit,
 ) {
     val selectedPageState = remember { mutableStateOf(0) }
+    val benchmarkState = remember { mutableStateOf(false) }
     val pageItems = when (selectedPageState.value) {
-        0 -> listOf("page", "page_filter", "intro", "jump", "surface", "verify")
+        0 -> listOf("page", "page_filter", "benchmark", "intro", "jump", "surface", "verify")
         1 -> listOf("page", "page_filter", "theme", "overrides", "verify")
         else -> listOf("page", "page_filter", "progress", "media", "verify")
     }
@@ -79,6 +80,39 @@ internal fun UiTreeBuilder.OverviewPage(
                 Text(
                     text = "The pager itself is also rendered through the framework as a mapped virtual control.",
                     color = TextDefaults.secondaryColor(),
+                )
+            }
+
+            "benchmark" -> ScenarioSection(
+                kind = ScenarioKind.Benchmark,
+                title = "Foundations Benchmark Anchor",
+                subtitle = "This block stays on the default page and uses short, stable labels so macrobenchmark can enter Foundations without segmented-page drift.",
+            ) {
+                BenchmarkRouteCallout(
+                    route = "Launcher -> MainActivity(extra=foundations) -> Foundations -> Foundations Benchmark Anchor",
+                    stableTargets = listOf(
+                        "Foundations Benchmark Off / Foundations Benchmark On",
+                        "Reset Foundations Benchmark",
+                    ),
+                )
+                Button(
+                    text = if (benchmarkState.value) {
+                        "Foundations Benchmark On"
+                    } else {
+                        "Foundations Benchmark Off"
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        benchmarkState.value = !benchmarkState.value
+                    },
+                )
+                Button(
+                    text = "Reset Foundations Benchmark",
+                    variant = ButtonVariant.Outlined,
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        benchmarkState.value = false
+                    },
                 )
             }
 

@@ -1,7 +1,6 @@
 package com.gzq.uiframework
 
 import android.content.Intent
-import android.os.Bundle
 import android.view.ViewGroup
 import com.gzq.uiframework.widget.core.UiTreeBuilder
 
@@ -13,15 +12,10 @@ class MainActivity : DemoRenderActivity() {
     override val demoSubtitle: String =
         "Module catalog aligned with Compose Tutorials categories and optimized for manual testing plus benchmark entry."
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun redirectTargetIntent(): Intent? {
         val moduleKey = intent?.getStringExtra(EXTRA_DEMO_MODULE_KEY)
         val targetActivity = moduleKey?.let(::findAvailableDemoModuleByKey)?.activityClass
-        if (targetActivity != null) {
-            startActivity(Intent(this, targetActivity))
-            finish()
-            return
-        }
-        super.onCreate(savedInstanceState)
+        return targetActivity?.let { Intent(this, it) }
     }
 
     override fun buildDemoContent(
