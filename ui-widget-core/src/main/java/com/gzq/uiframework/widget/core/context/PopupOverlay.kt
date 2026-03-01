@@ -1,7 +1,5 @@
 package com.gzq.uiframework.widget.core
 
-import com.gzq.uiframework.renderer.node.VNode
-
 enum class PopupAlignment {
     BelowStart,
     BelowCenter,
@@ -47,5 +45,5 @@ class PopupOverlaySpec(
 }
 
 data class PopupOverlayContent(
-    val nodes: List<VNode>,
+    val surface: OverlaySurfaceContent,
 )

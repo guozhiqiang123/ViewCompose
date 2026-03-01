@@ -849,7 +849,7 @@ fun UiTreeBuilder.Dialog(
                 onDismissRequest = onDismissRequest,
             ),
             contentToken = DialogOverlayContent(
-                nodes = buildVNodeTree(content),
+                surface = captureOverlaySurfaceContent(content),
             ),
         ),
     )
@@ -884,7 +884,7 @@ fun UiTreeBuilder.Popup(
                 onDismissRequest = onDismissRequest,
             ),
             contentToken = PopupOverlayContent(
-                nodes = buildVNodeTree(content),
+                surface = captureOverlaySurfaceContent(content),
             ),
         ),
     )

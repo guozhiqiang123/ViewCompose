@@ -25,23 +25,26 @@ class PopupDslTest {
 
         assertEquals(emptyList<VNode>(), tree)
         assertEquals(
-            listOf(
-                OverlayRequest(
-                    key = "feedback_popup",
-                    type = OverlayType.Popup,
-                    payload = PopupOverlaySpec(
-                        anchorId = "feedback_popup_anchor",
-                        alignment = PopupAlignment.AboveEnd,
-                        offsetY = 8.dp,
-                    ),
-                    contentToken = PopupOverlayContent(
-                        nodes = buildVNodeTree {
-                            Text(text = "Popup content")
-                        },
-                    ),
-                ),
+            1,
+            store.currentRequests().size,
+        )
+        val request = store.currentRequests().single()
+        assertEquals("feedback_popup", request.key)
+        assertEquals(OverlayType.Popup, request.type)
+        assertEquals(
+            PopupOverlaySpec(
+                anchorId = "feedback_popup_anchor",
+                alignment = PopupAlignment.AboveEnd,
+                offsetY = 8.dp,
             ),
-            store.currentRequests(),
+            request.payload,
+        )
+        val content = request.contentToken as PopupOverlayContent
+        assertEquals(
+            buildVNodeTree {
+                Text(text = "Popup content")
+            },
+            content.surface.buildNodes(),
         )
     }
 

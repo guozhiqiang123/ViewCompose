@@ -26,24 +26,27 @@ class DialogDslTest {
 
         assertEquals(emptyList<VNode>(), tree)
         assertEquals(
-            listOf(
-                OverlayRequest(
-                    key = "settings_dialog",
-                    type = OverlayType.Dialog,
-                    payload = DialogOverlaySpec(
-                        dismissOnBackPress = false,
-                        dismissOnClickOutside = false,
-                        position = DialogPosition.Bottom,
-                        scrimOpacity = 0.48f,
-                    ),
-                    contentToken = DialogOverlayContent(
-                        nodes = buildVNodeTree {
-                            Text(text = "Dialog body")
-                        },
-                    ),
-                ),
+            1,
+            store.currentRequests().size,
+        )
+        val request = store.currentRequests().single()
+        assertEquals("settings_dialog", request.key)
+        assertEquals(OverlayType.Dialog, request.type)
+        assertEquals(
+            DialogOverlaySpec(
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false,
+                position = DialogPosition.Bottom,
+                scrimOpacity = 0.48f,
             ),
-            store.currentRequests(),
+            request.payload,
+        )
+        val content = request.contentToken as DialogOverlayContent
+        assertEquals(
+            buildVNodeTree {
+                Text(text = "Dialog body")
+            },
+            content.surface.buildNodes(),
         )
     }
 

@@ -141,7 +141,7 @@ class PopupOverlayHostTest {
             type = OverlayType.Popup,
             payload = spec,
             contentToken = PopupOverlayContent(
-                nodes = buildVNodeTree {
+                surface = captureOverlaySurfaceContent {
                     Text(text = message)
                 },
             ),
@@ -156,7 +156,7 @@ class PopupOverlayHostTest {
             spec: PopupOverlaySpec,
             content: PopupOverlayContent,
         ): PopupOverlayHandle {
-            val textNode = content.nodes.single()
+            val textNode = content.surface.buildNodes().single()
             val message = textNode.props[TypedPropKeys.Text] as? String ?: ""
             events += "show:${entryId.sessionId.value}:${entryId.requestKey}:$message"
             return RecordingPopupHandle(
@@ -174,7 +174,7 @@ class PopupOverlayHostTest {
             spec: PopupOverlaySpec,
             content: PopupOverlayContent,
         ) {
-            val textNode = content.nodes.single()
+            val textNode = content.surface.buildNodes().single()
             val message = textNode.props[TypedPropKeys.Text] as? String ?: ""
             events += "update:${entryId.sessionId.value}:${entryId.requestKey}:$message"
         }

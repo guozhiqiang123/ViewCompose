@@ -72,6 +72,12 @@
 | `:ui-image-coil` | 可选远程图片加载桥接 | 角色清晰，边界合理 |
 | `:app` | demo、人工测试、主题切换、回归入口 | 合理 |
 
+当前 overlay 相关补充判断：
+
+- `Snackbar` / `Toast` 继续走宿主 feedback request 模型
+- `Dialog` / `PopupWindow` 已经切到独立 `OverlaySurfaceSession`，不再由 Android presenter 直接 patch `VNode` 列表
+- 这让 overlay 子树拥有明确的 session、remember/effect/local 边界，和普通页面主树分离
+
 ### 4.2 当前目录结构
 
 当前目录已经按职责重新整理。

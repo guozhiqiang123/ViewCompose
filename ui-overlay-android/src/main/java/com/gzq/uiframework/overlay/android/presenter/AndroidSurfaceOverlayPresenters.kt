@@ -13,8 +13,6 @@ import android.widget.FrameLayout
 import android.widget.PopupWindow
 import androidx.core.view.doOnLayout
 import com.gzq.uiframework.renderer.R
-import com.gzq.uiframework.renderer.view.tree.MountedNode
-import com.gzq.uiframework.renderer.view.tree.ViewTreeRenderer
 import com.gzq.uiframework.widget.core.AndroidEnvironmentBridge
 import com.gzq.uiframework.widget.core.DialogOverlayContent
 import com.gzq.uiframework.widget.core.DialogOverlayHandle
@@ -27,6 +25,8 @@ import com.gzq.uiframework.widget.core.PopupOverlayContent
 import com.gzq.uiframework.widget.core.PopupOverlayHandle
 import com.gzq.uiframework.widget.core.PopupOverlayPresenter
 import com.gzq.uiframework.widget.core.PopupOverlaySpec
+import com.gzq.uiframework.widget.core.OverlaySurfaceSession
+import com.gzq.uiframework.widget.core.createOverlaySurfaceSession
 
 class AndroidDialogOverlayPresenter(
     private val rootView: View,
@@ -80,7 +80,10 @@ private class AndroidDialogOverlayHandle(
         setContentView(dialogContainer)
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
-    private var mountedNodes: List<MountedNode> = emptyList()
+    private val surfaceSession: OverlaySurfaceSession = createOverlaySurfaceSession(
+        container = dialogContainer,
+        content = content.surface,
+    )
     private var currentSpec = spec
     private var programmaticDismiss = false
 
@@ -119,12 +122,7 @@ private class AndroidDialogOverlayHandle(
                 clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             }
         }
-        val renderResult = ViewTreeRenderer.renderInto(
-            container = dialogContainer,
-            previous = mountedNodes,
-            nodes = content.nodes,
-        )
-        mountedNodes = renderResult.mountedNodes
+        surfaceSession.update(content.surface)
         if (!dialog.isShowing) {
             dialog.show()
         }
@@ -133,11 +131,7 @@ private class AndroidDialogOverlayHandle(
     override fun dismiss() {
         programmaticDismiss = true
         dialog.setOnDismissListener(null)
-        ViewTreeRenderer.disposeMounted(
-            container = dialogContainer,
-            mountedNodes = mountedNodes,
-        )
-        mountedNodes = emptyList()
+        surfaceSession.dispose()
         if (dialog.isShowing) {
             dialog.dismiss()
         }
@@ -167,7 +161,10 @@ private class AndroidPopupOverlayHandle(
         setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         elevation = density.dp(12).toFloat()
     }
-    private var mountedNodes: List<MountedNode> = emptyList()
+    private val surfaceSession: OverlaySurfaceSession = createOverlaySurfaceSession(
+        container = popupContainer,
+        content = content.surface,
+    )
     private var currentSpec = spec
     private var programmaticDismiss = false
 
@@ -190,12 +187,7 @@ private class AndroidPopupOverlayHandle(
         currentSpec = spec
         popupWindow.isFocusable = spec.focusable
         popupWindow.isOutsideTouchable = spec.dismissOnClickOutside
-        val renderResult = ViewTreeRenderer.renderInto(
-            container = popupContainer,
-            previous = mountedNodes,
-            nodes = content.nodes,
-        )
-        mountedNodes = renderResult.mountedNodes
+        surfaceSession.update(content.surface)
         val anchor = rootView.findAnchorTarget(spec.anchorId)
         if (anchor == null) {
             if (popupWindow.isShowing) {
@@ -232,11 +224,7 @@ private class AndroidPopupOverlayHandle(
     override fun dismiss() {
         programmaticDismiss = true
         popupWindow.setOnDismissListener(null)
-        ViewTreeRenderer.disposeMounted(
-            container = popupContainer,
-            mountedNodes = mountedNodes,
-        )
-        mountedNodes = emptyList()
+        surfaceSession.dispose()
         if (popupWindow.isShowing) {
             popupWindow.dismiss()
         }

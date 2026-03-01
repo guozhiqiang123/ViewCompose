@@ -125,6 +125,11 @@
 3. surface 内部仍使用 `RenderSession + ViewTreeRenderer`
 4. 外层 session 更新时，overlay content 也要刷新
 
+当前状态更新：
+
+- `Dialog` / `PopupWindow` 已经按这条路线落地为 `OverlaySurfaceSession`
+- 后续工作重点转到 surface 约束、定位和多 overlay 管理，而不是再回退到 presenter 直连 `ViewTreeRenderer`
+
 这意味着它们虽然不是 `LazyColumn/TabPager` 那种延迟 session 容器，但同样属于：
 
 > 需要单独设计刷新语义的宿主级容器。

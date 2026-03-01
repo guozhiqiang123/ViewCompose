@@ -1,7 +1,5 @@
 package com.gzq.uiframework.widget.core
 
-import com.gzq.uiframework.renderer.node.VNode
-
 enum class DialogPosition {
     Top,
     Center,
@@ -38,5 +36,5 @@ class DialogOverlaySpec(
 }
 
 data class DialogOverlayContent(
-    val nodes: List<VNode>,
+    val surface: OverlaySurfaceContent,
 )
