@@ -29,6 +29,7 @@ class RenderSession internal constructor(
     private val rememberStore = RememberStore()
     private val effectStore = EffectStore()
     private val sideEffectStore = SideEffectStore()
+    private val overlayRequestStore = OverlayRequestStore()
 
     fun render() {
         renderScheduled = false
@@ -38,10 +39,12 @@ class RenderSession internal constructor(
         ) {
             var builtTree: List<com.gzq.uiframework.renderer.node.VNode> = emptyList()
             LocalContext.provide(LocalOverlayHost, overlayHost) {
-                SideEffectContext.withStore(sideEffectStore) {
-                    EffectContext.withStore(effectStore) {
-                        RememberContext.withStore(rememberStore) {
-                            builtTree = buildVNodeTree(content)
+                OverlayRequestContext.withStore(overlayRequestStore) {
+                    SideEffectContext.withStore(sideEffectStore) {
+                        EffectContext.withStore(effectStore) {
+                            RememberContext.withStore(rememberStore) {
+                                builtTree = buildVNodeTree(content)
+                            }
                         }
                     }
                 }
@@ -61,6 +64,10 @@ class RenderSession internal constructor(
             },
         )
         mountedNodes = renderResult.mountedNodes
+        overlayHost.commit(
+            sessionId = overlaySessionId,
+            requests = overlayRequestStore.currentRequests(),
+        )
         onRenderStats?.invoke(renderResult.stats)
         onRenderResult?.invoke(renderResult)
         effectStore.commit()
