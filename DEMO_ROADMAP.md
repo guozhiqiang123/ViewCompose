@@ -22,13 +22,13 @@
 
 ## 2. 当前问题
 
-当前 demo 已经完成第一轮多 Activity 重构，但仍然有明显问题：
+当前 demo 已经完成第一轮多 Activity 重构，并且已实现模块基本切到了统一的 scenario 模板，但仍然有明显问题：
 
-1. 模块 Activity 已经拆出来了，但章内 page 和 scenario 仍然有不少能力堆叠，定位问题还不够直接。
-2. 一部分页面仍然偏 sample 展示，而不是 benchmark 友好的 testbed。
-3. 目前只有已实现模块独立成章，planned 模块还停留在目录卡片，能力地图仍需持续补齐。
-4. benchmark 入口已经稳定到“目录页 -> 模块 Activity”，但页面内部的手测路径还需要继续标准化。
-5. demo 与 Compose 的能力差距虽然已经文档化，但场景覆盖还没完全对齐文档结构。
+1. 虽然页面已经统一到 `Guide / Core / Visual / Stress / Benchmark` 模板，但部分章节仍然偏 sample 展示，而不是更强的 testbed。
+2. 目前只有已实现模块独立成章，planned 模块还停留在目录卡片，能力地图仍需持续补齐。
+3. benchmark 入口已经稳定到“目录页 -> 模块 Activity”，但不是每个章节都已经有同等级的 benchmark-friendly scenario。
+4. demo 与 Compose 的能力差距虽然已经文档化，但场景覆盖还没完全对齐文档结构。
+5. Diagnostics 仍然更像调试面板，而不是完整 inspector。
 
 ## 3. 设计原则
 
@@ -80,6 +80,12 @@
 
 这样后续你人工回归时不需要再靠记忆判断。
 
+当前状态：
+
+- 已实现模块统一使用 `ScenarioSection`
+- 推荐场景类型固定为 `Guide / Core / Visual / Stress / Benchmark`
+- 后续新增页面不应再回退成纯 `DemoSection` 堆砌
+
 ### 3.5 Demo 结构要先于控件数量
 
 后续即使继续新增控件，也不应该先加更多零散 section。
@@ -109,6 +115,7 @@
 当前状态：
 
 - 已拆成独立 `FoundationsActivity`
+- 已统一到 scenario 模板
 - 仍需要继续把 scenario 变成更强的人工测试入口
 
 ### 4.2 Chapter 2: State & Effects
@@ -126,6 +133,7 @@
 当前状态：
 
 - 已拆成独立 `StateActivity`
+- 已统一到 scenario 模板
 - 已有 patch stress 路径
 - 仍需继续丰富 effect / identity 压力场景
 
@@ -144,6 +152,7 @@
 当前状态：
 
 - 已拆成独立 `LayoutsActivity`
+- 已统一到 scenario 模板
 - 已有布局压力页
 - 仍需继续细化热点容器对照场景
 
@@ -162,6 +171,7 @@
 当前状态：
 
 - 已拆成独立 `InputActivity`
+- 已统一到 scenario 模板
 - `P1` 语义已基本到位
 - 还缺 focus、表单态、校验态的系统 demo
 
@@ -180,6 +190,7 @@
 当前状态：
 
 - 已拆成独立 `CollectionsActivity`
+- 已统一到 scenario 模板
 - `LazyColumn` 可用
 - `TabPager` 已实现但应视为实验能力
 - 还缺 `LazyRow / LazyGrid / sticky headers / list state`
@@ -265,6 +276,7 @@
 当前状态：
 
 - 已拆成独立 `InteropActivity`
+- 已统一到 scenario 模板
 - `AndroidView` 已有
 - 这是当前框架相对 Compose 的现实优势
 
@@ -283,6 +295,7 @@
 当前状态：
 
 - 已拆成独立 `DiagnosticsActivity`
+- 已统一到 scenario 模板
 - 已有 render stats、warning、layout pass counters
 - 仍需继续补 inspector 级可视化
 
