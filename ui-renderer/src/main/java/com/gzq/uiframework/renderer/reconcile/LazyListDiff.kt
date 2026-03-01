@@ -64,8 +64,9 @@ object LazyListDiff {
                     working.add(index, moved)
                     updates += LazyListUpdate.Move(currentIndex, index)
                 }
-                if (working[index] != item) {
-                    working[index] = item
+                val previousItem = working[index]
+                working[index] = item
+                if (previousItem != item) {
                     updates += LazyListUpdate.Change(index, item)
                 }
             }

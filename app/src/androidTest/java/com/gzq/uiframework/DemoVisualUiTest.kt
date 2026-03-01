@@ -233,10 +233,13 @@ class DemoVisualUiTest {
             scenario.onActivity { activity ->
                 val remove = activity.requireTextView("Remove X")
                 val rotate = activity.requireTextView("Rotate Order")
+                val activeIds = activity.requireTextView("Active ids: X -> A -> B -> C -> D")
                 assertViewFullyVisible(remove)
                 assertViewFullyVisible(rotate)
+                assertViewFullyVisible(activeIds)
                 assertTextNotEllipsized(remove)
                 assertTextNotEllipsized(rotate)
+                assertTextNotEllipsized(activeIds)
             }
         }
     }

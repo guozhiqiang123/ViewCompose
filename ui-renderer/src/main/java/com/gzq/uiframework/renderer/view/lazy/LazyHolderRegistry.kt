@@ -32,4 +32,8 @@ internal class LazyHolderRegistry<T : Any>(
         boundHolders.clear()
         attachedHolders.clear()
     }
+
+    fun forEachBound(action: (T) -> Unit) {
+        boundHolders.toList().forEach(action)
+    }
 }

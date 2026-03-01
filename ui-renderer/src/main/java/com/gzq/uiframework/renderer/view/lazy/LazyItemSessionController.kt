@@ -18,6 +18,11 @@ internal class LazyItemSessionController(
             session = createSession(item)
             currentKey = item.key
             currentContentToken = item.contentToken
+            item.sessionUpdater?.invoke(session!!)
+        } else if (currentContentToken == item.contentToken) {
+            session?.let { currentSession ->
+                item.sessionUpdater?.invoke(currentSession)
+            }
         } else if (currentContentToken != item.contentToken) {
             val currentSession = session
             if (currentSession != null && item.sessionUpdater != null) {

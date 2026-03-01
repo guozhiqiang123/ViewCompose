@@ -24,6 +24,43 @@ class LazyItemSessionControllerTest {
     }
 
     @Test
+    fun `refreshes existing session updater when key and content token are unchanged`() {
+        val events = mutableListOf<String>()
+        val controller = createController(events)
+
+        controller.bind(
+            item(
+                key = "A",
+                contentToken = 1,
+                sessionUpdater = { session ->
+                    (session as RecordingSession).updateLabel("A:1:first")
+                },
+            ),
+        )
+        controller.bind(
+            item(
+                key = "A",
+                contentToken = 1,
+                sessionUpdater = { session ->
+                    (session as RecordingSession).updateLabel("A:1:second")
+                },
+            ),
+        )
+
+        assertEquals(
+            listOf(
+                "clear",
+                "create:A:1",
+                "update:A:1:first",
+                "render:A:1:first",
+                "update:A:1:second",
+                "render:A:1:second",
+            ),
+            events,
+        )
+    }
+
+    @Test
     fun `replaces session when content token changes`() {
         val events = mutableListOf<String>()
         val controller = createController(events)
@@ -73,6 +110,7 @@ class LazyItemSessionControllerTest {
             listOf(
                 "clear",
                 "create:A:1",
+                "update:A:1",
                 "render:A:1",
                 "update:A:2",
                 "render:A:2",

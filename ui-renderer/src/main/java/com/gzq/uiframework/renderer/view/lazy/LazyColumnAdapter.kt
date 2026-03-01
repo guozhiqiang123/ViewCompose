@@ -84,6 +84,14 @@ internal class LazyColumnAdapter : RecyclerView.Adapter<LazyColumnViewHolder>() 
                 LazyListUpdate.ReloadAll -> notifyDataSetChanged()
             }
         }
+        if (result.updates.isEmpty()) {
+            holderRegistry.forEachBound { holder ->
+                val position = holder.bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION && position < this.items.size) {
+                    holder.bind(this.items[position])
+                }
+            }
+        }
     }
 
     private fun warnAboutIdentityIssues(items: List<LazyListItem>) {

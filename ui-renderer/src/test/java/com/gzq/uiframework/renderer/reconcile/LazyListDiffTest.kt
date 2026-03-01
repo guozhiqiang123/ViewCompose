@@ -4,10 +4,8 @@ import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.LazyListItemSession
 import com.gzq.uiframework.renderer.node.LazyListItemSessionFactory
-import com.gzq.uiframework.renderer.node.NodeType
-import com.gzq.uiframework.renderer.node.Props
-import com.gzq.uiframework.renderer.node.VNode
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertSame
 import org.junit.Test
 
 class LazyListDiffTest {
@@ -55,10 +53,27 @@ class LazyListDiffTest {
         assertEquals(listOf(LazyListUpdate.ReloadAll), result.updates)
     }
 
-    private fun item(key: String?): LazyListItem {
+    @Test
+    fun `keeps latest lazy item instances when keyed diff produces no updates`() {
+        val previous = item("A", contentToken = "stable")
+        val next = item("A", contentToken = "stable")
+
+        val result = LazyListDiff.calculate(
+            previous = listOf(previous),
+            next = listOf(next),
+        )
+
+        assertEquals(emptyList<LazyListUpdate>(), result.updates)
+        assertSame(next, result.items.first())
+    }
+
+    private fun item(
+        key: String?,
+        contentToken: Any? = key,
+    ): LazyListItem {
         return LazyListItem(
             key = key,
-            contentToken = key,
+            contentToken = contentToken,
             sessionFactory = LazyListItemSessionFactory {
                 object : LazyListItemSession {
                     override fun render() = Unit
