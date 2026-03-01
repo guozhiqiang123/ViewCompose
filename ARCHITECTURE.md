@@ -114,6 +114,14 @@ renderer/
     input/
     media/
     spec/
+      action/
+      collection/
+      container/
+      content/
+      core/
+      feedback/
+      input/
+      media/
   reconcile/
   view/
     container/
@@ -131,7 +139,14 @@ renderer/
 - `node/collection/` 放列表、tab、segmented control 之类集合型节点数据
 - `node/input/` 放文本输入、IME、文本 primitive
 - `node/media/` 放图片 source、remote image request/loader、缩放策略
-- `node/spec/` 放 typed `NodeSpec`
+- `node/spec/core/` 放 `NodeSpec` 基础契约
+- `node/spec/content/` 放文本、divider 等内容节点 spec
+- `node/spec/input/` 放 text field、toggle、slider
+- `node/spec/container/` 放 `Box`、`Row`、`Column`、`AndroidView`
+- `node/spec/action/` 放 button、icon button、segmented control
+- `node/spec/media/` 放 image 相关 spec
+- `node/spec/collection/` 放 `LazyColumn`、`TabPager`
+- `node/spec/feedback/` 放 progress indicator 等反馈节点 spec
 - `reconcile/` 放 patch / diff
 - `view/container/` 放自定义 View 容器
 - `view/lazy/` 放 `LazyColumn` 的 adapter/session/controller
@@ -275,7 +290,8 @@ flowchart TD
 剩余问题：
 
 - `ViewTreeRenderer` 仍然是核心复杂度热点，但“modifier 应用 + layout params + mounted dispose + patch pipeline + binder 配套”已经不再全部挤在单文件里
-- `spec/` 目前仍按控件类型平铺，后续如果继续增长，可以再按 `content/input/container/media` 细分
+- `spec/` 已经按语义目录拆开，当前层次基本合理
+- 后续如果继续增长，重点会转到“哪些 spec 仍可进一步统一”而不是继续搬目录
 
 ### `ui-widget-core`
 
