@@ -70,4 +70,29 @@ class DemoInteractionBenchmark {
         swipePageUp()
         swipePageUp()
     }
+
+    @Test
+    fun patchUpdates() = benchmarkRule.measureRepeated(
+        packageName = TARGET_PACKAGE,
+        metrics = listOf(FrameTimingMetric()),
+        compilationMode = CompilationMode.Partial(),
+        iterations = DEFAULT_ITERATIONS,
+        startupMode = StartupMode.WARM,
+        setupBlock = {
+            startDemoAndWait()
+            clickText("State")
+            waitForText("Patch")
+            clickText("Patch")
+            waitForText("Patch Stress")
+            waitForText("Advance patch state 0")
+            waitForText("Reset patch state")
+        },
+    ) {
+        clickText("Advance patch state 0")
+        waitForText("Advance patch state 1")
+        clickText("Advance patch state 1")
+        waitForText("Advance patch state 2")
+        clickText("Reset patch state")
+        waitForText("Advance patch state 0")
+    }
 }

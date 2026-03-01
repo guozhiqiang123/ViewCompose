@@ -14,8 +14,11 @@ import com.gzq.uiframework.widget.core.Button
 import com.gzq.uiframework.widget.core.Column
 import com.gzq.uiframework.widget.core.LazyColumn
 import com.gzq.uiframework.widget.core.Row
+import com.gzq.uiframework.widget.core.SegmentedControl
 import com.gzq.uiframework.widget.core.SurfaceDefaults
+import com.gzq.uiframework.widget.core.TabPager
 import com.gzq.uiframework.widget.core.Text
+import com.gzq.uiframework.widget.core.TextField
 import com.gzq.uiframework.widget.core.TextDefaults
 import com.gzq.uiframework.widget.core.UiTextStyle
 import com.gzq.uiframework.widget.core.UiTreeBuilder
@@ -29,6 +32,10 @@ internal fun UiTreeBuilder.StatePage() {
     val clickCountState = remember { mutableStateOf(0) }
     val panelVisibleState = remember { mutableStateOf(true) }
     val selectedPageState = remember { mutableStateOf(0) }
+    val patchStepState = remember { mutableStateOf(0) }
+    val patchFieldValueState = remember { mutableStateOf("value-0") }
+    val patchSegmentIndexState = remember { mutableStateOf(0) }
+    val patchTabIndexState = remember { mutableStateOf(0) }
     val summaryState = remember {
         derivedStateOf {
             val value = clickCountState.value
@@ -49,6 +56,7 @@ internal fun UiTreeBuilder.StatePage() {
     val pageItems = when (selectedPageState.value) {
         0 -> listOf("page", "page_filter", "counter", "verify")
         1 -> listOf("page", "page_filter", "panel", "verify")
+        2 -> listOf("page", "page_filter", "patch", "verify")
         else -> listOf("page", "page_filter", "verify")
     }
 
@@ -65,7 +73,7 @@ internal fun UiTreeBuilder.StatePage() {
             )
 
             "page_filter" -> ChapterPageFilterSection(
-                pages = listOf("Core", "Identity", "Checklist"),
+                pages = listOf("Core", "Identity", "Patch", "Checklist"),
                 selectedIndex = selectedPageState.value,
                 onSelectionChange = { selectedPageState.value = it },
             )
@@ -151,20 +159,116 @@ internal fun UiTreeBuilder.StatePage() {
                 }
             }
 
+            "patch" -> DemoSection(
+                title = "Patch Stress",
+                subtitle = "Drive the first batch of node-level patch targets together so manual testing and benchmark runs hit the same update path.",
+            ) {
+                val step = patchStepState.value
+                Text(text = "Patch headline $step")
+                Text(
+                    text = "Patched nodes: Text, Button, TextField, SegmentedControl, TabPager",
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier.padding(vertical = 4.dp),
+                )
+                Column(
+                    spacing = 8.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .margin(top = 8.dp, bottom = 12.dp),
+                ) {
+                    Button(
+                        text = "Advance patch state $step",
+                        onClick = {
+                            val nextStep = patchStepState.value + 1
+                            patchStepState.value = nextStep
+                            patchFieldValueState.value = "value-$nextStep"
+                            patchSegmentIndexState.value = nextStep % 3
+                            patchTabIndexState.value = nextStep % 2
+                        },
+                    )
+                    Button(
+                        text = "Reset patch state",
+                        onClick = {
+                            patchStepState.value = 0
+                            patchFieldValueState.value = "value-0"
+                            patchSegmentIndexState.value = 0
+                            patchTabIndexState.value = 0
+                        },
+                    )
+                }
+                Button(
+                    text = "Patch action $step",
+                    onClick = {},
+                    modifier = Modifier.margin(bottom = 12.dp),
+                )
+                TextField(
+                    value = patchFieldValueState.value,
+                    onValueChange = { patchFieldValueState.value = it },
+                    label = "Patched field",
+                    supportingText = "Current patch step: $step",
+                    modifier = Modifier.margin(bottom = 12.dp),
+                )
+                SegmentedControl(
+                    items = listOf("Alpha", "Beta", "Gamma"),
+                    selectedIndex = patchSegmentIndexState.value,
+                    onSelectionChange = { patchSegmentIndexState.value = it },
+                    modifier = Modifier.margin(bottom = 12.dp),
+                )
+                TabPager(
+                    selectedTabIndex = patchTabIndexState.value,
+                    onTabSelected = { patchTabIndexState.value = it },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Page(title = "Summary", key = "summary", contentToken = "summary-$step") {
+                        Column(
+                            spacing = 8.dp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                                .padding(12.dp),
+                        ) {
+                            Text(text = "Tab summary $step")
+                            Text(
+                                text = "Patch scenario keeps tab host stable while page metadata changes.",
+                                color = TextDefaults.secondaryColor(),
+                            )
+                        }
+                    }
+                    Page(title = "Details", key = "details", contentToken = "details-$step") {
+                        Column(
+                            spacing = 8.dp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                                .padding(12.dp),
+                        ) {
+                            Text(text = "Tab details $step")
+                            Text(
+                                text = "Use this page when checking tab selection patching under repeated updates.",
+                                color = TextDefaults.secondaryColor(),
+                            )
+                        }
+                    }
+                }
+            }
+
             else -> VerificationNotesSection(
                 what = "State chapter should reveal whether root rerendering, local identity, and conditional recreation behave predictably under repeated interaction.",
                 howToVerify = listOf(
                     "连续点击 Increment 和 Reset，确认派生文案与 timeline 一起更新。",
                     "隐藏再显示 transient panel，确认 panel 内点击计数会被重建。",
+                    "进入 Patch 页面，连续点击 Advance patch state，确认 Text、Button、TextField、SegmentedControl 和 TabPager 都同步更新。",
                     "切换 theme mode 后再继续点击，确认状态值不受主题刷新影响。",
                 ),
                 expected = listOf(
                     "remember 状态在同一 identity 下保留，在 key 变化后重建。",
                     "derivedStateOf 和 produceState 不会落后于源状态。",
+                    "Patch 页面里的第一批节点会优先走 patch，而不是退回全量重绑。",
                     "条件 UI 显隐不会留下脏状态。",
                 ),
                 relatedGaps = listOf(
                     "还没有更细粒度的通用 subtree recomposition。",
+                    "还没有把 patch/rebind/skipped 统计直接可视化到页面上。",
                 ),
             )
         }
