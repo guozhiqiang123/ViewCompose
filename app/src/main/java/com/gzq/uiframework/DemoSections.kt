@@ -1,0 +1,218 @@
+package com.gzq.uiframework
+
+import com.gzq.uiframework.renderer.modifier.Modifier
+import com.gzq.uiframework.renderer.modifier.backgroundColor
+import com.gzq.uiframework.renderer.modifier.cornerRadius
+import com.gzq.uiframework.renderer.modifier.fillMaxWidth
+import com.gzq.uiframework.renderer.modifier.height
+import com.gzq.uiframework.renderer.modifier.margin
+import com.gzq.uiframework.renderer.modifier.padding
+import com.gzq.uiframework.renderer.modifier.textColor
+import com.gzq.uiframework.renderer.modifier.weight
+import com.gzq.uiframework.renderer.modifier.width
+import com.gzq.uiframework.widget.core.Box
+import com.gzq.uiframework.widget.core.Column
+import com.gzq.uiframework.widget.core.Divider
+import com.gzq.uiframework.widget.core.Row
+import com.gzq.uiframework.widget.core.SegmentedControl
+import com.gzq.uiframework.widget.core.Surface
+import com.gzq.uiframework.widget.core.SurfaceDefaults
+import com.gzq.uiframework.widget.core.SurfaceVariant
+import com.gzq.uiframework.widget.core.Text
+import com.gzq.uiframework.widget.core.TextDefaults
+import com.gzq.uiframework.widget.core.Theme
+import com.gzq.uiframework.widget.core.UiTextStyle
+import com.gzq.uiframework.widget.core.UiTreeBuilder
+import com.gzq.uiframework.widget.core.dp
+import com.gzq.uiframework.widget.core.sp
+import java.util.Locale
+
+internal fun UiTreeBuilder.ThemeSwatchRow(
+    label: String,
+    swatches: List<ThemeSwatch>,
+) {
+    Column(
+        spacing = 8.dp,
+        modifier = Modifier.Empty.margin(bottom = 8.dp),
+    ) {
+        Text(
+            text = label,
+            style = UiTextStyle(fontSizeSp = 13.sp),
+            modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+        )
+        Row(
+            spacing = 8.dp,
+            modifier = Modifier.Empty.fillMaxWidth(),
+        ) {
+            swatches.forEach { swatch ->
+                Column(
+                    spacing = 6.dp,
+                    modifier = Modifier.Empty.weight(1f),
+                ) {
+                    Box(
+                        modifier = Modifier.Empty
+                            .fillMaxWidth()
+                            .height(48.dp)
+                            .backgroundColor(swatch.color)
+                            .cornerRadius(SurfaceDefaults.cardCornerRadius()),
+                    ) {}
+                    Text(
+                        text = swatch.label,
+                        style = UiTextStyle(fontSizeSp = 12.sp),
+                    )
+                }
+            }
+        }
+    }
+}
+
+internal fun UiTreeBuilder.DemoSection(
+    title: String,
+    subtitle: String,
+    content: UiTreeBuilder.() -> Unit,
+) {
+    Surface(
+        variant = SurfaceVariant.Default,
+        modifier = Modifier.Empty
+            .fillMaxWidth()
+            .margin(bottom = 12.dp)
+            .padding(16.dp),
+    ) {
+        Column(
+            spacing = 8.dp,
+            modifier = Modifier.Empty.fillMaxWidth(),
+        ) {
+            Text(
+                text = title,
+                style = UiTextStyle(fontSizeSp = 20.sp),
+            )
+            Text(
+                text = subtitle,
+                style = UiTextStyle(fontSizeSp = 13.sp),
+                modifier = Modifier.Empty
+                    .textColor(TextDefaults.secondaryColor())
+                    .padding(bottom = 4.dp),
+            )
+            Divider()
+            content()
+        }
+    }
+}
+
+internal fun UiTreeBuilder.ChapterPageOverviewSection(
+    title: String,
+    goal: String,
+    modules: List<String>,
+) {
+    DemoSection(
+        title = title,
+        subtitle = "This page defines the testing goal and the framework layers that should be touched during manual verification.",
+    ) {
+        Text(text = goal)
+        ChecklistGroup(
+            title = "Framework Modules",
+            items = modules,
+        )
+    }
+}
+
+internal fun UiTreeBuilder.ChapterPageFilterSection(
+    pages: List<String>,
+    selectedIndex: Int,
+    onSelectionChange: (Int) -> Unit,
+) {
+    DemoSection(
+        title = "Chapter Pages",
+        subtitle = "Use the local page switcher to isolate one manual test path at a time within the current chapter.",
+    ) {
+        SegmentedControl(
+            items = pages,
+            selectedIndex = selectedIndex,
+            onSelectionChange = onSelectionChange,
+            modifier = Modifier.Empty.fillMaxWidth(),
+        )
+    }
+}
+
+internal fun UiTreeBuilder.VerificationNotesSection(
+    what: String,
+    howToVerify: List<String>,
+    expected: List<String>,
+    relatedGaps: List<String> = emptyList(),
+) {
+    DemoSection(
+        title = "Verification Notes",
+        subtitle = "Use this block as the manual acceptance checklist for the current chapter page.",
+    ) {
+        Text(text = what)
+        ChecklistGroup(
+            title = "How To Verify",
+            items = howToVerify,
+        )
+        ChecklistGroup(
+            title = "Expected",
+            items = expected,
+        )
+        if (relatedGaps.isNotEmpty()) {
+            ChecklistGroup(
+                title = "Related Gaps",
+                items = relatedGaps,
+            )
+        }
+    }
+}
+
+internal fun UiTreeBuilder.ChecklistGroup(
+    title: String,
+    items: List<String>,
+) {
+    Column(
+        spacing = 4.dp,
+        modifier = Modifier.Empty.margin(top = 8.dp),
+    ) {
+        Text(
+            text = title,
+            style = UiTextStyle(fontSizeSp = 13.sp),
+            modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+        )
+        items.forEachIndexed { index, item ->
+            Text(text = "${index + 1}. $item")
+        }
+    }
+}
+
+internal fun UiTreeBuilder.DiagnosticFactGroup(
+    title: String,
+    facts: List<DiagnosticFact>,
+) {
+    Column(
+        spacing = 6.dp,
+        modifier = Modifier.Empty.margin(top = 8.dp),
+    ) {
+        Text(
+            text = title,
+            style = UiTextStyle(fontSizeSp = 13.sp),
+            modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+        )
+        facts.forEach { fact ->
+            Row(
+                spacing = 12.dp,
+                modifier = Modifier.Empty.fillMaxWidth(),
+            ) {
+                Text(
+                    text = fact.label,
+                    style = UiTextStyle(fontSizeSp = 13.sp),
+                    modifier = Modifier.Empty.width(136.dp).textColor(TextDefaults.secondaryColor()),
+                )
+                Text(
+                    text = fact.value,
+                    modifier = Modifier.Empty.weight(1f),
+                )
+            }
+        }
+    }
+}
+
+internal fun Int.asColorHex(): String {
+    return "#${toUInt().toString(16).padStart(8, '0').uppercase(Locale.US)}"
+}
