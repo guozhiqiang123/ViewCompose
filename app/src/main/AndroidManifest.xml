@@ -20,6 +20,9 @@
             android:name=".CollectionsActivity"
             android:exported="false" />
         <activity
+            android:name=".FeedbackActivity"
+            android:exported="false" />
+        <activity
             android:name=".AnimationActivity"
             android:exported="false" />
         <activity

@@ -57,6 +57,15 @@ internal val DEMO_MODULES = listOf(
         activityClass = InputActivity::class.java,
     ),
     DemoModule(
+        key = "feedback",
+        title = "Feedback",
+        subtitle = "Snackbar, toast, and overlay-host-driven transient feedback paths.",
+        status = DemoModuleStatus.Available,
+        manualFocus = "transient overlay lifecycle, dismiss semantics, host presentation",
+        benchmarkPath = "Catalog -> Open Feedback -> Transient Feedback Anchor",
+        activityClass = FeedbackActivity::class.java,
+    ),
+    DemoModule(
         key = "collections",
         title = "Collections",
         subtitle = "LazyColumn, keyed reorder, item state, and collection stress paths.",
