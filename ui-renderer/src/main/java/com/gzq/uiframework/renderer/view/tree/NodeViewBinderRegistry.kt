@@ -89,7 +89,7 @@ internal object NodeViewBinderRegistry {
                 )
                 MediaViewBinder.bindIconButton(
                     view = view as android.widget.ImageButton,
-                    enabled = readEnabled(node),
+                    enabled = MediaViewBinder.readIconButtonEnabled(node),
                 )
             },
             NodeType.Row to { view, node ->
@@ -164,10 +164,6 @@ internal object NodeViewBinderRegistry {
         node: VNode,
     ) {
         binders.getValue(node.type).invoke(view, node)
-    }
-
-    private fun readEnabled(node: VNode): Boolean {
-        return node.props[TypedPropKeys.Enabled] ?: true
     }
 
     private fun readNodeTextColor(node: VNode): Int? {

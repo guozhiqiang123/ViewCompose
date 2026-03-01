@@ -7,8 +7,10 @@ import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.RemoteImageLoader
 import com.gzq.uiframework.renderer.node.RemoteImageRequest
 import com.gzq.uiframework.renderer.node.TypedPropKeys
+import com.gzq.uiframework.renderer.node.spec.ImageNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ImageTest {
@@ -28,6 +30,7 @@ class ImageTest {
         assertEquals(ImageSource.Resource(42), node.props[TypedPropKeys.ImageSource])
         assertEquals("Demo image", node.props[TypedPropKeys.ImageContentDescription])
         assertEquals(ImageContentScale.Crop, node.props[TypedPropKeys.ImageContentScale])
+        assertTrue(node.spec is ImageNodeProps)
     }
 
     @Test

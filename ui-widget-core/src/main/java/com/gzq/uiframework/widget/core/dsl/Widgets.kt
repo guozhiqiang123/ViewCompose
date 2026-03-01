@@ -29,8 +29,14 @@ import com.gzq.uiframework.renderer.node.TextFieldImeAction
 import com.gzq.uiframework.renderer.node.TextFieldType
 import com.gzq.uiframework.renderer.node.TextOverflow
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.IconButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.ImageNodeProps
+import com.gzq.uiframework.renderer.node.spec.ProgressIndicatorNodeProps
+import com.gzq.uiframework.renderer.node.spec.SliderNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
+import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
+import com.gzq.uiframework.renderer.node.spec.ToggleNodeProps
 
 fun UiTreeBuilder.Text(
     text: String,
@@ -53,6 +59,12 @@ fun UiTreeBuilder.Text(
             set(TypedPropKeys.TextOverflow, overflow)
             set(TypedPropKeys.TextAlign, textAlign)
         },
+        spec = TextNodeProps(
+            text = text,
+            maxLines = maxLines,
+            overflow = overflow,
+            textAlign = textAlign,
+        ),
         modifier = modifier,
     )
 }
@@ -81,6 +93,16 @@ fun UiTreeBuilder.Image(
             set(TypedPropKeys.ImageError, error)
             set(TypedPropKeys.ImageFallback, fallback)
         },
+        spec = ImageNodeProps(
+            contentDescription = contentDescription,
+            contentScale = contentScale,
+            tint = tint,
+            source = source,
+            placeholder = placeholder,
+            error = error,
+            fallback = fallback,
+            remoteImageLoader = ImageLoading.current,
+        ),
         modifier = modifier,
     )
 }
@@ -260,6 +282,7 @@ fun UiTreeBuilder.Checkbox(
     key: Any? = null,
     modifier: Modifier = Modifier,
 ) {
+    val controlColor = InputControlDefaults.checkboxControlColor(enabled)
     emit(
         type = NodeType.Checkbox,
         key = key,
@@ -268,11 +291,18 @@ fun UiTreeBuilder.Checkbox(
             set(TypedPropKeys.Checked, checked)
             set(TypedPropKeys.OnCheckedChange, onCheckedChange)
             set(TypedPropKeys.Enabled, enabled)
-            set(TypedPropKeys.ControlColor, InputControlDefaults.checkboxControlColor(enabled))
+            set(TypedPropKeys.ControlColor, controlColor)
             set(TypedPropKeys.TextColor, InputControlDefaults.checkboxLabelColor(enabled))
             set(TypedPropKeys.TextSizeSp, style.fontSizeSp)
             set(TypedPropKeys.StyleRippleColor, InputControlDefaults.pressedColor())
         },
+        spec = ToggleNodeProps(
+            text = text,
+            enabled = enabled,
+            checked = checked,
+            controlColor = controlColor,
+            onCheckedChange = onCheckedChange,
+        ),
         modifier = modifier,
     )
 }
@@ -286,6 +316,7 @@ fun UiTreeBuilder.Switch(
     key: Any? = null,
     modifier: Modifier = Modifier,
 ) {
+    val controlColor = InputControlDefaults.switchControlColor(enabled)
     emit(
         type = NodeType.Switch,
         key = key,
@@ -294,11 +325,18 @@ fun UiTreeBuilder.Switch(
             set(TypedPropKeys.Checked, checked)
             set(TypedPropKeys.OnCheckedChange, onCheckedChange)
             set(TypedPropKeys.Enabled, enabled)
-            set(TypedPropKeys.ControlColor, InputControlDefaults.switchControlColor(enabled))
+            set(TypedPropKeys.ControlColor, controlColor)
             set(TypedPropKeys.TextColor, InputControlDefaults.switchLabelColor(enabled))
             set(TypedPropKeys.TextSizeSp, style.fontSizeSp)
             set(TypedPropKeys.StyleRippleColor, InputControlDefaults.pressedColor())
         },
+        spec = ToggleNodeProps(
+            text = text,
+            enabled = enabled,
+            checked = checked,
+            controlColor = controlColor,
+            onCheckedChange = onCheckedChange,
+        ),
         modifier = modifier,
     )
 }
@@ -312,6 +350,7 @@ fun UiTreeBuilder.RadioButton(
     key: Any? = null,
     modifier: Modifier = Modifier,
 ) {
+    val controlColor = InputControlDefaults.radioButtonControlColor(enabled)
     emit(
         type = NodeType.RadioButton,
         key = key,
@@ -320,11 +359,18 @@ fun UiTreeBuilder.RadioButton(
             set(TypedPropKeys.Checked, checked)
             set(TypedPropKeys.OnCheckedChange, onCheckedChange)
             set(TypedPropKeys.Enabled, enabled)
-            set(TypedPropKeys.ControlColor, InputControlDefaults.radioButtonControlColor(enabled))
+            set(TypedPropKeys.ControlColor, controlColor)
             set(TypedPropKeys.TextColor, InputControlDefaults.radioButtonLabelColor(enabled))
             set(TypedPropKeys.TextSizeSp, style.fontSizeSp)
             set(TypedPropKeys.StyleRippleColor, InputControlDefaults.pressedColor())
         },
+        spec = ToggleNodeProps(
+            text = text,
+            enabled = enabled,
+            checked = checked,
+            controlColor = controlColor,
+            onCheckedChange = onCheckedChange,
+        ),
         modifier = modifier,
     )
 }
@@ -338,6 +384,7 @@ fun UiTreeBuilder.Slider(
     key: Any? = null,
     modifier: Modifier = Modifier,
 ) {
+    val controlColor = InputControlDefaults.sliderControlColor(enabled)
     emit(
         type = NodeType.Slider,
         key = key,
@@ -346,9 +393,17 @@ fun UiTreeBuilder.Slider(
             set(TypedPropKeys.MinValue, min)
             set(TypedPropKeys.MaxValue, max)
             set(TypedPropKeys.Enabled, enabled)
-            set(TypedPropKeys.ControlColor, InputControlDefaults.sliderControlColor(enabled))
+            set(TypedPropKeys.ControlColor, controlColor)
             set(TypedPropKeys.OnSliderValueChange, onValueChange)
         },
+        spec = SliderNodeProps(
+            min = min,
+            max = max,
+            value = value,
+            enabled = enabled,
+            tintColor = controlColor,
+            onValueChange = onValueChange,
+        ),
         modifier = modifier,
     )
 }
@@ -370,6 +425,14 @@ fun UiTreeBuilder.LinearProgressIndicator(
             set(TypedPropKeys.ProgressTrackColor, trackColor)
             set(TypedPropKeys.ProgressTrackThickness, trackThickness)
         },
+        spec = ProgressIndicatorNodeProps(
+            enabled = true,
+            progress = progress,
+            indicatorColor = indicatorColor,
+            trackColor = trackColor,
+            trackThickness = trackThickness,
+            indicatorSize = 0,
+        ),
         modifier = Modifier
             .fillMaxWidth()
             .height(trackThickness)
@@ -396,6 +459,14 @@ fun UiTreeBuilder.CircularProgressIndicator(
             set(TypedPropKeys.ProgressTrackThickness, trackThickness)
             set(TypedPropKeys.ProgressIndicatorSize, size)
         },
+        spec = ProgressIndicatorNodeProps(
+            enabled = true,
+            progress = progress,
+            indicatorColor = indicatorColor,
+            trackColor = trackColor,
+            trackThickness = trackThickness,
+            indicatorSize = size,
+        ),
         modifier = Modifier
             .size(width = size, height = size)
             .then(modifier),
@@ -571,6 +642,7 @@ fun UiTreeBuilder.IconButton(
     key: Any? = null,
     modifier: Modifier = Modifier,
 ) {
+    val tint = IconButtonDefaults.contentColor(variant, enabled)
     val semanticModifier = Modifier
         .size(
             width = IconButtonDefaults.size(size),
@@ -591,7 +663,7 @@ fun UiTreeBuilder.IconButton(
             set(TypedPropKeys.ImageSource, icon)
             set(TypedPropKeys.ImageContentDescription, contentDescription)
             set(TypedPropKeys.ImageContentScale, ImageContentScale.Inside)
-            set(TypedPropKeys.ImageTint, IconButtonDefaults.contentColor(variant, enabled))
+            set(TypedPropKeys.ImageTint, tint)
             set(TypedPropKeys.OnClick, onClick)
             set(TypedPropKeys.Enabled, enabled)
             set(TypedPropKeys.ImageRemoteLoader, ImageLoading.current)
@@ -605,6 +677,17 @@ fun UiTreeBuilder.IconButton(
             set(TypedPropKeys.StyleCornerRadius, IconButtonDefaults.cornerRadius())
             set(TypedPropKeys.StyleRippleColor, IconButtonDefaults.pressedColor())
         },
+        spec = IconButtonNodeProps(
+            contentDescription = contentDescription,
+            contentScale = ImageContentScale.Inside,
+            tint = tint,
+            source = icon,
+            placeholder = null,
+            error = null,
+            fallback = null,
+            remoteImageLoader = ImageLoading.current,
+            enabled = enabled,
+        ),
         modifier = semanticModifier,
     )
 }

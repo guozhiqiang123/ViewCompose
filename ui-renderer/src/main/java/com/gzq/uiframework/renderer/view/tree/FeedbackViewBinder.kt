@@ -7,6 +7,7 @@ import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.VNode
+import com.gzq.uiframework.renderer.node.spec.ProgressIndicatorNodeProps
 import kotlin.math.roundToInt
 
 internal object FeedbackViewBinder {
@@ -65,6 +66,17 @@ internal object FeedbackViewBinder {
     }
 
     fun readProgressSpec(node: VNode): ProgressSpec {
+        val spec = node.spec as? ProgressIndicatorNodeProps
+        if (spec != null) {
+            return ProgressSpec(
+                enabled = spec.enabled,
+                progress = spec.progress,
+                indicatorColor = spec.indicatorColor,
+                trackColor = spec.trackColor,
+                trackThickness = spec.trackThickness,
+                indicatorSize = spec.indicatorSize,
+            )
+        }
         return ProgressSpec(
             enabled = node.props[TypedPropKeys.Enabled] ?: true,
             progress = node.props[TypedPropKeys.ProgressFraction],

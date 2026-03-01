@@ -5,7 +5,9 @@ import com.gzq.uiframework.renderer.modifier.SizeModifierElement
 import com.gzq.uiframework.renderer.modifier.WidthModifierElement
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TypedPropKeys
+import com.gzq.uiframework.renderer.node.spec.ProgressIndicatorNodeProps
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ProgressIndicatorTest {
@@ -47,6 +49,7 @@ class ProgressIndicatorTest {
         assertEquals(customTheme.controls.progressIndicator.linearTrackThickness, node.props[TypedPropKeys.ProgressTrackThickness])
         assertEquals(android.view.ViewGroup.LayoutParams.MATCH_PARENT, width.width)
         assertEquals(customTheme.controls.progressIndicator.linearTrackThickness, height.height)
+        assertTrue(node.spec is ProgressIndicatorNodeProps)
     }
 
     @Test
@@ -86,6 +89,7 @@ class ProgressIndicatorTest {
         assertEquals(customTheme.controls.progressIndicator.circularSize, node.props[TypedPropKeys.ProgressIndicatorSize])
         assertEquals(customTheme.controls.progressIndicator.circularSize, size.width)
         assertEquals(customTheme.controls.progressIndicator.circularSize, size.height)
+        assertTrue(node.spec is ProgressIndicatorNodeProps)
     }
 
     @Test

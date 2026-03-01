@@ -10,6 +10,8 @@ import com.gzq.uiframework.renderer.node.RemoteImageRequest
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.node.ImageContentScale
 import com.gzq.uiframework.renderer.node.TypedPropKeys
+import com.gzq.uiframework.renderer.node.spec.IconButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.ImageNodeSpec
 
 internal object MediaViewBinder {
     data class ImageSpec(
@@ -63,6 +65,19 @@ internal object MediaViewBinder {
     }
 
     fun readImageSpec(node: VNode): ImageSpec {
+        val spec = node.spec as? ImageNodeSpec
+        if (spec != null) {
+            return ImageSpec(
+                contentDescription = spec.contentDescription,
+                scaleType = spec.contentScale.toScaleType(),
+                tint = spec.tint,
+                source = spec.source,
+                placeholder = spec.placeholder,
+                error = spec.error,
+                fallback = spec.fallback,
+                remoteImageLoader = spec.remoteImageLoader,
+            )
+        }
         val scale = node.props[TypedPropKeys.ImageContentScale] ?: ImageContentScale.Fit
         return ImageSpec(
             contentDescription = node.props[TypedPropKeys.ImageContentDescription],
@@ -83,6 +98,11 @@ internal object MediaViewBinder {
         view.isEnabled = enabled
         view.scaleType = ImageView.ScaleType.CENTER_INSIDE
         view.adjustViewBounds = false
+    }
+
+    fun readIconButtonEnabled(node: VNode): Boolean {
+        return (node.spec as? IconButtonNodeProps)?.enabled
+            ?: (node.props[TypedPropKeys.Enabled] ?: true)
     }
 
     private fun bindPlaceholder(

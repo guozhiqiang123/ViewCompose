@@ -12,6 +12,7 @@ import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.TextOverflow
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 
 internal object ContentViewBinder {
     data class TextSpec(
@@ -83,6 +84,15 @@ internal object ContentViewBinder {
     }
 
     fun readTextSpec(node: VNode): TextSpec {
+        val spec = node.spec as? TextNodeProps
+        if (spec != null) {
+            return TextSpec(
+                text = spec.text,
+                maxLines = spec.maxLines,
+                overflow = spec.overflow,
+                gravity = spec.textAlign.toTextGravity(),
+            )
+        }
         return TextSpec(
             text = node.props[TypedPropKeys.Text],
             maxLines = node.props[TypedPropKeys.TextMaxLines] ?: Int.MAX_VALUE,

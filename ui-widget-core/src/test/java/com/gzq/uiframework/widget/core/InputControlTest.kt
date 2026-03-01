@@ -2,6 +2,8 @@ package com.gzq.uiframework.widget.core
 
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TypedPropKeys
+import com.gzq.uiframework.renderer.node.spec.SliderNodeProps
+import com.gzq.uiframework.renderer.node.spec.ToggleNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -75,6 +77,7 @@ class InputControlTest {
         assertEquals(91, node.props[TypedPropKeys.TextColor])
         assertEquals(customTheme.typography.body.fontSizeSp, node.props[TypedPropKeys.TextSizeSp])
         assertEquals(customTheme.interactions.pressedOverlay, node.props[TypedPropKeys.StyleRippleColor])
+        assertTrue(node.spec is ToggleNodeProps)
     }
 
     @Test
@@ -96,6 +99,7 @@ class InputControlTest {
         assertEquals(10, node.props[TypedPropKeys.MinValue])
         assertEquals(60, node.props[TypedPropKeys.MaxValue])
         assertEquals(false, node.props[TypedPropKeys.Enabled])
+        assertTrue(node.spec is SliderNodeProps)
     }
 
     @Test

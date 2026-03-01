@@ -14,7 +14,9 @@ import com.gzq.uiframework.renderer.node.TextFieldImeAction
 import com.gzq.uiframework.renderer.node.TextFieldType
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.VNode
+import com.gzq.uiframework.renderer.node.spec.SliderNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
+import com.gzq.uiframework.renderer.node.spec.ToggleNodeProps
 import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
 import android.text.InputType
 import android.view.inputmethod.EditorInfo
@@ -229,6 +231,16 @@ internal object InputViewBinder {
     }
 
     fun readToggleSpec(node: VNode): ToggleSpec {
+        val spec = node.spec as? ToggleNodeProps
+        if (spec != null) {
+            return ToggleSpec(
+                text = spec.text,
+                enabled = spec.enabled,
+                checked = spec.checked,
+                controlColor = spec.controlColor,
+                onCheckedChange = spec.onCheckedChange,
+            )
+        }
         return ToggleSpec(
             text = node.props[TypedPropKeys.Text],
             enabled = node.props[TypedPropKeys.Enabled] ?: true,
@@ -239,6 +251,17 @@ internal object InputViewBinder {
     }
 
     fun readSliderSpec(node: VNode): SliderSpec {
+        val spec = node.spec as? SliderNodeProps
+        if (spec != null) {
+            return SliderSpec(
+                min = spec.min,
+                max = spec.max,
+                value = spec.value,
+                enabled = spec.enabled,
+                tintColor = spec.tintColor,
+                onValueChange = spec.onValueChange,
+            )
+        }
         return SliderSpec(
             min = node.props[TypedPropKeys.MinValue] ?: 0,
             max = node.props[TypedPropKeys.MaxValue] ?: 100,

@@ -5,7 +5,9 @@ import com.gzq.uiframework.renderer.node.ImageContentScale
 import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TypedPropKeys
+import com.gzq.uiframework.renderer.node.spec.IconButtonNodeProps
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class IconButtonTest {
@@ -32,6 +34,7 @@ class IconButtonTest {
         assertEquals(IconButtonDefaults.containerColor(), node.props[TypedPropKeys.StyleBackgroundColor])
         assertEquals(IconButtonDefaults.cornerRadius(), node.props[TypedPropKeys.StyleCornerRadius])
         assertEquals(true, node.props[TypedPropKeys.Enabled])
+        assertTrue(node.spec is IconButtonNodeProps)
     }
 
     @Test

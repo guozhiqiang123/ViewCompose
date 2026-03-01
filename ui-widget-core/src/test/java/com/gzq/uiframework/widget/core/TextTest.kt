@@ -4,7 +4,9 @@ import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TextAlign
 import com.gzq.uiframework.renderer.node.TextOverflow
 import com.gzq.uiframework.renderer.node.TypedPropKeys
+import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class TextTest {
@@ -25,5 +27,6 @@ class TextTest {
         assertEquals(2, node.props[TypedPropKeys.TextMaxLines])
         assertEquals(TextOverflow.Ellipsis, node.props[TypedPropKeys.TextOverflow])
         assertEquals(TextAlign.Center, node.props[TypedPropKeys.TextAlign])
+        assertTrue(node.spec is TextNodeProps)
     }
 }
