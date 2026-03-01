@@ -15,6 +15,7 @@ import com.gzq.uiframework.renderer.modifier.weight
 import com.gzq.uiframework.runtime.MutableState
 import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.Column
+import com.gzq.uiframework.widget.core.ColumnScope
 import com.gzq.uiframework.widget.core.DisposableEffect
 import com.gzq.uiframework.widget.core.Environment
 import com.gzq.uiframework.widget.core.ProvideRemoteImageLoader
@@ -112,7 +113,7 @@ internal fun UiTreeBuilder.DemoRoot(root: ViewGroup) {
     }
 }
 
-private fun UiTreeBuilder.DemoChapterPager(
+private fun ColumnScope.DemoChapterPager(
     selectedChapterState: MutableState<Int>,
 ) {
     TabPager(

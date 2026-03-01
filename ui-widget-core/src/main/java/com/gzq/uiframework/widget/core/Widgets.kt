@@ -7,11 +7,11 @@ import com.gzq.uiframework.renderer.layout.HorizontalAlignment
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.modifier.Modifier
+import com.gzq.uiframework.renderer.modifier.WeightModifierElement
 import com.gzq.uiframework.renderer.modifier.clickable
 import com.gzq.uiframework.renderer.modifier.fillMaxWidth
 import com.gzq.uiframework.renderer.modifier.height
 import com.gzq.uiframework.renderer.modifier.size
-import com.gzq.uiframework.renderer.modifier.weight
 import com.gzq.uiframework.renderer.node.ImageContentScale
 import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.renderer.node.LazyListItem
@@ -711,14 +711,20 @@ fun UiTreeBuilder.Spacer(
     )
 }
 
+@Deprecated(
+    message = "FlexibleSpacer is parent-data. Prefer RowScope.FlexibleSpacer(...) or ColumnScope.FlexibleSpacer(...).",
+)
 fun UiTreeBuilder.FlexibleSpacer(
     weight: Float = 1f,
     key: Any? = null,
     modifier: Modifier = Modifier,
 ) {
+    require(weight > 0f) {
+        "weight must be > 0"
+    }
     Spacer(
         key = key,
-        modifier = modifier.weight(weight),
+        modifier = modifier.then(WeightModifierElement(weight)),
     )
 }
 

@@ -287,6 +287,9 @@ fun Modifier.clickable(onClick: () -> Unit): Modifier {
     )
 }
 
+@Deprecated(
+    message = "weight is parent-data. Prefer RowScope.weight(...) or ColumnScope.weight(...).",
+)
 fun Modifier.weight(weight: Float): Modifier {
     require(weight > 0f) {
         "weight must be > 0"
@@ -296,18 +299,27 @@ fun Modifier.weight(weight: Float): Modifier {
     )
 }
 
+@Deprecated(
+    message = "Box alignment is parent-data. Prefer BoxScope.align(...).",
+)
 fun Modifier.align(alignment: BoxAlignment): Modifier {
     return then(
         BoxAlignModifierElement(alignment),
     )
 }
 
+@Deprecated(
+    message = "Horizontal alignment is parent-data. Prefer ColumnScope.align(...).",
+)
 fun Modifier.align(alignment: HorizontalAlignment): Modifier {
     return then(
         HorizontalAlignModifierElement(alignment),
     )
 }
 
+@Deprecated(
+    message = "Vertical alignment is parent-data. Prefer RowScope.align(...).",
+)
 fun Modifier.align(alignment: VerticalAlignment): Modifier {
     return then(
         VerticalAlignModifierElement(alignment),

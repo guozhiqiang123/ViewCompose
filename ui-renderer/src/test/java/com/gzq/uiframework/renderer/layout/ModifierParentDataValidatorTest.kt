@@ -9,6 +9,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
+@Suppress("DEPRECATION")
 class ModifierParentDataValidatorTest {
     @Test
     fun `weight is valid inside linear layout`() {

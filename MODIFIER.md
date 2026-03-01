@@ -206,6 +206,7 @@ Theme -> Modifier -> Renderer
 - `ui-renderer` 已补 parent-data 校验单测
 - `Row`、`Column`、`Box`、`Surface` 的内容 lambda 已切到对应 scope receiver
 - scope 内已提供 `weight` / `align` / `FlexibleSpacer` 的正确入口
+- 全局 `weight` / `align` / `FlexibleSpacer` 已开始标记为迁移型 API，用于把调用面逐步引导到 scope
 
 ### Phase 4
 
