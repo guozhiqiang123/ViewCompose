@@ -2,122 +2,152 @@
 
 ## 1. 文档定位
 
-本文档用于重新定义 `UIFramework` 当前阶段的真实架构基线。
+本文档定义 `UIFramework` 当前阶段的真实架构基线，用来回答 4 个问题：
 
-它不再描述“最初想做成什么”，而是回答 3 个更重要的问题：
+1. 现在框架实际上是怎么工作的
+2. `ui-runtime`、`ui-renderer`、`ui-widget-core` 的职责是否清晰
+3. 当前架构和 Compose 相比，稳定性、健壮性、可扩展性还缺什么
+4. 后续开发应该沿什么方向继续收敛，而不是再回到早期理想化蓝图
 
-1. 现在这套框架实际上是怎么工作的
-2. 当前设计哪些部分是合理的，哪些部分已经偏离最优方向
-3. 后续继续开发时，应该以什么架构边界为准，避免再次跑偏
-
-后续如果实现需要偏离本文档，必须先更新本文档，再继续开发。
+如果实现要偏离本文档，必须先更新本文档，再继续开发。
 
 当前状态：
 
-- 日期：2026-02-28
+- 日期：2026-03-01
 - 仓库：`/Users/gzq/AndroidStudioProjects/UIFramework`
-- 当前模块：`:ui-runtime`、`:ui-renderer`、`:ui-widget-core`、`:app`
-- 当前技术基线：Kotlin + Android View System，`minSdk 24`，`compileSdk 36`
+- 当前模块：`:ui-runtime`、`:ui-renderer`、`:ui-widget-core`、`:ui-image-coil`、`:app`
+- 技术基线：Kotlin + Android View System，`minSdk 24`，`compileSdk 36`
 
-## 2. 总结结论
+## 2. 当前总判断
 
-当前框架的总体方向是合理的，但文档和实现长期存在两个明显错位：
+当前框架的方向是成立的，但必须把评价说准确：
 
-1. 早期文档把目标写成了“更细粒度的通用 RenderScope + Adapter Registry + 更多模块分层”
-2. 实际实现已经收敛成了“根级 RenderSession + keyed child reconcile + 集中式 ViewTreeRenderer + RecyclerView 承载 LazyColumn”
+> `UIFramework` 现在是一个基于 Android View 的声明式渲染框架 v1，采用根级 `RenderSession` 驱动重建、虚拟树 keyed 复用、集中式 renderer、列表 item session、以及基于 local 的主题/环境上下文。
 
-这不是坏事。相反，这说明项目已经自然演化出一条更务实的 v1 路线。
+这条路对当前阶段是合理的，因为：
 
-当前结论应明确为：
+- 已经能稳定支撑“声明式 API + View 互操作 + keyed 更新 + demo/manual test”
+- 复杂度仍然可控
+- 和 Android View 主线程模型是兼容的
 
-> `UIFramework` 当前是一个基于 Android View 的声明式渲染框架 v1，采用根级会话驱动重建、虚拟树 keyed 复用、集中式 renderer、局部列表 item session，以及基于 local 的主题/环境上下文。
+但它还不是最终形态。和 Compose 相比，当前架构仍然有 4 个明显短板：
 
-这条路线对当前阶段是合理的，原因如下：
+1. 更新粒度仍然偏粗，通用页面节点仍以“根级重跑 + keyed 复用”为主
+2. renderer 仍然过于集中，`ViewTreeRenderer` 是明显的大类
+3. 组合运行时还主要住在 `ui-widget-core`，`ui-runtime` 仍然过薄
+4. `VNode + Props` 仍然偏动态，类型约束和错误发现能力弱于 Compose
 
-- 产品目标本来就是 “Compose-like on View”，不是复刻 Compose Runtime
-- 现阶段最重要的是把“声明式 API + keyed 更新 + View 互操作 + 可调试性”做稳
-- 过早追求通用 RenderScope 树、Adapter Registry、更多子模块，只会把复杂度前置
+所以正确结论不是“架构已经成熟”，而是：
 
-但也必须明确：
-
-- 当前框架还没有实现“全树通用局部 scope 更新”
-- 当前 renderer 是明显的集中式单体
-- 当前 runtime 能力有一部分仍放在 `ui-widget-core`，而不是纯 `ui-runtime`
-
-所以，正确评价不是“架构已经定型”，而是：
-
-> 当前设计是合理的 v1 骨架，但还不是最终形态；后续应基于当前实际实现继续收敛，而不是继续追逐早期那版理想化蓝图。
+> 当前架构是合理的 v1 骨架，但后续必须继续收敛职责、减少隐式约定、增强类型和边界，而不是继续无限堆功能。
 
 ## 3. 产品定义
 
-`UIFramework` 的目标仍然保持不变：
+当前产品定义保持不变：
 
 > 做一个基于 Android View 的声明式渲染引擎，具备虚拟树、keyed diff、状态驱动更新、原生 View 互操作。
 
-但这里的“状态驱动更新”，必须按当前真实能力重新表述：
+但这里的“状态驱动更新”必须按当前真实能力表述：
 
-- 通用页面节点：当前是“根级 render block 重跑 + keyed 复用”
-- `LazyColumn` item：当前具备更细的 item session 边界
-- 主题 / 环境 / remember / effect：通过 local + store 体系参与一次 render session
+- 普通页面节点：根级 render block 重跑 + renderer keyed reuse
+- `LazyColumn` item：具备独立 item session 和本地状态边界
+- 主题 / 环境 / remember / effect：基于 local + session store 参与一次 render session
 
-也就是说，当前并不是 Compose 那种“任意子树自动细粒度重组”，而是：
+它不是 Compose 那种“任意子树细粒度重组”，而是：
 
-> 根级重建 + renderer 最小复用 + 列表项独立 session。
+> 根级重建 + 最小复用 + 列表项独立 session。
 
-这是一个更准确、更可执行的定义。
+## 4. 当前真实模块职责
 
-## 4. 当前真实模块结构
+### 4.1 模块级职责
 
-### 4.1 模块职责
-
-| 模块 | 当前职责 | 评价 |
+| 模块 | 当前职责 | 当前评价 |
 | --- | --- | --- |
-| `:ui-runtime` | `State`、`MutableState`、`derivedStateOf`、读依赖观察 | 合理，但范围偏窄 |
-| `:ui-renderer` | `VNode`、`NodeType`、`Modifier`、reconcile、mounted tree、Android View 渲染、自定义容器 | 当前最核心模块 |
-| `:ui-widget-core` | DSL、`renderInto`、`RenderSession`、`remember`、effect、local、theme、environment、widget 默认值 | 当前实际上的 composition/runtime 表层 |
-| `:app` | demo、主题切换、能力演示、回归验证入口 | 合理 |
+| `:ui-runtime` | 可观察状态、派生状态、读依赖观察 | 结构清晰，但范围偏窄 |
+| `:ui-renderer` | `VNode`、`Modifier`、patch/reconcile、Android View 挂载、自定义容器、lazy adapter | 当前技术核心，结构比过去清晰 |
+| `:ui-widget-core` | DSL、session、remember/effect、local/theme/environment、widget 默认值 | 当前最混，但已整理目录 |
+| `:ui-image-coil` | 可选远程图片加载桥接 | 角色清晰，边界合理 |
+| `:app` | demo、人工测试、主题切换、回归入口 | 合理 |
 
-### 4.2 模块评价
+### 4.2 当前目录结构
 
-当前模块拆分虽然不“纯”，但对现阶段是合理的：
+当前目录已经按职责重新整理。
 
-- `ui-runtime` 没有被过早做大
-- `ui-renderer` 承担了大部分真正有技术含量的底层实现
-- `ui-widget-core` 既是 DSL 层，也是 composition/session 层，这在 v1 完全可以接受
+#### `ui-runtime`
 
-当前不建议继续拆出：
+```text
+runtime/
+  observation/
+  state/
+```
 
-- `:ui-node`
-- `:ui-view-adapter`
-- `:ui-debug`
-- `:ui-widget-lazy`
+解释：
 
-这些拆分都还为时过早。现在继续拆，只会增加跨模块维护成本。
+- `state/` 放 `State`、`MutableStateImpl`、`DerivedStateImpl`
+- `observation/` 放 `RuntimeObservation`
+- `UiRuntime.kt` 仍在根目录，作为轻量入口
 
-## 4.3 Modifier / Prop / Theme 边界
+评价：
 
-当前实现里的一个主要结构风险是 `Modifier` 边界过宽。
+- 这个结构是清晰的
+- 问题不在目录，而在模块范围太小
 
-现状问题：
+#### `ui-renderer`
 
-- `Modifier` 中同时存在布局修饰、外观修饰、交互修饰，以及 `textColor`、`textSize` 这类明显依赖具体控件的语义
-- 一部分默认样式链路是 `Theme -> Defaults -> Modifier -> Renderer`
-- `weight`、`align` 这类依赖父布局的能力仍以全局 modifier 形式暴露
+```text
+renderer/
+  debug/
+  layout/
+  modifier/
+  node/
+  reconcile/
+  view/
+    container/
+    lazy/
+    tree/
+```
 
-这对 v1 不构成立即阻塞，但已经是后续扩展的主要风险之一。
+解释：
 
-当前基线应明确为：
+- `layout/` 放布局算法和 parent-data 校验
+- `node/` 放 `VNode` 相关模型
+- `reconcile/` 放 patch / diff
+- `view/container/` 放自定义 View 容器
+- `view/lazy/` 放 `LazyColumn` 的 adapter/session/controller
+- `view/tree/` 放 mounted tree 和总渲染器
 
-- `Modifier` 负责跨节点通用修饰
-- 控件自身语义应进入 `Prop`
-- 父布局相关布局数据后续应进入 scoped modifier
-- 主题负责默认值，不直接承担通用 modifier 语义
+评价：
 
-这条线的详细设计和重构路线见 [MODIFIER.md](/Users/gzq/AndroidStudioProjects/UIFramework/MODIFIER.md)。
+- 当前目录已经能反映 renderer 内部职责
+- 但 `node/` 里仍混着不同层级的概念：`VNode` 本体、媒体 source、input primitive、tab/list item
+- `ViewTreeRenderer` 仍然是单点复杂度中心
+
+#### `ui-widget-core`
+
+```text
+widget/core/
+  bridge/
+  context/
+  defaults/
+  dsl/
+  runtime/
+```
+
+解释：
+
+- `bridge/` 放 Android theme/environment 桥接
+- `context/` 放 local、theme、environment、content color、image loading local
+- `defaults/` 放所有 widget 默认值解析
+- `dsl/` 放 `UiTreeBuilder`、`LayoutScopes`、`Widgets`、`Dimensions`
+- `runtime/` 放 `RenderSession`、`RenderInto`、remember/effect 等 composition 表层
+
+评价：
+
+- 这次整理后，目录层已经基本清楚
+- 但模块级职责仍偏重：`ui-widget-core` 现在同时承担 DSL、composition runtime、theme、defaults
+- 这是当前最需要在后续继续分层的地方
 
 ## 5. 当前核心调用链
-
-当前真实调用链如下：
 
 ```mermaid
 flowchart TD
@@ -129,11 +159,11 @@ flowchart TD
     F --> G["ChildReconciler"]
     G --> H["ViewTreeRenderer"]
     H --> I["Android View Tree"]
-    C --> J["RememberStore / EffectStore / LocalContext"]
+    C --> J["Remember / Effect / Local Stores"]
     H --> K["LazyColumnAdapter / Item Sessions"]
 ```
 
-最关键的几个真实节点是：
+当前真实主干是：
 
 - `renderInto(...)`
 - `RenderSession`
@@ -142,370 +172,260 @@ flowchart TD
 - `ChildReconciler.reconcile(...)`
 - `ViewTreeRenderer.renderInto(...)`
 
-这条链路已经构成了当前项目的真实主干，后续任何设计讨论都应围绕它展开。
+后续所有架构讨论都应围绕这条真实主链，而不是围绕早期未落地的抽象。
 
-## 6. 当前运行时模型
+## 6. 当前合理点
 
-### 6.1 根级 RenderSession
+当前架构里，有几件事是正确的，不应该推倒重来。
 
-当前框架不是通用 `RenderScope` 树，而是一个根级 `RenderSession`。
+### 6.1 根级会话模型是合理的
 
-`RenderSession` 当前负责：
+当前 `RenderSession` 是根级 session，不是通用 scope 树。
 
-- 执行 render block
-- 建立一次状态读取观察
-- 驱动 `VNode` 构建
-- 调用 renderer 完成 reconcile + mount
-- 提交 `DisposableEffect` / `SideEffect`
-- 持有 `RememberStore`
-
-这意味着当前更新模型的真实语义是：
-
-- 状态变化后，`RenderSession` 重新执行根 render block
-- renderer 利用 keyed reuse 尽量复用已有 View
-- 真正的“局部性”目前主要来自 renderer 的复用，而不是通用 subtree scope
-
-这个设计对 v1 是合理的，因为：
+这在 v1 是合理的，因为：
 
 - 逻辑简单
 - 调试成本低
-- 与 Android View 的主线程模型兼容
-- 现阶段已经足以支持 demo 和一般页面
+- 能和 Android View 更新模型稳定对接
+- 现阶段大多数页面问题都还不是“缺少细粒度重组”，而是“语义和边界没收干净”
 
-### 6.2 观察模型
+### 6.2 keyed reconcile 路线是正确的
 
-当前状态依赖追踪是基于 `RuntimeObservation` 完成的。
+当前 renderer 的核心价值不在“超复杂 patch 类型”，而在：
 
-真实机制：
+- `VNode`
+- keyed sibling reuse
+- mount tree 复用
+- `LazyColumn` item session
 
-1. `RenderSession.render()` 开始一次观察
-2. render 中读取 `state.value`
-3. `RuntimeObservation` 记录这次 render 读过哪些 state
-4. state 变化时，触发当前 session 的 `scheduleRender()`
-5. session 在主线程 `post()` 下一次重渲染
+这条路线和 React/Redwood/Litho 的基础思想是一致的，应该保留。
 
-它的本质是：
+### 6.3 主题 / environment / local 采用 local 机制是正确的
 
-> 根会话级观察，不是通用 scope 图。
+这一点已经很接近 Compose 的成熟经验：
 
-这个设计目前是合理的，但文档必须停止把它描述成“已经具备通用 RenderScope 树”。
+- 全局提供
+- 局部覆盖
+- widget 默认值按当前上下文解析
 
-### 6.3 local / remember / effect
+这条线应该继续扩展，而不是回退到 Android Theme 直读。
 
-当前 `remember`、`DisposableEffect`、`SideEffect`、`produceState`、`UiTheme`、`UiThemeOverride`、`Environment` 都已经存在，而且都挂在 `ui-widget-core` 的 session 体系上。
+### 6.4 不急着拆更多 Gradle 模块是正确的
 
-这说明项目实际上已经形成了一个“composition runtime 表层”，只是当前没有单独起模块名。
+现在继续拆出 `ui-node`、`ui-debug`、`ui-theme` 这类模块，收益不大，维护成本更高。
 
-正确认识应当是：
+当前问题是“模块内边界”，不是“Gradle 模块数量不够”。
 
-- `ui-runtime` 目前只负责 observable state
-- `ui-widget-core` 负责 composition/session/local/effect/theme 这一层
+## 7. 当前不合理点
 
-这并不优雅，但当前是合理的。
+这里是当前真正需要直说的问题。
 
-后续如果这层继续变复杂，再考虑把它提炼成新的 `ui-composition` 或并入更完整的 `ui-runtime`。
+### 7.1 `ui-widget-core` 仍然承担过多职责
 
-## 7. 当前渲染模型
+当前 `ui-widget-core` 同时承担：
 
-### 7.1 VNode + keyed reconcile
+- DSL
+- composition/session runtime
+- local/context/theme/environment
+- defaults
 
-当前渲染模型仍然是正确的：
+这在 v1 还可以接受，但再继续堆功能就会恶化成“大一统表层模块”。
 
-- DSL 构造 `VNode`
-- `ChildReconciler` 在兄弟节点级别做 keyed 复用
-- `ViewTreeRenderer` 按 patch 结果插入、复用、移除节点
+这也是当前最不合理的结构点。
 
-这里的关键事实是：
+结论：
 
-- 当前 reconcile 只有 `Insert`、`Reuse`、`Remove`
-- 并没有独立的 `Replace / UpdateProps / UpdateModifier / Move` 抽象类型对外存在
-- “Move” 语义隐含在 `ReusePatch.targetIndex` + `moveViewToIndex(...)` 中
-- “属性差异更新”不是 patch 级 diff，而是 `bindView(...)` 时全量重绑当前节点
+- 现在不必拆新模块
+- 但后续如果继续扩 runtime 和导航，必须考虑把 `runtime/` 和 `context/` 从 `ui-widget-core` 中提升出来
 
-这不是缺陷，而是当前阶段的合理简化。
+### 7.2 `ViewTreeRenderer` 仍然过于集中
 
-当前正确表述应为：
-
-> 框架已经具备显式 patch 列表，但 patch 模型仍然是 sibling reuse 导向，而不是细粒度属性 patch 导向。
-
-### 7.2 集中式 ViewTreeRenderer
-
-当前 `ViewTreeRenderer` 是一体化 renderer，内部承担：
+当前 `ViewTreeRenderer` 同时负责：
 
 - `NodeType -> View` 创建
-- 各节点 `bind`
-- `Modifier` 应用
-- child reconcile
-- attach/detach/dispose
-- `LazyColumn`、`TabPager`、`SegmentedControl` 等特殊节点桥接
+- prop 绑定
+- modifier 应用
+- child patch 执行
+- 特殊容器桥接
 
-这在架构上不是最终形态，但在当前阶段是合理的。
+这在当前阶段还能接受，但再继续长下去会带来三个风险：
 
-理由：
+- 单类回归面越来越大
+- 新节点接入成本越来越高
+- 很难引入更细的测试边界
 
-- 节点数量还没多到必须做 adapter registry
-- 当前最大的价值是统一调试和统一行为约束
-- 过早抽 adapter 接口，收益低于复杂度
+结论：
 
-但这里必须写清楚后续边界：
+- 当前不建议上完整 adapter registry
+- 但下一阶段如果继续扩控件，应该先把 `create / bind / modifier apply / special host` 分成内部 helper
 
-- 继续增加节点类型是允许的
-- 但如果 `ViewTreeRenderer` 持续膨胀，就必须抽出 binder / factory / modifier applier 子组件
-- 当前不建议直接上完整 `Adapter Registry`
+### 7.3 `VNode + Props` 仍然过于动态
 
-### 7.3 自定义容器策略
+当前 `Props` 本质上仍是 `Map<String, Any?>`。
 
-当前框架已经没有完全依赖原生 `LinearLayout / FrameLayout` 语义，而是引入了：
+这会带来：
 
-- `DeclarativeLinearLayout`
-- `DeclarativeBoxLayout`
-- `DeclarativeTabPagerLayout`
-- `DeclarativeSegmentedControlLayout`
+- prop key 拼写和组合错误只能运行时发现
+- 节点类型与 prop 集合之间没有强类型约束
+- renderer 的防御性代码被迫增多
 
-这个方向是正确的。
+和 Compose 相比，这是当前稳定性和健壮性最明显的差距之一。
 
-它解决了两个问题：
+Compose 的优势在于：
 
-1. Android 原生容器表达力不够
-2. 声明式布局语义需要更稳定的父容器控制权
+- 参数是强类型
+- 编译期就知道哪些组件接受哪些语义
+- 默认值、slot、scope 都受类型系统约束
 
-所以，后续设计应明确一条原则：
+而我们当前更多依赖约定和测试。
 
-> 只要原生 `ViewGroup` 不能稳定承载框架语义，就允许引入少量自定义容器；不要被“必须完全复用系统容器”束缚。
+结论：
 
-## 8. 当前列表模型
+- 当前 `Props` 设计适合 v1 快速演进
+- 但如果未来继续做大，必须考虑逐步引入 typed prop model，而不是永远停留在 string key map
 
-`LazyColumn` 是当前设计里最合理的部分之一。
+### 7.4 通用页面节点更新粒度仍偏粗
 
-当前真实策略：
+当前普通页面节点仍然主要依赖：
 
-- 容器基于 `RecyclerView`
-- diff 基于 `LazyListDiff`
-- identity 校验基于 `LazyListIdentityInspector`
-- item 渲染基于 `LazyItemSessionController`
-- item 可拥有独立 session 和本地 `remember`
+- 根级 render 重跑
+- renderer keyed reuse
 
-这条路线非常合理，应当继续坚持。
+这对一般 demo 和中小页面够用，但和 Compose 相比，差距很明确：
 
-原因：
+- Compose 可以对子树更细粒度重组
+- 我们当前更多靠 renderer 复用来降低损耗
 
-- 避免自研滚动与回收系统
-- item 状态边界更清晰
-- 直接验证 keyed identity 是否可靠
-- 更符合 Android View 生态现实
+这带来的风险是：
 
-这里要明确冻结一个架构决定：
+- 大页面重建成本可能上升
+- state 爆发频繁时更依赖 renderer 健壮性
+- 调试时更难区分“逻辑上局部更新”和“实现上全树重跑但复用成功”
 
-> `LazyColumn` 继续基于 `RecyclerView`，短期内不做自研 lazy container。
+结论：
 
-## 9. 当前主题与环境模型
+- 这不是当前最优先要解决的问题
+- 但它是长期扩展上限的核心瓶颈
 
-主题系统已经从“样式工具”演变成真实的运行时上下文系统。
+### 7.5 目录虽清晰，但 package 仍然扁平
 
-当前已经具备：
+本次整理优先做的是“按文件夹归类”，没有同步做 package 大迁移。
 
-- `UiTheme`
-- `UiThemeOverride`
-- `Theme.current`
-- `LocalValue / LocalContext`
-- `Environment`
-- `AndroidThemeBridge`
+这是当前合理取舍，因为：
 
-这说明当前架构里已经存在一个明确子系统：
+- 先降低回归风险
+- 先让代码阅读路径清晰
 
-> 基于 local 的声明式上下文系统。
+但这也意味着：
 
-这部分设计是合理且成熟的，应在总架构中正式承认，而不是把它当成 widget 附属功能。
+- 模块内的物理结构已经清楚
+- 类型命名空间还没有真正体现职责分层
 
-因此，后续架构讨论必须把以下几类能力视为同一层问题：
+结论：
 
-- theme
-- environment
-- remember
-- effect
-- side effect
+- 当前先保持 package 稳定
+- 未来如果继续演进到更成熟阶段，可以再评估 package 分层
 
-它们都属于“composition/session 上下文层”。
+## 8. 和 Compose 的对比
 
-## 10. 设计合理性评估
+这里不谈语法像不像，只谈结构能力。
 
-### 10.1 当前明确合理的部分
+### 8.1 当前已经对齐的点
 
-1. `DSL -> VNode -> View` 三层分离是正确的
-2. 根级 `RenderSession` 对当前阶段是合理复杂度
-3. keyed sibling reconcile 的实现方式简单、可测、可调试
-4. `RecyclerView + item session` 的 `LazyColumn` 策略非常合理
-5. local 驱动的主题 / 环境系统已经形成稳定方向
-6. 自定义容器补足原生 `ViewGroup` 的表达缺陷，这个决策是正确的
+- 声明式 DSL
+- 局部 theme / local 覆盖
+- `remember` / effect / key scope
+- 父布局 scope modifier
+- widget 默认值通过 theme 解析
+- AndroidView 互操作
 
-### 10.2 当前不合理或必须纠正的认知
-
-1. 文档不能再声称框架已经具备通用 `RenderScope` 树
-2. 文档不能再把 `Adapter Registry` 视为当前实际架构
-3. 文档不能再把工程描述成“只有空白 app”
-4. 文档不能再用“局部 scope 更新”概括整个框架现状
-
-真实情况是：
-
-- 当前是根级 render + 复用式增量更新
-- 列表 item 具备更细粒度 session
-- 通用 subtree scope 还没有形成
-
-### 10.3 当前真正的结构问题
-
-当前有 3 个真实问题需要在后续持续约束：
-
-1. `ViewTreeRenderer` 过于集中
-   - 当前还能接受
-   - 继续膨胀就必须拆解内部职责
-
-2. `ui-widget-core` 同时承担 DSL 和 composition runtime
-   - 当前可接受
-   - 如果 effect/local/session 继续增长，就要考虑提炼独立层
-
-3. 通用节点更新仍依赖根 render 重跑
-   - 当前适合 v1
-   - 但如果后面进入更复杂页面，这会成为性能与可预测性的上限
-
-## 11. 更新后的架构基线
-
-从现在开始，项目按下面这套基线理解和继续开发。
-
-### 11.1 固定不变的部分
-
-- 保持 `Android View` 为真实承载层
-- 保持 `VNode` 为中间表达层
-- 保持 `RenderSession` 为当前根级更新入口
-- 保持 `ChildReconciler + ViewTreeRenderer` 为核心更新链
-- 保持 `LazyColumn -> RecyclerView` 路线
-- 保持 theme / environment / remember / effect 基于 local/session 体系
-
-### 11.2 当前不做的部分
-
-- 不做完整 Router
-- 不做编译器插件
-- 不做通用 Adapter Registry
-- 不做额外模块过度拆分
-- 不做自研 lazy scroll container
-- 不急着做全树细粒度 subtree scope
-
-### 11.3 后续如果继续演进，优先顺序应该是
-
-1. 继续稳定 composition runtime 表层
-   - `remember`
-   - effect
-   - local
-   - theme
-   - environment
+### 8.2 当前明显落后的点
 
-2. 控制 renderer 膨胀
-   - 先拆内部 binder / background / input / container 子职责
-   - 不急着抽通用 adapter registry
+- 缺少编译器参与，无法做 Compose 式稳定性推断和细粒度重组
+- `Props` 动态映射弱于 Compose 的强类型组件参数
+- 更新模型仍偏根级重跑
+- 缺少 slot table / composition tree 层级的精细管理
+- 缺少官方级调试和性能工具
 
-3. 增强组件和状态语义
-   - 输入控件
-   - 容器状态
-   - 主题 token
-
-4. 最后再评估是否值得做通用 subtree scope
+### 8.3 当前反而有现实优势的点
 
-## 12. 实际数据流
+- 直接运行在 Android View 体系上
+- 和现有自定义 View、SDK View 互操作成本低
+- 更容易被已有 View 项目渐进接入
 
-### 12.1 首次渲染
+结论：
 
-```mermaid
-sequenceDiagram
-    participant Biz as Business DSL
-    participant Session as RenderSession
-    participant Build as buildVNodeTree
-    participant Obs as RuntimeObservation
-    participant Rec as ChildReconciler
-    participant Render as ViewTreeRenderer
-    participant View as Android View Tree
+> 这个框架不应该追求“复制 Compose”，而应该追求“在 View 体系里把声明式、主题、复用和互操作做稳”。
 
-    Biz->>Session: renderInto(container) { ... }
-    Session->>Obs: observeReads(...)
-    Obs->>Build: execute render block
-    Build-->>Session: root VNode list
-    Session->>Rec: reconcile(previous, next)
-    Rec-->>Render: Insert / Reuse / Remove patches
-    Render->>View: create / bind / move / remove
-    Session->>Session: commit effect + sideEffect
-```
+## 9. 当前稳定性、健壮性、可扩展性判断
 
-### 12.2 状态变化
+### 9.1 稳定性
 
-```mermaid
-sequenceDiagram
-    participant State as MutableState
-    participant Obs as Observation
-    participant Session as RenderSession
-    participant Render as ViewTreeRenderer
+当前稳定性中等偏上。
 
-    State->>Obs: invalidate
-    Obs->>Session: scheduleRender()
-    Session->>Session: post(renderRunnable)
-    Session->>Session: rebuild VNode tree
-    Session->>Render: keyed reuse renderInto(...)
-```
+优点：
 
-### 12.3 Lazy item 更新
+- 手测 demo 已成为稳定回归入口
+- 单测已覆盖 reconcile、theme、remember、effect、lazy diff 等关键路径
+- 模块目录已清晰，局部修改的风险比之前低
 
-```mermaid
-sequenceDiagram
-    participant RV as RecyclerView
-    participant Adapter as LazyColumnAdapter
-    participant Holder as ViewHolder
-    participant Item as LazyItemSessionController
+风险：
 
-    RV->>Adapter: submitItems(nextItems)
-    Adapter->>Adapter: LazyListDiff.calculate(...)
-    Adapter->>Holder: bind(item)
-    Holder->>Item: bind(item)
-    Item->>Item: reuse session by key or recreate
-    Item->>Item: render item session
-```
+- `ViewTreeRenderer` 单点复杂度仍高
+- `Props` 动态模型仍容易引入 silent bug
 
-## 13. 风险与约束
+### 9.2 健壮性
 
-### 13.1 当前主要风险
+当前健壮性中等。
 
-| 风险 | 说明 | 当前约束 |
-| --- | --- | --- |
-| 文档比实现更理想化 | 容易误导后续设计 | 以后所有架构文档必须写“当前真实能力” |
-| renderer 继续膨胀 | switch 和 bind 逻辑会越来越重 | 新节点进入前先判断是否该拆 renderer 内部职责 |
-| runtime 分层继续模糊 | `ui-widget-core` 会越来越重 | composition/session 能力继续增长时再考虑独立层 |
-| 错把 keyed reuse 当成通用局部重组 | 容易产生性能误判 | 统一承认当前是根级重跑模型 |
+优点：
 
-### 13.2 当前协作约定
+- 已有 parent-data 校验
+- 已有 lazy key warning
+- 已有 theme/defaults/override 的规则约束
 
-从现在开始，后续新增能力必须先回答下面 3 个问题：
+风险：
 
-1. 它属于 state/runtime、composition/session、renderer，还是 widget/theme？
-2. 它是否会继续膨胀 `ViewTreeRenderer`？
-3. 它是否真的需要新的模块，还是只是当前模块内拆职责即可？
+- 类型约束仍主要依赖测试，不是编译期保证
+- 错误配置更多是运行时暴露，而不是编译期阻断
 
-如果没有回答清楚，不应直接实现。
+### 9.3 可扩展性
 
-## 14. 下一阶段建议
+当前可扩展性中等，但必须按约束演进。
 
-按当前项目状态，后续最合理的技术方向不是继续改大架构，而是：
+如果后续继续遵守以下原则，可扩展性仍然是好的：
 
-1. 稳定现有 composition runtime
-   - 继续补 `remember` / effect / local 的边界测试
+- 新 widget 继续走 `Theme -> Defaults -> Props -> Renderer`
+- 不再把 widget 自身语义塞回通用 `Modifier`
+- 新容器能力优先进自定义容器，不强依赖系统 `LinearLayout`
+- 在 renderer 内部先拆 helper，再考虑更大抽象
 
-2. 控制 renderer 复杂度
-   - 把 `ViewTreeRenderer` 内部逐步拆成更小的职责块
+如果不遵守，则会很快退化成：
 
-3. 继续加强组件系统
-   - 主题
-   - 输入控件
-   - 容器语义
+- `ui-widget-core` 继续膨胀
+- `ViewTreeRenderer` 持续膨胀
+- `Props` map 越来越难维护
 
-4. 暂缓更激进的设计
-   - Router
-   - 编译器插件
-   - 通用 RenderScope 树
-   - 过细模块拆分
+## 10. 当前后续方向
 
-这条路线最符合当前项目的真实成熟度。
+基于当前状态，后续架构方向应明确为：
+
+1. 保持当前 Gradle 模块数量，不继续拆大模块
+2. 优先在模块内继续收敛职责，而不是引入新抽象
+3. 继续控制 `Modifier / Prop / Theme` 边界
+4. 如果继续扩 runtime，优先考虑把 `ui-widget-core/runtime` 和 `ui-widget-core/context` 抽象成更明确的 composition 层
+5. 如果继续扩 renderer，优先把 `ViewTreeRenderer` 内部拆成 helper，而不是直接上 adapter registry
+6. 中长期再评估 typed props 和更细粒度更新模型
+
+## 11. 现在的架构基线
+
+当前应以以下判断作为后续开发基线：
+
+- 当前目录结构已经按职责整理完成
+- 当前模块职责基本清楚，但 `ui-widget-core` 仍偏重
+- 当前架构适合继续做 v1/v1.5，不适合再做“理想化重构”
+- 当前最需要防止的不是“抽象不够多”，而是“边界再次变脏”
+
+一句话总结：
+
+> 当前 `UIFramework` 的架构已经从“能跑”进入“可维护的 v1”，但离 Compose 级成熟度还有明显距离；后续工作重点应是持续收边界、补类型约束、减单点复杂度，而不是盲目加层。
