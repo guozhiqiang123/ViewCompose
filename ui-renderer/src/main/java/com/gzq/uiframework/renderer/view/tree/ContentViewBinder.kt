@@ -11,6 +11,7 @@ import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.TextOverflow
 import com.gzq.uiframework.renderer.node.VNode
+import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
 
 internal object ContentViewBinder {
     data class TextSpec(
@@ -91,8 +92,20 @@ internal object ContentViewBinder {
         )
     }
 
-    @Suppress("UNCHECKED_CAST")
     fun readButtonSpec(node: VNode, contentColor: Int): ButtonSpec {
+        val spec = node.spec as? ButtonNodeProps
+        if (spec != null) {
+            return ButtonSpec(
+                text = spec.text,
+                enabled = spec.enabled,
+                iconSpacing = spec.iconSpacing,
+                leadingIcon = spec.leadingIcon,
+                trailingIcon = spec.trailingIcon,
+                iconTint = spec.iconTint,
+                iconSize = spec.iconSize,
+                onClick = spec.onClick,
+            )
+        }
         return ButtonSpec(
             text = node.props[TypedPropKeys.Text],
             enabled = node.props[TypedPropKeys.Enabled] ?: true,

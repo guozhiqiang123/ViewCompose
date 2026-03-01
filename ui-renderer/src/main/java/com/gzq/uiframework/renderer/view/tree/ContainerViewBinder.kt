@@ -18,6 +18,7 @@ import com.gzq.uiframework.renderer.node.SegmentedControlItem
 import com.gzq.uiframework.renderer.node.TabPage
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.VNode
+import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
 import android.view.Gravity
 
 internal object ContainerViewBinder {
@@ -179,6 +180,23 @@ internal object ContainerViewBinder {
     }
 
     fun readTabPagerSpec(node: VNode, defaultRippleColor: Int): TabPagerSpec {
+        val spec = node.spec as? TabPagerNodeProps
+        if (spec != null) {
+            return TabPagerSpec(
+                pages = spec.pages,
+                selectedTabIndex = spec.selectedTabIndex,
+                onTabSelected = spec.onTabSelected,
+                backgroundColor = spec.backgroundColor,
+                indicatorColor = spec.indicatorColor,
+                cornerRadius = spec.cornerRadius,
+                indicatorHeight = spec.indicatorHeight,
+                tabPaddingHorizontal = spec.tabPaddingHorizontal,
+                tabPaddingVertical = spec.tabPaddingVertical,
+                selectedTextColor = spec.selectedTextColor,
+                unselectedTextColor = spec.unselectedTextColor,
+                rippleColor = spec.rippleColor,
+            )
+        }
         return TabPagerSpec(
             pages = node.props[TypedPropKeys.TabPages] ?: emptyList(),
             selectedTabIndex = node.props[TypedPropKeys.SelectedTabIndex] ?: 0,

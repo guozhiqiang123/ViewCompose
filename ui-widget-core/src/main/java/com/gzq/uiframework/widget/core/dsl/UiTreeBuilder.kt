@@ -4,6 +4,7 @@ import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.Props
 import com.gzq.uiframework.renderer.node.VNode
+import com.gzq.uiframework.renderer.node.spec.NodeSpec
 
 @UiDslMarker
 open class UiTreeBuilder {
@@ -13,6 +14,7 @@ open class UiTreeBuilder {
         type: NodeType,
         key: Any? = null,
         props: Props = Props.Empty,
+        spec: NodeSpec? = null,
         modifier: Modifier = Modifier,
         content: (UiTreeBuilder.() -> Unit)? = null,
     ) {
@@ -25,6 +27,7 @@ open class UiTreeBuilder {
             type = type,
             key = key,
             props = props,
+            spec = spec,
             modifier = modifier,
             children = nestedChildren,
         )
@@ -34,6 +37,7 @@ open class UiTreeBuilder {
         type: NodeType,
         key: Any? = null,
         props: Props = Props.Empty,
+        spec: NodeSpec? = null,
         modifier: Modifier = Modifier,
         children: List<VNode> = emptyList(),
     ) {
@@ -41,6 +45,7 @@ open class UiTreeBuilder {
             type = type,
             key = key,
             props = props,
+            spec = spec,
             modifier = modifier,
             children = children,
         )

@@ -3,7 +3,9 @@ package com.gzq.uiframework.widget.core
 import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TypedPropKeys
+import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ButtonTest {
@@ -28,5 +30,6 @@ class ButtonTest {
         assertEquals(ButtonDefaults.contentColor(), node.props[TypedPropKeys.TextColor])
         assertEquals(ButtonDefaults.textStyle(ButtonSize.Large).fontSizeSp, node.props[TypedPropKeys.TextSizeSp])
         assertEquals(ButtonDefaults.height(ButtonSize.Large), node.props[TypedPropKeys.StyleMinHeight])
+        assertTrue(node.spec is ButtonNodeProps)
     }
 }

@@ -28,6 +28,8 @@ import com.gzq.uiframework.renderer.node.TextAlign
 import com.gzq.uiframework.renderer.node.TextFieldImeAction
 import com.gzq.uiframework.renderer.node.TextFieldType
 import com.gzq.uiframework.renderer.node.TextOverflow
+import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
 
 fun UiTreeBuilder.Text(
     text: String,
@@ -504,6 +506,9 @@ fun UiTreeBuilder.Button(
     key: Any? = null,
     modifier: Modifier = Modifier,
 ) {
+    val contentColor = ButtonDefaults.contentColor(variant, enabled)
+    val iconSizeValue = ButtonDefaults.iconSize(size)
+    val iconSpacingValue = ButtonDefaults.iconSpacing(size)
     emit(
         type = NodeType.Button,
         key = key,
@@ -511,7 +516,7 @@ fun UiTreeBuilder.Button(
             set(TypedPropKeys.Text, text)
             set(TypedPropKeys.OnClick, onClick)
             set(TypedPropKeys.Enabled, enabled)
-            set(TypedPropKeys.TextColor, ButtonDefaults.contentColor(variant, enabled))
+            set(TypedPropKeys.TextColor, contentColor)
             set(TypedPropKeys.TextSizeSp, style.fontSizeSp)
             set(TypedPropKeys.StyleMinHeight, ButtonDefaults.height(size))
             set(TypedPropKeys.StylePaddingLeft, ButtonDefaults.horizontalPadding(size))
@@ -523,11 +528,21 @@ fun UiTreeBuilder.Button(
             set(TypedPropKeys.StyleBorderColor, ButtonDefaults.borderColor(variant, enabled))
             set(TypedPropKeys.StyleCornerRadius, ButtonDefaults.cornerRadius())
             set(TypedPropKeys.StyleRippleColor, ButtonDefaults.pressedColor())
-            set(TypedPropKeys.ButtonIconSize, ButtonDefaults.iconSize(size))
-            set(TypedPropKeys.ButtonIconSpacing, ButtonDefaults.iconSpacing(size))
+            set(TypedPropKeys.ButtonIconSize, iconSizeValue)
+            set(TypedPropKeys.ButtonIconSpacing, iconSpacingValue)
             set(TypedPropKeys.ButtonLeadingIcon, leadingIcon)
             set(TypedPropKeys.ButtonTrailingIcon, trailingIcon)
         },
+        spec = ButtonNodeProps(
+            text = text,
+            enabled = enabled,
+            iconSpacing = iconSpacingValue,
+            leadingIcon = leadingIcon,
+            trailingIcon = trailingIcon,
+            iconTint = contentColor,
+            iconSize = iconSizeValue,
+            onClick = onClick,
+        ),
         modifier = modifier,
     )
 }
@@ -856,6 +871,28 @@ fun UiTreeBuilder.TabPager(
 ) {
     val builtPages = TabPagerScope().apply(pages).build()
     val localSnapshot = LocalContext.snapshot()
+    val resolvedPages = builtPages.map { page ->
+        TabPage(
+            title = page.title,
+            item = LazyListItem(
+                key = page.key,
+                contentToken = page.contentToken,
+                sessionFactory = LazyListItemSessionFactory { container ->
+                    WidgetLazyListItemSession(
+                        container = container,
+                        localSnapshot = localSnapshot,
+                        content = page.content,
+                    )
+                },
+                sessionUpdater = { session ->
+                    (session as? WidgetLazyListItemSession)?.updateContent(
+                        localSnapshot = localSnapshot,
+                        content = page.content,
+                    )
+                },
+            ),
+        )
+    }
     emit(
         type = NodeType.TabPager,
         key = key,
@@ -871,32 +908,22 @@ fun UiTreeBuilder.TabPager(
             set(TypedPropKeys.TabSelectedTextColor, selectedTextColor)
             set(TypedPropKeys.TabUnselectedTextColor, unselectedTextColor)
             set(TypedPropKeys.TabRippleColor, rippleColor)
-            set(
-                TypedPropKeys.TabPages,
-                builtPages.map { page ->
-                    TabPage(
-                        title = page.title,
-                        item = LazyListItem(
-                            key = page.key,
-                            contentToken = page.contentToken,
-                            sessionFactory = LazyListItemSessionFactory { container ->
-                                WidgetLazyListItemSession(
-                                    container = container,
-                                    localSnapshot = localSnapshot,
-                                    content = page.content,
-                                )
-                            },
-                            sessionUpdater = { session ->
-                                (session as? WidgetLazyListItemSession)?.updateContent(
-                                    localSnapshot = localSnapshot,
-                                    content = page.content,
-                                )
-                            },
-                        ),
-                    )
-                },
-            )
+            set(TypedPropKeys.TabPages, resolvedPages)
         },
+        spec = TabPagerNodeProps(
+            pages = resolvedPages,
+            selectedTabIndex = selectedTabIndex,
+            onTabSelected = onTabSelected,
+            backgroundColor = backgroundColor,
+            indicatorColor = indicatorColor,
+            cornerRadius = cornerRadius,
+            indicatorHeight = indicatorHeight,
+            tabPaddingHorizontal = tabPaddingHorizontal,
+            tabPaddingVertical = tabPaddingVertical,
+            selectedTextColor = selectedTextColor,
+            unselectedTextColor = unselectedTextColor,
+            rippleColor = rippleColor,
+        ),
         modifier = modifier,
     )
 }

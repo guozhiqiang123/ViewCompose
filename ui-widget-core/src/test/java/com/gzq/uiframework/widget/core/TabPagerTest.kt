@@ -3,8 +3,10 @@ package com.gzq.uiframework.widget.core
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TabPage
 import com.gzq.uiframework.renderer.node.TypedPropKeys
+import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class TabPagerTest {
@@ -50,6 +52,7 @@ class TabPagerTest {
         assertEquals(2, pages.size)
         assertEquals("Overview", pages[0].title)
         assertEquals("Input", pages[1].title)
+        assertTrue(node.spec is TabPagerNodeProps)
 
         onTabSelected?.invoke(0)
         assertEquals(0, selectedIndex)
