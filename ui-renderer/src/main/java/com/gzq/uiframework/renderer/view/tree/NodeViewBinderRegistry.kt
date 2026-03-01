@@ -119,7 +119,7 @@ internal object NodeViewBinderRegistry {
             NodeType.Spacer to { _, _ -> Unit },
             NodeType.Divider to { view, node ->
                 view.setBackgroundColor(
-                    node.props[TypedPropKeys.DividerColor] ?: 0xFF000000.toInt(),
+                    ContainerViewBinder.readDividerSpec(node).color,
                 )
             },
             NodeType.Image to { view, node ->
@@ -129,7 +129,7 @@ internal object NodeViewBinderRegistry {
                 )
             },
             NodeType.AndroidView to { view, node ->
-                val update = node.props[TypedPropKeys.ViewUpdate]
+                val update = ContainerViewBinder.readAndroidViewSpec(node).update
                 update?.invoke(view)
             },
             NodeType.LazyColumn to { view, node ->

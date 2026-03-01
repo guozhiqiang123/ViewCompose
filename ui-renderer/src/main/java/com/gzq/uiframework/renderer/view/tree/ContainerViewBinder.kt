@@ -18,6 +18,13 @@ import com.gzq.uiframework.renderer.node.SegmentedControlItem
 import com.gzq.uiframework.renderer.node.TabPage
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.VNode
+import com.gzq.uiframework.renderer.node.spec.AndroidViewNodeProps
+import com.gzq.uiframework.renderer.node.spec.BoxNodeProps
+import com.gzq.uiframework.renderer.node.spec.ColumnNodeProps
+import com.gzq.uiframework.renderer.node.spec.DividerNodeProps
+import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
+import com.gzq.uiframework.renderer.node.spec.RowNodeProps
+import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
 import android.view.Gravity
 
@@ -67,6 +74,15 @@ internal object ContainerViewBinder {
         val textSizeSp: Int,
         val horizontalPadding: Int,
         val verticalPadding: Int,
+    )
+
+    data class DividerSpec(
+        val color: Int,
+        val thickness: Int,
+    )
+
+    data class AndroidViewSpec(
+        val update: ((android.view.View) -> Unit)?,
     )
 
     fun bindRow(
@@ -150,6 +166,14 @@ internal object ContainerViewBinder {
     }
 
     fun readRowSpec(node: VNode): LinearSpec {
+        val spec = node.spec as? RowNodeProps
+        if (spec != null) {
+            return LinearSpec(
+                spacing = spec.spacing,
+                arrangement = spec.arrangement,
+                gravity = spec.verticalAlignment.toGravity(),
+            )
+        }
         return LinearSpec(
             spacing = node.props[TypedPropKeys.LinearSpacing] ?: 0,
             arrangement = node.props[TypedPropKeys.RowMainAxisArrangement] ?: MainAxisArrangement.Start,
@@ -158,6 +182,14 @@ internal object ContainerViewBinder {
     }
 
     fun readColumnSpec(node: VNode): LinearSpec {
+        val spec = node.spec as? ColumnNodeProps
+        if (spec != null) {
+            return LinearSpec(
+                spacing = spec.spacing,
+                arrangement = spec.arrangement,
+                gravity = spec.horizontalAlignment.toGravity(),
+            )
+        }
         return LinearSpec(
             spacing = node.props[TypedPropKeys.LinearSpacing] ?: 0,
             arrangement = node.props[TypedPropKeys.ColumnMainAxisArrangement] ?: MainAxisArrangement.Start,
@@ -166,12 +198,26 @@ internal object ContainerViewBinder {
     }
 
     fun readBoxSpec(node: VNode): BoxSpec {
+        val spec = node.spec as? BoxNodeProps
+        if (spec != null) {
+            return BoxSpec(
+                gravity = spec.contentAlignment.toGravity(),
+            )
+        }
         return BoxSpec(
             gravity = (node.props[TypedPropKeys.BoxAlignment] ?: BoxAlignment.TopStart).toGravity(),
         )
     }
 
     fun readLazyColumnSpec(node: VNode): LazyColumnSpec {
+        val spec = node.spec as? LazyColumnNodeProps
+        if (spec != null) {
+            return LazyColumnSpec(
+                contentPadding = spec.contentPadding,
+                spacing = spec.spacing,
+                items = spec.items,
+            )
+        }
         return LazyColumnSpec(
             contentPadding = node.props[TypedPropKeys.LazyContentPadding] ?: 0,
             spacing = node.props[TypedPropKeys.LazySpacing] ?: 0,
@@ -214,6 +260,24 @@ internal object ContainerViewBinder {
     }
 
     fun readSegmentedControlSpec(node: VNode, defaultRippleColor: Int): SegmentedControlSpec {
+        val spec = node.spec as? SegmentedControlNodeProps
+        if (spec != null) {
+            return SegmentedControlSpec(
+                items = spec.items,
+                selectedIndex = spec.selectedIndex,
+                onSelectionChange = spec.onSelectionChange,
+                enabled = spec.enabled,
+                backgroundColor = spec.backgroundColor,
+                indicatorColor = spec.indicatorColor,
+                cornerRadius = spec.cornerRadius,
+                textColor = spec.textColor,
+                selectedTextColor = spec.selectedTextColor,
+                rippleColor = spec.rippleColor,
+                textSizeSp = spec.textSizeSp,
+                horizontalPadding = spec.horizontalPadding,
+                verticalPadding = spec.verticalPadding,
+            )
+        }
         return SegmentedControlSpec(
             items = node.props[TypedPropKeys.SegmentItems] ?: emptyList(),
             selectedIndex = node.props[TypedPropKeys.SegmentSelectedIndex] ?: 0,
@@ -228,6 +292,30 @@ internal object ContainerViewBinder {
             textSizeSp = node.props[TypedPropKeys.SegmentTextSizeSp] ?: 14,
             horizontalPadding = node.props[TypedPropKeys.SegmentContentPaddingHorizontal] ?: 0,
             verticalPadding = node.props[TypedPropKeys.SegmentContentPaddingVertical] ?: 0,
+        )
+    }
+
+    fun readDividerSpec(node: VNode): DividerSpec {
+        val spec = node.spec as? DividerNodeProps
+        if (spec != null) {
+            return DividerSpec(
+                color = spec.color,
+                thickness = spec.thickness,
+            )
+        }
+        return DividerSpec(
+            color = node.props[TypedPropKeys.DividerColor] ?: android.graphics.Color.BLACK,
+            thickness = node.props[TypedPropKeys.DividerThickness] ?: 1,
+        )
+    }
+
+    fun readAndroidViewSpec(node: VNode): AndroidViewSpec {
+        val spec = node.spec as? AndroidViewNodeProps
+        if (spec != null) {
+            return AndroidViewSpec(update = spec.update)
+        }
+        return AndroidViewSpec(
+            update = node.props[TypedPropKeys.ViewUpdate],
         )
     }
 

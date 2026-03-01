@@ -595,7 +595,8 @@ object ViewTreeRenderer {
     }
 
     private fun readViewFactory(node: VNode): ((Context) -> View)? {
-        return node.props[TypedPropKeys.ViewFactory]
+        return (node.spec as? com.gzq.uiframework.renderer.node.spec.AndroidViewNodeProps)?.factory
+            ?: node.props[TypedPropKeys.ViewFactory]
     }
 
     private fun defaultDividerWidth(parent: ViewGroup, node: VNode): Int {
@@ -617,7 +618,7 @@ object ViewTreeRenderer {
     }
 
     private fun readDividerThickness(node: VNode): Int {
-        return node.props[TypedPropKeys.DividerThickness] ?: 1
+        return ContainerViewBinder.readDividerSpec(node).thickness
     }
 
     private fun readNodeTextColor(node: VNode): Int? {

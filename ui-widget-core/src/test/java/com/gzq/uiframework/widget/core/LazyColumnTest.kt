@@ -2,7 +2,9 @@ package com.gzq.uiframework.widget.core
 
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TypedPropKeys
+import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class LazyColumnTest {
@@ -23,5 +25,6 @@ class LazyColumnTest {
         assertEquals(NodeType.LazyColumn, node.type)
         assertEquals(12.dp, node.props[TypedPropKeys.LazyContentPadding])
         assertEquals(8.dp, node.props[TypedPropKeys.LazySpacing])
+        assertTrue(node.spec is LazyColumnNodeProps)
     }
 }

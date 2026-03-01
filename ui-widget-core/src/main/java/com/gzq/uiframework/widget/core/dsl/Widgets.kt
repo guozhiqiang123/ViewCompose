@@ -29,9 +29,16 @@ import com.gzq.uiframework.renderer.node.TextFieldImeAction
 import com.gzq.uiframework.renderer.node.TextFieldType
 import com.gzq.uiframework.renderer.node.TextOverflow
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.AndroidViewNodeProps
+import com.gzq.uiframework.renderer.node.spec.BoxNodeProps
+import com.gzq.uiframework.renderer.node.spec.ColumnNodeProps
+import com.gzq.uiframework.renderer.node.spec.DividerNodeProps
 import com.gzq.uiframework.renderer.node.spec.IconButtonNodeProps
 import com.gzq.uiframework.renderer.node.spec.ImageNodeProps
+import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.ProgressIndicatorNodeProps
+import com.gzq.uiframework.renderer.node.spec.RowNodeProps
+import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
 import com.gzq.uiframework.renderer.node.spec.SliderNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextNodeProps
@@ -701,24 +708,49 @@ fun UiTreeBuilder.SegmentedControl(
     key: Any? = null,
     modifier: Modifier = Modifier,
 ) {
+    val resolvedItems = items.map { label -> SegmentedControlItem(label = label) }
+    val backgroundColor = SegmentedControlDefaults.backgroundColor(enabled)
+    val indicatorColor = SegmentedControlDefaults.indicatorColor(enabled)
+    val cornerRadius = SegmentedControlDefaults.cornerRadius()
+    val textColor = SegmentedControlDefaults.textColor(enabled)
+    val selectedTextColor = SegmentedControlDefaults.selectedTextColor(enabled)
+    val rippleColor = SegmentedControlDefaults.rippleColor(enabled)
+    val textSizeSp = SegmentedControlDefaults.textStyle(size).fontSizeSp
+    val horizontalPadding = SegmentedControlDefaults.horizontalPadding(size)
+    val verticalPadding = SegmentedControlDefaults.verticalPadding(size)
     emit(
         type = NodeType.SegmentedControl,
         key = key,
         props = props {
-            set(TypedPropKeys.SegmentItems, items.map { label -> SegmentedControlItem(label = label) })
+            set(TypedPropKeys.SegmentItems, resolvedItems)
             set(TypedPropKeys.SegmentSelectedIndex, selectedIndex)
             set(TypedPropKeys.OnSegmentSelected, onSelectionChange)
             set(TypedPropKeys.Enabled, enabled)
-            set(TypedPropKeys.SegmentBackgroundColor, SegmentedControlDefaults.backgroundColor(enabled))
-            set(TypedPropKeys.SegmentIndicatorColor, SegmentedControlDefaults.indicatorColor(enabled))
-            set(TypedPropKeys.SegmentCornerRadius, SegmentedControlDefaults.cornerRadius())
-            set(TypedPropKeys.SegmentTextColor, SegmentedControlDefaults.textColor(enabled))
-            set(TypedPropKeys.SegmentSelectedTextColor, SegmentedControlDefaults.selectedTextColor(enabled))
-            set(TypedPropKeys.SegmentRippleColor, SegmentedControlDefaults.rippleColor(enabled))
-            set(TypedPropKeys.SegmentTextSizeSp, SegmentedControlDefaults.textStyle(size).fontSizeSp)
-            set(TypedPropKeys.SegmentContentPaddingHorizontal, SegmentedControlDefaults.horizontalPadding(size))
-            set(TypedPropKeys.SegmentContentPaddingVertical, SegmentedControlDefaults.verticalPadding(size))
+            set(TypedPropKeys.SegmentBackgroundColor, backgroundColor)
+            set(TypedPropKeys.SegmentIndicatorColor, indicatorColor)
+            set(TypedPropKeys.SegmentCornerRadius, cornerRadius)
+            set(TypedPropKeys.SegmentTextColor, textColor)
+            set(TypedPropKeys.SegmentSelectedTextColor, selectedTextColor)
+            set(TypedPropKeys.SegmentRippleColor, rippleColor)
+            set(TypedPropKeys.SegmentTextSizeSp, textSizeSp)
+            set(TypedPropKeys.SegmentContentPaddingHorizontal, horizontalPadding)
+            set(TypedPropKeys.SegmentContentPaddingVertical, verticalPadding)
         },
+        spec = SegmentedControlNodeProps(
+            items = resolvedItems,
+            selectedIndex = selectedIndex,
+            onSelectionChange = onSelectionChange,
+            enabled = enabled,
+            backgroundColor = backgroundColor,
+            indicatorColor = indicatorColor,
+            cornerRadius = cornerRadius,
+            textColor = textColor,
+            selectedTextColor = selectedTextColor,
+            rippleColor = rippleColor,
+            textSizeSp = textSizeSp,
+            horizontalPadding = horizontalPadding,
+            verticalPadding = verticalPadding,
+        ),
         modifier = Modifier
             .height(SegmentedControlDefaults.height(size))
             .then(modifier),
@@ -738,6 +770,10 @@ fun UiTreeBuilder.AndroidView(
             set(TypedPropKeys.ViewFactory, factory)
             set(TypedPropKeys.ViewUpdate, update)
         },
+        spec = AndroidViewNodeProps(
+            factory = factory,
+            update = update,
+        ),
         modifier = modifier,
     )
 }
@@ -754,6 +790,9 @@ fun UiTreeBuilder.Box(
         props = props {
             set(TypedPropKeys.BoxAlignment, contentAlignment)
         },
+        spec = BoxNodeProps(
+            contentAlignment = contentAlignment,
+        ),
         modifier = modifier,
         children = BoxScope().apply(content).build(),
     )
@@ -791,6 +830,9 @@ fun UiTreeBuilder.Surface(
                     set(TypedPropKeys.StyleAlpha, SurfaceDefaults.disabledAlpha())
                 }
             },
+            spec = BoxNodeProps(
+                contentAlignment = contentAlignment,
+            ),
             modifier = semanticModifier,
             children = BoxScope().apply(content).build(),
         )
@@ -838,6 +880,10 @@ fun UiTreeBuilder.Divider(
             set(TypedPropKeys.DividerColor, color)
             set(TypedPropKeys.DividerThickness, thickness)
         },
+        spec = DividerNodeProps(
+            color = color,
+            thickness = thickness,
+        ),
         modifier = modifier,
     )
 }
@@ -858,6 +904,11 @@ fun UiTreeBuilder.Row(
             set(TypedPropKeys.RowMainAxisArrangement, arrangement)
             set(TypedPropKeys.RowVerticalAlignment, verticalAlignment)
         },
+        spec = RowNodeProps(
+            spacing = spacing,
+            arrangement = arrangement,
+            verticalAlignment = verticalAlignment,
+        ),
         modifier = modifier,
         children = RowScope().apply(content).build(),
     )
@@ -879,6 +930,11 @@ fun UiTreeBuilder.Column(
             set(TypedPropKeys.ColumnMainAxisArrangement, arrangement)
             set(TypedPropKeys.ColumnHorizontalAlignment, horizontalAlignment)
         },
+        spec = ColumnNodeProps(
+            spacing = spacing,
+            arrangement = arrangement,
+            horizontalAlignment = horizontalAlignment,
+        ),
         modifier = modifier,
         children = ColumnScope().apply(content).build(),
     )
@@ -893,38 +949,41 @@ fun <T> UiTreeBuilder.LazyColumn(
     itemContent: UiTreeBuilder.(T) -> Unit,
 ) {
     val localSnapshot = LocalContext.snapshot()
+    val resolvedItems = items.map { item ->
+        LazyListItem(
+            key = key?.invoke(item),
+            contentToken = item,
+            sessionFactory = LazyListItemSessionFactory { container ->
+                WidgetLazyListItemSession(
+                    container = container,
+                    localSnapshot = localSnapshot,
+                    content = {
+                        itemContent(item)
+                    },
+                )
+            },
+            sessionUpdater = { session ->
+                (session as? WidgetLazyListItemSession)?.updateContent(
+                    localSnapshot = localSnapshot,
+                    content = {
+                        itemContent(item)
+                    },
+                )
+            },
+        )
+    }
     emit(
         type = NodeType.LazyColumn,
         props = props {
             set(TypedPropKeys.LazyContentPadding, contentPadding)
             set(TypedPropKeys.LazySpacing, spacing)
-            set(
-                TypedPropKeys.LazyItems,
-                items.map { item ->
-                    LazyListItem(
-                        key = key?.invoke(item),
-                        contentToken = item,
-                        sessionFactory = LazyListItemSessionFactory { container ->
-                            WidgetLazyListItemSession(
-                                container = container,
-                                localSnapshot = localSnapshot,
-                                content = {
-                                    itemContent(item)
-                                },
-                            )
-                        },
-                        sessionUpdater = { session ->
-                            (session as? WidgetLazyListItemSession)?.updateContent(
-                                localSnapshot = localSnapshot,
-                                content = {
-                                    itemContent(item)
-                                },
-                            )
-                        },
-                    )
-                },
-            )
+            set(TypedPropKeys.LazyItems, resolvedItems)
         },
+        spec = LazyColumnNodeProps(
+            contentPadding = contentPadding,
+            spacing = spacing,
+            items = resolvedItems,
+        ),
         modifier = modifier,
     )
 }

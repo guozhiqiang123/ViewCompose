@@ -4,7 +4,9 @@ import com.gzq.uiframework.renderer.modifier.HeightModifierElement
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.SegmentedControlItem
 import com.gzq.uiframework.renderer.node.TypedPropKeys
+import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class SegmentedControlTest {
@@ -46,6 +48,7 @@ class SegmentedControlTest {
         assertEquals(3, items.size)
         assertEquals("System", items[0].label)
         assertEquals(SegmentedControlDefaults.height(), height.height)
+        assertTrue(node.spec is SegmentedControlNodeProps)
 
         onSelectionChange?.invoke(2)
         assertEquals(2, selectedIndex)

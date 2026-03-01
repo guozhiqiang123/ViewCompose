@@ -5,7 +5,9 @@ import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.modifier.backgroundColor
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TypedPropKeys
+import com.gzq.uiframework.renderer.node.spec.BoxNodeProps
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ThemeTest {
@@ -598,6 +600,7 @@ class ThemeTest {
         assertEquals(SurfaceDefaults.cardCornerRadius(), surface.props[TypedPropKeys.StyleCornerRadius])
         assertEquals(SurfaceDefaults.pressedColor(), surface.props[TypedPropKeys.StyleRippleColor])
         assertEquals(SurfaceDefaults.disabledAlpha(), surface.props[TypedPropKeys.StyleAlpha])
+        assertTrue(surface.spec is BoxNodeProps)
     }
 
     @Test

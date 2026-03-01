@@ -310,8 +310,8 @@ Compose 的优势在于：
 
 - 现在的 typed prop 方向是合理的
 - 但它目前还是“typed key 包裹动态 map”，不是完整强类型节点参数模型
-- 下一阶段应继续把高频控件和 renderer 读取链路迁到 typed props，逐步压缩裸字符串 key 的使用面
-- 在此基础上，应只对高收益节点试点 `NodeProps`，而不是立即全量推广
+- 当前第一方控件节点已经基本完成 `NodeProps` 覆盖，`Spacer` 之外的常用节点都已有结构化 spec
+- 下一阶段不该继续停留在“补更多 spec 文件”，而应开始利用现有 spec 结果做节点级 diff、binder 局部跳过更新和 debug 能力
 
 ### 7.35 `typed props` 还不是长期终态
 
@@ -323,10 +323,11 @@ Compose 的优势在于：
 - 节点不变式仍然分散
 - 后续做调试、schema、节点级优化时，结构约束不够强
 
-因此当前更合理的下一步不是“继续堆更多 typed key”，而是：
+因此当前更合理的下一步已经从“继续堆更多 typed key”推进到了：
 
 - 保留 `typed props` 作为底层兼容层
-- 在高收益节点上逐步引入 `NodeProps`
+- 在第一方高频节点上优先读取 `NodeProps`
+- 基于 `NodeProps` 设计更细的节点级更新边界
 
 详细方案见 [NODE_PROPS.md](/Users/gzq/AndroidStudioProjects/UIFramework/NODE_PROPS.md)。
 

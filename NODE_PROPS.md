@@ -90,21 +90,26 @@ data class TextFieldNodeProps(...) : NodeSpec
 2. `TabPager`
 3. `TextField`
 
-### P2：框架稳定后继续推进
+### P2：在试点跑通后继续推进
 
 1. `SegmentedControl`
 2. `LazyColumn`
 3. `Image`
 4. `IconButton`
-5. `Surface`
+5. `Text`
+6. `Checkbox / Switch / RadioButton / Slider`
+7. `LinearProgressIndicator / CircularProgressIndicator`
 
-### P3：可长期保留在 typed props
+### P3：最后补全容器与互操作
 
-1. `Text`
-2. `Divider`
-3. `LinearProgressIndicator`
-4. `CircularProgressIndicator`
-5. `Checkbox / Switch / RadioButton / Slider`
+1. `Row / Column`
+2. `Box / Surface`
+3. `Divider`
+4. `AndroidView`
+
+### P4：可长期保留在 typed props
+
+1. `Spacer`
 
 ## 6. 与 Compose 的关系
 
@@ -141,7 +146,26 @@ Compose 的本质是：
 - binder 优先读 `spec`
 - 现有测试继续通过
 
-### Phase 3：验证收益
+### Phase 3：扩展到高频控件
+
+- `SegmentedControlNodeProps`
+- `LazyColumnNodeProps`
+- `ImageNodeProps`
+- `IconButtonNodeProps`
+- `TextNodeProps`
+- `ToggleNodeProps`
+- `SliderNodeProps`
+- `ProgressIndicatorNodeProps`
+
+### Phase 4：补齐容器和互操作
+
+- `RowNodeProps`
+- `ColumnNodeProps`
+- `BoxNodeProps`
+- `DividerNodeProps`
+- `AndroidViewNodeProps`
+
+### Phase 5：验证收益
 
 重点验证：
 
@@ -150,16 +174,17 @@ Compose 的本质是：
 3. 测试断言是否更直接
 4. 后续新增字段是否更容易
 
-### Phase 4：按需扩展
+### Phase 6：按需继续扩展
 
-仅在 P1 验证明显收益后，才推广到 `SegmentedControl / LazyColumn / Image / Surface`。
+仅在当前结构确实对节点级 diff、debug 和 binder 拆分有明显收益后，才考虑把 spec 模型继续推向更细粒度更新。
 
 ## 8. 当前执行策略
 
-当前立即执行的顺序：
+当前状态：
 
-1. `ButtonNodeProps`
-2. `TabPagerNodeProps`
-3. `TextFieldNodeProps`
+1. `Button / TabPager / TextField` 已完成 spec 化
+2. `Text / Image / IconButton / Checkbox / Switch / RadioButton / Slider / LinearProgressIndicator / CircularProgressIndicator` 已完成 spec 化
+3. `SegmentedControl / Row / Column / Box / Surface / Divider / LazyColumn / AndroidView` 已完成 spec 化
+4. `Spacer` 暂不 spec 化，因为它目前仅承担纯布局占位，不包含额外语义字段
 
-不同时推进更多节点。
+下一步不再继续追求“所有节点都先 spec 化”，而是开始利用现有 spec 结果讨论节点级 diff、跳过更新和更细粒度重组。
