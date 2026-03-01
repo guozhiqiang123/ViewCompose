@@ -332,6 +332,7 @@ Compose 的优势在于：
 - 在时机成熟后，把 `Props` 从主模型收缩为 internal bridge
 
 详细方案见 [NODE_PROPS.md](/Users/gzq/AndroidStudioProjects/UIFramework/NODE_PROPS.md)。
+性能主线见 [PERFORMANCE.md](/Users/gzq/AndroidStudioProjects/UIFramework/PERFORMANCE.md)。
 
 ### 7.4 通用页面节点更新粒度仍偏粗
 
