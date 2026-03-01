@@ -11,13 +11,7 @@ open class Modifier private constructor(
 
     fun then(modifier: Modifier): Modifier = Modifier(elements + modifier.elements)
 
-    companion object : Modifier(emptyList()) {
-        @Deprecated(
-            message = "Use Modifier instead.",
-            replaceWith = ReplaceWith("Modifier"),
-        )
-        val Empty: Modifier = this
-    }
+    companion object : Modifier(emptyList())
 }
 
 interface ModifierElement
@@ -51,14 +45,6 @@ data class CornerRadiusModifierElement(
 
 data class RippleColorModifierElement(
     val color: Int,
-) : ModifierElement
-
-data class TextColorModifierElement(
-    val color: Int,
-) : ModifierElement
-
-data class TextSizeModifierElement(
-    val sizeSp: Int,
 ) : ModifierElement
 
 data class SizeModifierElement(
@@ -183,26 +169,6 @@ fun Modifier.cornerRadius(radius: Int): Modifier {
 fun Modifier.rippleColor(color: Int): Modifier {
     return then(
         RippleColorModifierElement(color),
-    )
-}
-
-@Deprecated(
-    message = "Text color is widget-specific. Prefer Text(color = ...) or widget props.",
-    level = DeprecationLevel.ERROR,
-)
-fun Modifier.textColor(color: Int): Modifier {
-    return then(
-        TextColorModifierElement(color),
-    )
-}
-
-@Deprecated(
-    message = "Text size is widget-specific. Prefer Text(style = ...) or widget props.",
-    level = DeprecationLevel.ERROR,
-)
-fun Modifier.textSize(sizeSp: Int): Modifier {
-    return then(
-        TextSizeModifierElement(sizeSp),
     )
 }
 

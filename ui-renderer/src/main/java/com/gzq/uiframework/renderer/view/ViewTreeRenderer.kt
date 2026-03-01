@@ -41,7 +41,6 @@ import com.gzq.uiframework.renderer.layout.BoxAlignment
 import com.gzq.uiframework.renderer.layout.HorizontalAlignment
 import com.gzq.uiframework.renderer.layout.LayoutParamDefaultsResolver
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
-import com.gzq.uiframework.renderer.layout.ModifierCompatibilityInspector
 import com.gzq.uiframework.renderer.layout.ModifierParentDataValidator
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.modifier.AlphaModifierElement
@@ -58,8 +57,6 @@ import com.gzq.uiframework.renderer.modifier.OffsetModifierElement
 import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
 import com.gzq.uiframework.renderer.modifier.RippleColorModifierElement
 import com.gzq.uiframework.renderer.modifier.SizeModifierElement
-import com.gzq.uiframework.renderer.modifier.TextColorModifierElement
-import com.gzq.uiframework.renderer.modifier.TextSizeModifierElement
 import com.gzq.uiframework.renderer.modifier.VerticalAlignModifierElement
 import com.gzq.uiframework.renderer.modifier.Visibility
 import com.gzq.uiframework.renderer.modifier.VisibilityModifierElement
@@ -440,10 +437,6 @@ object ViewTreeRenderer {
             .lastOrNull { it is MinHeightModifierElement } as? MinHeightModifierElement
         val rippleColor = node.modifier.elements
             .lastOrNull { it is RippleColorModifierElement } as? RippleColorModifierElement
-        val legacyTextColor = node.modifier.elements
-            .lastOrNull { it is TextColorModifierElement } as? TextColorModifierElement
-        val legacyTextSize = node.modifier.elements
-            .lastOrNull { it is TextSizeModifierElement } as? TextSizeModifierElement
         val visibility = node.modifier.elements
             .lastOrNull { it is VisibilityModifierElement } as? VisibilityModifierElement
         val zIndex = node.modifier.elements
@@ -456,8 +449,8 @@ object ViewTreeRenderer {
         val resolvedPadding = padding ?: readNodePadding(node)
         val resolvedMinHeight = minHeight?.minHeight ?: readNodeMinHeight(node) ?: 0
         val resolvedRippleColor = rippleColor?.color ?: readNodeRippleColor(node) ?: DEFAULT_RIPPLE_COLOR
-        val textColor = readNodeTextColor(node) ?: legacyTextColor?.color
-        val textSizeSp = readNodeTextSize(node) ?: legacyTextSize?.sizeSp
+        val textColor = readNodeTextColor(node)
+        val textSizeSp = readNodeTextSize(node)
         view.alpha = resolvedAlpha
         if (view is DeclarativeTextFieldLayout) {
             view.visibility = when (visibility?.visibility ?: Visibility.Visible) {
@@ -1087,12 +1080,6 @@ object ViewTreeRenderer {
                 Log.w(WARNING_TAG, warning)
             }
         }
-        ModifierCompatibilityInspector.warnings(node).forEach { warning ->
-            val key = "compat|${node.type}|$warning"
-            if (emittedModifierWarnings.add(key)) {
-                Log.w(WARNING_TAG, warning)
-            }
-        }
     }
 
     private fun <T : ViewGroup.MarginLayoutParams> T.applyLayoutParams(
@@ -1452,7 +1439,7 @@ object ViewTreeRenderer {
     }
 
     private fun readButtonContentColor(node: VNode): Int {
-        return readNodeTextColor(node) ?: readLegacyModifierTextColor(node) ?: Color.BLACK
+        return readNodeTextColor(node) ?: Color.BLACK
     }
 
     private fun readImagePlaceholder(node: VNode): ImageSource.Resource? {
@@ -1518,12 +1505,6 @@ object ViewTreeRenderer {
             right = right,
             bottom = bottom,
         )
-    }
-
-    private fun readLegacyModifierTextColor(node: VNode): Int? {
-        return (node.modifier.elements
-            .lastOrNull { it is TextColorModifierElement } as? TextColorModifierElement)
-            ?.color
     }
 
     private fun TextAlign.toTextGravity(): Int {
