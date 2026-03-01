@@ -14,6 +14,7 @@ import com.gzq.uiframework.renderer.node.TextFieldImeAction
 import com.gzq.uiframework.renderer.node.TextFieldType
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.VNode
+import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
 import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
 import android.text.InputType
 import android.view.inputmethod.EditorInfo
@@ -173,8 +174,32 @@ internal object InputViewBinder {
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
     fun readTextFieldSpec(node: VNode): TextFieldSpec {
+        val spec = node.spec as? TextFieldNodeProps
+        if (spec != null) {
+            return TextFieldSpec(
+                value = spec.value,
+                label = spec.label,
+                labelColor = spec.labelColor,
+                labelTextSizeSp = spec.labelTextSizeSp,
+                supportingText = spec.supportingText,
+                supportingTextColor = spec.supportingTextColor,
+                supportingTextSizeSp = spec.supportingTextSizeSp,
+                placeholder = spec.placeholder,
+                enabled = spec.enabled,
+                singleLine = spec.singleLine,
+                minLines = spec.minLines,
+                maxLines = spec.maxLines,
+                inputType = resolveInputType(
+                    type = spec.keyboardType,
+                    singleLine = spec.singleLine,
+                ),
+                imeAction = spec.imeAction.toEditorAction(),
+                hintColor = spec.hintColor,
+                readOnly = spec.readOnly,
+                onValueChange = spec.onValueChange,
+            )
+        }
         val hintColor = node.props[TypedPropKeys.HintTextColor] ?: 0xFF888888.toInt()
         val singleLine = node.props[TypedPropKeys.SingleLine] ?: true
         return TextFieldSpec(

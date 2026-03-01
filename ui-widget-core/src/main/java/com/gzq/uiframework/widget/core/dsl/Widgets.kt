@@ -29,6 +29,7 @@ import com.gzq.uiframework.renderer.node.TextFieldImeAction
 import com.gzq.uiframework.renderer.node.TextFieldType
 import com.gzq.uiframework.renderer.node.TextOverflow
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
 
 fun UiTreeBuilder.Text(
@@ -130,6 +131,18 @@ fun UiTreeBuilder.TextField(
     } else {
         Modifier
     }
+    val hintColor = TextFieldDefaults.hintColor(
+        enabled = enabled,
+        isError = isError,
+    )
+    val labelColor = TextFieldDefaults.labelColor(
+        enabled = enabled,
+        isError = isError,
+    )
+    val supportingTextColor = TextFieldDefaults.supportingTextColor(
+        enabled = enabled,
+        isError = isError,
+    )
     emit(
         type = NodeType.TextField,
         key = key,
@@ -173,30 +186,31 @@ fun UiTreeBuilder.TextField(
             )
             set(TypedPropKeys.StyleCornerRadius, TextFieldDefaults.cornerRadius())
             set(TypedPropKeys.StyleRippleColor, TextFieldDefaults.pressedColor())
-            set(
-                TypedPropKeys.HintTextColor,
-                TextFieldDefaults.hintColor(
-                    enabled = enabled,
-                    isError = isError,
-                ),
-            )
-            set(
-                TypedPropKeys.LabelTextColor,
-                TextFieldDefaults.labelColor(
-                    enabled = enabled,
-                    isError = isError,
-                ),
-            )
-            set(
-                TypedPropKeys.SupportingTextColor,
-                TextFieldDefaults.supportingTextColor(
-                    enabled = enabled,
-                    isError = isError,
-                ),
-            )
+            set(TypedPropKeys.HintTextColor, hintColor)
+            set(TypedPropKeys.LabelTextColor, labelColor)
+            set(TypedPropKeys.SupportingTextColor, supportingTextColor)
             set(TypedPropKeys.LabelTextSizeSp, TextFieldDefaults.labelTextStyle().fontSizeSp)
             set(TypedPropKeys.SupportingTextSizeSp, TextFieldDefaults.supportingTextStyle().fontSizeSp)
         },
+        spec = TextFieldNodeProps(
+            value = value,
+            label = label,
+            labelColor = labelColor,
+            labelTextSizeSp = TextFieldDefaults.labelTextStyle().fontSizeSp,
+            supportingText = supportingText,
+            supportingTextColor = supportingTextColor,
+            supportingTextSizeSp = TextFieldDefaults.supportingTextStyle().fontSizeSp,
+            placeholder = placeholder.ifEmpty { hint },
+            enabled = enabled,
+            singleLine = singleLine,
+            minLines = minLines,
+            maxLines = maxLines,
+            keyboardType = keyboardType,
+            imeAction = imeAction,
+            hintColor = hintColor,
+            readOnly = readOnly,
+            onValueChange = onValueChange,
+        ),
         modifier = Modifier
             .then(sizeModifier)
             .then(modifier),

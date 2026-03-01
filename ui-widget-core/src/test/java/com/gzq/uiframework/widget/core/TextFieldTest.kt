@@ -5,6 +5,7 @@ import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TextFieldImeAction
 import com.gzq.uiframework.renderer.node.TextFieldType
 import com.gzq.uiframework.renderer.node.TypedPropKeys
+import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -61,6 +62,7 @@ class TextFieldTest {
         assertEquals(customTheme.shapes.controlCornerRadius, node.props[TypedPropKeys.StyleCornerRadius])
         assertEquals(customTheme.interactions.pressedOverlay, node.props[TypedPropKeys.StyleRippleColor])
         assertEquals(true, node.props[TypedPropKeys.Enabled])
+        assertTrue(node.spec is TextFieldNodeProps)
     }
 
     @Test
