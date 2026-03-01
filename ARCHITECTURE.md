@@ -169,6 +169,12 @@ widget/core/
   bridge/
   context/
   defaults/
+    action/
+    collection/
+    content/
+    feedback/
+    input/
+    layout/
   dsl/
     action/
     collection/
@@ -185,7 +191,12 @@ widget/core/
 
 - `bridge/` 放 Android theme/environment 桥接
 - `context/` 只放 local、theme、environment、content color、image loading 这类 ambient context
-- `defaults/` 放所有 widget 默认值解析
+- `defaults/content/` 放文本、divider 等内容控件默认值
+- `defaults/input/` 放 text field、toggle、slider 等输入控件默认值
+- `defaults/action/` 放 button、icon button、segmented control 默认值
+- `defaults/feedback/` 放 progress 等反馈类默认值
+- `defaults/layout/` 放 `Surface` 等布局/容器相关默认值
+- `defaults/collection/` 放 `TabPager` 等集合型默认值
 - `dsl/` 根目录放 `UiTreeBuilder`、`LayoutScopes`、`Dimensions`
 - `dsl/content/` 放 `Text`、`Image`、`Icon`、`AndroidView`
 - `dsl/input/` 放 `TextField`、`Checkbox`、`Slider` 等输入控件 DSL
@@ -302,6 +313,7 @@ flowchart TD
 - `context/` 现在重新回到“ambient context”职责
 - overlay 相关契约和 reducer 已经移到 `overlay/`、`overlay/runtime/`
 - `dsl/` 已经从单个 `Widgets.kt` 拆成按控件族归类的文件
+- `defaults/` 也已经和 DSL 一样按语义目录归类
 - 当前比之前更符合“DSL + session + defaults + overlay contracts”的真实边界
 
 剩余问题：
