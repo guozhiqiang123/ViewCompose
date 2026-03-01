@@ -1,10 +1,10 @@
 package com.gzq.uiframework.widget.core
 
 import com.gzq.uiframework.renderer.modifier.HeightModifierElement
-import com.gzq.uiframework.renderer.node.TextFieldImeAction
 import com.gzq.uiframework.renderer.node.NodeType
-import com.gzq.uiframework.renderer.node.PropKeys
+import com.gzq.uiframework.renderer.node.TextFieldImeAction
 import com.gzq.uiframework.renderer.node.TextFieldType
+import com.gzq.uiframework.renderer.node.TypedPropKeys
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -45,22 +45,22 @@ class TextFieldTest {
 
         val node = tree.single()
         assertEquals(NodeType.TextField, node.type)
-        assertEquals("hello", node.props.values[PropKeys.VALUE])
-        assertEquals("Type here", node.props.values[PropKeys.HINT])
-        assertEquals("Display name", node.props.values[PropKeys.LABEL])
-        assertEquals("Type here", node.props.values[PropKeys.PLACEHOLDER])
-        assertEquals("Shown in profile", node.props.values[PropKeys.SUPPORTING_TEXT])
-        assertEquals(true, node.props.values[PropKeys.SINGLE_LINE])
-        assertEquals(TextFieldType.Text, node.props.values[PropKeys.TEXT_FIELD_TYPE])
-        assertEquals(3, node.props.values[PropKeys.MAX_LINES])
-        assertEquals(TextFieldImeAction.Next, node.props.values[PropKeys.IME_ACTION])
-        assertEquals(customTheme.colors.textSecondary, node.props.values[PropKeys.HINT_TEXT_COLOR])
-        assertEquals(customTheme.colors.textPrimary, node.props.values[PropKeys.TEXT_COLOR])
-        assertEquals(customTheme.typography.body.fontSizeSp, node.props.values[PropKeys.TEXT_SIZE_SP])
-        assertEquals(customTheme.input.fieldContainer, node.props.values[PropKeys.STYLE_BACKGROUND_COLOR])
-        assertEquals(customTheme.shapes.controlCornerRadius, node.props.values[PropKeys.STYLE_CORNER_RADIUS])
-        assertEquals(customTheme.interactions.pressedOverlay, node.props.values[PropKeys.STYLE_RIPPLE_COLOR])
-        assertEquals(true, node.props.values[PropKeys.ENABLED])
+        assertEquals("hello", node.props[TypedPropKeys.Value])
+        assertEquals("Type here", node.props[TypedPropKeys.Hint])
+        assertEquals("Display name", node.props[TypedPropKeys.Label])
+        assertEquals("Type here", node.props[TypedPropKeys.Placeholder])
+        assertEquals("Shown in profile", node.props[TypedPropKeys.SupportingText])
+        assertEquals(true, node.props[TypedPropKeys.SingleLine])
+        assertEquals(TextFieldType.Text, node.props[TypedPropKeys.TextFieldType])
+        assertEquals(3, node.props[TypedPropKeys.MaxLines])
+        assertEquals(TextFieldImeAction.Next, node.props[TypedPropKeys.ImeAction])
+        assertEquals(customTheme.colors.textSecondary, node.props[TypedPropKeys.HintTextColor])
+        assertEquals(customTheme.colors.textPrimary, node.props[TypedPropKeys.TextColor])
+        assertEquals(customTheme.typography.body.fontSizeSp, node.props[TypedPropKeys.TextSizeSp])
+        assertEquals(customTheme.input.fieldContainer, node.props[TypedPropKeys.StyleBackgroundColor])
+        assertEquals(customTheme.shapes.controlCornerRadius, node.props[TypedPropKeys.StyleCornerRadius])
+        assertEquals(customTheme.interactions.pressedOverlay, node.props[TypedPropKeys.StyleRippleColor])
+        assertEquals(true, node.props[TypedPropKeys.Enabled])
     }
 
     @Test
@@ -78,10 +78,10 @@ class TextFieldTest {
         val node = tree.single()
 
         assertEquals(NodeType.TextField, node.type)
-        assertEquals(TextFieldType.Password, node.props.values[PropKeys.TEXT_FIELD_TYPE])
-        assertEquals("Password", node.props.values[PropKeys.LABEL])
-        assertEquals("At least 8 characters", node.props.values[PropKeys.SUPPORTING_TEXT])
-        assertTrue(node.props.values[PropKeys.SINGLE_LINE] as Boolean)
+        assertEquals(TextFieldType.Password, node.props[TypedPropKeys.TextFieldType])
+        assertEquals("Password", node.props[TypedPropKeys.Label])
+        assertEquals("At least 8 characters", node.props[TypedPropKeys.SupportingText])
+        assertTrue(node.props[TypedPropKeys.SingleLine] as Boolean)
     }
 
     @Test
@@ -101,13 +101,13 @@ class TextFieldTest {
 
         val node = tree.single()
 
-        assertEquals(false, node.props.values[PropKeys.SINGLE_LINE])
-        assertEquals(true, node.props.values[PropKeys.READ_ONLY])
-        assertEquals(4, node.props.values[PropKeys.MIN_LINES])
-        assertEquals(6, node.props.values[PropKeys.MAX_LINES])
-        assertEquals(TextFieldImeAction.Done, node.props.values[PropKeys.IME_ACTION])
-        assertEquals("Bio", node.props.values[PropKeys.LABEL])
-        assertEquals("Visible to collaborators", node.props.values[PropKeys.SUPPORTING_TEXT])
+        assertEquals(false, node.props[TypedPropKeys.SingleLine])
+        assertEquals(true, node.props[TypedPropKeys.ReadOnly])
+        assertEquals(4, node.props[TypedPropKeys.MinLines])
+        assertEquals(6, node.props[TypedPropKeys.MaxLines])
+        assertEquals(TextFieldImeAction.Done, node.props[TypedPropKeys.ImeAction])
+        assertEquals("Bio", node.props[TypedPropKeys.Label])
+        assertEquals("Visible to collaborators", node.props[TypedPropKeys.SupportingText])
     }
 
     @Test
@@ -124,9 +124,9 @@ class TextFieldTest {
 
         val node = tree.single()
 
-        assertEquals(0x00000000, node.props.values[PropKeys.STYLE_BACKGROUND_COLOR])
-        assertEquals(Theme.input.control, node.props.values[PropKeys.STYLE_BORDER_COLOR])
-        assertEquals(1.dp, node.props.values[PropKeys.STYLE_BORDER_WIDTH])
+        assertEquals(0x00000000, node.props[TypedPropKeys.StyleBackgroundColor])
+        assertEquals(Theme.input.control, node.props[TypedPropKeys.StyleBorderColor])
+        assertEquals(1.dp, node.props[TypedPropKeys.StyleBorderWidth])
     }
 
     @Test
@@ -145,7 +145,7 @@ class TextFieldTest {
         val height = elements.last { it is HeightModifierElement } as HeightModifierElement
 
         assertEquals(TextFieldDefaults.height(TextFieldSize.Compact), height.height)
-        assertEquals(Theme.typography.label.fontSizeSp, tree.single().props.values[PropKeys.TEXT_SIZE_SP])
+        assertEquals(Theme.typography.label.fontSizeSp, tree.single().props[TypedPropKeys.TextSizeSp])
     }
 
     @Test
@@ -198,8 +198,8 @@ class TextFieldTest {
             }
         }
 
-        assertEquals(202, disabledTree.single().props.values[PropKeys.STYLE_BACKGROUND_COLOR])
-        assertEquals(209, errorTree.single().props.values[PropKeys.STYLE_BORDER_COLOR])
+        assertEquals(202, disabledTree.single().props[TypedPropKeys.StyleBackgroundColor])
+        assertEquals(209, errorTree.single().props[TypedPropKeys.StyleBorderColor])
     }
 
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {

@@ -1,8 +1,8 @@
 package com.gzq.uiframework.widget.core
 
 import com.gzq.uiframework.renderer.node.NodeType
-import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.TabPage
+import com.gzq.uiframework.renderer.node.TypedPropKeys
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
@@ -27,28 +27,26 @@ class TabPagerTest {
         }
 
         val node = tree.single()
-        @Suppress("UNCHECKED_CAST")
-        val pages = node.props.values[PropKeys.TAB_PAGES] as List<TabPage>
-        @Suppress("UNCHECKED_CAST")
-        val onTabSelected = node.props.values[PropKeys.ON_TAB_SELECTED] as? (Int) -> Unit
+        val pages = node.props[TypedPropKeys.TabPages] as List<TabPage>
+        val onTabSelected = node.props[TypedPropKeys.OnTabSelected]
 
         assertEquals(NodeType.TabPager, node.type)
-        assertEquals(1, node.props.values[PropKeys.SELECTED_TAB_INDEX])
-        assertEquals(TabPagerDefaults.backgroundColor(), node.props.values[PropKeys.TAB_BACKGROUND_COLOR])
-        assertEquals(TabPagerDefaults.indicatorColor(), node.props.values[PropKeys.TAB_INDICATOR_COLOR])
-        assertEquals(TabPagerDefaults.cornerRadius(), node.props.values[PropKeys.TAB_CORNER_RADIUS])
-        assertEquals(TabPagerDefaults.indicatorHeight(), node.props.values[PropKeys.TAB_INDICATOR_HEIGHT])
+        assertEquals(1, node.props[TypedPropKeys.SelectedTabIndex])
+        assertEquals(TabPagerDefaults.backgroundColor(), node.props[TypedPropKeys.TabBackgroundColor])
+        assertEquals(TabPagerDefaults.indicatorColor(), node.props[TypedPropKeys.TabIndicatorColor])
+        assertEquals(TabPagerDefaults.cornerRadius(), node.props[TypedPropKeys.TabCornerRadius])
+        assertEquals(TabPagerDefaults.indicatorHeight(), node.props[TypedPropKeys.TabIndicatorHeight])
         assertEquals(
             TabPagerDefaults.tabPaddingHorizontal(),
-            node.props.values[PropKeys.TAB_CONTENT_PADDING_HORIZONTAL],
+            node.props[TypedPropKeys.TabContentPaddingHorizontal],
         )
         assertEquals(
             TabPagerDefaults.tabPaddingVertical(),
-            node.props.values[PropKeys.TAB_CONTENT_PADDING_VERTICAL],
+            node.props[TypedPropKeys.TabContentPaddingVertical],
         )
-        assertEquals(TabPagerDefaults.selectedTextColor(), node.props.values[PropKeys.TAB_SELECTED_TEXT_COLOR])
-        assertEquals(TabPagerDefaults.unselectedTextColor(), node.props.values[PropKeys.TAB_UNSELECTED_TEXT_COLOR])
-        assertEquals(TabPagerDefaults.rippleColor(), node.props.values[PropKeys.TAB_RIPPLE_COLOR])
+        assertEquals(TabPagerDefaults.selectedTextColor(), node.props[TypedPropKeys.TabSelectedTextColor])
+        assertEquals(TabPagerDefaults.unselectedTextColor(), node.props[TypedPropKeys.TabUnselectedTextColor])
+        assertEquals(TabPagerDefaults.rippleColor(), node.props[TypedPropKeys.TabRippleColor])
         assertEquals(2, pages.size)
         assertEquals("Overview", pages[0].title)
         assertEquals("Input", pages[1].title)
@@ -98,9 +96,9 @@ class TabPagerTest {
 
         val node = tree.single()
 
-        assertEquals(601, node.props.values[PropKeys.TAB_BACKGROUND_COLOR])
-        assertEquals(602, node.props.values[PropKeys.TAB_INDICATOR_COLOR])
-        assertEquals(603, node.props.values[PropKeys.TAB_UNSELECTED_TEXT_COLOR])
-        assertEquals(604, node.props.values[PropKeys.TAB_SELECTED_TEXT_COLOR])
+        assertEquals(601, node.props[TypedPropKeys.TabBackgroundColor])
+        assertEquals(602, node.props[TypedPropKeys.TabIndicatorColor])
+        assertEquals(603, node.props[TypedPropKeys.TabUnselectedTextColor])
+        assertEquals(604, node.props[TypedPropKeys.TabSelectedTextColor])
     }
 }

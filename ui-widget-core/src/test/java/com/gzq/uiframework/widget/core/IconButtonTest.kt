@@ -4,7 +4,7 @@ import com.gzq.uiframework.renderer.modifier.SizeModifierElement
 import com.gzq.uiframework.renderer.node.ImageContentScale
 import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.renderer.node.NodeType
-import com.gzq.uiframework.renderer.node.PropKeys
+import com.gzq.uiframework.renderer.node.TypedPropKeys
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -23,15 +23,15 @@ class IconButtonTest {
         val size = elements.last { it is SizeModifierElement } as SizeModifierElement
 
         assertEquals(NodeType.IconButton, node.type)
-        assertEquals(ImageSource.Resource(42), node.props.values[PropKeys.IMAGE_SOURCE])
-        assertEquals("Action", node.props.values[PropKeys.IMAGE_CONTENT_DESCRIPTION])
-        assertEquals(ImageContentScale.Inside, node.props.values[PropKeys.IMAGE_CONTENT_SCALE])
-        assertEquals(IconButtonDefaults.contentColor(), node.props.values[PropKeys.IMAGE_TINT])
+        assertEquals(ImageSource.Resource(42), node.props[TypedPropKeys.ImageSource])
+        assertEquals("Action", node.props[TypedPropKeys.ImageContentDescription])
+        assertEquals(ImageContentScale.Inside, node.props[TypedPropKeys.ImageContentScale])
+        assertEquals(IconButtonDefaults.contentColor(), node.props[TypedPropKeys.ImageTint])
         assertEquals(IconButtonDefaults.size(), size.width)
         assertEquals(IconButtonDefaults.size(), size.height)
-        assertEquals(IconButtonDefaults.containerColor(), node.props.values[PropKeys.STYLE_BACKGROUND_COLOR])
-        assertEquals(IconButtonDefaults.cornerRadius(), node.props.values[PropKeys.STYLE_CORNER_RADIUS])
-        assertEquals(true, node.props.values[PropKeys.ENABLED])
+        assertEquals(IconButtonDefaults.containerColor(), node.props[TypedPropKeys.StyleBackgroundColor])
+        assertEquals(IconButtonDefaults.cornerRadius(), node.props[TypedPropKeys.StyleCornerRadius])
+        assertEquals(true, node.props[TypedPropKeys.Enabled])
     }
 
     @Test
@@ -46,15 +46,15 @@ class IconButtonTest {
 
         val node = tree.single()
 
-        assertEquals(false, node.props.values[PropKeys.ENABLED])
-        assertEquals(IconButtonDefaults.borderWidth(ButtonVariant.Outlined), node.props.values[PropKeys.STYLE_BORDER_WIDTH])
+        assertEquals(false, node.props[TypedPropKeys.Enabled])
+        assertEquals(IconButtonDefaults.borderWidth(ButtonVariant.Outlined), node.props[TypedPropKeys.StyleBorderWidth])
         assertEquals(
             IconButtonDefaults.borderColor(ButtonVariant.Outlined, enabled = false),
-            node.props.values[PropKeys.STYLE_BORDER_COLOR],
+            node.props[TypedPropKeys.StyleBorderColor],
         )
         assertEquals(
             IconButtonDefaults.contentColor(ButtonVariant.Outlined, enabled = false),
-            node.props.values[PropKeys.IMAGE_TINT],
+            node.props[TypedPropKeys.ImageTint],
         )
     }
 

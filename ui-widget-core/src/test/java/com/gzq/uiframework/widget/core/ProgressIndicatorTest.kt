@@ -4,7 +4,7 @@ import com.gzq.uiframework.renderer.modifier.HeightModifierElement
 import com.gzq.uiframework.renderer.modifier.SizeModifierElement
 import com.gzq.uiframework.renderer.modifier.WidthModifierElement
 import com.gzq.uiframework.renderer.node.NodeType
-import com.gzq.uiframework.renderer.node.PropKeys
+import com.gzq.uiframework.renderer.node.TypedPropKeys
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -41,10 +41,10 @@ class ProgressIndicatorTest {
         val height = elements.last { it is HeightModifierElement } as HeightModifierElement
 
         assertEquals(NodeType.LinearProgressIndicator, node.type)
-        assertEquals(0.42f, node.props.values[PropKeys.PROGRESS_FRACTION])
-        assertEquals(customTheme.components.progressIndicator.linearIndicator, node.props.values[PropKeys.PROGRESS_INDICATOR_COLOR])
-        assertEquals(customTheme.components.progressIndicator.linearTrack, node.props.values[PropKeys.PROGRESS_TRACK_COLOR])
-        assertEquals(customTheme.controls.progressIndicator.linearTrackThickness, node.props.values[PropKeys.PROGRESS_TRACK_THICKNESS])
+        assertEquals(0.42f, node.props[TypedPropKeys.ProgressFraction])
+        assertEquals(customTheme.components.progressIndicator.linearIndicator, node.props[TypedPropKeys.ProgressIndicatorColor])
+        assertEquals(customTheme.components.progressIndicator.linearTrack, node.props[TypedPropKeys.ProgressTrackColor])
+        assertEquals(customTheme.controls.progressIndicator.linearTrackThickness, node.props[TypedPropKeys.ProgressTrackThickness])
         assertEquals(android.view.ViewGroup.LayoutParams.MATCH_PARENT, width.width)
         assertEquals(customTheme.controls.progressIndicator.linearTrackThickness, height.height)
     }
@@ -79,11 +79,11 @@ class ProgressIndicatorTest {
         val size = node.modifier.readModifierElements().last { it is SizeModifierElement } as SizeModifierElement
 
         assertEquals(NodeType.CircularProgressIndicator, node.type)
-        assertEquals(null, node.props.values[PropKeys.PROGRESS_FRACTION])
-        assertEquals(customTheme.components.progressIndicator.circularIndicator, node.props.values[PropKeys.PROGRESS_INDICATOR_COLOR])
-        assertEquals(customTheme.components.progressIndicator.circularTrack, node.props.values[PropKeys.PROGRESS_TRACK_COLOR])
-        assertEquals(customTheme.controls.progressIndicator.circularTrackThickness, node.props.values[PropKeys.PROGRESS_TRACK_THICKNESS])
-        assertEquals(customTheme.controls.progressIndicator.circularSize, node.props.values[PropKeys.PROGRESS_INDICATOR_SIZE])
+        assertEquals(null, node.props[TypedPropKeys.ProgressFraction])
+        assertEquals(customTheme.components.progressIndicator.circularIndicator, node.props[TypedPropKeys.ProgressIndicatorColor])
+        assertEquals(customTheme.components.progressIndicator.circularTrack, node.props[TypedPropKeys.ProgressTrackColor])
+        assertEquals(customTheme.controls.progressIndicator.circularTrackThickness, node.props[TypedPropKeys.ProgressTrackThickness])
+        assertEquals(customTheme.controls.progressIndicator.circularSize, node.props[TypedPropKeys.ProgressIndicatorSize])
         assertEquals(customTheme.controls.progressIndicator.circularSize, size.width)
         assertEquals(customTheme.controls.progressIndicator.circularSize, size.height)
     }
@@ -126,10 +126,10 @@ class ProgressIndicatorTest {
         val linearNode = tree.single().children[0]
         val circularNode = tree.single().children[1]
 
-        assertEquals(701, linearNode.props.values[PropKeys.PROGRESS_INDICATOR_COLOR])
-        assertEquals(702, linearNode.props.values[PropKeys.PROGRESS_TRACK_COLOR])
-        assertEquals(703, circularNode.props.values[PropKeys.PROGRESS_INDICATOR_COLOR])
-        assertEquals(704, circularNode.props.values[PropKeys.PROGRESS_TRACK_COLOR])
+        assertEquals(701, linearNode.props[TypedPropKeys.ProgressIndicatorColor])
+        assertEquals(702, linearNode.props[TypedPropKeys.ProgressTrackColor])
+        assertEquals(703, circularNode.props[TypedPropKeys.ProgressIndicatorColor])
+        assertEquals(704, circularNode.props[TypedPropKeys.ProgressTrackColor])
     }
 
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {

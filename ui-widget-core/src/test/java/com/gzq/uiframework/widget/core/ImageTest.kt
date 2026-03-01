@@ -4,9 +4,9 @@ import com.gzq.uiframework.renderer.modifier.SizeModifierElement
 import com.gzq.uiframework.renderer.node.ImageContentScale
 import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.renderer.node.NodeType
-import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.RemoteImageLoader
 import com.gzq.uiframework.renderer.node.RemoteImageRequest
+import com.gzq.uiframework.renderer.node.TypedPropKeys
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
@@ -25,9 +25,9 @@ class ImageTest {
         val node = tree.single()
 
         assertEquals(NodeType.Image, node.type)
-        assertEquals(ImageSource.Resource(42), node.props.values[PropKeys.IMAGE_SOURCE])
-        assertEquals("Demo image", node.props.values[PropKeys.IMAGE_CONTENT_DESCRIPTION])
-        assertEquals(ImageContentScale.Crop, node.props.values[PropKeys.IMAGE_CONTENT_SCALE])
+        assertEquals(ImageSource.Resource(42), node.props[TypedPropKeys.ImageSource])
+        assertEquals("Demo image", node.props[TypedPropKeys.ImageContentDescription])
+        assertEquals(ImageContentScale.Crop, node.props[TypedPropKeys.ImageContentScale])
     }
 
     @Test
@@ -45,8 +45,8 @@ class ImageTest {
         val size = node.modifier.readModifierElements().last { it is SizeModifierElement } as SizeModifierElement
 
         assertEquals(NodeType.Image, node.type)
-        assertEquals(0xFF123456.toInt(), node.props.values[PropKeys.IMAGE_TINT])
-        assertEquals(ImageContentScale.Inside, node.props.values[PropKeys.IMAGE_CONTENT_SCALE])
+        assertEquals(0xFF123456.toInt(), node.props[TypedPropKeys.ImageTint])
+        assertEquals(ImageContentScale.Inside, node.props[TypedPropKeys.ImageContentScale])
         assertEquals(24.dp, size.width)
         assertEquals(24.dp, size.height)
     }
@@ -67,11 +67,11 @@ class ImageTest {
 
         val node = tree.single()
 
-        assertEquals(ImageSource.Remote("https://example.com/demo.png"), node.props.values[PropKeys.IMAGE_SOURCE])
-        assertNotNull(node.props.values[PropKeys.IMAGE_REMOTE_LOADER])
-        assertEquals(ImageSource.Resource(10), node.props.values[PropKeys.IMAGE_PLACEHOLDER])
-        assertEquals(ImageSource.Resource(11), node.props.values[PropKeys.IMAGE_ERROR])
-        assertEquals(ImageSource.Resource(12), node.props.values[PropKeys.IMAGE_FALLBACK])
+        assertEquals(ImageSource.Remote("https://example.com/demo.png"), node.props[TypedPropKeys.ImageSource])
+        assertNotNull(node.props[TypedPropKeys.ImageRemoteLoader])
+        assertEquals(ImageSource.Resource(10), node.props[TypedPropKeys.ImagePlaceholder])
+        assertEquals(ImageSource.Resource(11), node.props[TypedPropKeys.ImageError])
+        assertEquals(ImageSource.Resource(12), node.props[TypedPropKeys.ImageFallback])
     }
 
     @Test
@@ -88,8 +88,8 @@ class ImageTest {
 
         val node = tree.single()
 
-        assertEquals(ImageSource.Remote(null), node.props.values[PropKeys.IMAGE_SOURCE])
-        assertEquals(ImageSource.Resource(99), node.props.values[PropKeys.IMAGE_FALLBACK])
+        assertEquals(ImageSource.Remote(null), node.props[TypedPropKeys.ImageSource])
+        assertEquals(ImageSource.Resource(99), node.props[TypedPropKeys.ImageFallback])
     }
 
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {

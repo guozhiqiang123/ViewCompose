@@ -2,8 +2,8 @@ package com.gzq.uiframework.widget.core
 
 import com.gzq.uiframework.renderer.modifier.HeightModifierElement
 import com.gzq.uiframework.renderer.node.NodeType
-import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.SegmentedControlItem
+import com.gzq.uiframework.renderer.node.TypedPropKeys
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -23,27 +23,25 @@ class SegmentedControlTest {
         }
 
         val node = tree.single()
-        @Suppress("UNCHECKED_CAST")
-        val items = node.props.values[PropKeys.SEGMENT_ITEMS] as List<SegmentedControlItem>
-        @Suppress("UNCHECKED_CAST")
-        val onSelectionChange = node.props.values[PropKeys.ON_SEGMENT_SELECTED] as? (Int) -> Unit
+        val items = node.props[TypedPropKeys.SegmentItems] as List<SegmentedControlItem>
+        val onSelectionChange = node.props[TypedPropKeys.OnSegmentSelected]
         val height = node.modifier.readModifierElements()
             .last { it is HeightModifierElement } as HeightModifierElement
 
         assertEquals(NodeType.SegmentedControl, node.type)
-        assertEquals(1, node.props.values[PropKeys.SEGMENT_SELECTED_INDEX])
-        assertEquals(SegmentedControlDefaults.backgroundColor(), node.props.values[PropKeys.SEGMENT_BACKGROUND_COLOR])
-        assertEquals(SegmentedControlDefaults.indicatorColor(), node.props.values[PropKeys.SEGMENT_INDICATOR_COLOR])
-        assertEquals(SegmentedControlDefaults.cornerRadius(), node.props.values[PropKeys.SEGMENT_CORNER_RADIUS])
-        assertEquals(SegmentedControlDefaults.textColor(), node.props.values[PropKeys.SEGMENT_TEXT_COLOR])
+        assertEquals(1, node.props[TypedPropKeys.SegmentSelectedIndex])
+        assertEquals(SegmentedControlDefaults.backgroundColor(), node.props[TypedPropKeys.SegmentBackgroundColor])
+        assertEquals(SegmentedControlDefaults.indicatorColor(), node.props[TypedPropKeys.SegmentIndicatorColor])
+        assertEquals(SegmentedControlDefaults.cornerRadius(), node.props[TypedPropKeys.SegmentCornerRadius])
+        assertEquals(SegmentedControlDefaults.textColor(), node.props[TypedPropKeys.SegmentTextColor])
         assertEquals(
             SegmentedControlDefaults.selectedTextColor(),
-            node.props.values[PropKeys.SEGMENT_SELECTED_TEXT_COLOR],
+            node.props[TypedPropKeys.SegmentSelectedTextColor],
         )
-        assertEquals(SegmentedControlDefaults.rippleColor(), node.props.values[PropKeys.SEGMENT_RIPPLE_COLOR])
+        assertEquals(SegmentedControlDefaults.rippleColor(), node.props[TypedPropKeys.SegmentRippleColor])
         assertEquals(
             SegmentedControlDefaults.textStyle().fontSizeSp,
-            node.props.values[PropKeys.SEGMENT_TEXT_SIZE_SP],
+            node.props[TypedPropKeys.SegmentTextSizeSp],
         )
         assertEquals(3, items.size)
         assertEquals("System", items[0].label)
@@ -94,10 +92,10 @@ class SegmentedControlTest {
 
         val node = tree.single()
 
-        assertEquals(401, node.props.values[PropKeys.SEGMENT_BACKGROUND_COLOR])
-        assertEquals(406, node.props.values[PropKeys.SEGMENT_INDICATOR_COLOR])
-        assertEquals(408, node.props.values[PropKeys.SEGMENT_TEXT_COLOR])
-        assertEquals(410, node.props.values[PropKeys.SEGMENT_SELECTED_TEXT_COLOR])
+        assertEquals(401, node.props[TypedPropKeys.SegmentBackgroundColor])
+        assertEquals(406, node.props[TypedPropKeys.SegmentIndicatorColor])
+        assertEquals(408, node.props[TypedPropKeys.SegmentTextColor])
+        assertEquals(410, node.props[TypedPropKeys.SegmentSelectedTextColor])
     }
 
     @Test
@@ -142,12 +140,12 @@ class SegmentedControlTest {
 
         val node = tree.single()
 
-        assertEquals(false, node.props.values[PropKeys.ENABLED])
-        assertEquals(502, node.props.values[PropKeys.SEGMENT_BACKGROUND_COLOR])
-        assertEquals(504, node.props.values[PropKeys.SEGMENT_INDICATOR_COLOR])
-        assertEquals(506, node.props.values[PropKeys.SEGMENT_TEXT_COLOR])
-        assertEquals(508, node.props.values[PropKeys.SEGMENT_SELECTED_TEXT_COLOR])
-        assertEquals(0x00000000, node.props.values[PropKeys.SEGMENT_RIPPLE_COLOR])
+        assertEquals(false, node.props[TypedPropKeys.Enabled])
+        assertEquals(502, node.props[TypedPropKeys.SegmentBackgroundColor])
+        assertEquals(504, node.props[TypedPropKeys.SegmentIndicatorColor])
+        assertEquals(506, node.props[TypedPropKeys.SegmentTextColor])
+        assertEquals(508, node.props[TypedPropKeys.SegmentSelectedTextColor])
+        assertEquals(0x00000000, node.props[TypedPropKeys.SegmentRippleColor])
     }
 
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {
