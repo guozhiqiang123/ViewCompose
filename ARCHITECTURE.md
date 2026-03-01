@@ -163,7 +163,7 @@ widget/core/
 - `bridge/` 放 Android theme/environment 桥接
 - `context/` 只放 local、theme、environment、content color、image loading 这类 ambient context
 - `defaults/` 放所有 widget 默认值解析
-- `dsl/` 放 `UiTreeBuilder`、`LayoutScopes`、`Widgets`、`Dimensions`
+- `dsl/` 放 `UiTreeBuilder`、`LayoutScopes`、`Dimensions` 以及按控件族拆分的 DSL 文件
 - `overlay/` 放 overlay 的声明契约、spec、host contract
 - `overlay/runtime/` 放 overlay request、surface session、overlay host reducer
 - `runtime/` 只放 `RenderSession`、`RenderInto`、remember/effect 等 composition 表层
@@ -271,12 +271,13 @@ flowchart TD
 
 - `context/` 现在重新回到“ambient context”职责
 - overlay 相关契约和 reducer 已经移到 `overlay/`、`overlay/runtime/`
+- `dsl/` 已经从单个 `Widgets.kt` 拆成按控件族归类的文件
 - 当前比之前更符合“DSL + session + defaults + overlay contracts”的真实边界
 
 剩余问题：
 
 - 模块职责仍然偏重，后续可能需要继续从中拆出更明确的 composition/runtime 层
-- `Widgets.kt` 仍然很大，这是当前 widget 声明层最明显的复杂度热点
+- widget 声明层后续仍可继续细分，例如把 action/layout/feedback 再演进成子目录
 
 ### `ui-overlay-android`
 
