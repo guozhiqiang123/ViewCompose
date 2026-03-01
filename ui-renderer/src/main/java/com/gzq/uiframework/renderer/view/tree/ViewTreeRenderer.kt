@@ -17,8 +17,6 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.progressindicator.CircularProgressIndicator
-import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.gzq.uiframework.renderer.layout.BoxAlignment
 import com.gzq.uiframework.renderer.layout.HorizontalAlignment
 import com.gzq.uiframework.renderer.layout.LayoutParamDefaultsResolver
@@ -66,6 +64,12 @@ object ViewTreeRenderer {
     private const val DEFAULT_RIPPLE_COLOR: Int = 0x22000000
     private const val WARNING_TAG: String = "UIFramework"
     private val emittedModifierWarnings = mutableSetOf<String>()
+
+    init {
+        NodeViewBinderRegistry.initialize(
+            defaultRippleColor = DEFAULT_RIPPLE_COLOR,
+        )
+    }
 
     fun disposeMounted(
         container: ViewGroup,
@@ -193,155 +197,7 @@ object ViewTreeRenderer {
 
     private fun bindView(view: View, node: VNode) {
         applyModifier(view, node)
-        when (node.type) {
-            NodeType.Text -> {
-                ContentViewBinder.bindText(
-                    view = view as TextView,
-                    spec = ContentViewBinder.readTextSpec(node),
-                )
-            }
-
-            NodeType.TextField -> {
-                InputViewBinder.bindTextField(
-                    view = view as DeclarativeTextFieldLayout,
-                    spec = InputViewBinder.readTextFieldSpec(node),
-                )
-            }
-
-            NodeType.Checkbox -> {
-                InputViewBinder.bindCheckbox(
-                    view = view as android.widget.CheckBox,
-                    spec = InputViewBinder.readToggleSpec(node),
-                )
-            }
-
-            NodeType.Switch -> {
-                InputViewBinder.bindSwitch(
-                    view = view as android.widget.Switch,
-                    spec = InputViewBinder.readToggleSpec(node),
-                )
-            }
-
-            NodeType.RadioButton -> {
-                InputViewBinder.bindRadioButton(
-                    view = view as android.widget.RadioButton,
-                    spec = InputViewBinder.readToggleSpec(node),
-                )
-            }
-
-            NodeType.Slider -> {
-                InputViewBinder.bindSlider(
-                    view = view as android.widget.SeekBar,
-                    spec = InputViewBinder.readSliderSpec(node),
-                )
-            }
-
-            NodeType.LinearProgressIndicator -> {
-                FeedbackViewBinder.bindLinearProgressIndicator(
-                    view = view as LinearProgressIndicator,
-                    spec = FeedbackViewBinder.readProgressSpec(node),
-                )
-            }
-
-            NodeType.CircularProgressIndicator -> {
-                FeedbackViewBinder.bindCircularProgressIndicator(
-                    view = view as CircularProgressIndicator,
-                    spec = FeedbackViewBinder.readProgressSpec(node),
-                )
-            }
-
-            NodeType.Button -> {
-                ContentViewBinder.bindButton(
-                    view = view as android.widget.Button,
-                    spec = ContentViewBinder.readButtonSpec(
-                        node = node,
-                        contentColor = readNodeTextColor(node) ?: Color.BLACK,
-                    ),
-                )
-            }
-
-            NodeType.IconButton -> {
-                MediaViewBinder.bindImage(
-                    view = view as android.widget.ImageView,
-                    spec = MediaViewBinder.readImageSpec(node),
-                )
-                MediaViewBinder.bindIconButton(
-                    view = view as android.widget.ImageButton,
-                    enabled = readEnabled(node),
-                )
-            }
-
-            NodeType.Row -> {
-                ContainerViewBinder.bindRow(
-                    view = view as DeclarativeLinearLayout,
-                    spec = ContainerViewBinder.readRowSpec(node),
-                )
-            }
-
-            NodeType.Column -> {
-                ContainerViewBinder.bindColumn(
-                    view = view as DeclarativeLinearLayout,
-                    spec = ContainerViewBinder.readColumnSpec(node),
-                )
-            }
-            NodeType.Box -> {
-                ContainerViewBinder.bindBox(
-                    view = view as DeclarativeBoxLayout,
-                    spec = ContainerViewBinder.readBoxSpec(node),
-                )
-            }
-
-            NodeType.Surface -> {
-                ContainerViewBinder.bindBox(
-                    view = view as DeclarativeBoxLayout,
-                    spec = ContainerViewBinder.readBoxSpec(node),
-                )
-            }
-
-            NodeType.Spacer -> Unit
-
-            NodeType.Divider -> {
-                view.setBackgroundColor(readDividerColor(node))
-            }
-
-            NodeType.Image -> {
-                MediaViewBinder.bindImage(
-                    view = view as android.widget.ImageView,
-                    spec = MediaViewBinder.readImageSpec(node),
-                )
-            }
-
-            NodeType.AndroidView -> {
-                readViewUpdate(node)?.invoke(view)
-            }
-
-            NodeType.LazyColumn -> {
-                ContainerViewBinder.bindLazyColumn(
-                    view = view as RecyclerView,
-                    spec = ContainerViewBinder.readLazyColumnSpec(node),
-                )
-            }
-
-            NodeType.TabPager -> {
-                ContainerViewBinder.bindTabPager(
-                    view = view as com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout,
-                    spec = ContainerViewBinder.readTabPagerSpec(
-                        node = node,
-                        defaultRippleColor = DEFAULT_RIPPLE_COLOR,
-                    ),
-                )
-            }
-
-            NodeType.SegmentedControl -> {
-                ContainerViewBinder.bindSegmentedControl(
-                    view = view as com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout,
-                    spec = ContainerViewBinder.readSegmentedControlSpec(
-                        node = node,
-                        defaultRippleColor = DEFAULT_RIPPLE_COLOR,
-                    ),
-                )
-            }
-        }
+        NodeViewBinderRegistry.bind(view, node)
     }
 
     private fun applyModifier(view: View, node: VNode) {
@@ -743,11 +599,6 @@ object ViewTreeRenderer {
         return node.props.values[PropKeys.VIEW_FACTORY] as? ((Context) -> View)
     }
 
-    @Suppress("UNCHECKED_CAST")
-    private fun readViewUpdate(node: VNode): ((View) -> Unit)? {
-        return node.props.values[PropKeys.VIEW_UPDATE] as? ((View) -> Unit)
-    }
-
     private fun defaultDividerWidth(parent: ViewGroup, node: VNode): Int {
         val thickness = readDividerThickness(node)
         return if ((parent as? LinearLayout)?.orientation == LinearLayout.HORIZONTAL) {
@@ -766,16 +617,8 @@ object ViewTreeRenderer {
         }
     }
 
-    private fun readDividerColor(node: VNode): Int {
-        return node.props.values[PropKeys.DIVIDER_COLOR] as? Int ?: 0xFF000000.toInt()
-    }
-
     private fun readDividerThickness(node: VNode): Int {
         return node.props.values[PropKeys.DIVIDER_THICKNESS] as? Int ?: 1
-    }
-
-    private fun readEnabled(node: VNode): Boolean {
-        return node.props.values[PropKeys.ENABLED] as? Boolean ?: true
     }
 
     private fun readNodeTextColor(node: VNode): Int? {

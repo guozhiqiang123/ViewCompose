@@ -250,6 +250,7 @@ flowchart TD
 其中最重的 Android 侧细节已经开始拆出到内部 helper：
 
 - `ViewNodeFactory`
+- `NodeViewBinderRegistry`
 - `ContentViewBinder`
 - `InputViewBinder`
 - `MediaViewBinder`
@@ -259,6 +260,7 @@ flowchart TD
 这一步的意义是：
 
 - `ViewTreeRenderer` 开始更像“树调度器”
+- 节点级绑定已经通过轻量 `NodeViewBinderRegistry` 分发，不再由中心 `when` 直接堆砌
 - 控件族绑定逻辑有了独立测试和演进落点
 - 文本、输入、媒体、容器、进度这几组 props 解析也开始跟随 binder 下沉
 - 不必过早引入 adapter registry，也能先降低单点复杂度
