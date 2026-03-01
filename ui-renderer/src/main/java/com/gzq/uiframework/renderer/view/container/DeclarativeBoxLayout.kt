@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
+import com.gzq.uiframework.renderer.view.tree.LayoutPassTracker
 
 internal class DeclarativeBoxLayout @JvmOverloads constructor(
     context: Context,
@@ -19,6 +20,14 @@ internal class DeclarativeBoxLayout @JvmOverloads constructor(
             field = value
             requestLayout()
         }
+
+    override fun onMeasure(
+        widthMeasureSpec: Int,
+        heightMeasureSpec: Int,
+    ) {
+        LayoutPassTracker.recordMeasure(javaClass.simpleName)
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
 
     override fun onViewAdded(child: View) {
         super.onViewAdded(child)
@@ -36,6 +45,7 @@ internal class DeclarativeBoxLayout @JvmOverloads constructor(
         right: Int,
         bottom: Int,
     ) {
+        LayoutPassTracker.recordLayout(javaClass.simpleName)
         applyGravityToChildren()
         super.onLayout(changed, left, top, right, bottom)
     }

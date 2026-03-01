@@ -9,6 +9,7 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.gzq.uiframework.renderer.view.tree.LayoutPassTracker
 
 internal class DeclarativeTextFieldLayout @JvmOverloads constructor(
     context: Context,
@@ -51,6 +52,25 @@ internal class DeclarativeTextFieldLayout @JvmOverloads constructor(
         addView(labelView)
         addView(fieldContainer)
         addView(supportingView)
+    }
+
+    override fun onMeasure(
+        widthMeasureSpec: Int,
+        heightMeasureSpec: Int,
+    ) {
+        LayoutPassTracker.recordMeasure(javaClass.simpleName)
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+
+    override fun onLayout(
+        changed: Boolean,
+        left: Int,
+        top: Int,
+        right: Int,
+        bottom: Int,
+    ) {
+        LayoutPassTracker.recordLayout(javaClass.simpleName)
+        super.onLayout(changed, left, top, right, bottom)
     }
 
     fun setLabel(

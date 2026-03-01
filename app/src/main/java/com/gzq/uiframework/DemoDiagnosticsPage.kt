@@ -4,6 +4,7 @@ import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.modifier.fillMaxSize
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.runtime.mutableStateOf
+import com.gzq.uiframework.renderer.view.tree.LayoutPassTracker
 import com.gzq.uiframework.widget.core.Button
 import com.gzq.uiframework.widget.core.Environment
 import com.gzq.uiframework.widget.core.LazyColumn
@@ -21,10 +22,12 @@ internal fun UiTreeBuilder.DiagnosticsPage() {
     val pendingSnapshotRefreshState = remember { mutableStateOf(false) }
     val renderSnapshotState = remember { mutableStateOf(DemoRenderDiagnosticsStore.latestSnapshot()) }
     val patchSnapshotState = remember { mutableStateOf(DemoRenderDiagnosticsStore.latestPatchActiveSnapshot()) }
+    val layoutSnapshotState = remember { mutableStateOf(LayoutPassTracker.snapshot()) }
     if (pendingSnapshotRefreshState.value) {
         SideEffect {
             renderSnapshotState.value = DemoRenderDiagnosticsStore.latestSnapshot()
             patchSnapshotState.value = DemoRenderDiagnosticsStore.latestPatchActiveSnapshot()
+            layoutSnapshotState.value = LayoutPassTracker.snapshot()
             pendingSnapshotRefreshState.value = false
         }
     }
@@ -85,6 +88,7 @@ internal fun UiTreeBuilder.DiagnosticsPage() {
             ) {
                 val snapshot = renderSnapshotState.value
                 val patchSnapshot = patchSnapshotState.value
+                val layoutSnapshot = layoutSnapshotState.value
                 Button(
                     text = if (pendingSnapshotRefreshState.value) {
                         "Capturing renderer snapshot..."
@@ -92,6 +96,14 @@ internal fun UiTreeBuilder.DiagnosticsPage() {
                         "Refresh renderer snapshots"
                     },
                     onClick = {
+                        pendingSnapshotRefreshState.value = true
+                    },
+                    modifier = Modifier.padding(bottom = 8.dp),
+                )
+                Button(
+                    text = "Reset layout counters",
+                    onClick = {
+                        LayoutPassTracker.reset()
                         pendingSnapshotRefreshState.value = true
                     },
                     modifier = Modifier.padding(bottom = 8.dp),
@@ -125,6 +137,20 @@ internal fun UiTreeBuilder.DiagnosticsPage() {
                     ),
                 )
                 DiagnosticFactGroup(
+                    title = "Layout Pass Counters",
+                    facts = listOf(
+                        DiagnosticFact("Total measure", layoutSnapshot.totalMeasureCount.toString()),
+                        DiagnosticFact("Total layout", layoutSnapshot.totalLayoutCount.toString()),
+                    ) + layoutSnapshot.entries
+                        .take(6)
+                        .map { entry ->
+                            DiagnosticFact(
+                                entry.viewName,
+                                "measure=${entry.measureCount}, layout=${entry.layoutCount}",
+                            )
+                        },
+                )
+                DiagnosticFactGroup(
                     title = "Current Rendering Model",
                     facts = listOf(
                         DiagnosticFact("Render root", "Single root RenderSession"),
@@ -139,6 +165,7 @@ internal fun UiTreeBuilder.DiagnosticsPage() {
                     title = "Manual Probes",
                     items = listOf(
                         "先进入 State -> Patch Stress 做几次切换，再返回这里点击 Refresh，确认 Latest Patch-Active Snapshot 里的 patched/skipped 开始增长。",
+                        "点击 Reset layout counters 后进入 Layouts / Input / Foundations，再回来刷新，确认 Layout Pass Counters 主要由自定义容器增长。",
                         "切到 Layouts 或 Collections 压力页后再回来，确认 mounted depth 和 vnode depth 会跟随复杂场景变化。",
                         "打开 Layouts / Collections 压力页，观察日志中 VNode tree 与 Reconcile 摘要是否稳定。",
                         "切换章节并返回，确认 debug 日志仍持续输出到 UIFrameworkSample。",
@@ -182,6 +209,7 @@ internal fun UiTreeBuilder.DiagnosticsPage() {
                 howToVerify = listOf(
                     "切换 theme mode 与章节，确认 runtime snapshot 始终反映当前 environment。",
                     "在 State -> Patch Stress 执行几次更新后，返回 Renderer 页点击 Refresh，确认 patched/skipped 不再始终为 0。",
+                    "点击 Reset layout counters，再进入一个复杂章节操作后返回，确认 Layout Pass Counters 出现新的 measure/layout 增长。",
                     "切到层级更复杂的章节后再次刷新，确认 Renderer 页能看到 vnode/mounted depth。",
                     "在出现渲染问题时，对照这里列出的 gaps 判断是已知缺口还是新回归。",
                     "结合日志观察 renderer 行为，并确认 diagnostics 页面描述与当前实现一致。",
@@ -190,11 +218,12 @@ internal fun UiTreeBuilder.DiagnosticsPage() {
                     "该章节能快速告诉你当前框架还缺什么。",
                     "环境信息和主题信息不会在章节切换后失真。",
                     "Renderer 页可以拿到最近一次 render 的统计快照和最近一次 patch-active 快照。",
+                    "Renderer 页可以看到自定义容器的 measure/layout 计数。",
                     "Diagnostics 会持续作为后续 inspector 的落点。",
                 ),
                 relatedGaps = listOf(
                     "还没有自动刷新的 render tree、patch timeline 和性能面板可视化。",
-                    "还没有 deepest path、measure/layout 次数和 frame timeline。",
+                    "还没有 deepest path、frame timeline 和每节点耗时。",
                 ),
             )
         }

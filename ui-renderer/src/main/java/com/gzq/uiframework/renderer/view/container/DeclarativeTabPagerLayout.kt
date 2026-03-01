@@ -14,6 +14,7 @@ import com.gzq.uiframework.renderer.reconcile.TabPagerSelectionResolver
 import com.gzq.uiframework.renderer.reconcile.TabPagerUpdate
 import com.gzq.uiframework.renderer.view.lazy.LazyHolderRegistry
 import com.gzq.uiframework.renderer.view.lazy.LazyItemSessionController
+import com.gzq.uiframework.renderer.view.tree.LayoutPassTracker
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -54,6 +55,25 @@ internal class DeclarativeTabPagerLayout(
         }.also { it.attach() }
         addView(tabLayout)
         addView(viewPager)
+    }
+
+    override fun onMeasure(
+        widthMeasureSpec: Int,
+        heightMeasureSpec: Int,
+    ) {
+        LayoutPassTracker.recordMeasure(javaClass.simpleName)
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+
+    override fun onLayout(
+        changed: Boolean,
+        left: Int,
+        top: Int,
+        right: Int,
+        bottom: Int,
+    ) {
+        LayoutPassTracker.recordLayout(javaClass.simpleName)
+        super.onLayout(changed, left, top, right, bottom)
     }
 
     fun bind(

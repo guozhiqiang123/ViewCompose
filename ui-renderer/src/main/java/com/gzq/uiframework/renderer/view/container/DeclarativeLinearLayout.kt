@@ -13,6 +13,7 @@ import com.gzq.uiframework.renderer.layout.LinearCrossAxisAlignmentResolver
 import com.gzq.uiframework.renderer.layout.LinearChildSpec
 import com.gzq.uiframework.renderer.layout.LinearPlacementCalculator
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
+import com.gzq.uiframework.renderer.view.tree.LayoutPassTracker
 
 internal class DeclarativeLinearLayout @JvmOverloads constructor(
     context: Context,
@@ -35,6 +36,14 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
             requestLayout()
         }
 
+    override fun onMeasure(
+        widthMeasureSpec: Int,
+        heightMeasureSpec: Int,
+    ) {
+        LayoutPassTracker.recordMeasure(javaClass.simpleName)
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+
     override fun onLayout(
         changed: Boolean,
         left: Int,
@@ -42,6 +51,7 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
         right: Int,
         bottom: Int,
     ) {
+        LayoutPassTracker.recordLayout(javaClass.simpleName)
         val visibleChildren = (0 until childCount)
             .map(::getChildAt)
             .filter { child -> child.visibility != View.GONE }

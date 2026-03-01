@@ -559,6 +559,8 @@ Compose 会：
    - 当前 mounted view depth 超过 `10` 时会输出 warning
 4. 无 key / 重复 key / 大量重建 warning
    - 当前 renderer 已统一收口 sibling duplicate key、repeated unkeyed siblings、high rebind churn、high structural churn
+5. measure/layout 观测
+   - 当前已对核心自定义容器接入 `LayoutPassTracker`，Diagnostics 可手动查看和重置计数
 
 ### Phase 4：收布局性能
 
