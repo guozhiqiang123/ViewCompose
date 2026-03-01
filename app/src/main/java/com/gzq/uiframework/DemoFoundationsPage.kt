@@ -42,13 +42,14 @@ import com.gzq.uiframework.renderer.node.ImageContentScale
 import com.gzq.uiframework.renderer.node.ImageSource
 
 internal fun UiTreeBuilder.OverviewPage(
+    initialPageIndex: Int = 0,
     onOpenCapability: (Class<out androidx.appcompat.app.AppCompatActivity>) -> Unit,
 ) {
-    val selectedPageState = remember { mutableStateOf(0) }
+    val selectedPageState = remember { mutableStateOf(initialPageIndex.coerceIn(0, 2)) }
     val benchmarkState = remember { mutableStateOf(false) }
     val pageItems = when (selectedPageState.value) {
         0 -> listOf("benchmark", "page", "page_filter", "intro", "jump", "surface", "verify")
-        1 -> listOf("page", "page_filter", "theme", "overrides", "verify")
+        1 -> listOf("overrides", "page", "page_filter", "theme", "verify")
         else -> listOf("page", "page_filter", "progress", "media", "verify")
     }
     LazyColumn(

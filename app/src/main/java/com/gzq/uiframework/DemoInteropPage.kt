@@ -51,19 +51,6 @@ internal fun UiTreeBuilder.InteropPage() {
                 title = "Interop Benchmark Anchor",
                 subtitle = "Keep a native TextView interop update path visible in the first viewport so benchmark runs do not depend on the longer guide content below.",
             ) {
-                BenchmarkRouteCallout(
-                    route = "Launcher -> MainActivity(extra=interop) -> Interop -> Interop Benchmark Anchor",
-                    stableTargets = listOf(
-                        "Interop Benchmark Primary",
-                        "Reset Interop Benchmark",
-                    ),
-                )
-                Text(
-                    text = "Stable route: launcher -> interop module -> benchmark anchor",
-                    style = UiTextStyle(fontSizeSp = 12.sp),
-                    color = TextDefaults.secondaryColor(),
-                    modifier = Modifier.margin(bottom = 8.dp),
-                )
                 Text(
                     text = if (benchmarkToggleState.value) {
                         "Interop benchmark native state: alternate"
@@ -108,6 +95,19 @@ internal fun UiTreeBuilder.InteropPage() {
                             "Native benchmark TextView: primary"
                         }
                     },
+                )
+                BenchmarkRouteCallout(
+                    route = "Launcher -> MainActivity(extra=interop) -> Interop -> Interop Benchmark Anchor",
+                    stableTargets = listOf(
+                        "Interop Benchmark Primary",
+                        "Reset Interop Benchmark",
+                    ),
+                )
+                Text(
+                    text = "Stable route: launcher -> interop module -> benchmark anchor",
+                    style = UiTextStyle(fontSizeSp = 12.sp),
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier.margin(top = 8.dp),
                 )
             }
 

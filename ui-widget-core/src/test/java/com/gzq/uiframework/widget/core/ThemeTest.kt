@@ -97,11 +97,13 @@ class ThemeTest {
     }
 
     @Test
-    fun `theme override replaces only requested domain`() {
+    fun `theme override rebases derived domains when colors change`() {
         val baseTheme = UiThemeDefaults.light()
         var primary = 0
         var bodySize = 0
         var controlColor = 0
+        var buttonContainer = 0
+        var pressedOverlay = 0
 
         buildVNodeTree {
             UiTheme(baseTheme) {
@@ -111,13 +113,17 @@ class ThemeTest {
                     primary = Theme.colors.primary
                     bodySize = Theme.typography.body.fontSizeSp
                     controlColor = Theme.input.control
+                    buttonContainer = Theme.components.button.primaryContainer
+                    pressedOverlay = Theme.interactions.pressedOverlay
                 }
             }
         }
 
         assertEquals(0xFF225577.toInt(), primary)
         assertEquals(baseTheme.typography.body.fontSizeSp, bodySize)
-        assertEquals(baseTheme.input.control, controlColor)
+        assertEquals(0xFF225577.toInt(), controlColor)
+        assertEquals(0xFF225577.toInt(), buttonContainer)
+        assertEquals(UiInteractionDefaults.fromColors(baseTheme.colors.copy(primary = 0xFF225577.toInt())).pressedOverlay, pressedOverlay)
     }
 
     @Test
@@ -212,6 +218,62 @@ class ThemeTest {
 
         assertEquals(0xFF222222.toInt(), resolvedPrimary)
         assertEquals(0x33445566, resolvedPressed)
+    }
+
+    @Test
+    fun `theme override preserves explicit component overrides while rebasing derived values`() {
+        val baseTheme = UiThemeDefaults.light()
+        var buttonPrimary = 0
+        var buttonSecondary = 0
+        var checkboxControl = 0
+
+        buildVNodeTree {
+            UiTheme(baseTheme) {
+                UiThemeOverride(
+                    components = {
+                        copy(
+                            button = button.copy(primaryContainer = 0xFF556677.toInt()),
+                        )
+                    },
+                ) {
+                    UiThemeOverride(
+                        colors = { copy(primary = 0xFF123456.toInt()) },
+                    ) {
+                        buttonPrimary = Theme.components.button.primaryContainer
+                        buttonSecondary = Theme.components.button.secondaryContainer
+                        checkboxControl = Theme.components.checkbox.control
+                    }
+                }
+            }
+        }
+
+        assertEquals(0xFF556677.toInt(), buttonPrimary)
+        assertEquals(baseTheme.colors.accent, buttonSecondary)
+        assertEquals(0xFF123456.toInt(), checkboxControl)
+    }
+
+    @Test
+    fun `theme override preserves explicit interaction overrides while rebasing colors`() {
+        val baseTheme = UiThemeDefaults.light()
+        var pressedOverlay = 0
+
+        buildVNodeTree {
+            UiTheme(baseTheme) {
+                UiThemeOverride(
+                    interactions = {
+                        copy(pressedOverlay = 0x44112233)
+                    },
+                ) {
+                    UiThemeOverride(
+                        colors = { copy(primary = 0xFF778899.toInt()) },
+                    ) {
+                        pressedOverlay = Theme.interactions.pressedOverlay
+                    }
+                }
+            }
+        }
+
+        assertEquals(0x44112233, pressedOverlay)
     }
 
     @Test

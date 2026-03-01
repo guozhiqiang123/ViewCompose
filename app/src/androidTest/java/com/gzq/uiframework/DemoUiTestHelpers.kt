@@ -1,13 +1,21 @@
 package com.gzq.uiframework
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Rect
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.InsetDrawable
+import android.graphics.drawable.LayerDrawable
+import android.graphics.drawable.RippleDrawable
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.Until
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -22,6 +30,14 @@ internal fun <A : Activity> launchDemoActivity(
     return ActivityScenario.launch(activityClass)
 }
 
+internal fun <A : Activity> launchDemoActivity(
+    intent: Intent,
+    themeMode: DemoThemeMode = DemoThemeMode.Light,
+): ActivityScenario<A> {
+    DemoThemeSession.mode = themeMode
+    return ActivityScenario.launch(intent)
+}
+
 internal fun waitForUiIdle() {
     InstrumentationRegistry.getInstrumentation().waitForIdleSync()
 }
@@ -34,6 +50,16 @@ internal fun captureDeviceScreenshot(name: String) {
     }
     UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         .takeScreenshot(File(directory, "$name.png"))
+}
+
+internal fun clickDeviceText(text: String) {
+    val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+    val node = device.wait(Until.hasObject(By.text(text)), 5_000)
+    assertTrue("Expected device text target: $text", node)
+    val target = device.findObject(By.text(text))
+    assertNotNull("Expected device object for text: $text", target)
+    target!!.click()
+    waitForUiIdle()
 }
 
 internal fun Activity.requireTextView(text: String): TextView {
@@ -84,4 +110,36 @@ internal fun findTextViewByText(root: View, text: String): TextView? {
         }
     }
     return null
+}
+
+internal fun assertViewBackgroundColor(view: View, expectedColor: Int) {
+    val actual = resolveDrawableColor(view.background)
+    assertNotNull("Expected background drawable color for ${view.javaClass.simpleName}", actual)
+    assertEquals(
+        "Expected background color to match theme token",
+        expectedColor,
+        actual,
+    )
+}
+
+private fun resolveDrawableColor(drawable: Drawable?): Int? {
+    return when (drawable) {
+        null -> null
+        is RippleDrawable -> {
+            resolveDrawableColor(drawable.getDrawable(0))
+                ?: resolveDrawableColor(drawable.findDrawableByLayerId(android.R.id.mask))
+        }
+        is InsetDrawable -> resolveDrawableColor(drawable.drawable)
+        is LayerDrawable -> {
+            for (index in 0 until drawable.numberOfLayers) {
+                val color = resolveDrawableColor(drawable.getDrawable(index))
+                if (color != null) {
+                    return color
+                }
+            }
+            null
+        }
+        is GradientDrawable -> drawable.color?.defaultColor
+        else -> null
+    }
 }

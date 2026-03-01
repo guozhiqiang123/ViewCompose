@@ -40,7 +40,7 @@ internal fun UiTreeBuilder.LayoutPage() {
     val useLongLabelsState = remember { mutableStateOf(false) }
     val selectedPageState = remember { mutableStateOf(0) }
     val pageItems = when (selectedPageState.value) {
-        0 -> listOf("page", "page_filter", "benchmark", "row", "column", "verify")
+        0 -> listOf("benchmark", "page", "page_filter", "row", "column", "verify")
         1 -> listOf("page", "page_filter", "box", "verify")
         2 -> listOf("page", "page_filter", "edge", "verify")
         else -> listOf("page", "page_filter", "verify")
