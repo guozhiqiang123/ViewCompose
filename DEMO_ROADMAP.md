@@ -84,6 +84,7 @@
 
 - 已实现模块统一使用 `ScenarioSection`
 - 推荐场景类型固定为 `Guide / Core / Visual / Stress / Benchmark`
+- 高收益模块页已补 `Benchmark Route` 提示块
 - 后续新增页面不应再回退成纯 `DemoSection` 堆砌
 
 ### 3.5 Demo 结构要先于控件数量
@@ -326,6 +327,7 @@
 
 - 顶层不再依赖单一 giant pager
 - 章内仍可继续使用 `SegmentedControl / TabPager / LazyColumn`
+- benchmark-friendly 页面应提供稳定的 `Benchmark Route` 提示
 - 未实现能力先在目录页保留 roadmap 卡片，不急着创建空 Activity
 
 这样做的原因：
