@@ -9,11 +9,13 @@ import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.renderer.modifier.weight
 import com.gzq.uiframework.runtime.mutableStateOf
+import com.gzq.uiframework.widget.core.AnchorTarget
 import com.gzq.uiframework.widget.core.Button
 import com.gzq.uiframework.widget.core.ButtonVariant
 import com.gzq.uiframework.widget.core.Column
 import com.gzq.uiframework.widget.core.Dialog
 import com.gzq.uiframework.widget.core.LazyColumn
+import com.gzq.uiframework.widget.core.Popup
 import com.gzq.uiframework.widget.core.Row
 import com.gzq.uiframework.widget.core.Snackbar
 import com.gzq.uiframework.widget.core.SnackbarDuration
@@ -28,8 +30,11 @@ import com.gzq.uiframework.widget.core.remember
 import com.gzq.uiframework.widget.core.sp
 
 internal fun UiTreeBuilder.FeedbackPage() {
+    val popupAnchorId = "feedback_popup_anchor"
     val dialogVisibleState = remember { mutableStateOf(false) }
     val dialogCountState = remember { mutableStateOf(0) }
+    val popupVisibleState = remember { mutableStateOf(false) }
+    val popupCountState = remember { mutableStateOf(0) }
     val snackbarVisibleState = remember { mutableStateOf(false) }
     val snackbarCountState = remember { mutableStateOf(0) }
     val toastCountState = remember { mutableStateOf(0) }
@@ -85,6 +90,44 @@ internal fun UiTreeBuilder.FeedbackPage() {
             }
         }
     }
+    Popup(
+        visible = popupVisibleState.value,
+        anchorId = popupAnchorId,
+        requestKey = "feedback_popup",
+        offsetY = 8.dp,
+        onDismissRequest = {
+            if (popupVisibleState.value) {
+                popupVisibleState.value = false
+                lastEventState.value = "Popup dismissed ${popupCountState.value}"
+            }
+        },
+    ) {
+        Column(
+            spacing = 10.dp,
+            modifier = Modifier
+                .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                .padding(12.dp),
+        ) {
+            Text(
+                text = "Feedback Popup ${popupCountState.value}",
+                style = UiTextStyle(fontSizeSp = 16.sp),
+            )
+            Text(
+                text = "Anchored popup content resolves its target from the rendered tree.",
+                color = TextDefaults.secondaryColor(),
+            )
+            Button(
+                text = "Dismiss Popup",
+                variant = ButtonVariant.Outlined,
+                onClick = {
+                    popupVisibleState.value = false
+                    lastEventState.value = "Popup closed ${popupCountState.value}"
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+    }
     Snackbar(
         visible = snackbarVisibleState.value,
         message = "Feedback snackbar ${snackbarCountState.value}",
@@ -132,6 +175,7 @@ internal fun UiTreeBuilder.FeedbackPage() {
                         "Hide Snackbar",
                         "Show Toast",
                         "Show Dialog",
+                        "Show Popup",
                         "Reset Feedback",
                     ),
                 )
@@ -195,12 +239,29 @@ internal fun UiTreeBuilder.FeedbackPage() {
                         .fillMaxWidth()
                         .margin(top = 8.dp),
                 ) {
+                    AnchorTarget(
+                        anchorId = popupAnchorId,
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        Button(
+                            text = "Show Popup",
+                            variant = ButtonVariant.Tonal,
+                            onClick = {
+                                popupCountState.value += 1
+                                popupVisibleState.value = true
+                                lastEventState.value = "Popup requested ${popupCountState.value}"
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
                     Button(
                         text = "Reset Feedback",
                         variant = ButtonVariant.Outlined,
                         onClick = {
                             dialogVisibleState.value = false
                             dialogCountState.value = 0
+                            popupVisibleState.value = false
+                            popupCountState.value = 0
                             snackbarVisibleState.value = false
                             snackbarCountState.value = 0
                             toastCountState.value = 0
@@ -214,6 +275,7 @@ internal fun UiTreeBuilder.FeedbackPage() {
                     modifier = Modifier.margin(top = 12.dp),
                 ) {
                     Text(text = "Dialog count: ${dialogCountState.value}")
+                    Text(text = "Popup count: ${popupCountState.value}")
                     Text(text = "Snackbar count: ${snackbarCountState.value}")
                     Text(text = "Toast count: ${toastCountState.value}")
                 }
@@ -226,17 +288,19 @@ internal fun UiTreeBuilder.FeedbackPage() {
                     "点击 Hide Snackbar 或等待 dismiss，确认页面里的 Last event 会同步更新。",
                     "连续点击 Show Toast，确认短暂提示会重复触发，而不会卡死在第一次请求上。",
                     "点击 Show Dialog，确认弹窗内容可见，且点击 Confirm Dialog / Close Dialog 后页面状态会同步更新。",
+                    "点击 Show Popup，确认 anchored popup 出现在按钮下方，并且点击 Dismiss Popup 后页面状态会同步更新。",
                     "点击 Reset Feedback，确认状态计数和当前 snackbar 都回到初始状态。",
                 ),
                 expected = listOf(
                     "Dialog 通过 overlay host 渲染，而不是作为页面内联节点出现。",
+                    "PopupWindow 通过 anchor target 挂到稳定节点，而不是硬编码坐标。",
                     "Snackbar 和 Toast 都通过同一套 overlay host 流程触发。",
                     "Snackbar dismiss 后不会继续残留在页面底部。",
                     "demo 会话结束时，不应残留悬挂的 transient overlay。",
                 ),
                 relatedGaps = listOf(
-                    "PopupWindow 还未接入 demo。",
                     "Toast 自然消失的真实回调链仍未建模。",
+                    "PopupWindow 还没有 UI 自动化回归。",
                 ),
             )
         }
