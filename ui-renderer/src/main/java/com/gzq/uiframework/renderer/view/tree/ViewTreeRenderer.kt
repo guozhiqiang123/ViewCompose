@@ -85,8 +85,9 @@ object ViewTreeRenderer {
         container: ViewGroup,
         previous: List<MountedNode>,
         nodes: List<VNode>,
-        onReconcile: ((ReconcileResult<MountedNode>) -> Unit)? = null,
-    ): List<MountedNode> {
+        onReconcile: ((RenderTreeResult) -> Unit)? = null,
+    ): RenderTreeResult {
+        var stats = RenderStats()
         val reconcileResult = ChildReconciler.reconcile(
             previous = previous.map { mountedNode ->
                 ReconcileNode(
@@ -96,27 +97,44 @@ object ViewTreeRenderer {
             },
             nodes = nodes,
         )
-        onReconcile?.invoke(reconcileResult)
         val nextMounted = mutableListOf<MountedNode>()
         reconcileResult.patches.forEach { patch ->
-            nextMounted += applyPatch(
+            val patchResult = applyPatch(
                 container = container,
                 patch = patch,
             )
+            stats = stats.copy(
+                inserts = stats.inserts + patchResult.stats.inserts,
+                reuses = stats.reuses + patchResult.stats.reuses,
+                removals = stats.removals + patchResult.stats.removals,
+                reboundNodes = stats.reboundNodes + patchResult.stats.reboundNodes,
+                skippedBindings = stats.skippedBindings + patchResult.stats.skippedBindings,
+            )
+            nextMounted += patchResult.mountedNode
         }
         reconcileResult.removals.forEach { removal ->
             applyRemoval(
                 container = container,
                 removal = removal,
             )
+            stats = stats.withRemoval()
         }
-        return nextMounted
+        return RenderTreeResult(
+            mountedNodes = nextMounted,
+            reconcileResult = reconcileResult,
+            stats = stats,
+        ).also { onReconcile?.invoke(it) }
     }
+
+    private data class PatchApplicationResult(
+        val mountedNode: MountedNode,
+        val stats: RenderStats,
+    )
 
     private fun applyPatch(
         container: ViewGroup,
         patch: RenderPatch<MountedNode>,
-    ): MountedNode {
+    ): PatchApplicationResult {
         return when (patch) {
             is InsertPatch -> {
                 val mountedNode = mountNode(container.context, patch.nextVNode)
@@ -125,27 +143,35 @@ object ViewTreeRenderer {
                     patch.targetIndex.coerceAtMost(container.childCount),
                     createLayoutParams(container, patch.nextVNode),
                 )
-                mountedNode
+                PatchApplicationResult(
+                    mountedNode = mountedNode,
+                    stats = RenderStats(inserts = 1),
+                )
             }
 
             is ReusePatch -> {
                 val mountedNode = patch.payload
-                if (NodeBindingDiffer.shouldRebind(mountedNode.vnode, patch.nextVNode)) {
+                val shouldRebind = NodeBindingDiffer.shouldRebind(mountedNode.vnode, patch.nextVNode)
+                if (shouldRebind) {
                     bindView(mountedNode.view, patch.nextVNode)
                 }
                 mountedNode.view.layoutParams = createLayoutParams(container, patch.nextVNode)
-                mountedNode.children = reconcileChildren(
+                val childResult = reconcileChildren(
                     view = mountedNode.view,
                     previousChildren = mountedNode.children,
                     node = patch.nextVNode,
                 )
+                mountedNode.children = childResult.mountedNodes
                 mountedNode.vnode = patch.nextVNode
                 moveViewToIndex(
                     container = container,
                     view = mountedNode.view,
                     targetIndex = patch.targetIndex,
                 )
-                mountedNode
+                PatchApplicationResult(
+                    mountedNode = mountedNode,
+                    stats = childResult.stats.withReuse(rebound = shouldRebind),
+                )
             }
         }
     }
@@ -162,8 +188,15 @@ object ViewTreeRenderer {
         view: View,
         previousChildren: List<MountedNode>,
         node: VNode,
-    ): List<MountedNode> {
-        val viewGroup = view as? ViewGroup ?: return emptyList()
+    ): RenderTreeResult {
+        val viewGroup = view as? ViewGroup ?: return RenderTreeResult(
+            mountedNodes = emptyList(),
+            reconcileResult = ReconcileResult(
+                patches = emptyList(),
+                removals = emptyList(),
+            ),
+            stats = RenderStats(),
+        )
         return renderInto(
             container = viewGroup,
             previous = previousChildren,
@@ -186,7 +219,7 @@ object ViewTreeRenderer {
                 container = view,
                 previous = emptyList(),
                 nodes = node.children,
-            )
+            ).mountedNodes
         } else {
             emptyList()
         }

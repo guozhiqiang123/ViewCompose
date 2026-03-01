@@ -38,17 +38,18 @@ class RenderSession internal constructor(
             }
         }
         observation = nextObservation
-        mountedNodes = ViewTreeRenderer.renderInto(
+        val renderResult = ViewTreeRenderer.renderInto(
             container = container,
             previous = mountedNodes,
             nodes = tree,
-            onReconcile = { reconcileResult ->
+            onReconcile = { renderResult ->
                 if (debug) {
                     Log.d(debugTag, "VNode tree\n${tree.debugTree()}")
-                    Log.d(debugTag, "Reconcile\n${reconcileResult.debugSummary()}")
+                    Log.d(debugTag, "Reconcile\n${renderResult.debugSummary()}")
                 }
             },
         )
+        mountedNodes = renderResult.mountedNodes
         effectStore.commit()
         sideEffectStore.commit()
     }

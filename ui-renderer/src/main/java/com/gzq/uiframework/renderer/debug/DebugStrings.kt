@@ -5,6 +5,8 @@ import com.gzq.uiframework.renderer.reconcile.InsertPatch
 import com.gzq.uiframework.renderer.reconcile.ReconcileResult
 import com.gzq.uiframework.renderer.reconcile.RemovePatch
 import com.gzq.uiframework.renderer.reconcile.ReusePatch
+import com.gzq.uiframework.renderer.view.tree.RenderStats
+import com.gzq.uiframework.renderer.view.tree.RenderTreeResult
 
 fun List<VNode>.debugTree(): String {
     if (isEmpty()) {
@@ -32,6 +34,20 @@ fun <T> ReconcileResult<T>.debugSummary(): String {
     } else {
         parts.joinToString(separator = "\n")
     }
+}
+
+fun RenderTreeResult.debugSummary(): String {
+    val reconcile = reconcileResult.debugSummary()
+    val stats = stats.debugSummary()
+    return buildString {
+        append(reconcile)
+        append("\n--\n")
+        append(stats)
+    }
+}
+
+fun RenderStats.debugSummary(): String {
+    return "inserts=$inserts reuses=$reuses removals=$removals rebound=$reboundNodes skipped=$skippedBindings"
 }
 
 private fun VNode.debugTree(indent: Int): String {

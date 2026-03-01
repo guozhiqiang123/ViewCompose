@@ -34,6 +34,7 @@
    - 浅层布局约束
    - debug / warning 能力
    这 4 件事做好
+4. `Phase 2` 已经开始起步：renderer 现在能基于 `NodeSpec/props/modifier` 判断节点是否需要重绑，并输出 `rebound/skipped` 统计
 
 ## 3. 性能风险模型
 
@@ -251,6 +252,12 @@ Compose 官方文档也明确把这类模式视为不理想，因为它会多跑
    - 某些容器 subtree 深度
 3. `过深层级 warning`
 4. `无 key / 重复 key / 大量重建` warning
+
+当前已落地的第一步：
+
+1. [ViewTreeRenderer.kt](/Users/gzq/AndroidStudioProjects/UIFramework/ui-renderer/src/main/java/com/gzq/uiframework/renderer/view/tree/ViewTreeRenderer.kt) 会输出单次 render 的 `insert/reuse/removal/rebound/skipped` 统计
+2. [RenderSession.kt](/Users/gzq/AndroidStudioProjects/UIFramework/ui-widget-core/src/main/java/com/gzq/uiframework/widget/core/runtime/RenderSession.kt) 的 debug 日志已包含这些统计
+3. [DebugStrings.kt](/Users/gzq/AndroidStudioProjects/UIFramework/ui-renderer/src/main/java/com/gzq/uiframework/renderer/debug/DebugStrings.kt) 已能格式化 render 统计摘要
 
 ## 5. 架构设计层面的性能约束
 
@@ -526,6 +533,12 @@ Compose 会：
 1. 基于 `NodeSpec` 做 `areEquivalent / patch`
 2. 先覆盖 `Button / TextField / TabPager / LazyColumn / SegmentedControl`
 3. renderer 先支持“字段级跳过更新”
+
+当前状态：
+
+1. 已完成第一步“整节点 skip bind”
+2. 当前判断条件基于 `type + spec + props + modifier`
+3. 下一步才是把高收益节点推进到字段级 patch，而不是继续停留在全量 rebind / 全量 skip 之间
 
 ### Phase 3：补诊断能力
 
