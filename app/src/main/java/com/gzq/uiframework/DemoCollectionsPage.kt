@@ -10,7 +10,6 @@ import com.gzq.uiframework.renderer.modifier.fillMaxWidth
 import com.gzq.uiframework.renderer.modifier.height
 import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
-import com.gzq.uiframework.renderer.modifier.textColor
 import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.AndroidView
 import com.gzq.uiframework.widget.core.Button

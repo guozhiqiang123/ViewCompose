@@ -10,8 +10,6 @@ import com.gzq.uiframework.renderer.modifier.height
 import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.renderer.modifier.size
-import com.gzq.uiframework.renderer.modifier.textColor
-import com.gzq.uiframework.renderer.modifier.weight
 import com.gzq.uiframework.runtime.MutableState
 import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.Box

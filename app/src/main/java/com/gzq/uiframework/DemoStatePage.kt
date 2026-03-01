@@ -7,7 +7,6 @@ import com.gzq.uiframework.renderer.modifier.fillMaxSize
 import com.gzq.uiframework.renderer.modifier.fillMaxWidth
 import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
-import com.gzq.uiframework.renderer.modifier.textColor
 import com.gzq.uiframework.renderer.modifier.visibility
 import com.gzq.uiframework.runtime.derivedStateOf
 import com.gzq.uiframework.runtime.mutableStateOf

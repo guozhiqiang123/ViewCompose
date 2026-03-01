@@ -10,8 +10,6 @@ import com.gzq.uiframework.renderer.modifier.fillMaxSize
 import com.gzq.uiframework.renderer.modifier.fillMaxWidth
 import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
-import com.gzq.uiframework.renderer.modifier.textColor
-import com.gzq.uiframework.renderer.modifier.weight
 import com.gzq.uiframework.runtime.MutableState
 import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.Column

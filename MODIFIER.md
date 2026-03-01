@@ -208,6 +208,7 @@ Theme -> Modifier -> Renderer
 - `Row`、`Column`、`Box`、`Surface` 的内容 lambda 已切到对应 scope receiver
 - scope 内已提供 `weight` / `align` / `FlexibleSpacer` 的正确入口
 - 全局 `weight` / `align` / `FlexibleSpacer` 已开始标记为迁移型 API，用于把调用面逐步引导到 scope
+- demo 与框架内部调用已优先切到 scope 解析，不再显式导入全局 parent-data API
 
 ### Phase 4
 
