@@ -37,6 +37,7 @@ import com.gzq.uiframework.renderer.node.TextOverflow
 fun UiTreeBuilder.Text(
     text: String,
     style: UiTextStyle = TextDefaults.bodyStyle(),
+    color: Int = TextDefaults.primaryColor(),
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: TextAlign = TextAlign.Start,
@@ -49,7 +50,7 @@ fun UiTreeBuilder.Text(
         props = Props(
             values = mapOf(
                 PropKeys.TEXT to text,
-                PropKeys.TEXT_COLOR to TextDefaults.primaryColor(),
+                PropKeys.TEXT_COLOR to color,
                 PropKeys.TEXT_SIZE_SP to style.fontSizeSp,
                 PropKeys.TEXT_MAX_LINES to maxLines,
                 PropKeys.TEXT_OVERFLOW to overflow,

@@ -90,7 +90,7 @@ internal fun UiTreeBuilder.InteropPage() {
                 Text(
                     text = "Later this page should verify themed native widgets, custom view adapters, and fragment host containers.",
                     style = UiTextStyle(fontSizeSp = 13.sp),
-                    modifier = Modifier.textColor(TextDefaults.secondaryColor()),
+                    color = TextDefaults.secondaryColor(),
                 )
             }
 

@@ -74,13 +74,13 @@ internal fun UiTreeBuilder.DemoRoot(root: ViewGroup) {
                     Text(
                         text = "Declarative UI runtime on Android Views, regrouped into chapter-driven manual test paths.",
                         style = UiTextStyle(fontSizeSp = 14.sp),
-                        modifier = Modifier.textColor(TextDefaults.secondaryColor()),
+                        color = TextDefaults.secondaryColor(),
                     )
                     Text(
                         text = environmentLabel,
                         style = UiTextStyle(fontSizeSp = 12.sp),
+                        color = TextDefaults.secondaryColor(),
                         modifier = Modifier
-                            .textColor(TextDefaults.secondaryColor())
                             .padding(vertical = 4.dp),
                     )
                     Column(

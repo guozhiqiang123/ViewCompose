@@ -38,7 +38,7 @@ internal fun UiTreeBuilder.ThemeSwatchRow(
         Text(
             text = label,
             style = UiTextStyle(fontSizeSp = 13.sp),
-            modifier = Modifier.textColor(TextDefaults.secondaryColor()),
+            color = TextDefaults.secondaryColor(),
         )
         Row(
             spacing = 8.dp,
@@ -89,8 +89,8 @@ internal fun UiTreeBuilder.DemoSection(
             Text(
                 text = subtitle,
                 style = UiTextStyle(fontSizeSp = 13.sp),
+                color = TextDefaults.secondaryColor(),
                 modifier = Modifier
-                    .textColor(TextDefaults.secondaryColor())
                     .padding(bottom = 4.dp),
             )
             Divider()
@@ -173,7 +173,7 @@ internal fun UiTreeBuilder.ChecklistGroup(
         Text(
             text = title,
             style = UiTextStyle(fontSizeSp = 13.sp),
-            modifier = Modifier.textColor(TextDefaults.secondaryColor()),
+            color = TextDefaults.secondaryColor(),
         )
         items.forEachIndexed { index, item ->
             Text(text = "${index + 1}. $item")
@@ -192,7 +192,7 @@ internal fun UiTreeBuilder.DiagnosticFactGroup(
         Text(
             text = title,
             style = UiTextStyle(fontSizeSp = 13.sp),
-            modifier = Modifier.textColor(TextDefaults.secondaryColor()),
+            color = TextDefaults.secondaryColor(),
         )
         facts.forEach { fact ->
             Row(
@@ -202,7 +202,8 @@ internal fun UiTreeBuilder.DiagnosticFactGroup(
                 Text(
                     text = fact.label,
                     style = UiTextStyle(fontSizeSp = 13.sp),
-                    modifier = Modifier.width(136.dp).textColor(TextDefaults.secondaryColor()),
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier.width(136.dp),
                 )
                 Text(
                     text = fact.value,

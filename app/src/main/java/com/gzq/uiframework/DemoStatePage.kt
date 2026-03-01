@@ -78,14 +78,14 @@ internal fun UiTreeBuilder.StatePage() {
                 Text(text = "Clicks: ${clickCountState.value}")
                 Text(
                     text = summaryState.value,
+                    color = TextDefaults.secondaryColor(),
                     modifier = Modifier
-                        .textColor(TextDefaults.secondaryColor())
                         .padding(vertical = 4.dp),
                 )
                 Text(
                     text = timelineState.value,
                     style = UiTextStyle(fontSizeSp = 13.sp),
-                    modifier = Modifier.textColor(TextDefaults.secondaryColor()),
+                    color = TextDefaults.secondaryColor(),
                 )
                 Row(
                     spacing = 8.dp,

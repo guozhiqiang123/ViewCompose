@@ -193,8 +193,8 @@ internal fun UiTreeBuilder.CollectionPage() {
                 Text(
                     text = "Active ids: ${stressItems.joinToString(separator = " -> ") { it.id }}",
                     style = UiTextStyle(fontSizeSp = 13.sp),
+                    color = TextDefaults.secondaryColor(),
                     modifier = Modifier
-                        .textColor(TextDefaults.secondaryColor())
                         .margin(bottom = 12.dp),
                 )
                 LazyColumn(
@@ -224,7 +224,7 @@ internal fun UiTreeBuilder.CollectionPage() {
                             Text(
                                 text = "Stable key: ${item.id}",
                                 style = UiTextStyle(fontSizeSp = 12.sp),
-                                modifier = Modifier.textColor(TextDefaults.secondaryColor()),
+                                color = TextDefaults.secondaryColor(),
                             )
                             Button(
                                 text = "Item ${item.id} taps: ${itemCountState.value}",

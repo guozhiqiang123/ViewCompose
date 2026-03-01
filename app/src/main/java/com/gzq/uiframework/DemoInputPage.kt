@@ -94,7 +94,7 @@ internal fun UiTreeBuilder.InputPage() {
                 Text(
                     text = "Typography also uses the formal dp/sp DSL in sample code.",
                     style = UiTextStyle(fontSizeSp = 13.sp),
-                    modifier = Modifier.textColor(TextDefaults.secondaryColor()),
+                    color = TextDefaults.secondaryColor(),
                 )
             }
 
@@ -410,7 +410,7 @@ internal fun UiTreeBuilder.InputPage() {
                 Text(
                     text = bioState.value,
                     style = UiTextStyle(fontSizeSp = 13.sp),
-                    modifier = Modifier.textColor(TextDefaults.secondaryColor()),
+                    color = TextDefaults.secondaryColor(),
                 )
             }
 

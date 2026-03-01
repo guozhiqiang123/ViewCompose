@@ -80,7 +80,7 @@ internal fun UiTreeBuilder.OverviewPage(
                 )
                 Text(
                     text = "The pager itself is also rendered through the framework as a mapped virtual control.",
-                    modifier = Modifier.textColor(TextDefaults.secondaryColor()),
+                    color = TextDefaults.secondaryColor(),
                 )
             }
 
@@ -109,7 +109,7 @@ internal fun UiTreeBuilder.OverviewPage(
                 Text(
                     text = "Shapes: card=${Theme.shapes.cardCornerRadius}px, control=${Theme.shapes.controlCornerRadius}px",
                     style = UiTextStyle(fontSizeSp = 13.sp),
-                    modifier = Modifier.textColor(TextDefaults.secondaryColor()),
+                    color = TextDefaults.secondaryColor(),
                 )
             }
 
@@ -167,7 +167,7 @@ internal fun UiTreeBuilder.OverviewPage(
                         Text(
                             text = "Local card=${Theme.shapes.cardCornerRadius}px, control=${Theme.shapes.controlCornerRadius}px",
                             style = UiTextStyle(fontSizeSp = 13.sp),
-                            modifier = Modifier.textColor(TextDefaults.secondaryColor()),
+                            color = TextDefaults.secondaryColor(),
                         )
                         Row(
                             spacing = 8.dp,
@@ -265,7 +265,7 @@ internal fun UiTreeBuilder.OverviewPage(
                         Text(
                             text = "This block changes button and segmented defaults without changing the base color palette.",
                             style = UiTextStyle(fontSizeSp = 13.sp),
-                            modifier = Modifier.textColor(TextDefaults.secondaryColor()),
+                            color = TextDefaults.secondaryColor(),
                         )
                         SegmentedControl(
                             items = listOf("Alpha", "Beta", "Gamma"),
@@ -324,7 +324,7 @@ internal fun UiTreeBuilder.OverviewPage(
                 Text(
                     text = "Outside these blocks, the parent demo theme stays unchanged.",
                     style = UiTextStyle(fontSizeSp = 13.sp),
-                    modifier = Modifier.textColor(TextDefaults.secondaryColor()),
+                    color = TextDefaults.secondaryColor(),
                 )
             }
 
@@ -335,7 +335,7 @@ internal fun UiTreeBuilder.OverviewPage(
                 Text(
                     text = "The linear indicator follows the current component tokens, while circular can run determinate or indeterminate.",
                     style = UiTextStyle(fontSizeSp = 13.sp),
-                    modifier = Modifier.textColor(TextDefaults.secondaryColor()),
+                    color = TextDefaults.secondaryColor(),
                 )
                 LinearProgressIndicator(
                     progress = 0.68f,
@@ -382,7 +382,7 @@ internal fun UiTreeBuilder.OverviewPage(
                         Text(
                             text = "Remote loading is now provided by an optional Coil integration module without changing the Image API.",
                             style = UiTextStyle(fontSizeSp = 13.sp),
-                            modifier = Modifier.textColor(TextDefaults.secondaryColor()),
+                            color = TextDefaults.secondaryColor(),
                         )
                     }
                 }
