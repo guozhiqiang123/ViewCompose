@@ -185,6 +185,9 @@ widget/core/
   overlay/
     runtime/
   runtime/
+    composition/
+    effects/
+    session/
 ```
 
 解释：
@@ -206,7 +209,9 @@ widget/core/
 - `dsl/collection/` 放 `LazyColumn`、`TabPager` 等集合型 DSL
 - `overlay/` 放 overlay 的声明契约、spec、host contract
 - `overlay/runtime/` 放 overlay request、surface session、overlay host reducer
-- `runtime/` 只放 `RenderSession`、`RenderInto`、remember/effect 等 composition 表层
+- `runtime/session/` 放 `RenderSession`、`RenderInto`
+- `runtime/composition/` 放 `remember`、`key`、`produceState`、`rememberUpdatedState`
+- `runtime/effects/` 放 `DisposableEffect`、`SideEffect`
 
 评价：
 
@@ -314,6 +319,7 @@ flowchart TD
 - overlay 相关契约和 reducer 已经移到 `overlay/`、`overlay/runtime/`
 - `dsl/` 已经从单个 `Widgets.kt` 拆成按控件族归类的文件
 - `defaults/` 也已经和 DSL 一样按语义目录归类
+- `runtime/` 也已经拆成 `session/composition/effects`
 - 当前比之前更符合“DSL + session + defaults + overlay contracts”的真实边界
 
 剩余问题：
