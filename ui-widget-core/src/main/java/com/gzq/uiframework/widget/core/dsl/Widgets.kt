@@ -824,6 +824,33 @@ fun UiTreeBuilder.Toast(
     )
 }
 
+fun UiTreeBuilder.Dialog(
+    visible: Boolean,
+    requestKey: String = "dialog",
+    dismissOnBackPress: Boolean = true,
+    dismissOnClickOutside: Boolean = true,
+    onDismissRequest: (() -> Unit)? = null,
+    content: UiTreeBuilder.() -> Unit,
+) {
+    if (!visible) {
+        return
+    }
+    submitOverlayRequest(
+        OverlayRequest(
+            key = requestKey,
+            type = OverlayType.Dialog,
+            payload = DialogOverlaySpec(
+                dismissOnBackPress = dismissOnBackPress,
+                dismissOnClickOutside = dismissOnClickOutside,
+                onDismissRequest = onDismissRequest,
+            ),
+            contentToken = DialogOverlayContent(
+                nodes = buildVNodeTree(content),
+            ),
+        ),
+    )
+}
+
 fun UiTreeBuilder.Box(
     key: Any? = null,
     contentAlignment: BoxAlignment = BoxAlignment.TopStart,
