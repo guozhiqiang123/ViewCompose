@@ -143,7 +143,7 @@ renderer/
 评价：
 
 - renderer 的问题不再是“有没有目录”，而是“是否把不同语义层级继续堆在同一目录”
-- `ViewTreeRenderer` 仍然是单点复杂度中心，但 modifier、layout params、dispose、binder/diagnostics/patch 相关配套类已经开始拆出，不应再回流
+- `ViewTreeRenderer` 仍然是单点复杂度中心，但 modifier、layout params、dispose、patch pipeline、binder/diagnostics 相关配套类已经开始拆出，不应再回流
 
 #### `ui-widget-core`
 
@@ -274,7 +274,7 @@ flowchart TD
 
 剩余问题：
 
-- `ViewTreeRenderer` 仍然是核心复杂度热点，但“modifier 应用 + layout params + mounted dispose + binder 配套”已经不再全部挤在单文件里
+- `ViewTreeRenderer` 仍然是核心复杂度热点，但“modifier 应用 + layout params + mounted dispose + patch pipeline + binder 配套”已经不再全部挤在单文件里
 - `spec/` 目前仍按控件类型平铺，后续如果继续增长，可以再按 `content/input/container/media` 细分
 
 ### `ui-widget-core`
