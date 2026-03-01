@@ -15,7 +15,7 @@
 
 - 日期：2026-03-01
 - 仓库：`/Users/gzq/AndroidStudioProjects/UIFramework`
-- 当前模块：`:ui-runtime`、`:ui-renderer`、`:ui-widget-core`、`:ui-image-coil`、`:app`
+- 当前模块：`:ui-runtime`、`:ui-renderer`、`:ui-widget-core`、`:ui-overlay-android`、`:ui-image-coil`、`:app`
 - 技术基线：Kotlin + Android View System，`minSdk 24`，`compileSdk 36`
 
 ## 2. 当前总判断
@@ -68,6 +68,7 @@
 | `:ui-runtime` | 可观察状态、派生状态、读依赖观察 | 结构清晰，但范围偏窄 |
 | `:ui-renderer` | `VNode`、`Modifier`、patch/reconcile、Android View 挂载、自定义容器、lazy adapter | 当前技术核心，结构比过去清晰 |
 | `:ui-widget-core` | DSL、session、remember/effect、local/theme/environment、widget 默认值 | 当前最混，但已整理目录 |
+| `:ui-overlay-android` | Android 宿主级 overlay presenter、Dialog/PopupWindow 等平台弹层接线 | 新增模块，用于承接不适合继续堆在 `ui-widget-core` 的平台实现 |
 | `:ui-image-coil` | 可选远程图片加载桥接 | 角色清晰，边界合理 |
 | `:app` | demo、人工测试、主题切换、回归入口 | 合理 |
 

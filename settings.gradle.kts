@@ -24,6 +24,7 @@ include(":app")
 include(":ui-runtime")
 include(":ui-renderer")
 include(":ui-widget-core")
+include(":ui-overlay-android")
 include(":ui-image-coil")
 include(":benchmark")
  
