@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.view.View.MeasureSpec
 import android.view.Window
 import android.view.WindowManager
 import android.widget.FrameLayout
@@ -228,11 +229,28 @@ private class AndroidPopupOverlayHandle(
             }
             return
         }
+        popupContainer.measure(
+            rootView.width.atMostMeasureSpec(),
+            rootView.height.atMostMeasureSpec(),
+        )
+        val popupWidth = popupContainer.measuredWidth
+        val popupHeight = popupContainer.measuredHeight
+        val xOffset = spec.alignment.resolveXOffset(
+            anchorWidth = anchor.width,
+            popupWidth = popupWidth,
+            isRtl = anchor.layoutDirection == View.LAYOUT_DIRECTION_RTL,
+            baseOffset = spec.offsetX,
+        )
+        val yOffset = spec.alignment.resolveYOffset(
+            anchorHeight = anchor.height,
+            popupHeight = popupHeight,
+            baseOffset = spec.offsetY,
+        )
         anchor.doOnLayout {
             if (!popupWindow.isShowing) {
-                popupWindow.showAsDropDown(anchor, spec.offsetX, spec.offsetY)
+                popupWindow.showAsDropDown(anchor, xOffset, yOffset)
             } else {
-                popupWindow.update(anchor, spec.offsetX, spec.offsetY, -1, -1)
+                popupWindow.update(anchor, xOffset, yOffset, -1, -1)
             }
         }
     }
@@ -275,5 +293,63 @@ private fun DialogPosition.toGravity(): Int {
         DialogPosition.Top -> Gravity.TOP or Gravity.CENTER_HORIZONTAL
         DialogPosition.Center -> Gravity.CENTER
         DialogPosition.Bottom -> Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+    }
+}
+
+private fun PopupAlignment.resolveXOffset(
+    anchorWidth: Int,
+    popupWidth: Int,
+    isRtl: Boolean,
+    baseOffset: Int,
+): Int {
+    val startOffset = if (isRtl) {
+        anchorWidth - popupWidth
+    } else {
+        0
+    }
+    val endOffset = if (isRtl) {
+        0
+    } else {
+        anchorWidth - popupWidth
+    }
+    val alignedOffset = when (this) {
+        PopupAlignment.BelowStart,
+        PopupAlignment.AboveStart,
+        -> startOffset
+
+        PopupAlignment.BelowCenter,
+        PopupAlignment.AboveCenter,
+        -> (anchorWidth - popupWidth) / 2
+
+        PopupAlignment.BelowEnd,
+        PopupAlignment.AboveEnd,
+        -> endOffset
+    }
+    return alignedOffset + baseOffset
+}
+
+private fun PopupAlignment.resolveYOffset(
+    anchorHeight: Int,
+    popupHeight: Int,
+    baseOffset: Int,
+): Int {
+    return when (this) {
+        PopupAlignment.BelowStart,
+        PopupAlignment.BelowCenter,
+        PopupAlignment.BelowEnd,
+        -> baseOffset
+
+        PopupAlignment.AboveStart,
+        PopupAlignment.AboveCenter,
+        PopupAlignment.AboveEnd,
+        -> -anchorHeight - popupHeight + baseOffset
+    }
+}
+
+private fun Int.atMostMeasureSpec(): Int {
+    return if (this > 0) {
+        MeasureSpec.makeMeasureSpec(this, MeasureSpec.AT_MOST)
+    } else {
+        MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
     }
 }

@@ -61,6 +61,48 @@ class PopupOverlayHostTest {
     }
 
     @Test
+    fun `updates popup when alignment changes`() {
+        val presenter = RecordingPopupPresenter()
+        val host = PopupOverlayHost(presenter)
+        val sessionId = OverlaySessionId("session-1")
+
+        host.commit(
+            sessionId = sessionId,
+            requests = listOf(
+                popupRequest(
+                    key = "menu",
+                    message = "Menu popup",
+                    spec = PopupOverlaySpec(
+                        anchorId = "popup_anchor",
+                        alignment = PopupAlignment.BelowStart,
+                    ),
+                ),
+            ),
+        )
+        host.commit(
+            sessionId = sessionId,
+            requests = listOf(
+                popupRequest(
+                    key = "menu",
+                    message = "Menu popup",
+                    spec = PopupOverlaySpec(
+                        anchorId = "popup_anchor",
+                        alignment = PopupAlignment.AboveEnd,
+                    ),
+                ),
+            ),
+        )
+
+        assertEquals(
+            listOf(
+                "show:session-1:menu:Menu popup",
+                "update:session-1:menu:Menu popup",
+            ),
+            presenter.events,
+        )
+    }
+
+    @Test
     fun `dismisses popup removed on next commit`() {
         val presenter = RecordingPopupPresenter()
         val host = PopupOverlayHost(presenter)
@@ -92,11 +134,12 @@ class PopupOverlayHostTest {
     private fun popupRequest(
         key: String,
         message: String,
+        spec: PopupOverlaySpec = PopupOverlaySpec(anchorId = "popup_anchor"),
     ): OverlayRequest {
         return OverlayRequest(
             key = key,
             type = OverlayType.Popup,
-            payload = PopupOverlaySpec(anchorId = "popup_anchor"),
+            payload = spec,
             contentToken = PopupOverlayContent(
                 nodes = buildVNodeTree {
                     Text(text = message)

@@ -859,6 +859,7 @@ fun UiTreeBuilder.Popup(
     visible: Boolean,
     anchorId: String,
     requestKey: String = "popup",
+    alignment: PopupAlignment = PopupAlignment.BelowStart,
     dismissOnClickOutside: Boolean = true,
     focusable: Boolean = true,
     offsetX: Int = 0,
@@ -875,6 +876,7 @@ fun UiTreeBuilder.Popup(
             type = OverlayType.Popup,
             payload = PopupOverlaySpec(
                 anchorId = anchorId,
+                alignment = alignment,
                 dismissOnClickOutside = dismissOnClickOutside,
                 focusable = focusable,
                 offsetX = offsetX,

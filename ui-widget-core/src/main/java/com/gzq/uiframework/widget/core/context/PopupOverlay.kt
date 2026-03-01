@@ -2,8 +2,18 @@ package com.gzq.uiframework.widget.core
 
 import com.gzq.uiframework.renderer.node.VNode
 
+enum class PopupAlignment {
+    BelowStart,
+    BelowCenter,
+    BelowEnd,
+    AboveStart,
+    AboveCenter,
+    AboveEnd,
+}
+
 class PopupOverlaySpec(
     val anchorId: String,
+    val alignment: PopupAlignment = PopupAlignment.BelowStart,
     val dismissOnClickOutside: Boolean = true,
     val focusable: Boolean = true,
     val offsetX: Int = 0,
@@ -18,6 +28,7 @@ class PopupOverlaySpec(
             return false
         }
         return anchorId == other.anchorId &&
+            alignment == other.alignment &&
             dismissOnClickOutside == other.dismissOnClickOutside &&
             focusable == other.focusable &&
             offsetX == other.offsetX &&
@@ -26,6 +37,7 @@ class PopupOverlaySpec(
 
     override fun hashCode(): Int {
         var result = anchorId.hashCode()
+        result = 31 * result + alignment.hashCode()
         result = 31 * result + dismissOnClickOutside.hashCode()
         result = 31 * result + focusable.hashCode()
         result = 31 * result + offsetX

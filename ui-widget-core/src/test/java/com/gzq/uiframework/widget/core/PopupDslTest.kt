@@ -15,6 +15,7 @@ class PopupDslTest {
                     visible = true,
                     anchorId = "feedback_popup_anchor",
                     requestKey = "feedback_popup",
+                    alignment = PopupAlignment.AboveEnd,
                     offsetY = 8.dp,
                 ) {
                     Text(text = "Popup content")
@@ -30,6 +31,7 @@ class PopupDslTest {
                     type = OverlayType.Popup,
                     payload = PopupOverlaySpec(
                         anchorId = "feedback_popup_anchor",
+                        alignment = PopupAlignment.AboveEnd,
                         offsetY = 8.dp,
                     ),
                     contentToken = PopupOverlayContent(
