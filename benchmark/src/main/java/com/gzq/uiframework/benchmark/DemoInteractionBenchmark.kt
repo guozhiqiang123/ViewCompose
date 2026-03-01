@@ -23,13 +23,15 @@ class DemoInteractionBenchmark {
         startupMode = StartupMode.WARM,
         setupBlock = {
             startDemoAndWait()
-            waitForText("State")
-            waitForText("Layouts")
+            waitForText("Capability Modules")
+            waitForText("Open State")
+            waitForText("Open Layouts")
         },
     ) {
-        clickText("State")
+        openDemoModule("State")
         waitForText("State & Effects")
-        clickText("Layouts")
+        returnToCatalog()
+        openDemoModule("Layouts")
         waitForText("Layouts")
     }
 
@@ -62,7 +64,7 @@ class DemoInteractionBenchmark {
         startupMode = StartupMode.WARM,
         setupBlock = {
             startDemoAndWait()
-            clickText("Collections")
+            openDemoModule("Collections")
             waitForText("Collections")
         },
     ) {
@@ -80,7 +82,7 @@ class DemoInteractionBenchmark {
         startupMode = StartupMode.WARM,
         setupBlock = {
             startDemoAndWait()
-            clickText("State")
+            openDemoModule("State")
             waitForText("Patch")
             clickText("Patch")
             waitForText("Patch Stress")
@@ -105,8 +107,7 @@ class DemoInteractionBenchmark {
         startupMode = StartupMode.WARM,
         setupBlock = {
             startDemoAndWait()
-            clickTextIfExists("Back to chapter tabs")
-            clickText("State")
+            openDemoModule("State")
             waitForText("State & Effects")
             waitForText("Patch")
             clickText("Patch")

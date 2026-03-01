@@ -38,11 +38,13 @@ internal fun MacrobenchmarkScope.clickText(text: String) {
     device.waitForIdle()
 }
 
-internal fun MacrobenchmarkScope.clickTextIfExists(text: String): Boolean {
-    val node = device.findObject(By.text(text)) ?: return false
-    node.click()
-    device.waitForIdle()
-    return true
+internal fun MacrobenchmarkScope.openDemoModule(title: String) {
+    clickText("Open $title")
+}
+
+internal fun MacrobenchmarkScope.returnToCatalog() {
+    clickText("Back to catalog")
+    waitForText("Capability Modules")
 }
 
 internal fun MacrobenchmarkScope.clickChapterTab(text: String) {
