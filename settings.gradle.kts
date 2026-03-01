@@ -25,4 +25,5 @@ include(":ui-runtime")
 include(":ui-renderer")
 include(":ui-widget-core")
 include(":ui-image-coil")
+include(":benchmark")
  

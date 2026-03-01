@@ -112,6 +112,37 @@ Compose 官方文档也明确把这类模式视为不理想，因为它会多跑
 
 ## 4. 性能基准测试
 
+### 当前状态
+
+当前已完成 `Phase 1` 的起步骨架：
+
+1. 已新增 `:benchmark` 模块
+2. `app` 已新增 `benchmark` build type
+3. 宿主 app 已声明 `profileable`
+4. 已落地首批宏基准场景：
+   - 冷启动
+   - 章节切换
+   - 主题切换
+   - Collections 页面滚动
+
+当前相关代码位置：
+
+1. [benchmark/build.gradle.kts](/Users/gzq/AndroidStudioProjects/UIFramework/benchmark/build.gradle.kts)
+2. [StartupBenchmark.kt](/Users/gzq/AndroidStudioProjects/UIFramework/benchmark/src/main/java/com/gzq/uiframework/benchmark/StartupBenchmark.kt)
+3. [DemoInteractionBenchmark.kt](/Users/gzq/AndroidStudioProjects/UIFramework/benchmark/src/main/java/com/gzq/uiframework/benchmark/DemoInteractionBenchmark.kt)
+
+当前本地已验证：
+
+```bash
+./gradlew :benchmark:assembleBenchmark :app:assembleBenchmark
+```
+
+后续在真机运行宏基准的主要命令：
+
+```bash
+./gradlew :benchmark:connectedBenchmarkAndroidTest
+```
+
 ## 4.1 需要两层基准
 
 ### A. Macrobenchmark
