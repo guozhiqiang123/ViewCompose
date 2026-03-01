@@ -72,7 +72,7 @@ internal fun UiTreeBuilder.InputPage() {
     LazyColumn(
         items = pageItems,
         key = { it },
-        modifier = Modifier.Empty.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
     ) { section ->
         when (section) {
             "page" -> ChapterPageOverviewSection(
@@ -94,7 +94,7 @@ internal fun UiTreeBuilder.InputPage() {
                 Text(
                     text = "Typography also uses the formal dp/sp DSL in sample code.",
                     style = UiTextStyle(fontSizeSp = 13.sp),
-                    modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+                    modifier = Modifier.textColor(TextDefaults.secondaryColor()),
                 )
             }
 
@@ -111,7 +111,7 @@ internal fun UiTreeBuilder.InputPage() {
                     imeAction = TextFieldImeAction.Next,
                     variant = TextFieldVariant.Filled,
                     size = TextFieldSize.Large,
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .fillMaxWidth()
                         .margin(bottom = 12.dp),
                 )
@@ -124,7 +124,7 @@ internal fun UiTreeBuilder.InputPage() {
                     imeAction = TextFieldImeAction.Next,
                     variant = TextFieldVariant.Tonal,
                     size = TextFieldSize.Medium,
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .fillMaxWidth()
                         .margin(bottom = 12.dp),
                 )
@@ -138,7 +138,7 @@ internal fun UiTreeBuilder.InputPage() {
                     variant = TextFieldVariant.Outlined,
                     size = TextFieldSize.Medium,
                     isError = passwordState.value.isBlank(),
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .fillMaxWidth()
                         .margin(bottom = 12.dp),
                 )
@@ -150,7 +150,7 @@ internal fun UiTreeBuilder.InputPage() {
                     supportingText = "Semantic version generations",
                     variant = TextFieldVariant.Outlined,
                     size = TextFieldSize.Compact,
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .fillMaxWidth()
                         .margin(bottom = 12.dp),
                 )
@@ -163,7 +163,7 @@ internal fun UiTreeBuilder.InputPage() {
                     variant = TextFieldVariant.Tonal,
                     size = TextFieldSize.Medium,
                     enabled = false,
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .fillMaxWidth()
                         .margin(bottom = 12.dp),
                 )
@@ -177,7 +177,7 @@ internal fun UiTreeBuilder.InputPage() {
                     imeAction = TextFieldImeAction.Done,
                     variant = TextFieldVariant.Filled,
                     size = TextFieldSize.Large,
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .fillMaxWidth()
                         .height(120.dp)
                         .margin(bottom = 12.dp),
@@ -205,13 +205,13 @@ internal fun UiTreeBuilder.InputPage() {
                     text = "Notifications",
                     checked = notificationsEnabledState.value,
                     onCheckedChange = { notificationsEnabledState.value = it },
-                    modifier = Modifier.Empty.margin(bottom = 8.dp),
+                    modifier = Modifier.margin(bottom = 8.dp),
                 )
                 Switch(
                     text = "Analytics",
                     checked = analyticsEnabledState.value,
                     onCheckedChange = { analyticsEnabledState.value = it },
-                    modifier = Modifier.Empty.margin(bottom = 8.dp),
+                    modifier = Modifier.margin(bottom = 8.dp),
                 )
                 RadioButton(
                     text = "Alpha tier",
@@ -221,7 +221,7 @@ internal fun UiTreeBuilder.InputPage() {
                             selectedTierState.value = "Alpha"
                         }
                     },
-                    modifier = Modifier.Empty.margin(bottom = 8.dp),
+                    modifier = Modifier.margin(bottom = 8.dp),
                 )
                 RadioButton(
                     text = "Beta tier",
@@ -231,18 +231,18 @@ internal fun UiTreeBuilder.InputPage() {
                             selectedTierState.value = "Beta"
                         }
                     },
-                    modifier = Modifier.Empty.margin(bottom = 8.dp),
+                    modifier = Modifier.margin(bottom = 8.dp),
                 )
                 Text(
                     text = "Intensity: ${intensityState.value}",
-                    modifier = Modifier.Empty.padding(bottom = 6.dp),
+                    modifier = Modifier.padding(bottom = 6.dp),
                 )
                 Slider(
                     value = intensityState.value,
                     min = 0,
                     max = 100,
                     onValueChange = { intensityState.value = it },
-                    modifier = Modifier.Empty.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                 )
                 UiThemeOverride(
                     components = {
@@ -274,7 +274,7 @@ internal fun UiTreeBuilder.InputPage() {
                 ) {
                     Column(
                         spacing = 8.dp,
-                        modifier = Modifier.Empty
+                        modifier = Modifier
                             .fillMaxWidth()
                             .backgroundColor(SurfaceDefaults.backgroundColor())
                             .cornerRadius(SurfaceDefaults.cardCornerRadius())
@@ -303,7 +303,7 @@ internal fun UiTreeBuilder.InputPage() {
                             max = 100,
                             enabled = false,
                             onValueChange = {},
-                            modifier = Modifier.Empty.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                         )
                     }
                 }
@@ -315,7 +315,7 @@ internal fun UiTreeBuilder.InputPage() {
             ) {
                 Row(
                     spacing = 8.dp,
-                    modifier = Modifier.Empty.margin(bottom = 12.dp),
+                    modifier = Modifier.margin(bottom = 12.dp),
                 ) {
                     Button(
                         text = if (stressExpandedState.value) "Compact Copy" else "Expanded Copy",
@@ -357,7 +357,7 @@ internal fun UiTreeBuilder.InputPage() {
                     },
                     variant = TextFieldVariant.Outlined,
                     size = TextFieldSize.Large,
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .fillMaxWidth()
                         .margin(bottom = 12.dp),
                 )
@@ -374,7 +374,7 @@ internal fun UiTreeBuilder.InputPage() {
                     maxLines = 6,
                     variant = TextFieldVariant.Tonal,
                     size = TextFieldSize.Large,
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .fillMaxWidth()
                         .height(132.dp)
                         .margin(bottom = 12.dp),
@@ -391,7 +391,7 @@ internal fun UiTreeBuilder.InputPage() {
                     isError = stressErrorState.value,
                     variant = TextFieldVariant.Filled,
                     size = TextFieldSize.Medium,
-                    modifier = Modifier.Empty.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
 
@@ -410,7 +410,7 @@ internal fun UiTreeBuilder.InputPage() {
                 Text(
                     text = bioState.value,
                     style = UiTextStyle(fontSizeSp = 13.sp),
-                    modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+                    modifier = Modifier.textColor(TextDefaults.secondaryColor()),
                 )
             }
 

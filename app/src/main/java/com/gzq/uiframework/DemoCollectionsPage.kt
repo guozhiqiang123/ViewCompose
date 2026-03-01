@@ -94,7 +94,7 @@ internal fun UiTreeBuilder.CollectionPage() {
     LazyColumn(
         items = pageItems,
         key = { it },
-        modifier = Modifier.Empty.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
     ) { section ->
         when (section) {
             "page" -> ChapterPageOverviewSection(
@@ -117,7 +117,7 @@ internal fun UiTreeBuilder.CollectionPage() {
                 Row(
                     spacing = 8.dp,
                     verticalAlignment = VerticalAlignment.Center,
-                    modifier = Modifier.Empty.margin(top = 12.dp),
+                    modifier = Modifier.margin(top = 12.dp),
                 ) {
                     Button(
                         text = if (reversedState.value) "Show A-B-C" else "Show C-B-A",
@@ -141,7 +141,7 @@ internal fun UiTreeBuilder.CollectionPage() {
                 LazyColumn(
                     items = keyedItems,
                     key = { item -> item.id },
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .fillMaxWidth()
                         .height(280.dp),
                 ) { item ->
@@ -149,7 +149,7 @@ internal fun UiTreeBuilder.CollectionPage() {
                     Column(
                         key = item.id,
                         spacing = 6.dp,
-                        modifier = Modifier.Empty
+                        modifier = Modifier
                             .fillMaxWidth()
                             .backgroundColor(SurfaceDefaults.backgroundColor())
                             .padding(12.dp),
@@ -171,7 +171,7 @@ internal fun UiTreeBuilder.CollectionPage() {
             ) {
                 Row(
                     spacing = 8.dp,
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .fillMaxWidth()
                         .margin(bottom = 12.dp),
                 ) {
@@ -193,7 +193,7 @@ internal fun UiTreeBuilder.CollectionPage() {
                 Text(
                     text = "Active ids: ${stressItems.joinToString(separator = " -> ") { it.id }}",
                     style = UiTextStyle(fontSizeSp = 13.sp),
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .textColor(TextDefaults.secondaryColor())
                         .margin(bottom = 12.dp),
                 )
@@ -202,7 +202,7 @@ internal fun UiTreeBuilder.CollectionPage() {
                     key = { item -> item.id },
                     spacing = 8.dp,
                     contentPadding = 8.dp,
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .fillMaxWidth()
                         .height(320.dp)
                         .backgroundColor(SurfaceDefaults.variantBackgroundColor())
@@ -211,12 +211,12 @@ internal fun UiTreeBuilder.CollectionPage() {
                     val itemCountState = remember { mutableStateOf(0) }
                     Surface(
                         variant = SurfaceVariant.Default,
-                        modifier = Modifier.Empty.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
                         Column(
                             key = item.id,
                             spacing = 6.dp,
-                            modifier = Modifier.Empty
+                            modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(12.dp),
                         ) {
@@ -224,7 +224,7 @@ internal fun UiTreeBuilder.CollectionPage() {
                             Text(
                                 text = "Stable key: ${item.id}",
                                 style = UiTextStyle(fontSizeSp = 12.sp),
-                                modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+                                modifier = Modifier.textColor(TextDefaults.secondaryColor()),
                             )
                             Button(
                                 text = "Item ${item.id} taps: ${itemCountState.value}",
@@ -249,7 +249,7 @@ internal fun UiTreeBuilder.CollectionPage() {
                 }
                 AndroidView(
                     key = "legacy_summary",
-                    modifier = Modifier.Empty.padding(vertical = 4.dp),
+                    modifier = Modifier.padding(vertical = 4.dp),
                     factory = { context ->
                         TextView(context)
                     },

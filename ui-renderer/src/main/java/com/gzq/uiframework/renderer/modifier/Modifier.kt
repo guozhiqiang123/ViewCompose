@@ -4,15 +4,19 @@ import com.gzq.uiframework.renderer.layout.BoxAlignment
 import com.gzq.uiframework.renderer.layout.HorizontalAlignment
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 
-class Modifier private constructor(
+open class Modifier private constructor(
     internal val elements: List<ModifierElement>,
 ) {
     fun then(element: ModifierElement): Modifier = Modifier(elements + element)
 
     fun then(modifier: Modifier): Modifier = Modifier(elements + modifier.elements)
 
-    companion object {
-        val Empty: Modifier = Modifier(emptyList())
+    companion object : Modifier(emptyList()) {
+        @Deprecated(
+            message = "Use Modifier instead.",
+            replaceWith = ReplaceWith("Modifier"),
+        )
+        val Empty: Modifier = this
     }
 }
 

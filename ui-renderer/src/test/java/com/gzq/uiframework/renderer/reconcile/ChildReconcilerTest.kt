@@ -63,7 +63,7 @@ class ChildReconcilerTest {
             type = NodeType.Text,
             key = key,
             props = Props.Empty,
-            modifier = Modifier.Empty,
+            modifier = Modifier,
         )
     }
 }

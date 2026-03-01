@@ -33,24 +33,24 @@ internal fun UiTreeBuilder.ThemeSwatchRow(
 ) {
     Column(
         spacing = 8.dp,
-        modifier = Modifier.Empty.margin(bottom = 8.dp),
+        modifier = Modifier.margin(bottom = 8.dp),
     ) {
         Text(
             text = label,
             style = UiTextStyle(fontSizeSp = 13.sp),
-            modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+            modifier = Modifier.textColor(TextDefaults.secondaryColor()),
         )
         Row(
             spacing = 8.dp,
-            modifier = Modifier.Empty.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
         ) {
             swatches.forEach { swatch ->
                 Column(
                     spacing = 6.dp,
-                    modifier = Modifier.Empty.weight(1f),
+                    modifier = Modifier.weight(1f),
                 ) {
                     Box(
-                        modifier = Modifier.Empty
+                        modifier = Modifier
                             .fillMaxWidth()
                             .height(48.dp)
                             .backgroundColor(swatch.color)
@@ -73,14 +73,14 @@ internal fun UiTreeBuilder.DemoSection(
 ) {
     Surface(
         variant = SurfaceVariant.Default,
-        modifier = Modifier.Empty
+        modifier = Modifier
             .fillMaxWidth()
             .margin(bottom = 12.dp)
             .padding(16.dp),
     ) {
         Column(
             spacing = 8.dp,
-            modifier = Modifier.Empty.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
         ) {
             Text(
                 text = title,
@@ -89,7 +89,7 @@ internal fun UiTreeBuilder.DemoSection(
             Text(
                 text = subtitle,
                 style = UiTextStyle(fontSizeSp = 13.sp),
-                modifier = Modifier.Empty
+                modifier = Modifier
                     .textColor(TextDefaults.secondaryColor())
                     .padding(bottom = 4.dp),
             )
@@ -129,7 +129,7 @@ internal fun UiTreeBuilder.ChapterPageFilterSection(
             items = pages,
             selectedIndex = selectedIndex,
             onSelectionChange = onSelectionChange,
-            modifier = Modifier.Empty.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
@@ -168,12 +168,12 @@ internal fun UiTreeBuilder.ChecklistGroup(
 ) {
     Column(
         spacing = 4.dp,
-        modifier = Modifier.Empty.margin(top = 8.dp),
+        modifier = Modifier.margin(top = 8.dp),
     ) {
         Text(
             text = title,
             style = UiTextStyle(fontSizeSp = 13.sp),
-            modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+            modifier = Modifier.textColor(TextDefaults.secondaryColor()),
         )
         items.forEachIndexed { index, item ->
             Text(text = "${index + 1}. $item")
@@ -187,26 +187,26 @@ internal fun UiTreeBuilder.DiagnosticFactGroup(
 ) {
     Column(
         spacing = 6.dp,
-        modifier = Modifier.Empty.margin(top = 8.dp),
+        modifier = Modifier.margin(top = 8.dp),
     ) {
         Text(
             text = title,
             style = UiTextStyle(fontSizeSp = 13.sp),
-            modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+            modifier = Modifier.textColor(TextDefaults.secondaryColor()),
         )
         facts.forEach { fact ->
             Row(
                 spacing = 12.dp,
-                modifier = Modifier.Empty.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
                     text = fact.label,
                     style = UiTextStyle(fontSizeSp = 13.sp),
-                    modifier = Modifier.Empty.width(136.dp).textColor(TextDefaults.secondaryColor()),
+                    modifier = Modifier.width(136.dp).textColor(TextDefaults.secondaryColor()),
                 )
                 Text(
                     text = fact.value,
-                    modifier = Modifier.Empty.weight(1f),
+                    modifier = Modifier.weight(1f),
                 )
             }
         }

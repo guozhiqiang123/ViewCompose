@@ -56,7 +56,7 @@ internal fun UiTreeBuilder.StatePage() {
     LazyColumn(
         items = pageItems,
         key = { it },
-        modifier = Modifier.Empty.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
     ) { section ->
         when (section) {
             "page" -> ChapterPageOverviewSection(
@@ -78,19 +78,19 @@ internal fun UiTreeBuilder.StatePage() {
                 Text(text = "Clicks: ${clickCountState.value}")
                 Text(
                     text = summaryState.value,
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .textColor(TextDefaults.secondaryColor())
                         .padding(vertical = 4.dp),
                 )
                 Text(
                     text = timelineState.value,
                     style = UiTextStyle(fontSizeSp = 13.sp),
-                    modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+                    modifier = Modifier.textColor(TextDefaults.secondaryColor()),
                 )
                 Row(
                     spacing = 8.dp,
                     verticalAlignment = com.gzq.uiframework.renderer.layout.VerticalAlignment.Center,
-                    modifier = Modifier.Empty.margin(top = 12.dp),
+                    modifier = Modifier.margin(top = 12.dp),
                 ) {
                     Button(
                         text = "Increment",
@@ -113,14 +113,14 @@ internal fun UiTreeBuilder.StatePage() {
             ) {
                 Button(
                     text = if (panelVisibleState.value) "Hide panel" else "Show panel",
-                    modifier = Modifier.Empty.margin(bottom = 12.dp),
+                    modifier = Modifier.margin(bottom = 12.dp),
                     onClick = {
                         panelVisibleState.value = !panelVisibleState.value
                     },
                 )
                 Text(
                     text = "Visibility sample: hidden when the panel is off",
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .visibility(
                             if (panelVisibleState.value) {
                                 Visibility.Visible
@@ -135,7 +135,7 @@ internal fun UiTreeBuilder.StatePage() {
                         val panelTapState = remember { mutableStateOf(0) }
                         Column(
                             spacing = 8.dp,
-                            modifier = Modifier.Empty
+                            modifier = Modifier
                                 .fillMaxWidth()
                                 .backgroundColor(SurfaceDefaults.variantBackgroundColor())
                                 .padding(12.dp),

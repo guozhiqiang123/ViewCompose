@@ -31,7 +31,7 @@ internal fun UiTreeBuilder.InteropPage() {
     LazyColumn(
         items = pageItems,
         key = { it },
-        modifier = Modifier.Empty.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
     ) { section ->
         when (section) {
             "page" -> ChapterPageOverviewSection(
@@ -52,7 +52,7 @@ internal fun UiTreeBuilder.InteropPage() {
             ) {
                 Row(
                     spacing = 8.dp,
-                    modifier = Modifier.Empty.margin(bottom = 12.dp),
+                    modifier = Modifier.margin(bottom = 12.dp),
                 ) {
                     Button(
                         text = if (alternateLabelsState.value) "Show Primary Copy" else "Show Alternate Copy",
@@ -63,7 +63,7 @@ internal fun UiTreeBuilder.InteropPage() {
                 }
                 AndroidView(
                     key = "interop_text_view",
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp),
                     factory = { context ->
@@ -90,7 +90,7 @@ internal fun UiTreeBuilder.InteropPage() {
                 Text(
                     text = "Later this page should verify themed native widgets, custom view adapters, and fragment host containers.",
                     style = UiTextStyle(fontSizeSp = 13.sp),
-                    modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+                    modifier = Modifier.textColor(TextDefaults.secondaryColor()),
                 )
             }
 

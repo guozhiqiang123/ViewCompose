@@ -65,7 +65,7 @@ class DebugStringsTest {
         return VNode(
             type = type,
             props = Props.Empty,
-            modifier = Modifier.Empty,
+            modifier = Modifier,
         )
     }
 }

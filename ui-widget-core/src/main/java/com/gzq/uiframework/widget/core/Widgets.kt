@@ -43,7 +43,7 @@ fun UiTreeBuilder.Text(
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: TextAlign = TextAlign.Start,
     key: Any? = null,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
 ) {
     emit(
         type = NodeType.Text,
@@ -56,7 +56,7 @@ fun UiTreeBuilder.Text(
                 PropKeys.TEXT_ALIGN to textAlign,
             ),
         ),
-        modifier = Modifier.Empty
+        modifier = Modifier
             .textColor(TextDefaults.primaryColor())
             .textSize(style.fontSizeSp)
             .then(modifier),
@@ -72,7 +72,7 @@ fun UiTreeBuilder.Image(
     error: ImageSource.Resource? = placeholder,
     fallback: ImageSource.Resource? = placeholder,
     key: Any? = null,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
 ) {
     emit(
         type = NodeType.Image,
@@ -99,7 +99,7 @@ fun UiTreeBuilder.Icon(
     tint: Int = ContentColor.current,
     size: Int = 24.dp,
     key: Any? = null,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
 ) {
     Image(
         source = source,
@@ -107,7 +107,7 @@ fun UiTreeBuilder.Icon(
         contentScale = ImageContentScale.Inside,
         tint = tint,
         key = key,
-        modifier = Modifier.Empty
+        modifier = Modifier
             .size(width = size, height = size)
             .then(modifier),
     )
@@ -132,9 +132,9 @@ fun UiTreeBuilder.TextField(
     isError: Boolean = false,
     style: UiTextStyle = TextFieldDefaults.textStyle(size),
     key: Any? = null,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
 ) {
-    val defaultModifier = Modifier.Empty
+    val defaultModifier = Modifier
         .padding(
             horizontal = TextFieldDefaults.horizontalPadding(size),
             vertical = TextFieldDefaults.verticalPadding(size),
@@ -179,7 +179,7 @@ fun UiTreeBuilder.TextField(
                 PropKeys.SUPPORTING_TEXT_SIZE_SP to TextFieldDefaults.supportingTextStyle().fontSizeSp,
             ),
         ),
-        modifier = Modifier.Empty
+        modifier = Modifier
             .then(sizeModifier)
             .backgroundColor(
                 TextFieldDefaults.containerColor(
@@ -217,7 +217,7 @@ fun UiTreeBuilder.PasswordField(
     isError: Boolean = false,
     style: UiTextStyle = TextFieldDefaults.textStyle(size),
     key: Any? = null,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
 ) {
     TextField(
         value = value,
@@ -245,7 +245,7 @@ fun UiTreeBuilder.Checkbox(
     enabled: Boolean = true,
     style: UiTextStyle = InputControlDefaults.labelStyle(),
     key: Any? = null,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
 ) {
     emit(
         type = NodeType.Checkbox,
@@ -259,7 +259,7 @@ fun UiTreeBuilder.Checkbox(
                 PropKeys.CONTROL_COLOR to InputControlDefaults.checkboxControlColor(enabled),
             ),
         ),
-        modifier = Modifier.Empty
+        modifier = Modifier
             .textColor(InputControlDefaults.checkboxLabelColor(enabled))
             .rippleColor(InputControlDefaults.pressedColor())
             .textSize(style.fontSizeSp)
@@ -274,7 +274,7 @@ fun UiTreeBuilder.Switch(
     enabled: Boolean = true,
     style: UiTextStyle = InputControlDefaults.labelStyle(),
     key: Any? = null,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
 ) {
     emit(
         type = NodeType.Switch,
@@ -288,7 +288,7 @@ fun UiTreeBuilder.Switch(
                 PropKeys.CONTROL_COLOR to InputControlDefaults.switchControlColor(enabled),
             ),
         ),
-        modifier = Modifier.Empty
+        modifier = Modifier
             .textColor(InputControlDefaults.switchLabelColor(enabled))
             .rippleColor(InputControlDefaults.pressedColor())
             .textSize(style.fontSizeSp)
@@ -303,7 +303,7 @@ fun UiTreeBuilder.RadioButton(
     enabled: Boolean = true,
     style: UiTextStyle = InputControlDefaults.labelStyle(),
     key: Any? = null,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
 ) {
     emit(
         type = NodeType.RadioButton,
@@ -317,7 +317,7 @@ fun UiTreeBuilder.RadioButton(
                 PropKeys.CONTROL_COLOR to InputControlDefaults.radioButtonControlColor(enabled),
             ),
         ),
-        modifier = Modifier.Empty
+        modifier = Modifier
             .textColor(InputControlDefaults.radioButtonLabelColor(enabled))
             .rippleColor(InputControlDefaults.pressedColor())
             .textSize(style.fontSizeSp)
@@ -332,7 +332,7 @@ fun UiTreeBuilder.Slider(
     max: Int = 100,
     enabled: Boolean = true,
     key: Any? = null,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
 ) {
     emit(
         type = NodeType.Slider,
@@ -357,7 +357,7 @@ fun UiTreeBuilder.LinearProgressIndicator(
     trackColor: Int = ProgressIndicatorDefaults.linearTrackColor(),
     trackThickness: Int = ProgressIndicatorDefaults.linearTrackThickness(),
     key: Any? = null,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
 ) {
     emit(
         type = NodeType.LinearProgressIndicator,
@@ -370,7 +370,7 @@ fun UiTreeBuilder.LinearProgressIndicator(
                 PropKeys.PROGRESS_TRACK_THICKNESS to trackThickness,
             ),
         ),
-        modifier = Modifier.Empty
+        modifier = Modifier
             .fillMaxWidth()
             .height(trackThickness)
             .then(modifier),
@@ -384,7 +384,7 @@ fun UiTreeBuilder.CircularProgressIndicator(
     size: Int = ProgressIndicatorDefaults.circularSize(),
     trackThickness: Int = ProgressIndicatorDefaults.circularTrackThickness(),
     key: Any? = null,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
 ) {
     emit(
         type = NodeType.CircularProgressIndicator,
@@ -398,7 +398,7 @@ fun UiTreeBuilder.CircularProgressIndicator(
                 PropKeys.PROGRESS_INDICATOR_SIZE to size,
             ),
         ),
-        modifier = Modifier.Empty
+        modifier = Modifier
             .size(width = size, height = size)
             .then(modifier),
     )
@@ -416,7 +416,7 @@ fun UiTreeBuilder.EmailField(
     enabled: Boolean = true,
     style: UiTextStyle = TextFieldDefaults.textStyle(size),
     key: Any? = null,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
 ) {
     TextField(
         value = value,
@@ -448,7 +448,7 @@ fun UiTreeBuilder.NumberField(
     enabled: Boolean = true,
     style: UiTextStyle = TextFieldDefaults.textStyle(size),
     key: Any? = null,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
 ) {
     TextField(
         value = value,
@@ -485,7 +485,7 @@ fun UiTreeBuilder.TextArea(
     imeAction: TextFieldImeAction = TextFieldImeAction.Default,
     style: UiTextStyle = TextFieldDefaults.textStyle(size),
     key: Any? = null,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
 ) {
     TextField(
         value = value,
@@ -520,7 +520,7 @@ fun UiTreeBuilder.Button(
     enabled: Boolean = true,
     style: UiTextStyle = ButtonDefaults.textStyle(size),
     key: Any? = null,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
 ) {
     emit(
         type = NodeType.Button,
@@ -536,7 +536,7 @@ fun UiTreeBuilder.Button(
                 trailingIcon?.let { put(PropKeys.BUTTON_TRAILING_ICON, it) }
             },
         ),
-        modifier = Modifier.Empty
+        modifier = Modifier
             .minHeight(ButtonDefaults.height(size))
             .padding(
                 horizontal = ButtonDefaults.horizontalPadding(size),
@@ -563,9 +563,9 @@ fun UiTreeBuilder.IconButton(
     size: ButtonSize = ButtonSize.Medium,
     enabled: Boolean = true,
     key: Any? = null,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
 ) {
-    val semanticModifier = Modifier.Empty
+    val semanticModifier = Modifier
         .size(
             width = IconButtonDefaults.size(size),
             height = IconButtonDefaults.size(size),
@@ -580,9 +580,9 @@ fun UiTreeBuilder.IconButton(
         .rippleColor(IconButtonDefaults.pressedColor())
         .then(
             if (enabled && onClick != null) {
-                Modifier.Empty.clickable(onClick)
+                Modifier.clickable(onClick)
             } else {
-                Modifier.Empty
+                Modifier
             },
         )
         .then(modifier)
@@ -611,7 +611,7 @@ fun UiTreeBuilder.SegmentedControl(
     size: SegmentedControlSize = SegmentedControlSize.Medium,
     enabled: Boolean = true,
     key: Any? = null,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
 ) {
     emit(
         type = NodeType.SegmentedControl,
@@ -635,7 +635,7 @@ fun UiTreeBuilder.SegmentedControl(
                 PropKeys.SEGMENT_CONTENT_PADDING_VERTICAL to SegmentedControlDefaults.verticalPadding(size),
             ),
         ),
-        modifier = Modifier.Empty
+        modifier = Modifier
             .height(SegmentedControlDefaults.height(size))
             .then(modifier),
     )
@@ -645,7 +645,7 @@ fun UiTreeBuilder.AndroidView(
     factory: (Context) -> View,
     update: (View) -> Unit = {},
     key: Any? = null,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
 ) {
     emit(
         type = NodeType.AndroidView,
@@ -663,7 +663,7 @@ fun UiTreeBuilder.AndroidView(
 fun UiTreeBuilder.Box(
     key: Any? = null,
     contentAlignment: BoxAlignment = BoxAlignment.TopStart,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
     content: UiTreeBuilder.() -> Unit,
 ) {
     emit(
@@ -686,25 +686,25 @@ fun UiTreeBuilder.Surface(
     contentAlignment: BoxAlignment = BoxAlignment.TopStart,
     contentColor: Int = SurfaceDefaults.contentColor(variant),
     onClick: (() -> Unit)? = null,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
     content: UiTreeBuilder.() -> Unit,
 ) {
-    val semanticModifier = Modifier.Empty
+    val semanticModifier = Modifier
         .backgroundColor(SurfaceDefaults.backgroundColor(variant))
         .cornerRadius(SurfaceDefaults.cardCornerRadius())
         .rippleColor(SurfaceDefaults.pressedColor())
         .then(
             if (enabled) {
-                Modifier.Empty
+                Modifier
             } else {
-                Modifier.Empty.alpha(SurfaceDefaults.disabledAlpha())
+                Modifier.alpha(SurfaceDefaults.disabledAlpha())
             },
         )
         .then(
             if (enabled && onClick != null) {
-                Modifier.Empty.clickable(onClick)
+                Modifier.clickable(onClick)
             } else {
-                Modifier.Empty
+                Modifier
             },
         )
         .then(modifier)
@@ -725,7 +725,7 @@ fun UiTreeBuilder.Surface(
 
 fun UiTreeBuilder.Spacer(
     key: Any? = null,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
 ) {
     emit(
         type = NodeType.Spacer,
@@ -737,7 +737,7 @@ fun UiTreeBuilder.Spacer(
 fun UiTreeBuilder.FlexibleSpacer(
     weight: Float = 1f,
     key: Any? = null,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
 ) {
     Spacer(
         key = key,
@@ -749,7 +749,7 @@ fun UiTreeBuilder.Divider(
     color: Int = DividerDefaults.color(),
     thickness: Int = DividerDefaults.thickness(),
     key: Any? = null,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
 ) {
     emit(
         type = NodeType.Divider,
@@ -769,7 +769,7 @@ fun UiTreeBuilder.Row(
     spacing: Int = 0,
     arrangement: MainAxisArrangement = MainAxisArrangement.Start,
     verticalAlignment: VerticalAlignment = VerticalAlignment.Top,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
     content: UiTreeBuilder.() -> Unit,
 ) {
     emit(
@@ -792,7 +792,7 @@ fun UiTreeBuilder.Column(
     spacing: Int = 0,
     arrangement: MainAxisArrangement = MainAxisArrangement.Start,
     horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Start,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
     content: UiTreeBuilder.() -> Unit,
 ) {
     emit(
@@ -815,7 +815,7 @@ fun <T> UiTreeBuilder.LazyColumn(
     key: ((T) -> Any)? = null,
     contentPadding: Int = 0,
     spacing: Int = 0,
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
     itemContent: UiTreeBuilder.(T) -> Unit,
 ) {
     val localSnapshot = LocalContext.snapshot()
@@ -888,7 +888,7 @@ fun UiTreeBuilder.TabPager(
     selectedTextColor: Int = TabPagerDefaults.selectedTextColor(),
     unselectedTextColor: Int = TabPagerDefaults.unselectedTextColor(),
     rippleColor: Int = TabPagerDefaults.rippleColor(),
-    modifier: Modifier = Modifier.Empty,
+    modifier: Modifier = Modifier,
     pages: TabPagerScope.() -> Unit,
 ) {
     val builtPages = TabPagerScope().apply(pages).build()

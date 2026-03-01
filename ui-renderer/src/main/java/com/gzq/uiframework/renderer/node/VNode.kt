@@ -6,6 +6,6 @@ data class VNode(
     val type: NodeType,
     val key: Any? = null,
     val props: Props = Props.Empty,
-    val modifier: Modifier = Modifier.Empty,
+    val modifier: Modifier = Modifier,
     val children: List<VNode> = emptyList(),
 )

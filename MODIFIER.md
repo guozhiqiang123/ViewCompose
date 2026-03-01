@@ -173,22 +173,30 @@ Theme -> Modifier -> Renderer
 - 调用侧默认改为 `Modifier`
 - `Modifier.Empty` 保留兼容，但逐步淘汰
 
+当前状态：已完成
+
 ### Phase 2
 
 - 禁止继续新增控件语义型 modifier
 - 新增能力优先回到控件参数 / `Prop`
 - 文本、输入、按钮等控件默认值链路逐步从 `Modifier` 转为 `Prop`
 
+当前状态：未开始
+
 ### Phase 3
 
 - 引入 `RowScope`、`ColumnScope`、`BoxScope`
 - 将 `weight`、`align` 等父布局相关能力迁入 scope
+
+当前状态：未开始
 
 ### Phase 4
 
 - 清理历史兼容层
 - `Modifier.Empty` 标记移除
 - `textColor` / `textSize` 等历史通用 modifier 彻底退场
+
+当前状态：未开始
 
 ## 8. 当前实施结论
 

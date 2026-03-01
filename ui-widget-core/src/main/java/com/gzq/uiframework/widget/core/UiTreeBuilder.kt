@@ -13,7 +13,7 @@ class UiTreeBuilder {
         type: NodeType,
         key: Any? = null,
         props: Props = Props.Empty,
-        modifier: Modifier = Modifier.Empty,
+        modifier: Modifier = Modifier,
         content: (UiTreeBuilder.() -> Unit)? = null,
     ) {
         val nestedChildren = if (content == null) {

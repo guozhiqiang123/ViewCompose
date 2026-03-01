@@ -56,7 +56,7 @@ internal fun UiTreeBuilder.OverviewPage(
     LazyColumn(
         items = pageItems,
         key = { it },
-        modifier = Modifier.Empty.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
     ) { section ->
         when (section) {
             "page" -> ChapterPageOverviewSection(
@@ -80,7 +80,7 @@ internal fun UiTreeBuilder.OverviewPage(
                 )
                 Text(
                     text = "The pager itself is also rendered through the framework as a mapped virtual control.",
-                    modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+                    modifier = Modifier.textColor(TextDefaults.secondaryColor()),
                 )
             }
 
@@ -109,7 +109,7 @@ internal fun UiTreeBuilder.OverviewPage(
                 Text(
                     text = "Shapes: card=${Theme.shapes.cardCornerRadius}px, control=${Theme.shapes.controlCornerRadius}px",
                     style = UiTextStyle(fontSizeSp = 13.sp),
-                    modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+                    modifier = Modifier.textColor(TextDefaults.secondaryColor()),
                 )
             }
 
@@ -127,7 +127,7 @@ internal fun UiTreeBuilder.OverviewPage(
                 ) {
                     Column(
                         spacing = 8.dp,
-                        modifier = Modifier.Empty
+                        modifier = Modifier
                             .fillMaxWidth()
                             .backgroundColor(SurfaceDefaults.variantBackgroundColor())
                             .cornerRadius(SurfaceDefaults.cardCornerRadius())
@@ -143,7 +143,7 @@ internal fun UiTreeBuilder.OverviewPage(
                         )
                         Button(
                             text = "Accent As Primary",
-                            modifier = Modifier.Empty.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                         )
                     }
                 }
@@ -157,7 +157,7 @@ internal fun UiTreeBuilder.OverviewPage(
                 ) {
                     Column(
                         spacing = 8.dp,
-                        modifier = Modifier.Empty
+                        modifier = Modifier
                             .fillMaxWidth()
                             .backgroundColor(SurfaceDefaults.backgroundColor())
                             .cornerRadius(SurfaceDefaults.cardCornerRadius())
@@ -167,14 +167,14 @@ internal fun UiTreeBuilder.OverviewPage(
                         Text(
                             text = "Local card=${Theme.shapes.cardCornerRadius}px, control=${Theme.shapes.controlCornerRadius}px",
                             style = UiTextStyle(fontSizeSp = 13.sp),
-                            modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+                            modifier = Modifier.textColor(TextDefaults.secondaryColor()),
                         )
                         Row(
                             spacing = 8.dp,
-                            modifier = Modifier.Empty.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                         ) {
                             Box(
-                                modifier = Modifier.Empty
+                                modifier = Modifier
                                     .weight(1f)
                                     .height(72.dp)
                                     .backgroundColor(Theme.colors.surfaceVariant)
@@ -184,7 +184,7 @@ internal fun UiTreeBuilder.OverviewPage(
                                 text = "Rounded Action",
                                 variant = ButtonVariant.Tonal,
                                 size = ButtonSize.Large,
-                                modifier = Modifier.Empty.weight(1f),
+                                modifier = Modifier.weight(1f),
                             )
                         }
                     }
@@ -198,7 +198,7 @@ internal fun UiTreeBuilder.OverviewPage(
                 ) {
                     Column(
                         spacing = 8.dp,
-                        modifier = Modifier.Empty
+                        modifier = Modifier
                             .fillMaxWidth()
                             .backgroundColor(SurfaceDefaults.backgroundColor())
                             .cornerRadius(SurfaceDefaults.cardCornerRadius())
@@ -214,17 +214,17 @@ internal fun UiTreeBuilder.OverviewPage(
                         )
                         Row(
                             spacing = 8.dp,
-                            modifier = Modifier.Empty.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                         ) {
                             Button(
                                 text = "Press Me",
                                 variant = ButtonVariant.Primary,
-                                modifier = Modifier.Empty.weight(1f),
+                                modifier = Modifier.weight(1f),
                             )
                             Button(
                                 text = "Outlined",
                                 variant = ButtonVariant.Outlined,
-                                modifier = Modifier.Empty.weight(1f),
+                                modifier = Modifier.weight(1f),
                             )
                         }
                     }
@@ -255,7 +255,7 @@ internal fun UiTreeBuilder.OverviewPage(
                 ) {
                     Column(
                         spacing = 8.dp,
-                        modifier = Modifier.Empty
+                        modifier = Modifier
                             .fillMaxWidth()
                             .backgroundColor(SurfaceDefaults.backgroundColor())
                             .cornerRadius(SurfaceDefaults.cardCornerRadius())
@@ -265,51 +265,51 @@ internal fun UiTreeBuilder.OverviewPage(
                         Text(
                             text = "This block changes button and segmented defaults without changing the base color palette.",
                             style = UiTextStyle(fontSizeSp = 13.sp),
-                            modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+                            modifier = Modifier.textColor(TextDefaults.secondaryColor()),
                         )
                         SegmentedControl(
                             items = listOf("Alpha", "Beta", "Gamma"),
                             selectedIndex = 1,
                             onSelectionChange = {},
-                            modifier = Modifier.Empty.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                         )
                         SegmentedControl(
                             items = listOf("Disabled", "State"),
                             selectedIndex = 0,
                             enabled = false,
                             onSelectionChange = {},
-                            modifier = Modifier.Empty.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                         )
                         Row(
                             spacing = 8.dp,
-                            modifier = Modifier.Empty.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                         ) {
                             Button(
                                 text = "Primary Token",
                                 leadingIcon = ImageSource.Resource(R.drawable.demo_media_icon),
-                                modifier = Modifier.Empty.weight(1f),
+                                modifier = Modifier.weight(1f),
                             )
                             Button(
                                 text = "Outlined Token",
                                 trailingIcon = ImageSource.Resource(R.drawable.demo_media_icon),
                                 variant = ButtonVariant.Outlined,
-                                modifier = Modifier.Empty.weight(1f),
+                                modifier = Modifier.weight(1f),
                             )
                         }
                         Row(
                             spacing = 8.dp,
-                            modifier = Modifier.Empty.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                         ) {
                             Button(
                                 text = "Disabled Primary",
                                 enabled = false,
-                                modifier = Modifier.Empty.weight(1f),
+                                modifier = Modifier.weight(1f),
                             )
                             Button(
                                 text = "Disabled Outline",
                                 variant = ButtonVariant.Outlined,
                                 enabled = false,
-                                modifier = Modifier.Empty.weight(1f),
+                                modifier = Modifier.weight(1f),
                             )
                         }
                         TextField(
@@ -317,14 +317,14 @@ internal fun UiTreeBuilder.OverviewPage(
                             onValueChange = {},
                             variant = TextFieldVariant.Outlined,
                             isError = true,
-                            modifier = Modifier.Empty.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                         )
                     }
                 }
                 Text(
                     text = "Outside these blocks, the parent demo theme stays unchanged.",
                     style = UiTextStyle(fontSizeSp = 13.sp),
-                    modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+                    modifier = Modifier.textColor(TextDefaults.secondaryColor()),
                 )
             }
 
@@ -335,24 +335,24 @@ internal fun UiTreeBuilder.OverviewPage(
                 Text(
                     text = "The linear indicator follows the current component tokens, while circular can run determinate or indeterminate.",
                     style = UiTextStyle(fontSizeSp = 13.sp),
-                    modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+                    modifier = Modifier.textColor(TextDefaults.secondaryColor()),
                 )
                 LinearProgressIndicator(
                     progress = 0.68f,
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .fillMaxWidth()
                         .margin(top = 12.dp, bottom = 12.dp),
                 )
                 Row(
                     spacing = 16.dp,
                     verticalAlignment = VerticalAlignment.Center,
-                    modifier = Modifier.Empty.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     CircularProgressIndicator(progress = 0.42f)
                     CircularProgressIndicator()
                     Text(
                         text = "Progress family is now part of the P1 widget surface.",
-                        modifier = Modifier.Empty.weight(1f),
+                        modifier = Modifier.weight(1f),
                     )
                 }
             }
@@ -364,25 +364,25 @@ internal fun UiTreeBuilder.OverviewPage(
                 Row(
                     spacing = 16.dp,
                     verticalAlignment = VerticalAlignment.Center,
-                    modifier = Modifier.Empty.fillMaxWidth().margin(bottom = 12.dp),
+                    modifier = Modifier.fillMaxWidth().margin(bottom = 12.dp),
                 ) {
                     Image(
                         source = ImageSource.Resource(R.drawable.demo_media_image),
                         contentDescription = "Launcher image",
                         contentScale = ImageContentScale.Crop,
-                        modifier = Modifier.Empty
+                        modifier = Modifier
                             .size(64.dp, 64.dp)
                             .cornerRadius(Theme.shapes.cardCornerRadius),
                     )
                     Column(
                         spacing = 8.dp,
-                        modifier = Modifier.Empty.weight(1f),
+                        modifier = Modifier.weight(1f),
                     ) {
                         Text(text = "Image uses a typed source and content scale.")
                         Text(
                             text = "Remote loading is now provided by an optional Coil integration module without changing the Image API.",
                             style = UiTextStyle(fontSizeSp = 13.sp),
-                            modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+                            modifier = Modifier.textColor(TextDefaults.secondaryColor()),
                         )
                     }
                 }
@@ -393,7 +393,7 @@ internal fun UiTreeBuilder.OverviewPage(
                     placeholder = ImageSource.Resource(R.drawable.demo_media_image),
                     error = ImageSource.Resource(R.drawable.demo_media_image),
                     fallback = ImageSource.Resource(R.drawable.demo_media_image),
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .fillMaxWidth()
                         .height(140.dp)
                         .backgroundColor(SurfaceDefaults.variantBackgroundColor())
@@ -405,7 +405,7 @@ internal fun UiTreeBuilder.OverviewPage(
                     contentDescription = "Fallback image",
                     contentScale = ImageContentScale.Crop,
                     fallback = ImageSource.Resource(R.drawable.demo_media_image),
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .fillMaxWidth()
                         .height(88.dp)
                         .backgroundColor(SurfaceDefaults.variantBackgroundColor())
@@ -415,10 +415,10 @@ internal fun UiTreeBuilder.OverviewPage(
                 Row(
                     spacing = 12.dp,
                     verticalAlignment = VerticalAlignment.Center,
-                    modifier = Modifier.Empty.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Surface(
-                        modifier = Modifier.Empty.padding(8.dp),
+                        modifier = Modifier.padding(8.dp),
                     ) {
                         Icon(
                             source = ImageSource.Resource(R.drawable.demo_media_icon),
@@ -432,7 +432,7 @@ internal fun UiTreeBuilder.OverviewPage(
                     ) {
                         Surface(
                             variant = SurfaceVariant.Variant,
-                            modifier = Modifier.Empty.padding(8.dp),
+                            modifier = Modifier.padding(8.dp),
                         ) {
                             Icon(
                                 source = ImageSource.Resource(R.drawable.demo_media_icon),
@@ -442,17 +442,17 @@ internal fun UiTreeBuilder.OverviewPage(
                     }
                     Text(
                         text = "Icon defaults to ContentColor.current, so it naturally follows local surface/content scopes.",
-                        modifier = Modifier.Empty.weight(1f),
+                        modifier = Modifier.weight(1f),
                     )
                 }
                 Row(
                     spacing = 12.dp,
-                    modifier = Modifier.Empty.fillMaxWidth().margin(top = 12.dp),
+                    modifier = Modifier.fillMaxWidth().margin(top = 12.dp),
                 ) {
                     IconButton(
                         icon = ImageSource.Resource(R.drawable.demo_media_icon),
                         contentDescription = "Primary icon button",
-                        modifier = Modifier.Empty,
+                        modifier = Modifier,
                     )
                     IconButton(
                         icon = ImageSource.Resource(R.drawable.demo_media_icon),
@@ -478,21 +478,21 @@ internal fun UiTreeBuilder.OverviewPage(
             ) {
                 Button(
                     text = "Open Layouts",
-                    modifier = Modifier.Empty.margin(bottom = 8.dp),
+                    modifier = Modifier.margin(bottom = 8.dp),
                     onClick = {
                         selectedChapterState.value = CHAPTER_LAYOUTS
                     },
                 )
                 Button(
                     text = "Open Input",
-                    modifier = Modifier.Empty.margin(bottom = 8.dp),
+                    modifier = Modifier.margin(bottom = 8.dp),
                     onClick = {
                         selectedChapterState.value = CHAPTER_INPUT
                     },
                 )
                 Button(
                     text = "Open State",
-                    modifier = Modifier.Empty.margin(bottom = 8.dp),
+                    modifier = Modifier.margin(bottom = 8.dp),
                     onClick = {
                         selectedChapterState.value = CHAPTER_STATE
                     },
@@ -505,7 +505,7 @@ internal fun UiTreeBuilder.OverviewPage(
                 )
                 Button(
                     text = "Open Interop",
-                    modifier = Modifier.Empty.margin(top = 8.dp),
+                    modifier = Modifier.margin(top = 8.dp),
                     onClick = {
                         selectedChapterState.value = CHAPTER_INTEROP
                     },
@@ -518,25 +518,25 @@ internal fun UiTreeBuilder.OverviewPage(
             ) {
                 Row(
                     spacing = 8.dp,
-                    modifier = Modifier.Empty.fillMaxWidth().margin(bottom = 8.dp),
+                    modifier = Modifier.fillMaxWidth().margin(bottom = 8.dp),
                 ) {
                     Button(
                         text = "Primary",
                         variant = ButtonVariant.Primary,
                         size = ButtonSize.Compact,
-                        modifier = Modifier.Empty.weight(1f),
+                        modifier = Modifier.weight(1f),
                     )
                     Button(
                         text = "Tonal",
                         variant = ButtonVariant.Tonal,
                         size = ButtonSize.Medium,
-                        modifier = Modifier.Empty.weight(1f),
+                        modifier = Modifier.weight(1f),
                     )
                     Button(
                         text = "Outline",
                         variant = ButtonVariant.Outlined,
                         size = ButtonSize.Large,
-                        modifier = Modifier.Empty.weight(1f),
+                        modifier = Modifier.weight(1f),
                     )
                 }
                 Text(text = "Text, TextField, EmailField, PasswordField, NumberField, TextArea")

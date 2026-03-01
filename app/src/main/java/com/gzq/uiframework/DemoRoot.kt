@@ -62,7 +62,7 @@ internal fun UiTreeBuilder.DemoRoot(root: ViewGroup) {
                 }
                 Column(
                     spacing = 8.dp,
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .fillMaxSize()
                         .backgroundColor(Theme.colors.background)
                         .padding(24.dp),
@@ -74,18 +74,18 @@ internal fun UiTreeBuilder.DemoRoot(root: ViewGroup) {
                     Text(
                         text = "Declarative UI runtime on Android Views, regrouped into chapter-driven manual test paths.",
                         style = UiTextStyle(fontSizeSp = 14.sp),
-                        modifier = Modifier.Empty.textColor(TextDefaults.secondaryColor()),
+                        modifier = Modifier.textColor(TextDefaults.secondaryColor()),
                     )
                     Text(
                         text = environmentLabel,
                         style = UiTextStyle(fontSizeSp = 12.sp),
-                        modifier = Modifier.Empty
+                        modifier = Modifier
                             .textColor(TextDefaults.secondaryColor())
                             .padding(vertical = 4.dp),
                     )
                     Column(
                         spacing = 8.dp,
-                        modifier = Modifier.Empty
+                        modifier = Modifier
                             .fillMaxWidth()
                             .backgroundColor(SurfaceDefaults.variantBackgroundColor())
                             .cornerRadius(SurfaceDefaults.cardCornerRadius())
@@ -102,7 +102,7 @@ internal fun UiTreeBuilder.DemoRoot(root: ViewGroup) {
                                 themeModeState.value = DemoThemeMode.entries[index]
                             },
                             size = SegmentedControlSize.Medium,
-                            modifier = Modifier.Empty.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                         )
                     }
                     DemoChapterPager(selectedChapterState = selectedChapterState)
@@ -120,7 +120,7 @@ private fun UiTreeBuilder.DemoChapterPager(
         onTabSelected = { index ->
             selectedChapterState.value = index
         },
-        modifier = Modifier.Empty
+        modifier = Modifier
             .fillMaxWidth()
             .weight(1f)
             .margin(top = 12.dp),

@@ -360,7 +360,7 @@ class ThemeTest {
                 ) {
                     Button(
                         text = "Override",
-                        modifier = Modifier.Empty
+                        modifier = Modifier
                             .backgroundColor(explicitBackground),
                     )
                 }

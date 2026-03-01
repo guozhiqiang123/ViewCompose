@@ -50,7 +50,7 @@ internal fun UiTreeBuilder.LayoutPage() {
     LazyColumn(
         items = pageItems,
         key = { it },
-        modifier = Modifier.Empty.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
     ) { section ->
         when (section) {
             "page" -> ChapterPageOverviewSection(
@@ -72,14 +72,14 @@ internal fun UiTreeBuilder.LayoutPage() {
                 Row(
                     arrangement = MainAxisArrangement.Start,
                     verticalAlignment = VerticalAlignment.Center,
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .fillMaxWidth()
                         .backgroundColor(SurfaceDefaults.backgroundColor())
                         .padding(12.dp),
                 ) {
                     Text(
                         text = "Top",
-                        modifier = Modifier.Empty
+                        modifier = Modifier
                             .align(VerticalAlignment.Top)
                             .backgroundColor(Theme.colors.surfaceVariant)
                             .padding(horizontal = 10.dp, vertical = 6.dp),
@@ -87,7 +87,7 @@ internal fun UiTreeBuilder.LayoutPage() {
                     FlexibleSpacer()
                     Text(
                         text = "Bottom",
-                        modifier = Modifier.Empty
+                        modifier = Modifier
                             .align(VerticalAlignment.Bottom)
                             .backgroundColor(Theme.colors.accent)
                             .padding(horizontal = 10.dp, vertical = 6.dp),
@@ -101,7 +101,7 @@ internal fun UiTreeBuilder.LayoutPage() {
             ) {
                 Box(
                     contentAlignment = BoxAlignment.Center,
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .fillMaxWidth()
                         .height(140.dp)
                         .backgroundColor(SurfaceDefaults.variantBackgroundColor())
@@ -113,13 +113,13 @@ internal fun UiTreeBuilder.LayoutPage() {
                 ) {
                     Text(
                         text = "Centered surface · taps ${boxTapState.value}",
-                        modifier = Modifier.Empty
+                        modifier = Modifier
                             .backgroundColor(Theme.colors.primary)
                             .padding(horizontal = 12.dp, vertical = 8.dp),
                     )
                     Text(
                         text = "Pinned tag",
-                        modifier = Modifier.Empty
+                        modifier = Modifier
                             .align(BoxAlignment.BottomEnd)
                             .offset(x = (-8).dp.toFloat(), y = (-8).dp.toFloat())
                             .zIndex(1f)
@@ -136,7 +136,7 @@ internal fun UiTreeBuilder.LayoutPage() {
                 Column(
                     arrangement = MainAxisArrangement.SpaceEvenly,
                     horizontalAlignment = HorizontalAlignment.Center,
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .fillMaxWidth()
                         .height(180.dp)
                         .backgroundColor(SurfaceDefaults.backgroundColor())
@@ -156,7 +156,7 @@ internal fun UiTreeBuilder.LayoutPage() {
             ) {
                 Button(
                     text = if (useLongLabelsState.value) "Use Short Labels" else "Use Long Labels",
-                    modifier = Modifier.Empty.margin(bottom = 12.dp),
+                    modifier = Modifier.margin(bottom = 12.dp),
                     onClick = {
                         useLongLabelsState.value = !useLongLabelsState.value
                     },
@@ -164,7 +164,7 @@ internal fun UiTreeBuilder.LayoutPage() {
                 Row(
                     spacing = 8.dp,
                     verticalAlignment = VerticalAlignment.Center,
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .fillMaxWidth()
                         .backgroundColor(SurfaceDefaults.backgroundColor())
                         .cornerRadius(SurfaceDefaults.cardCornerRadius())
@@ -172,7 +172,7 @@ internal fun UiTreeBuilder.LayoutPage() {
                         .margin(bottom = 12.dp),
                 ) {
                     Surface(
-                        modifier = Modifier.Empty.padding(8.dp),
+                        modifier = Modifier.padding(8.dp),
                     ) {
                         Icon(
                             source = ImageSource.Resource(R.drawable.demo_media_icon),
@@ -185,37 +185,37 @@ internal fun UiTreeBuilder.LayoutPage() {
                         } else {
                             "Weighted"
                         },
-                        modifier = Modifier.Empty.weight(1f),
+                        modifier = Modifier.weight(1f),
                     )
                     Button(
                         text = "Action",
                         variant = ButtonVariant.Outlined,
-                        modifier = Modifier.Empty.weight(1f),
+                        modifier = Modifier.weight(1f),
                     )
                 }
                 Row(
                     spacing = 8.dp,
                     verticalAlignment = VerticalAlignment.Center,
-                    modifier = Modifier.Empty
+                    modifier = Modifier
                         .fillMaxWidth()
                         .backgroundColor(SurfaceDefaults.variantBackgroundColor())
                         .cornerRadius(SurfaceDefaults.cardCornerRadius())
                         .padding(12.dp),
                 ) {
                     Surface(
-                        modifier = Modifier.Empty.padding(8.dp),
+                        modifier = Modifier.padding(8.dp),
                     ) {
                         Text(text = "Wrap")
                     }
                     Surface(
                         variant = SurfaceVariant.Variant,
-                        modifier = Modifier.Empty.padding(8.dp),
+                        modifier = Modifier.padding(8.dp),
                     ) {
                         Text(text = "Still Wrap")
                     }
                     Text(
                         text = "Nested surfaces should hug content and leave the remaining width to this text block.",
-                        modifier = Modifier.Empty.weight(1f),
+                        modifier = Modifier.weight(1f),
                     )
                 }
             }

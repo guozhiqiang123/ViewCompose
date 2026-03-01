@@ -15,7 +15,7 @@ internal fun UiTreeBuilder.ChapterPlaceholderPage(
     LazyColumn(
         items = listOf("intro", "planned", "gaps"),
         key = { it },
-        modifier = Modifier.Empty.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
     ) { section ->
         when (section) {
             "intro" -> DemoSection(
