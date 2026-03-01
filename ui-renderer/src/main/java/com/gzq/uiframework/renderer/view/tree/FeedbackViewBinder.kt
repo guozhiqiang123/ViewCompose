@@ -5,72 +5,73 @@ import android.widget.ProgressBar
 import com.google.android.material.progressindicator.BaseProgressIndicator
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.progressindicator.LinearProgressIndicator
+import com.gzq.uiframework.renderer.node.PropKeys
+import com.gzq.uiframework.renderer.node.VNode
 import kotlin.math.roundToInt
 
 internal object FeedbackViewBinder {
+    data class ProgressSpec(
+        val enabled: Boolean,
+        val progress: Float?,
+        val indicatorColor: Int,
+        val trackColor: Int,
+        val trackThickness: Int,
+        val indicatorSize: Int,
+    )
+
     fun bindLinearProgressIndicator(
         view: LinearProgressIndicator,
-        enabled: Boolean,
-        progress: Float?,
-        indicatorColor: Int,
-        trackColor: Int,
-        trackThickness: Int,
+        spec: ProgressSpec,
     ) {
         bindProgressIndicator(
             view = view,
-            enabled = enabled,
-            progress = progress,
-            indicatorColor = indicatorColor,
-            trackColor = trackColor,
-            trackThickness = trackThickness,
+            spec = spec,
         )
     }
 
     fun bindCircularProgressIndicator(
         view: CircularProgressIndicator,
-        enabled: Boolean,
-        progress: Float?,
-        indicatorColor: Int,
-        trackColor: Int,
-        trackThickness: Int,
-        indicatorSize: Int,
+        spec: ProgressSpec,
     ) {
         bindProgressIndicator(
             view = view,
-            enabled = enabled,
-            progress = progress,
-            indicatorColor = indicatorColor,
-            trackColor = trackColor,
-            trackThickness = trackThickness,
+            spec = spec,
         )
-        view.indicatorSize = indicatorSize
+        view.indicatorSize = spec.indicatorSize
     }
 
     private fun bindProgressIndicator(
         view: ProgressBar,
-        enabled: Boolean,
-        progress: Float?,
-        indicatorColor: Int,
-        trackColor: Int,
-        trackThickness: Int,
+        spec: ProgressSpec,
     ) {
-        val tint = ColorStateList.valueOf(indicatorColor)
-        view.isEnabled = enabled
-        view.isIndeterminate = progress == null
+        val tint = ColorStateList.valueOf(spec.indicatorColor)
+        view.isEnabled = spec.enabled
+        view.isIndeterminate = spec.progress == null
         view.progressTintList = tint
         view.indeterminateTintList = tint
 
         if (view is BaseProgressIndicator<*>) {
-            view.trackColor = trackColor
-            view.trackThickness = trackThickness
-            view.setIndicatorColor(indicatorColor)
+            view.trackColor = spec.trackColor
+            view.trackThickness = spec.trackThickness
+            view.setIndicatorColor(spec.indicatorColor)
         } else {
-            view.progressBackgroundTintList = ColorStateList.valueOf(trackColor)
+            view.progressBackgroundTintList = ColorStateList.valueOf(spec.trackColor)
         }
 
-        if (progress != null) {
+        if (spec.progress != null) {
             view.max = 10_000
-            view.progress = (progress.coerceIn(0f, 1f) * 10_000f).roundToInt()
+            view.progress = (spec.progress.coerceIn(0f, 1f) * 10_000f).roundToInt()
         }
+    }
+
+    fun readProgressSpec(node: VNode): ProgressSpec {
+        return ProgressSpec(
+            enabled = node.props.values[PropKeys.ENABLED] as? Boolean ?: true,
+            progress = node.props.values[PropKeys.PROGRESS_FRACTION] as? Float,
+            indicatorColor = node.props.values[PropKeys.PROGRESS_INDICATOR_COLOR] as? Int ?: 0xFF000000.toInt(),
+            trackColor = node.props.values[PropKeys.PROGRESS_TRACK_COLOR] as? Int ?: 0x33000000,
+            trackThickness = node.props.values[PropKeys.PROGRESS_TRACK_THICKNESS] as? Int ?: 4,
+            indicatorSize = node.props.values[PropKeys.PROGRESS_INDICATOR_SIZE] as? Int ?: 32,
+        )
     }
 }

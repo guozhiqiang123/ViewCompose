@@ -7,17 +7,13 @@ import android.graphics.Outline
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
-import android.text.InputType
 import android.text.TextUtils
 import android.util.Log
 import android.util.TypedValue
-import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
-import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -49,18 +45,8 @@ import com.gzq.uiframework.renderer.modifier.VisibilityModifierElement
 import com.gzq.uiframework.renderer.modifier.WeightModifierElement
 import com.gzq.uiframework.renderer.modifier.WidthModifierElement
 import com.gzq.uiframework.renderer.modifier.ZIndexModifierElement
-import com.gzq.uiframework.renderer.node.ImageContentScale
-import com.gzq.uiframework.renderer.node.ImageSource
-import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.PropKeys
-import com.gzq.uiframework.renderer.node.RemoteImageLoader
-import com.gzq.uiframework.renderer.node.SegmentedControlItem
-import com.gzq.uiframework.renderer.node.TabPage
-import com.gzq.uiframework.renderer.node.TextFieldType
-import com.gzq.uiframework.renderer.node.TextFieldImeAction
-import com.gzq.uiframework.renderer.node.TextAlign
-import com.gzq.uiframework.renderer.node.TextOverflow
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.reconcile.ChildReconciler
 import com.gzq.uiframework.renderer.reconcile.InsertPatch
@@ -211,132 +197,73 @@ object ViewTreeRenderer {
             NodeType.Text -> {
                 ContentViewBinder.bindText(
                     view = view as TextView,
-                    text = node.props.values[PropKeys.TEXT] as? CharSequence,
-                    maxLines = readTextMaxLines(node),
-                    overflow = readTextOverflow(node),
-                    gravity = readTextAlign(node).toTextGravity(),
+                    spec = ContentViewBinder.readTextSpec(node),
                 )
             }
 
             NodeType.TextField -> {
                 InputViewBinder.bindTextField(
                     view = view as DeclarativeTextFieldLayout,
-                    value = readFieldValue(node),
-                    label = readFieldLabel(node),
-                    labelColor = readFieldLabelColor(node),
-                    labelTextSizeSp = readFieldLabelTextSize(node),
-                    supportingText = readFieldSupportingText(node),
-                    supportingTextColor = readFieldSupportingTextColor(node),
-                    supportingTextSizeSp = readFieldSupportingTextSize(node),
-                    placeholder = readFieldPlaceholder(node),
-                    enabled = readEnabled(node),
-                    singleLine = readFieldSingleLine(node),
-                    minLines = readFieldMinLines(node),
-                    maxLines = readFieldMaxLines(node),
-                    inputType = resolveInputType(
-                        type = readFieldType(node),
-                        singleLine = readFieldSingleLine(node),
-                    ),
-                    imeAction = readFieldImeAction(node).toEditorAction(),
-                    hintColor = readFieldHintColor(node),
-                    readOnly = readFieldReadOnly(node),
-                    onValueChange = readOnValueChange(node),
+                    spec = InputViewBinder.readTextFieldSpec(node),
                 )
             }
 
             NodeType.Checkbox -> {
                 InputViewBinder.bindCheckbox(
                     view = view as android.widget.CheckBox,
-                    text = node.props.values[PropKeys.TEXT] as? CharSequence,
-                    enabled = readEnabled(node),
-                    checked = readChecked(node),
-                    controlColor = readControlColor(node),
-                    onCheckedChange = readOnCheckedChange(node),
+                    spec = InputViewBinder.readToggleSpec(node),
                 )
             }
 
             NodeType.Switch -> {
                 InputViewBinder.bindSwitch(
                     view = view as android.widget.Switch,
-                    text = node.props.values[PropKeys.TEXT] as? CharSequence,
-                    enabled = readEnabled(node),
-                    checked = readChecked(node),
-                    controlColor = readControlColor(node),
-                    onCheckedChange = readOnCheckedChange(node),
+                    spec = InputViewBinder.readToggleSpec(node),
                 )
             }
 
             NodeType.RadioButton -> {
                 InputViewBinder.bindRadioButton(
                     view = view as android.widget.RadioButton,
-                    text = node.props.values[PropKeys.TEXT] as? CharSequence,
-                    enabled = readEnabled(node),
-                    checked = readChecked(node),
-                    controlColor = readControlColor(node),
-                    onCheckedChange = readOnCheckedChange(node),
+                    spec = InputViewBinder.readToggleSpec(node),
                 )
             }
 
             NodeType.Slider -> {
                 InputViewBinder.bindSlider(
                     view = view as android.widget.SeekBar,
-                    min = readMinValue(node),
-                    max = readMaxValue(node),
-                    value = readSliderValue(node),
-                    enabled = readEnabled(node),
-                    tintColor = readControlColor(node),
-                    onValueChange = readOnSliderValueChange(node),
+                    spec = InputViewBinder.readSliderSpec(node),
                 )
             }
 
             NodeType.LinearProgressIndicator -> {
                 FeedbackViewBinder.bindLinearProgressIndicator(
                     view = view as LinearProgressIndicator,
-                    enabled = readEnabled(node),
-                    progress = readProgressFraction(node),
-                    indicatorColor = readProgressIndicatorColor(node),
-                    trackColor = readProgressTrackColor(node),
-                    trackThickness = readProgressTrackThickness(node),
+                    spec = FeedbackViewBinder.readProgressSpec(node),
                 )
             }
 
             NodeType.CircularProgressIndicator -> {
                 FeedbackViewBinder.bindCircularProgressIndicator(
                     view = view as CircularProgressIndicator,
-                    enabled = readEnabled(node),
-                    progress = readProgressFraction(node),
-                    indicatorColor = readProgressIndicatorColor(node),
-                    trackColor = readProgressTrackColor(node),
-                    trackThickness = readProgressTrackThickness(node),
-                    indicatorSize = readProgressIndicatorSize(node),
+                    spec = FeedbackViewBinder.readProgressSpec(node),
                 )
             }
 
             NodeType.Button -> {
                 ContentViewBinder.bindButton(
                     view = view as android.widget.Button,
-                    text = node.props.values[PropKeys.TEXT] as? CharSequence,
-                    enabled = readEnabled(node),
-                    iconSpacing = readButtonIconSpacing(node),
-                    leadingIcon = readButtonLeadingIcon(node),
-                    trailingIcon = readButtonTrailingIcon(node),
-                    iconTint = readButtonContentColor(node),
-                    iconSize = readButtonIconSize(node),
-                    onClick = readOnClick(node),
+                    spec = ContentViewBinder.readButtonSpec(
+                        node = node,
+                        contentColor = readNodeTextColor(node) ?: Color.BLACK,
+                    ),
                 )
             }
 
             NodeType.IconButton -> {
                 MediaViewBinder.bindImage(
-                    view = view as ImageView,
-                    contentDescription = readImageContentDescription(node),
-                    scaleType = readImageContentScale(node).toScaleType(),
-                    tint = readImageTint(node),
-                    source = readImageSource(node),
-                    placeholder = readImagePlaceholder(node),
-                    error = readImageError(node),
-                    fallback = readImageFallback(node),
-                    remoteImageLoader = readRemoteImageLoader(node),
+                    view = view as android.widget.ImageView,
+                    spec = MediaViewBinder.readImageSpec(node),
                 )
                 MediaViewBinder.bindIconButton(
                     view = view as android.widget.ImageButton,
@@ -347,31 +274,27 @@ object ViewTreeRenderer {
             NodeType.Row -> {
                 ContainerViewBinder.bindRow(
                     view = view as DeclarativeLinearLayout,
-                    spacing = readLinearSpacing(node),
-                    arrangement = readRowArrangement(node),
-                    gravity = readRowVerticalAlignment(node).toGravity(),
+                    spec = ContainerViewBinder.readRowSpec(node),
                 )
             }
 
             NodeType.Column -> {
                 ContainerViewBinder.bindColumn(
                     view = view as DeclarativeLinearLayout,
-                    spacing = readLinearSpacing(node),
-                    arrangement = readColumnArrangement(node),
-                    gravity = readColumnHorizontalAlignment(node).toGravity(),
+                    spec = ContainerViewBinder.readColumnSpec(node),
                 )
             }
             NodeType.Box -> {
                 ContainerViewBinder.bindBox(
                     view = view as DeclarativeBoxLayout,
-                    gravity = readBoxAlignment(node).toGravity(),
+                    spec = ContainerViewBinder.readBoxSpec(node),
                 )
             }
 
             NodeType.Surface -> {
                 ContainerViewBinder.bindBox(
                     view = view as DeclarativeBoxLayout,
-                    gravity = readBoxAlignment(node).toGravity(),
+                    spec = ContainerViewBinder.readBoxSpec(node),
                 )
             }
 
@@ -383,15 +306,8 @@ object ViewTreeRenderer {
 
             NodeType.Image -> {
                 MediaViewBinder.bindImage(
-                    view = view as ImageView,
-                    contentDescription = readImageContentDescription(node),
-                    scaleType = readImageContentScale(node).toScaleType(),
-                    tint = readImageTint(node),
-                    source = readImageSource(node),
-                    placeholder = readImagePlaceholder(node),
-                    error = readImageError(node),
-                    fallback = readImageFallback(node),
-                    remoteImageLoader = readRemoteImageLoader(node),
+                    view = view as android.widget.ImageView,
+                    spec = MediaViewBinder.readImageSpec(node),
                 )
             }
 
@@ -402,46 +318,27 @@ object ViewTreeRenderer {
             NodeType.LazyColumn -> {
                 ContainerViewBinder.bindLazyColumn(
                     view = view as RecyclerView,
-                    contentPadding = readLazyContentPadding(node),
-                    spacing = readLazySpacing(node),
-                    items = readLazyItems(node),
+                    spec = ContainerViewBinder.readLazyColumnSpec(node),
                 )
             }
 
             NodeType.TabPager -> {
                 ContainerViewBinder.bindTabPager(
                     view = view as com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout,
-                    pages = readTabPages(node),
-                    selectedTabIndex = readSelectedTabIndex(node),
-                    onTabSelected = readOnTabSelected(node),
-                    backgroundColor = readTabBackgroundColor(node),
-                    indicatorColor = readTabIndicatorColor(node),
-                    cornerRadius = readTabCornerRadius(node),
-                    indicatorHeight = readTabIndicatorHeight(node),
-                    tabPaddingHorizontal = readTabPaddingHorizontal(node),
-                    tabPaddingVertical = readTabPaddingVertical(node),
-                    selectedTextColor = readTabSelectedTextColor(node),
-                    unselectedTextColor = readTabUnselectedTextColor(node),
-                    rippleColor = readTabRippleColor(node),
+                    spec = ContainerViewBinder.readTabPagerSpec(
+                        node = node,
+                        defaultRippleColor = DEFAULT_RIPPLE_COLOR,
+                    ),
                 )
             }
 
             NodeType.SegmentedControl -> {
                 ContainerViewBinder.bindSegmentedControl(
                     view = view as com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout,
-                    items = readSegmentItems(node),
-                    selectedIndex = readSegmentSelectedIndex(node),
-                    onSelectionChange = readOnSegmentSelected(node),
-                    enabled = readEnabled(node),
-                    backgroundColor = readSegmentBackgroundColor(node),
-                    indicatorColor = readSegmentIndicatorColor(node),
-                    cornerRadius = readSegmentCornerRadius(node),
-                    textColor = readSegmentTextColor(node),
-                    selectedTextColor = readSegmentSelectedTextColor(node),
-                    rippleColor = readSegmentRippleColor(node),
-                    textSizeSp = readSegmentTextSize(node),
-                    horizontalPadding = readSegmentPaddingHorizontal(node),
-                    verticalPadding = readSegmentPaddingVertical(node),
+                    spec = ContainerViewBinder.readSegmentedControlSpec(
+                        node = node,
+                        defaultRippleColor = DEFAULT_RIPPLE_COLOR,
+                    ),
                 )
             }
         }
@@ -730,24 +627,6 @@ object ViewTreeRenderer {
         }
     }
 
-    private fun resolveInputType(type: TextFieldType, singleLine: Boolean): Int {
-        val baseType = when (type) {
-            TextFieldType.Text -> InputType.TYPE_CLASS_TEXT
-            TextFieldType.Password -> {
-                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-            }
-            TextFieldType.Email -> {
-                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
-            }
-            TextFieldType.Number -> InputType.TYPE_CLASS_NUMBER
-        }
-        return if (singleLine) {
-            baseType
-        } else {
-            baseType or InputType.TYPE_TEXT_FLAG_MULTI_LINE
-        }
-    }
-
     private fun createLayoutParams(parent: ViewGroup, node: VNode): ViewGroup.LayoutParams {
         emitModifierWarnings(parent, node)
         val boxAlign = node.modifier.elements.lastOrNull { it is BoxAlignModifierElement } as? BoxAlignModifierElement
@@ -860,26 +739,6 @@ object ViewTreeRenderer {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun readOnClick(node: VNode): (() -> Unit)? {
-        return node.props.values[PropKeys.ON_CLICK] as? (() -> Unit)
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun readOnValueChange(node: VNode): ((String) -> Unit)? {
-        return node.props.values[PropKeys.ON_VALUE_CHANGE] as? ((String) -> Unit)
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun readOnCheckedChange(node: VNode): ((Boolean) -> Unit)? {
-        return node.props.values[PropKeys.ON_CHECKED_CHANGE] as? ((Boolean) -> Unit)
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun readOnSliderValueChange(node: VNode): ((Int) -> Unit)? {
-        return node.props.values[PropKeys.ON_SLIDER_VALUE_CHANGE] as? ((Int) -> Unit)
-    }
-
-    @Suppress("UNCHECKED_CAST")
     private fun readViewFactory(node: VNode): ((Context) -> View)? {
         return node.props.values[PropKeys.VIEW_FACTORY] as? ((Context) -> View)
     }
@@ -887,140 +746,6 @@ object ViewTreeRenderer {
     @Suppress("UNCHECKED_CAST")
     private fun readViewUpdate(node: VNode): ((View) -> Unit)? {
         return node.props.values[PropKeys.VIEW_UPDATE] as? ((View) -> Unit)
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun readLazyItems(node: VNode): List<LazyListItem> {
-        return node.props.values[PropKeys.LAZY_ITEMS] as? List<LazyListItem> ?: emptyList()
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun readTabPages(node: VNode): List<TabPage> {
-        return node.props.values[PropKeys.TAB_PAGES] as? List<TabPage> ?: emptyList()
-    }
-
-    private fun readSelectedTabIndex(node: VNode): Int {
-        return node.props.values[PropKeys.SELECTED_TAB_INDEX] as? Int ?: 0
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun readOnTabSelected(node: VNode): ((Int) -> Unit)? {
-        return node.props.values[PropKeys.ON_TAB_SELECTED] as? ((Int) -> Unit)
-    }
-
-    private fun readTabBackgroundColor(node: VNode): Int {
-        return node.props.values[PropKeys.TAB_BACKGROUND_COLOR] as? Int ?: 0
-    }
-
-    private fun readTabIndicatorColor(node: VNode): Int {
-        return node.props.values[PropKeys.TAB_INDICATOR_COLOR] as? Int ?: 0
-    }
-
-    private fun readTabCornerRadius(node: VNode): Int {
-        return node.props.values[PropKeys.TAB_CORNER_RADIUS] as? Int ?: 0
-    }
-
-    private fun readTabIndicatorHeight(node: VNode): Int {
-        return node.props.values[PropKeys.TAB_INDICATOR_HEIGHT] as? Int ?: 0
-    }
-
-    private fun readTabPaddingHorizontal(node: VNode): Int {
-        return node.props.values[PropKeys.TAB_CONTENT_PADDING_HORIZONTAL] as? Int ?: 0
-    }
-
-    private fun readTabPaddingVertical(node: VNode): Int {
-        return node.props.values[PropKeys.TAB_CONTENT_PADDING_VERTICAL] as? Int ?: 0
-    }
-
-    private fun readTabSelectedTextColor(node: VNode): Int {
-        return node.props.values[PropKeys.TAB_SELECTED_TEXT_COLOR] as? Int ?: 0
-    }
-
-    private fun readTabUnselectedTextColor(node: VNode): Int {
-        return node.props.values[PropKeys.TAB_UNSELECTED_TEXT_COLOR] as? Int ?: 0
-    }
-
-    private fun readTabRippleColor(node: VNode): Int {
-        return node.props.values[PropKeys.TAB_RIPPLE_COLOR] as? Int ?: DEFAULT_RIPPLE_COLOR
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun readSegmentItems(node: VNode): List<SegmentedControlItem> {
-        return node.props.values[PropKeys.SEGMENT_ITEMS] as? List<SegmentedControlItem> ?: emptyList()
-    }
-
-    private fun readSegmentSelectedIndex(node: VNode): Int {
-        return node.props.values[PropKeys.SEGMENT_SELECTED_INDEX] as? Int ?: 0
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun readOnSegmentSelected(node: VNode): ((Int) -> Unit)? {
-        return node.props.values[PropKeys.ON_SEGMENT_SELECTED] as? ((Int) -> Unit)
-    }
-
-    private fun readSegmentBackgroundColor(node: VNode): Int {
-        return node.props.values[PropKeys.SEGMENT_BACKGROUND_COLOR] as? Int ?: Color.TRANSPARENT
-    }
-
-    private fun readSegmentIndicatorColor(node: VNode): Int {
-        return node.props.values[PropKeys.SEGMENT_INDICATOR_COLOR] as? Int ?: Color.TRANSPARENT
-    }
-
-    private fun readSegmentCornerRadius(node: VNode): Int {
-        return node.props.values[PropKeys.SEGMENT_CORNER_RADIUS] as? Int ?: 0
-    }
-
-    private fun readSegmentTextColor(node: VNode): Int {
-        return node.props.values[PropKeys.SEGMENT_TEXT_COLOR] as? Int ?: Color.BLACK
-    }
-
-    private fun readSegmentSelectedTextColor(node: VNode): Int {
-        return node.props.values[PropKeys.SEGMENT_SELECTED_TEXT_COLOR] as? Int ?: Color.WHITE
-    }
-
-    private fun readSegmentRippleColor(node: VNode): Int {
-        return node.props.values[PropKeys.SEGMENT_RIPPLE_COLOR] as? Int ?: DEFAULT_RIPPLE_COLOR
-    }
-
-    private fun readSegmentTextSize(node: VNode): Int {
-        return node.props.values[PropKeys.SEGMENT_TEXT_SIZE_SP] as? Int ?: 14
-    }
-
-    private fun readSegmentPaddingHorizontal(node: VNode): Int {
-        return node.props.values[PropKeys.SEGMENT_CONTENT_PADDING_HORIZONTAL] as? Int ?: 0
-    }
-
-    private fun readSegmentPaddingVertical(node: VNode): Int {
-        return node.props.values[PropKeys.SEGMENT_CONTENT_PADDING_VERTICAL] as? Int ?: 0
-    }
-
-    private fun readLinearSpacing(node: VNode): Int {
-        return node.props.values[PropKeys.LINEAR_SPACING] as? Int ?: 0
-    }
-
-    private fun readBoxAlignment(node: VNode): BoxAlignment {
-        return node.props.values[PropKeys.BOX_ALIGNMENT] as? BoxAlignment
-            ?: BoxAlignment.TopStart
-    }
-
-    private fun readRowVerticalAlignment(node: VNode): VerticalAlignment {
-        return node.props.values[PropKeys.ROW_VERTICAL_ALIGNMENT] as? VerticalAlignment
-            ?: VerticalAlignment.Top
-    }
-
-    private fun readRowArrangement(node: VNode): MainAxisArrangement {
-        return node.props.values[PropKeys.ROW_MAIN_AXIS_ARRANGEMENT] as? MainAxisArrangement
-            ?: MainAxisArrangement.Start
-    }
-
-    private fun readColumnHorizontalAlignment(node: VNode): HorizontalAlignment {
-        return node.props.values[PropKeys.COLUMN_HORIZONTAL_ALIGNMENT] as? HorizontalAlignment
-            ?: HorizontalAlignment.Start
-    }
-
-    private fun readColumnArrangement(node: VNode): MainAxisArrangement {
-        return node.props.values[PropKeys.COLUMN_MAIN_AXIS_ARRANGEMENT] as? MainAxisArrangement
-            ?: MainAxisArrangement.Start
     }
 
     private fun defaultDividerWidth(parent: ViewGroup, node: VNode): Int {
@@ -1049,165 +774,8 @@ object ViewTreeRenderer {
         return node.props.values[PropKeys.DIVIDER_THICKNESS] as? Int ?: 1
     }
 
-    private fun readChecked(node: VNode): Boolean {
-        return node.props.values[PropKeys.CHECKED] as? Boolean ?: false
-    }
-
-    private fun readTextMaxLines(node: VNode): Int {
-        return node.props.values[PropKeys.TEXT_MAX_LINES] as? Int ?: Int.MAX_VALUE
-    }
-
-    private fun readTextOverflow(node: VNode): TextOverflow {
-        return node.props.values[PropKeys.TEXT_OVERFLOW] as? TextOverflow ?: TextOverflow.Clip
-    }
-
-    private fun readTextAlign(node: VNode): TextAlign {
-        return node.props.values[PropKeys.TEXT_ALIGN] as? TextAlign ?: TextAlign.Start
-    }
-
     private fun readEnabled(node: VNode): Boolean {
         return node.props.values[PropKeys.ENABLED] as? Boolean ?: true
-    }
-
-    private fun readControlColor(node: VNode): Int {
-        return node.props.values[PropKeys.CONTROL_COLOR] as? Int ?: 0xFF000000.toInt()
-    }
-
-    private fun readFieldValue(node: VNode): String {
-        return node.props.values[PropKeys.VALUE] as? String ?: ""
-    }
-
-    private fun readFieldLabel(node: VNode): String {
-        return node.props.values[PropKeys.LABEL] as? String ?: ""
-    }
-
-    private fun readFieldHint(node: VNode): String {
-        return node.props.values[PropKeys.HINT] as? String ?: ""
-    }
-
-    private fun readFieldPlaceholder(node: VNode): String {
-        return node.props.values[PropKeys.PLACEHOLDER] as? String ?: readFieldHint(node)
-    }
-
-    private fun readFieldSupportingText(node: VNode): String {
-        return node.props.values[PropKeys.SUPPORTING_TEXT] as? String ?: ""
-    }
-
-    private fun readFieldSingleLine(node: VNode): Boolean {
-        return node.props.values[PropKeys.SINGLE_LINE] as? Boolean ?: true
-    }
-
-    private fun readFieldType(node: VNode): TextFieldType {
-        return node.props.values[PropKeys.TEXT_FIELD_TYPE] as? TextFieldType ?: TextFieldType.Text
-    }
-
-    private fun readFieldHintColor(node: VNode): Int {
-        return node.props.values[PropKeys.HINT_TEXT_COLOR] as? Int ?: 0xFF888888.toInt()
-    }
-
-    private fun readFieldReadOnly(node: VNode): Boolean {
-        return node.props.values[PropKeys.READ_ONLY] as? Boolean ?: false
-    }
-
-    private fun readFieldMaxLines(node: VNode): Int {
-        return node.props.values[PropKeys.MAX_LINES] as? Int ?: Int.MAX_VALUE
-    }
-
-    private fun readFieldMinLines(node: VNode): Int {
-        return node.props.values[PropKeys.MIN_LINES] as? Int ?: 1
-    }
-
-    private fun readFieldImeAction(node: VNode): TextFieldImeAction {
-        return node.props.values[PropKeys.IME_ACTION] as? TextFieldImeAction ?: TextFieldImeAction.Default
-    }
-
-    private fun readFieldLabelColor(node: VNode): Int {
-        return node.props.values[PropKeys.LABEL_TEXT_COLOR] as? Int ?: readFieldHintColor(node)
-    }
-
-    private fun readFieldSupportingTextColor(node: VNode): Int {
-        return node.props.values[PropKeys.SUPPORTING_TEXT_COLOR] as? Int ?: readFieldHintColor(node)
-    }
-
-    private fun readFieldLabelTextSize(node: VNode): Int {
-        return node.props.values[PropKeys.LABEL_TEXT_SIZE_SP] as? Int ?: 12
-    }
-
-    private fun readFieldSupportingTextSize(node: VNode): Int {
-        return node.props.values[PropKeys.SUPPORTING_TEXT_SIZE_SP] as? Int ?: 12
-    }
-
-    private fun readSliderValue(node: VNode): Int {
-        return node.props.values[PropKeys.SLIDER_VALUE] as? Int ?: 0
-    }
-
-    private fun readProgressFraction(node: VNode): Float? {
-        return node.props.values[PropKeys.PROGRESS_FRACTION] as? Float
-    }
-
-    private fun readLazyContentPadding(node: VNode): Int {
-        return node.props.values[PropKeys.LAZY_CONTENT_PADDING] as? Int ?: 0
-    }
-
-    private fun readLazySpacing(node: VNode): Int {
-        return node.props.values[PropKeys.LAZY_SPACING] as? Int ?: 0
-    }
-
-    private fun readImageSource(node: VNode): ImageSource? {
-        return node.props.values[PropKeys.IMAGE_SOURCE] as? ImageSource
-    }
-
-    private fun readImageContentScale(node: VNode): ImageContentScale {
-        return node.props.values[PropKeys.IMAGE_CONTENT_SCALE] as? ImageContentScale
-            ?: ImageContentScale.Fit
-    }
-
-    private fun readImageContentDescription(node: VNode): String? {
-        return node.props.values[PropKeys.IMAGE_CONTENT_DESCRIPTION] as? String
-    }
-
-    private fun readImageTint(node: VNode): Int? {
-        return node.props.values[PropKeys.IMAGE_TINT] as? Int
-    }
-
-    private fun readRemoteImageLoader(node: VNode): RemoteImageLoader? {
-        return node.props.values[PropKeys.IMAGE_REMOTE_LOADER] as? RemoteImageLoader
-    }
-
-    private fun readButtonLeadingIcon(node: VNode): ImageSource.Resource? {
-        return node.props.values[PropKeys.BUTTON_LEADING_ICON] as? ImageSource.Resource
-    }
-
-    private fun readButtonTrailingIcon(node: VNode): ImageSource.Resource? {
-        return node.props.values[PropKeys.BUTTON_TRAILING_ICON] as? ImageSource.Resource
-    }
-
-    private fun readButtonIconSize(node: VNode): Int {
-        return node.props.values[PropKeys.BUTTON_ICON_SIZE] as? Int ?: 18
-    }
-
-    private fun readButtonIconSpacing(node: VNode): Int {
-        return node.props.values[PropKeys.BUTTON_ICON_SPACING] as? Int ?: 8
-    }
-
-    private fun readButtonContentColor(node: VNode): Int {
-        return readNodeTextColor(node) ?: Color.BLACK
-    }
-
-    private fun readImagePlaceholder(node: VNode): ImageSource.Resource? {
-        return node.props.values[PropKeys.IMAGE_PLACEHOLDER] as? ImageSource.Resource
-    }
-
-    private fun readImageError(node: VNode): ImageSource.Resource? {
-        return node.props.values[PropKeys.IMAGE_ERROR] as? ImageSource.Resource
-    }
-
-    private fun readImageFallback(node: VNode): ImageSource.Resource? {
-        return node.props.values[PropKeys.IMAGE_FALLBACK] as? ImageSource.Resource
-    }
-
-    private fun readProgressIndicatorColor(node: VNode): Int {
-        return node.props.values[PropKeys.PROGRESS_INDICATOR_COLOR] as? Int ?: 0xFF000000.toInt()
     }
 
     private fun readNodeTextColor(node: VNode): Int? {
@@ -1259,45 +827,6 @@ object ViewTreeRenderer {
         )
     }
 
-    private fun TextAlign.toTextGravity(): Int {
-        return when (this) {
-            TextAlign.Start -> Gravity.START or Gravity.CENTER_VERTICAL
-            TextAlign.Center -> Gravity.CENTER
-            TextAlign.End -> Gravity.END or Gravity.CENTER_VERTICAL
-        }
-    }
-
-    private fun TextFieldImeAction.toEditorAction(): Int {
-        return when (this) {
-            TextFieldImeAction.Default -> EditorInfo.IME_ACTION_UNSPECIFIED
-            TextFieldImeAction.Next -> EditorInfo.IME_ACTION_NEXT
-            TextFieldImeAction.Done -> EditorInfo.IME_ACTION_DONE
-            TextFieldImeAction.Go -> EditorInfo.IME_ACTION_GO
-            TextFieldImeAction.Search -> EditorInfo.IME_ACTION_SEARCH
-            TextFieldImeAction.Send -> EditorInfo.IME_ACTION_SEND
-        }
-    }
-
-    private fun readProgressTrackColor(node: VNode): Int {
-        return node.props.values[PropKeys.PROGRESS_TRACK_COLOR] as? Int ?: 0x33000000
-    }
-
-    private fun readProgressTrackThickness(node: VNode): Int {
-        return node.props.values[PropKeys.PROGRESS_TRACK_THICKNESS] as? Int ?: 4
-    }
-
-    private fun readProgressIndicatorSize(node: VNode): Int {
-        return node.props.values[PropKeys.PROGRESS_INDICATOR_SIZE] as? Int ?: 32
-    }
-
-    private fun readMinValue(node: VNode): Int {
-        return node.props.values[PropKeys.MIN_VALUE] as? Int ?: 0
-    }
-
-    private fun readMaxValue(node: VNode): Int {
-        return node.props.values[PropKeys.MAX_VALUE] as? Int ?: 100
-    }
-
     private fun disposeMountedNode(
         mountedNode: MountedNode,
     ) {
@@ -1313,40 +842,32 @@ object ViewTreeRenderer {
 
     private fun VerticalAlignment.toGravity(): Int {
         return when (this) {
-            VerticalAlignment.Top -> Gravity.TOP
-            VerticalAlignment.Center -> Gravity.CENTER_VERTICAL
-            VerticalAlignment.Bottom -> Gravity.BOTTOM
+            VerticalAlignment.Top -> android.view.Gravity.TOP
+            VerticalAlignment.Center -> android.view.Gravity.CENTER_VERTICAL
+            VerticalAlignment.Bottom -> android.view.Gravity.BOTTOM
         }
     }
 
     private fun HorizontalAlignment.toGravity(): Int {
         return when (this) {
-            HorizontalAlignment.Start -> Gravity.START
-            HorizontalAlignment.Center -> Gravity.CENTER_HORIZONTAL
-            HorizontalAlignment.End -> Gravity.END
+            HorizontalAlignment.Start -> android.view.Gravity.START
+            HorizontalAlignment.Center -> android.view.Gravity.CENTER_HORIZONTAL
+            HorizontalAlignment.End -> android.view.Gravity.END
         }
     }
 
     private fun BoxAlignment.toGravity(): Int {
         return when (this) {
-            BoxAlignment.TopStart -> Gravity.TOP or Gravity.START
-            BoxAlignment.TopCenter -> Gravity.TOP or Gravity.CENTER_HORIZONTAL
-            BoxAlignment.TopEnd -> Gravity.TOP or Gravity.END
-            BoxAlignment.CenterStart -> Gravity.CENTER_VERTICAL or Gravity.START
-            BoxAlignment.Center -> Gravity.CENTER
-            BoxAlignment.CenterEnd -> Gravity.CENTER_VERTICAL or Gravity.END
-            BoxAlignment.BottomStart -> Gravity.BOTTOM or Gravity.START
-            BoxAlignment.BottomCenter -> Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
-            BoxAlignment.BottomEnd -> Gravity.BOTTOM or Gravity.END
+            BoxAlignment.TopStart -> android.view.Gravity.TOP or android.view.Gravity.START
+            BoxAlignment.TopCenter -> android.view.Gravity.TOP or android.view.Gravity.CENTER_HORIZONTAL
+            BoxAlignment.TopEnd -> android.view.Gravity.TOP or android.view.Gravity.END
+            BoxAlignment.CenterStart -> android.view.Gravity.CENTER_VERTICAL or android.view.Gravity.START
+            BoxAlignment.Center -> android.view.Gravity.CENTER
+            BoxAlignment.CenterEnd -> android.view.Gravity.CENTER_VERTICAL or android.view.Gravity.END
+            BoxAlignment.BottomStart -> android.view.Gravity.BOTTOM or android.view.Gravity.START
+            BoxAlignment.BottomCenter -> android.view.Gravity.BOTTOM or android.view.Gravity.CENTER_HORIZONTAL
+            BoxAlignment.BottomEnd -> android.view.Gravity.BOTTOM or android.view.Gravity.END
         }
     }
 
-    private fun ImageContentScale.toScaleType(): ImageView.ScaleType {
-        return when (this) {
-            ImageContentScale.Fit -> ImageView.ScaleType.FIT_CENTER
-            ImageContentScale.Crop -> ImageView.ScaleType.CENTER_CROP
-            ImageContentScale.FillBounds -> ImageView.ScaleType.FIT_XY
-            ImageContentScale.Inside -> ImageView.ScaleType.CENTER_INSIDE
-        }
-    }
 }

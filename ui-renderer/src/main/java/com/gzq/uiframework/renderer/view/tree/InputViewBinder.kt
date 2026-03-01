@@ -10,139 +10,137 @@ import android.widget.RadioButton
 import android.widget.SeekBar
 import android.widget.Switch
 import com.gzq.uiframework.renderer.R
+import com.gzq.uiframework.renderer.node.PropKeys
+import com.gzq.uiframework.renderer.node.TextFieldImeAction
+import com.gzq.uiframework.renderer.node.TextFieldType
+import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
+import android.text.InputType
+import android.view.inputmethod.EditorInfo
 
 internal object InputViewBinder {
+    data class TextFieldSpec(
+        val value: String,
+        val label: String,
+        val labelColor: Int,
+        val labelTextSizeSp: Int,
+        val supportingText: String,
+        val supportingTextColor: Int,
+        val supportingTextSizeSp: Int,
+        val placeholder: String,
+        val enabled: Boolean,
+        val singleLine: Boolean,
+        val minLines: Int,
+        val maxLines: Int,
+        val inputType: Int,
+        val imeAction: Int,
+        val hintColor: Int,
+        val readOnly: Boolean,
+        val onValueChange: ((String) -> Unit)?,
+    )
+
+    data class ToggleSpec(
+        val text: CharSequence?,
+        val enabled: Boolean,
+        val checked: Boolean,
+        val controlColor: Int,
+        val onCheckedChange: ((Boolean) -> Unit)?,
+    )
+
+    data class SliderSpec(
+        val min: Int,
+        val max: Int,
+        val value: Int,
+        val enabled: Boolean,
+        val tintColor: Int,
+        val onValueChange: ((Int) -> Unit)?,
+    )
+
     fun bindTextField(
         view: DeclarativeTextFieldLayout,
-        value: String,
-        label: String,
-        labelColor: Int,
-        labelTextSizeSp: Int,
-        supportingText: String,
-        supportingTextColor: Int,
-        supportingTextSizeSp: Int,
-        placeholder: String,
-        enabled: Boolean,
-        singleLine: Boolean,
-        minLines: Int,
-        maxLines: Int,
-        inputType: Int,
-        imeAction: Int,
-        hintColor: Int,
-        readOnly: Boolean,
-        onValueChange: ((String) -> Unit)?,
+        spec: TextFieldSpec,
     ) {
         val input = view.inputView
-        if (input.text?.toString() != value) {
-            input.setText(value)
-            input.setSelection(value.length)
+        if (input.text?.toString() != spec.value) {
+            input.setText(spec.value)
+            input.setSelection(spec.value.length)
         }
         view.setLabel(
-            text = label,
-            color = labelColor,
-            textSizeSp = labelTextSizeSp,
+            text = spec.label,
+            color = spec.labelColor,
+            textSizeSp = spec.labelTextSizeSp,
         )
         view.setSupportingText(
-            text = supportingText,
-            color = supportingTextColor,
-            textSizeSp = supportingTextSizeSp,
+            text = spec.supportingText,
+            color = spec.supportingTextColor,
+            textSizeSp = spec.supportingTextSizeSp,
         )
-        input.hint = placeholder
-        input.isEnabled = enabled
-        input.isSingleLine = singleLine
-        input.minLines = if (singleLine) 1 else minLines
-        input.maxLines = if (singleLine) 1 else maxLines
-        input.inputType = inputType
-        input.imeOptions = imeAction
-        input.setHintTextColor(hintColor)
-        applyReadOnly(input, readOnly)
+        input.hint = spec.placeholder
+        input.isEnabled = spec.enabled
+        input.isSingleLine = spec.singleLine
+        input.minLines = if (spec.singleLine) 1 else spec.minLines
+        input.maxLines = if (spec.singleLine) 1 else spec.maxLines
+        input.inputType = spec.inputType
+        input.imeOptions = spec.imeAction
+        input.setHintTextColor(spec.hintColor)
+        applyReadOnly(input, spec.readOnly)
         bindTextWatcher(
             view = input,
-            currentValue = value,
-            onValueChange = onValueChange,
+            currentValue = spec.value,
+            onValueChange = spec.onValueChange,
         )
     }
 
     fun bindCheckbox(
         view: CheckBox,
-        text: CharSequence?,
-        enabled: Boolean,
-        checked: Boolean,
-        controlColor: Int,
-        onCheckedChange: ((Boolean) -> Unit)?,
+        spec: ToggleSpec,
     ) {
         bindCompoundButton(
             view = view,
-            text = text,
-            enabled = enabled,
-            checked = checked,
-            controlColor = controlColor,
-            onCheckedChange = onCheckedChange,
+            spec = spec,
         )
     }
 
     fun bindSwitch(
         view: Switch,
-        text: CharSequence?,
-        enabled: Boolean,
-        checked: Boolean,
-        controlColor: Int,
-        onCheckedChange: ((Boolean) -> Unit)?,
+        spec: ToggleSpec,
     ) {
         bindCompoundButton(
             view = view,
-            text = text,
-            enabled = enabled,
-            checked = checked,
-            controlColor = controlColor,
-            onCheckedChange = onCheckedChange,
+            spec = spec,
         )
     }
 
     fun bindRadioButton(
         view: RadioButton,
-        text: CharSequence?,
-        enabled: Boolean,
-        checked: Boolean,
-        controlColor: Int,
-        onCheckedChange: ((Boolean) -> Unit)?,
+        spec: ToggleSpec,
     ) {
         bindCompoundButton(
             view = view,
-            text = text,
-            enabled = enabled,
-            checked = checked,
-            controlColor = controlColor,
-            onCheckedChange = onCheckedChange,
+            spec = spec,
         )
     }
 
     fun bindSlider(
         view: SeekBar,
-        min: Int,
-        max: Int,
-        value: Int,
-        enabled: Boolean,
-        tintColor: Int,
-        onValueChange: ((Int) -> Unit)?,
+        spec: SliderSpec,
     ) {
         val listener = view.getTag(R.id.ui_framework_seek_listener) as? SeekBar.OnSeekBarChangeListener
         if (listener != null) {
             view.setOnSeekBarChangeListener(null)
         }
-        val resolvedValue = value.coerceIn(min, max)
-        view.max = (max - min).coerceAtLeast(0)
-        view.progress = resolvedValue - min
-        view.isEnabled = enabled
-        val tint = ColorStateList.valueOf(tintColor)
+        val resolvedValue = spec.value.coerceIn(spec.min, spec.max)
+        view.max = (spec.max - spec.min).coerceAtLeast(0)
+        view.progress = resolvedValue - spec.min
+        view.isEnabled = spec.enabled
+        val tint = ColorStateList.valueOf(spec.tintColor)
         view.progressTintList = tint
         view.thumbTintList = tint
         val nextListener = object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val nextValue = min + progress
+                val nextValue = spec.min + progress
                 if (fromUser && nextValue != resolvedValue) {
-                    onValueChange?.invoke(nextValue)
+                    spec.onValueChange?.invoke(nextValue)
                 }
             }
 
@@ -156,26 +154,96 @@ internal object InputViewBinder {
 
     private fun bindCompoundButton(
         view: CompoundButton,
-        text: CharSequence?,
-        enabled: Boolean,
-        checked: Boolean,
-        controlColor: Int,
-        onCheckedChange: ((Boolean) -> Unit)?,
+        spec: ToggleSpec,
     ) {
         view.setOnCheckedChangeListener(null)
-        view.text = text
-        view.isEnabled = enabled
-        view.isChecked = checked
-        val tint = ColorStateList.valueOf(controlColor)
+        view.text = spec.text
+        view.isEnabled = spec.enabled
+        view.isChecked = spec.checked
+        val tint = ColorStateList.valueOf(spec.controlColor)
         view.buttonTintList = tint
         if (view is Switch) {
             view.thumbTintList = tint
             view.trackTintList = tint
         }
         view.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked != checked) {
-                onCheckedChange?.invoke(isChecked)
+            if (isChecked != spec.checked) {
+                spec.onCheckedChange?.invoke(isChecked)
             }
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun readTextFieldSpec(node: VNode): TextFieldSpec {
+        val hintColor = node.props.values[PropKeys.HINT_TEXT_COLOR] as? Int ?: 0xFF888888.toInt()
+        val singleLine = node.props.values[PropKeys.SINGLE_LINE] as? Boolean ?: true
+        return TextFieldSpec(
+            value = node.props.values[PropKeys.VALUE] as? String ?: "",
+            label = node.props.values[PropKeys.LABEL] as? String ?: "",
+            labelColor = node.props.values[PropKeys.LABEL_TEXT_COLOR] as? Int ?: hintColor,
+            labelTextSizeSp = node.props.values[PropKeys.LABEL_TEXT_SIZE_SP] as? Int ?: 12,
+            supportingText = node.props.values[PropKeys.SUPPORTING_TEXT] as? String ?: "",
+            supportingTextColor = node.props.values[PropKeys.SUPPORTING_TEXT_COLOR] as? Int ?: hintColor,
+            supportingTextSizeSp = node.props.values[PropKeys.SUPPORTING_TEXT_SIZE_SP] as? Int ?: 12,
+            placeholder = node.props.values[PropKeys.PLACEHOLDER] as? String
+                ?: (node.props.values[PropKeys.HINT] as? String ?: ""),
+            enabled = node.props.values[PropKeys.ENABLED] as? Boolean ?: true,
+            singleLine = singleLine,
+            minLines = node.props.values[PropKeys.MIN_LINES] as? Int ?: 1,
+            maxLines = node.props.values[PropKeys.MAX_LINES] as? Int ?: Int.MAX_VALUE,
+            inputType = resolveInputType(
+                type = node.props.values[PropKeys.TEXT_FIELD_TYPE] as? TextFieldType ?: TextFieldType.Text,
+                singleLine = singleLine,
+            ),
+            imeAction = (node.props.values[PropKeys.IME_ACTION] as? TextFieldImeAction
+                ?: TextFieldImeAction.Default).toEditorAction(),
+            hintColor = hintColor,
+            readOnly = node.props.values[PropKeys.READ_ONLY] as? Boolean ?: false,
+            onValueChange = node.props.values[PropKeys.ON_VALUE_CHANGE] as? ((String) -> Unit),
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun readToggleSpec(node: VNode): ToggleSpec {
+        return ToggleSpec(
+            text = node.props.values[PropKeys.TEXT] as? CharSequence,
+            enabled = node.props.values[PropKeys.ENABLED] as? Boolean ?: true,
+            checked = node.props.values[PropKeys.CHECKED] as? Boolean ?: false,
+            controlColor = node.props.values[PropKeys.CONTROL_COLOR] as? Int ?: 0xFF000000.toInt(),
+            onCheckedChange = node.props.values[PropKeys.ON_CHECKED_CHANGE] as? ((Boolean) -> Unit),
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun readSliderSpec(node: VNode): SliderSpec {
+        return SliderSpec(
+            min = node.props.values[PropKeys.MIN_VALUE] as? Int ?: 0,
+            max = node.props.values[PropKeys.MAX_VALUE] as? Int ?: 100,
+            value = node.props.values[PropKeys.SLIDER_VALUE] as? Int ?: 0,
+            enabled = node.props.values[PropKeys.ENABLED] as? Boolean ?: true,
+            tintColor = node.props.values[PropKeys.CONTROL_COLOR] as? Int ?: 0xFF000000.toInt(),
+            onValueChange = node.props.values[PropKeys.ON_SLIDER_VALUE_CHANGE] as? ((Int) -> Unit),
+        )
+    }
+
+    private fun resolveInputType(type: TextFieldType, singleLine: Boolean): Int {
+        val baseType = when (type) {
+            TextFieldType.Text -> InputType.TYPE_CLASS_TEXT
+            TextFieldType.Password -> InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            TextFieldType.Email -> InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+            TextFieldType.Number -> InputType.TYPE_CLASS_NUMBER
+        }
+        return if (singleLine) baseType else baseType or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+    }
+
+    private fun TextFieldImeAction.toEditorAction(): Int {
+        return when (this) {
+            TextFieldImeAction.Default -> EditorInfo.IME_ACTION_UNSPECIFIED
+            TextFieldImeAction.Next -> EditorInfo.IME_ACTION_NEXT
+            TextFieldImeAction.Done -> EditorInfo.IME_ACTION_DONE
+            TextFieldImeAction.Go -> EditorInfo.IME_ACTION_GO
+            TextFieldImeAction.Search -> EditorInfo.IME_ACTION_SEARCH
+            TextFieldImeAction.Send -> EditorInfo.IME_ACTION_SEND
         }
     }
 

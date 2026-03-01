@@ -5,47 +5,54 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import com.gzq.uiframework.renderer.node.ImageSource
+import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.RemoteImageLoader
 import com.gzq.uiframework.renderer.node.RemoteImageRequest
+import com.gzq.uiframework.renderer.node.VNode
+import com.gzq.uiframework.renderer.node.ImageContentScale
 
 internal object MediaViewBinder {
+    data class ImageSpec(
+        val contentDescription: String?,
+        val scaleType: ImageView.ScaleType,
+        val tint: Int?,
+        val source: ImageSource?,
+        val placeholder: ImageSource.Resource?,
+        val error: ImageSource.Resource?,
+        val fallback: ImageSource.Resource?,
+        val remoteImageLoader: RemoteImageLoader?,
+    )
+
     fun bindImage(
         view: ImageView,
-        contentDescription: String?,
-        scaleType: ImageView.ScaleType,
-        tint: Int?,
-        source: ImageSource?,
-        placeholder: ImageSource.Resource?,
-        error: ImageSource.Resource?,
-        fallback: ImageSource.Resource?,
-        remoteImageLoader: RemoteImageLoader?,
+        spec: ImageSpec,
     ) {
-        view.contentDescription = contentDescription
-        view.scaleType = scaleType
-        view.imageTintList = tint?.let(ColorStateList::valueOf)
+        view.contentDescription = spec.contentDescription
+        view.scaleType = spec.scaleType
+        view.imageTintList = spec.tint?.let(ColorStateList::valueOf)
 
-        when (source) {
+        when (val source = spec.source) {
             is ImageSource.Resource -> {
                 view.setImageResource(source.resId)
             }
             is ImageSource.Remote -> {
                 val normalizedUrl = source.url?.takeIf { it.isNotBlank() }
                 if (normalizedUrl == null) {
-                    bindPlaceholder(view, fallback)
+                    bindPlaceholder(view, spec.fallback)
                     return
                 }
-                if (remoteImageLoader == null) {
-                    bindPlaceholder(view, error ?: placeholder ?: fallback)
+                if (spec.remoteImageLoader == null) {
+                    bindPlaceholder(view, spec.error ?: spec.placeholder ?: spec.fallback)
                     return
                 }
-                bindPlaceholder(view, placeholder)
-                remoteImageLoader.load(
+                bindPlaceholder(view, spec.placeholder)
+                spec.remoteImageLoader.load(
                     imageView = view,
                     request = RemoteImageRequest(
                         url = normalizedUrl,
-                        placeholderResId = placeholder?.resId,
-                        errorResId = error?.resId,
-                        fallbackResId = fallback?.resId,
+                        placeholderResId = spec.placeholder?.resId,
+                        errorResId = spec.error?.resId,
+                        fallbackResId = spec.fallback?.resId,
                     ),
                 )
             }
@@ -53,6 +60,20 @@ internal object MediaViewBinder {
                 view.setImageDrawable(null)
             }
         }
+    }
+
+    fun readImageSpec(node: VNode): ImageSpec {
+        val scale = node.props.values[PropKeys.IMAGE_CONTENT_SCALE] as? ImageContentScale ?: ImageContentScale.Fit
+        return ImageSpec(
+            contentDescription = node.props.values[PropKeys.IMAGE_CONTENT_DESCRIPTION] as? String,
+            scaleType = scale.toScaleType(),
+            tint = node.props.values[PropKeys.IMAGE_TINT] as? Int,
+            source = node.props.values[PropKeys.IMAGE_SOURCE] as? ImageSource,
+            placeholder = node.props.values[PropKeys.IMAGE_PLACEHOLDER] as? ImageSource.Resource,
+            error = node.props.values[PropKeys.IMAGE_ERROR] as? ImageSource.Resource,
+            fallback = node.props.values[PropKeys.IMAGE_FALLBACK] as? ImageSource.Resource,
+            remoteImageLoader = node.props.values[PropKeys.IMAGE_REMOTE_LOADER] as? RemoteImageLoader,
+        )
     }
 
     fun bindIconButton(
@@ -75,5 +96,14 @@ internal object MediaViewBinder {
         view.setImageDrawable(
             ContextCompat.getDrawable(view.context, source.resId),
         )
+    }
+
+    private fun ImageContentScale.toScaleType(): ImageView.ScaleType {
+        return when (this) {
+            ImageContentScale.Fit -> ImageView.ScaleType.FIT_CENTER
+            ImageContentScale.Crop -> ImageView.ScaleType.CENTER_CROP
+            ImageContentScale.FillBounds -> ImageView.ScaleType.FIT_XY
+            ImageContentScale.Inside -> ImageView.ScaleType.CENTER_INSIDE
+        }
     }
 }

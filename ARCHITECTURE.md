@@ -260,12 +260,13 @@ flowchart TD
 
 - `ViewTreeRenderer` 开始更像“树调度器”
 - 控件族绑定逻辑有了独立测试和演进落点
+- 文本、输入、媒体、容器、进度这几组 props 解析也开始跟随 binder 下沉
 - 不必过早引入 adapter registry，也能先降低单点复杂度
 
 但它仍然没有彻底解决这些问题：
 
 - modifier 应用
-- props 读取仍集中在 `ViewTreeRenderer`
+- 节点通用 style / layout param / 部分共享 props 读取仍集中在 `ViewTreeRenderer`
 - 新控件接入仍需要修改中心分发 `when`
 
 这意味着它已经从“所有事都在一个文件里”前进到了“调度器 + family binders”，但还没演进成真正可插拔的 renderer 扩展结构。
