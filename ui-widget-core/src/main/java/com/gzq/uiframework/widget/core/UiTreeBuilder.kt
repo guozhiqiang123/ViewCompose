@@ -6,7 +6,7 @@ import com.gzq.uiframework.renderer.node.Props
 import com.gzq.uiframework.renderer.node.VNode
 
 @UiDslMarker
-class UiTreeBuilder {
+open class UiTreeBuilder {
     private val children = mutableListOf<VNode>()
 
     fun emit(
@@ -21,12 +21,28 @@ class UiTreeBuilder {
         } else {
             UiTreeBuilder().apply(content).build()
         }
-        children += VNode(
+        emitResolved(
             type = type,
             key = key,
             props = props,
             modifier = modifier,
             children = nestedChildren,
+        )
+    }
+
+    internal fun emitResolved(
+        type: NodeType,
+        key: Any? = null,
+        props: Props = Props.Empty,
+        modifier: Modifier = Modifier,
+        children: List<VNode> = emptyList(),
+    ) {
+        this.children += VNode(
+            type = type,
+            key = key,
+            props = props,
+            modifier = modifier,
+            children = children,
         )
     }
 

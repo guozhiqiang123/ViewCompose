@@ -201,6 +201,8 @@ Theme -> Modifier -> Renderer
 - `weight`、`align` 的 parent-data 规则已抽成统一校验
 - renderer 已在运行时对错误宿主输出一次性 warning
 - `ui-renderer` 已补 parent-data 校验单测
+- `Row`、`Column`、`Box`、`Surface` 的内容 lambda 已切到对应 scope receiver
+- scope 内已提供 `weight` / `align` / `FlexibleSpacer` 的正确入口
 
 ### Phase 4
 

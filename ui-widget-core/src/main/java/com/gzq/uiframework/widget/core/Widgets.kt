@@ -662,9 +662,9 @@ fun UiTreeBuilder.Box(
     key: Any? = null,
     contentAlignment: BoxAlignment = BoxAlignment.TopStart,
     modifier: Modifier = Modifier,
-    content: UiTreeBuilder.() -> Unit,
+    content: BoxScope.() -> Unit,
 ) {
-    emit(
+    emitResolved(
         type = NodeType.Box,
         key = key,
         props = Props(
@@ -673,7 +673,7 @@ fun UiTreeBuilder.Box(
             ),
         ),
         modifier = modifier,
-        content = content,
+        children = BoxScope().apply(content).build(),
     )
 }
 
@@ -685,7 +685,7 @@ fun UiTreeBuilder.Surface(
     contentColor: Int = SurfaceDefaults.contentColor(variant),
     onClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
-    content: UiTreeBuilder.() -> Unit,
+    content: BoxScope.() -> Unit,
 ) {
     val semanticModifier = Modifier
         .backgroundColor(SurfaceDefaults.backgroundColor(variant))
@@ -707,7 +707,7 @@ fun UiTreeBuilder.Surface(
         )
         .then(modifier)
     ProvideContentColor(contentColor) {
-        emit(
+        emitResolved(
             type = NodeType.Surface,
             key = key,
             props = Props(
@@ -716,7 +716,7 @@ fun UiTreeBuilder.Surface(
                 ),
             ),
             modifier = semanticModifier,
-            content = content,
+            children = BoxScope().apply(content).build(),
         )
     }
 }
@@ -768,9 +768,9 @@ fun UiTreeBuilder.Row(
     arrangement: MainAxisArrangement = MainAxisArrangement.Start,
     verticalAlignment: VerticalAlignment = VerticalAlignment.Top,
     modifier: Modifier = Modifier,
-    content: UiTreeBuilder.() -> Unit,
+    content: RowScope.() -> Unit,
 ) {
-    emit(
+    emitResolved(
         type = NodeType.Row,
         key = key,
         props = Props(
@@ -781,7 +781,7 @@ fun UiTreeBuilder.Row(
             ),
         ),
         modifier = modifier,
-        content = content,
+        children = RowScope().apply(content).build(),
     )
 }
 
@@ -791,9 +791,9 @@ fun UiTreeBuilder.Column(
     arrangement: MainAxisArrangement = MainAxisArrangement.Start,
     horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Start,
     modifier: Modifier = Modifier,
-    content: UiTreeBuilder.() -> Unit,
+    content: ColumnScope.() -> Unit,
 ) {
-    emit(
+    emitResolved(
         type = NodeType.Column,
         key = key,
         props = Props(
@@ -804,7 +804,7 @@ fun UiTreeBuilder.Column(
             ),
         ),
         modifier = modifier,
-        content = content,
+        children = ColumnScope().apply(content).build(),
     )
 }
 
