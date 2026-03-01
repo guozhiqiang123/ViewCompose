@@ -7,10 +7,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.gzq.uiframework.widget.core.RenderSession
 import com.gzq.uiframework.widget.core.UiTreeBuilder
 import com.gzq.uiframework.widget.core.renderInto
 
 abstract class DemoRenderActivity : AppCompatActivity() {
+    private var renderSession: RenderSession? = null
+
     protected open val showBackButton: Boolean = true
 
     protected open fun redirectTargetIntent(): Intent? = null
@@ -37,7 +40,8 @@ abstract class DemoRenderActivity : AppCompatActivity() {
             view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        renderInto(
+        renderSession?.dispose()
+        renderSession = renderInto(
             container = root,
             debug = true,
             debugTag = "UIFrameworkSample",
@@ -52,6 +56,12 @@ abstract class DemoRenderActivity : AppCompatActivity() {
                 buildDemoContent(root, builder)
             }
         }
+    }
+
+    override fun onDestroy() {
+        renderSession?.dispose()
+        renderSession = null
+        super.onDestroy()
     }
 
     override fun onNewIntent(intent: Intent) {
