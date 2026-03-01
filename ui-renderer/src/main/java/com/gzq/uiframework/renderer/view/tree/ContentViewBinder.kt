@@ -46,6 +46,27 @@ internal object ContentViewBinder {
         view.gravity = spec.gravity
     }
 
+    fun applyTextPatch(
+        view: TextView,
+        patch: TextNodePatch,
+    ) {
+        if (patch.previous.text != patch.next.text) {
+            view.text = patch.next.text
+        }
+        if (patch.previous.maxLines != patch.next.maxLines) {
+            view.maxLines = patch.next.maxLines
+        }
+        if (patch.previous.overflow != patch.next.overflow) {
+            view.ellipsize = when (patch.next.overflow) {
+                TextOverflow.Clip -> null
+                TextOverflow.Ellipsis -> TextUtils.TruncateAt.END
+            }
+        }
+        if (patch.previous.textAlign != patch.next.textAlign) {
+            view.gravity = patch.next.textAlign.toTextGravity()
+        }
+    }
+
     fun bindButton(
         view: Button,
         spec: ButtonSpec,

@@ -51,7 +51,10 @@ class NodeBindingDifferTest {
         val previous = textNode(text = "before")
         val next = textNode(text = "after")
 
-        assertSame(NodeBindingPlan.Rebind, NodeBindingDiffer.plan(previous, next))
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is TextNodePatch)
     }
 
     @Test

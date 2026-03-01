@@ -1,6 +1,7 @@
 package com.gzq.uiframework.renderer.view.tree
 
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 
 internal sealed interface NodeBindingPlan {
     data object Skip : NodeBindingPlan
@@ -17,4 +18,9 @@ internal sealed interface NodeViewPatch
 internal data class ButtonNodePatch(
     val previous: ButtonNodeProps,
     val next: ButtonNodeProps,
+) : NodeViewPatch
+
+internal data class TextNodePatch(
+    val previous: TextNodeProps,
+    val next: TextNodeProps,
 ) : NodeViewPatch

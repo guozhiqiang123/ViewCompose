@@ -3,6 +3,7 @@ package com.gzq.uiframework.renderer.view.tree
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 
 internal object NodeBindingDiffer {
     fun plan(
@@ -29,6 +30,16 @@ internal object NodeBindingDiffer {
                     patch = ButtonNodePatch(
                         previous = previousButton,
                         next = nextButton,
+                    ),
+                )
+            }
+            val previousText = previous.spec as? TextNodeProps
+            val nextText = next.spec as? TextNodeProps
+            if (previousText != null && nextText != null) {
+                return NodeBindingPlan.Patch(
+                    patch = TextNodePatch(
+                        previous = previousText,
+                        next = nextText,
                     ),
                 )
             }

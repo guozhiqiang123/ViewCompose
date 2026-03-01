@@ -177,6 +177,12 @@ internal object NodeViewBinderRegistry {
                     patch = patch,
                 )
             }
+            is TextNodePatch -> {
+                ContentViewBinder.applyTextPatch(
+                    view = view as TextView,
+                    patch = patch,
+                )
+            }
         }
     }
 
