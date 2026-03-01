@@ -774,6 +774,56 @@ fun UiTreeBuilder.AndroidView(
     )
 }
 
+fun UiTreeBuilder.Snackbar(
+    visible: Boolean,
+    message: String,
+    actionLabel: String? = null,
+    duration: SnackbarDuration = SnackbarDuration.Short,
+    requestKey: String = "snackbar",
+    onAction: (() -> Unit)? = null,
+    onDismiss: (() -> Unit)? = null,
+) {
+    if (!visible) {
+        return
+    }
+    submitOverlayRequest(
+        OverlayRequest(
+            key = requestKey,
+            type = OverlayType.Snackbar,
+            payload = SnackbarOverlaySpec(
+                message = message,
+                actionLabel = actionLabel,
+                duration = duration,
+                onAction = onAction,
+                onDismiss = onDismiss,
+            ),
+        ),
+    )
+}
+
+fun UiTreeBuilder.Toast(
+    visible: Boolean,
+    message: String,
+    duration: ToastDuration = ToastDuration.Short,
+    requestKey: String = "toast",
+    onDismiss: (() -> Unit)? = null,
+) {
+    if (!visible) {
+        return
+    }
+    submitOverlayRequest(
+        OverlayRequest(
+            key = requestKey,
+            type = OverlayType.Toast,
+            payload = ToastOverlaySpec(
+                message = message,
+                duration = duration,
+                onDismiss = onDismiss,
+            ),
+        ),
+    )
+}
+
 fun UiTreeBuilder.Box(
     key: Any? = null,
     contentAlignment: BoxAlignment = BoxAlignment.TopStart,
