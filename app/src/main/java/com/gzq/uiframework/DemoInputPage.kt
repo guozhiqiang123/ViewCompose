@@ -86,7 +86,8 @@ internal fun UiTreeBuilder.InputPage() {
                 onSelectionChange = { selectedPageState.value = it },
             )
 
-            "intro" -> DemoSection(
+            "intro" -> ScenarioSection(
+                kind = ScenarioKind.Guide,
                 title = "Text And Input Family",
                 subtitle = "The framework now maps multiple `EditText` variants: text, password, email, number, and multiline text.",
             ) {
@@ -97,7 +98,8 @@ internal fun UiTreeBuilder.InputPage() {
                 )
             }
 
-            "form" -> DemoSection(
+            "form" -> ScenarioSection(
+                kind = ScenarioKind.Core,
                 title = "Form Controls",
                 subtitle = "All fields are state-driven and update the same render session.",
             ) {
@@ -196,7 +198,8 @@ internal fun UiTreeBuilder.InputPage() {
                 )
             }
 
-            "controls" -> DemoSection(
+            "controls" -> ScenarioSection(
+                kind = ScenarioKind.Core,
                 title = "Selection + Slider Controls",
                 subtitle = "Checkbox, switch, radio button, and slider now live in the same declarative input family.",
             ) {
@@ -308,7 +311,8 @@ internal fun UiTreeBuilder.InputPage() {
                 }
             }
 
-            "stress" -> DemoSection(
+            "stress" -> ScenarioSection(
+                kind = ScenarioKind.Stress,
                 title = "Input Edge Cases",
                 subtitle = "This page focuses on long labels, read-only text, multiline growth, and persistent error styling under theme changes.",
             ) {
@@ -394,7 +398,8 @@ internal fun UiTreeBuilder.InputPage() {
                 )
             }
 
-            "summary" -> DemoSection(
+            "summary" -> ScenarioSection(
+                kind = ScenarioKind.Benchmark,
                 title = "Derived Summary",
                 subtitle = "This section is driven by `derivedStateOf`, not duplicated imperative updates.",
             ) {

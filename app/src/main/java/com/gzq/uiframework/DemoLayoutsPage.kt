@@ -62,7 +62,8 @@ internal fun UiTreeBuilder.LayoutPage() {
                 onSelectionChange = { selectedPageState.value = it },
             )
 
-            "row" -> DemoSection(
+            "row" -> ScenarioSection(
+                kind = ScenarioKind.Core,
                 title = "Row + Spacer + Cross Axis Alignment",
                 subtitle = "Custom linear layout now supports spacing, arrangement, and child-level cross-axis override.",
             ) {
@@ -92,7 +93,8 @@ internal fun UiTreeBuilder.LayoutPage() {
                 }
             }
 
-            "box" -> DemoSection(
+            "box" -> ScenarioSection(
+                kind = ScenarioKind.Visual,
                 title = "Box Overlay",
                 subtitle = "Default alignment, child override, offset, and zIndex work together in a single container.",
             ) {
@@ -126,7 +128,8 @@ internal fun UiTreeBuilder.LayoutPage() {
                 }
             }
 
-            "column" -> DemoSection(
+            "column" -> ScenarioSection(
+                kind = ScenarioKind.Core,
                 title = "Column Arrangement",
                 subtitle = "Main-axis arrangement and dividers are now stable inside the custom linear container.",
             ) {
@@ -147,7 +150,8 @@ internal fun UiTreeBuilder.LayoutPage() {
                 }
             }
 
-            "edge" -> DemoSection(
+            "edge" -> ScenarioSection(
+                kind = ScenarioKind.Stress,
                 title = "Layout Edge Cases",
                 subtitle = "This page compresses the combinations that previously exposed wrong defaults for wrap, weight, and nested container sizing.",
             ) {

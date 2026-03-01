@@ -25,6 +25,32 @@ import com.gzq.uiframework.widget.core.dp
 import com.gzq.uiframework.widget.core.sp
 import java.util.Locale
 
+internal enum class ScenarioKind(
+    val label: String,
+    val hint: String,
+) {
+    Guide(
+        label = "Guide",
+        hint = "Use this block to understand the page goal before testing.",
+    ),
+    Core(
+        label = "Core Scenario",
+        hint = "This is the primary manual verification path for the current page.",
+    ),
+    Visual(
+        label = "Visual Scenario",
+        hint = "Use this block to inspect placement, styling, and visual state stability.",
+    ),
+    Stress(
+        label = "Stress Scenario",
+        hint = "Use this block to trigger edge cases and benchmark-friendly repeated updates.",
+    ),
+    Benchmark(
+        label = "Benchmark Entry",
+        hint = "This block is intentionally stable so manual runs and macrobenchmarks can share the same path.",
+    ),
+}
+
 internal fun UiTreeBuilder.ThemeSwatchRow(
     label: String,
     swatches: List<ThemeSwatch>,
@@ -61,6 +87,26 @@ internal fun UiTreeBuilder.ThemeSwatchRow(
                 }
             }
         }
+    }
+}
+
+internal fun UiTreeBuilder.ScenarioSection(
+    kind: ScenarioKind,
+    title: String,
+    subtitle: String,
+    content: UiTreeBuilder.() -> Unit,
+) {
+    DemoSection(
+        title = title,
+        subtitle = subtitle,
+    ) {
+        Text(
+            text = "${kind.label} · ${kind.hint}",
+            style = UiTextStyle(fontSizeSp = 12.sp),
+            color = TextDefaults.secondaryColor(),
+            modifier = Modifier.padding(bottom = 4.dp),
+        )
+        content()
     }
 }
 

@@ -68,7 +68,8 @@ internal fun UiTreeBuilder.OverviewPage(
                 onSelectionChange = { selectedPageState.value = it },
             )
 
-            "intro" -> DemoSection(
+            "intro" -> ScenarioSection(
+                kind = ScenarioKind.Guide,
                 title = "Why This Demo Changed",
                 subtitle = "The sample is now split by category so the runtime surface is easier to read and extend.",
             ) {
@@ -81,7 +82,8 @@ internal fun UiTreeBuilder.OverviewPage(
                 )
             }
 
-            "theme" -> DemoSection(
+            "theme" -> ScenarioSection(
+                kind = ScenarioKind.Core,
                 title = "Theme Preview",
                 subtitle = "This block shows the active demo theme tokens, including the tab pager palette.",
             ) {
@@ -110,7 +112,8 @@ internal fun UiTreeBuilder.OverviewPage(
                 )
             }
 
-            "overrides" -> DemoSection(
+            "overrides" -> ScenarioSection(
+                kind = ScenarioKind.Core,
                 title = "Scoped Theme Overrides",
                 subtitle = "Each block below overrides only one token domain for its local subtree.",
             ) {
@@ -325,7 +328,8 @@ internal fun UiTreeBuilder.OverviewPage(
                 )
             }
 
-            "progress" -> DemoSection(
+            "progress" -> ScenarioSection(
+                kind = ScenarioKind.Core,
                 title = "Progress Indicators",
                 subtitle = "These are mapped virtual controls backed by Material View widgets, but styled through framework defaults.",
             ) {
@@ -354,7 +358,8 @@ internal fun UiTreeBuilder.OverviewPage(
                 }
             }
 
-            "media" -> DemoSection(
+            "media" -> ScenarioSection(
+                kind = ScenarioKind.Visual,
                 title = "Image + Icon",
                 subtitle = "Media primitives are now separate from remote loading. The widget defines semantics; loading stays pluggable.",
             ) {
@@ -469,7 +474,8 @@ internal fun UiTreeBuilder.OverviewPage(
                 }
             }
 
-            "jump" -> DemoSection(
+            "jump" -> ScenarioSection(
+                kind = ScenarioKind.Benchmark,
                 title = "Jump To A Capability",
                 subtitle = "These buttons now navigate between the top-level demo chapters, so manual testing follows stable paths.",
             ) {
@@ -509,7 +515,8 @@ internal fun UiTreeBuilder.OverviewPage(
                 )
             }
 
-            "surface" -> DemoSection(
+            "surface" -> ScenarioSection(
+                kind = ScenarioKind.Core,
                 title = "Current Surface",
                 subtitle = "The first vertical slice now includes the following framework controls.",
             ) {

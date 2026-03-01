@@ -108,7 +108,8 @@ internal fun UiTreeBuilder.CollectionPage() {
                 onSelectionChange = { selectedPageState.value = it },
             )
 
-            "controls" -> DemoSection(
+            "controls" -> ScenarioSection(
+                kind = ScenarioKind.Guide,
                 title = "Collection Controls",
                 subtitle = "These buttons mutate the source list and labels while preserving keyed item state.",
             ) {
@@ -133,7 +134,8 @@ internal fun UiTreeBuilder.CollectionPage() {
                 }
             }
 
-            "list" -> DemoSection(
+            "list" -> ScenarioSection(
+                kind = ScenarioKind.Core,
                 title = "LazyColumn",
                 subtitle = "Each item keeps its own local state while keyed reorder and content updates pass through the diff layer.",
             ) {
@@ -164,7 +166,8 @@ internal fun UiTreeBuilder.CollectionPage() {
                 }
             }
 
-            "stress" -> DemoSection(
+            "stress" -> ScenarioSection(
+                kind = ScenarioKind.Stress,
                 title = "Lazy Stress Cases",
                 subtitle = "This page compresses reorder, insertion, label mutation, and constrained height into one repeatable manual test path.",
             ) {
@@ -237,7 +240,8 @@ internal fun UiTreeBuilder.CollectionPage() {
                 }
             }
 
-            "interop" -> DemoSection(
+            "interop" -> ScenarioSection(
+                kind = ScenarioKind.Benchmark,
                 title = "AndroidView Interop",
                 subtitle = "Legacy views still plug into the same declarative state flow.",
             ) {
