@@ -558,6 +558,7 @@ Compose 会：
 3. 过深树 warning
    - 当前 mounted view depth 超过 `10` 时会输出 warning
 4. 无 key / 重复 key / 大量重建 warning
+   - 当前 renderer 已统一收口 sibling duplicate key、repeated unkeyed siblings、high rebind churn、high structural churn
 
 ### Phase 4：收布局性能
 

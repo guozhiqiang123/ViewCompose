@@ -63,7 +63,6 @@ import com.gzq.uiframework.renderer.R
 object ViewTreeRenderer {
     private const val DEFAULT_RIPPLE_COLOR: Int = 0x22000000
     private const val WARNING_TAG: String = "UIFramework"
-    private const val DEEP_TREE_WARNING_DEPTH: Int = 10
     private val emittedModifierWarnings = mutableSetOf<String>()
     private val emittedStructureWarnings = mutableSetOf<String>()
 
@@ -129,7 +128,11 @@ object ViewTreeRenderer {
         val warnings = if (onReconcile == null) {
             emptyList()
         } else {
-            collectStructureWarnings(structure)
+            collectRenderWarnings(
+                nodes = nodes,
+                structure = structure,
+                stats = stats,
+            )
         }
         return RenderTreeResult(
             mountedNodes = nextMounted,
@@ -229,13 +232,16 @@ object ViewTreeRenderer {
         )
     }
 
-    private fun collectStructureWarnings(
+    private fun collectRenderWarnings(
+        nodes: List<VNode>,
         structure: RenderStructureStats,
+        stats: RenderStats,
     ): List<String> {
-        val warnings = mutableListOf<String>()
-        if (structure.maxMountedDepth > DEEP_TREE_WARNING_DEPTH) {
-            warnings += "Deep mounted view tree detected: depth=${structure.maxMountedDepth} exceeds recommended limit $DEEP_TREE_WARNING_DEPTH."
-        }
+        val warnings = RenderWarningCollector.collect(
+            nodes = nodes,
+            structure = structure,
+            stats = stats,
+        )
         warnings.forEach { warning ->
             val key = "structure|$warning"
             if (emittedStructureWarnings.add(key)) {

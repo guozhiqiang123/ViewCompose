@@ -267,6 +267,7 @@ flowchart TD
 - 控件族绑定逻辑有了独立测试和演进落点
 - 文本、输入、媒体、容器、进度这几组 props 解析也开始跟随 binder 下沉
 - `RenderTreeResult` 也开始承载 `RenderStats + RenderStructureStats + warnings`，Diagnostics 和性能路线终于有了统一数据口
+- renderer warning 也开始统一收口到同一产物里，不再只依赖零散 `Log.w(...)`
 - 不必过早引入 adapter registry，也能先降低单点复杂度
 
 但它仍然没有彻底解决这些问题：
