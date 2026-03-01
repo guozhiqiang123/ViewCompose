@@ -151,6 +151,24 @@ widget/core/
 - 但模块级职责仍偏重：`ui-widget-core` 现在同时承担 DSL、composition runtime、theme、defaults
 - 这是当前最需要在后续继续分层的地方
 
+#### `ui-overlay-android`
+
+```text
+overlay/android/
+  host/
+  presenter/
+```
+
+解释：
+
+- `host/` 放 Android 侧 `OverlayHost` 装配和组合宿主
+- `presenter/` 放 `Dialog`、`PopupWindow`、`Snackbar`、`Toast` 的平台 presenter
+
+评价：
+
+- 这个模块只承接 Android 平台弹层实现，不再回流到 `ui-widget-core`
+- 后续如果继续扩张，再按 `surface/feedback/positioning` 细分
+
 ## 5. 当前核心调用链
 
 ```mermaid

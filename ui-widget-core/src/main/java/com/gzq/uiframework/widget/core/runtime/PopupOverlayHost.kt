@@ -1,6 +1,6 @@
 package com.gzq.uiframework.widget.core
 
-internal interface PopupOverlayHandle {
+interface PopupOverlayHandle {
     fun update(
         spec: PopupOverlaySpec,
         content: PopupOverlayContent,
@@ -9,7 +9,7 @@ internal interface PopupOverlayHandle {
     fun dismiss()
 }
 
-internal interface PopupOverlayPresenter {
+interface PopupOverlayPresenter {
     fun show(
         entryId: OverlayEntryId,
         spec: PopupOverlaySpec,
@@ -17,7 +17,7 @@ internal interface PopupOverlayPresenter {
     ): PopupOverlayHandle
 }
 
-internal class PopupOverlayHost(
+class PopupOverlayHost(
     private val presenter: PopupOverlayPresenter,
 ) : OverlayHost {
     private val activeRequests = mutableMapOf<OverlayEntryId, ActivePopupEntry>()

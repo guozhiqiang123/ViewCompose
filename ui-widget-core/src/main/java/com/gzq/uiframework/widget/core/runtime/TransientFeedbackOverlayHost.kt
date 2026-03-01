@@ -1,11 +1,11 @@
 package com.gzq.uiframework.widget.core
 
-internal data class OverlayEntryId(
+data class OverlayEntryId(
     val sessionId: OverlaySessionId,
     val requestKey: String,
 )
 
-internal interface SnackbarOverlayPresenter {
+interface SnackbarOverlayPresenter {
     fun show(
         entryId: OverlayEntryId,
         spec: SnackbarOverlaySpec,
@@ -14,7 +14,7 @@ internal interface SnackbarOverlayPresenter {
     fun dismiss(entryId: OverlayEntryId)
 }
 
-internal interface ToastOverlayPresenter {
+interface ToastOverlayPresenter {
     fun show(
         entryId: OverlayEntryId,
         spec: ToastOverlaySpec,
@@ -23,7 +23,7 @@ internal interface ToastOverlayPresenter {
     fun dismiss(entryId: OverlayEntryId)
 }
 
-internal class TransientFeedbackOverlayHost(
+class TransientFeedbackOverlayHost(
     private val snackbarPresenter: SnackbarOverlayPresenter,
     private val toastPresenter: ToastOverlayPresenter,
 ) : OverlayHost {

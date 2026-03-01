@@ -1,62 +1,34 @@
-package com.gzq.uiframework.widget.core
+package com.gzq.uiframework.overlay.android.presenter
 
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import android.view.View.MeasureSpec
+import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.PopupWindow
 import androidx.core.view.doOnLayout
+import com.gzq.uiframework.renderer.R
 import com.gzq.uiframework.renderer.view.tree.MountedNode
 import com.gzq.uiframework.renderer.view.tree.ViewTreeRenderer
-import com.gzq.uiframework.renderer.R
+import com.gzq.uiframework.widget.core.AndroidEnvironmentBridge
+import com.gzq.uiframework.widget.core.DialogOverlayContent
+import com.gzq.uiframework.widget.core.DialogOverlayHandle
+import com.gzq.uiframework.widget.core.DialogOverlayPresenter
+import com.gzq.uiframework.widget.core.DialogOverlaySpec
+import com.gzq.uiframework.widget.core.DialogPosition
+import com.gzq.uiframework.widget.core.OverlayEntryId
+import com.gzq.uiframework.widget.core.PopupAlignment
+import com.gzq.uiframework.widget.core.PopupOverlayContent
+import com.gzq.uiframework.widget.core.PopupOverlayHandle
+import com.gzq.uiframework.widget.core.PopupOverlayPresenter
+import com.gzq.uiframework.widget.core.PopupOverlaySpec
 
-class AndroidOverlayHost(
-    rootView: View,
-) : OverlayHost {
-    private val delegate = CompositeOverlayHost(
-        DialogOverlayHost(AndroidDialogOverlayPresenter(rootView)),
-        PopupOverlayHost(AndroidPopupOverlayPresenter(rootView)),
-        AndroidTransientFeedbackOverlayHost(rootView),
-    )
-
-    override fun commit(
-        sessionId: OverlaySessionId,
-        requests: List<OverlayRequest>,
-    ) {
-        delegate.commit(sessionId, requests)
-    }
-
-    override fun clear(sessionId: OverlaySessionId) {
-        delegate.clear(sessionId)
-    }
-}
-
-internal class CompositeOverlayHost(
-    private vararg val delegates: OverlayHost,
-) : OverlayHost {
-    override fun commit(
-        sessionId: OverlaySessionId,
-        requests: List<OverlayRequest>,
-    ) {
-        delegates.forEach { host ->
-            host.commit(sessionId, requests)
-        }
-    }
-
-    override fun clear(sessionId: OverlaySessionId) {
-        delegates.forEach { host ->
-            host.clear(sessionId)
-        }
-    }
-}
-
-internal class AndroidDialogOverlayPresenter(
+class AndroidDialogOverlayPresenter(
     private val rootView: View,
 ) : DialogOverlayPresenter {
     override fun show(
@@ -72,7 +44,7 @@ internal class AndroidDialogOverlayPresenter(
     }
 }
 
-internal class AndroidPopupOverlayPresenter(
+class AndroidPopupOverlayPresenter(
     private val rootView: View,
 ) : PopupOverlayPresenter {
     override fun show(
@@ -93,8 +65,9 @@ private class AndroidDialogOverlayHandle(
     spec: DialogOverlaySpec,
     content: DialogOverlayContent,
 ) : DialogOverlayHandle {
+    private val density = AndroidEnvironmentBridge.fromContext(rootView.context).density
     private val dialogContainer = FrameLayout(rootView.context).apply {
-        val inset = 24.dp(rootView)
+        val inset = density.dp(24)
         setPadding(inset, inset, inset, inset)
         background = ColorDrawable(Color.TRANSPARENT)
         layoutParams = ViewGroup.LayoutParams(
@@ -177,6 +150,7 @@ private class AndroidPopupOverlayHandle(
     spec: PopupOverlaySpec,
     content: PopupOverlayContent,
 ) : PopupOverlayHandle {
+    private val density = AndroidEnvironmentBridge.fromContext(rootView.context).density
     private val popupContainer = FrameLayout(rootView.context).apply {
         background = ColorDrawable(Color.TRANSPARENT)
         layoutParams = ViewGroup.LayoutParams(
@@ -191,7 +165,7 @@ private class AndroidPopupOverlayHandle(
         spec.focusable,
     ).apply {
         setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        elevation = 12.dp(rootView).toFloat()
+        elevation = density.dp(12).toFloat()
     }
     private var mountedNodes: List<MountedNode> = emptyList()
     private var currentSpec = spec
@@ -268,10 +242,6 @@ private class AndroidPopupOverlayHandle(
         }
         programmaticDismiss = false
     }
-}
-
-private fun Int.dp(view: View): Int {
-    return (this * view.resources.displayMetrics.density).toInt()
 }
 
 private fun View.findAnchorTarget(anchorId: String): View? {

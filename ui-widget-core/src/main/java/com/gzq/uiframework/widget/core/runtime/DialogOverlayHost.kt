@@ -1,6 +1,6 @@
 package com.gzq.uiframework.widget.core
 
-internal interface DialogOverlayHandle {
+interface DialogOverlayHandle {
     fun update(
         spec: DialogOverlaySpec,
         content: DialogOverlayContent,
@@ -9,7 +9,7 @@ internal interface DialogOverlayHandle {
     fun dismiss()
 }
 
-internal interface DialogOverlayPresenter {
+interface DialogOverlayPresenter {
     fun show(
         entryId: OverlayEntryId,
         spec: DialogOverlaySpec,
@@ -17,7 +17,7 @@ internal interface DialogOverlayPresenter {
     ): DialogOverlayHandle
 }
 
-internal class DialogOverlayHost(
+class DialogOverlayHost(
     private val presenter: DialogOverlayPresenter,
 ) : OverlayHost {
     private val activeRequests = mutableMapOf<OverlayEntryId, ActiveDialogEntry>()

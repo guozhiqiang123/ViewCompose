@@ -45,6 +45,7 @@ dependencies {
     implementation(project(":ui-runtime"))
     implementation(project(":ui-renderer"))
     implementation(project(":ui-widget-core"))
+    implementation(project(":ui-overlay-android"))
     implementation(project(":ui-image-coil"))
 
     implementation(libs.androidx.core.ktx)

@@ -7,7 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.gzq.uiframework.widget.core.AndroidOverlayHost
+import com.gzq.uiframework.overlay.android.host.AndroidOverlayHost
 import com.gzq.uiframework.widget.core.RenderSession
 import com.gzq.uiframework.widget.core.UiTreeBuilder
 import com.gzq.uiframework.widget.core.renderInto

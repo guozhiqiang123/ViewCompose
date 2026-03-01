@@ -1,18 +1,18 @@
-package com.gzq.uiframework.widget.core
+package com.gzq.uiframework.overlay.android.presenter
 
 import android.content.Context
 import android.view.View
 import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
+import com.gzq.uiframework.widget.core.OverlayEntryId
+import com.gzq.uiframework.widget.core.SnackbarDuration
+import com.gzq.uiframework.widget.core.SnackbarOverlayPresenter
+import com.gzq.uiframework.widget.core.SnackbarOverlaySpec
+import com.gzq.uiframework.widget.core.ToastDuration
+import com.gzq.uiframework.widget.core.ToastOverlayPresenter
+import com.gzq.uiframework.widget.core.ToastOverlaySpec
 
-class AndroidTransientFeedbackOverlayHost(
-    anchorView: View,
-) : OverlayHost by TransientFeedbackOverlayHost(
-    snackbarPresenter = AndroidSnackbarOverlayPresenter(anchorView),
-    toastPresenter = AndroidToastOverlayPresenter(anchorView.context.applicationContext),
-)
-
-internal class AndroidSnackbarOverlayPresenter(
+class AndroidSnackbarOverlayPresenter(
     private val anchorView: View,
 ) : SnackbarOverlayPresenter {
     private val activeSnackbars = mutableMapOf<OverlayEntryId, Snackbar>()
@@ -51,17 +51,9 @@ internal class AndroidSnackbarOverlayPresenter(
     override fun dismiss(entryId: OverlayEntryId) {
         activeSnackbars.remove(entryId)?.dismiss()
     }
-
-    private fun SnackbarDuration.toPlatformDuration(): Int {
-        return when (this) {
-            SnackbarDuration.Short -> Snackbar.LENGTH_SHORT
-            SnackbarDuration.Long -> Snackbar.LENGTH_LONG
-            SnackbarDuration.Indefinite -> Snackbar.LENGTH_INDEFINITE
-        }
-    }
 }
 
-internal class AndroidToastOverlayPresenter(
+class AndroidToastOverlayPresenter(
     private val appContext: Context,
 ) : ToastOverlayPresenter {
     private val activeToasts = mutableMapOf<OverlayEntryId, Pair<Toast, ToastOverlaySpec>>()
@@ -85,11 +77,19 @@ internal class AndroidToastOverlayPresenter(
         active.first.cancel()
         active.second.onDismiss?.invoke()
     }
+}
 
-    private fun ToastDuration.toPlatformDuration(): Int {
-        return when (this) {
-            ToastDuration.Short -> Toast.LENGTH_SHORT
-            ToastDuration.Long -> Toast.LENGTH_LONG
-        }
+private fun SnackbarDuration.toPlatformDuration(): Int {
+    return when (this) {
+        SnackbarDuration.Short -> Snackbar.LENGTH_SHORT
+        SnackbarDuration.Long -> Snackbar.LENGTH_LONG
+        SnackbarDuration.Indefinite -> Snackbar.LENGTH_INDEFINITE
+    }
+}
+
+private fun ToastDuration.toPlatformDuration(): Int {
+    return when (this) {
+        ToastDuration.Short -> Toast.LENGTH_SHORT
+        ToastDuration.Long -> Toast.LENGTH_LONG
     }
 }
