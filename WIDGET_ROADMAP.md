@@ -265,6 +265,8 @@
 
 ### 6.4 结构性反馈组件
 
+专项规划见 [OVERLAY_COMPONENTS_ROADMAP.md](/Users/gzq/AndroidStudioProjects/UIFramework/OVERLAY_COMPONENTS_ROADMAP.md)。
+
 | 控件 | 原生承载 | 核心属性 | 为什么是 P2 |
 | --- | --- | --- | --- |
 | `Dialog` | `Dialog` / `FragmentDialog` | `visible`、`onDismiss`、content | 生命周期与宿主绑定更复杂 |

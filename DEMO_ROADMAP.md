@@ -20,6 +20,8 @@
 - 该仓库 README 当前明确强调了 `Jetpack Compose Tutorials`、`Layouts`、`State`、`Widgets`、`Navigation`、`Gestures`、`Animation`、`Canvas` 等方向  
   参考页：<https://github.com/SmartToolFactory/Jetpack-Compose-Tutorials>
 
+外挂组件 demo 规划见 [OVERLAY_COMPONENTS_ROADMAP.md](/Users/gzq/AndroidStudioProjects/UIFramework/OVERLAY_COMPONENTS_ROADMAP.md)。
+
 ## 2. 当前问题
 
 当前 demo 已经完成第一轮多 Activity 重构，并且已实现模块基本切到了统一的 scenario 模板，但仍然有明显问题：
@@ -463,6 +465,7 @@
 - Drawer
 - Snackbar
 - Dialog / BottomSheet
+- Overlay / Feedback module（`Toast`、`Snackbar`、`Dialog`、`PopupWindow`）
 
 #### H. Tooling 与语义树
 

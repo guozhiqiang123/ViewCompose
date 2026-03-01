@@ -11,6 +11,8 @@
 3. demo 页面结构调整后，关键 benchmark 入口跑偏
 4. 组件在真实 Activity/View 树里的测量与视觉表现和预期不一致
 
+外挂组件专项规划见 [OVERLAY_COMPONENTS_ROADMAP.md](/Users/gzq/AndroidStudioProjects/UIFramework/OVERLAY_COMPONENTS_ROADMAP.md)。
+
 因此，后续 UI 测试的目标不是替代单元测试，而是补上“真实 Activity + 真实 View 树 + 真实主题切换”的回归校验。
 
 ## 2. 分层策略
@@ -116,6 +118,7 @@
    - weight / wrap / nested surface 的可见性和布局边界
 4. 局部主题 override 的视觉断言
 5. 截图目录和 artifact 汇总
+6. overlay/feedback 组件的宿主级回归
 
 ## 6.1 当前专项回归基线
 
