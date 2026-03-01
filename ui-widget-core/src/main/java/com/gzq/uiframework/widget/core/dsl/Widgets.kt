@@ -247,18 +247,16 @@ fun UiTreeBuilder.Checkbox(
     emit(
         type = NodeType.Checkbox,
         key = key,
-        props = Props(
-            values = mapOf(
-                PropKeys.TEXT to text,
-                PropKeys.CHECKED to checked,
-                PropKeys.ON_CHECKED_CHANGE to onCheckedChange,
-                PropKeys.ENABLED to enabled,
-                PropKeys.CONTROL_COLOR to InputControlDefaults.checkboxControlColor(enabled),
-                PropKeys.TEXT_COLOR to InputControlDefaults.checkboxLabelColor(enabled),
-                PropKeys.TEXT_SIZE_SP to style.fontSizeSp,
-                PropKeys.STYLE_RIPPLE_COLOR to InputControlDefaults.pressedColor(),
-            ),
-        ),
+        props = props {
+            set(TypedPropKeys.Text, text)
+            set(TypedPropKeys.Checked, checked)
+            set(TypedPropKeys.OnCheckedChange, onCheckedChange)
+            set(TypedPropKeys.Enabled, enabled)
+            set(TypedPropKeys.ControlColor, InputControlDefaults.checkboxControlColor(enabled))
+            set(TypedPropKeys.TextColor, InputControlDefaults.checkboxLabelColor(enabled))
+            set(TypedPropKeys.TextSizeSp, style.fontSizeSp)
+            set(TypedPropKeys.StyleRippleColor, InputControlDefaults.pressedColor())
+        },
         modifier = modifier,
     )
 }
@@ -275,18 +273,16 @@ fun UiTreeBuilder.Switch(
     emit(
         type = NodeType.Switch,
         key = key,
-        props = Props(
-            values = mapOf(
-                PropKeys.TEXT to text,
-                PropKeys.CHECKED to checked,
-                PropKeys.ON_CHECKED_CHANGE to onCheckedChange,
-                PropKeys.ENABLED to enabled,
-                PropKeys.CONTROL_COLOR to InputControlDefaults.switchControlColor(enabled),
-                PropKeys.TEXT_COLOR to InputControlDefaults.switchLabelColor(enabled),
-                PropKeys.TEXT_SIZE_SP to style.fontSizeSp,
-                PropKeys.STYLE_RIPPLE_COLOR to InputControlDefaults.pressedColor(),
-            ),
-        ),
+        props = props {
+            set(TypedPropKeys.Text, text)
+            set(TypedPropKeys.Checked, checked)
+            set(TypedPropKeys.OnCheckedChange, onCheckedChange)
+            set(TypedPropKeys.Enabled, enabled)
+            set(TypedPropKeys.ControlColor, InputControlDefaults.switchControlColor(enabled))
+            set(TypedPropKeys.TextColor, InputControlDefaults.switchLabelColor(enabled))
+            set(TypedPropKeys.TextSizeSp, style.fontSizeSp)
+            set(TypedPropKeys.StyleRippleColor, InputControlDefaults.pressedColor())
+        },
         modifier = modifier,
     )
 }
@@ -303,18 +299,16 @@ fun UiTreeBuilder.RadioButton(
     emit(
         type = NodeType.RadioButton,
         key = key,
-        props = Props(
-            values = mapOf(
-                PropKeys.TEXT to text,
-                PropKeys.CHECKED to checked,
-                PropKeys.ON_CHECKED_CHANGE to onCheckedChange,
-                PropKeys.ENABLED to enabled,
-                PropKeys.CONTROL_COLOR to InputControlDefaults.radioButtonControlColor(enabled),
-                PropKeys.TEXT_COLOR to InputControlDefaults.radioButtonLabelColor(enabled),
-                PropKeys.TEXT_SIZE_SP to style.fontSizeSp,
-                PropKeys.STYLE_RIPPLE_COLOR to InputControlDefaults.pressedColor(),
-            ),
-        ),
+        props = props {
+            set(TypedPropKeys.Text, text)
+            set(TypedPropKeys.Checked, checked)
+            set(TypedPropKeys.OnCheckedChange, onCheckedChange)
+            set(TypedPropKeys.Enabled, enabled)
+            set(TypedPropKeys.ControlColor, InputControlDefaults.radioButtonControlColor(enabled))
+            set(TypedPropKeys.TextColor, InputControlDefaults.radioButtonLabelColor(enabled))
+            set(TypedPropKeys.TextSizeSp, style.fontSizeSp)
+            set(TypedPropKeys.StyleRippleColor, InputControlDefaults.pressedColor())
+        },
         modifier = modifier,
     )
 }
@@ -331,16 +325,14 @@ fun UiTreeBuilder.Slider(
     emit(
         type = NodeType.Slider,
         key = key,
-        props = Props(
-            values = mapOf(
-                PropKeys.SLIDER_VALUE to value,
-                PropKeys.MIN_VALUE to min,
-                PropKeys.MAX_VALUE to max,
-                PropKeys.ENABLED to enabled,
-                PropKeys.CONTROL_COLOR to InputControlDefaults.sliderControlColor(enabled),
-                PropKeys.ON_SLIDER_VALUE_CHANGE to onValueChange,
-            ),
-        ),
+        props = props {
+            set(TypedPropKeys.SliderValue, value)
+            set(TypedPropKeys.MinValue, min)
+            set(TypedPropKeys.MaxValue, max)
+            set(TypedPropKeys.Enabled, enabled)
+            set(TypedPropKeys.ControlColor, InputControlDefaults.sliderControlColor(enabled))
+            set(TypedPropKeys.OnSliderValueChange, onValueChange)
+        },
         modifier = modifier,
     )
 }
@@ -356,14 +348,12 @@ fun UiTreeBuilder.LinearProgressIndicator(
     emit(
         type = NodeType.LinearProgressIndicator,
         key = key,
-        props = Props(
-            values = mapOf(
-                PropKeys.PROGRESS_FRACTION to progress,
-                PropKeys.PROGRESS_INDICATOR_COLOR to indicatorColor,
-                PropKeys.PROGRESS_TRACK_COLOR to trackColor,
-                PropKeys.PROGRESS_TRACK_THICKNESS to trackThickness,
-            ),
-        ),
+        props = props {
+            set(TypedPropKeys.ProgressFraction, progress)
+            set(TypedPropKeys.ProgressIndicatorColor, indicatorColor)
+            set(TypedPropKeys.ProgressTrackColor, trackColor)
+            set(TypedPropKeys.ProgressTrackThickness, trackThickness)
+        },
         modifier = Modifier
             .fillMaxWidth()
             .height(trackThickness)
@@ -383,15 +373,13 @@ fun UiTreeBuilder.CircularProgressIndicator(
     emit(
         type = NodeType.CircularProgressIndicator,
         key = key,
-        props = Props(
-            values = mapOf(
-                PropKeys.PROGRESS_FRACTION to progress,
-                PropKeys.PROGRESS_INDICATOR_COLOR to indicatorColor,
-                PropKeys.PROGRESS_TRACK_COLOR to trackColor,
-                PropKeys.PROGRESS_TRACK_THICKNESS to trackThickness,
-                PropKeys.PROGRESS_INDICATOR_SIZE to size,
-            ),
-        ),
+        props = props {
+            set(TypedPropKeys.ProgressFraction, progress)
+            set(TypedPropKeys.ProgressIndicatorColor, indicatorColor)
+            set(TypedPropKeys.ProgressTrackColor, trackColor)
+            set(TypedPropKeys.ProgressTrackThickness, trackThickness)
+            set(TypedPropKeys.ProgressIndicatorSize, size)
+        },
         modifier = Modifier
             .size(width = size, height = size)
             .then(modifier),
@@ -604,25 +592,21 @@ fun UiTreeBuilder.SegmentedControl(
     emit(
         type = NodeType.SegmentedControl,
         key = key,
-        props = Props(
-            values = mapOf(
-                PropKeys.SEGMENT_ITEMS to items.map { label ->
-                    SegmentedControlItem(label = label)
-                },
-                PropKeys.SEGMENT_SELECTED_INDEX to selectedIndex,
-                PropKeys.ON_SEGMENT_SELECTED to onSelectionChange,
-                PropKeys.ENABLED to enabled,
-                PropKeys.SEGMENT_BACKGROUND_COLOR to SegmentedControlDefaults.backgroundColor(enabled),
-                PropKeys.SEGMENT_INDICATOR_COLOR to SegmentedControlDefaults.indicatorColor(enabled),
-                PropKeys.SEGMENT_CORNER_RADIUS to SegmentedControlDefaults.cornerRadius(),
-                PropKeys.SEGMENT_TEXT_COLOR to SegmentedControlDefaults.textColor(enabled),
-                PropKeys.SEGMENT_SELECTED_TEXT_COLOR to SegmentedControlDefaults.selectedTextColor(enabled),
-                PropKeys.SEGMENT_RIPPLE_COLOR to SegmentedControlDefaults.rippleColor(enabled),
-                PropKeys.SEGMENT_TEXT_SIZE_SP to SegmentedControlDefaults.textStyle(size).fontSizeSp,
-                PropKeys.SEGMENT_CONTENT_PADDING_HORIZONTAL to SegmentedControlDefaults.horizontalPadding(size),
-                PropKeys.SEGMENT_CONTENT_PADDING_VERTICAL to SegmentedControlDefaults.verticalPadding(size),
-            ),
-        ),
+        props = props {
+            set(TypedPropKeys.SegmentItems, items.map { label -> SegmentedControlItem(label = label) })
+            set(TypedPropKeys.SegmentSelectedIndex, selectedIndex)
+            set(TypedPropKeys.OnSegmentSelected, onSelectionChange)
+            set(TypedPropKeys.Enabled, enabled)
+            set(TypedPropKeys.SegmentBackgroundColor, SegmentedControlDefaults.backgroundColor(enabled))
+            set(TypedPropKeys.SegmentIndicatorColor, SegmentedControlDefaults.indicatorColor(enabled))
+            set(TypedPropKeys.SegmentCornerRadius, SegmentedControlDefaults.cornerRadius())
+            set(TypedPropKeys.SegmentTextColor, SegmentedControlDefaults.textColor(enabled))
+            set(TypedPropKeys.SegmentSelectedTextColor, SegmentedControlDefaults.selectedTextColor(enabled))
+            set(TypedPropKeys.SegmentRippleColor, SegmentedControlDefaults.rippleColor(enabled))
+            set(TypedPropKeys.SegmentTextSizeSp, SegmentedControlDefaults.textStyle(size).fontSizeSp)
+            set(TypedPropKeys.SegmentContentPaddingHorizontal, SegmentedControlDefaults.horizontalPadding(size))
+            set(TypedPropKeys.SegmentContentPaddingVertical, SegmentedControlDefaults.verticalPadding(size))
+        },
         modifier = Modifier
             .height(SegmentedControlDefaults.height(size))
             .then(modifier),
@@ -638,12 +622,10 @@ fun UiTreeBuilder.AndroidView(
     emit(
         type = NodeType.AndroidView,
         key = key,
-        props = Props(
-            values = mapOf(
-                PropKeys.VIEW_FACTORY to factory,
-                PropKeys.VIEW_UPDATE to update,
-            ),
-        ),
+        props = props {
+            set(TypedPropKeys.ViewFactory, factory)
+            set(TypedPropKeys.ViewUpdate, update)
+        },
         modifier = modifier,
     )
 }
@@ -657,11 +639,9 @@ fun UiTreeBuilder.Box(
     emitResolved(
         type = NodeType.Box,
         key = key,
-        props = Props(
-            values = mapOf(
-                PropKeys.BOX_ALIGNMENT to contentAlignment,
-            ),
-        ),
+        props = props {
+            set(TypedPropKeys.BoxAlignment, contentAlignment)
+        },
         modifier = modifier,
         children = BoxScope().apply(content).build(),
     )
@@ -690,17 +670,15 @@ fun UiTreeBuilder.Surface(
         emitResolved(
             type = NodeType.Surface,
             key = key,
-            props = Props(
-                values = buildMap {
-                    put(PropKeys.BOX_ALIGNMENT, contentAlignment)
-                    put(PropKeys.STYLE_BACKGROUND_COLOR, SurfaceDefaults.backgroundColor(variant))
-                    put(PropKeys.STYLE_CORNER_RADIUS, SurfaceDefaults.cardCornerRadius())
-                    put(PropKeys.STYLE_RIPPLE_COLOR, SurfaceDefaults.pressedColor())
-                    if (!enabled) {
-                        put(PropKeys.STYLE_ALPHA, SurfaceDefaults.disabledAlpha())
-                    }
-                },
-            ),
+            props = props {
+                set(TypedPropKeys.BoxAlignment, contentAlignment)
+                set(TypedPropKeys.StyleBackgroundColor, SurfaceDefaults.backgroundColor(variant))
+                set(TypedPropKeys.StyleCornerRadius, SurfaceDefaults.cardCornerRadius())
+                set(TypedPropKeys.StyleRippleColor, SurfaceDefaults.pressedColor())
+                if (!enabled) {
+                    set(TypedPropKeys.StyleAlpha, SurfaceDefaults.disabledAlpha())
+                }
+            },
             modifier = semanticModifier,
             children = BoxScope().apply(content).build(),
         )
@@ -744,12 +722,10 @@ fun UiTreeBuilder.Divider(
     emit(
         type = NodeType.Divider,
         key = key,
-        props = Props(
-            values = mapOf(
-                PropKeys.DIVIDER_COLOR to color,
-                PropKeys.DIVIDER_THICKNESS to thickness,
-            ),
-        ),
+        props = props {
+            set(TypedPropKeys.DividerColor, color)
+            set(TypedPropKeys.DividerThickness, thickness)
+        },
         modifier = modifier,
     )
 }
@@ -765,13 +741,11 @@ fun UiTreeBuilder.Row(
     emitResolved(
         type = NodeType.Row,
         key = key,
-        props = Props(
-            values = mapOf(
-                PropKeys.LINEAR_SPACING to spacing,
-                PropKeys.ROW_MAIN_AXIS_ARRANGEMENT to arrangement,
-                PropKeys.ROW_VERTICAL_ALIGNMENT to verticalAlignment,
-            ),
-        ),
+        props = props {
+            set(TypedPropKeys.LinearSpacing, spacing)
+            set(TypedPropKeys.RowMainAxisArrangement, arrangement)
+            set(TypedPropKeys.RowVerticalAlignment, verticalAlignment)
+        },
         modifier = modifier,
         children = RowScope().apply(content).build(),
     )
@@ -788,13 +762,11 @@ fun UiTreeBuilder.Column(
     emitResolved(
         type = NodeType.Column,
         key = key,
-        props = Props(
-            values = mapOf(
-                PropKeys.LINEAR_SPACING to spacing,
-                PropKeys.COLUMN_MAIN_AXIS_ARRANGEMENT to arrangement,
-                PropKeys.COLUMN_HORIZONTAL_ALIGNMENT to horizontalAlignment,
-            ),
-        ),
+        props = props {
+            set(TypedPropKeys.LinearSpacing, spacing)
+            set(TypedPropKeys.ColumnMainAxisArrangement, arrangement)
+            set(TypedPropKeys.ColumnHorizontalAlignment, horizontalAlignment)
+        },
         modifier = modifier,
         children = ColumnScope().apply(content).build(),
     )
@@ -811,11 +783,12 @@ fun <T> UiTreeBuilder.LazyColumn(
     val localSnapshot = LocalContext.snapshot()
     emit(
         type = NodeType.LazyColumn,
-        props = Props(
-            values = mapOf(
-                PropKeys.LAZY_CONTENT_PADDING to contentPadding,
-                PropKeys.LAZY_SPACING to spacing,
-                PropKeys.LAZY_ITEMS to items.map { item ->
+        props = props {
+            set(TypedPropKeys.LazyContentPadding, contentPadding)
+            set(TypedPropKeys.LazySpacing, spacing)
+            set(
+                TypedPropKeys.LazyItems,
+                items.map { item ->
                     LazyListItem(
                         key = key?.invoke(item),
                         contentToken = item,
@@ -838,8 +811,8 @@ fun <T> UiTreeBuilder.LazyColumn(
                         },
                     )
                 },
-            ),
-        ),
+            )
+        },
         modifier = modifier,
     )
 }
@@ -886,20 +859,21 @@ fun UiTreeBuilder.TabPager(
     emit(
         type = NodeType.TabPager,
         key = key,
-        props = Props(
-            values = mapOf(
-                PropKeys.SELECTED_TAB_INDEX to selectedTabIndex,
-                PropKeys.ON_TAB_SELECTED to onTabSelected,
-                PropKeys.TAB_BACKGROUND_COLOR to backgroundColor,
-                PropKeys.TAB_INDICATOR_COLOR to indicatorColor,
-                PropKeys.TAB_CORNER_RADIUS to cornerRadius,
-                PropKeys.TAB_INDICATOR_HEIGHT to indicatorHeight,
-                PropKeys.TAB_CONTENT_PADDING_HORIZONTAL to tabPaddingHorizontal,
-                PropKeys.TAB_CONTENT_PADDING_VERTICAL to tabPaddingVertical,
-                PropKeys.TAB_SELECTED_TEXT_COLOR to selectedTextColor,
-                PropKeys.TAB_UNSELECTED_TEXT_COLOR to unselectedTextColor,
-                PropKeys.TAB_RIPPLE_COLOR to rippleColor,
-                PropKeys.TAB_PAGES to builtPages.map { page ->
+        props = props {
+            set(TypedPropKeys.SelectedTabIndex, selectedTabIndex)
+            set(TypedPropKeys.OnTabSelected, onTabSelected)
+            set(TypedPropKeys.TabBackgroundColor, backgroundColor)
+            set(TypedPropKeys.TabIndicatorColor, indicatorColor)
+            set(TypedPropKeys.TabCornerRadius, cornerRadius)
+            set(TypedPropKeys.TabIndicatorHeight, indicatorHeight)
+            set(TypedPropKeys.TabContentPaddingHorizontal, tabPaddingHorizontal)
+            set(TypedPropKeys.TabContentPaddingVertical, tabPaddingVertical)
+            set(TypedPropKeys.TabSelectedTextColor, selectedTextColor)
+            set(TypedPropKeys.TabUnselectedTextColor, unselectedTextColor)
+            set(TypedPropKeys.TabRippleColor, rippleColor)
+            set(
+                TypedPropKeys.TabPages,
+                builtPages.map { page ->
                     TabPage(
                         title = page.title,
                         item = LazyListItem(
@@ -921,8 +895,8 @@ fun UiTreeBuilder.TabPager(
                         ),
                     )
                 },
-            ),
-        ),
+            )
+        },
         modifier = modifier,
     )
 }

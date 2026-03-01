@@ -7,7 +7,7 @@ import android.widget.TextView
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.gzq.uiframework.renderer.node.NodeType
-import com.gzq.uiframework.renderer.node.PropKeys
+import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
@@ -119,7 +119,7 @@ internal object NodeViewBinderRegistry {
             NodeType.Spacer to { _, _ -> Unit },
             NodeType.Divider to { view, node ->
                 view.setBackgroundColor(
-                    node.props.values[PropKeys.DIVIDER_COLOR] as? Int ?: 0xFF000000.toInt(),
+                    node.props[TypedPropKeys.DividerColor] ?: 0xFF000000.toInt(),
                 )
             },
             NodeType.Image to { view, node ->
@@ -129,8 +129,7 @@ internal object NodeViewBinderRegistry {
                 )
             },
             NodeType.AndroidView to { view, node ->
-                @Suppress("UNCHECKED_CAST")
-                val update = node.props.values[PropKeys.VIEW_UPDATE] as? ((View) -> Unit)
+                val update = node.props[TypedPropKeys.ViewUpdate]
                 update?.invoke(view)
             },
             NodeType.LazyColumn to { view, node ->
@@ -168,10 +167,10 @@ internal object NodeViewBinderRegistry {
     }
 
     private fun readEnabled(node: VNode): Boolean {
-        return node.props.values[PropKeys.ENABLED] as? Boolean ?: true
+        return node.props[TypedPropKeys.Enabled] ?: true
     }
 
     private fun readNodeTextColor(node: VNode): Int? {
-        return node.props.values[PropKeys.TEXT_COLOR] as? Int
+        return node.props[TypedPropKeys.TextColor]
     }
 }

@@ -8,7 +8,6 @@ import com.gzq.uiframework.renderer.layout.HorizontalAlignment
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.node.LazyListItem
-import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
@@ -17,6 +16,7 @@ import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
 import com.gzq.uiframework.renderer.view.lazy.LazyItemSpacingDecoration
 import com.gzq.uiframework.renderer.node.SegmentedControlItem
 import com.gzq.uiframework.renderer.node.TabPage
+import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.VNode
 import android.view.Gravity
 
@@ -150,74 +150,66 @@ internal object ContainerViewBinder {
 
     fun readRowSpec(node: VNode): LinearSpec {
         return LinearSpec(
-            spacing = node.props.values[PropKeys.LINEAR_SPACING] as? Int ?: 0,
-            arrangement = node.props.values[PropKeys.ROW_MAIN_AXIS_ARRANGEMENT] as? MainAxisArrangement
-                ?: MainAxisArrangement.Start,
-            gravity = (node.props.values[PropKeys.ROW_VERTICAL_ALIGNMENT] as? VerticalAlignment
-                ?: VerticalAlignment.Top).toGravity(),
+            spacing = node.props[TypedPropKeys.LinearSpacing] ?: 0,
+            arrangement = node.props[TypedPropKeys.RowMainAxisArrangement] ?: MainAxisArrangement.Start,
+            gravity = (node.props[TypedPropKeys.RowVerticalAlignment] ?: VerticalAlignment.Top).toGravity(),
         )
     }
 
     fun readColumnSpec(node: VNode): LinearSpec {
         return LinearSpec(
-            spacing = node.props.values[PropKeys.LINEAR_SPACING] as? Int ?: 0,
-            arrangement = node.props.values[PropKeys.COLUMN_MAIN_AXIS_ARRANGEMENT] as? MainAxisArrangement
-                ?: MainAxisArrangement.Start,
-            gravity = (node.props.values[PropKeys.COLUMN_HORIZONTAL_ALIGNMENT] as? HorizontalAlignment
-                ?: HorizontalAlignment.Start).toGravity(),
+            spacing = node.props[TypedPropKeys.LinearSpacing] ?: 0,
+            arrangement = node.props[TypedPropKeys.ColumnMainAxisArrangement] ?: MainAxisArrangement.Start,
+            gravity = (node.props[TypedPropKeys.ColumnHorizontalAlignment] ?: HorizontalAlignment.Start).toGravity(),
         )
     }
 
     fun readBoxSpec(node: VNode): BoxSpec {
         return BoxSpec(
-            gravity = (node.props.values[PropKeys.BOX_ALIGNMENT] as? BoxAlignment
-                ?: BoxAlignment.TopStart).toGravity(),
+            gravity = (node.props[TypedPropKeys.BoxAlignment] ?: BoxAlignment.TopStart).toGravity(),
         )
     }
 
-    @Suppress("UNCHECKED_CAST")
     fun readLazyColumnSpec(node: VNode): LazyColumnSpec {
         return LazyColumnSpec(
-            contentPadding = node.props.values[PropKeys.LAZY_CONTENT_PADDING] as? Int ?: 0,
-            spacing = node.props.values[PropKeys.LAZY_SPACING] as? Int ?: 0,
-            items = node.props.values[PropKeys.LAZY_ITEMS] as? List<LazyListItem> ?: emptyList(),
+            contentPadding = node.props[TypedPropKeys.LazyContentPadding] ?: 0,
+            spacing = node.props[TypedPropKeys.LazySpacing] ?: 0,
+            items = node.props[TypedPropKeys.LazyItems] ?: emptyList(),
         )
     }
 
-    @Suppress("UNCHECKED_CAST")
     fun readTabPagerSpec(node: VNode, defaultRippleColor: Int): TabPagerSpec {
         return TabPagerSpec(
-            pages = node.props.values[PropKeys.TAB_PAGES] as? List<TabPage> ?: emptyList(),
-            selectedTabIndex = node.props.values[PropKeys.SELECTED_TAB_INDEX] as? Int ?: 0,
-            onTabSelected = node.props.values[PropKeys.ON_TAB_SELECTED] as? ((Int) -> Unit),
-            backgroundColor = node.props.values[PropKeys.TAB_BACKGROUND_COLOR] as? Int ?: 0,
-            indicatorColor = node.props.values[PropKeys.TAB_INDICATOR_COLOR] as? Int ?: 0,
-            cornerRadius = node.props.values[PropKeys.TAB_CORNER_RADIUS] as? Int ?: 0,
-            indicatorHeight = node.props.values[PropKeys.TAB_INDICATOR_HEIGHT] as? Int ?: 0,
-            tabPaddingHorizontal = node.props.values[PropKeys.TAB_CONTENT_PADDING_HORIZONTAL] as? Int ?: 0,
-            tabPaddingVertical = node.props.values[PropKeys.TAB_CONTENT_PADDING_VERTICAL] as? Int ?: 0,
-            selectedTextColor = node.props.values[PropKeys.TAB_SELECTED_TEXT_COLOR] as? Int ?: 0,
-            unselectedTextColor = node.props.values[PropKeys.TAB_UNSELECTED_TEXT_COLOR] as? Int ?: 0,
-            rippleColor = node.props.values[PropKeys.TAB_RIPPLE_COLOR] as? Int ?: defaultRippleColor,
+            pages = node.props[TypedPropKeys.TabPages] ?: emptyList(),
+            selectedTabIndex = node.props[TypedPropKeys.SelectedTabIndex] ?: 0,
+            onTabSelected = node.props[TypedPropKeys.OnTabSelected],
+            backgroundColor = node.props[TypedPropKeys.TabBackgroundColor] ?: 0,
+            indicatorColor = node.props[TypedPropKeys.TabIndicatorColor] ?: 0,
+            cornerRadius = node.props[TypedPropKeys.TabCornerRadius] ?: 0,
+            indicatorHeight = node.props[TypedPropKeys.TabIndicatorHeight] ?: 0,
+            tabPaddingHorizontal = node.props[TypedPropKeys.TabContentPaddingHorizontal] ?: 0,
+            tabPaddingVertical = node.props[TypedPropKeys.TabContentPaddingVertical] ?: 0,
+            selectedTextColor = node.props[TypedPropKeys.TabSelectedTextColor] ?: 0,
+            unselectedTextColor = node.props[TypedPropKeys.TabUnselectedTextColor] ?: 0,
+            rippleColor = node.props[TypedPropKeys.TabRippleColor] ?: defaultRippleColor,
         )
     }
 
-    @Suppress("UNCHECKED_CAST")
     fun readSegmentedControlSpec(node: VNode, defaultRippleColor: Int): SegmentedControlSpec {
         return SegmentedControlSpec(
-            items = node.props.values[PropKeys.SEGMENT_ITEMS] as? List<SegmentedControlItem> ?: emptyList(),
-            selectedIndex = node.props.values[PropKeys.SEGMENT_SELECTED_INDEX] as? Int ?: 0,
-            onSelectionChange = node.props.values[PropKeys.ON_SEGMENT_SELECTED] as? ((Int) -> Unit),
-            enabled = node.props.values[PropKeys.ENABLED] as? Boolean ?: true,
-            backgroundColor = node.props.values[PropKeys.SEGMENT_BACKGROUND_COLOR] as? Int ?: android.graphics.Color.TRANSPARENT,
-            indicatorColor = node.props.values[PropKeys.SEGMENT_INDICATOR_COLOR] as? Int ?: android.graphics.Color.TRANSPARENT,
-            cornerRadius = node.props.values[PropKeys.SEGMENT_CORNER_RADIUS] as? Int ?: 0,
-            textColor = node.props.values[PropKeys.SEGMENT_TEXT_COLOR] as? Int ?: android.graphics.Color.BLACK,
-            selectedTextColor = node.props.values[PropKeys.SEGMENT_SELECTED_TEXT_COLOR] as? Int ?: android.graphics.Color.WHITE,
-            rippleColor = node.props.values[PropKeys.SEGMENT_RIPPLE_COLOR] as? Int ?: defaultRippleColor,
-            textSizeSp = node.props.values[PropKeys.SEGMENT_TEXT_SIZE_SP] as? Int ?: 14,
-            horizontalPadding = node.props.values[PropKeys.SEGMENT_CONTENT_PADDING_HORIZONTAL] as? Int ?: 0,
-            verticalPadding = node.props.values[PropKeys.SEGMENT_CONTENT_PADDING_VERTICAL] as? Int ?: 0,
+            items = node.props[TypedPropKeys.SegmentItems] ?: emptyList(),
+            selectedIndex = node.props[TypedPropKeys.SegmentSelectedIndex] ?: 0,
+            onSelectionChange = node.props[TypedPropKeys.OnSegmentSelected],
+            enabled = node.props[TypedPropKeys.Enabled] ?: true,
+            backgroundColor = node.props[TypedPropKeys.SegmentBackgroundColor] ?: android.graphics.Color.TRANSPARENT,
+            indicatorColor = node.props[TypedPropKeys.SegmentIndicatorColor] ?: android.graphics.Color.TRANSPARENT,
+            cornerRadius = node.props[TypedPropKeys.SegmentCornerRadius] ?: 0,
+            textColor = node.props[TypedPropKeys.SegmentTextColor] ?: android.graphics.Color.BLACK,
+            selectedTextColor = node.props[TypedPropKeys.SegmentSelectedTextColor] ?: android.graphics.Color.WHITE,
+            rippleColor = node.props[TypedPropKeys.SegmentRippleColor] ?: defaultRippleColor,
+            textSizeSp = node.props[TypedPropKeys.SegmentTextSizeSp] ?: 14,
+            horizontalPadding = node.props[TypedPropKeys.SegmentContentPaddingHorizontal] ?: 0,
+            verticalPadding = node.props[TypedPropKeys.SegmentContentPaddingVertical] ?: 0,
         )
     }
 
