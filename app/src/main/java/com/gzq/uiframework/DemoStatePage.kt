@@ -86,6 +86,13 @@ internal fun UiTreeBuilder.StatePage(
                 title = "State Benchmark Anchor",
                 subtitle = "This block stays on the default Core page and keeps the benchmark controls inside the first viewport.",
             ) {
+                BenchmarkRouteCallout(
+                    route = "Launcher -> MainActivity(extra=state) -> State -> State Benchmark Anchor",
+                    stableTargets = listOf(
+                        "Advance State Benchmark 0",
+                        "Reset State Benchmark",
+                    ),
+                )
                 Text(
                     text = "Stable route: launcher -> state module -> benchmark anchor",
                     style = UiTextStyle(fontSizeSp = 12.sp),

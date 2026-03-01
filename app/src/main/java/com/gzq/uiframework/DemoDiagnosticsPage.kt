@@ -66,6 +66,13 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                 title = "Diagnostics Benchmark Anchor",
                 subtitle = "This block stays on the default Runtime page and keeps the benchmark controls inside the first viewport.",
             ) {
+                BenchmarkRouteCallout(
+                    route = "Launcher -> MainActivity(extra=diagnostics) -> Diagnostics -> Diagnostics Benchmark Anchor",
+                    stableTargets = listOf(
+                        "Refresh Diagnostics Benchmark",
+                        "Reset Diagnostics Benchmark",
+                    ),
+                )
                 Text(
                     text = "Stable route: launcher -> diagnostics module -> benchmark anchor",
                     style = UiTextStyle(fontSizeSp = 12.sp),

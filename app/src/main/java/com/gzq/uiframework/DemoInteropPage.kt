@@ -51,6 +51,13 @@ internal fun UiTreeBuilder.InteropPage() {
                 title = "Interop Benchmark Anchor",
                 subtitle = "Keep a native TextView interop update path visible in the first viewport so benchmark runs do not depend on the longer guide content below.",
             ) {
+                BenchmarkRouteCallout(
+                    route = "Launcher -> MainActivity(extra=interop) -> Interop -> Interop Benchmark Anchor",
+                    stableTargets = listOf(
+                        "Interop Benchmark Primary",
+                        "Reset Interop Benchmark",
+                    ),
+                )
                 Text(
                     text = "Stable route: launcher -> interop module -> benchmark anchor",
                     style = UiTextStyle(fontSizeSp = 12.sp),
