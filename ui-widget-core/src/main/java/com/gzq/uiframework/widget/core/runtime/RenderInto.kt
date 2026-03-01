@@ -8,6 +8,7 @@ fun renderInto(
     container: ViewGroup,
     debug: Boolean = false,
     debugTag: String = "UIFramework",
+    overlayHost: OverlayHost = OverlayHostDefaults.noOp,
     onRenderStats: ((RenderStats) -> Unit)? = null,
     onRenderResult: ((RenderTreeResult) -> Unit)? = null,
     content: UiTreeBuilder.() -> Unit,
@@ -17,6 +18,7 @@ fun renderInto(
         content = content,
         debug = debug,
         debugTag = debugTag,
+        overlayHost = overlayHost,
         onRenderStats = onRenderStats,
         onRenderResult = onRenderResult,
     ).also(RenderSession::render)
