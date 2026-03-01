@@ -829,6 +829,8 @@ fun UiTreeBuilder.Dialog(
     requestKey: String = "dialog",
     dismissOnBackPress: Boolean = true,
     dismissOnClickOutside: Boolean = true,
+    position: DialogPosition = DialogPosition.Center,
+    scrimOpacity: Float = 0.32f,
     onDismissRequest: (() -> Unit)? = null,
     content: UiTreeBuilder.() -> Unit,
 ) {
@@ -842,6 +844,8 @@ fun UiTreeBuilder.Dialog(
             payload = DialogOverlaySpec(
                 dismissOnBackPress = dismissOnBackPress,
                 dismissOnClickOutside = dismissOnClickOutside,
+                position = position,
+                scrimOpacity = scrimOpacity,
                 onDismissRequest = onDismissRequest,
             ),
             contentToken = DialogOverlayContent(

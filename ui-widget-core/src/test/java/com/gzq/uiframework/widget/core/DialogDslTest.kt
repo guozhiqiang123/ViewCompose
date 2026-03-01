@@ -16,6 +16,8 @@ class DialogDslTest {
                     requestKey = "settings_dialog",
                     dismissOnBackPress = false,
                     dismissOnClickOutside = false,
+                    position = DialogPosition.Bottom,
+                    scrimOpacity = 0.48f,
                 ) {
                     Text(text = "Dialog body")
                 }
@@ -31,6 +33,8 @@ class DialogDslTest {
                     payload = DialogOverlaySpec(
                         dismissOnBackPress = false,
                         dismissOnClickOutside = false,
+                        position = DialogPosition.Bottom,
+                        scrimOpacity = 0.48f,
                     ),
                     contentToken = DialogOverlayContent(
                         nodes = buildVNodeTree {

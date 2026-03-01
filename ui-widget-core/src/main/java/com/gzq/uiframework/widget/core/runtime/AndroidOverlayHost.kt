@@ -3,9 +3,11 @@ package com.gzq.uiframework.widget.core
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.PopupWindow
 import androidx.core.view.doOnLayout
@@ -128,6 +130,21 @@ private class AndroidDialogOverlayHandle(
         currentSpec = spec
         dialog.setCancelable(spec.dismissOnBackPress)
         dialog.setCanceledOnTouchOutside(spec.dismissOnClickOutside)
+        dialog.window?.apply {
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setLayout(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+            )
+            setGravity(spec.position.toGravity())
+            val clampedScrim = spec.scrimOpacity.coerceIn(0f, 1f)
+            if (clampedScrim > 0f) {
+                addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+                setDimAmount(clampedScrim)
+            } else {
+                clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            }
+        }
         val renderResult = ViewTreeRenderer.renderInto(
             container = dialogContainer,
             previous = mountedNodes,
@@ -251,4 +268,12 @@ private fun View.findAnchorTarget(anchorId: String): View? {
         }
     }
     return null
+}
+
+private fun DialogPosition.toGravity(): Int {
+    return when (this) {
+        DialogPosition.Top -> Gravity.TOP or Gravity.CENTER_HORIZONTAL
+        DialogPosition.Center -> Gravity.CENTER
+        DialogPosition.Bottom -> Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+    }
 }

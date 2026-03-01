@@ -61,6 +61,48 @@ class DialogOverlayHostTest {
     }
 
     @Test
+    fun `updates dialog when position or scrim changes`() {
+        val presenter = RecordingDialogPresenter()
+        val host = DialogOverlayHost(presenter)
+        val sessionId = OverlaySessionId("session-1")
+
+        host.commit(
+            sessionId = sessionId,
+            requests = listOf(
+                dialogRequest(
+                    key = "settings",
+                    message = "Settings dialog",
+                    spec = DialogOverlaySpec(
+                        position = DialogPosition.Center,
+                        scrimOpacity = 0.32f,
+                    ),
+                ),
+            ),
+        )
+        host.commit(
+            sessionId = sessionId,
+            requests = listOf(
+                dialogRequest(
+                    key = "settings",
+                    message = "Settings dialog",
+                    spec = DialogOverlaySpec(
+                        position = DialogPosition.Bottom,
+                        scrimOpacity = 0.56f,
+                    ),
+                ),
+            ),
+        )
+
+        assertEquals(
+            listOf(
+                "show:session-1:settings:Settings dialog",
+                "update:session-1:settings:Settings dialog",
+            ),
+            presenter.events,
+        )
+    }
+
+    @Test
     fun `dismisses dialog removed on next commit`() {
         val presenter = RecordingDialogPresenter()
         val host = DialogOverlayHost(presenter)
@@ -128,11 +170,12 @@ class DialogOverlayHostTest {
     private fun dialogRequest(
         key: String,
         message: String,
+        spec: DialogOverlaySpec = DialogOverlaySpec(),
     ): OverlayRequest {
         return OverlayRequest(
             key = key,
             type = OverlayType.Dialog,
-            payload = DialogOverlaySpec(),
+            payload = spec,
             contentToken = DialogOverlayContent(
                 nodes = buildVNodeTree {
                     Text(text = message)
