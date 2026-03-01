@@ -286,7 +286,7 @@ flowchart TD
 - `PropKey<T>`
 - `Props.get(key: PropKey<T>)`
 - `props { set(...) }`
-- 高频控件和核心容器开始迁移到 typed prop keys
+- 高频控件、核心容器和通用样式读取开始迁移到 typed prop keys
 
 这会带来：
 

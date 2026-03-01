@@ -44,7 +44,7 @@ import com.gzq.uiframework.renderer.modifier.WeightModifierElement
 import com.gzq.uiframework.renderer.modifier.WidthModifierElement
 import com.gzq.uiframework.renderer.modifier.ZIndexModifierElement
 import com.gzq.uiframework.renderer.node.NodeType
-import com.gzq.uiframework.renderer.node.PropKeys
+import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.reconcile.ChildReconciler
 import com.gzq.uiframework.renderer.reconcile.InsertPatch
@@ -594,9 +594,8 @@ object ViewTreeRenderer {
         return this
     }
 
-    @Suppress("UNCHECKED_CAST")
     private fun readViewFactory(node: VNode): ((Context) -> View)? {
-        return node.props.values[PropKeys.VIEW_FACTORY] as? ((Context) -> View)
+        return node.props[TypedPropKeys.ViewFactory]
     }
 
     private fun defaultDividerWidth(parent: ViewGroup, node: VNode): Int {
@@ -618,50 +617,50 @@ object ViewTreeRenderer {
     }
 
     private fun readDividerThickness(node: VNode): Int {
-        return node.props.values[PropKeys.DIVIDER_THICKNESS] as? Int ?: 1
+        return node.props[TypedPropKeys.DividerThickness] ?: 1
     }
 
     private fun readNodeTextColor(node: VNode): Int? {
-        return node.props.values[PropKeys.TEXT_COLOR] as? Int
+        return node.props[TypedPropKeys.TextColor]
     }
 
     private fun readNodeTextSize(node: VNode): Int? {
-        return node.props.values[PropKeys.TEXT_SIZE_SP] as? Int
+        return node.props[TypedPropKeys.TextSizeSp]
     }
 
     private fun readNodeAlpha(node: VNode): Float? {
-        return node.props.values[PropKeys.STYLE_ALPHA] as? Float
+        return node.props[TypedPropKeys.StyleAlpha]
     }
 
     private fun readNodeBackgroundColor(node: VNode): Int? {
-        return node.props.values[PropKeys.STYLE_BACKGROUND_COLOR] as? Int
+        return node.props[TypedPropKeys.StyleBackgroundColor]
     }
 
     private fun readNodeBorderWidth(node: VNode): Int? {
-        return node.props.values[PropKeys.STYLE_BORDER_WIDTH] as? Int
+        return node.props[TypedPropKeys.StyleBorderWidth]
     }
 
     private fun readNodeBorderColor(node: VNode): Int? {
-        return node.props.values[PropKeys.STYLE_BORDER_COLOR] as? Int
+        return node.props[TypedPropKeys.StyleBorderColor]
     }
 
     private fun readNodeCornerRadius(node: VNode): Int? {
-        return node.props.values[PropKeys.STYLE_CORNER_RADIUS] as? Int
+        return node.props[TypedPropKeys.StyleCornerRadius]
     }
 
     private fun readNodeRippleColor(node: VNode): Int? {
-        return node.props.values[PropKeys.STYLE_RIPPLE_COLOR] as? Int
+        return node.props[TypedPropKeys.StyleRippleColor]
     }
 
     private fun readNodeMinHeight(node: VNode): Int? {
-        return node.props.values[PropKeys.STYLE_MIN_HEIGHT] as? Int
+        return node.props[TypedPropKeys.StyleMinHeight]
     }
 
     private fun readNodePadding(node: VNode): PaddingModifierElement? {
-        val left = node.props.values[PropKeys.STYLE_PADDING_LEFT] as? Int ?: return null
-        val top = node.props.values[PropKeys.STYLE_PADDING_TOP] as? Int ?: return null
-        val right = node.props.values[PropKeys.STYLE_PADDING_RIGHT] as? Int ?: return null
-        val bottom = node.props.values[PropKeys.STYLE_PADDING_BOTTOM] as? Int ?: return null
+        val left = node.props[TypedPropKeys.StylePaddingLeft] ?: return null
+        val top = node.props[TypedPropKeys.StylePaddingTop] ?: return null
+        val right = node.props[TypedPropKeys.StylePaddingRight] ?: return null
+        val bottom = node.props[TypedPropKeys.StylePaddingBottom] ?: return null
         return PaddingModifierElement(
             left = left,
             top = top,

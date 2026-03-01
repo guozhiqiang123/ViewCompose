@@ -145,7 +145,7 @@ fun UiTreeBuilder.TextField(
             set(TypedPropKeys.MinLines, minLines)
             set(TypedPropKeys.ImeAction, imeAction)
             set(TypedPropKeys.Enabled, enabled)
-            setRaw(PropKeys.IS_ERROR, isError)
+            set(TypedPropKeys.IsError, isError)
             set(TypedPropKeys.TextColor, TextFieldDefaults.textColor(enabled))
             set(TypedPropKeys.TextSizeSp, style.fontSizeSp)
             set(TypedPropKeys.StylePaddingLeft, TextFieldDefaults.horizontalPadding(size))

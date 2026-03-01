@@ -203,26 +203,24 @@ internal object InputViewBinder {
         )
     }
 
-    @Suppress("UNCHECKED_CAST")
     fun readToggleSpec(node: VNode): ToggleSpec {
         return ToggleSpec(
             text = node.props[TypedPropKeys.Text],
             enabled = node.props[TypedPropKeys.Enabled] ?: true,
-            checked = node.props.values[com.gzq.uiframework.renderer.node.PropKeys.CHECKED] as? Boolean ?: false,
-            controlColor = node.props.values[com.gzq.uiframework.renderer.node.PropKeys.CONTROL_COLOR] as? Int ?: 0xFF000000.toInt(),
-            onCheckedChange = node.props.values[com.gzq.uiframework.renderer.node.PropKeys.ON_CHECKED_CHANGE] as? ((Boolean) -> Unit),
+            checked = node.props[TypedPropKeys.Checked] ?: false,
+            controlColor = node.props[TypedPropKeys.ControlColor] ?: 0xFF000000.toInt(),
+            onCheckedChange = node.props[TypedPropKeys.OnCheckedChange],
         )
     }
 
-    @Suppress("UNCHECKED_CAST")
     fun readSliderSpec(node: VNode): SliderSpec {
         return SliderSpec(
-            min = node.props.values[com.gzq.uiframework.renderer.node.PropKeys.MIN_VALUE] as? Int ?: 0,
-            max = node.props.values[com.gzq.uiframework.renderer.node.PropKeys.MAX_VALUE] as? Int ?: 100,
-            value = node.props.values[com.gzq.uiframework.renderer.node.PropKeys.SLIDER_VALUE] as? Int ?: 0,
+            min = node.props[TypedPropKeys.MinValue] ?: 0,
+            max = node.props[TypedPropKeys.MaxValue] ?: 100,
+            value = node.props[TypedPropKeys.SliderValue] ?: 0,
             enabled = node.props[TypedPropKeys.Enabled] ?: true,
-            tintColor = node.props.values[com.gzq.uiframework.renderer.node.PropKeys.CONTROL_COLOR] as? Int ?: 0xFF000000.toInt(),
-            onValueChange = node.props.values[com.gzq.uiframework.renderer.node.PropKeys.ON_SLIDER_VALUE_CHANGE] as? ((Int) -> Unit),
+            tintColor = node.props[TypedPropKeys.ControlColor] ?: 0xFF000000.toInt(),
+            onValueChange = node.props[TypedPropKeys.OnSliderValueChange],
         )
     }
 
