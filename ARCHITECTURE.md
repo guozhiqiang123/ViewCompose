@@ -67,7 +67,7 @@
 | --- | --- | --- |
 | `:ui-runtime` | 可观察状态、派生状态、读依赖观察 | 结构清晰，但范围偏窄 |
 | `:ui-renderer` | `VNode`、`Modifier`、patch/reconcile、Android View 挂载、自定义容器、lazy adapter | 当前技术核心，结构比过去清晰 |
-| `:ui-widget-core` | DSL、session、remember/effect、local/theme/environment、widget 默认值 | 当前最混，但已整理目录 |
+| `:ui-widget-core` | DSL、session、remember/effect、local/theme/environment、overlay 声明契约、widget 默认值 | 当前最混，但已整理目录 |
 | `:ui-overlay-android` | Android 宿主级 overlay presenter、Dialog/PopupWindow 等平台弹层接线 | 新增模块，用于承接不适合继续堆在 `ui-widget-core` 的平台实现 |
 | `:ui-image-coil` | 可选远程图片加载桥接 | 角色清晰，边界合理 |
 | `:app` | demo、人工测试、主题切换、回归入口 | 合理 |
@@ -109,28 +109,41 @@ renderer/
   layout/
   modifier/
   node/
+    collection/
+    core/
+    input/
+    media/
+    spec/
   reconcile/
   view/
     container/
     lazy/
     tree/
+      binder/
+      diagnostics/
+      patch/
 ```
 
 解释：
 
 - `layout/` 放布局算法和 parent-data 校验
-- `node/` 放 `VNode` 相关模型
+- `node/core/` 放 `VNode`、`NodeType`、`Props`、`PropKey` 等基础节点模型
+- `node/collection/` 放列表、tab、segmented control 之类集合型节点数据
+- `node/input/` 放文本输入、IME、文本 primitive
+- `node/media/` 放图片 source、remote image request/loader、缩放策略
+- `node/spec/` 放 typed `NodeSpec`
 - `reconcile/` 放 patch / diff
 - `view/container/` 放自定义 View 容器
 - `view/lazy/` 放 `LazyColumn` 的 adapter/session/controller
-- `view/tree/` 放 mounted tree、总渲染器和 binder 调度
+- `view/tree/binder/` 放 binder、binding plan、factory、registry
+- `view/tree/diagnostics/` 放 render stats、warning、layout pass 跟踪
 - `view/tree/patch/` 放节点级 patch applier
+- `view/tree/` 根目录只保留 `ViewTreeRenderer`、`MountedNode` 这类树级核心对象
 
 评价：
 
-- 当前目录已经能反映 renderer 内部职责
-- 但 `node/` 里仍混着不同层级的概念：`VNode` 本体、媒体 source、input primitive、tab/list item
-- `ViewTreeRenderer` 仍然是单点复杂度中心
+- renderer 的问题不再是“有没有目录”，而是“是否把不同语义层级继续堆在同一目录”
+- `ViewTreeRenderer` 仍然是单点复杂度中心，但 binder/diagnostics/patch 相关配套类不应继续平铺
 
 #### `ui-widget-core`
 
@@ -140,21 +153,25 @@ widget/core/
   context/
   defaults/
   dsl/
+  overlay/
+    runtime/
   runtime/
 ```
 
 解释：
 
 - `bridge/` 放 Android theme/environment 桥接
-- `context/` 放 local、theme、environment、content color、image loading local
+- `context/` 只放 local、theme、environment、content color、image loading 这类 ambient context
 - `defaults/` 放所有 widget 默认值解析
 - `dsl/` 放 `UiTreeBuilder`、`LayoutScopes`、`Widgets`、`Dimensions`
-- `runtime/` 放 `RenderSession`、`RenderInto`、remember/effect 等 composition 表层
+- `overlay/` 放 overlay 的声明契约、spec、host contract
+- `overlay/runtime/` 放 overlay request、surface session、overlay host reducer
+- `runtime/` 只放 `RenderSession`、`RenderInto`、remember/effect 等 composition 表层
 
 评价：
 
 - 这次整理后，目录层已经基本清楚
-- 但模块级职责仍偏重：`ui-widget-core` 现在同时承担 DSL、composition runtime、theme、defaults
+- 但模块级职责仍偏重：`ui-widget-core` 现在同时承担 DSL、composition runtime、theme、defaults、overlay contracts
 - 这是当前最需要在后续继续分层的地方
 
 #### `ui-overlay-android`
@@ -173,7 +190,25 @@ overlay/android/
 评价：
 
 - 这个模块只承接 Android 平台弹层实现，不再回流到 `ui-widget-core`
-- 后续如果继续扩张，再按 `surface/feedback/positioning` 细分
+- 后续如果继续扩张，再按 `presenter/surface`、`presenter/feedback`、`positioning` 细分
+
+## 4.3 模块与目录归属判断规则
+
+后续判断一个类该放哪里，顺序必须固定：
+
+1. 先判断它是不是平台无关能力，还是 Android 宿主实现
+2. 再判断它是“声明契约 / 数据模型 / runtime / renderer / demo”哪一层
+3. 最后才判断具体目录和文件名
+
+当前固定规则：
+
+1. Android `View` / `Dialog` / `PopupWindow` / `Toast` 宿主代码，不进入 `ui-widget-core`
+2. ambient local 和主题上下文，不和 overlay/request DSL 混放
+3. renderer 的节点基础模型、媒体模型、输入模型、集合模型，不继续共用一个平铺目录
+4. `ViewTreeRenderer` 配套 binder/diagnostics/patch，不继续堆在 `view/tree/` 根目录
+5. demo 专用页面和回归用例，不回流到框架模块
+
+如果现有目录无法承载某类职责，正确动作是先更新本文档，再新增目录，而不是继续把文件平铺进去。
 
 ## 5. 当前核心调用链
 
