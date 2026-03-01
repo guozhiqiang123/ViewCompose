@@ -60,6 +60,23 @@
 4. `Diagnostics`
    - benchmark 刷新入口是否稳定
 
+### 3.1 延迟 session 容器专项
+
+这类测试现在已经从“可选覆盖”提升为专项必测。
+
+原因很明确：`LazyColumn` 和 `TabPager` 都已经暴露过同构问题：
+
+1. 节点 `key` 稳定
+2. `contentToken` 稳定或结构 diff 为空
+3. 但父层闭包、localSnapshot 或外层状态已经变化
+4. 已绑定 holder/session 没有刷新，导致真实 UI 停留在旧内容
+
+因此，后续 UI 测试不只要测“能不能显示”，还要测：
+
+1. 结构不变时，文案是否仍然更新
+2. 结构不变时，局部主题/内容色是否仍然更新
+3. 结构不变时，当前可见页/可见项是否立即刷新，而不是等回收重绑后才刷新
+
 ## 4. 当前技术方案
 
 使用 instrumentation test，组合三类能力：
@@ -99,6 +116,36 @@
    - weight / wrap / nested surface 的可见性和布局边界
 4. 局部主题 override 的视觉断言
 5. 截图目录和 artifact 汇总
+
+## 6.1 当前专项回归基线
+
+当前已经进入稳定基线的延迟 session 容器回归有：
+
+1. `Collections -> Stress`
+   - 点击 `Insert X`
+   - 验证 `Remove X`、`Rotate Order`、`Active ids: X -> A -> B -> C -> D`
+   - 目的：覆盖 `LazyColumn` 在结构近似稳定时的 item session 刷新
+2. `State -> Patch`
+   - 点击 `Advance patch state 0`
+   - 验证 `Stable summary 1`
+   - 目的：覆盖 `TabPager` 在稳定 page token 下的当前页闭包刷新
+
+这些用例的目标不是证明 demo 正常，而是证明框架层“延迟 session 容器”在真实 Activity 内能刷新可见内容。
+
+## 6.2 后续新增 UI 测试的固定规则
+
+只要新增的控件或容器满足下面任一条件，就必须补延迟 session 容器回归：
+
+1. 内部基于 `RecyclerView` / `ViewPager2`
+2. 内部存在 holder/session 复用
+3. 内容闭包和结构 diff 可能解耦
+
+新增用例至少要包含这 2 条：
+
+1. `结构稳定 + 外层状态变化`
+2. `当前可见内容立即刷新`
+
+专项清单见 [SESSION_CONTAINER_CHECKLIST.md](/Users/gzq/AndroidStudioProjects/UIFramework/SESSION_CONTAINER_CHECKLIST.md)。
 
 ## 7. 结论
 

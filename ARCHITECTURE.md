@@ -203,6 +203,35 @@ flowchart TD
 
 这条路线和 React/Redwood/Litho 的基础思想是一致的，应该保留。
 
+### 6.5 延迟 session 容器必须被视为一级架构对象
+
+最近连续修掉了两类同构问题：
+
+1. `LazyColumn` item 在 `key/contentToken` 稳定时，父层闭包内容变化没有刷新到已绑定 session
+2. `TabPager` page 在 `key/contentToken` 稳定时，当前页内容没有跟随父层闭包更新
+
+这说明一个重要结论：
+
+> 只要容器内部使用“延迟创建 + 复用 holder/session”的模型，它就不是普通容器，而是一个需要单独设计刷新语义的架构对象。
+
+当前已经明确属于这类对象的有：
+
+- `LazyColumn`
+- `TabPager`
+
+后续凡是新增下面这种能力，都必须默认按“延迟 session 容器”处理，而不是当作普通节点：
+
+- pager / carousel
+- lazy grid / lazy row
+- keep-alive page host
+- 任何 `RecyclerView/ViewPager2` 背后的复用型节点容器
+
+这类容器必须满足 3 条架构规则：
+
+1. diff 结果即使为空，也必须保留最新 item/page 实例，不能回退到旧实例
+2. 当前已绑定 holder/session 在“结构无变化”时，也必须有显式刷新路径
+3. 本地 `localSnapshot`、主题、环境和父层闭包都必须在 update 路径下重新注入，而不是只在 create 路径注入
+
 ### 6.3 主题 / environment / local 采用 local 机制是正确的
 
 这一点已经很接近 Compose 的成熟经验：
@@ -258,6 +287,26 @@ flowchart TD
 - `InputViewBinder`
 - `MediaViewBinder`
 - `FeedbackViewBinder`
+
+### 7.3 延迟 session 容器的刷新语义此前是隐式的
+
+`LazyColumn` 和 `TabPager` 之前都依赖“有 diff update 才会刷新已绑定 holder”的隐式假设。
+
+这个假设是不成立的，因为：
+
+- 结构不变不代表内容闭包不变
+- `key` 稳定不代表父层局部上下文没有变化
+- `contentToken` 只是一个优化信号，不是“可以跳过 session 刷新”的充分条件
+
+现在这个问题已经通过修复和 UI 回归测试暴露出来，但它也说明：
+
+> 当前架构最容易藏 bug 的地方，不是普通 `VNode` diff，而是“延迟 session 容器”的 update 语义。
+
+因此后续新增此类容器时，必须同步提供：
+
+1. 单元测试：`diff empty but content closure changed`
+2. instrumentation 测试：真实 Activity 内交互后内容可见性/文案更新
+3. 文档登记：加入延迟 session 容器测试清单
 - `ContainerViewBinder`
 
 这一步的意义是：
@@ -338,6 +387,7 @@ Compose 的优势在于：
 
 详细方案见 [NODE_PROPS.md](/Users/gzq/AndroidStudioProjects/UIFramework/NODE_PROPS.md)。
 性能主线见 [PERFORMANCE.md](/Users/gzq/AndroidStudioProjects/UIFramework/PERFORMANCE.md)。
+延迟 session 容器专项检查见 [SESSION_CONTAINER_CHECKLIST.md](/Users/gzq/AndroidStudioProjects/UIFramework/SESSION_CONTAINER_CHECKLIST.md)。
 
 ### 7.4 通用页面节点更新粒度仍偏粗
 
