@@ -130,7 +130,9 @@ object ViewTreeRenderer {
 
             is ReusePatch -> {
                 val mountedNode = patch.payload
-                bindView(mountedNode.view, patch.nextVNode)
+                if (NodeBindingDiffer.shouldRebind(mountedNode.vnode, patch.nextVNode)) {
+                    bindView(mountedNode.view, patch.nextVNode)
+                }
                 mountedNode.view.layoutParams = createLayoutParams(container, patch.nextVNode)
                 mountedNode.children = reconcileChildren(
                     view = mountedNode.view,
