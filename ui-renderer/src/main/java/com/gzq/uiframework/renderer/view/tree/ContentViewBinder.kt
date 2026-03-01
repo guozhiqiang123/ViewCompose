@@ -46,27 +46,6 @@ internal object ContentViewBinder {
         view.gravity = spec.gravity
     }
 
-    fun applyTextPatch(
-        view: TextView,
-        patch: TextNodePatch,
-    ) {
-        if (patch.previous.text != patch.next.text) {
-            view.text = patch.next.text
-        }
-        if (patch.previous.maxLines != patch.next.maxLines) {
-            view.maxLines = patch.next.maxLines
-        }
-        if (patch.previous.overflow != patch.next.overflow) {
-            view.ellipsize = when (patch.next.overflow) {
-                TextOverflow.Clip -> null
-                TextOverflow.Ellipsis -> TextUtils.TruncateAt.END
-            }
-        }
-        if (patch.previous.textAlign != patch.next.textAlign) {
-            view.gravity = patch.next.textAlign.toTextGravity()
-        }
-    }
-
     fun bindButton(
         view: Button,
         spec: ButtonSpec,
@@ -100,54 +79,6 @@ internal object ContentViewBinder {
         view.setOnClickListener {
             if (spec.enabled) {
                 spec.onClick?.invoke()
-            }
-        }
-    }
-
-    fun applyButtonPatch(
-        view: Button,
-        patch: ButtonNodePatch,
-    ) {
-        if (patch.previous.text != patch.next.text) {
-            view.text = patch.next.text
-        }
-        if (patch.previous.enabled != patch.next.enabled) {
-            view.isEnabled = patch.next.enabled
-        }
-        if (patch.previous.iconSpacing != patch.next.iconSpacing) {
-            view.compoundDrawablePadding = patch.next.iconSpacing
-        }
-        if (
-            patch.previous.leadingIcon != patch.next.leadingIcon ||
-            patch.previous.trailingIcon != patch.next.trailingIcon ||
-            patch.previous.iconTint != patch.next.iconTint ||
-            patch.previous.iconSize != patch.next.iconSize
-        ) {
-            view.setCompoundDrawablesRelative(
-                resolveButtonIconDrawable(
-                    view = view,
-                    source = patch.next.leadingIcon,
-                    tint = patch.next.iconTint,
-                    size = patch.next.iconSize,
-                ),
-                null,
-                resolveButtonIconDrawable(
-                    view = view,
-                    source = patch.next.trailingIcon,
-                    tint = patch.next.iconTint,
-                    size = patch.next.iconSize,
-                ),
-                null,
-            )
-        }
-        if (
-            patch.previous.onClick != patch.next.onClick ||
-            patch.previous.enabled != patch.next.enabled
-        ) {
-            view.setOnClickListener {
-                if (patch.next.enabled) {
-                    patch.next.onClick?.invoke()
-                }
             }
         }
     }
@@ -197,6 +128,24 @@ internal object ContentViewBinder {
         )
     }
 
+    internal fun toTextGravity(alignment: com.gzq.uiframework.renderer.node.TextAlign): Int {
+        return alignment.toTextGravity()
+    }
+
+    internal fun resolveButtonIconDrawable(
+        view: TextView,
+        source: ImageSource.Resource?,
+        tint: Int,
+        size: Int,
+    ): Drawable? {
+        return createButtonIconDrawable(
+            view = view,
+            source = source,
+            tint = tint,
+            size = size,
+        )
+    }
+
     private fun com.gzq.uiframework.renderer.node.TextAlign.toTextGravity(): Int {
         return when (this) {
             com.gzq.uiframework.renderer.node.TextAlign.Start -> Gravity.START or Gravity.CENTER_VERTICAL
@@ -205,7 +154,7 @@ internal object ContentViewBinder {
         }
     }
 
-    private fun resolveButtonIconDrawable(
+    private fun createButtonIconDrawable(
         view: TextView,
         source: ImageSource.Resource?,
         tint: Int,

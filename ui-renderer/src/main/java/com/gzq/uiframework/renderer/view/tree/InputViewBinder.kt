@@ -94,90 +94,6 @@ internal object InputViewBinder {
         )
     }
 
-    fun applyTextFieldPatch(
-        view: DeclarativeTextFieldLayout,
-        patch: TextFieldNodePatch,
-    ) {
-        val input = view.inputView
-        val previous = patch.previous
-        val next = patch.next
-        if (previous.value != next.value && input.text?.toString() != next.value) {
-            input.setText(next.value)
-            input.setSelection(next.value.length)
-        }
-        if (
-            previous.label != next.label ||
-            previous.labelColor != next.labelColor ||
-            previous.labelTextSizeSp != next.labelTextSizeSp
-        ) {
-            view.setLabel(
-                text = next.label,
-                color = next.labelColor,
-                textSizeSp = next.labelTextSizeSp,
-            )
-        }
-        if (
-            previous.supportingText != next.supportingText ||
-            previous.supportingTextColor != next.supportingTextColor ||
-            previous.supportingTextSizeSp != next.supportingTextSizeSp
-        ) {
-            view.setSupportingText(
-                text = next.supportingText,
-                color = next.supportingTextColor,
-                textSizeSp = next.supportingTextSizeSp,
-            )
-        }
-        if (previous.placeholder != next.placeholder) {
-            input.hint = next.placeholder
-        }
-        if (previous.enabled != next.enabled) {
-            input.isEnabled = next.enabled
-        }
-        if (previous.singleLine != next.singleLine) {
-            input.isSingleLine = next.singleLine
-        }
-        if (
-            previous.singleLine != next.singleLine ||
-            previous.minLines != next.minLines
-        ) {
-            input.minLines = if (next.singleLine) 1 else next.minLines
-        }
-        if (
-            previous.singleLine != next.singleLine ||
-            previous.maxLines != next.maxLines
-        ) {
-            input.maxLines = if (next.singleLine) 1 else next.maxLines
-        }
-        if (
-            previous.keyboardType != next.keyboardType ||
-            previous.singleLine != next.singleLine
-        ) {
-            input.inputType = resolveInputType(
-                type = next.keyboardType,
-                singleLine = next.singleLine,
-            )
-        }
-        if (previous.imeAction != next.imeAction) {
-            input.imeOptions = next.imeAction.toEditorAction()
-        }
-        if (previous.hintColor != next.hintColor) {
-            input.setHintTextColor(next.hintColor)
-        }
-        if (previous.readOnly != next.readOnly) {
-            applyReadOnly(input, next.readOnly)
-        }
-        if (
-            previous.value != next.value ||
-            previous.onValueChange != next.onValueChange
-        ) {
-            bindTextWatcher(
-                view = input,
-                currentValue = next.value,
-                onValueChange = next.onValueChange,
-            )
-        }
-    }
-
     fun bindCheckbox(
         view: CheckBox,
         spec: ToggleSpec,
@@ -356,7 +272,7 @@ internal object InputViewBinder {
         )
     }
 
-    private fun resolveInputType(type: TextFieldType, singleLine: Boolean): Int {
+    internal fun resolveInputType(type: TextFieldType, singleLine: Boolean): Int {
         val baseType = when (type) {
             TextFieldType.Text -> InputType.TYPE_CLASS_TEXT
             TextFieldType.Password -> InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
@@ -364,6 +280,32 @@ internal object InputViewBinder {
             TextFieldType.Number -> InputType.TYPE_CLASS_NUMBER
         }
         return if (singleLine) baseType else baseType or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+    }
+
+    internal fun toEditorAction(action: TextFieldImeAction): Int {
+        return action.toEditorAction()
+    }
+
+    internal fun bindTextWatcher(
+        view: EditText,
+        currentValue: String,
+        onValueChange: ((String) -> Unit)?,
+    ) {
+        attachTextWatcher(
+            view = view,
+            currentValue = currentValue,
+            onValueChange = onValueChange,
+        )
+    }
+
+    internal fun applyReadOnly(
+        view: EditText,
+        readOnly: Boolean,
+    ) {
+        updateReadOnly(
+            view = view,
+            readOnly = readOnly,
+        )
     }
 
     private fun TextFieldImeAction.toEditorAction(): Int {
@@ -377,7 +319,7 @@ internal object InputViewBinder {
         }
     }
 
-    private fun bindTextWatcher(
+    private fun attachTextWatcher(
         view: EditText,
         currentValue: String,
         onValueChange: ((String) -> Unit)?,
@@ -412,7 +354,7 @@ internal object InputViewBinder {
         view.setTag(R.id.ui_framework_text_watcher, watcher)
     }
 
-    private fun applyReadOnly(
+    private fun updateReadOnly(
         view: EditText,
         readOnly: Boolean,
     ) {

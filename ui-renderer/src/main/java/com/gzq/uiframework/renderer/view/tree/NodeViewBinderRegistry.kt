@@ -14,6 +14,9 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
+import com.gzq.uiframework.renderer.view.tree.patch.ContainerNodePatchApplier
+import com.gzq.uiframework.renderer.view.tree.patch.ContentNodePatchApplier
+import com.gzq.uiframework.renderer.view.tree.patch.InputNodePatchApplier
 
 internal object NodeViewBinderRegistry {
     private lateinit var binders: Map<NodeType, (View, VNode) -> Unit>
@@ -172,37 +175,37 @@ internal object NodeViewBinderRegistry {
     ) {
         when (patch) {
             is ButtonNodePatch -> {
-                ContentViewBinder.applyButtonPatch(
+                ContentNodePatchApplier.applyButtonPatch(
                     view = view as android.widget.Button,
                     patch = patch,
                 )
             }
             is TextNodePatch -> {
-                ContentViewBinder.applyTextPatch(
+                ContentNodePatchApplier.applyTextPatch(
                     view = view as TextView,
                     patch = patch,
                 )
             }
             is TextFieldNodePatch -> {
-                InputViewBinder.applyTextFieldPatch(
+                InputNodePatchApplier.applyTextFieldPatch(
                     view = view as DeclarativeTextFieldLayout,
                     patch = patch,
                 )
             }
             is TabPagerNodePatch -> {
-                ContainerViewBinder.applyTabPagerPatch(
+                ContainerNodePatchApplier.applyTabPagerPatch(
                     view = view as DeclarativeTabPagerLayout,
                     patch = patch,
                 )
             }
             is SegmentedControlNodePatch -> {
-                ContainerViewBinder.applySegmentedControlPatch(
+                ContainerNodePatchApplier.applySegmentedControlPatch(
                     view = view as DeclarativeSegmentedControlLayout,
                     patch = patch,
                 )
             }
             is LazyColumnNodePatch -> {
-                ContainerViewBinder.applyLazyColumnPatch(
+                ContainerNodePatchApplier.applyLazyColumnPatch(
                     view = view as RecyclerView,
                     patch = patch,
                 )

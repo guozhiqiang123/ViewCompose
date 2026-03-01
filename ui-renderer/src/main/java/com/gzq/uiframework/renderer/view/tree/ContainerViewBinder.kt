@@ -124,20 +124,6 @@ internal object ContainerViewBinder {
         adapter.submitItems(spec.items)
     }
 
-    fun applyLazyColumnPatch(
-        view: RecyclerView,
-        patch: LazyColumnNodePatch,
-    ) {
-        bindLazyColumn(
-            view = view,
-            spec = LazyColumnSpec(
-                contentPadding = patch.next.contentPadding,
-                spacing = patch.next.spacing,
-                items = patch.next.items,
-            ),
-        )
-    }
-
     fun bindTabPager(
         view: DeclarativeTabPagerLayout,
         spec: TabPagerSpec,
@@ -155,29 +141,6 @@ internal object ContainerViewBinder {
             selectedTextColor = spec.selectedTextColor,
             unselectedTextColor = spec.unselectedTextColor,
             rippleColor = spec.rippleColor,
-        )
-    }
-
-    fun applyTabPagerPatch(
-        view: DeclarativeTabPagerLayout,
-        patch: TabPagerNodePatch,
-    ) {
-        bindTabPager(
-            view = view,
-            spec = TabPagerSpec(
-                pages = patch.next.pages,
-                selectedTabIndex = patch.next.selectedTabIndex,
-                onTabSelected = patch.next.onTabSelected,
-                backgroundColor = patch.next.backgroundColor,
-                indicatorColor = patch.next.indicatorColor,
-                cornerRadius = patch.next.cornerRadius,
-                indicatorHeight = patch.next.indicatorHeight,
-                tabPaddingHorizontal = patch.next.tabPaddingHorizontal,
-                tabPaddingVertical = patch.next.tabPaddingVertical,
-                selectedTextColor = patch.next.selectedTextColor,
-                unselectedTextColor = patch.next.unselectedTextColor,
-                rippleColor = patch.next.rippleColor,
-            ),
         )
     }
 
@@ -199,30 +162,6 @@ internal object ContainerViewBinder {
             textSizeSp = spec.textSizeSp,
             horizontalPadding = spec.horizontalPadding,
             verticalPadding = spec.verticalPadding,
-        )
-    }
-
-    fun applySegmentedControlPatch(
-        view: DeclarativeSegmentedControlLayout,
-        patch: SegmentedControlNodePatch,
-    ) {
-        bindSegmentedControl(
-            view = view,
-            spec = SegmentedControlSpec(
-                items = patch.next.items,
-                selectedIndex = patch.next.selectedIndex,
-                onSelectionChange = patch.next.onSelectionChange,
-                enabled = patch.next.enabled,
-                backgroundColor = patch.next.backgroundColor,
-                indicatorColor = patch.next.indicatorColor,
-                cornerRadius = patch.next.cornerRadius,
-                textColor = patch.next.textColor,
-                selectedTextColor = patch.next.selectedTextColor,
-                rippleColor = patch.next.rippleColor,
-                textSizeSp = patch.next.textSizeSp,
-                horizontalPadding = patch.next.horizontalPadding,
-                verticalPadding = patch.next.verticalPadding,
-            ),
         )
     }
 

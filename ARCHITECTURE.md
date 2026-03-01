@@ -116,7 +116,8 @@ renderer/
 - `reconcile/` 放 patch / diff
 - `view/container/` 放自定义 View 容器
 - `view/lazy/` 放 `LazyColumn` 的 adapter/session/controller
-- `view/tree/` 放 mounted tree 和总渲染器
+- `view/tree/` 放 mounted tree、总渲染器和 binder 调度
+- `view/tree/patch/` 放节点级 patch applier
 
 评价：
 
@@ -273,7 +274,7 @@ flowchart TD
 - 节点通用 style / layout param / 部分共享 props 读取仍集中在 `ViewTreeRenderer`
 - 新控件接入仍需要修改中心分发 `when`
 
-这意味着它已经从“所有事都在一个文件里”前进到了“调度器 + family binders”，但还没演进成真正可插拔的 renderer 扩展结构。
+这意味着它已经从“所有事都在一个文件里”前进到了“调度器 + family binders + patch appliers”，但还没演进成真正可插拔的 renderer 扩展结构。
 
 当前阶段的结论是：
 
