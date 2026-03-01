@@ -36,11 +36,12 @@
 
 原则如下：
 
-1. `VNode.props` 继续保留
-2. `NodeProps` 只先覆盖高收益节点
+1. `VNode.props` 继续保留，但降级为兼容层和扩展层
+2. 第一方控件的主输入模型应转向 `NodeProps`
 3. renderer 优先读 `NodeProps`
-4. DSL 同时写入 `spec + props`
+4. DSL 现阶段继续同时写入 `spec + props`
 5. `NodeProps` 只表达节点语义，不承载 `Modifier`
+6. `Props` 不再作为第一方新控件的主建模方式
 
 ## 4. 推荐模型
 
@@ -81,6 +82,24 @@ data class TextFieldNodeProps(...) : NodeSpec
 
 1. 优先 `node.spec as? XxxNodeProps`
 2. 否则回退到 `node.props[TypedPropKeys.Xxx]`
+
+### 4.4 `Props` 的长期角色
+
+`Props` 仍然保留，但它的职责应收缩为：
+
+1. 兼容层
+2. 扩展层
+3. 底层桥接容器
+
+不再把它作为第一方控件的长期主模型。
+
+更具体地说：
+
+- `NodeSpec` 负责节点语义
+- `Modifier` 负责通用修饰与 parent-data
+- `Props` 负责兼容字段、未结构化字段、以及开放扩展入口
+
+因此后续方向不是“删除 `Props`”，而是“降级 `Props`”。
 
 ## 5. 优先级
 
@@ -177,6 +196,16 @@ Compose 的本质是：
 ### Phase 6：按需继续扩展
 
 仅在当前结构确实对节点级 diff、debug 和 binder 拆分有明显收益后，才考虑把 spec 模型继续推向更细粒度更新。
+
+### Phase 7：收缩 `Props` 角色
+
+在以下前提都成立后，再继续收缩 `Props`：
+
+1. 第一方控件 binder 全部优先读 `NodeSpec`
+2. debug / inspector 开始优先展示 `NodeSpec`
+3. 节点级 diff 开始基于 `NodeSpec`
+
+这一步的目标是让 `Props` 成为 internal bridge，而不是外部主抽象。
 
 ## 8. 当前执行策略
 

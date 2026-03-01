@@ -29,7 +29,7 @@
 - 已经能稳定支撑“声明式 API + View 互操作 + keyed 更新 + demo/manual test”
 - 复杂度仍然可控
 - 和 Android View 主线程模型是兼容的
-- `typed props` 已经足够支撑下一步在高收益节点上试点 `NodeProps`
+- `typed props` 已经完成向 `NodeProps` 的过渡基础设施建设
 
 但它还不是最终形态。和 Compose 相比，当前架构仍然有 5 个明显短板：
 
@@ -37,7 +37,7 @@
 2. renderer 仍然过于集中，`ViewTreeRenderer` 是明显的大类
 3. 组合运行时还主要住在 `ui-widget-core`，`ui-runtime` 仍然过薄
 4. `VNode + Props` 仍然偏动态，类型约束和错误发现能力弱于 Compose
-5. 高收益节点还没有进入真正的结构化 `NodeProps`，typed props 仍是当前上限
+5. `Props` 仍然存在于主链路里，尚未完全收缩为兼容/扩展层
 
 所以正确结论不是“架构已经成熟”，而是：
 
@@ -290,7 +290,7 @@ flowchart TD
 - `props { set(...) }`
 - 高频控件、核心容器和通用样式读取开始迁移到 typed prop keys
 
-这会带来：
+即使第一方常用节点已经基本完成 `NodeProps` 覆盖，`Props` 仍然会带来：
 
 - prop key 拼写和组合错误只能运行时发现
 - 节点类型与 prop 集合之间没有强类型约束
@@ -312,6 +312,7 @@ Compose 的优势在于：
 - 但它目前还是“typed key 包裹动态 map”，不是完整强类型节点参数模型
 - 当前第一方控件节点已经基本完成 `NodeProps` 覆盖，`Spacer` 之外的常用节点都已有结构化 spec
 - 下一阶段不该继续停留在“补更多 spec 文件”，而应开始利用现有 spec 结果做节点级 diff、binder 局部跳过更新和 debug 能力
+- `Props` 应继续保留，但它的角色应收缩成兼容层和扩展层，而不是第一方控件主模型
 
 ### 7.35 `typed props` 还不是长期终态
 
@@ -328,6 +329,7 @@ Compose 的优势在于：
 - 保留 `typed props` 作为底层兼容层
 - 在第一方高频节点上优先读取 `NodeProps`
 - 基于 `NodeProps` 设计更细的节点级更新边界
+- 在时机成熟后，把 `Props` 从主模型收缩为 internal bridge
 
 详细方案见 [NODE_PROPS.md](/Users/gzq/AndroidStudioProjects/UIFramework/NODE_PROPS.md)。
 
@@ -450,7 +452,7 @@ Compose 的优势在于：
 
 如果后续继续遵守以下原则，可扩展性仍然是好的：
 
-- 新 widget 继续走 `Theme -> Defaults -> Props -> Renderer`
+- 新 widget 继续走 `Theme -> Defaults -> NodeSpec -> Renderer`
 - 不再把 widget 自身语义塞回通用 `Modifier`
 - 新容器能力优先进自定义容器，不强依赖系统 `LinearLayout`
 - 在 renderer 内部先拆 helper，再考虑更大抽象
