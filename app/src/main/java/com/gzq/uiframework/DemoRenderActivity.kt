@@ -7,7 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.gzq.uiframework.widget.core.AndroidTransientFeedbackOverlayHost
+import com.gzq.uiframework.widget.core.AndroidOverlayHost
 import com.gzq.uiframework.widget.core.RenderSession
 import com.gzq.uiframework.widget.core.UiTreeBuilder
 import com.gzq.uiframework.widget.core.renderInto
@@ -46,7 +46,7 @@ abstract class DemoRenderActivity : AppCompatActivity() {
             container = root,
             debug = true,
             debugTag = "UIFrameworkSample",
-            overlayHost = AndroidTransientFeedbackOverlayHost(root),
+            overlayHost = AndroidOverlayHost(root),
             onRenderResult = DemoRenderDiagnosticsStore::record,
         ) {
             DemoPageScaffold(
