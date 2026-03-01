@@ -7,14 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.FrameLayout
+import android.widget.PopupWindow
+import androidx.core.view.doOnLayout
 import com.gzq.uiframework.renderer.view.tree.MountedNode
 import com.gzq.uiframework.renderer.view.tree.ViewTreeRenderer
+import com.gzq.uiframework.renderer.R
 
 class AndroidOverlayHost(
     rootView: View,
 ) : OverlayHost {
     private val delegate = CompositeOverlayHost(
         DialogOverlayHost(AndroidDialogOverlayPresenter(rootView)),
+        PopupOverlayHost(AndroidPopupOverlayPresenter(rootView)),
         AndroidTransientFeedbackOverlayHost(rootView),
     )
 
@@ -58,6 +62,22 @@ internal class AndroidDialogOverlayPresenter(
         content: DialogOverlayContent,
     ): DialogOverlayHandle {
         return AndroidDialogOverlayHandle(
+            rootView = rootView,
+            spec = spec,
+            content = content,
+        )
+    }
+}
+
+internal class AndroidPopupOverlayPresenter(
+    private val rootView: View,
+) : PopupOverlayPresenter {
+    override fun show(
+        entryId: OverlayEntryId,
+        spec: PopupOverlaySpec,
+        content: PopupOverlayContent,
+    ): PopupOverlayHandle {
+        return AndroidPopupOverlayHandle(
             rootView = rootView,
             spec = spec,
             content = content,
@@ -134,6 +154,101 @@ private class AndroidDialogOverlayHandle(
     }
 }
 
+private class AndroidPopupOverlayHandle(
+    private val rootView: View,
+    spec: PopupOverlaySpec,
+    content: PopupOverlayContent,
+) : PopupOverlayHandle {
+    private val popupContainer = FrameLayout(rootView.context).apply {
+        background = ColorDrawable(Color.TRANSPARENT)
+        layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+        )
+    }
+    private val popupWindow = PopupWindow(
+        popupContainer,
+        ViewGroup.LayoutParams.WRAP_CONTENT,
+        ViewGroup.LayoutParams.WRAP_CONTENT,
+        spec.focusable,
+    ).apply {
+        setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        elevation = 12.dp(rootView).toFloat()
+    }
+    private var mountedNodes: List<MountedNode> = emptyList()
+    private var currentSpec = spec
+    private var programmaticDismiss = false
+
+    init {
+        popupWindow.setOnDismissListener {
+            if (!programmaticDismiss) {
+                currentSpec.onDismissRequest?.invoke()
+            }
+        }
+        update(
+            spec = spec,
+            content = content,
+        )
+    }
+
+    override fun update(
+        spec: PopupOverlaySpec,
+        content: PopupOverlayContent,
+    ) {
+        currentSpec = spec
+        popupWindow.isFocusable = spec.focusable
+        popupWindow.isOutsideTouchable = spec.dismissOnClickOutside
+        val renderResult = ViewTreeRenderer.renderInto(
+            container = popupContainer,
+            previous = mountedNodes,
+            nodes = content.nodes,
+        )
+        mountedNodes = renderResult.mountedNodes
+        val anchor = rootView.findAnchorTarget(spec.anchorId)
+        if (anchor == null) {
+            if (popupWindow.isShowing) {
+                dismiss()
+            }
+            return
+        }
+        anchor.doOnLayout {
+            if (!popupWindow.isShowing) {
+                popupWindow.showAsDropDown(anchor, spec.offsetX, spec.offsetY)
+            } else {
+                popupWindow.update(anchor, spec.offsetX, spec.offsetY, -1, -1)
+            }
+        }
+    }
+
+    override fun dismiss() {
+        programmaticDismiss = true
+        popupWindow.setOnDismissListener(null)
+        ViewTreeRenderer.disposeMounted(
+            container = popupContainer,
+            mountedNodes = mountedNodes,
+        )
+        mountedNodes = emptyList()
+        if (popupWindow.isShowing) {
+            popupWindow.dismiss()
+        }
+        programmaticDismiss = false
+    }
+}
+
 private fun Int.dp(view: View): Int {
     return (this * view.resources.displayMetrics.density).toInt()
+}
+
+private fun View.findAnchorTarget(anchorId: String): View? {
+    if (getTag(R.id.ui_framework_anchor_id) == anchorId) {
+        return this
+    }
+    val group = this as? ViewGroup ?: return null
+    for (index in 0 until group.childCount) {
+        val match = group.getChildAt(index).findAnchorTarget(anchorId)
+        if (match != null) {
+            return match
+        }
+    }
+    return null
 }
