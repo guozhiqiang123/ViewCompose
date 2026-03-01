@@ -245,6 +245,29 @@ class DemoVisualUiTest {
     }
 
     @Test
+    fun statePatchStress_refreshesStableTabPagerPageContent() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            StateActivity::class.java,
+        ).putExtra(EXTRA_STATE_PAGE_INDEX, 2)
+        launchDemoActivity<StateActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scrollDeviceTextIntoView("Advance patch state 0")
+            scenario.onActivity { activity ->
+                activity.clickTextView("Advance patch state 0")
+            }
+            waitForUiIdle()
+            scrollDeviceTextIntoView("Stable summary 1")
+            captureDeviceScreenshot("state-patch-stable-tab-light")
+            scenario.onActivity { activity ->
+                val summary = activity.requireTextView("Stable summary 1")
+                assertViewFullyVisible(summary)
+                assertTextNotEllipsized(summary)
+            }
+        }
+    }
+
+    @Test
     fun darkTheme_appliesExpectedTitleColorOnFoundationsPage() {
         launchDemoActivity(FoundationsActivity::class.java, themeMode = DemoThemeMode.Light).use { scenario ->
             waitForUiIdle()

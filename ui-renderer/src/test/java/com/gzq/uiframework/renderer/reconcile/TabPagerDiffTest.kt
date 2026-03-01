@@ -6,6 +6,7 @@ import com.gzq.uiframework.renderer.node.LazyListItemSessionFactory
 import com.gzq.uiframework.renderer.node.TabPage
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertSame
 import org.junit.Test
 
 class TabPagerDiffTest {
@@ -46,6 +47,20 @@ class TabPagerDiffTest {
         assertNull(TabPagerSelectionResolver.resolve(emptyList(), 2))
         assertEquals(0, TabPagerSelectionResolver.resolve(listOf(page("A")), -1))
         assertEquals(1, TabPagerSelectionResolver.resolve(listOf(page("A"), page("B")), 5))
+    }
+
+    @Test
+    fun `keeps latest page instances when keyed diff produces no updates`() {
+        val previous = listOf(page("summary"))
+        val next = listOf(page("summary"))
+
+        val result = TabPagerDiff.calculate(
+            previous = previous,
+            next = next,
+        )
+
+        assertEquals(emptyList<TabPagerUpdate>(), result.updates)
+        assertSame(next[0], result.pages[0])
     }
 
     private fun page(

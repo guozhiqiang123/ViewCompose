@@ -29,16 +29,18 @@ import com.gzq.uiframework.widget.core.remember
 import com.gzq.uiframework.widget.core.sp
 
 internal fun UiTreeBuilder.StatePage(
+    initialPageIndex: Int = 0,
     onOpenDiagnostics: () -> Unit,
 ) {
     val benchmarkStepState = remember { mutableStateOf(0) }
     val clickCountState = remember { mutableStateOf(0) }
     val panelVisibleState = remember { mutableStateOf(true) }
-    val selectedPageState = remember { mutableStateOf(0) }
+    val selectedPageState = remember { mutableStateOf(initialPageIndex.coerceIn(0, 3)) }
     val patchStepState = remember { mutableStateOf(0) }
     val patchFieldValueState = remember { mutableStateOf("value-0") }
     val patchSegmentIndexState = remember { mutableStateOf(0) }
     val patchTabIndexState = remember { mutableStateOf(0) }
+    val stableTabIndexState = remember { mutableStateOf(0) }
     val summaryState = remember {
         derivedStateOf {
             val value = clickCountState.value
@@ -296,6 +298,48 @@ internal fun UiTreeBuilder.StatePage(
                             Text(text = "Tab details $step")
                             Text(
                                 text = "Use this page when checking tab selection patching under repeated updates.",
+                                color = TextDefaults.secondaryColor(),
+                            )
+                        }
+                    }
+                }
+                Text(
+                    text = "Stable token tab pager keeps page identity fixed while the page closure still reflects the latest outer state.",
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier
+                        .padding(top = 12.dp, bottom = 4.dp),
+                )
+                TabPager(
+                    selectedTabIndex = stableTabIndexState.value,
+                    onTabSelected = { stableTabIndexState.value = it },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Page(title = "Stable Summary", key = "stable-summary", contentToken = "stable-summary") {
+                        Column(
+                            spacing = 8.dp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                                .padding(12.dp),
+                        ) {
+                            Text(text = "Stable summary $step")
+                            Text(
+                                text = "This page should still refresh after Advance patch state even though the tab page token stays stable.",
+                                color = TextDefaults.secondaryColor(),
+                            )
+                        }
+                    }
+                    Page(title = "Stable Details", key = "stable-details", contentToken = "stable-details") {
+                        Column(
+                            spacing = 8.dp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                                .padding(12.dp),
+                        ) {
+                            Text(text = "Stable details $step")
+                            Text(
+                                text = "Use this page to catch stale tab page closures when keyed page metadata does not change.",
                                 color = TextDefaults.secondaryColor(),
                             )
                         }
