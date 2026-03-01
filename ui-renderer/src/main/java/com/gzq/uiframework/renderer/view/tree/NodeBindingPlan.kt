@@ -1,6 +1,7 @@
 package com.gzq.uiframework.renderer.view.tree
 
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
@@ -35,4 +36,9 @@ internal data class TextFieldNodePatch(
 internal data class TabPagerNodePatch(
     val previous: TabPagerNodeProps,
     val next: TabPagerNodeProps,
+) : NodeViewPatch
+
+internal data class SegmentedControlNodePatch(
+    val previous: SegmentedControlNodeProps,
+    val next: SegmentedControlNodeProps,
 ) : NodeViewPatch

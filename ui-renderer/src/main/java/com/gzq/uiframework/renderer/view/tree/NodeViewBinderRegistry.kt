@@ -195,6 +195,12 @@ internal object NodeViewBinderRegistry {
                     patch = patch,
                 )
             }
+            is SegmentedControlNodePatch -> {
+                ContainerViewBinder.applySegmentedControlPatch(
+                    view = view as DeclarativeSegmentedControlLayout,
+                    patch = patch,
+                )
+            }
         }
     }
 

@@ -8,6 +8,7 @@ import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.props
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
@@ -132,6 +133,17 @@ class NodeBindingDifferTest {
         assertTrue((plan as NodeBindingPlan.Patch).patch is TabPagerNodePatch)
     }
 
+    @Test
+    fun `patches segmented control semantic updates`() {
+        val previous = segmentedControlNode(selectedIndex = 0)
+        val next = segmentedControlNode(selectedIndex = 1)
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is SegmentedControlNodePatch)
+    }
+
     private fun textNode(
         text: String = "value",
         modifier: Modifier = Modifier,
@@ -225,6 +237,31 @@ class NodeBindingDifferTest {
                 selectedTextColor = 7,
                 unselectedTextColor = 8,
                 rippleColor = 9,
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun segmentedControlNode(
+        selectedIndex: Int = 0,
+    ): VNode {
+        return VNode(
+            type = NodeType.SegmentedControl,
+            props = Props.Empty,
+            spec = SegmentedControlNodeProps(
+                items = emptyList(),
+                selectedIndex = selectedIndex,
+                onSelectionChange = null,
+                enabled = true,
+                backgroundColor = 1,
+                indicatorColor = 2,
+                cornerRadius = 3,
+                textColor = 4,
+                selectedTextColor = 5,
+                rippleColor = 6,
+                textSizeSp = 14,
+                horizontalPadding = 8,
+                verticalPadding = 6,
             ),
             modifier = Modifier,
         )

@@ -3,6 +3,7 @@ package com.gzq.uiframework.renderer.view.tree
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
@@ -62,6 +63,16 @@ internal object NodeBindingDiffer {
                     patch = TabPagerNodePatch(
                         previous = previousTabPager,
                         next = nextTabPager,
+                    ),
+                )
+            }
+            val previousSegmentedControl = previous.spec as? SegmentedControlNodeProps
+            val nextSegmentedControl = next.spec as? SegmentedControlNodeProps
+            if (previousSegmentedControl != null && nextSegmentedControl != null) {
+                return NodeBindingPlan.Patch(
+                    patch = SegmentedControlNodePatch(
+                        previous = previousSegmentedControl,
+                        next = nextSegmentedControl,
                     ),
                 )
             }

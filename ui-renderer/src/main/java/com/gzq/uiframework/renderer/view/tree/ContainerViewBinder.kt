@@ -188,6 +188,30 @@ internal object ContainerViewBinder {
         )
     }
 
+    fun applySegmentedControlPatch(
+        view: DeclarativeSegmentedControlLayout,
+        patch: SegmentedControlNodePatch,
+    ) {
+        bindSegmentedControl(
+            view = view,
+            spec = SegmentedControlSpec(
+                items = patch.next.items,
+                selectedIndex = patch.next.selectedIndex,
+                onSelectionChange = patch.next.onSelectionChange,
+                enabled = patch.next.enabled,
+                backgroundColor = patch.next.backgroundColor,
+                indicatorColor = patch.next.indicatorColor,
+                cornerRadius = patch.next.cornerRadius,
+                textColor = patch.next.textColor,
+                selectedTextColor = patch.next.selectedTextColor,
+                rippleColor = patch.next.rippleColor,
+                textSizeSp = patch.next.textSizeSp,
+                horizontalPadding = patch.next.horizontalPadding,
+                verticalPadding = patch.next.verticalPadding,
+            ),
+        )
+    }
+
     fun readRowSpec(node: VNode): LinearSpec {
         val spec = node.spec as? RowNodeProps
         if (spec != null) {
