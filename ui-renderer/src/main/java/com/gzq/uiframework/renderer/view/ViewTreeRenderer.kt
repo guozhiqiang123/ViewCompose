@@ -10,6 +10,7 @@ import android.graphics.drawable.RippleDrawable
 import android.text.Editable
 import android.text.InputType
 import android.text.TextUtils
+import android.util.Log
 import android.text.TextWatcher
 import android.util.TypedValue
 import android.view.Gravity
@@ -40,6 +41,7 @@ import com.gzq.uiframework.renderer.layout.BoxAlignment
 import com.gzq.uiframework.renderer.layout.HorizontalAlignment
 import com.gzq.uiframework.renderer.layout.LayoutParamDefaultsResolver
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
+import com.gzq.uiframework.renderer.layout.ModifierParentDataValidator
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.modifier.AlphaModifierElement
 import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
@@ -89,6 +91,8 @@ import kotlin.math.roundToInt
 
 object ViewTreeRenderer {
     private const val DEFAULT_RIPPLE_COLOR: Int = 0x22000000
+    private const val WARNING_TAG: String = "UIFramework"
+    private val emittedModifierWarnings = mutableSetOf<String>()
 
     fun disposeMounted(
         container: ViewGroup,
@@ -991,6 +995,7 @@ object ViewTreeRenderer {
     }
 
     private fun createLayoutParams(parent: ViewGroup, node: VNode): ViewGroup.LayoutParams {
+        emitModifierWarnings(parent, node)
         val boxAlign = node.modifier.elements.lastOrNull { it is BoxAlignModifierElement } as? BoxAlignModifierElement
         val margin = node.modifier.elements.lastOrNull { it is MarginModifierElement } as? MarginModifierElement
         val size = node.modifier.elements.lastOrNull { it is SizeModifierElement } as? SizeModifierElement
@@ -1060,6 +1065,18 @@ object ViewTreeRenderer {
             }
             is FrameLayout -> FrameLayout.LayoutParams(width, height).applyLayoutParams(margin = margin)
             else -> ViewGroup.MarginLayoutParams(width, height).applyMargin(margin)
+        }
+    }
+
+    private fun emitModifierWarnings(
+        parent: ViewGroup,
+        node: VNode,
+    ) {
+        ModifierParentDataValidator.validate(parent, node).forEach { warning ->
+            val key = "${parent::class.java.name}|${node.type}|$warning"
+            if (emittedModifierWarnings.add(key)) {
+                Log.w(WARNING_TAG, warning)
+            }
         }
     }
 

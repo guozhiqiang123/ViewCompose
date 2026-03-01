@@ -194,7 +194,13 @@ Theme -> Modifier -> Renderer
 - 引入 `RowScope`、`ColumnScope`、`BoxScope`
 - 将 `weight`、`align` 等父布局相关能力迁入 scope
 
-当前状态：未开始
+当前状态：已开始铺垫
+
+当前已完成的子项：
+
+- `weight`、`align` 的 parent-data 规则已抽成统一校验
+- renderer 已在运行时对错误宿主输出一次性 warning
+- `ui-renderer` 已补 parent-data 校验单测
 
 ### Phase 4
 
