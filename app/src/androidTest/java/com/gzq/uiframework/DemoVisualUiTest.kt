@@ -192,15 +192,19 @@ class DemoVisualUiTest {
             waitForUiIdle()
             scrollDeviceTextIntoView("Image + Icon")
             scrollDeviceDescriptionIntoView("Remote image")
+            scenario.onActivity { activity ->
+                val remoteImage = activity.requireViewWithContentDescription("Remote image")
+                assertViewFullyVisible(remoteImage)
+            }
             scrollDeviceDescriptionIntoView("Fallback image")
+            scenario.onActivity { activity ->
+                val fallbackImage = activity.requireViewWithContentDescription("Fallback image")
+                assertViewFullyVisible(fallbackImage)
+            }
             scrollDeviceDescriptionIntoView("Primary icon button")
             captureDeviceScreenshot("foundations-media-light")
             scenario.onActivity { activity ->
-                val remoteImage = activity.requireViewWithContentDescription("Remote image")
-                val fallbackImage = activity.requireViewWithContentDescription("Fallback image")
                 val iconButton = activity.requireViewWithContentDescription("Primary icon button")
-                assertViewFullyVisible(remoteImage)
-                assertViewFullyVisible(fallbackImage)
                 assertViewFullyVisible(iconButton)
             }
         }
