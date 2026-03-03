@@ -34,44 +34,48 @@ class RenderSession internal constructor(
     fun render() {
         renderScheduled = false
         observation?.dispose()
-        val (tree, nextObservation) = RuntimeObservation.observeReads(
-            onInvalidated = ::scheduleRender,
-        ) {
-            var builtTree: List<com.gzq.uiframework.renderer.node.VNode> = emptyList()
-            LocalContext.provide(LocalOverlayHost, overlayHost) {
-                OverlayRequestContext.withStore(overlayRequestStore) {
-                    SideEffectContext.withStore(sideEffectStore) {
-                        EffectContext.withStore(effectStore) {
-                            RememberContext.withStore(rememberStore) {
-                                builtTree = buildVNodeTree(content)
+        try {
+            val (tree, nextObservation) = RuntimeObservation.observeReads(
+                onInvalidated = ::scheduleRender,
+            ) {
+                var builtTree: List<com.gzq.uiframework.renderer.node.VNode> = emptyList()
+                LocalContext.provide(LocalOverlayHost, overlayHost) {
+                    OverlayRequestContext.withStore(overlayRequestStore) {
+                        SideEffectContext.withStore(sideEffectStore) {
+                            EffectContext.withStore(effectStore) {
+                                RememberContext.withStore(rememberStore) {
+                                    builtTree = buildVNodeTree(content)
+                                }
                             }
                         }
                     }
                 }
+                builtTree
             }
-            builtTree
+            observation = nextObservation
+            val renderResult = ViewTreeRenderer.renderInto(
+                container = container,
+                previous = mountedNodes,
+                nodes = tree,
+                onReconcile = { renderResult ->
+                    if (debug) {
+                        Log.d(debugTag, "VNode tree\n${tree.debugTree()}")
+                        Log.d(debugTag, "Reconcile\n${renderResult.debugSummary()}")
+                    }
+                },
+            )
+            mountedNodes = renderResult.mountedNodes
+            overlayHost.commit(
+                sessionId = overlaySessionId,
+                requests = overlayRequestStore.currentRequests(),
+            )
+            onRenderStats?.invoke(renderResult.stats)
+            onRenderResult?.invoke(renderResult)
+            effectStore.commit()
+            sideEffectStore.commit()
+        } catch (e: Exception) {
+            Log.e(debugTag, "Render failed, keeping previous view tree", e)
         }
-        observation = nextObservation
-        val renderResult = ViewTreeRenderer.renderInto(
-            container = container,
-            previous = mountedNodes,
-            nodes = tree,
-            onReconcile = { renderResult ->
-                if (debug) {
-                    Log.d(debugTag, "VNode tree\n${tree.debugTree()}")
-                    Log.d(debugTag, "Reconcile\n${renderResult.debugSummary()}")
-                }
-            },
-        )
-        mountedNodes = renderResult.mountedNodes
-        overlayHost.commit(
-            sessionId = overlaySessionId,
-            requests = overlayRequestStore.currentRequests(),
-        )
-        onRenderStats?.invoke(renderResult.stats)
-        onRenderResult?.invoke(renderResult)
-        effectStore.commit()
-        sideEffectStore.commit()
     }
 
     fun dispose() {
