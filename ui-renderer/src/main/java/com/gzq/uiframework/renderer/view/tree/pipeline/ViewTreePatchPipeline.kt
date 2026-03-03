@@ -41,14 +41,7 @@ internal object ViewTreePatchPipeline {
                 emittedModifierWarnings = emittedModifierWarnings,
                 renderChildren = renderChildren,
             )
-            stats = stats.copy(
-                inserts = stats.inserts + patchResult.stats.inserts,
-                reuses = stats.reuses + patchResult.stats.reuses,
-                removals = stats.removals + patchResult.stats.removals,
-                reboundNodes = stats.reboundNodes + patchResult.stats.reboundNodes,
-                patchedNodes = stats.patchedNodes + patchResult.stats.patchedNodes,
-                skippedBindings = stats.skippedBindings + patchResult.stats.skippedBindings,
-            )
+            stats = stats.mergeWith(patchResult.stats)
             nextMounted += patchResult.mountedNode
         }
         reconcileResult.removals.forEach { removal ->
@@ -139,6 +132,7 @@ internal object ViewTreePatchPipeline {
                             NodeBindingPlan.Skip -> ReuseBindingResult.Skipped
                             is NodeBindingPlan.Patch -> ReuseBindingResult.Patched
                         },
+                        nodeType = patch.nextVNode.type,
                     ),
                 )
             }

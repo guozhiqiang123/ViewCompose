@@ -194,6 +194,21 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                         DiagnosticFact("Warnings", patchSnapshot?.warnings?.joinToString() ?: "None"),
                     ),
                 )
+                val bindingsByType = patchSnapshot?.stats?.bindingsByType
+                if (bindingsByType != null && bindingsByType.isNotEmpty()) {
+                    DiagnosticFactGroup(
+                        title = "Binding Breakdown by Node Type",
+                        facts = bindingsByType.entries
+                            .sortedByDescending { it.value.patched + it.value.rebound }
+                            .map { (type, stats) ->
+                                val typeName = type::class.simpleName ?: "?"
+                                DiagnosticFact(
+                                    typeName,
+                                    "patched=${stats.patched}  rebound=${stats.rebound}  skipped=${stats.skipped}",
+                                )
+                            },
+                    )
+                }
                 DiagnosticFactGroup(
                     title = "Layout Pass Counters",
                     facts = listOf(

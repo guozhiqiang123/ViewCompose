@@ -266,6 +266,7 @@ internal object NodeViewBinderRegistry {
                     patch = patch,
                 )
             }
+            else -> error("Unknown patch type: ${patch::class.simpleName}")
         }
     }
 

@@ -58,6 +58,18 @@ fun RenderStats.debugSummary(): String {
     return "inserts=$inserts reuses=$reuses removals=$removals rebound=$reboundNodes patched=$patchedNodes skipped=$skippedBindings"
 }
 
+fun RenderStats.debugBindingsByType(): String {
+    if (bindingsByType.isEmpty()) {
+        return "<no per-type data>"
+    }
+    return bindingsByType.entries
+        .sortedByDescending { it.value.patched + it.value.rebound }
+        .joinToString(separator = "\n") { (type, stats) ->
+            val typeName = type::class.simpleName ?: "?"
+            "  $typeName: patched=${stats.patched} rebound=${stats.rebound} skipped=${stats.skipped}"
+        }
+}
+
 fun RenderStructureStats.debugSummary(): String {
     return "vnodeCount=$vnodeCount mountedCount=$mountedNodeCount vnodeDepth=$maxVNodeDepth mountedDepth=$maxMountedDepth"
 }
