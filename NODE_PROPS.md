@@ -215,5 +215,8 @@ Compose 的本质是：
 2. `Text / Image / IconButton / Checkbox / Switch / RadioButton / Slider / LinearProgressIndicator / CircularProgressIndicator` 已完成 spec 化
 3. `SegmentedControl / Row / Column / Box / Surface / Divider / LazyColumn / AndroidView` 已完成 spec 化
 4. `Spacer` 暂不 spec 化，因为它目前仅承担纯布局占位，不包含额外语义字段
+5. 所有有 `NodeSpec` 的第一方节点都已接入 `NodeBindingDiffer` patch 路径，spec 变化时走 Patch 而非 Rebind：
+   - 真正字段级 patch：`Button`、`Text`、`TextField`、`Toggle`、`Slider`、`ProgressIndicator`、`Divider`、`Row`、`Column`、`Box`、`Image`、`IconButton`、`LazyColumn`
+   - 结构级 patch（委托 full bind）：`TabPager`、`SegmentedControl`
 
-下一步不再继续追求“所有节点都先 spec 化”，而是开始利用现有 spec 结果讨论节点级 diff、跳过更新和更细粒度重组。
+下一步不再继续追求”所有节点都先 spec 化”，而是开始利用现有 spec 结果讨论节点级 diff、跳过更新和更细粒度重组。

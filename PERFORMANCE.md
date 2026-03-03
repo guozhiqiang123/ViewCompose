@@ -600,16 +600,20 @@ Compose 会：
 
 1. 基于 `NodeSpec` 做 `areEquivalent / patch`
 2. 先覆盖 `Button / Text / TextField / TabPager / LazyColumn / SegmentedControl`
-3. renderer 先支持“字段级跳过更新”
+3. renderer 先支持”字段级跳过更新”
 
 当前状态：
 
-1. 已完成第一步“整节点 skip bind”
-2. 当前判断条件已经收敛为“modifier + 样式 props + NodeSpec”
-3. `Button`、`Text`、`TextField`、`TabPager`、`SegmentedControl` 和 `LazyColumn` 已作为第一批高收益节点进入字段级 patch
-4. `State -> Patch Stress` 已成为第一条专门压测 patch 路径的 demo/benchmark 场景
-5. `State -> Patch Stress -> Open diagnostics renderer` 已补成第二条对照场景，用来把 patch 压测和 diagnostics 面板串起来
-6. 下一步不再是“继续补第一批节点”，而是开始把 patch 逻辑继续从 family binder 下沉，并为更细粒度统计和 benchmark 对照补场景
+1. 已完成第一步”整节点 skip bind”
+2. 当前判断条件已经收敛为”modifier + 样式 props + NodeSpec”
+3. 所有有 `NodeSpec` 的第一方节点都已接入 patch 路径：
+   - **真正字段级 patch**：`Button`、`Text`、`TextField`、`Toggle`、`Slider`、`ProgressIndicator`、`Divider`、`Row`、`Column`、`Box`、`Image`、`IconButton`、`LazyColumn` — 逐字段比较，仅更新变化的属性
+   - **结构级 patch**（委托 full bind）：`TabPager`、`SegmentedControl` — 自定义 View 不暴露单独 setter，深化需改自定义 View 内部，ROI 较低
+4. `Image` patch 采用混合策略：元数据字段（contentDescription, contentScale, tint）独立更新，源相关字段（source, placeholder, error, fallback, remoteImageLoader）组合比较后走 full bindImage
+5. `IconButton` patch 复用 Image patch 逻辑并额外比较 enabled 字段
+6. `LazyColumn` patch 已下沉为真正字段级：contentPadding/spacing/items 分别比较、独立更新
+7. `State -> Patch Stress` 已成为第一条专门压测 patch 路径的 demo/benchmark 场景，覆盖 Text、Button、TextField、SegmentedControl、TabPager、Row、Column、Box、Image
+8. `State -> Patch Stress -> Open diagnostics renderer` 已补成第二条对照场景，用来把 patch 压测和 diagnostics 面板串起来
 
 ### Phase 3：补诊断能力
 
