@@ -1,11 +1,15 @@
 package com.gzq.uiframework.renderer.view.tree
 
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.DividerNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
+import com.gzq.uiframework.renderer.node.spec.ProgressIndicatorNodeProps
 import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
+import com.gzq.uiframework.renderer.node.spec.SliderNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
+import com.gzq.uiframework.renderer.node.spec.ToggleNodeProps
 
 internal sealed interface NodeBindingPlan {
     data object Skip : NodeBindingPlan
@@ -47,4 +51,24 @@ internal data class SegmentedControlNodePatch(
 internal data class LazyColumnNodePatch(
     val previous: LazyColumnNodeProps,
     val next: LazyColumnNodeProps,
+) : NodeViewPatch
+
+internal data class ToggleNodePatch(
+    val previous: ToggleNodeProps,
+    val next: ToggleNodeProps,
+) : NodeViewPatch
+
+internal data class SliderNodePatch(
+    val previous: SliderNodeProps,
+    val next: SliderNodeProps,
+) : NodeViewPatch
+
+internal data class ProgressIndicatorNodePatch(
+    val previous: ProgressIndicatorNodeProps,
+    val next: ProgressIndicatorNodeProps,
+) : NodeViewPatch
+
+internal data class DividerNodePatch(
+    val previous: DividerNodeProps,
+    val next: DividerNodeProps,
 ) : NodeViewPatch

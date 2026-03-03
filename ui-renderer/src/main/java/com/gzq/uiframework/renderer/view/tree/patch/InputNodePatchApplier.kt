@@ -1,8 +1,15 @@
 package com.gzq.uiframework.renderer.view.tree.patch
 
+import android.content.res.ColorStateList
+import android.widget.CompoundButton
+import android.widget.SeekBar
+import android.widget.Switch
+import com.gzq.uiframework.renderer.R
 import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
 import com.gzq.uiframework.renderer.view.tree.InputViewBinder
+import com.gzq.uiframework.renderer.view.tree.SliderNodePatch
 import com.gzq.uiframework.renderer.view.tree.TextFieldNodePatch
+import com.gzq.uiframework.renderer.view.tree.ToggleNodePatch
 
 internal object InputNodePatchApplier {
     fun applyTextFieldPatch(
@@ -87,5 +94,76 @@ internal object InputNodePatchApplier {
                 onValueChange = next.onValueChange,
             )
         }
+    }
+
+    fun applyTogglePatch(
+        view: CompoundButton,
+        patch: ToggleNodePatch,
+    ) {
+        val previous = patch.previous
+        val next = patch.next
+        view.setOnCheckedChangeListener(null)
+        if (previous.text != next.text) {
+            view.text = next.text
+        }
+        if (previous.enabled != next.enabled) {
+            view.isEnabled = next.enabled
+        }
+        if (previous.checked != next.checked) {
+            view.isChecked = next.checked
+        }
+        if (previous.controlColor != next.controlColor) {
+            val tint = ColorStateList.valueOf(next.controlColor)
+            view.buttonTintList = tint
+            if (view is Switch) {
+                view.thumbTintList = tint
+                view.trackTintList = tint
+            }
+        }
+        view.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked != next.checked) {
+                next.onCheckedChange?.invoke(isChecked)
+            }
+        }
+    }
+
+    fun applySliderPatch(
+        view: SeekBar,
+        patch: SliderNodePatch,
+    ) {
+        val previous = patch.previous
+        val next = patch.next
+        val listener = view.getTag(R.id.ui_framework_seek_listener) as? SeekBar.OnSeekBarChangeListener
+        if (listener != null) {
+            view.setOnSeekBarChangeListener(null)
+        }
+        val resolvedValue = next.value.coerceIn(next.min, next.max)
+        if (previous.min != next.min || previous.max != next.max) {
+            view.max = (next.max - next.min).coerceAtLeast(0)
+        }
+        if (previous.value != next.value || previous.min != next.min || previous.max != next.max) {
+            view.progress = resolvedValue - next.min
+        }
+        if (previous.enabled != next.enabled) {
+            view.isEnabled = next.enabled
+        }
+        if (previous.tintColor != next.tintColor) {
+            val tint = ColorStateList.valueOf(next.tintColor)
+            view.progressTintList = tint
+            view.thumbTintList = tint
+        }
+        val nextListener = object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val nextValue = next.min + progress
+                if (fromUser && nextValue != resolvedValue) {
+                    next.onValueChange?.invoke(nextValue)
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
+            override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
+        }
+        view.setOnSeekBarChangeListener(nextListener)
+        view.setTag(R.id.ui_framework_seek_listener, nextListener)
     }
 }

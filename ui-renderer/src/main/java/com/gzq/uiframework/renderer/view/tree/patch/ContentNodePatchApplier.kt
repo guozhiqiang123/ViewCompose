@@ -1,11 +1,13 @@
 package com.gzq.uiframework.renderer.view.tree.patch
 
 import android.text.TextUtils
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import com.gzq.uiframework.renderer.node.TextOverflow
 import com.gzq.uiframework.renderer.view.tree.ButtonNodePatch
 import com.gzq.uiframework.renderer.view.tree.ContentViewBinder
+import com.gzq.uiframework.renderer.view.tree.DividerNodePatch
 import com.gzq.uiframework.renderer.view.tree.TextNodePatch
 
 internal object ContentNodePatchApplier {
@@ -75,6 +77,15 @@ internal object ContentNodePatchApplier {
                     patch.next.onClick?.invoke()
                 }
             }
+        }
+    }
+
+    fun applyDividerPatch(
+        view: View,
+        patch: DividerNodePatch,
+    ) {
+        if (patch.previous.color != patch.next.color) {
+            view.setBackgroundColor(patch.next.color)
         }
     }
 }

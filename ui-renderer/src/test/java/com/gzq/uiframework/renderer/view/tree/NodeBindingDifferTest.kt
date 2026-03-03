@@ -8,11 +8,15 @@ import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.props
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.DividerNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
+import com.gzq.uiframework.renderer.node.spec.ProgressIndicatorNodeProps
 import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
+import com.gzq.uiframework.renderer.node.spec.SliderNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
+import com.gzq.uiframework.renderer.node.spec.ToggleNodeProps
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -156,6 +160,50 @@ class NodeBindingDifferTest {
         assertTrue((plan as NodeBindingPlan.Patch).patch is LazyColumnNodePatch)
     }
 
+    @Test
+    fun `patches toggle semantic updates`() {
+        val previous = toggleNode(checked = false)
+        val next = toggleNode(checked = true)
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is ToggleNodePatch)
+    }
+
+    @Test
+    fun `patches slider semantic updates`() {
+        val previous = sliderNode(value = 10)
+        val next = sliderNode(value = 50)
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is SliderNodePatch)
+    }
+
+    @Test
+    fun `patches progress indicator semantic updates`() {
+        val previous = progressNode(progress = 0.3f)
+        val next = progressNode(progress = 0.7f)
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is ProgressIndicatorNodePatch)
+    }
+
+    @Test
+    fun `patches divider semantic updates`() {
+        val previous = dividerNode(color = 0xFFCCCCCC.toInt())
+        val next = dividerNode(color = 0xFF000000.toInt())
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is DividerNodePatch)
+    }
+
     private fun textNode(
         text: String = "value",
         modifier: Modifier = Modifier,
@@ -289,6 +337,73 @@ class NodeBindingDifferTest {
                 contentPadding = 12,
                 spacing = spacing,
                 items = emptyList(),
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun toggleNode(
+        checked: Boolean = false,
+    ): VNode {
+        return VNode(
+            type = NodeType.Checkbox,
+            props = Props.Empty,
+            spec = ToggleNodeProps(
+                text = "Toggle",
+                enabled = true,
+                checked = checked,
+                controlColor = 0xFF000000.toInt(),
+                onCheckedChange = null,
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun sliderNode(
+        value: Int = 50,
+    ): VNode {
+        return VNode(
+            type = NodeType.Slider,
+            props = Props.Empty,
+            spec = SliderNodeProps(
+                min = 0,
+                max = 100,
+                value = value,
+                enabled = true,
+                tintColor = 0xFF000000.toInt(),
+                onValueChange = null,
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun progressNode(
+        progress: Float? = 0.5f,
+    ): VNode {
+        return VNode(
+            type = NodeType.LinearProgressIndicator,
+            props = Props.Empty,
+            spec = ProgressIndicatorNodeProps(
+                enabled = true,
+                progress = progress,
+                indicatorColor = 0xFF000000.toInt(),
+                trackColor = 0x33000000,
+                trackThickness = 4,
+                indicatorSize = 32,
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun dividerNode(
+        color: Int = 0xFFCCCCCC.toInt(),
+    ): VNode {
+        return VNode(
+            type = NodeType.Divider,
+            props = Props.Empty,
+            spec = DividerNodeProps(
+                color = color,
+                thickness = 1,
             ),
             modifier = Modifier,
         )

@@ -16,6 +16,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
 import com.gzq.uiframework.renderer.view.tree.patch.ContainerNodePatchApplier
 import com.gzq.uiframework.renderer.view.tree.patch.ContentNodePatchApplier
+import com.gzq.uiframework.renderer.view.tree.patch.FeedbackNodePatchApplier
 import com.gzq.uiframework.renderer.view.tree.patch.InputNodePatchApplier
 
 internal object NodeViewBinderRegistry {
@@ -207,6 +208,30 @@ internal object NodeViewBinderRegistry {
             is LazyColumnNodePatch -> {
                 ContainerNodePatchApplier.applyLazyColumnPatch(
                     view = view as RecyclerView,
+                    patch = patch,
+                )
+            }
+            is ToggleNodePatch -> {
+                InputNodePatchApplier.applyTogglePatch(
+                    view = view as android.widget.CompoundButton,
+                    patch = patch,
+                )
+            }
+            is SliderNodePatch -> {
+                InputNodePatchApplier.applySliderPatch(
+                    view = view as android.widget.SeekBar,
+                    patch = patch,
+                )
+            }
+            is ProgressIndicatorNodePatch -> {
+                FeedbackNodePatchApplier.applyProgressIndicatorPatch(
+                    view = view as android.widget.ProgressBar,
+                    patch = patch,
+                )
+            }
+            is DividerNodePatch -> {
+                ContentNodePatchApplier.applyDividerPatch(
+                    view = view,
                     patch = patch,
                 )
             }

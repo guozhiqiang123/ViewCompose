@@ -3,11 +3,15 @@ package com.gzq.uiframework.renderer.view.tree
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.DividerNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
+import com.gzq.uiframework.renderer.node.spec.ProgressIndicatorNodeProps
 import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
+import com.gzq.uiframework.renderer.node.spec.SliderNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
+import com.gzq.uiframework.renderer.node.spec.ToggleNodeProps
 
 internal object NodeBindingDiffer {
     fun plan(
@@ -84,6 +88,46 @@ internal object NodeBindingDiffer {
                     patch = LazyColumnNodePatch(
                         previous = previousLazyColumn,
                         next = nextLazyColumn,
+                    ),
+                )
+            }
+            val previousToggle = previous.spec as? ToggleNodeProps
+            val nextToggle = next.spec as? ToggleNodeProps
+            if (previousToggle != null && nextToggle != null) {
+                return NodeBindingPlan.Patch(
+                    patch = ToggleNodePatch(
+                        previous = previousToggle,
+                        next = nextToggle,
+                    ),
+                )
+            }
+            val previousSlider = previous.spec as? SliderNodeProps
+            val nextSlider = next.spec as? SliderNodeProps
+            if (previousSlider != null && nextSlider != null) {
+                return NodeBindingPlan.Patch(
+                    patch = SliderNodePatch(
+                        previous = previousSlider,
+                        next = nextSlider,
+                    ),
+                )
+            }
+            val previousProgress = previous.spec as? ProgressIndicatorNodeProps
+            val nextProgress = next.spec as? ProgressIndicatorNodeProps
+            if (previousProgress != null && nextProgress != null) {
+                return NodeBindingPlan.Patch(
+                    patch = ProgressIndicatorNodePatch(
+                        previous = previousProgress,
+                        next = nextProgress,
+                    ),
+                )
+            }
+            val previousDivider = previous.spec as? DividerNodeProps
+            val nextDivider = next.spec as? DividerNodeProps
+            if (previousDivider != null && nextDivider != null) {
+                return NodeBindingPlan.Patch(
+                    patch = DividerNodePatch(
+                        previous = previousDivider,
+                        next = nextDivider,
                     ),
                 )
             }
