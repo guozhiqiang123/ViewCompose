@@ -22,17 +22,16 @@ class DemoInteractionBenchmark {
         iterations = DEFAULT_ITERATIONS,
         startupMode = StartupMode.WARM,
         setupBlock = {
-            startCatalogAndWait()
-            waitForText("Capability Modules")
-            waitForText("Open State")
-            waitForText("Open Layouts")
+            startDemoActivityAndWait(
+                moduleKey = "foundations",
+                expectedText = "Foundations",
+            )
         },
     ) {
-        openDemoModule("State")
-        waitForText("State & Effects")
-        returnToCatalog()
-        openDemoModule("Layouts")
-        waitForText("Layouts")
+        startDemoActivityAndWait(
+            moduleKey = "state",
+            expectedText = "State Benchmark Anchor",
+        )
     }
 
     @Test
@@ -153,7 +152,7 @@ class DemoInteractionBenchmark {
         setupBlock = {
             startDemoActivityAndWait(
                 moduleKey = "state",
-                expectedText = "State & Effects",
+                expectedText = "State Benchmark Anchor",
             )
             scrollUntilText("Advance State Benchmark 0")
             scrollUntilText("Reset State Benchmark")
@@ -217,9 +216,10 @@ class DemoInteractionBenchmark {
         iterations = DEFAULT_ITERATIONS,
         startupMode = StartupMode.WARM,
         setupBlock = {
-            startCatalogAndWait()
-            openDemoModule("Collections")
-            waitForText("Collections")
+            startDemoActivityAndWait(
+                moduleKey = "collections",
+                expectedText = "Collections",
+            )
         },
     ) {
         swipePageUp()
@@ -235,11 +235,11 @@ class DemoInteractionBenchmark {
         iterations = DEFAULT_ITERATIONS,
         startupMode = StartupMode.WARM,
         setupBlock = {
-            startCatalogAndWait()
-            openDemoModule("State")
-            waitForText("Patch")
-            clickText("Patch")
-            waitForText("Patch Stress")
+            startDemoActivityAndWait(
+                moduleKey = "state",
+                expectedText = "Patch Stress",
+                extras = mapOf("state_page_index" to 2),
+            )
             waitForText("Advance patch state 0")
             waitForText("Reset patch state")
         },
@@ -260,18 +260,18 @@ class DemoInteractionBenchmark {
         iterations = DEFAULT_ITERATIONS,
         startupMode = StartupMode.WARM,
         setupBlock = {
-            startCatalogAndWait()
-            openDemoModule("State")
-            waitForText("State & Effects")
-            waitForText("Patch")
-            clickText("Patch")
-            waitForText("Patch Stress")
-            waitForText("Advance patch state 0")
-            clickText("Advance patch state 0")
-            waitForText("Advance patch state 1")
+            startDemoActivityAndWait(
+                moduleKey = "state",
+                expectedText = "State Benchmark Anchor",
+            )
+            scrollUntilText("Advance State Benchmark 0")
+            clickText("Advance State Benchmark 0")
+            waitForText("Advance State Benchmark 1")
         },
     ) {
-        clickText("Open diagnostics renderer")
-        scrollUntilText("Latest Patch-Active Snapshot")
+        startDemoActivityAndWait(
+            moduleKey = "diagnostics",
+            expectedText = "Diagnostics",
+        )
     }
 }

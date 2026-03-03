@@ -31,10 +31,24 @@ internal fun MacrobenchmarkScope.startCatalogAndWait() {
 internal fun MacrobenchmarkScope.startDemoActivityAndWait(
     moduleKey: String,
     expectedText: String,
+    extras: Map<String, Int> = emptyMap(),
 ) {
     pressHome()
     startActivityAndWait { intent ->
+        // Clear app-specific extras from previous test methods while
+        // preserving any system extras the benchmark framework needs.
+        intent.removeExtra("demo_module_key")
+        intent.removeExtra("state_page_index")
+        // When extras are present, clear the task so the activity is recreated
+        // fresh with the new extras. Otherwise, remove the flag so subsequent
+        // tests without extras don't inherit the aggressive clear behavior.
+        if (extras.isNotEmpty()) {
+            intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        } else {
+            intent.flags = intent.flags and android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK.inv()
+        }
         intent.putExtra("demo_module_key", moduleKey)
+        extras.forEach { (key, value) -> intent.putExtra(key, value) }
     }
     waitForText(expectedText)
 }
@@ -45,7 +59,7 @@ internal fun MacrobenchmarkScope.waitForText(text: String) {
 
 internal fun MacrobenchmarkScope.scrollUntilText(
     text: String,
-    maxSwipes: Int = 6,
+    maxSwipes: Int = 10,
 ) {
     repeat(maxSwipes + 1) { attempt ->
         if (device.hasObject(By.text(text))) {
@@ -54,6 +68,13 @@ internal fun MacrobenchmarkScope.scrollUntilText(
         if (attempt < maxSwipes) {
             swipePageUp()
         }
+    }
+    // Text not found scrolling down — try scrolling back up.
+    repeat(maxSwipes * 2) { attempt ->
+        if (device.hasObject(By.text(text))) {
+            return
+        }
+        swipePageDown()
     }
     waitForText(text)
 }

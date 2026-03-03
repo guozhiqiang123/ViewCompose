@@ -66,19 +66,6 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                 title = "Diagnostics Benchmark Anchor",
                 subtitle = "This block stays on the default Runtime page and keeps the benchmark controls inside the first viewport.",
             ) {
-                BenchmarkRouteCallout(
-                    route = "Launcher -> MainActivity(extra=diagnostics) -> Diagnostics -> Diagnostics Benchmark Anchor",
-                    stableTargets = listOf(
-                        "Refresh Diagnostics Benchmark",
-                        "Reset Diagnostics Benchmark",
-                    ),
-                )
-                Text(
-                    text = "Stable route: launcher -> diagnostics module -> benchmark anchor",
-                    style = UiTextStyle(fontSizeSp = 12.sp),
-                    color = TextDefaults.secondaryColor(),
-                    modifier = Modifier.padding(bottom = 8.dp),
-                )
                 Text(
                     text = "Diagnostics refresh count ${benchmarkRefreshCountState.value}",
                     modifier = Modifier.padding(bottom = 8.dp),
@@ -97,6 +84,19 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                         benchmarkRefreshCountState.value = 0
                         pendingSnapshotRefreshState.value = true
                     },
+                    modifier = Modifier.padding(bottom = 8.dp),
+                )
+                BenchmarkRouteCallout(
+                    route = "Launcher -> MainActivity(extra=diagnostics) -> Diagnostics -> Diagnostics Benchmark Anchor",
+                    stableTargets = listOf(
+                        "Refresh Diagnostics Benchmark",
+                        "Reset Diagnostics Benchmark",
+                    ),
+                )
+                Text(
+                    text = "Stable route: launcher -> diagnostics module -> benchmark anchor",
+                    style = UiTextStyle(fontSizeSp = 12.sp),
+                    color = TextDefaults.secondaryColor(),
                 )
             }
 

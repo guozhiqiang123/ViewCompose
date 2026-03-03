@@ -94,19 +94,6 @@ internal fun UiTreeBuilder.StatePage(
                 title = "State Benchmark Anchor",
                 subtitle = "This block stays on the default Core page and keeps the benchmark controls inside the first viewport.",
             ) {
-                BenchmarkRouteCallout(
-                    route = "Launcher -> MainActivity(extra=state) -> State -> State Benchmark Anchor",
-                    stableTargets = listOf(
-                        "Advance State Benchmark 0",
-                        "Reset State Benchmark",
-                    ),
-                )
-                Text(
-                    text = "Stable route: launcher -> state module -> benchmark anchor",
-                    style = UiTextStyle(fontSizeSp = 12.sp),
-                    color = TextDefaults.secondaryColor(),
-                    modifier = Modifier.margin(bottom = 8.dp),
-                )
                 Text(
                     text = "Benchmark step ${benchmarkStepState.value}",
                     modifier = Modifier.margin(bottom = 8.dp),
@@ -122,10 +109,24 @@ internal fun UiTreeBuilder.StatePage(
                 )
                 Button(
                     text = "Reset State Benchmark",
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .margin(bottom = 8.dp),
                     onClick = {
                         benchmarkStepState.value = 0
                     },
+                )
+                BenchmarkRouteCallout(
+                    route = "Launcher -> MainActivity(extra=state) -> State -> State Benchmark Anchor",
+                    stableTargets = listOf(
+                        "Advance State Benchmark 0",
+                        "Reset State Benchmark",
+                    ),
+                )
+                Text(
+                    text = "Stable route: launcher -> state module -> benchmark anchor",
+                    style = UiTextStyle(fontSizeSp = 12.sp),
+                    color = TextDefaults.secondaryColor(),
                 )
             }
 
