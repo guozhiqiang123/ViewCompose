@@ -8,10 +8,16 @@ import com.gzq.uiframework.renderer.modifier.fillMaxWidth
 import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.renderer.modifier.visibility
+import com.gzq.uiframework.renderer.layout.BoxAlignment
+import com.gzq.uiframework.renderer.layout.MainAxisArrangement
+import com.gzq.uiframework.renderer.layout.VerticalAlignment
+import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.runtime.derivedStateOf
 import com.gzq.uiframework.runtime.mutableStateOf
+import com.gzq.uiframework.widget.core.Box
 import com.gzq.uiframework.widget.core.Button
 import com.gzq.uiframework.widget.core.Column
+import com.gzq.uiframework.widget.core.Image
 import com.gzq.uiframework.widget.core.LazyColumn
 import com.gzq.uiframework.widget.core.Row
 import com.gzq.uiframework.widget.core.SegmentedControl
@@ -214,7 +220,7 @@ internal fun UiTreeBuilder.StatePage(
                 val step = patchStepState.value
                 Text(text = "Patch headline $step")
                 Text(
-                    text = "Patched nodes: Text, Button, TextField, SegmentedControl, TabPager",
+                    text = "Patched nodes: Text, Button, TextField, SegmentedControl, TabPager, Row, Column, Box, Image",
                     color = TextDefaults.secondaryColor(),
                     modifier = Modifier.padding(vertical = 4.dp),
                 )
@@ -265,6 +271,43 @@ internal fun UiTreeBuilder.StatePage(
                     items = listOf("Alpha", "Beta", "Gamma"),
                     selectedIndex = patchSegmentIndexState.value,
                     onSelectionChange = { patchSegmentIndexState.value = it },
+                    modifier = Modifier.margin(bottom = 12.dp),
+                )
+                Row(
+                    spacing = if (step % 2 == 0) 8.dp else 16.dp,
+                    arrangement = if (step % 2 == 0) MainAxisArrangement.Start else MainAxisArrangement.SpaceEvenly,
+                    verticalAlignment = VerticalAlignment.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .margin(bottom = 12.dp),
+                ) {
+                    Text(text = "Row A")
+                    Text(text = "Row B")
+                    Text(text = "Row C")
+                }
+                Column(
+                    spacing = if (step % 2 == 0) 4.dp else 12.dp,
+                    arrangement = if (step % 2 == 0) MainAxisArrangement.Start else MainAxisArrangement.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .margin(bottom = 12.dp),
+                ) {
+                    Text(text = "Col item 1")
+                    Text(text = "Col item 2")
+                }
+                Box(
+                    contentAlignment = if (step % 2 == 0) BoxAlignment.TopStart else BoxAlignment.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                        .padding(12.dp)
+                        .margin(bottom = 12.dp),
+                ) {
+                    Text(text = "Box content $step")
+                }
+                Image(
+                    source = ImageSource.Resource(android.R.drawable.ic_menu_gallery),
+                    tint = if (step % 2 == 0) 0xFF000000.toInt() else 0xFFFF0000.toInt(),
                     modifier = Modifier.margin(bottom = 12.dp),
                 )
                 TabPager(
