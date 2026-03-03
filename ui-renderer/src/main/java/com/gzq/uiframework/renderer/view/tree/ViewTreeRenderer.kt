@@ -4,6 +4,7 @@ import android.content.Context
 import android.text.TextUtils
 import android.util.Log
 import android.view.ViewGroup
+import androidx.annotation.VisibleForTesting
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
 import com.gzq.uiframework.renderer.node.NodeType
@@ -14,8 +15,15 @@ import com.gzq.uiframework.renderer.reconcile.ReconcileNode
 object ViewTreeRenderer {
     private const val DEFAULT_RIPPLE_COLOR: Int = 0x22000000
     private const val WARNING_TAG: String = "UIFramework"
+    private const val MAX_WARNING_ENTRIES: Int = 200
     private val emittedModifierWarnings = mutableSetOf<String>()
     private val emittedStructureWarnings = mutableSetOf<String>()
+
+    @VisibleForTesting
+    fun resetWarnings() {
+        emittedModifierWarnings.clear()
+        emittedStructureWarnings.clear()
+    }
 
     init {
         NodeViewBinderRegistry.initialize(
@@ -53,7 +61,7 @@ object ViewTreeRenderer {
             reconcileResult = reconcileResult,
             defaultRippleColor = DEFAULT_RIPPLE_COLOR,
             warningTag = WARNING_TAG,
-            emittedModifierWarnings = emittedModifierWarnings,
+            emittedModifierWarnings = cappedModifierWarnings(),
             renderChildren = { childContainer, childPrevious, childNodes ->
                 renderInto(
                     container = childContainer,
@@ -84,6 +92,13 @@ object ViewTreeRenderer {
         ).also { onReconcile?.invoke(it) }
     }
 
+    private fun cappedModifierWarnings(): MutableSet<String> {
+        if (emittedModifierWarnings.size >= MAX_WARNING_ENTRIES) {
+            emittedModifierWarnings.clear()
+        }
+        return emittedModifierWarnings
+    }
+
     private fun collectRenderWarnings(
         nodes: List<VNode>,
         structure: RenderStructureStats,
@@ -96,6 +111,9 @@ object ViewTreeRenderer {
         )
         warnings.forEach { warning ->
             val key = "structure|$warning"
+            if (emittedStructureWarnings.size >= MAX_WARNING_ENTRIES) {
+                emittedStructureWarnings.clear()
+            }
             if (emittedStructureWarnings.add(key)) {
                 Log.w(WARNING_TAG, warning)
             }
