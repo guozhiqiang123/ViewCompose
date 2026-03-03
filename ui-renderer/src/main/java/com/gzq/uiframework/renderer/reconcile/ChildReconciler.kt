@@ -13,11 +13,13 @@ object ChildReconciler {
         nodes: List<VNode>,
     ): ReconcileResult<T> {
         val usedPrevious = BooleanArray(previous.size)
+        val keyedIndex = buildKeyedIndex(previous)
         val patches = buildList {
             nodes.forEachIndexed { index, node ->
                 val reusableIndex = findReusableIndex(
                     previous = previous,
                     usedPrevious = usedPrevious,
+                    keyedIndex = keyedIndex,
                     targetIndex = index,
                     node = node,
                 )
@@ -60,16 +62,33 @@ object ChildReconciler {
         )
     }
 
+    private fun <T> buildKeyedIndex(
+        previous: List<ReconcileNode<T>>,
+    ): Map<Any, MutableList<Int>> {
+        val map = HashMap<Any, MutableList<Int>>(previous.size)
+        previous.forEachIndexed { index, node ->
+            val key = node.vnode.key
+            if (key != null) {
+                map.getOrPut(key) { mutableListOf() }.add(index)
+            }
+        }
+        return map
+    }
+
     private fun <T> findReusableIndex(
         previous: List<ReconcileNode<T>>,
         usedPrevious: BooleanArray,
+        keyedIndex: Map<Any, MutableList<Int>>,
         targetIndex: Int,
         node: VNode,
     ): Int? {
         if (node.key != null) {
-            previous.forEachIndexed { index, mountedNode ->
-                if (!usedPrevious[index] && canReuse(mountedNode.vnode, node)) {
-                    return index
+            val candidates = keyedIndex[node.key] ?: return null
+            for (candidateIndex in candidates) {
+                if (!usedPrevious[candidateIndex] &&
+                    canReuse(previous[candidateIndex].vnode, node)
+                ) {
+                    return candidateIndex
                 }
             }
             return null
