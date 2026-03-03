@@ -2,10 +2,15 @@ package com.gzq.uiframework.renderer.view.tree
 
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.VNode
+import com.gzq.uiframework.renderer.node.spec.BoxNodeProps
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.ColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.DividerNodeProps
+import com.gzq.uiframework.renderer.node.spec.IconButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.ImageNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.ProgressIndicatorNodeProps
+import com.gzq.uiframework.renderer.node.spec.RowNodeProps
 import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
 import com.gzq.uiframework.renderer.node.spec.SliderNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
@@ -118,6 +123,56 @@ internal object NodeBindingDiffer {
                     patch = ProgressIndicatorNodePatch(
                         previous = previousProgress,
                         next = nextProgress,
+                    ),
+                )
+            }
+            val previousRow = previous.spec as? RowNodeProps
+            val nextRow = next.spec as? RowNodeProps
+            if (previousRow != null && nextRow != null) {
+                return NodeBindingPlan.Patch(
+                    patch = RowNodePatch(
+                        previous = previousRow,
+                        next = nextRow,
+                    ),
+                )
+            }
+            val previousColumn = previous.spec as? ColumnNodeProps
+            val nextColumn = next.spec as? ColumnNodeProps
+            if (previousColumn != null && nextColumn != null) {
+                return NodeBindingPlan.Patch(
+                    patch = ColumnNodePatch(
+                        previous = previousColumn,
+                        next = nextColumn,
+                    ),
+                )
+            }
+            val previousBox = previous.spec as? BoxNodeProps
+            val nextBox = next.spec as? BoxNodeProps
+            if (previousBox != null && nextBox != null) {
+                return NodeBindingPlan.Patch(
+                    patch = BoxNodePatch(
+                        previous = previousBox,
+                        next = nextBox,
+                    ),
+                )
+            }
+            val previousImage = previous.spec as? ImageNodeProps
+            val nextImage = next.spec as? ImageNodeProps
+            if (previousImage != null && nextImage != null) {
+                return NodeBindingPlan.Patch(
+                    patch = ImageNodePatch(
+                        previous = previousImage,
+                        next = nextImage,
+                    ),
+                )
+            }
+            val previousIconButton = previous.spec as? IconButtonNodeProps
+            val nextIconButton = next.spec as? IconButtonNodeProps
+            if (previousIconButton != null && nextIconButton != null) {
+                return NodeBindingPlan.Patch(
+                    patch = IconButtonNodePatch(
+                        previous = previousIconButton,
+                        next = nextIconButton,
                     ),
                 )
             }

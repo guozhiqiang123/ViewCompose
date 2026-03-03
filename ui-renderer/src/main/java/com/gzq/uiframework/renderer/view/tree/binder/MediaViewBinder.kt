@@ -118,7 +118,7 @@ internal object MediaViewBinder {
         )
     }
 
-    private fun ImageContentScale.toScaleType(): ImageView.ScaleType {
+    internal fun ImageContentScale.toScaleType(): ImageView.ScaleType {
         return when (this) {
             ImageContentScale.Fit -> ImageView.ScaleType.FIT_CENTER
             ImageContentScale.Crop -> ImageView.ScaleType.CENTER_CROP

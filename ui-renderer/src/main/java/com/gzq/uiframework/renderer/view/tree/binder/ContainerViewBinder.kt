@@ -319,7 +319,7 @@ internal object ContainerViewBinder {
         )
     }
 
-    private fun applyLazyListPadding(
+    internal fun applyLazyListPadding(
         recyclerView: RecyclerView,
         padding: Int,
     ) {
@@ -327,7 +327,7 @@ internal object ContainerViewBinder {
         recyclerView.clipToPadding = padding == 0
     }
 
-    private fun applyLazyListSpacing(
+    internal fun applyLazyListSpacing(
         recyclerView: RecyclerView,
         spacing: Int,
     ) {
@@ -342,7 +342,7 @@ internal object ContainerViewBinder {
         recyclerView.addItemDecoration(decoration)
     }
 
-    private fun VerticalAlignment.toGravity(): Int {
+    internal fun VerticalAlignment.toGravity(): Int {
         return when (this) {
             VerticalAlignment.Top -> Gravity.TOP
             VerticalAlignment.Center -> Gravity.CENTER_VERTICAL
@@ -350,7 +350,7 @@ internal object ContainerViewBinder {
         }
     }
 
-    private fun HorizontalAlignment.toGravity(): Int {
+    internal fun HorizontalAlignment.toGravity(): Int {
         return when (this) {
             HorizontalAlignment.Start -> Gravity.START
             HorizontalAlignment.Center -> Gravity.CENTER_HORIZONTAL
@@ -358,7 +358,7 @@ internal object ContainerViewBinder {
         }
     }
 
-    private fun BoxAlignment.toGravity(): Int {
+    internal fun BoxAlignment.toGravity(): Int {
         return when (this) {
             BoxAlignment.TopStart -> Gravity.TOP or Gravity.START
             BoxAlignment.TopCenter -> Gravity.TOP or Gravity.CENTER_HORIZONTAL

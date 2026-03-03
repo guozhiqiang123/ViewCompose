@@ -1,9 +1,14 @@
 package com.gzq.uiframework.renderer.view.tree
 
+import com.gzq.uiframework.renderer.node.spec.BoxNodeProps
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.ColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.DividerNodeProps
+import com.gzq.uiframework.renderer.node.spec.IconButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.ImageNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.ProgressIndicatorNodeProps
+import com.gzq.uiframework.renderer.node.spec.RowNodeProps
 import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
 import com.gzq.uiframework.renderer.node.spec.SliderNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
@@ -66,6 +71,31 @@ internal data class SliderNodePatch(
 internal data class ProgressIndicatorNodePatch(
     val previous: ProgressIndicatorNodeProps,
     val next: ProgressIndicatorNodeProps,
+) : NodeViewPatch
+
+internal data class RowNodePatch(
+    val previous: RowNodeProps,
+    val next: RowNodeProps,
+) : NodeViewPatch
+
+internal data class ColumnNodePatch(
+    val previous: ColumnNodeProps,
+    val next: ColumnNodeProps,
+) : NodeViewPatch
+
+internal data class BoxNodePatch(
+    val previous: BoxNodeProps,
+    val next: BoxNodeProps,
+) : NodeViewPatch
+
+internal data class ImageNodePatch(
+    val previous: ImageNodeProps,
+    val next: ImageNodeProps,
+) : NodeViewPatch
+
+internal data class IconButtonNodePatch(
+    val previous: IconButtonNodeProps,
+    val next: IconButtonNodeProps,
 ) : NodeViewPatch
 
 internal data class DividerNodePatch(

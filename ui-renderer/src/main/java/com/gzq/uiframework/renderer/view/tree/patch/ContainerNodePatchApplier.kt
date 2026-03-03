@@ -1,26 +1,89 @@
 package com.gzq.uiframework.renderer.view.tree.patch
 
 import androidx.recyclerview.widget.RecyclerView
+import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout
+import com.gzq.uiframework.renderer.view.tree.BoxNodePatch
+import com.gzq.uiframework.renderer.view.tree.ColumnNodePatch
 import com.gzq.uiframework.renderer.view.tree.ContainerViewBinder
 import com.gzq.uiframework.renderer.view.tree.LazyColumnNodePatch
+import com.gzq.uiframework.renderer.view.tree.RowNodePatch
 import com.gzq.uiframework.renderer.view.tree.SegmentedControlNodePatch
 import com.gzq.uiframework.renderer.view.tree.TabPagerNodePatch
+import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
 
 internal object ContainerNodePatchApplier {
+    fun applyRowPatch(
+        view: DeclarativeLinearLayout,
+        patch: RowNodePatch,
+    ) {
+        val previous = patch.previous
+        val next = patch.next
+        if (previous.spacing != next.spacing) {
+            view.itemSpacing = next.spacing
+        }
+        if (previous.arrangement != next.arrangement) {
+            view.mainAxisArrangement = next.arrangement
+        }
+        if (previous.verticalAlignment != next.verticalAlignment) {
+            with(ContainerViewBinder) {
+                view.gravity = next.verticalAlignment.toGravity()
+            }
+        }
+    }
+
+    fun applyColumnPatch(
+        view: DeclarativeLinearLayout,
+        patch: ColumnNodePatch,
+    ) {
+        val previous = patch.previous
+        val next = patch.next
+        if (previous.spacing != next.spacing) {
+            view.itemSpacing = next.spacing
+        }
+        if (previous.arrangement != next.arrangement) {
+            view.mainAxisArrangement = next.arrangement
+        }
+        if (previous.horizontalAlignment != next.horizontalAlignment) {
+            with(ContainerViewBinder) {
+                view.gravity = next.horizontalAlignment.toGravity()
+            }
+        }
+    }
+
+    fun applyBoxPatch(
+        view: DeclarativeBoxLayout,
+        patch: BoxNodePatch,
+    ) {
+        val previous = patch.previous
+        val next = patch.next
+        if (previous.contentAlignment != next.contentAlignment) {
+            with(ContainerViewBinder) {
+                view.contentGravity = next.contentAlignment.toGravity()
+            }
+        }
+    }
+
     fun applyLazyColumnPatch(
         view: RecyclerView,
         patch: LazyColumnNodePatch,
     ) {
-        ContainerViewBinder.bindLazyColumn(
-            view = view,
-            spec = ContainerViewBinder.LazyColumnSpec(
-                contentPadding = patch.next.contentPadding,
-                spacing = patch.next.spacing,
-                items = patch.next.items,
-            ),
-        )
+        val previous = patch.previous
+        val next = patch.next
+        if (previous.contentPadding != next.contentPadding) {
+            ContainerViewBinder.applyLazyListPadding(view, next.contentPadding)
+        }
+        if (previous.spacing != next.spacing) {
+            ContainerViewBinder.applyLazyListSpacing(view, next.spacing)
+        }
+        if (previous.items != next.items) {
+            val adapter = view.adapter as? LazyColumnAdapter ?: LazyColumnAdapter().also {
+                view.adapter = it
+            }
+            adapter.submitItems(next.items)
+        }
     }
 
     fun applyTabPagerPatch(

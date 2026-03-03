@@ -18,6 +18,7 @@ import com.gzq.uiframework.renderer.view.tree.patch.ContainerNodePatchApplier
 import com.gzq.uiframework.renderer.view.tree.patch.ContentNodePatchApplier
 import com.gzq.uiframework.renderer.view.tree.patch.FeedbackNodePatchApplier
 import com.gzq.uiframework.renderer.view.tree.patch.InputNodePatchApplier
+import com.gzq.uiframework.renderer.view.tree.patch.MediaNodePatchApplier
 
 internal object NodeViewBinderRegistry {
     private lateinit var binders: Map<NodeType, (View, VNode) -> Unit>
@@ -175,6 +176,36 @@ internal object NodeViewBinderRegistry {
         patch: NodeViewPatch,
     ) {
         when (patch) {
+            is RowNodePatch -> {
+                ContainerNodePatchApplier.applyRowPatch(
+                    view = view as DeclarativeLinearLayout,
+                    patch = patch,
+                )
+            }
+            is ColumnNodePatch -> {
+                ContainerNodePatchApplier.applyColumnPatch(
+                    view = view as DeclarativeLinearLayout,
+                    patch = patch,
+                )
+            }
+            is BoxNodePatch -> {
+                ContainerNodePatchApplier.applyBoxPatch(
+                    view = view as DeclarativeBoxLayout,
+                    patch = patch,
+                )
+            }
+            is ImageNodePatch -> {
+                MediaNodePatchApplier.applyImagePatch(
+                    view = view as android.widget.ImageView,
+                    patch = patch,
+                )
+            }
+            is IconButtonNodePatch -> {
+                MediaNodePatchApplier.applyIconButtonPatch(
+                    view = view as android.widget.ImageButton,
+                    patch = patch,
+                )
+            }
             is ButtonNodePatch -> {
                 ContentNodePatchApplier.applyButtonPatch(
                     view = view as android.widget.Button,

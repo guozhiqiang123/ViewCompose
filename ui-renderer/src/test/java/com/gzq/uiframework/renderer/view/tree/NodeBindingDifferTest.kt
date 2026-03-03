@@ -7,10 +7,15 @@ import com.gzq.uiframework.renderer.node.Props
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.props
+import com.gzq.uiframework.renderer.node.spec.BoxNodeProps
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.ColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.DividerNodeProps
+import com.gzq.uiframework.renderer.node.spec.IconButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.ImageNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.ProgressIndicatorNodeProps
+import com.gzq.uiframework.renderer.node.spec.RowNodeProps
 import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
 import com.gzq.uiframework.renderer.node.spec.SliderNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
@@ -202,6 +207,61 @@ class NodeBindingDifferTest {
 
         assertTrue(plan is NodeBindingPlan.Patch)
         assertTrue((plan as NodeBindingPlan.Patch).patch is DividerNodePatch)
+    }
+
+    @Test
+    fun `patches row semantic updates`() {
+        val previous = rowNode(spacing = 8)
+        val next = rowNode(spacing = 16)
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is RowNodePatch)
+    }
+
+    @Test
+    fun `patches column semantic updates`() {
+        val previous = columnNode(spacing = 8)
+        val next = columnNode(spacing = 16)
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is ColumnNodePatch)
+    }
+
+    @Test
+    fun `patches box semantic updates`() {
+        val previous = boxNode(contentAlignment = com.gzq.uiframework.renderer.layout.BoxAlignment.TopStart)
+        val next = boxNode(contentAlignment = com.gzq.uiframework.renderer.layout.BoxAlignment.Center)
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is BoxNodePatch)
+    }
+
+    @Test
+    fun `patches image semantic updates`() {
+        val previous = imageNode(tint = 0xFF000000.toInt())
+        val next = imageNode(tint = 0xFFFF0000.toInt())
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is ImageNodePatch)
+    }
+
+    @Test
+    fun `patches icon button semantic updates`() {
+        val previous = iconButtonNode(enabled = true)
+        val next = iconButtonNode(enabled = false)
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is IconButtonNodePatch)
     }
 
     private fun textNode(
@@ -404,6 +464,90 @@ class NodeBindingDifferTest {
             spec = DividerNodeProps(
                 color = color,
                 thickness = 1,
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun rowNode(
+        spacing: Int = 8,
+    ): VNode {
+        return VNode(
+            type = NodeType.Row,
+            props = Props.Empty,
+            spec = RowNodeProps(
+                spacing = spacing,
+                arrangement = com.gzq.uiframework.renderer.layout.MainAxisArrangement.Start,
+                verticalAlignment = com.gzq.uiframework.renderer.layout.VerticalAlignment.Top,
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun columnNode(
+        spacing: Int = 8,
+    ): VNode {
+        return VNode(
+            type = NodeType.Column,
+            props = Props.Empty,
+            spec = ColumnNodeProps(
+                spacing = spacing,
+                arrangement = com.gzq.uiframework.renderer.layout.MainAxisArrangement.Start,
+                horizontalAlignment = com.gzq.uiframework.renderer.layout.HorizontalAlignment.Start,
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun boxNode(
+        contentAlignment: com.gzq.uiframework.renderer.layout.BoxAlignment = com.gzq.uiframework.renderer.layout.BoxAlignment.TopStart,
+    ): VNode {
+        return VNode(
+            type = NodeType.Box,
+            props = Props.Empty,
+            spec = BoxNodeProps(
+                contentAlignment = contentAlignment,
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun imageNode(
+        tint: Int? = null,
+    ): VNode {
+        return VNode(
+            type = NodeType.Image,
+            props = Props.Empty,
+            spec = ImageNodeProps(
+                contentDescription = null,
+                contentScale = com.gzq.uiframework.renderer.node.ImageContentScale.Fit,
+                tint = tint,
+                source = null,
+                placeholder = null,
+                error = null,
+                fallback = null,
+                remoteImageLoader = null,
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun iconButtonNode(
+        enabled: Boolean = true,
+    ): VNode {
+        return VNode(
+            type = NodeType.IconButton,
+            props = Props.Empty,
+            spec = IconButtonNodeProps(
+                contentDescription = null,
+                contentScale = com.gzq.uiframework.renderer.node.ImageContentScale.Fit,
+                tint = null,
+                source = null,
+                placeholder = null,
+                error = null,
+                fallback = null,
+                remoteImageLoader = null,
+                enabled = enabled,
             ),
             modifier = Modifier,
         )
