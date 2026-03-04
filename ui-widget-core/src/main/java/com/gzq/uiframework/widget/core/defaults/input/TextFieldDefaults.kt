@@ -62,14 +62,26 @@ object TextFieldDefaults {
         enabled: Boolean = true,
         isError: Boolean = false,
     ): Int {
+        val override = LocalContext.current(LocalTextFieldColors)
         return when {
             variant == TextFieldVariant.Outlined -> 0x00000000
-            isError && variant == TextFieldVariant.Tonal -> Theme.components.textField.tonalErrorContainer
-            isError -> Theme.components.textField.filledErrorContainer
-            variant == TextFieldVariant.Tonal && enabled -> Theme.components.textField.tonalContainer
-            variant == TextFieldVariant.Tonal -> Theme.components.textField.tonalDisabledContainer
-            enabled -> Theme.components.textField.filledContainer
-            else -> Theme.components.textField.filledDisabledContainer
+            isError && variant == TextFieldVariant.Tonal ->
+                override?.tonalErrorContainer ?: Theme.input.fieldError
+
+            isError ->
+                override?.filledErrorContainer ?: Theme.input.fieldError
+
+            variant == TextFieldVariant.Tonal && enabled ->
+                override?.tonalContainer ?: Theme.colors.surfaceVariant
+
+            variant == TextFieldVariant.Tonal ->
+                override?.tonalDisabledContainer ?: Theme.input.fieldContainerDisabled
+
+            enabled ->
+                override?.filledContainer ?: Theme.input.fieldContainer
+
+            else ->
+                override?.filledDisabledContainer ?: Theme.input.fieldContainerDisabled
         }
     }
 
@@ -78,10 +90,17 @@ object TextFieldDefaults {
         enabled: Boolean = true,
         isError: Boolean = false,
     ): Int {
+        val override = LocalContext.current(LocalTextFieldColors)
         return when {
-            isError -> Theme.components.textField.outlinedErrorBorder
-            variant == TextFieldVariant.Outlined && enabled -> Theme.components.textField.outlinedBorder
-            variant == TextFieldVariant.Outlined -> Theme.components.textField.outlinedDisabledBorder
+            isError ->
+                override?.outlinedErrorBorder ?: Theme.input.fieldError
+
+            variant == TextFieldVariant.Outlined && enabled ->
+                override?.outlinedBorder ?: Theme.input.control
+
+            variant == TextFieldVariant.Outlined ->
+                override?.outlinedDisabledBorder ?: Theme.input.controlDisabled
+
             else -> 0x00000000
         }
     }

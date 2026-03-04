@@ -18,23 +18,24 @@ object ButtonDefaults {
         variant: ButtonVariant = ButtonVariant.Primary,
         enabled: Boolean = true,
     ): Int {
+        val override = LocalContext.current(LocalButtonColors)
         return when (variant) {
             ButtonVariant.Primary -> if (enabled) {
-                Theme.components.button.primaryContainer
+                override?.primaryContainer ?: Theme.colors.primary
             } else {
-                Theme.components.button.primaryDisabledContainer
+                override?.primaryDisabledContainer ?: Theme.colors.divider
             }
 
             ButtonVariant.Secondary -> if (enabled) {
-                Theme.components.button.secondaryContainer
+                override?.secondaryContainer ?: Theme.colors.accent
             } else {
-                Theme.components.button.secondaryDisabledContainer
+                override?.secondaryDisabledContainer ?: Theme.colors.divider
             }
 
             ButtonVariant.Tonal -> if (enabled) {
-                Theme.components.button.tonalContainer
+                override?.tonalContainer ?: Theme.colors.surfaceVariant
             } else {
-                Theme.components.button.tonalDisabledContainer
+                override?.tonalDisabledContainer ?: Theme.colors.surfaceVariant
             }
 
             ButtonVariant.Outlined -> 0x00000000
@@ -45,29 +46,30 @@ object ButtonDefaults {
         variant: ButtonVariant = ButtonVariant.Primary,
         enabled: Boolean = true,
     ): Int {
+        val override = LocalContext.current(LocalButtonColors)
         return when (variant) {
             ButtonVariant.Primary -> if (enabled) {
-                Theme.components.button.primaryContent
+                override?.primaryContent ?: contentColorFor(Theme.colors.primary)
             } else {
-                Theme.components.button.primaryDisabledContent
+                override?.primaryDisabledContent ?: Theme.colors.textSecondary
             }
 
             ButtonVariant.Secondary -> if (enabled) {
-                Theme.components.button.secondaryContent
+                override?.secondaryContent ?: contentColorFor(Theme.colors.accent)
             } else {
-                Theme.components.button.secondaryDisabledContent
+                override?.secondaryDisabledContent ?: Theme.colors.textSecondary
             }
 
             ButtonVariant.Tonal -> if (enabled) {
-                Theme.components.button.tonalContent
+                override?.tonalContent ?: Theme.colors.textPrimary
             } else {
-                Theme.components.button.tonalDisabledContent
+                override?.tonalDisabledContent ?: Theme.colors.textSecondary
             }
 
             ButtonVariant.Outlined -> if (enabled) {
-                Theme.components.button.outlinedContent
+                override?.outlinedContent ?: Theme.colors.textPrimary
             } else {
-                Theme.components.button.outlinedDisabledContent
+                override?.outlinedDisabledContent ?: Theme.colors.textSecondary
             }
         }
     }
@@ -76,11 +78,12 @@ object ButtonDefaults {
         variant: ButtonVariant = ButtonVariant.Primary,
         enabled: Boolean = true,
     ): Int {
+        val override = LocalContext.current(LocalButtonColors)
         return when (variant) {
             ButtonVariant.Outlined -> if (enabled) {
-                Theme.components.button.outlinedBorder
+                override?.outlinedBorder ?: Theme.colors.divider
             } else {
-                Theme.components.button.outlinedDisabledBorder
+                override?.outlinedDisabledBorder ?: Theme.colors.divider
             }
 
             else -> 0x00000000

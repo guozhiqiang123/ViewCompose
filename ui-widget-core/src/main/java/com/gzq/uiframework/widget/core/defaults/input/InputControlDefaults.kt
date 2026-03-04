@@ -3,84 +3,67 @@ package com.gzq.uiframework.widget.core
 object InputControlDefaults {
     fun labelStyle(): UiTextStyle = TextDefaults.bodyStyle()
 
-    private fun labelColor(
-        enabled: Boolean,
-        label: Int,
-        labelDisabled: Int,
-    ): Int {
-        return if (enabled) {
-            label
-        } else {
-            labelDisabled
-        }
-    }
-
-    private fun controlColor(
-        enabled: Boolean,
-        control: Int,
-        controlDisabled: Int,
-    ): Int {
-        return if (enabled) {
-            control
-        } else {
-            controlDisabled
-        }
-    }
-
     fun checkboxLabelColor(enabled: Boolean = true): Int {
-        return labelColor(
-            enabled = enabled,
-            label = Theme.components.checkbox.label,
-            labelDisabled = Theme.components.checkbox.labelDisabled,
-        )
+        val override = LocalContext.current(LocalCheckboxColors)
+        return if (enabled) {
+            override?.label ?: Theme.input.fieldText
+        } else {
+            override?.labelDisabled ?: Theme.input.fieldTextDisabled
+        }
     }
 
     fun checkboxControlColor(enabled: Boolean = true): Int {
-        return controlColor(
-            enabled = enabled,
-            control = Theme.components.checkbox.control,
-            controlDisabled = Theme.components.checkbox.controlDisabled,
-        )
+        val override = LocalContext.current(LocalCheckboxColors)
+        return if (enabled) {
+            override?.control ?: Theme.input.control
+        } else {
+            override?.controlDisabled ?: Theme.input.controlDisabled
+        }
     }
 
     fun switchLabelColor(enabled: Boolean = true): Int {
-        return labelColor(
-            enabled = enabled,
-            label = Theme.components.switchControl.label,
-            labelDisabled = Theme.components.switchControl.labelDisabled,
-        )
+        val override = LocalContext.current(LocalSwitchColors)
+        return if (enabled) {
+            override?.label ?: Theme.input.fieldText
+        } else {
+            override?.labelDisabled ?: Theme.input.fieldTextDisabled
+        }
     }
 
     fun switchControlColor(enabled: Boolean = true): Int {
-        return controlColor(
-            enabled = enabled,
-            control = Theme.components.switchControl.control,
-            controlDisabled = Theme.components.switchControl.controlDisabled,
-        )
+        val override = LocalContext.current(LocalSwitchColors)
+        return if (enabled) {
+            override?.control ?: Theme.input.control
+        } else {
+            override?.controlDisabled ?: Theme.input.controlDisabled
+        }
     }
 
     fun radioButtonLabelColor(enabled: Boolean = true): Int {
-        return labelColor(
-            enabled = enabled,
-            label = Theme.components.radioButton.label,
-            labelDisabled = Theme.components.radioButton.labelDisabled,
-        )
+        val override = LocalContext.current(LocalRadioButtonColors)
+        return if (enabled) {
+            override?.label ?: Theme.input.fieldText
+        } else {
+            override?.labelDisabled ?: Theme.input.fieldTextDisabled
+        }
     }
 
     fun radioButtonControlColor(enabled: Boolean = true): Int {
-        return controlColor(
-            enabled = enabled,
-            control = Theme.components.radioButton.control,
-            controlDisabled = Theme.components.radioButton.controlDisabled,
-        )
+        val override = LocalContext.current(LocalRadioButtonColors)
+        return if (enabled) {
+            override?.control ?: Theme.input.control
+        } else {
+            override?.controlDisabled ?: Theme.input.controlDisabled
+        }
     }
 
     fun sliderControlColor(enabled: Boolean = true): Int {
-        return controlColor(
-            enabled = enabled,
-            control = Theme.components.slider.control,
-            controlDisabled = Theme.components.slider.controlDisabled,
-        )
+        val override = LocalContext.current(LocalSliderColors)
+        return if (enabled) {
+            override?.control ?: Theme.input.control
+        } else {
+            override?.controlDisabled ?: Theme.input.controlDisabled
+        }
     }
 
     fun pressedColor(): Int = Theme.interactions.pressedOverlay

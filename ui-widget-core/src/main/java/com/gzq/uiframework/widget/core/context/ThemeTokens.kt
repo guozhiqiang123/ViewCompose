@@ -48,7 +48,6 @@ data class UiThemeTokens(
     val input: UiInputColors = UiInputDefaults.fromColors(colors),
     val shapes: UiShapes = UiShapeDefaults.default(),
     val controls: UiControlSizing = UiControlSizeDefaults.default(),
-    val components: UiComponentStyles = UiComponentStyleDefaults.fromTheme(colors, input),
     val interactions: UiInteractionColors = UiInteractionDefaults.fromColors(colors),
 )
 

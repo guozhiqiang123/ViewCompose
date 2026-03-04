@@ -23,9 +23,6 @@ object Theme {
     val controls: UiControlSizing
         get() = current.controls
 
-    val components: UiComponentStyles
-        get() = current.components
-
     val interactions: UiInteractionColors
         get() = current.interactions
 }
@@ -49,7 +46,6 @@ fun UiTreeBuilder.UiThemeOverride(
     input: UiInputColors? = null,
     shapes: UiShapes? = null,
     controls: UiControlSizing? = null,
-    components: UiComponentStyles? = null,
     interactions: UiInteractionColors? = null,
     content: UiTreeBuilder.() -> Unit,
 ) {
@@ -61,7 +57,6 @@ fun UiTreeBuilder.UiThemeOverride(
             input = input,
             shapes = shapes,
             controls = controls,
-            components = components,
             interactions = interactions,
         ),
     ) {
@@ -75,7 +70,6 @@ fun UiTreeBuilder.UiThemeOverride(
     input: (UiInputColors.() -> UiInputColors)? = null,
     shapes: (UiShapes.() -> UiShapes)? = null,
     controls: (UiControlSizing.() -> UiControlSizing)? = null,
-    components: (UiComponentStyles.() -> UiComponentStyles)? = null,
     interactions: (UiInteractionColors.() -> UiInteractionColors)? = null,
     content: UiTreeBuilder.() -> Unit,
 ) {
@@ -85,7 +79,6 @@ fun UiTreeBuilder.UiThemeOverride(
         input = input?.invoke(Theme.input),
         shapes = shapes?.invoke(Theme.shapes),
         controls = controls?.invoke(Theme.controls),
-        components = components?.invoke(Theme.components),
         interactions = interactions?.invoke(Theme.interactions),
         content = content,
     )

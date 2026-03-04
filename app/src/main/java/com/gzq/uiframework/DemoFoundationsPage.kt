@@ -13,6 +13,7 @@ import com.gzq.uiframework.renderer.modifier.size
 import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.Box
 import com.gzq.uiframework.widget.core.Button
+import com.gzq.uiframework.widget.core.ButtonColorOverride
 import com.gzq.uiframework.widget.core.ButtonSize
 import com.gzq.uiframework.widget.core.ButtonVariant
 import com.gzq.uiframework.widget.core.CircularProgressIndicator
@@ -22,14 +23,19 @@ import com.gzq.uiframework.widget.core.IconButton
 import com.gzq.uiframework.widget.core.Image
 import com.gzq.uiframework.widget.core.LazyColumn
 import com.gzq.uiframework.widget.core.LinearProgressIndicator
+import com.gzq.uiframework.widget.core.ProvideButtonColors
+import com.gzq.uiframework.widget.core.ProvideSegmentedControlColors
+import com.gzq.uiframework.widget.core.ProvideTextFieldColors
 import com.gzq.uiframework.widget.core.Row
 import com.gzq.uiframework.widget.core.SegmentedControl
+import com.gzq.uiframework.widget.core.SegmentedControlColorOverride
 import com.gzq.uiframework.widget.core.Surface
 import com.gzq.uiframework.widget.core.SurfaceDefaults
 import com.gzq.uiframework.widget.core.SurfaceVariant
 import com.gzq.uiframework.widget.core.Text
 import com.gzq.uiframework.widget.core.TextDefaults
 import com.gzq.uiframework.widget.core.TextField
+import com.gzq.uiframework.widget.core.TextFieldColorOverride
 import com.gzq.uiframework.widget.core.TextFieldVariant
 import com.gzq.uiframework.widget.core.Theme
 import com.gzq.uiframework.widget.core.UiTextStyle
@@ -264,29 +270,29 @@ internal fun UiTreeBuilder.OverviewPage(
                         }
                     }
                 }
-                UiThemeOverride(
-                    components = {
-                        copy(
-                            button = button.copy(
-                                primaryContainer = Theme.colors.textPrimary,
-                                primaryContent = Theme.colors.background,
-                                primaryDisabledContainer = Theme.colors.divider,
-                                primaryDisabledContent = Theme.colors.textSecondary,
-                                outlinedBorder = Theme.colors.accent,
-                                outlinedDisabledBorder = Theme.colors.textSecondary,
-                            ),
-                            textField = textField.copy(
-                                filledDisabledContainer = Theme.colors.surfaceVariant,
-                                outlinedErrorBorder = Theme.colors.accent,
-                            ),
-                            segmentedControl = segmentedControl.copy(
-                                indicator = Theme.colors.accent,
-                                indicatorDisabled = Theme.colors.divider,
-                                selectedText = Theme.colors.background,
-                                selectedTextDisabled = Theme.colors.textSecondary,
-                            ),
-                        )
-                    },
+                ProvideButtonColors(
+                    ButtonColorOverride(
+                        primaryContainer = Theme.colors.textPrimary,
+                        primaryContent = Theme.colors.background,
+                        primaryDisabledContainer = Theme.colors.divider,
+                        primaryDisabledContent = Theme.colors.textSecondary,
+                        outlinedBorder = Theme.colors.accent,
+                        outlinedDisabledBorder = Theme.colors.textSecondary,
+                    ),
+                ) {
+                ProvideTextFieldColors(
+                    TextFieldColorOverride(
+                        filledDisabledContainer = Theme.colors.surfaceVariant,
+                        outlinedErrorBorder = Theme.colors.accent,
+                    ),
+                ) {
+                ProvideSegmentedControlColors(
+                    SegmentedControlColorOverride(
+                        indicator = Theme.colors.accent,
+                        indicatorDisabled = Theme.colors.divider,
+                        selectedText = Theme.colors.background,
+                        selectedTextDisabled = Theme.colors.textSecondary,
+                    ),
                 ) {
                     Column(
                         spacing = 8.dp,
@@ -355,6 +361,8 @@ internal fun UiTreeBuilder.OverviewPage(
                             modifier = Modifier.fillMaxWidth(),
                         )
                     }
+                }
+                }
                 }
                 Text(
                     text = "Outside these blocks, the parent demo theme stays unchanged.",

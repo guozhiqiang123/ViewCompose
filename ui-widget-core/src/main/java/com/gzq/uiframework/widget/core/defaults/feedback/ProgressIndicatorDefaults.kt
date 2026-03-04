@@ -1,15 +1,27 @@
 package com.gzq.uiframework.widget.core
 
 object ProgressIndicatorDefaults {
-    fun linearIndicatorColor(): Int = Theme.components.progressIndicator.linearIndicator
+    fun linearIndicatorColor(): Int {
+        val override = LocalContext.current(LocalProgressIndicatorColors)
+        return override?.linearIndicator ?: Theme.colors.primary
+    }
 
-    fun linearTrackColor(): Int = Theme.components.progressIndicator.linearTrack
+    fun linearTrackColor(): Int {
+        val override = LocalContext.current(LocalProgressIndicatorColors)
+        return override?.linearTrack ?: Theme.colors.divider
+    }
 
     fun linearTrackThickness(): Int = Theme.controls.progressIndicator.linearTrackThickness
 
-    fun circularIndicatorColor(): Int = Theme.components.progressIndicator.circularIndicator
+    fun circularIndicatorColor(): Int {
+        val override = LocalContext.current(LocalProgressIndicatorColors)
+        return override?.circularIndicator ?: Theme.colors.primary
+    }
 
-    fun circularTrackColor(): Int = Theme.components.progressIndicator.circularTrack
+    fun circularTrackColor(): Int {
+        val override = LocalContext.current(LocalProgressIndicatorColors)
+        return override?.circularTrack ?: Theme.colors.divider
+    }
 
     fun circularSize(): Int = Theme.controls.progressIndicator.circularSize
 

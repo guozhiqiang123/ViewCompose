@@ -16,6 +16,11 @@ import com.gzq.uiframework.widget.core.ButtonVariant
 import com.gzq.uiframework.widget.core.Checkbox
 import com.gzq.uiframework.widget.core.Column
 import com.gzq.uiframework.widget.core.EmailField
+import com.gzq.uiframework.widget.core.InputControlColorOverride
+import com.gzq.uiframework.widget.core.ProvideCheckboxColors
+import com.gzq.uiframework.widget.core.ProvideRadioButtonColors
+import com.gzq.uiframework.widget.core.ProvideSliderColors
+import com.gzq.uiframework.widget.core.ProvideSwitchColors
 import com.gzq.uiframework.widget.core.LazyColumn
 import com.gzq.uiframework.widget.core.NumberField
 import com.gzq.uiframework.widget.core.PasswordField
@@ -303,33 +308,35 @@ internal fun UiTreeBuilder.InputPage(
                     onValueChange = { intensityState.value = it },
                     modifier = Modifier.fillMaxWidth(),
                 )
-                UiThemeOverride(
-                    components = {
-                        copy(
-                            checkbox = checkbox.copy(
-                                control = Theme.colors.accent,
-                                controlDisabled = Theme.colors.divider,
-                                label = Theme.colors.textPrimary,
-                                labelDisabled = Theme.colors.textSecondary,
-                            ),
-                            switchControl = switchControl.copy(
-                                control = Theme.colors.accent,
-                                controlDisabled = Theme.colors.divider,
-                                label = Theme.colors.textPrimary,
-                                labelDisabled = Theme.colors.textSecondary,
-                            ),
-                            radioButton = radioButton.copy(
-                                control = Theme.colors.accent,
-                                controlDisabled = Theme.colors.divider,
-                                label = Theme.colors.textPrimary,
-                                labelDisabled = Theme.colors.textSecondary,
-                            ),
-                            slider = slider.copy(
-                                control = Theme.colors.accent,
-                                controlDisabled = Theme.colors.divider,
-                            ),
-                        )
-                    },
+                ProvideCheckboxColors(
+                    InputControlColorOverride(
+                        control = Theme.colors.accent,
+                        controlDisabled = Theme.colors.divider,
+                        label = Theme.colors.textPrimary,
+                        labelDisabled = Theme.colors.textSecondary,
+                    ),
+                ) {
+                ProvideSwitchColors(
+                    InputControlColorOverride(
+                        control = Theme.colors.accent,
+                        controlDisabled = Theme.colors.divider,
+                        label = Theme.colors.textPrimary,
+                        labelDisabled = Theme.colors.textSecondary,
+                    ),
+                ) {
+                ProvideRadioButtonColors(
+                    InputControlColorOverride(
+                        control = Theme.colors.accent,
+                        controlDisabled = Theme.colors.divider,
+                        label = Theme.colors.textPrimary,
+                        labelDisabled = Theme.colors.textSecondary,
+                    ),
+                ) {
+                ProvideSliderColors(
+                    InputControlColorOverride(
+                        control = Theme.colors.accent,
+                        controlDisabled = Theme.colors.divider,
+                    ),
                 ) {
                     Column(
                         spacing = 8.dp,
@@ -365,6 +372,9 @@ internal fun UiTreeBuilder.InputPage(
                             modifier = Modifier.fillMaxWidth(),
                         )
                     }
+                }
+                }
+                }
                 }
             }
 

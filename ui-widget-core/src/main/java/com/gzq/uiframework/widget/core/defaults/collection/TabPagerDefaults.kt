@@ -1,9 +1,15 @@
 package com.gzq.uiframework.widget.core
 
 object TabPagerDefaults {
-    fun backgroundColor(): Int = Theme.components.tabPager.background
+    fun backgroundColor(): Int {
+        val override = LocalContext.current(LocalTabPagerColors)
+        return override?.background ?: Theme.colors.surfaceVariant
+    }
 
-    fun indicatorColor(): Int = Theme.components.tabPager.indicator
+    fun indicatorColor(): Int {
+        val override = LocalContext.current(LocalTabPagerColors)
+        return override?.indicator ?: Theme.colors.primary
+    }
 
     fun cornerRadius(): Int = Theme.shapes.cardCornerRadius
 
@@ -13,9 +19,15 @@ object TabPagerDefaults {
 
     fun tabPaddingVertical(): Int = 10.dp
 
-    fun selectedTextColor(): Int = Theme.components.tabPager.selectedText
+    fun selectedTextColor(): Int {
+        val override = LocalContext.current(LocalTabPagerColors)
+        return override?.selectedText ?: Theme.colors.textPrimary
+    }
 
-    fun unselectedTextColor(): Int = Theme.components.tabPager.text
+    fun unselectedTextColor(): Int {
+        val override = LocalContext.current(LocalTabPagerColors)
+        return override?.text ?: Theme.colors.textSecondary
+    }
 
     fun rippleColor(): Int = Theme.interactions.pressedOverlay
 }

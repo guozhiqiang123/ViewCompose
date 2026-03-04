@@ -8,36 +8,40 @@ enum class SegmentedControlSize {
 
 object SegmentedControlDefaults {
     fun backgroundColor(enabled: Boolean = true): Int {
+        val override = LocalContext.current(LocalSegmentedControlColors)
         return if (enabled) {
-            Theme.components.segmentedControl.background
+            override?.background ?: Theme.colors.surfaceVariant
         } else {
-            Theme.components.segmentedControl.backgroundDisabled
+            override?.backgroundDisabled ?: Theme.colors.surface
         }
     }
 
     fun indicatorColor(enabled: Boolean = true): Int {
+        val override = LocalContext.current(LocalSegmentedControlColors)
         return if (enabled) {
-            Theme.components.segmentedControl.indicator
+            override?.indicator ?: Theme.colors.primary
         } else {
-            Theme.components.segmentedControl.indicatorDisabled
+            override?.indicatorDisabled ?: Theme.colors.divider
         }
     }
 
     fun cornerRadius(): Int = Theme.shapes.controlCornerRadius
 
     fun textColor(enabled: Boolean = true): Int {
+        val override = LocalContext.current(LocalSegmentedControlColors)
         return if (enabled) {
-            Theme.components.segmentedControl.text
+            override?.text ?: Theme.colors.textSecondary
         } else {
-            Theme.components.segmentedControl.textDisabled
+            override?.textDisabled ?: Theme.colors.textSecondary
         }
     }
 
     fun selectedTextColor(enabled: Boolean = true): Int {
+        val override = LocalContext.current(LocalSegmentedControlColors)
         return if (enabled) {
-            Theme.components.segmentedControl.selectedText
+            override?.selectedText ?: contentColorFor(Theme.colors.primary)
         } else {
-            Theme.components.segmentedControl.selectedTextDisabled
+            override?.selectedTextDisabled ?: Theme.colors.textSecondary
         }
     }
 
