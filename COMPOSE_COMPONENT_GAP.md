@@ -12,13 +12,14 @@
 
 | 类别 | 已有组件 |
 |------|---------|
-| 布局容器 | Box, Row, Column, Surface, Spacer, Divider |
-| 内容展示 | Text, Image, Icon |
-| 按钮动作 | Button (4 variant), IconButton (4 variant), SegmentedControl |
+| 布局容器 | Box, Row, Column, Surface, Spacer, Divider, Card (3 variant), ListItem |
+| 内容展示 | Text, Image, Icon, Badge, BadgedBox |
+| 按钮动作 | Button (5 variant incl. Text), TextButton, IconButton (4 variant), SegmentedControl, FloatingActionButton, ExtendedFloatingActionButton |
 | 文本输入 | TextField, PasswordField, EmailField, NumberField, TextArea |
 | 选择输入 | Checkbox, Switch, RadioButton, Slider |
-| 反馈提示 | LinearProgressIndicator, CircularProgressIndicator, Snackbar, Toast, Dialog, Popup |
+| 反馈提示 | LinearProgressIndicator, CircularProgressIndicator, Snackbar, Toast, Dialog, Popup, AlertDialog, PlainTooltip |
 | 集合列表 | LazyColumn, TabPager |
+| 导航 | TopAppBar, BottomAppBar |
 | 逃生通道 | AndroidView |
 
 ### Compose Material 3 组件总量
@@ -820,9 +821,9 @@ fun UiTreeBuilder.ListItem(
 | `Image` | ✅ 已有 | `Image()` | — |
 | `HorizontalDivider` | ✅ 已有 | `Divider()` | — |
 | `VerticalDivider` | ❌ 缺失 | — | T4 组合（Divider 旋转） |
-| `Badge` / `BadgedBox` | ❌ 缺失 | — | T4 组合封装 |
-| `ListItem` | ❌ 缺失 | — | T4 组合封装 |
-| `Card` / `ElevatedCard` / `OutlinedCard` | ❌ 缺失 | — | T4 组合封装 |
+| `Badge` / `BadgedBox` | ✅ 已有 | `Badge()`, `BadgedBox()` | Phase A |
+| `ListItem` | ✅ 已有 | `ListItem()` | Phase A |
+| `Card` / `ElevatedCard` / `OutlinedCard` | ✅ 已有 | `Card(variant = Filled/Elevated/Outlined)` | Phase A |
 
 ### 5.3 按钮与动作
 
@@ -832,11 +833,11 @@ fun UiTreeBuilder.ListItem(
 | `ElevatedButton` | 🔧 部分 | `Button(variant = Secondary)` | 缺 elevation |
 | `FilledTonalButton` | ✅ 已有 | `Button(variant = Tonal)` | — |
 | `OutlinedButton` | ✅ 已有 | `Button(variant = Outlined)` | — |
-| `TextButton` | ❌ 缺失 | — | T4 新增 variant |
+| `TextButton` | ✅ 已有 | `TextButton()` / `Button(variant = Text)` | Phase A |
 | `IconButton` | ✅ 已有 | `IconButton()` | — |
 | `IconToggleButton` | ❌ 缺失 | — | T4 组合（IconButton + state） |
-| `FloatingActionButton` | ❌ 缺失 | — | T4 组合封装 |
-| `ExtendedFloatingActionButton` | ❌ 缺失 | — | T4 组合封装 |
+| `FloatingActionButton` | ✅ 已有 | `FloatingActionButton()` | Phase A |
+| `ExtendedFloatingActionButton` | ✅ 已有 | `ExtendedFloatingActionButton()` | Phase A |
 
 ### 5.4 Chip
 
@@ -874,9 +875,9 @@ fun UiTreeBuilder.ListItem(
 
 | Compose 组件 | 框架状态 | 框架对应 | 归类 |
 |-------------|---------|---------|------|
-| `TopAppBar` | ❌ 缺失 | — | T4 组合封装 |
+| `TopAppBar` | ✅ 已有 | `TopAppBar()` | Phase A |
 | `CenterAlignedTopAppBar` | ❌ 缺失 | — | T4 组合封装 |
-| `BottomAppBar` | ❌ 缺失 | — | T4 组合封装 |
+| `BottomAppBar` | ✅ 已有 | `BottomAppBar()` | Phase A |
 | `NavigationBar` | ❌ 缺失 | — | T1 新增虚拟 |
 | `NavigationRail` | ❌ 缺失 | — | T2 新增虚拟 |
 | `ModalNavigationDrawer` | ❌ 缺失 | — | T2 新增虚拟 |
@@ -888,13 +889,13 @@ fun UiTreeBuilder.ListItem(
 | Compose 组件 | 框架状态 | 框架对应 | 归类 |
 |-------------|---------|---------|------|
 | `Snackbar` | ✅ 已有 | `Snackbar()` | — |
-| `AlertDialog` | 🔧 部分 | `Dialog()` (无标准化布局) | T4 组合封装 |
+| `AlertDialog` | ✅ 已有 | `AlertDialog()` | Phase A |
 | `CircularProgressIndicator` | ✅ 已有 | `CircularProgressIndicator()` | — |
 | `LinearProgressIndicator` | ✅ 已有 | `LinearProgressIndicator()` | — |
 | `ModalBottomSheet` | ❌ 缺失 | — | T2 新增虚拟 |
 | `PullToRefreshBox` | ❌ 缺失 | — | T2 新增虚拟 |
 | `SwipeToDismissBox` | ❌ 缺失 | — | T2 新增虚拟 |
-| `PlainTooltip` / `RichTooltip` | ❌ 缺失 | — | T4 组合封装 |
+| `PlainTooltip` / `RichTooltip` | 🔧 部分 | `PlainTooltip()` (RichTooltip 待实现) | Phase A |
 
 ### 5.9 集合与列表
 
@@ -920,22 +921,22 @@ fun UiTreeBuilder.ListItem(
 
 ## §6 实施路线图
 
-### Phase A：核心组合封装（1-2 周）
+### Phase A：核心组合封装（1-2 周） ✅ 已完成
 
 > 不需要新 NodeType，纯 DSL + Defaults，可立即开始。
 > **前置依赖**：WIDGET_PROPERTY_AUDIT Phase 2.1（elevation Modifier）对 ElevatedCard 和 FAB 有帮助，但不阻塞其他项。
 
-| # | 组件 | 工作量 | 依赖 |
-|---|------|--------|------|
-| A.1 | Card (Filled/Outlined) | 0.5 天 | — |
-| A.2 | AlertDialog | 0.5 天 | — |
-| A.3 | ListItem | 0.5 天 | — |
-| A.4 | TopAppBar | 1 天 | — |
-| A.5 | BottomAppBar | 0.5 天 | — |
-| A.6 | FloatingActionButton / ExtendedFAB | 0.5 天 | elevation Modifier（可选） |
-| A.7 | Badge / BadgedBox | 0.5 天 | — |
-| A.8 | TextButton variant | 0.5 天 | — |
-| A.9 | Tooltip (Plain) | 0.5 天 | 依赖现有 Popup |
+| # | 组件 | 工作量 | 依赖 | 状态 |
+|---|------|--------|------|------|
+| A.1 | Card (Filled/Outlined/Elevated) | 0.5 天 | — | ✅ |
+| A.2 | AlertDialog | 0.5 天 | — | ✅ |
+| A.3 | ListItem | 0.5 天 | — | ✅ |
+| A.4 | TopAppBar | 1 天 | — | ✅ |
+| A.5 | BottomAppBar | 0.5 天 | — | ✅ |
+| A.6 | FloatingActionButton / ExtendedFAB | 0.5 天 | elevation Modifier（可选） | ✅ |
+| A.7 | Badge / BadgedBox | 0.5 天 | — | ✅ |
+| A.8 | TextButton variant | 0.5 天 | — | ✅ |
+| A.9 | Tooltip (Plain) | 0.5 天 | 依赖现有 Popup | ✅ |
 
 ### Phase B：核心新增虚拟组件（2-3 周）
 
@@ -986,12 +987,12 @@ fun UiTreeBuilder.ListItem(
 | 维度 | 数量 |
 |------|------|
 | Compose M3 核心组件（去重、去 Expressive） | ~90 |
-| 框架已覆盖 | 28 |
+| 框架已覆盖 | 37 |
 | 框架部分覆盖 | 4 |
-| T1 核心缺口 | 10 |
-| T2 中等缺口 | 20 |
+| T1 核心缺口 | 10 → 3 (Phase A 关闭 7) |
+| T2 中等缺口 | 20 → 18 (Phase A 关闭 2) |
 | T3 AndroidView | 14 |
-| T4 可组合封装 | 14 |
+| T4 可组合封装 | 14 → 5 (Phase A 关闭 9) |
 
 ### 缺口分布
 
