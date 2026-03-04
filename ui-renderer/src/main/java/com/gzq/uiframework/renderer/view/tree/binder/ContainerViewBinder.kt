@@ -14,6 +14,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLa
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout
 import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
 import com.gzq.uiframework.renderer.view.lazy.LazyItemSpacingDecoration
+import com.gzq.uiframework.renderer.view.lazy.LazyListState
 import com.gzq.uiframework.renderer.node.SegmentedControlItem
 import com.gzq.uiframework.renderer.node.TabPage
 import com.gzq.uiframework.renderer.node.TypedPropKeys
@@ -43,6 +44,7 @@ internal object ContainerViewBinder {
         val contentPadding: Int,
         val spacing: Int,
         val items: List<LazyListItem>,
+        val state: LazyListState? = null,
     )
 
     data class TabPagerSpec(
@@ -122,6 +124,7 @@ internal object ContainerViewBinder {
         applyLazyListPadding(view, spec.contentPadding)
         applyLazyListSpacing(view, spec.spacing)
         adapter.submitItems(spec.items)
+        spec.state?.recyclerView = view
     }
 
     fun bindTabPager(
@@ -216,6 +219,7 @@ internal object ContainerViewBinder {
                 contentPadding = spec.contentPadding,
                 spacing = spec.spacing,
                 items = spec.items,
+                state = spec.state,
             )
         }
         return LazyColumnSpec(

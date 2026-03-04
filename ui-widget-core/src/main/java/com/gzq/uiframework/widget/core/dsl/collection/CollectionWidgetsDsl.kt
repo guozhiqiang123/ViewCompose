@@ -9,12 +9,14 @@ import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TabPage
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
+import com.gzq.uiframework.renderer.view.lazy.LazyListState
 
 fun <T> UiTreeBuilder.LazyColumn(
     items: List<T>,
     key: ((T) -> Any)? = null,
     contentPadding: Int = 0,
     spacing: Int = 0,
+    state: LazyListState? = null,
     modifier: Modifier = Modifier,
     itemContent: UiTreeBuilder.(T) -> Unit,
 ) {
@@ -48,6 +50,7 @@ fun <T> UiTreeBuilder.LazyColumn(
             contentPadding = contentPadding,
             spacing = spacing,
             items = resolvedItems,
+            state = state,
         ),
         modifier = modifier,
     )

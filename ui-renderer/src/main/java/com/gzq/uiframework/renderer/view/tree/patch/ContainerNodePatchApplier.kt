@@ -84,6 +84,10 @@ internal object ContainerNodePatchApplier {
             }
             adapter.submitItems(next.items)
         }
+        if (previous.state !== next.state) {
+            previous.state?.recyclerView = null
+            next.state?.recyclerView = view
+        }
     }
 
     fun applyTabPagerPatch(

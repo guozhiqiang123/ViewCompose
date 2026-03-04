@@ -800,8 +800,8 @@ val trackColor: Int? = null   // null 时回退到 controlColor
 
 | 原生属性 | Android setter | 框架归属 | 当前状态 | 备注 |
 |----------|---------------|---------|---------|------|
-| scrollToPosition | `scrollToPosition` | Spec (命令式) | 📋 | 需要设计命令式 API（如 LazyListState） |
-| smoothScrollToPosition | `smoothScrollToPosition` | Spec (命令式) | 📋 | 平滑滚动 |
+| scrollToPosition | `scrollToPosition` | Spec (命令式) | ✅ | `LazyListState.scrollToPosition(index)` |
+| smoothScrollToPosition | `smoothScrollToPosition` | Spec (命令式) | ✅ | `LazyListState.smoothScrollToPosition(index)` |
 | clipToPadding | `setClipToPadding` | Spec | 🔧 | contentPadding 场景需设为 false，需确认框架是否自动处理 |
 | contentPadding 四边独立 | `setPadding(l,t,r,b)` | Spec | 📋 | 当前仅支持统一 padding，应支持 `contentPadding(top, bottom, start, end)` |
 
@@ -1002,14 +1002,14 @@ object IconDefaults {
 ### Phase 2：中等工作量（1-2 周）
 
 > P1 优先级项，需要新增 ModifierElement 或涉及较大 API 设计。
-> 简单项（2.5-2.9）已于 commit c6c5504 完成；2.2（textDecoration）和 2.3（cursorColor）已完成；2.1（elevation）已完成；剩余 2.4（scrollToPosition）待后续实施。
+> 简单项（2.5-2.9）已于 commit c6c5504 完成；2.2（textDecoration）和 2.3（cursorColor）已完成；2.1（elevation）已完成；2.4（scrollToPosition）已完成。Phase 2 全部 9 项已完成。
 
 | # | 改进项 | 涉及文件 | 对应审计项 | 预估工作量 | 状态 |
 |---|--------|---------|-----------|-----------|------|
 | 2.1 | **elevation / shadow Modifier**：新增 `Modifier.elevation(dp: Int)` → `ElevationModifierElement`，渲染器调用 `view.elevation` + `view.outlineProvider` | `Modifier.kt`, 通用渲染器 `ModifierApplier` | §2.2 elevation/shadow ✅ | 1-2 天 | ✅ 已完成 |
 | 2.2 | **textDecoration**：UiTextStyle 新增 `textDecoration: Set<TextDecoration>?`，枚举 `TextDecoration.Underline/LineThrough`，渲染器通过 `paintFlags` 实现 | `UiTextStyle.kt`, Text 渲染器 | §3.1 textDecoration ✅ | 1 天 | ✅ 已完成 |
 | 2.3 | **TextField cursorColor**：TextFieldNodeProps 新增 `cursorColor: Int?`，TextFieldDefaults 新增 `cursorColor()` → `Theme.colors.primary`，渲染器通过 `setTextCursorDrawable` (API 29+) 或反射实现 | `TextFieldNodeProps.kt`, `TextFieldDefaults.kt`, TextField 渲染器, DSL | §3.6 cursorColor ✅ | 1 天 | ✅ 已完成 |
-| 2.4 | **LazyColumn scrollToPosition API**：设计 `LazyListState` 接口，DSL 新增 `state` 参数，通过命令式 API 桥接 `RecyclerView.scrollToPosition` | `LazyColumnNodeProps.kt`, RecyclerView 渲染器, DSL | §3.15 scrollToPosition 📋 | 2-3 天 | 待实施 |
+| 2.4 | **LazyColumn scrollToPosition API**：设计 `LazyListState` 接口，DSL 新增 `state` 参数，通过命令式 API 桥接 `RecyclerView.scrollToPosition` | `LazyColumnNodeProps.kt`, RecyclerView 渲染器, DSL | §3.15 scrollToPosition ✅ | 2-3 天 | ✅ 已完成 |
 | 2.5 | **clipToOutline Modifier**：新增 `Modifier.clip()` → `ClipModifierElement`，渲染器调用 `view.clipToOutline = true` | `Modifier.kt`, 通用渲染器 | §2.2 clipToOutline ✅ | 0.5 天 | ✅ 已完成 |
 | 2.6 | **contentDescription 通用 Modifier**：新增 `Modifier.contentDescription(description: String?)` → `ContentDescriptionModifierElement`，渲染器调用 `view.contentDescription` | `Modifier.kt`, 通用渲染器 | §2.2 / §4.3 contentDescription ✅ | 0.5 天 | ✅ 已完成 |
 | 2.7 | **minWidth Modifier**：新增 `Modifier.minWidth(minWidth: Int)` → `MinWidthModifierElement`，渲染器调用 `view.minimumWidth` | `Modifier.kt` | §2.2 minWidth ✅ | 0.5 天 | ✅ 已完成 |
@@ -1032,7 +1032,7 @@ object IconDefaults {
 | 3.8 | **Icon contentScale 暴露**：Icon DSL 添加 `contentScale: ImageContentScale = IconDefaults.contentScale()` 参数 | `ContentWidgetsDsl.kt` | §3.3 contentScale 📋 | 0.5 天 |
 | 3.9 | **TextField onImeAction 回调**：TextFieldNodeProps 新增 `onImeAction: (() -> Unit)?`，渲染器设置 `setOnEditorActionListener` | `TextFieldNodeProps.kt`, TextField 渲染器, DSL | §3.6 onImeAction 📋 | 1 天 |
 | 3.10 | **LazyColumn contentPadding 四边独立**：`contentPadding: Int` → `contentPadding: ContentPadding` 或重载 | `LazyColumnNodeProps.kt`, DSL | §3.15 contentPadding 📋 | 1 天 |
-| 2.4 | **LazyColumn scrollToPosition API**：新增命令式滚动 API | `LazyColumnNodeProps.kt`, RecyclerView 渲染器 | §3.15 scrollToPosition 📋 |
+| 2.4 | **LazyColumn scrollToPosition API**：新增命令式滚动 API | `LazyColumnNodeProps.kt`, RecyclerView 渲染器 | §3.15 scrollToPosition ✅ |
 | 2.5 | **clipToOutline Modifier**：新增 `Modifier.clip()` | `Modifier.kt`, 通用渲染器 | §2.2 clipToOutline ✅ |
 | 2.6 | **contentDescription 通用 Modifier**：新增 `Modifier.contentDescription(description)` | `Modifier.kt`, 通用渲染器 | §2.2 / §4.3 contentDescription ✅ |
 | 2.7 | **minWidth Modifier**：新增 `Modifier.minWidth(minWidth)` | `Modifier.kt` | §2.2 minWidth ✅ |
@@ -1075,7 +1075,7 @@ object IconDefaults {
 | 阶段 | 改进项数 | 预估总工作量 | 覆盖率提升预期 | 状态 |
 |------|---------|------------|--------------|------|
 | Phase 1 | 6 项 | 3-4 天 | Text 32% → 50%, Switch 38% → 50% | ✅ 已完成 |
-| Phase 2 | 9 项（8 项已完成） | 6-8 天 | 全局 +10%（elevation, clip, semantics） | 🔧 进行中 |
+| Phase 2 | 9 项 | 6-8 天 | 全局 +10%（elevation, clip, semantics） | ✅ 已完成 |
 | Phase 3 | 10 项 | 6-8 天 | Text 50% → 60%, LazyColumn 21% → 35% | 待实施 |
 | Phase 4 | 按需 | 持续 | 不影响覆盖率统计 | 待实施 |
 
