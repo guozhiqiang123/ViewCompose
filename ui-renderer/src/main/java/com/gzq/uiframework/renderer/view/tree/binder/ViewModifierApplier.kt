@@ -15,8 +15,11 @@ import com.gzq.uiframework.renderer.modifier.AlphaModifierElement
 import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
 import com.gzq.uiframework.renderer.modifier.BorderModifierElement
 import com.gzq.uiframework.renderer.modifier.ClickableModifierElement
+import com.gzq.uiframework.renderer.modifier.ClipModifierElement
+import com.gzq.uiframework.renderer.modifier.ContentDescriptionModifierElement
 import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
 import com.gzq.uiframework.renderer.modifier.MinHeightModifierElement
+import com.gzq.uiframework.renderer.modifier.MinWidthModifierElement
 import com.gzq.uiframework.renderer.modifier.NativeViewElement
 import com.gzq.uiframework.renderer.modifier.OffsetModifierElement
 import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
@@ -99,15 +102,21 @@ internal object ViewModifierApplier {
             .lastOrNull { it is BackgroundColorModifierElement } as? BackgroundColorModifierElement
         val clickable = node.modifier.elements
             .lastOrNull { it is ClickableModifierElement } as? ClickableModifierElement
+        val contentDescriptionElement = node.modifier.elements
+            .lastOrNull { it is ContentDescriptionModifierElement } as? ContentDescriptionModifierElement
         val border = node.modifier.elements
             .lastOrNull { it is BorderModifierElement } as? BorderModifierElement
         val cornerRadius = node.modifier.elements
             .lastOrNull { it is CornerRadiusModifierElement } as? CornerRadiusModifierElement
+        val clip = node.modifier.elements
+            .lastOrNull { it is ClipModifierElement } as? ClipModifierElement
         val offset = node.modifier.elements
             .lastOrNull { it is OffsetModifierElement } as? OffsetModifierElement
         val padding = node.modifier.elements.lastOrNull { it is PaddingModifierElement } as? PaddingModifierElement
         val minHeight = node.modifier.elements
             .lastOrNull { it is MinHeightModifierElement } as? MinHeightModifierElement
+        val minWidth = node.modifier.elements
+            .lastOrNull { it is MinWidthModifierElement } as? MinWidthModifierElement
         val rippleColor = node.modifier.elements
             .lastOrNull { it is RippleColorModifierElement } as? RippleColorModifierElement
         val visibility = node.modifier.elements
@@ -121,6 +130,7 @@ internal object ViewModifierApplier {
         val resolvedCornerRadius = cornerRadius?.radius ?: readNodeCornerRadius(node) ?: 0
         val resolvedPadding = padding ?: readNodePadding(node)
         val resolvedMinHeight = minHeight?.minHeight ?: readNodeMinHeight(node) ?: 0
+        val resolvedMinWidth = minWidth?.minWidth ?: 0
         val resolvedRippleColor = rippleColor?.color ?: readNodeRippleColor(node) ?: defaultRippleColor
         val textColor = readNodeTextColor(node)
         val textSizeSp = readNodeTextSize(node)
@@ -139,6 +149,8 @@ internal object ViewModifierApplier {
             view.isClickable = false
             view.setOnClickListener(null)
             view.minimumHeight = 0
+            view.minimumWidth = 0
+            view.contentDescription = contentDescriptionElement?.contentDescription
             view.setPadding(0, 0, 0, 0)
             applyTextFieldModifier(
                 layout = view,
@@ -162,6 +174,7 @@ internal object ViewModifierApplier {
             cornerRadius = resolvedCornerRadius,
             rippleColor = resolvedRippleColor,
             clickable = clickable != null,
+            forceClip = clip?.clip ?: false,
         )
         applyAnchorId(view, anchorId)
         view.visibility = when (visibility?.visibility ?: Visibility.Visible) {
@@ -173,6 +186,8 @@ internal object ViewModifierApplier {
         view.translationY = offset?.y ?: 0f
         view.z = zIndex?.zIndex ?: 0f
         view.minimumHeight = resolvedMinHeight
+        view.minimumWidth = resolvedMinWidth
+        view.contentDescription = contentDescriptionElement?.contentDescription
         view.isClickable = clickable != null
         view.setOnClickListener(
             if (clickable == null) {
@@ -232,6 +247,7 @@ internal object ViewModifierApplier {
         cornerRadius: Int,
         rippleColor: Int,
         clickable: Boolean,
+        forceClip: Boolean = false,
     ) {
         val hasCustomShape = backgroundColor != null || cornerRadius > 0 || borderWidth > 0
         if (hasCustomShape) {
@@ -256,7 +272,7 @@ internal object ViewModifierApplier {
                 restoreOriginalForeground(view)
             }
         }
-        applyCornerOutline(view, cornerRadius)
+        applyCornerOutline(view, cornerRadius, forceClip)
     }
 
     private fun createBackgroundDrawable(
@@ -295,17 +311,20 @@ internal object ViewModifierApplier {
     private fun applyCornerOutline(
         view: View,
         cornerRadius: Int,
+        forceClip: Boolean = false,
     ) {
-        if (cornerRadius <= 0) {
+        if (cornerRadius <= 0 && !forceClip) {
             view.clipToOutline = false
             view.outlineProvider = ViewOutlineProvider.BACKGROUND
             view.invalidateOutline()
             return
         }
         view.clipToOutline = true
-        view.outlineProvider = object : ViewOutlineProvider() {
-            override fun getOutline(view: View, outline: Outline) {
-                outline.setRoundRect(0, 0, view.width, view.height, cornerRadius.toFloat())
+        if (cornerRadius > 0) {
+            view.outlineProvider = object : ViewOutlineProvider() {
+                override fun getOutline(view: View, outline: Outline) {
+                    outline.setRoundRect(0, 0, view.width, view.height, cornerRadius.toFloat())
+                }
             }
         }
         view.invalidateOutline()

@@ -51,6 +51,8 @@ internal object InputViewBinder {
         val controlColor: Int,
         val thumbColor: Int? = null,
         val trackColor: Int? = null,
+        val checkedColor: Int? = null,
+        val uncheckedColor: Int? = null,
         val onCheckedChange: ((Boolean) -> Unit)?,
     )
 
@@ -168,11 +170,22 @@ internal object InputViewBinder {
         view.text = spec.text
         view.isEnabled = spec.enabled
         view.isChecked = spec.checked
-        val tint = ColorStateList.valueOf(spec.controlColor)
-        view.buttonTintList = tint
         if (view is Switch) {
+            view.buttonTintList = ColorStateList.valueOf(spec.controlColor)
             view.thumbTintList = ColorStateList.valueOf(spec.thumbColor ?: spec.controlColor)
             view.trackTintList = ColorStateList.valueOf(spec.trackColor ?: spec.controlColor)
+        } else if (spec.checkedColor != null || spec.uncheckedColor != null) {
+            val checked = spec.checkedColor ?: spec.controlColor
+            val unchecked = spec.uncheckedColor ?: spec.controlColor
+            view.buttonTintList = ColorStateList(
+                arrayOf(
+                    intArrayOf(android.R.attr.state_checked),
+                    intArrayOf(-android.R.attr.state_checked),
+                ),
+                intArrayOf(checked, unchecked),
+            )
+        } else {
+            view.buttonTintList = ColorStateList.valueOf(spec.controlColor)
         }
         view.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked != spec.checked) {
@@ -246,6 +259,8 @@ internal object InputViewBinder {
                 controlColor = spec.controlColor,
                 thumbColor = spec.thumbColor,
                 trackColor = spec.trackColor,
+                checkedColor = spec.checkedColor,
+                uncheckedColor = spec.uncheckedColor,
                 onCheckedChange = spec.onCheckedChange,
             )
         }

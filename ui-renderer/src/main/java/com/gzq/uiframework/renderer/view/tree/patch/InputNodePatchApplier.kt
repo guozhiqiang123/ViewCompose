@@ -154,12 +154,26 @@ internal object InputNodePatchApplier {
         if (previous.checked != next.checked) {
             view.isChecked = next.checked
         }
-        if (previous.controlColor != next.controlColor) {
-            val tint = ColorStateList.valueOf(next.controlColor)
-            view.buttonTintList = tint
+        if (previous.controlColor != next.controlColor ||
+            previous.checkedColor != next.checkedColor ||
+            previous.uncheckedColor != next.uncheckedColor
+        ) {
             if (view is Switch) {
+                view.buttonTintList = ColorStateList.valueOf(next.controlColor)
                 view.thumbTintList = ColorStateList.valueOf(next.thumbColor ?: next.controlColor)
                 view.trackTintList = ColorStateList.valueOf(next.trackColor ?: next.controlColor)
+            } else if (next.checkedColor != null || next.uncheckedColor != null) {
+                val checked = next.checkedColor ?: next.controlColor
+                val unchecked = next.uncheckedColor ?: next.controlColor
+                view.buttonTintList = ColorStateList(
+                    arrayOf(
+                        intArrayOf(android.R.attr.state_checked),
+                        intArrayOf(-android.R.attr.state_checked),
+                    ),
+                    intArrayOf(checked, unchecked),
+                )
+            } else {
+                view.buttonTintList = ColorStateList.valueOf(next.controlColor)
             }
         } else if (view is Switch) {
             if (previous.thumbColor != next.thumbColor) {

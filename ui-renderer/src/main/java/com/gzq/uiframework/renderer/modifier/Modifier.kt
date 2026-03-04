@@ -43,6 +43,10 @@ data class CornerRadiusModifierElement(
     val radius: Int,
 ) : ModifierElement
 
+data class ClipModifierElement(
+    val clip: Boolean = true,
+) : ModifierElement
+
 data class RippleColorModifierElement(
     val color: Int,
 ) : ModifierElement
@@ -64,6 +68,10 @@ data class MinHeightModifierElement(
     val minHeight: Int,
 ) : ModifierElement
 
+data class MinWidthModifierElement(
+    val minWidth: Int,
+) : ModifierElement
+
 data class AlphaModifierElement(
     val alpha: Float,
 ) : ModifierElement
@@ -74,6 +82,10 @@ data class VisibilityModifierElement(
 
 data class ClickableModifierElement(
     val onClick: () -> Unit,
+) : ModifierElement
+
+data class ContentDescriptionModifierElement(
+    val contentDescription: String?,
 ) : ModifierElement
 
 data class WeightModifierElement(
@@ -176,6 +188,12 @@ fun Modifier.cornerRadius(radius: Int): Modifier {
     )
 }
 
+fun Modifier.clip(): Modifier {
+    return then(
+        ClipModifierElement(clip = true),
+    )
+}
+
 fun Modifier.rippleColor(color: Int): Modifier {
     return then(
         RippleColorModifierElement(color),
@@ -247,6 +265,12 @@ fun Modifier.minHeight(minHeight: Int): Modifier {
     )
 }
 
+fun Modifier.minWidth(minWidth: Int): Modifier {
+    return then(
+        MinWidthModifierElement(minWidth),
+    )
+}
+
 fun Modifier.alpha(alpha: Float): Modifier {
     return then(
         AlphaModifierElement(alpha),
@@ -262,6 +286,12 @@ fun Modifier.visibility(visibility: Visibility): Modifier {
 fun Modifier.clickable(onClick: () -> Unit): Modifier {
     return then(
         ClickableModifierElement(onClick),
+    )
+}
+
+fun Modifier.contentDescription(description: String?): Modifier {
+    return then(
+        ContentDescriptionModifierElement(description),
     )
 }
 

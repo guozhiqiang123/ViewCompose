@@ -21,6 +21,24 @@ object InputControlDefaults {
         }
     }
 
+    fun checkboxCheckedColor(enabled: Boolean = true): Int {
+        val override = LocalContext.current(LocalCheckboxColors)
+        return if (enabled) {
+            override?.control ?: Theme.colors.primary
+        } else {
+            override?.controlDisabled ?: Theme.colors.divider
+        }
+    }
+
+    fun checkboxUncheckedColor(enabled: Boolean = true): Int {
+        val override = LocalContext.current(LocalCheckboxColors)
+        return if (enabled) {
+            Theme.colors.surfaceVariant
+        } else {
+            override?.controlDisabled ?: Theme.colors.divider
+        }
+    }
+
     fun switchLabelColor(enabled: Boolean = true): Int {
         val override = LocalContext.current(LocalSwitchColors)
         return if (enabled) {
@@ -73,6 +91,24 @@ object InputControlDefaults {
         val override = LocalContext.current(LocalRadioButtonColors)
         return if (enabled) {
             override?.control ?: Theme.colors.primary
+        } else {
+            override?.controlDisabled ?: Theme.colors.divider
+        }
+    }
+
+    fun radioButtonCheckedColor(enabled: Boolean = true): Int {
+        val override = LocalContext.current(LocalRadioButtonColors)
+        return if (enabled) {
+            override?.control ?: Theme.colors.primary
+        } else {
+            override?.controlDisabled ?: Theme.colors.divider
+        }
+    }
+
+    fun radioButtonUncheckedColor(enabled: Boolean = true): Int {
+        val override = LocalContext.current(LocalRadioButtonColors)
+        return if (enabled) {
+            Theme.colors.surfaceVariant
         } else {
             override?.controlDisabled ?: Theme.colors.divider
         }

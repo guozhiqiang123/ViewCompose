@@ -74,8 +74,8 @@ fun UiTreeBuilder.Image(
 fun UiTreeBuilder.Icon(
     source: ImageSource,
     contentDescription: String? = null,
-    tint: Int = ContentColor.current,
-    size: Int = 24.dp,
+    tint: Int = IconDefaults.tint(),
+    size: Int = IconDefaults.size(),
     key: Any? = null,
     modifier: Modifier = Modifier,
 ) {
