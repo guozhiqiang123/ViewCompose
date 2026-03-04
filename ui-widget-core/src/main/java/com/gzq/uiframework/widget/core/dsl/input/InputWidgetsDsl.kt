@@ -26,6 +26,7 @@ fun UiTreeBuilder.TextField(
     size: TextFieldSize = TextFieldSize.Medium,
     enabled: Boolean = true,
     isError: Boolean = false,
+    cursorColor: Int = TextFieldDefaults.cursorColor(),
     style: UiTextStyle = TextFieldDefaults.textStyle(size),
     key: Any? = null,
     modifier: Modifier = Modifier,
@@ -82,6 +83,7 @@ fun UiTreeBuilder.TextField(
             paddingHorizontal = TextFieldDefaults.horizontalPadding(size),
             paddingVertical = TextFieldDefaults.verticalPadding(size),
             maxLength = maxLength,
+            cursorColor = cursorColor,
         ),
         modifier = modifier,
     )

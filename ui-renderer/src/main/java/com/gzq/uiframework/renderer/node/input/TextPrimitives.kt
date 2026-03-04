@@ -10,3 +10,10 @@ enum class TextAlign {
     Center,
     End,
 }
+
+enum class TextDecoration {
+    None,
+    Underline,
+    LineThrough,
+    UnderlineLineThrough,
+}

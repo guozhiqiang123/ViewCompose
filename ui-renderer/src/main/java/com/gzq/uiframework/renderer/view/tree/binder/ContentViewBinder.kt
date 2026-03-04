@@ -1,5 +1,6 @@
 package com.gzq.uiframework.renderer.view.tree
 
+import android.graphics.Paint
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -13,6 +14,7 @@ import androidx.core.widget.TextViewCompat
 import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.TypedPropKeys
+import com.gzq.uiframework.renderer.node.TextDecoration
 import com.gzq.uiframework.renderer.node.TextOverflow
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
@@ -29,6 +31,7 @@ internal object ContentViewBinder {
         val letterSpacingEm: Float? = null,
         val lineHeightSp: Int? = null,
         val includeFontPadding: Boolean = false,
+        val textDecoration: TextDecoration = TextDecoration.None,
     )
 
     data class ButtonSpec(
@@ -65,6 +68,7 @@ internal object ContentViewBinder {
             )
         }
         view.includeFontPadding = spec.includeFontPadding
+        applyTextDecoration(view, spec.textDecoration)
     }
 
     fun bindButton(
@@ -117,6 +121,7 @@ internal object ContentViewBinder {
                 letterSpacingEm = spec.letterSpacingEm,
                 lineHeightSp = spec.lineHeightSp,
                 includeFontPadding = spec.includeFontPadding,
+                textDecoration = spec.textDecoration,
             )
         }
         return TextSpec(
@@ -210,6 +215,18 @@ internal object ContentViewBinder {
                 else -> Typeface.NORMAL
             }
             view.setTypeface(base, style)
+        }
+    }
+
+    internal fun applyTextDecoration(view: TextView, decoration: TextDecoration) {
+        val flags = view.paintFlags and
+            (Paint.UNDERLINE_TEXT_FLAG or Paint.STRIKE_THRU_TEXT_FLAG).inv()
+        view.paintFlags = flags or when (decoration) {
+            TextDecoration.None -> 0
+            TextDecoration.Underline -> Paint.UNDERLINE_TEXT_FLAG
+            TextDecoration.LineThrough -> Paint.STRIKE_THRU_TEXT_FLAG
+            TextDecoration.UnderlineLineThrough ->
+                Paint.UNDERLINE_TEXT_FLAG or Paint.STRIKE_THRU_TEXT_FLAG
         }
     }
 }

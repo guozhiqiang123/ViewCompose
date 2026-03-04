@@ -23,6 +23,7 @@ data class UiTextStyle(
     val letterSpacingEm: Float? = null,
     val lineHeightSp: Int? = null,
     val includeFontPadding: Boolean = false,
+    val textDecoration: com.gzq.uiframework.renderer.node.TextDecoration? = null,
 )
 
 data class UiTypography(

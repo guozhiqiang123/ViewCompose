@@ -42,6 +42,7 @@ internal object InputViewBinder {
         val readOnly: Boolean,
         val onValueChange: ((String) -> Unit)?,
         val maxLength: Int? = null,
+        val cursorColor: Int = 0,
     )
 
     data class ToggleSpec(
@@ -93,6 +94,9 @@ internal object InputViewBinder {
         input.inputType = spec.inputType
         input.imeOptions = spec.imeAction
         input.setHintTextColor(spec.hintColor)
+        if (spec.cursorColor != 0) {
+            input.highlightColor = spec.cursorColor
+        }
         applyMaxLength(input, spec.maxLength)
         applyReadOnly(input, spec.readOnly)
         bindTextWatcher(
@@ -219,6 +223,7 @@ internal object InputViewBinder {
                 readOnly = spec.readOnly,
                 onValueChange = spec.onValueChange,
                 maxLength = spec.maxLength,
+                cursorColor = spec.cursorColor,
             )
         }
         val hintColor = node.props[TypedPropKeys.HintTextColor] ?: 0xFF888888.toInt()

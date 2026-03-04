@@ -61,6 +61,9 @@ internal object ContentNodePatchApplier {
         if (patch.previous.includeFontPadding != patch.next.includeFontPadding) {
             view.includeFontPadding = patch.next.includeFontPadding
         }
+        if (patch.previous.textDecoration != patch.next.textDecoration) {
+            ContentViewBinder.applyTextDecoration(view, patch.next.textDecoration)
+        }
     }
 
     fun applyButtonPatch(

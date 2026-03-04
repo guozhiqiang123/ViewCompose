@@ -83,6 +83,9 @@ internal object InputNodePatchApplier {
         if (previous.hintColor != next.hintColor) {
             input.setHintTextColor(next.hintColor)
         }
+        if (previous.cursorColor != next.cursorColor && next.cursorColor != 0) {
+            input.highlightColor = next.cursorColor
+        }
         if (previous.readOnly != next.readOnly) {
             InputViewBinder.applyReadOnly(input, next.readOnly)
         }

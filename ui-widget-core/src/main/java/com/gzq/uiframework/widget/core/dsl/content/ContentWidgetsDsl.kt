@@ -8,6 +8,7 @@ import com.gzq.uiframework.renderer.node.ImageContentScale
 import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TextAlign
+import com.gzq.uiframework.renderer.node.TextDecoration
 import com.gzq.uiframework.renderer.node.TextOverflow
 import com.gzq.uiframework.renderer.node.spec.AndroidViewNodeProps
 import com.gzq.uiframework.renderer.node.spec.ImageNodeProps
@@ -20,6 +21,7 @@ fun UiTreeBuilder.Text(
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
     textAlign: TextAlign = TextAlign.Start,
+    textDecoration: TextDecoration = style.textDecoration ?: TextDecoration.None,
     key: Any? = null,
     modifier: Modifier = Modifier,
 ) {
@@ -38,6 +40,7 @@ fun UiTreeBuilder.Text(
             letterSpacingEm = style.letterSpacingEm,
             lineHeightSp = style.lineHeightSp,
             includeFontPadding = style.includeFontPadding,
+            textDecoration = textDecoration,
         ),
         modifier = modifier,
     )

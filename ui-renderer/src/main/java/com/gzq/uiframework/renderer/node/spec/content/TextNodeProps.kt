@@ -2,6 +2,7 @@ package com.gzq.uiframework.renderer.node.spec
 
 import android.graphics.Typeface
 import com.gzq.uiframework.renderer.node.TextAlign
+import com.gzq.uiframework.renderer.node.TextDecoration
 import com.gzq.uiframework.renderer.node.TextOverflow
 
 data class TextNodeProps(
@@ -16,4 +17,5 @@ data class TextNodeProps(
     val letterSpacingEm: Float? = null,
     val lineHeightSp: Int? = null,
     val includeFontPadding: Boolean = false,
+    val textDecoration: TextDecoration = TextDecoration.None,
 ) : NodeSpec
