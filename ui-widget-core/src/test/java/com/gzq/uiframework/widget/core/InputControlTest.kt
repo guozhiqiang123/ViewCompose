@@ -180,6 +180,6 @@ class InputControlTest {
         assertEquals(203, checkboxSpec.controlColor)
         assertEquals(207, switchSpec.controlColor)
         assertEquals(211, radioSpec.controlColor)
-        assertEquals(213, sliderSpec.tintColor)
+        assertEquals(213, sliderSpec.thumbColor)
     }
 }

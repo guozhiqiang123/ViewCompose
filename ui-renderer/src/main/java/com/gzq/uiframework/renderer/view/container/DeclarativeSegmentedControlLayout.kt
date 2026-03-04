@@ -39,8 +39,8 @@ internal class DeclarativeSegmentedControlLayout(
         selectedTextColor: Int,
         rippleColor: Int,
         textSizeSp: Int,
-        horizontalPadding: Int,
-        verticalPadding: Int,
+        paddingHorizontal: Int,
+        paddingVertical: Int,
     ) {
         this.onSelectionChange = onSelectionChange
         background = GradientDrawable().apply {
@@ -61,8 +61,8 @@ internal class DeclarativeSegmentedControlLayout(
             selectedTextColor = selectedTextColor,
             rippleColor = rippleColor,
             textSizeSp = textSizeSp,
-            horizontalPadding = horizontalPadding,
-            verticalPadding = verticalPadding,
+            paddingHorizontal = paddingHorizontal,
+            paddingVertical = paddingVertical,
         )
     }
 
@@ -93,8 +93,8 @@ internal class DeclarativeSegmentedControlLayout(
         selectedTextColor: Int,
         rippleColor: Int,
         textSizeSp: Int,
-        horizontalPadding: Int,
-        verticalPadding: Int,
+        paddingHorizontal: Int,
+        paddingVertical: Int,
     ) {
         for (index in 0 until childCount) {
             val child = getChildAt(index) as? TextView ?: continue
@@ -104,7 +104,7 @@ internal class DeclarativeSegmentedControlLayout(
             child.isEnabled = enabled
             child.setTextColor(if (isSelected) selectedTextColor else textColor)
             child.textSize = textSizeSp.toFloat()
-            child.setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding)
+            child.setPadding(paddingHorizontal, paddingVertical, paddingHorizontal, paddingVertical)
             child.layoutParams = (child.layoutParams as LayoutParams).apply {
                 leftMargin = indicatorInset.toInt()
                 topMargin = indicatorInset.toInt()

@@ -86,6 +86,9 @@ internal object InputNodePatchApplier {
         if (previous.readOnly != next.readOnly) {
             InputViewBinder.applyReadOnly(input, next.readOnly)
         }
+        if (previous.maxLength != next.maxLength) {
+            InputViewBinder.applyMaxLength(input, next.maxLength)
+        }
         if (
             previous.value != next.value ||
             previous.onValueChange != next.onValueChange
@@ -155,8 +158,15 @@ internal object InputNodePatchApplier {
             val tint = ColorStateList.valueOf(next.controlColor)
             view.buttonTintList = tint
             if (view is Switch) {
-                view.thumbTintList = tint
-                view.trackTintList = tint
+                view.thumbTintList = ColorStateList.valueOf(next.thumbColor ?: next.controlColor)
+                view.trackTintList = ColorStateList.valueOf(next.trackColor ?: next.controlColor)
+            }
+        } else if (view is Switch) {
+            if (previous.thumbColor != next.thumbColor) {
+                view.thumbTintList = ColorStateList.valueOf(next.thumbColor ?: next.controlColor)
+            }
+            if (previous.trackColor != next.trackColor) {
+                view.trackTintList = ColorStateList.valueOf(next.trackColor ?: next.controlColor)
             }
         }
         view.setOnCheckedChangeListener { _, isChecked ->
@@ -192,10 +202,11 @@ internal object InputNodePatchApplier {
         if (previous.enabled != next.enabled) {
             view.isEnabled = next.enabled
         }
-        if (previous.tintColor != next.tintColor) {
-            val tint = ColorStateList.valueOf(next.tintColor)
-            view.progressTintList = tint
-            view.thumbTintList = tint
+        if (previous.thumbColor != next.thumbColor) {
+            view.thumbTintList = ColorStateList.valueOf(next.thumbColor)
+        }
+        if (previous.trackColor != next.trackColor) {
+            view.progressTintList = ColorStateList.valueOf(next.trackColor)
         }
         val nextListener = object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {

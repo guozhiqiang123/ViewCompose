@@ -127,8 +127,8 @@ internal object ContainerNodePatchApplier {
                 selectedTextColor = patch.next.selectedTextColor,
                 rippleColor = patch.next.rippleColor,
                 textSizeSp = patch.next.textSizeSp,
-                horizontalPadding = patch.next.horizontalPadding,
-                verticalPadding = patch.next.verticalPadding,
+                paddingHorizontal = patch.next.paddingHorizontal,
+                paddingVertical = patch.next.paddingVertical,
             ),
         )
     }

@@ -5,6 +5,8 @@ data class ToggleNodeProps(
     val enabled: Boolean,
     val checked: Boolean,
     val controlColor: Int,
+    val thumbColor: Int? = null,
+    val trackColor: Int? = null,
     val onCheckedChange: ((Boolean) -> Unit)?,
     val textColor: Int,
     val textSizeSp: Int,

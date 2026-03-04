@@ -5,6 +5,7 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.core.widget.TextViewCompat
 import com.gzq.uiframework.renderer.node.TextOverflow
 import com.gzq.uiframework.renderer.view.tree.ButtonNodePatch
 import com.gzq.uiframework.renderer.view.tree.ContentViewBinder
@@ -37,6 +38,28 @@ internal object ContentNodePatchApplier {
         }
         if (patch.previous.textSizeSp != patch.next.textSizeSp) {
             view.setTextSize(TypedValue.COMPLEX_UNIT_SP, patch.next.textSizeSp.toFloat())
+        }
+        if (
+            patch.previous.fontWeight != patch.next.fontWeight ||
+            patch.previous.fontFamily != patch.next.fontFamily
+        ) {
+            ContentViewBinder.applyTypeface(view, patch.next.fontWeight, patch.next.fontFamily)
+        }
+        if (patch.previous.letterSpacingEm != patch.next.letterSpacingEm) {
+            view.letterSpacing = patch.next.letterSpacingEm ?: 0f
+        }
+        if (patch.previous.lineHeightSp != patch.next.lineHeightSp) {
+            val lineHeight = patch.next.lineHeightSp
+            if (lineHeight != null) {
+                TextViewCompat.setLineHeight(
+                    view,
+                    TypedValue.COMPLEX_UNIT_SP,
+                    lineHeight.toFloat(),
+                )
+            }
+        }
+        if (patch.previous.includeFontPadding != patch.next.includeFontPadding) {
+            view.includeFontPadding = patch.next.includeFontPadding
         }
     }
 

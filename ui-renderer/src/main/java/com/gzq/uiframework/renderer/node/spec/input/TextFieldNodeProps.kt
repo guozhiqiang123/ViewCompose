@@ -31,4 +31,5 @@ data class TextFieldNodeProps(
     val minHeight: Int,
     val paddingHorizontal: Int,
     val paddingVertical: Int,
+    val maxLength: Int? = null,
 ) : NodeSpec

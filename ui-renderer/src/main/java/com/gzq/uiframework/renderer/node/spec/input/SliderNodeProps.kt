@@ -5,6 +5,7 @@ data class SliderNodeProps(
     val max: Int,
     val value: Int,
     val enabled: Boolean,
-    val tintColor: Int,
+    val thumbColor: Int,
+    val trackColor: Int,
     val onValueChange: ((Int) -> Unit)?,
 ) : NodeSpec

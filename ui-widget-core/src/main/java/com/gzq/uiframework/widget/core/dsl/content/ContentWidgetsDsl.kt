@@ -33,6 +33,11 @@ fun UiTreeBuilder.Text(
             textAlign = textAlign,
             textColor = color,
             textSizeSp = style.fontSizeSp,
+            fontWeight = style.fontWeight,
+            fontFamily = style.fontFamily,
+            letterSpacingEm = style.letterSpacingEm,
+            lineHeightSp = style.lineHeightSp,
+            includeFontPadding = style.includeFontPadding,
         ),
         modifier = modifier,
     )

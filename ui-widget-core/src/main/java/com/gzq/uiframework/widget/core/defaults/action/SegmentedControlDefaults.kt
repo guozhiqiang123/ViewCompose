@@ -75,7 +75,7 @@ object SegmentedControlDefaults {
         }
     }
 
-    fun horizontalPadding(
+    fun paddingHorizontal(
         size: SegmentedControlSize = SegmentedControlSize.Medium,
     ): Int {
         return when (size) {
@@ -85,7 +85,7 @@ object SegmentedControlDefaults {
         }
     }
 
-    fun verticalPadding(
+    fun paddingVertical(
         size: SegmentedControlSize = SegmentedControlSize.Medium,
     ): Int {
         return when (size) {

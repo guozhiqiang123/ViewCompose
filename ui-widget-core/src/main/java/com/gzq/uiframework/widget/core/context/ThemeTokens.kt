@@ -18,6 +18,11 @@ data class UiShapes(
 
 data class UiTextStyle(
     val fontSizeSp: Int,
+    val fontWeight: Int? = null,
+    val fontFamily: android.graphics.Typeface? = null,
+    val letterSpacingEm: Float? = null,
+    val lineHeightSp: Int? = null,
+    val includeFontPadding: Boolean = false,
 )
 
 data class UiTypography(

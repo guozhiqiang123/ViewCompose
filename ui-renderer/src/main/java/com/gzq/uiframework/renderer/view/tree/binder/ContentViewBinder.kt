@@ -1,11 +1,15 @@
 package com.gzq.uiframework.renderer.view.tree
 
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.text.TextUtils
+import android.util.TypedValue
 import android.view.Gravity
 import android.widget.Button
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.widget.TextViewCompat
 import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.renderer.node.PropKeys
 import com.gzq.uiframework.renderer.node.TypedPropKeys
@@ -20,6 +24,11 @@ internal object ContentViewBinder {
         val maxLines: Int,
         val overflow: TextOverflow,
         val gravity: Int,
+        val fontWeight: Int? = null,
+        val fontFamily: Typeface? = null,
+        val letterSpacingEm: Float? = null,
+        val lineHeightSp: Int? = null,
+        val includeFontPadding: Boolean = false,
     )
 
     data class ButtonSpec(
@@ -44,6 +53,18 @@ internal object ContentViewBinder {
             TextOverflow.Ellipsis -> TextUtils.TruncateAt.END
         }
         view.gravity = spec.gravity
+        applyTypeface(view, spec.fontWeight, spec.fontFamily)
+        if (spec.letterSpacingEm != null) {
+            view.letterSpacing = spec.letterSpacingEm
+        }
+        if (spec.lineHeightSp != null) {
+            TextViewCompat.setLineHeight(
+                view,
+                TypedValue.COMPLEX_UNIT_SP,
+                spec.lineHeightSp.toFloat(),
+            )
+        }
+        view.includeFontPadding = spec.includeFontPadding
     }
 
     fun bindButton(
@@ -91,6 +112,11 @@ internal object ContentViewBinder {
                 maxLines = spec.maxLines,
                 overflow = spec.overflow,
                 gravity = spec.textAlign.toTextGravity(),
+                fontWeight = spec.fontWeight,
+                fontFamily = spec.fontFamily,
+                letterSpacingEm = spec.letterSpacingEm,
+                lineHeightSp = spec.lineHeightSp,
+                includeFontPadding = spec.includeFontPadding,
             )
         }
         return TextSpec(
@@ -167,5 +193,23 @@ internal object ContentViewBinder {
         drawable.setTint(tint)
         drawable.setBounds(0, 0, size, size)
         return drawable
+    }
+
+    internal fun applyTypeface(
+        view: TextView,
+        fontWeight: Int?,
+        fontFamily: Typeface?,
+    ) {
+        if (fontWeight == null && fontFamily == null) return
+        val base = fontFamily ?: view.typeface ?: Typeface.DEFAULT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && fontWeight != null) {
+            view.typeface = Typeface.create(base, fontWeight, false)
+        } else {
+            val style = when {
+                fontWeight != null && fontWeight >= 700 -> Typeface.BOLD
+                else -> Typeface.NORMAL
+            }
+            view.setTypeface(base, style)
+        }
     }
 }

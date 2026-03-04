@@ -18,6 +18,7 @@ import com.gzq.uiframework.renderer.node.spec.SliderNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
 import com.gzq.uiframework.renderer.node.spec.ToggleNodeProps
 import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
+import android.text.InputFilter
 import android.text.InputType
 import android.view.inputmethod.EditorInfo
 
@@ -40,6 +41,7 @@ internal object InputViewBinder {
         val hintColor: Int,
         val readOnly: Boolean,
         val onValueChange: ((String) -> Unit)?,
+        val maxLength: Int? = null,
     )
 
     data class ToggleSpec(
@@ -47,6 +49,8 @@ internal object InputViewBinder {
         val enabled: Boolean,
         val checked: Boolean,
         val controlColor: Int,
+        val thumbColor: Int? = null,
+        val trackColor: Int? = null,
         val onCheckedChange: ((Boolean) -> Unit)?,
     )
 
@@ -55,7 +59,8 @@ internal object InputViewBinder {
         val max: Int,
         val value: Int,
         val enabled: Boolean,
-        val tintColor: Int,
+        val thumbColor: Int,
+        val trackColor: Int,
         val onValueChange: ((Int) -> Unit)?,
     )
 
@@ -86,6 +91,7 @@ internal object InputViewBinder {
         input.inputType = spec.inputType
         input.imeOptions = spec.imeAction
         input.setHintTextColor(spec.hintColor)
+        applyMaxLength(input, spec.maxLength)
         applyReadOnly(input, spec.readOnly)
         bindTextWatcher(
             view = input,
@@ -136,9 +142,8 @@ internal object InputViewBinder {
         view.max = (spec.max - spec.min).coerceAtLeast(0)
         view.progress = resolvedValue - spec.min
         view.isEnabled = spec.enabled
-        val tint = ColorStateList.valueOf(spec.tintColor)
-        view.progressTintList = tint
-        view.thumbTintList = tint
+        view.progressTintList = ColorStateList.valueOf(spec.trackColor)
+        view.thumbTintList = ColorStateList.valueOf(spec.thumbColor)
         val nextListener = object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 val nextValue = spec.min + progress
@@ -166,8 +171,8 @@ internal object InputViewBinder {
         val tint = ColorStateList.valueOf(spec.controlColor)
         view.buttonTintList = tint
         if (view is Switch) {
-            view.thumbTintList = tint
-            view.trackTintList = tint
+            view.thumbTintList = ColorStateList.valueOf(spec.thumbColor ?: spec.controlColor)
+            view.trackTintList = ColorStateList.valueOf(spec.trackColor ?: spec.controlColor)
         }
         view.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked != spec.checked) {
@@ -200,6 +205,7 @@ internal object InputViewBinder {
                 hintColor = spec.hintColor,
                 readOnly = spec.readOnly,
                 onValueChange = spec.onValueChange,
+                maxLength = spec.maxLength,
             )
         }
         val hintColor = node.props[TypedPropKeys.HintTextColor] ?: 0xFF888888.toInt()
@@ -238,6 +244,8 @@ internal object InputViewBinder {
                 enabled = spec.enabled,
                 checked = spec.checked,
                 controlColor = spec.controlColor,
+                thumbColor = spec.thumbColor,
+                trackColor = spec.trackColor,
                 onCheckedChange = spec.onCheckedChange,
             )
         }
@@ -258,7 +266,8 @@ internal object InputViewBinder {
                 max = spec.max,
                 value = spec.value,
                 enabled = spec.enabled,
-                tintColor = spec.tintColor,
+                thumbColor = spec.thumbColor,
+                trackColor = spec.trackColor,
                 onValueChange = spec.onValueChange,
             )
         }
@@ -267,7 +276,8 @@ internal object InputViewBinder {
             max = node.props[TypedPropKeys.MaxValue] ?: 100,
             value = node.props[TypedPropKeys.SliderValue] ?: 0,
             enabled = node.props[TypedPropKeys.Enabled] ?: true,
-            tintColor = node.props[TypedPropKeys.ControlColor] ?: 0xFF000000.toInt(),
+            thumbColor = node.props[TypedPropKeys.ControlColor] ?: 0xFF000000.toInt(),
+            trackColor = node.props[TypedPropKeys.ControlColor] ?: 0xFF000000.toInt(),
             onValueChange = node.props[TypedPropKeys.OnSliderValueChange],
         )
     }
@@ -306,6 +316,18 @@ internal object InputViewBinder {
             view = view,
             readOnly = readOnly,
         )
+    }
+
+    internal fun applyMaxLength(
+        view: EditText,
+        maxLength: Int?,
+    ) {
+        val existing = view.filters.filterNot { it is InputFilter.LengthFilter }
+        view.filters = if (maxLength != null && maxLength > 0) {
+            (existing + InputFilter.LengthFilter(maxLength)).toTypedArray()
+        } else {
+            existing.toTypedArray()
+        }
     }
 
     private fun TextFieldImeAction.toEditorAction(): Int {

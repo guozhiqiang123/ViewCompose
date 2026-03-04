@@ -72,8 +72,8 @@ internal object ContainerViewBinder {
         val selectedTextColor: Int,
         val rippleColor: Int,
         val textSizeSp: Int,
-        val horizontalPadding: Int,
-        val verticalPadding: Int,
+        val paddingHorizontal: Int,
+        val paddingVertical: Int,
     )
 
     data class DividerSpec(
@@ -160,8 +160,8 @@ internal object ContainerViewBinder {
             selectedTextColor = spec.selectedTextColor,
             rippleColor = spec.rippleColor,
             textSizeSp = spec.textSizeSp,
-            horizontalPadding = spec.horizontalPadding,
-            verticalPadding = spec.verticalPadding,
+            paddingHorizontal = spec.paddingHorizontal,
+            paddingVertical = spec.paddingVertical,
         )
     }
 
@@ -274,8 +274,8 @@ internal object ContainerViewBinder {
                 selectedTextColor = spec.selectedTextColor,
                 rippleColor = spec.rippleColor,
                 textSizeSp = spec.textSizeSp,
-                horizontalPadding = spec.horizontalPadding,
-                verticalPadding = spec.verticalPadding,
+                paddingHorizontal = spec.paddingHorizontal,
+                paddingVertical = spec.paddingVertical,
             )
         }
         return SegmentedControlSpec(
@@ -290,8 +290,8 @@ internal object ContainerViewBinder {
             selectedTextColor = node.props[TypedPropKeys.SegmentSelectedTextColor] ?: android.graphics.Color.WHITE,
             rippleColor = node.props[TypedPropKeys.SegmentRippleColor] ?: defaultRippleColor,
             textSizeSp = node.props[TypedPropKeys.SegmentTextSizeSp] ?: 14,
-            horizontalPadding = node.props[TypedPropKeys.SegmentContentPaddingHorizontal] ?: 0,
-            verticalPadding = node.props[TypedPropKeys.SegmentContentPaddingVertical] ?: 0,
+            paddingHorizontal = node.props[TypedPropKeys.SegmentContentPaddingHorizontal] ?: 0,
+            paddingVertical = node.props[TypedPropKeys.SegmentContentPaddingVertical] ?: 0,
         )
     }
 

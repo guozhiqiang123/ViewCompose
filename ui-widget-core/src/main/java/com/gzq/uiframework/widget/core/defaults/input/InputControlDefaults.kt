@@ -39,6 +39,27 @@ object InputControlDefaults {
         }
     }
 
+    fun switchThumbColor(checked: Boolean = true, enabled: Boolean = true): Int {
+        val override = LocalContext.current(LocalSwitchColors)
+        return when {
+            !enabled -> override?.controlDisabled ?: Theme.colors.divider
+            checked -> override?.control ?: Theme.colors.primary
+            else -> Theme.colors.surfaceVariant
+        }
+    }
+
+    fun switchTrackColor(checked: Boolean = true, enabled: Boolean = true): Int {
+        val override = LocalContext.current(LocalSwitchColors)
+        return when {
+            !enabled -> override?.controlDisabled ?: Theme.colors.divider
+            checked -> {
+                val base = override?.control ?: Theme.colors.primary
+                (base and 0x00FFFFFF) or 0x61000000
+            }
+            else -> Theme.colors.surfaceVariant
+        }
+    }
+
     fun radioButtonLabelColor(enabled: Boolean = true): Int {
         val override = LocalContext.current(LocalRadioButtonColors)
         return if (enabled) {
@@ -61,6 +82,25 @@ object InputControlDefaults {
         val override = LocalContext.current(LocalSliderColors)
         return if (enabled) {
             override?.control ?: Theme.colors.primary
+        } else {
+            override?.controlDisabled ?: Theme.colors.divider
+        }
+    }
+
+    fun sliderThumbColor(enabled: Boolean = true): Int {
+        val override = LocalContext.current(LocalSliderColors)
+        return if (enabled) {
+            override?.control ?: Theme.colors.primary
+        } else {
+            override?.controlDisabled ?: Theme.colors.divider
+        }
+    }
+
+    fun sliderTrackColor(enabled: Boolean = true): Int {
+        val override = LocalContext.current(LocalSliderColors)
+        return if (enabled) {
+            val base = override?.control ?: Theme.colors.primary
+            (base and 0x00FFFFFF) or 0x61000000
         } else {
             override?.controlDisabled ?: Theme.colors.divider
         }

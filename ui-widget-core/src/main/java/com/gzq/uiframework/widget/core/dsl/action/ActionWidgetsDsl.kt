@@ -120,8 +120,8 @@ fun UiTreeBuilder.SegmentedControl(
     val selectedTextColor = SegmentedControlDefaults.selectedTextColor(enabled)
     val rippleColor = SegmentedControlDefaults.rippleColor(enabled)
     val textSizeSp = SegmentedControlDefaults.textStyle(size).fontSizeSp
-    val horizontalPadding = SegmentedControlDefaults.horizontalPadding(size)
-    val verticalPadding = SegmentedControlDefaults.verticalPadding(size)
+    val paddingHorizontal = SegmentedControlDefaults.paddingHorizontal(size)
+    val paddingVertical = SegmentedControlDefaults.paddingVertical(size)
     emit(
         type = NodeType.SegmentedControl,
         key = key,
@@ -137,8 +137,8 @@ fun UiTreeBuilder.SegmentedControl(
             selectedTextColor = selectedTextColor,
             rippleColor = rippleColor,
             textSizeSp = textSizeSp,
-            horizontalPadding = horizontalPadding,
-            verticalPadding = verticalPadding,
+            paddingHorizontal = paddingHorizontal,
+            paddingVertical = paddingVertical,
         ),
         modifier = Modifier
             .height(SegmentedControlDefaults.height(size))
