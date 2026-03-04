@@ -101,6 +101,16 @@ data class ZIndexModifierElement(
     val zIndex: Float,
 ) : ModifierElement
 
+class NativeViewElement(
+    val stableKey: Any,
+    val configure: (android.view.View) -> Unit,
+) : ModifierElement {
+    override fun equals(other: Any?): Boolean =
+        other is NativeViewElement && stableKey == other.stableKey
+
+    override fun hashCode(): Int = stableKey.hashCode()
+}
+
 enum class Visibility {
     Visible,
     Invisible,
@@ -325,4 +335,8 @@ fun Modifier.fillMaxSize(): Modifier {
         width = android.view.ViewGroup.LayoutParams.MATCH_PARENT,
         height = android.view.ViewGroup.LayoutParams.MATCH_PARENT,
     )
+}
+
+fun Modifier.nativeView(key: Any = Unit, configure: (android.view.View) -> Unit): Modifier {
+    return then(NativeViewElement(key, configure))
 }

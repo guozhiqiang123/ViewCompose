@@ -17,6 +17,7 @@ import com.gzq.uiframework.renderer.modifier.BorderModifierElement
 import com.gzq.uiframework.renderer.modifier.ClickableModifierElement
 import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
 import com.gzq.uiframework.renderer.modifier.MinHeightModifierElement
+import com.gzq.uiframework.renderer.modifier.NativeViewElement
 import com.gzq.uiframework.renderer.modifier.OffsetModifierElement
 import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
 import com.gzq.uiframework.renderer.modifier.RippleColorModifierElement
@@ -44,6 +45,7 @@ internal object ViewModifierApplier {
             defaultRippleColor = defaultRippleColor,
         )
         NodeViewBinderRegistry.bind(view, node)
+        applyNativeViewConfigs(view, node)
     }
 
     fun cacheOriginalBackground(view: View) {
@@ -439,5 +441,13 @@ internal object ViewModifierApplier {
 
     private fun readAnchorId(node: VNode): String? {
         return node.props[TypedPropKeys.AnchorId]
+    }
+
+    private fun applyNativeViewConfigs(view: View, node: VNode) {
+        for (element in node.modifier.elements) {
+            if (element is NativeViewElement) {
+                element.configure(view)
+            }
+        }
     }
 }
