@@ -1,7 +1,6 @@
 package com.gzq.uiframework.widget.core
 
 import com.gzq.uiframework.renderer.node.NodeType
-import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.spec.SliderNodeProps
 import com.gzq.uiframework.renderer.node.spec.ToggleNodeProps
 import org.junit.Assert.assertEquals
@@ -27,34 +26,16 @@ class InputControlTest {
                 body = UiTextStyle(fontSizeSp = 19),
                 label = UiTextStyle(fontSizeSp = 13),
             ),
-            components = UiComponentStyles(
-                button = UiThemeDefaults.light().components.button,
-                textField = UiThemeDefaults.light().components.textField,
-                checkbox = UiCheckboxStyles(
-                    label = 91,
-                    labelDisabled = 92,
-                    control = 93,
-                    controlDisabled = 94,
-                ),
-                switchControl = UiSwitchStyles(
-                    label = 95,
-                    labelDisabled = 96,
-                    control = 97,
-                    controlDisabled = 98,
-                ),
-                radioButton = UiRadioButtonStyles(
-                    label = 99,
-                    labelDisabled = 100,
-                    control = 101,
-                    controlDisabled = 102,
-                ),
-                slider = UiSliderStyles(
-                    control = 103,
-                    controlDisabled = 104,
-                ),
-                segmentedControl = UiThemeDefaults.light().components.segmentedControl,
-                progressIndicator = UiThemeDefaults.light().components.progressIndicator,
-                tabPager = UiThemeDefaults.light().components.tabPager,
+            input = UiInputColors(
+                fieldContainer = 81,
+                fieldContainerDisabled = 82,
+                fieldError = 83,
+                fieldText = 91,
+                fieldTextDisabled = 92,
+                fieldHint = 85,
+                fieldHintDisabled = 86,
+                control = 93,
+                controlDisabled = 94,
             ),
         )
         val tree = buildVNodeTree {
@@ -68,15 +49,16 @@ class InputControlTest {
         }
 
         val node = tree.single()
+        val spec = node.spec as ToggleNodeProps
 
         assertEquals(NodeType.Checkbox, node.type)
-        assertEquals("Enable logs", node.props[TypedPropKeys.Text])
-        assertEquals(true, node.props[TypedPropKeys.Checked])
-        assertEquals(true, node.props[TypedPropKeys.Enabled])
-        assertEquals(93, node.props[TypedPropKeys.ControlColor])
-        assertEquals(91, node.props[TypedPropKeys.TextColor])
-        assertEquals(customTheme.typography.body.fontSizeSp, node.props[TypedPropKeys.TextSizeSp])
-        assertEquals(customTheme.interactions.pressedOverlay, node.props[TypedPropKeys.StyleRippleColor])
+        assertEquals("Enable logs", spec.text)
+        assertEquals(true, spec.checked)
+        assertEquals(true, spec.enabled)
+        assertEquals(93, spec.controlColor)
+        assertEquals(91, spec.textColor)
+        assertEquals(customTheme.typography.body.fontSizeSp, spec.textSizeSp)
+        assertEquals(customTheme.interactions.pressedOverlay, spec.rippleColor)
         assertTrue(node.spec is ToggleNodeProps)
     }
 
@@ -93,12 +75,13 @@ class InputControlTest {
         }
 
         val node = tree.single()
+        val spec = node.spec as SliderNodeProps
 
         assertEquals(NodeType.Slider, node.type)
-        assertEquals(24, node.props[TypedPropKeys.SliderValue])
-        assertEquals(10, node.props[TypedPropKeys.MinValue])
-        assertEquals(60, node.props[TypedPropKeys.MaxValue])
-        assertEquals(false, node.props[TypedPropKeys.Enabled])
+        assertEquals(24, spec.value)
+        assertEquals(10, spec.min)
+        assertEquals(60, spec.max)
+        assertEquals(false, spec.enabled)
         assertTrue(node.spec is SliderNodeProps)
     }
 
@@ -120,129 +103,94 @@ class InputControlTest {
             }
         }
 
+        val radioSpec = tree[0].children[0].spec as ToggleNodeProps
+        val switchSpec = tree[0].children[1].spec as ToggleNodeProps
+
         assertEquals(NodeType.RadioButton, tree[0].children[0].type)
         assertEquals(NodeType.Switch, tree[0].children[1].type)
-        assertEquals(false, tree[0].children[0].props[TypedPropKeys.Enabled])
-        assertTrue(tree[0].children[1].props[TypedPropKeys.Enabled] as Boolean)
-        assertEquals(InputControlDefaults.pressedColor(), tree[0].children[0].props[TypedPropKeys.StyleRippleColor])
-        assertEquals(InputControlDefaults.pressedColor(), tree[0].children[1].props[TypedPropKeys.StyleRippleColor])
+        assertEquals(false, radioSpec.enabled)
+        assertTrue(switchSpec.enabled)
+        assertEquals(InputControlDefaults.pressedColor(), radioSpec.rippleColor)
+        assertEquals(InputControlDefaults.pressedColor(), switchSpec.rippleColor)
     }
 
     @Test
-    fun `input control component styles support disabled state override`() {
+    fun `input control color override supports disabled state`() {
         val baseTheme = UiThemeDefaults.light()
-        val customTheme = UiThemeTokens(
-            colors = baseTheme.colors,
-            typography = baseTheme.typography,
-            input = baseTheme.input,
-            components = UiComponentStyles(
-                button = baseTheme.components.button,
-                textField = baseTheme.components.textField,
-                checkbox = UiCheckboxStyles(
-                    label = 101,
-                    labelDisabled = 102,
-                    control = 103,
-                    controlDisabled = 104,
-                ),
-                switchControl = baseTheme.components.switchControl,
-                radioButton = baseTheme.components.radioButton,
-                slider = baseTheme.components.slider,
-                segmentedControl = baseTheme.components.segmentedControl,
-                progressIndicator = baseTheme.components.progressIndicator,
-                tabPager = baseTheme.components.tabPager,
-            ),
-        )
 
         val tree = buildVNodeTree {
-            UiTheme(customTheme) {
-                Checkbox(
-                    text = "Disabled",
-                    checked = false,
-                    enabled = false,
-                    onCheckedChange = {},
-                )
-            }
-        }
-
-        val node = tree.single()
-
-        assertEquals(104, node.props[TypedPropKeys.ControlColor])
-        assertEquals(102, node.props[TypedPropKeys.TextColor])
-    }
-
-    @Test
-    fun `input controls resolve independent component domains`() {
-        val baseTheme = UiThemeDefaults.light()
-        val customTheme = UiThemeTokens(
-            colors = baseTheme.colors,
-            typography = baseTheme.typography,
-            input = baseTheme.input,
-            components = UiComponentStyles(
-                button = baseTheme.components.button,
-                textField = baseTheme.components.textField,
-                checkbox = UiCheckboxStyles(
-                    label = 201,
-                    labelDisabled = 202,
-                    control = 203,
-                    controlDisabled = 204,
-                ),
-                switchControl = UiSwitchStyles(
-                    label = 205,
-                    labelDisabled = 206,
-                    control = 207,
-                    controlDisabled = 208,
-                ),
-                radioButton = UiRadioButtonStyles(
-                    label = 209,
-                    labelDisabled = 210,
-                    control = 211,
-                    controlDisabled = 212,
-                ),
-                slider = UiSliderStyles(
-                    control = 213,
-                    controlDisabled = 214,
-                ),
-                segmentedControl = baseTheme.components.segmentedControl,
-                progressIndicator = baseTheme.components.progressIndicator,
-                tabPager = baseTheme.components.tabPager,
-            ),
-        )
-
-        val tree = buildVNodeTree {
-            UiTheme(customTheme) {
-                Column {
+            UiTheme(baseTheme) {
+                ProvideCheckboxColors(
+                    InputControlColorOverride(
+                        label = 101,
+                        labelDisabled = 102,
+                        control = 103,
+                        controlDisabled = 104,
+                    ),
+                ) {
                     Checkbox(
-                        text = "Checkbox",
-                        checked = true,
+                        text = "Disabled",
+                        checked = false,
+                        enabled = false,
                         onCheckedChange = {},
-                    )
-                    Switch(
-                        text = "Switch",
-                        checked = true,
-                        onCheckedChange = {},
-                    )
-                    RadioButton(
-                        text = "Radio",
-                        checked = true,
-                        onCheckedChange = {},
-                    )
-                    Slider(
-                        value = 12,
-                        onValueChange = {},
                     )
                 }
             }
         }
 
-        val root = tree.single()
-        val checkbox = root.children[0]
-        val switchControl = root.children[1]
-        val radioButton = root.children[2]
-        val slider = root.children[3]
+        val spec = tree.single().spec as ToggleNodeProps
 
-        assertEquals(203, checkbox.props[TypedPropKeys.ControlColor])
-        assertEquals(207, switchControl.props[TypedPropKeys.ControlColor])
-        assertEquals(211, radioButton.props[TypedPropKeys.ControlColor])
-        assertEquals(213, slider.props[TypedPropKeys.ControlColor])
+        assertEquals(104, spec.controlColor)
+        assertEquals(102, spec.textColor)
+    }
+
+    @Test
+    fun `input controls resolve independent color overrides`() {
+        val baseTheme = UiThemeDefaults.light()
+
+        val tree = buildVNodeTree {
+            UiTheme(baseTheme) {
+                ProvideCheckboxColors(InputControlColorOverride(control = 203)) {
+                    ProvideSwitchColors(InputControlColorOverride(control = 207)) {
+                        ProvideRadioButtonColors(InputControlColorOverride(control = 211)) {
+                            ProvideSliderColors(InputControlColorOverride(control = 213)) {
+                                Column {
+                                    Checkbox(
+                                        text = "Checkbox",
+                                        checked = true,
+                                        onCheckedChange = {},
+                                    )
+                                    Switch(
+                                        text = "Switch",
+                                        checked = true,
+                                        onCheckedChange = {},
+                                    )
+                                    RadioButton(
+                                        text = "Radio",
+                                        checked = true,
+                                        onCheckedChange = {},
+                                    )
+                                    Slider(
+                                        value = 12,
+                                        onValueChange = {},
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        val root = tree.single()
+        val checkboxSpec = root.children[0].spec as ToggleNodeProps
+        val switchSpec = root.children[1].spec as ToggleNodeProps
+        val radioSpec = root.children[2].spec as ToggleNodeProps
+        val sliderSpec = root.children[3].spec as SliderNodeProps
+
+        assertEquals(203, checkboxSpec.controlColor)
+        assertEquals(207, switchSpec.controlColor)
+        assertEquals(211, radioSpec.controlColor)
+        assertEquals(213, sliderSpec.tintColor)
     }
 }

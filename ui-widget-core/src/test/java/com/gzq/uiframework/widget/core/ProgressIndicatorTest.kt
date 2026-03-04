@@ -4,7 +4,6 @@ import com.gzq.uiframework.renderer.modifier.HeightModifierElement
 import com.gzq.uiframework.renderer.modifier.SizeModifierElement
 import com.gzq.uiframework.renderer.modifier.WidthModifierElement
 import com.gzq.uiframework.renderer.node.NodeType
-import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.spec.ProgressIndicatorNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -38,15 +37,16 @@ class ProgressIndicatorTest {
         }
 
         val node = tree.single()
+        val spec = node.spec as ProgressIndicatorNodeProps
         val elements = node.modifier.readModifierElements()
         val width = elements.last { it is WidthModifierElement } as WidthModifierElement
         val height = elements.last { it is HeightModifierElement } as HeightModifierElement
 
         assertEquals(NodeType.LinearProgressIndicator, node.type)
-        assertEquals(0.42f, node.props[TypedPropKeys.ProgressFraction])
-        assertEquals(customTheme.components.progressIndicator.linearIndicator, node.props[TypedPropKeys.ProgressIndicatorColor])
-        assertEquals(customTheme.components.progressIndicator.linearTrack, node.props[TypedPropKeys.ProgressTrackColor])
-        assertEquals(customTheme.controls.progressIndicator.linearTrackThickness, node.props[TypedPropKeys.ProgressTrackThickness])
+        assertEquals(0.42f, spec.progress)
+        assertEquals(customTheme.colors.primary, spec.indicatorColor)
+        assertEquals(customTheme.colors.divider, spec.trackColor)
+        assertEquals(customTheme.controls.progressIndicator.linearTrackThickness, spec.trackThickness)
         assertEquals(android.view.ViewGroup.LayoutParams.MATCH_PARENT, width.width)
         assertEquals(customTheme.controls.progressIndicator.linearTrackThickness, height.height)
         assertTrue(node.spec is ProgressIndicatorNodeProps)
@@ -79,61 +79,49 @@ class ProgressIndicatorTest {
         }
 
         val node = tree.single()
+        val spec = node.spec as ProgressIndicatorNodeProps
         val size = node.modifier.readModifierElements().last { it is SizeModifierElement } as SizeModifierElement
 
         assertEquals(NodeType.CircularProgressIndicator, node.type)
-        assertEquals(null, node.props[TypedPropKeys.ProgressFraction])
-        assertEquals(customTheme.components.progressIndicator.circularIndicator, node.props[TypedPropKeys.ProgressIndicatorColor])
-        assertEquals(customTheme.components.progressIndicator.circularTrack, node.props[TypedPropKeys.ProgressTrackColor])
-        assertEquals(customTheme.controls.progressIndicator.circularTrackThickness, node.props[TypedPropKeys.ProgressTrackThickness])
-        assertEquals(customTheme.controls.progressIndicator.circularSize, node.props[TypedPropKeys.ProgressIndicatorSize])
+        assertEquals(null, spec.progress)
+        assertEquals(customTheme.colors.primary, spec.indicatorColor)
+        assertEquals(customTheme.colors.divider, spec.trackColor)
+        assertEquals(customTheme.controls.progressIndicator.circularTrackThickness, spec.trackThickness)
+        assertEquals(customTheme.controls.progressIndicator.circularSize, spec.indicatorSize)
         assertEquals(customTheme.controls.progressIndicator.circularSize, size.width)
         assertEquals(customTheme.controls.progressIndicator.circularSize, size.height)
         assertTrue(node.spec is ProgressIndicatorNodeProps)
     }
 
     @Test
-    fun `progress indicator uses component style overrides`() {
+    fun `progress indicator uses color overrides`() {
         val baseTheme = UiThemeDefaults.light()
-        val customTheme = UiThemeTokens(
-            colors = baseTheme.colors,
-            typography = baseTheme.typography,
-            input = baseTheme.input,
-            controls = baseTheme.controls,
-            components = UiComponentStyles(
-                button = baseTheme.components.button,
-                textField = baseTheme.components.textField,
-                segmentedControl = baseTheme.components.segmentedControl,
-                checkbox = baseTheme.components.checkbox,
-                switchControl = baseTheme.components.switchControl,
-                radioButton = baseTheme.components.radioButton,
-                slider = baseTheme.components.slider,
-                progressIndicator = UiProgressIndicatorStyles(
-                    linearIndicator = 701,
-                    linearTrack = 702,
-                    circularIndicator = 703,
-                    circularTrack = 704,
-                ),
-                tabPager = baseTheme.components.tabPager,
-            ),
-        )
 
         val tree = buildVNodeTree {
-            UiTheme(customTheme) {
-                Column {
-                    LinearProgressIndicator(progress = 0.4f)
-                    CircularProgressIndicator(progress = 0.6f)
+            UiTheme(baseTheme) {
+                ProvideProgressIndicatorColors(
+                    ProgressIndicatorColorOverride(
+                        linearIndicator = 701,
+                        linearTrack = 702,
+                        circularIndicator = 703,
+                        circularTrack = 704,
+                    ),
+                ) {
+                    Column {
+                        LinearProgressIndicator(progress = 0.4f)
+                        CircularProgressIndicator(progress = 0.6f)
+                    }
                 }
             }
         }
 
-        val linearNode = tree.single().children[0]
-        val circularNode = tree.single().children[1]
+        val linearSpec = tree.single().children[0].spec as ProgressIndicatorNodeProps
+        val circularSpec = tree.single().children[1].spec as ProgressIndicatorNodeProps
 
-        assertEquals(701, linearNode.props[TypedPropKeys.ProgressIndicatorColor])
-        assertEquals(702, linearNode.props[TypedPropKeys.ProgressTrackColor])
-        assertEquals(703, circularNode.props[TypedPropKeys.ProgressIndicatorColor])
-        assertEquals(704, circularNode.props[TypedPropKeys.ProgressTrackColor])
+        assertEquals(701, linearSpec.indicatorColor)
+        assertEquals(702, linearSpec.trackColor)
+        assertEquals(703, circularSpec.indicatorColor)
+        assertEquals(704, circularSpec.trackColor)
     }
 
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {

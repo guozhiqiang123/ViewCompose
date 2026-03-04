@@ -1,6 +1,7 @@
 package com.gzq.uiframework.renderer.view.tree.patch
 
 import android.content.res.ColorStateList
+import android.util.TypedValue
 import android.widget.CompoundButton
 import android.widget.SeekBar
 import android.widget.Switch
@@ -10,6 +11,7 @@ import com.gzq.uiframework.renderer.view.tree.InputViewBinder
 import com.gzq.uiframework.renderer.view.tree.SliderNodePatch
 import com.gzq.uiframework.renderer.view.tree.TextFieldNodePatch
 import com.gzq.uiframework.renderer.view.tree.ToggleNodePatch
+import com.gzq.uiframework.renderer.view.tree.ViewModifierApplier
 
 internal object InputNodePatchApplier {
     fun applyTextFieldPatch(
@@ -94,6 +96,43 @@ internal object InputNodePatchApplier {
                 onValueChange = next.onValueChange,
             )
         }
+        if (previous.textColor != next.textColor) {
+            input.setTextColor(next.textColor)
+        }
+        if (previous.textSizeSp != next.textSizeSp) {
+            input.setTextSize(TypedValue.COMPLEX_UNIT_SP, next.textSizeSp.toFloat())
+        }
+        if (
+            previous.backgroundColor != next.backgroundColor ||
+            previous.borderWidth != next.borderWidth ||
+            previous.borderColor != next.borderColor ||
+            previous.cornerRadius != next.cornerRadius ||
+            previous.rippleColor != next.rippleColor
+        ) {
+            ViewModifierApplier.applyStylePatch(
+                view = view.fieldContainer,
+                backgroundColor = next.backgroundColor,
+                borderWidth = next.borderWidth,
+                borderColor = next.borderColor,
+                cornerRadius = next.cornerRadius,
+                rippleColor = next.rippleColor,
+                clickable = false,
+            )
+        }
+        if (previous.minHeight != next.minHeight) {
+            view.fieldContainer.minimumHeight = next.minHeight
+        }
+        if (
+            previous.paddingHorizontal != next.paddingHorizontal ||
+            previous.paddingVertical != next.paddingVertical
+        ) {
+            view.fieldContainer.setPadding(
+                next.paddingHorizontal,
+                next.paddingVertical,
+                next.paddingHorizontal,
+                next.paddingVertical,
+            )
+        }
     }
 
     fun applyTogglePatch(
@@ -124,6 +163,12 @@ internal object InputNodePatchApplier {
             if (isChecked != next.checked) {
                 next.onCheckedChange?.invoke(isChecked)
             }
+        }
+        if (previous.textColor != next.textColor) {
+            view.setTextColor(next.textColor)
+        }
+        if (previous.textSizeSp != next.textSizeSp) {
+            view.setTextSize(TypedValue.COMPLEX_UNIT_SP, next.textSizeSp.toFloat())
         }
     }
 

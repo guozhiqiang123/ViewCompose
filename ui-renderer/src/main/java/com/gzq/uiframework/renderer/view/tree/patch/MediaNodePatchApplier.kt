@@ -6,6 +6,7 @@ import android.widget.ImageView
 import com.gzq.uiframework.renderer.view.tree.IconButtonNodePatch
 import com.gzq.uiframework.renderer.view.tree.ImageNodePatch
 import com.gzq.uiframework.renderer.view.tree.MediaViewBinder
+import com.gzq.uiframework.renderer.view.tree.ViewModifierApplier
 
 internal object MediaNodePatchApplier {
     fun applyImagePatch(
@@ -86,6 +87,31 @@ internal object MediaNodePatchApplier {
         }
         if (previous.enabled != next.enabled) {
             view.isEnabled = next.enabled
+        }
+        if (
+            previous.backgroundColor != next.backgroundColor ||
+            previous.borderWidth != next.borderWidth ||
+            previous.borderColor != next.borderColor ||
+            previous.cornerRadius != next.cornerRadius ||
+            previous.rippleColor != next.rippleColor
+        ) {
+            ViewModifierApplier.applyStylePatch(
+                view = view,
+                backgroundColor = next.backgroundColor,
+                borderWidth = next.borderWidth,
+                borderColor = next.borderColor,
+                cornerRadius = next.cornerRadius,
+                rippleColor = next.rippleColor,
+                clickable = true,
+            )
+        }
+        if (previous.contentPadding != next.contentPadding) {
+            view.setPadding(
+                next.contentPadding,
+                next.contentPadding,
+                next.contentPadding,
+                next.contentPadding,
+            )
         }
     }
 }

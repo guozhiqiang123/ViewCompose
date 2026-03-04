@@ -8,4 +8,6 @@ data class TextNodeProps(
     val maxLines: Int,
     val overflow: TextOverflow,
     val textAlign: TextAlign,
+    val textColor: Int,
+    val textSizeSp: Int,
 ) : NodeSpec

@@ -9,6 +9,7 @@ import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.VNode
+import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
 import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
@@ -271,6 +272,8 @@ internal object NodeViewBinderRegistry {
     }
 
     private fun readNodeTextColor(node: VNode): Int? {
+        val spec = node.spec as? ButtonNodeProps
+        if (spec != null) return spec.textColor
         return node.props[TypedPropKeys.TextColor]
     }
 }

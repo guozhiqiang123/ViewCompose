@@ -1,7 +1,6 @@
 package com.gzq.uiframework.widget.core
 
 import com.gzq.uiframework.renderer.node.NodeType
-import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -21,10 +20,11 @@ class LazyColumnTest {
         }
 
         val node = tree.single()
+        val spec = node.spec as LazyColumnNodeProps
 
         assertEquals(NodeType.LazyColumn, node.type)
-        assertEquals(12.dp, node.props[TypedPropKeys.LazyContentPadding])
-        assertEquals(8.dp, node.props[TypedPropKeys.LazySpacing])
+        assertEquals(12.dp, spec.contentPadding)
+        assertEquals(8.dp, spec.spacing)
         assertTrue(node.spec is LazyColumnNodeProps)
     }
 }

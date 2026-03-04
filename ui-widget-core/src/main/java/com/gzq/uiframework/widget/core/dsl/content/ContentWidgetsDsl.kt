@@ -9,8 +9,6 @@ import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TextAlign
 import com.gzq.uiframework.renderer.node.TextOverflow
-import com.gzq.uiframework.renderer.node.TypedPropKeys
-import com.gzq.uiframework.renderer.node.props
 import com.gzq.uiframework.renderer.node.spec.AndroidViewNodeProps
 import com.gzq.uiframework.renderer.node.spec.ImageNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextNodeProps
@@ -28,19 +26,13 @@ fun UiTreeBuilder.Text(
     emit(
         type = NodeType.Text,
         key = key,
-        props = props {
-            set(TypedPropKeys.Text, text)
-            set(TypedPropKeys.TextColor, color)
-            set(TypedPropKeys.TextSizeSp, style.fontSizeSp)
-            set(TypedPropKeys.TextMaxLines, maxLines)
-            set(TypedPropKeys.TextOverflow, overflow)
-            set(TypedPropKeys.TextAlign, textAlign)
-        },
         spec = TextNodeProps(
             text = text,
             maxLines = maxLines,
             overflow = overflow,
             textAlign = textAlign,
+            textColor = color,
+            textSizeSp = style.fontSizeSp,
         ),
         modifier = modifier,
     )
@@ -60,16 +52,6 @@ fun UiTreeBuilder.Image(
     emit(
         type = NodeType.Image,
         key = key,
-        props = props {
-            set(TypedPropKeys.ImageSource, source)
-            set(TypedPropKeys.ImageContentScale, contentScale)
-            set(TypedPropKeys.ImageContentDescription, contentDescription)
-            set(TypedPropKeys.ImageRemoteLoader, ImageLoading.current)
-            set(TypedPropKeys.ImageTint, tint)
-            set(TypedPropKeys.ImagePlaceholder, placeholder)
-            set(TypedPropKeys.ImageError, error)
-            set(TypedPropKeys.ImageFallback, fallback)
-        },
         spec = ImageNodeProps(
             contentDescription = contentDescription,
             contentScale = contentScale,
@@ -113,10 +95,6 @@ fun UiTreeBuilder.AndroidView(
     emit(
         type = NodeType.AndroidView,
         key = key,
-        props = props {
-            set(TypedPropKeys.ViewFactory, factory)
-            set(TypedPropKeys.ViewUpdate, update)
-        },
         spec = AndroidViewNodeProps(
             factory = factory,
             update = update,

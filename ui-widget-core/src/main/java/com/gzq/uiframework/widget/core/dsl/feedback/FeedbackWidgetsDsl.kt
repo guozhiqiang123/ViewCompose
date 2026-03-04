@@ -5,8 +5,6 @@ import com.gzq.uiframework.renderer.modifier.fillMaxWidth
 import com.gzq.uiframework.renderer.modifier.height
 import com.gzq.uiframework.renderer.modifier.size
 import com.gzq.uiframework.renderer.node.NodeType
-import com.gzq.uiframework.renderer.node.TypedPropKeys
-import com.gzq.uiframework.renderer.node.props
 import com.gzq.uiframework.renderer.node.spec.ProgressIndicatorNodeProps
 
 fun UiTreeBuilder.LinearProgressIndicator(
@@ -20,12 +18,6 @@ fun UiTreeBuilder.LinearProgressIndicator(
     emit(
         type = NodeType.LinearProgressIndicator,
         key = key,
-        props = props {
-            set(TypedPropKeys.ProgressFraction, progress)
-            set(TypedPropKeys.ProgressIndicatorColor, indicatorColor)
-            set(TypedPropKeys.ProgressTrackColor, trackColor)
-            set(TypedPropKeys.ProgressTrackThickness, trackThickness)
-        },
         spec = ProgressIndicatorNodeProps(
             enabled = true,
             progress = progress,
@@ -53,13 +45,6 @@ fun UiTreeBuilder.CircularProgressIndicator(
     emit(
         type = NodeType.CircularProgressIndicator,
         key = key,
-        props = props {
-            set(TypedPropKeys.ProgressFraction, progress)
-            set(TypedPropKeys.ProgressIndicatorColor, indicatorColor)
-            set(TypedPropKeys.ProgressTrackColor, trackColor)
-            set(TypedPropKeys.ProgressTrackThickness, trackThickness)
-            set(TypedPropKeys.ProgressIndicatorSize, size)
-        },
         spec = ProgressIndicatorNodeProps(
             enabled = true,
             progress = progress,

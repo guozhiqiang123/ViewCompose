@@ -1,6 +1,7 @@
 package com.gzq.uiframework.renderer.view.tree.patch
 
 import android.text.TextUtils
+import android.util.TypedValue
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -9,6 +10,7 @@ import com.gzq.uiframework.renderer.view.tree.ButtonNodePatch
 import com.gzq.uiframework.renderer.view.tree.ContentViewBinder
 import com.gzq.uiframework.renderer.view.tree.DividerNodePatch
 import com.gzq.uiframework.renderer.view.tree.TextNodePatch
+import com.gzq.uiframework.renderer.view.tree.ViewModifierApplier
 
 internal object ContentNodePatchApplier {
     fun applyTextPatch(
@@ -29,6 +31,12 @@ internal object ContentNodePatchApplier {
         }
         if (patch.previous.textAlign != patch.next.textAlign) {
             view.gravity = ContentViewBinder.toTextGravity(patch.next.textAlign)
+        }
+        if (patch.previous.textColor != patch.next.textColor) {
+            view.setTextColor(patch.next.textColor)
+        }
+        if (patch.previous.textSizeSp != patch.next.textSizeSp) {
+            view.setTextSize(TypedValue.COMPLEX_UNIT_SP, patch.next.textSizeSp.toFloat())
         }
     }
 
@@ -78,6 +86,37 @@ internal object ContentNodePatchApplier {
                 }
             }
         }
+        if (patch.previous.textColor != patch.next.textColor) {
+            view.setTextColor(patch.next.textColor)
+        }
+        if (patch.previous.textSizeSp != patch.next.textSizeSp) {
+            view.setTextSize(TypedValue.COMPLEX_UNIT_SP, patch.next.textSizeSp.toFloat())
+        }
+        if (hasStyleChange(patch)) {
+            ViewModifierApplier.applyStylePatch(
+                view = view,
+                backgroundColor = patch.next.backgroundColor,
+                borderWidth = patch.next.borderWidth,
+                borderColor = patch.next.borderColor,
+                cornerRadius = patch.next.cornerRadius,
+                rippleColor = patch.next.rippleColor,
+                clickable = true,
+            )
+        }
+        if (patch.previous.minHeight != patch.next.minHeight) {
+            view.minimumHeight = patch.next.minHeight
+        }
+        if (
+            patch.previous.paddingHorizontal != patch.next.paddingHorizontal ||
+            patch.previous.paddingVertical != patch.next.paddingVertical
+        ) {
+            view.setPadding(
+                patch.next.paddingHorizontal,
+                patch.next.paddingVertical,
+                patch.next.paddingHorizontal,
+                patch.next.paddingVertical,
+            )
+        }
     }
 
     fun applyDividerPatch(
@@ -87,5 +126,13 @@ internal object ContentNodePatchApplier {
         if (patch.previous.color != patch.next.color) {
             view.setBackgroundColor(patch.next.color)
         }
+    }
+
+    private fun hasStyleChange(patch: ButtonNodePatch): Boolean {
+        return patch.previous.backgroundColor != patch.next.backgroundColor ||
+            patch.previous.borderWidth != patch.next.borderWidth ||
+            patch.previous.borderColor != patch.next.borderColor ||
+            patch.previous.cornerRadius != patch.next.cornerRadius ||
+            patch.previous.rippleColor != patch.next.rippleColor
     }
 }

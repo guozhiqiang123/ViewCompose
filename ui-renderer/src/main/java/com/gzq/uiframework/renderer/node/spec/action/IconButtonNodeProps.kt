@@ -14,4 +14,10 @@ data class IconButtonNodeProps(
     override val fallback: ImageSource.Resource?,
     override val remoteImageLoader: RemoteImageLoader?,
     val enabled: Boolean,
+    val backgroundColor: Int,
+    val borderWidth: Int,
+    val borderColor: Int,
+    val cornerRadius: Int,
+    val rippleColor: Int,
+    val contentPadding: Int,
 ) : ImageNodeSpec

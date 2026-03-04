@@ -24,9 +24,6 @@ fun UiTreeBuilder.Box(
     emitResolved(
         type = NodeType.Box,
         key = key,
-        props = props {
-            set(TypedPropKeys.BoxAlignment, contentAlignment)
-        },
         spec = BoxNodeProps(
             contentAlignment = contentAlignment,
         ),
@@ -46,7 +43,6 @@ fun UiTreeBuilder.AnchorTarget(
         type = NodeType.Box,
         key = key,
         props = props {
-            set(TypedPropKeys.BoxAlignment, contentAlignment)
             set(TypedPropKeys.AnchorId, anchorId)
         },
         spec = BoxNodeProps(
@@ -135,10 +131,6 @@ fun UiTreeBuilder.Divider(
     emit(
         type = NodeType.Divider,
         key = key,
-        props = props {
-            set(TypedPropKeys.DividerColor, color)
-            set(TypedPropKeys.DividerThickness, thickness)
-        },
         spec = DividerNodeProps(
             color = color,
             thickness = thickness,
@@ -158,11 +150,6 @@ fun UiTreeBuilder.Row(
     emitResolved(
         type = NodeType.Row,
         key = key,
-        props = props {
-            set(TypedPropKeys.LinearSpacing, spacing)
-            set(TypedPropKeys.RowMainAxisArrangement, arrangement)
-            set(TypedPropKeys.RowVerticalAlignment, verticalAlignment)
-        },
         spec = RowNodeProps(
             spacing = spacing,
             arrangement = arrangement,
@@ -184,11 +171,6 @@ fun UiTreeBuilder.Column(
     emitResolved(
         type = NodeType.Column,
         key = key,
-        props = props {
-            set(TypedPropKeys.LinearSpacing, spacing)
-            set(TypedPropKeys.ColumnMainAxisArrangement, arrangement)
-            set(TypedPropKeys.ColumnHorizontalAlignment, horizontalAlignment)
-        },
         spec = ColumnNodeProps(
             spacing = spacing,
             arrangement = arrangement,

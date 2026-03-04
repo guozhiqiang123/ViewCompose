@@ -8,8 +8,6 @@ import com.gzq.uiframework.renderer.node.ImageContentScale
 import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.SegmentedControlItem
-import com.gzq.uiframework.renderer.node.TypedPropKeys
-import com.gzq.uiframework.renderer.node.props
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
 import com.gzq.uiframework.renderer.node.spec.IconButtonNodeProps
 import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
@@ -32,36 +30,25 @@ fun UiTreeBuilder.Button(
     emit(
         type = NodeType.Button,
         key = key,
-        props = props {
-            set(TypedPropKeys.Text, text)
-            set(TypedPropKeys.OnClick, onClick)
-            set(TypedPropKeys.Enabled, enabled)
-            set(TypedPropKeys.TextColor, contentColor)
-            set(TypedPropKeys.TextSizeSp, style.fontSizeSp)
-            set(TypedPropKeys.StyleMinHeight, ButtonDefaults.height(size))
-            set(TypedPropKeys.StylePaddingLeft, ButtonDefaults.horizontalPadding(size))
-            set(TypedPropKeys.StylePaddingTop, ButtonDefaults.verticalPadding(size))
-            set(TypedPropKeys.StylePaddingRight, ButtonDefaults.horizontalPadding(size))
-            set(TypedPropKeys.StylePaddingBottom, ButtonDefaults.verticalPadding(size))
-            set(TypedPropKeys.StyleBackgroundColor, ButtonDefaults.containerColor(variant, enabled))
-            set(TypedPropKeys.StyleBorderWidth, ButtonDefaults.borderWidth(variant))
-            set(TypedPropKeys.StyleBorderColor, ButtonDefaults.borderColor(variant, enabled))
-            set(TypedPropKeys.StyleCornerRadius, ButtonDefaults.cornerRadius())
-            set(TypedPropKeys.StyleRippleColor, ButtonDefaults.pressedColor())
-            set(TypedPropKeys.ButtonIconSize, iconSizeValue)
-            set(TypedPropKeys.ButtonIconSpacing, iconSpacingValue)
-            set(TypedPropKeys.ButtonLeadingIcon, leadingIcon)
-            set(TypedPropKeys.ButtonTrailingIcon, trailingIcon)
-        },
         spec = ButtonNodeProps(
             text = text,
             enabled = enabled,
-            iconSpacing = iconSpacingValue,
+            onClick = onClick,
+            textColor = contentColor,
+            textSizeSp = style.fontSizeSp,
+            backgroundColor = ButtonDefaults.containerColor(variant, enabled),
+            borderWidth = ButtonDefaults.borderWidth(variant),
+            borderColor = ButtonDefaults.borderColor(variant, enabled),
+            cornerRadius = ButtonDefaults.cornerRadius(),
+            rippleColor = ButtonDefaults.pressedColor(),
+            minHeight = ButtonDefaults.height(size),
+            paddingHorizontal = ButtonDefaults.horizontalPadding(size),
+            paddingVertical = ButtonDefaults.verticalPadding(size),
             leadingIcon = leadingIcon,
             trailingIcon = trailingIcon,
             iconTint = contentColor,
             iconSize = iconSizeValue,
-            onClick = onClick,
+            iconSpacing = iconSpacingValue,
         ),
         modifier = modifier,
     )
@@ -78,6 +65,7 @@ fun UiTreeBuilder.IconButton(
     modifier: Modifier = Modifier,
 ) {
     val tint = IconButtonDefaults.contentColor(variant, enabled)
+    val contentPaddingValue = IconButtonDefaults.contentPadding(size)
     val semanticModifier = Modifier
         .size(
             width = IconButtonDefaults.size(size),
@@ -94,24 +82,6 @@ fun UiTreeBuilder.IconButton(
     emit(
         type = NodeType.IconButton,
         key = key,
-        props = props {
-            set(TypedPropKeys.ImageSource, icon)
-            set(TypedPropKeys.ImageContentDescription, contentDescription)
-            set(TypedPropKeys.ImageContentScale, ImageContentScale.Inside)
-            set(TypedPropKeys.ImageTint, tint)
-            set(TypedPropKeys.OnClick, onClick)
-            set(TypedPropKeys.Enabled, enabled)
-            set(TypedPropKeys.ImageRemoteLoader, ImageLoading.current)
-            set(TypedPropKeys.StylePaddingLeft, IconButtonDefaults.contentPadding(size))
-            set(TypedPropKeys.StylePaddingTop, IconButtonDefaults.contentPadding(size))
-            set(TypedPropKeys.StylePaddingRight, IconButtonDefaults.contentPadding(size))
-            set(TypedPropKeys.StylePaddingBottom, IconButtonDefaults.contentPadding(size))
-            set(TypedPropKeys.StyleBackgroundColor, IconButtonDefaults.containerColor(variant, enabled))
-            set(TypedPropKeys.StyleBorderWidth, IconButtonDefaults.borderWidth(variant))
-            set(TypedPropKeys.StyleBorderColor, IconButtonDefaults.borderColor(variant, enabled))
-            set(TypedPropKeys.StyleCornerRadius, IconButtonDefaults.cornerRadius())
-            set(TypedPropKeys.StyleRippleColor, IconButtonDefaults.pressedColor())
-        },
         spec = IconButtonNodeProps(
             contentDescription = contentDescription,
             contentScale = ImageContentScale.Inside,
@@ -122,6 +92,12 @@ fun UiTreeBuilder.IconButton(
             fallback = null,
             remoteImageLoader = ImageLoading.current,
             enabled = enabled,
+            backgroundColor = IconButtonDefaults.containerColor(variant, enabled),
+            borderWidth = IconButtonDefaults.borderWidth(variant),
+            borderColor = IconButtonDefaults.borderColor(variant, enabled),
+            cornerRadius = IconButtonDefaults.cornerRadius(),
+            rippleColor = IconButtonDefaults.pressedColor(),
+            contentPadding = contentPaddingValue,
         ),
         modifier = semanticModifier,
     )
@@ -149,21 +125,6 @@ fun UiTreeBuilder.SegmentedControl(
     emit(
         type = NodeType.SegmentedControl,
         key = key,
-        props = props {
-            set(TypedPropKeys.SegmentItems, resolvedItems)
-            set(TypedPropKeys.SegmentSelectedIndex, selectedIndex)
-            set(TypedPropKeys.OnSegmentSelected, onSelectionChange)
-            set(TypedPropKeys.Enabled, enabled)
-            set(TypedPropKeys.SegmentBackgroundColor, backgroundColor)
-            set(TypedPropKeys.SegmentIndicatorColor, indicatorColor)
-            set(TypedPropKeys.SegmentCornerRadius, cornerRadius)
-            set(TypedPropKeys.SegmentTextColor, textColor)
-            set(TypedPropKeys.SegmentSelectedTextColor, selectedTextColor)
-            set(TypedPropKeys.SegmentRippleColor, rippleColor)
-            set(TypedPropKeys.SegmentTextSizeSp, textSizeSp)
-            set(TypedPropKeys.SegmentContentPaddingHorizontal, horizontalPadding)
-            set(TypedPropKeys.SegmentContentPaddingVertical, verticalPadding)
-        },
         spec = SegmentedControlNodeProps(
             items = resolvedItems,
             selectedIndex = selectedIndex,

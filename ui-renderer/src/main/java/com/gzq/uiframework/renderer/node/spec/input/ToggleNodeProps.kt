@@ -6,4 +6,7 @@ data class ToggleNodeProps(
     val checked: Boolean,
     val controlColor: Int,
     val onCheckedChange: ((Boolean) -> Unit)?,
+    val textColor: Int,
+    val textSizeSp: Int,
+    val rippleColor: Int,
 ) : NodeSpec

@@ -1,6 +1,6 @@
 package com.gzq.uiframework.widget.core
 
-import com.gzq.uiframework.renderer.node.TypedPropKeys
+import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -157,7 +157,7 @@ class PopupOverlayHostTest {
             content: PopupOverlayContent,
         ): PopupOverlayHandle {
             val textNode = content.surface.buildNodes().single()
-            val message = textNode.props[TypedPropKeys.Text] as? String ?: ""
+            val message = (textNode.spec as? TextNodeProps)?.text?.toString() ?: ""
             events += "show:${entryId.sessionId.value}:${entryId.requestKey}:$message"
             return RecordingPopupHandle(
                 entryId = entryId,
@@ -175,7 +175,7 @@ class PopupOverlayHostTest {
             content: PopupOverlayContent,
         ) {
             val textNode = content.surface.buildNodes().single()
-            val message = textNode.props[TypedPropKeys.Text] as? String ?: ""
+            val message = (textNode.spec as? TextNodeProps)?.text?.toString() ?: ""
             events += "update:${entryId.sessionId.value}:${entryId.requestKey}:$message"
         }
 

@@ -7,8 +7,6 @@ import com.gzq.uiframework.renderer.node.LazyListItemSession
 import com.gzq.uiframework.renderer.node.LazyListItemSessionFactory
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TabPage
-import com.gzq.uiframework.renderer.node.TypedPropKeys
-import com.gzq.uiframework.renderer.node.props
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
 
@@ -46,11 +44,6 @@ fun <T> UiTreeBuilder.LazyColumn(
     }
     emit(
         type = NodeType.LazyColumn,
-        props = props {
-            set(TypedPropKeys.LazyContentPadding, contentPadding)
-            set(TypedPropKeys.LazySpacing, spacing)
-            set(TypedPropKeys.LazyItems, resolvedItems)
-        },
         spec = LazyColumnNodeProps(
             contentPadding = contentPadding,
             spacing = spacing,
@@ -124,20 +117,6 @@ fun UiTreeBuilder.TabPager(
     emit(
         type = NodeType.TabPager,
         key = key,
-        props = props {
-            set(TypedPropKeys.SelectedTabIndex, selectedTabIndex)
-            set(TypedPropKeys.OnTabSelected, onTabSelected)
-            set(TypedPropKeys.TabBackgroundColor, backgroundColor)
-            set(TypedPropKeys.TabIndicatorColor, indicatorColor)
-            set(TypedPropKeys.TabCornerRadius, cornerRadius)
-            set(TypedPropKeys.TabIndicatorHeight, indicatorHeight)
-            set(TypedPropKeys.TabContentPaddingHorizontal, tabPaddingHorizontal)
-            set(TypedPropKeys.TabContentPaddingVertical, tabPaddingVertical)
-            set(TypedPropKeys.TabSelectedTextColor, selectedTextColor)
-            set(TypedPropKeys.TabUnselectedTextColor, unselectedTextColor)
-            set(TypedPropKeys.TabRippleColor, rippleColor)
-            set(TypedPropKeys.TabPages, resolvedPages)
-        },
         spec = TabPagerNodeProps(
             pages = resolvedPages,
             selectedTabIndex = selectedTabIndex,

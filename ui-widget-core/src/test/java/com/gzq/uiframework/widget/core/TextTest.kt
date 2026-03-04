@@ -3,7 +3,6 @@ package com.gzq.uiframework.widget.core
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TextAlign
 import com.gzq.uiframework.renderer.node.TextOverflow
-import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -22,11 +21,12 @@ class TextTest {
         }
 
         val node = tree.single()
+        val spec = node.spec as TextNodeProps
 
         assertEquals(NodeType.Text, node.type)
-        assertEquals(2, node.props[TypedPropKeys.TextMaxLines])
-        assertEquals(TextOverflow.Ellipsis, node.props[TypedPropKeys.TextOverflow])
-        assertEquals(TextAlign.Center, node.props[TypedPropKeys.TextAlign])
+        assertEquals(2, spec.maxLines)
+        assertEquals(TextOverflow.Ellipsis, spec.overflow)
+        assertEquals(TextAlign.Center, spec.textAlign)
         assertTrue(node.spec is TextNodeProps)
     }
 }

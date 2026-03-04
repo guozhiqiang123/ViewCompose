@@ -25,6 +25,11 @@ import com.gzq.uiframework.renderer.modifier.VisibilityModifierElement
 import com.gzq.uiframework.renderer.modifier.ZIndexModifierElement
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.VNode
+import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.IconButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
+import com.gzq.uiframework.renderer.node.spec.TextNodeProps
+import com.gzq.uiframework.renderer.node.spec.ToggleNodeProps
 import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
 
 internal object ViewModifierApplier {
@@ -58,6 +63,26 @@ internal object ViewModifierApplier {
         view.setTag(
             R.id.ui_framework_original_foreground,
             cloneDrawable(view.foreground),
+        )
+    }
+
+    fun applyStylePatch(
+        view: View,
+        backgroundColor: Int,
+        borderWidth: Int,
+        borderColor: Int,
+        cornerRadius: Int,
+        rippleColor: Int,
+        clickable: Boolean,
+    ) {
+        applyBackgroundAndInteraction(
+            view = view,
+            backgroundColor = backgroundColor,
+            borderWidth = borderWidth,
+            borderColor = borderColor,
+            cornerRadius = cornerRadius,
+            rippleColor = rippleColor,
+            clickable = clickable,
         )
     }
 
@@ -322,53 +347,94 @@ internal object ViewModifierApplier {
         }
     }
 
-    private fun readNodeTextColor(node: VNode): Int? {
-        return node.props[TypedPropKeys.TextColor]
+    private fun readNodeTextColor(node: VNode): Int? = when (val spec = node.spec) {
+        is ButtonNodeProps -> spec.textColor
+        is TextNodeProps -> spec.textColor
+        is TextFieldNodeProps -> spec.textColor
+        is ToggleNodeProps -> spec.textColor
+        else -> node.props[TypedPropKeys.TextColor]
     }
 
-    private fun readNodeTextSize(node: VNode): Int? {
-        return node.props[TypedPropKeys.TextSizeSp]
+    private fun readNodeTextSize(node: VNode): Int? = when (val spec = node.spec) {
+        is ButtonNodeProps -> spec.textSizeSp
+        is TextNodeProps -> spec.textSizeSp
+        is TextFieldNodeProps -> spec.textSizeSp
+        is ToggleNodeProps -> spec.textSizeSp
+        else -> node.props[TypedPropKeys.TextSizeSp]
     }
 
     private fun readNodeAlpha(node: VNode): Float? {
         return node.props[TypedPropKeys.StyleAlpha]
     }
 
-    private fun readNodeBackgroundColor(node: VNode): Int? {
-        return node.props[TypedPropKeys.StyleBackgroundColor]
+    private fun readNodeBackgroundColor(node: VNode): Int? = when (val spec = node.spec) {
+        is ButtonNodeProps -> spec.backgroundColor
+        is TextFieldNodeProps -> spec.backgroundColor
+        is IconButtonNodeProps -> spec.backgroundColor
+        else -> node.props[TypedPropKeys.StyleBackgroundColor]
     }
 
-    private fun readNodeBorderWidth(node: VNode): Int? {
-        return node.props[TypedPropKeys.StyleBorderWidth]
+    private fun readNodeBorderWidth(node: VNode): Int? = when (val spec = node.spec) {
+        is ButtonNodeProps -> spec.borderWidth
+        is TextFieldNodeProps -> spec.borderWidth
+        is IconButtonNodeProps -> spec.borderWidth
+        else -> node.props[TypedPropKeys.StyleBorderWidth]
     }
 
-    private fun readNodeBorderColor(node: VNode): Int? {
-        return node.props[TypedPropKeys.StyleBorderColor]
+    private fun readNodeBorderColor(node: VNode): Int? = when (val spec = node.spec) {
+        is ButtonNodeProps -> spec.borderColor
+        is TextFieldNodeProps -> spec.borderColor
+        is IconButtonNodeProps -> spec.borderColor
+        else -> node.props[TypedPropKeys.StyleBorderColor]
     }
 
-    private fun readNodeCornerRadius(node: VNode): Int? {
-        return node.props[TypedPropKeys.StyleCornerRadius]
+    private fun readNodeCornerRadius(node: VNode): Int? = when (val spec = node.spec) {
+        is ButtonNodeProps -> spec.cornerRadius
+        is TextFieldNodeProps -> spec.cornerRadius
+        is IconButtonNodeProps -> spec.cornerRadius
+        else -> node.props[TypedPropKeys.StyleCornerRadius]
     }
 
-    private fun readNodeRippleColor(node: VNode): Int? {
-        return node.props[TypedPropKeys.StyleRippleColor]
+    private fun readNodeRippleColor(node: VNode): Int? = when (val spec = node.spec) {
+        is ButtonNodeProps -> spec.rippleColor
+        is TextFieldNodeProps -> spec.rippleColor
+        is IconButtonNodeProps -> spec.rippleColor
+        is ToggleNodeProps -> spec.rippleColor
+        else -> node.props[TypedPropKeys.StyleRippleColor]
     }
 
-    private fun readNodeMinHeight(node: VNode): Int? {
-        return node.props[TypedPropKeys.StyleMinHeight]
+    private fun readNodeMinHeight(node: VNode): Int? = when (val spec = node.spec) {
+        is ButtonNodeProps -> spec.minHeight
+        is TextFieldNodeProps -> spec.minHeight
+        else -> node.props[TypedPropKeys.StyleMinHeight]
     }
 
-    private fun readNodePadding(node: VNode): PaddingModifierElement? {
-        val left = node.props[TypedPropKeys.StylePaddingLeft] ?: return null
-        val top = node.props[TypedPropKeys.StylePaddingTop] ?: return null
-        val right = node.props[TypedPropKeys.StylePaddingRight] ?: return null
-        val bottom = node.props[TypedPropKeys.StylePaddingBottom] ?: return null
-        return PaddingModifierElement(
-            left = left,
-            top = top,
-            right = right,
-            bottom = bottom,
+    private fun readNodePadding(node: VNode): PaddingModifierElement? = when (val spec = node.spec) {
+        is ButtonNodeProps -> PaddingModifierElement(
+            left = spec.paddingHorizontal,
+            top = spec.paddingVertical,
+            right = spec.paddingHorizontal,
+            bottom = spec.paddingVertical,
         )
+        is TextFieldNodeProps -> PaddingModifierElement(
+            left = spec.paddingHorizontal,
+            top = spec.paddingVertical,
+            right = spec.paddingHorizontal,
+            bottom = spec.paddingVertical,
+        )
+        is IconButtonNodeProps -> PaddingModifierElement(
+            left = spec.contentPadding,
+            top = spec.contentPadding,
+            right = spec.contentPadding,
+            bottom = spec.contentPadding,
+        )
+        else -> {
+            val left = node.props[TypedPropKeys.StylePaddingLeft] ?: return null
+            val top = node.props[TypedPropKeys.StylePaddingTop] ?: return null
+            val right = node.props[TypedPropKeys.StylePaddingRight] ?: return null
+            val bottom = node.props[TypedPropKeys.StylePaddingBottom] ?: return null
+            PaddingModifierElement(left = left, top = top, right = right, bottom = bottom)
+        }
     }
 
     private fun readAnchorId(node: VNode): String? {

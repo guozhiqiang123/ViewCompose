@@ -6,6 +6,9 @@ import com.gzq.uiframework.renderer.modifier.backgroundColor
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.spec.BoxNodeProps
+import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
+import com.gzq.uiframework.renderer.node.spec.DividerNodeProps
+import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -37,8 +40,9 @@ class ThemeTest {
             }
         }
 
-        assertEquals(7, tree.single().props[TypedPropKeys.TextColor])
-        assertEquals(18, tree.single().props[TypedPropKeys.TextSizeSp])
+        val spec = tree.single().spec as TextNodeProps
+        assertEquals(7, spec.textColor)
+        assertEquals(18, spec.textSizeSp)
     }
 
     @Test
@@ -67,7 +71,8 @@ class ThemeTest {
             }
         }
 
-        assertEquals(42, tree.single().props[TypedPropKeys.DividerColor])
+        val spec = tree.single().spec as DividerNodeProps
+        assertEquals(42, spec.color)
     }
 
     @Test
@@ -102,7 +107,6 @@ class ThemeTest {
         var primary = 0
         var bodySize = 0
         var controlColor = 0
-        var buttonContainer = 0
         var pressedOverlay = 0
 
         buildVNodeTree {
@@ -113,7 +117,6 @@ class ThemeTest {
                     primary = Theme.colors.primary
                     bodySize = Theme.typography.body.fontSizeSp
                     controlColor = Theme.input.control
-                    buttonContainer = Theme.components.button.primaryContainer
                     pressedOverlay = Theme.interactions.pressedOverlay
                 }
             }
@@ -122,8 +125,31 @@ class ThemeTest {
         assertEquals(0xFF225577.toInt(), primary)
         assertEquals(baseTheme.typography.body.fontSizeSp, bodySize)
         assertEquals(0xFF225577.toInt(), controlColor)
-        assertEquals(0xFF225577.toInt(), buttonContainer)
         assertEquals(UiInteractionDefaults.fromColors(baseTheme.colors.copy(primary = 0xFF225577.toInt())).pressedOverlay, pressedOverlay)
+    }
+
+    @Test
+    fun `defaults derive from colors and follow color override`() {
+        val baseTheme = UiThemeDefaults.light()
+        var buttonContainer = 0
+        var progressIndicator = 0
+        var segmentedIndicator = 0
+
+        buildVNodeTree {
+            UiTheme(baseTheme) {
+                UiThemeOverride(
+                    colors = baseTheme.colors.copy(primary = 0xFF225577.toInt()),
+                ) {
+                    buttonContainer = ButtonDefaults.containerColor(ButtonVariant.Primary)
+                    progressIndicator = ProgressIndicatorDefaults.linearIndicatorColor()
+                    segmentedIndicator = SegmentedControlDefaults.indicatorColor()
+                }
+            }
+        }
+
+        assertEquals(0xFF225577.toInt(), buttonContainer)
+        assertEquals(0xFF225577.toInt(), progressIndicator)
+        assertEquals(0xFF225577.toInt(), segmentedIndicator)
     }
 
     @Test
@@ -221,38 +247,6 @@ class ThemeTest {
     }
 
     @Test
-    fun `theme override preserves explicit component overrides while rebasing derived values`() {
-        val baseTheme = UiThemeDefaults.light()
-        var buttonPrimary = 0
-        var buttonSecondary = 0
-        var checkboxControl = 0
-
-        buildVNodeTree {
-            UiTheme(baseTheme) {
-                UiThemeOverride(
-                    components = {
-                        copy(
-                            button = button.copy(primaryContainer = 0xFF556677.toInt()),
-                        )
-                    },
-                ) {
-                    UiThemeOverride(
-                        colors = { copy(primary = 0xFF123456.toInt()) },
-                    ) {
-                        buttonPrimary = Theme.components.button.primaryContainer
-                        buttonSecondary = Theme.components.button.secondaryContainer
-                        checkboxControl = Theme.components.checkbox.control
-                    }
-                }
-            }
-        }
-
-        assertEquals(0xFF556677.toInt(), buttonPrimary)
-        assertEquals(baseTheme.colors.accent, buttonSecondary)
-        assertEquals(0xFF123456.toInt(), checkboxControl)
-    }
-
-    @Test
     fun `theme override preserves explicit interaction overrides while rebasing colors`() {
         val baseTheme = UiThemeDefaults.light()
         var pressedOverlay = 0
@@ -302,13 +296,14 @@ class ThemeTest {
             }
         }
 
-        assertEquals(customTheme.colors.primary, tree.single().props[TypedPropKeys.StyleBackgroundColor])
-        assertEquals(customTheme.shapes.controlCornerRadius, tree.single().props[TypedPropKeys.StyleCornerRadius])
-        assertEquals(customTheme.interactions.pressedOverlay, tree.single().props[TypedPropKeys.StyleRippleColor])
-        assertEquals(0xFFFFFFFF.toInt(), tree.single().props[TypedPropKeys.TextColor])
-        assertEquals(customTheme.typography.label.fontSizeSp, tree.single().props[TypedPropKeys.TextSizeSp])
+        val spec = tree.single().spec as ButtonNodeProps
+        assertEquals(customTheme.colors.primary, spec.backgroundColor)
+        assertEquals(customTheme.shapes.controlCornerRadius, spec.cornerRadius)
+        assertEquals(customTheme.interactions.pressedOverlay, spec.rippleColor)
+        assertEquals(0xFFFFFFFF.toInt(), spec.textColor)
+        assertEquals(customTheme.typography.label.fontSizeSp, spec.textSizeSp)
         assertEquals(customTheme.controls.button.mediumHeight, ButtonDefaults.height())
-        assertEquals(customTheme.controls.button.mediumHeight, tree.single().props[TypedPropKeys.StyleMinHeight])
+        assertEquals(customTheme.controls.button.mediumHeight, spec.minHeight)
     }
 
     @Test
@@ -322,51 +317,19 @@ class ThemeTest {
             }
         }
 
-        assertEquals(0x00000000, tree.single().props[TypedPropKeys.StyleBackgroundColor])
-        assertEquals(Theme.colors.divider, tree.single().props[TypedPropKeys.StyleBorderColor])
-        assertEquals(1.dp, tree.single().props[TypedPropKeys.StyleBorderWidth])
-        assertEquals(Theme.colors.textPrimary, tree.single().props[TypedPropKeys.TextColor])
+        val spec = tree.single().spec as ButtonNodeProps
+        assertEquals(0x00000000, spec.backgroundColor)
+        assertEquals(Theme.colors.divider, spec.borderColor)
+        assertEquals(1.dp, spec.borderWidth)
+        assertEquals(Theme.colors.textPrimary, spec.textColor)
     }
 
     @Test
     fun `disabled button emits enabled prop and themed disabled styles`() {
         val baseTheme = UiThemeDefaults.light()
-        val customTheme = UiThemeTokens(
-            colors = baseTheme.colors,
-            typography = baseTheme.typography,
-            input = baseTheme.input,
-            components = UiComponentStyles(
-                button = UiButtonStyles(
-                    primaryContainer = 101,
-                    primaryContent = 102,
-                    primaryDisabledContainer = 103,
-                    primaryDisabledContent = 104,
-                    secondaryContainer = 105,
-                    secondaryContent = 106,
-                    secondaryDisabledContainer = 107,
-                    secondaryDisabledContent = 108,
-                    tonalContainer = 109,
-                    tonalContent = 110,
-                    tonalDisabledContainer = 111,
-                    tonalDisabledContent = 112,
-                    outlinedContent = 113,
-                    outlinedBorder = 114,
-                    outlinedDisabledContent = 115,
-                    outlinedDisabledBorder = 116,
-                ),
-                textField = baseTheme.components.textField,
-                segmentedControl = baseTheme.components.segmentedControl,
-                checkbox = baseTheme.components.checkbox,
-                switchControl = baseTheme.components.switchControl,
-                radioButton = baseTheme.components.radioButton,
-                slider = baseTheme.components.slider,
-                progressIndicator = baseTheme.components.progressIndicator,
-                tabPager = baseTheme.components.tabPager,
-            ),
-        )
 
         val tree = buildVNodeTree {
-            UiTheme(customTheme) {
+            UiTheme(baseTheme) {
                 Button(
                     text = "Disabled",
                     enabled = false,
@@ -374,11 +337,35 @@ class ThemeTest {
             }
         }
 
-        val node = tree.single()
+        val spec = tree.single().spec as ButtonNodeProps
 
-        assertEquals(false, node.props[TypedPropKeys.Enabled])
-        assertEquals(103, node.props[TypedPropKeys.StyleBackgroundColor])
-        assertEquals(104, node.props[TypedPropKeys.TextColor])
+        assertEquals(false, spec.enabled)
+        assertEquals(baseTheme.colors.divider, spec.backgroundColor)
+        assertEquals(baseTheme.colors.textSecondary, spec.textColor)
+    }
+
+    @Test
+    fun `button color override changes targeted colors`() {
+        val baseTheme = UiThemeDefaults.light()
+
+        val tree = buildVNodeTree {
+            UiTheme(baseTheme) {
+                ProvideButtonColors(
+                    ButtonColorOverride(
+                        primaryContainer = 0xFF556677.toInt(),
+                        primaryDisabledContainer = 103,
+                        primaryDisabledContent = 104,
+                    ),
+                ) {
+                    Button(text = "Custom", enabled = false)
+                }
+            }
+        }
+
+        val spec = tree.single().spec as ButtonNodeProps
+
+        assertEquals(103, spec.backgroundColor)
+        assertEquals(104, spec.textColor)
     }
 
     @Test
@@ -447,98 +434,29 @@ class ThemeTest {
     }
 
     @Test
-    fun `component style defaults reflect current theme`() {
-        val baseTheme = UiThemeDefaults.light()
+    fun `component defaults derive from theme colors`() {
         val customTheme = UiThemeTokens(
-            colors = baseTheme.colors,
-            typography = baseTheme.typography,
-            input = baseTheme.input,
-            components = UiComponentStyles(
-                button = UiButtonStyles(
-                    primaryContainer = 101,
-                    primaryContent = 102,
-                    primaryDisabledContainer = 109,
-                    primaryDisabledContent = 110,
-                    secondaryContainer = 103,
-                    secondaryContent = 104,
-                    secondaryDisabledContainer = 111,
-                    secondaryDisabledContent = 112,
-                    tonalContainer = 105,
-                    tonalContent = 106,
-                    tonalDisabledContainer = 113,
-                    tonalDisabledContent = 114,
-                    outlinedContent = 107,
-                    outlinedBorder = 108,
-                    outlinedDisabledContent = 115,
-                    outlinedDisabledBorder = 116,
-                ),
-                textField = UiTextFieldStyles(
-                    filledContainer = 201,
-                    filledDisabledContainer = 204,
-                    filledErrorContainer = 205,
-                    tonalContainer = 202,
-                    tonalDisabledContainer = 206,
-                    tonalErrorContainer = 207,
-                    outlinedBorder = 203,
-                    outlinedDisabledBorder = 208,
-                    outlinedErrorBorder = 209,
-                ),
-                checkbox = UiCheckboxStyles(
-                    label = 210,
-                    labelDisabled = 211,
-                    control = 212,
-                    controlDisabled = 213,
-                ),
-                switchControl = UiSwitchStyles(
-                    label = 214,
-                    labelDisabled = 215,
-                    control = 216,
-                    controlDisabled = 217,
-                ),
-                radioButton = UiRadioButtonStyles(
-                    label = 218,
-                    labelDisabled = 219,
-                    control = 220,
-                    controlDisabled = 221,
-                ),
-                slider = UiSliderStyles(
-                    control = 222,
-                    controlDisabled = 223,
-                ),
-                progressIndicator = UiProgressIndicatorStyles(
-                    linearIndicator = 224,
-                    linearTrack = 225,
-                    circularIndicator = 226,
-                    circularTrack = 227,
-                ),
-                segmentedControl = UiSegmentedControlStyles(
-                    background = 301,
-                    backgroundDisabled = 305,
-                    indicator = 306,
-                    indicatorDisabled = 307,
-                    text = 308,
-                    textDisabled = 309,
-                    selectedText = 310,
-                    selectedTextDisabled = 311,
-                ),
-                tabPager = UiTabPagerStyles(
-                    background = 312,
-                    indicator = 313,
-                    text = 314,
-                    selectedText = 315,
-                ),
+            colors = UiColors(
+                background = 1,
+                surface = 2,
+                surfaceVariant = 3,
+                primary = 0xFF112233.toInt(),
+                accent = 0xFF445566.toInt(),
+                divider = 0xFF778899.toInt(),
+                textPrimary = 0xFFAABBCC.toInt(),
+                textSecondary = 0xFFDDEEFF.toInt(),
+            ),
+            typography = UiTypography(
+                title = UiTextStyle(fontSizeSp = 30),
+                body = UiTextStyle(fontSizeSp = 18),
+                label = UiTextStyle(fontSizeSp = 12),
             ),
         )
         var buttonTonal = 0
         var outlinedBorder = 0
         var disabledPrimary = 0
-        var textFieldTonal = 0
-        var textFieldError = 0
-        var checkboxDisabled = 0
-        var sliderDisabled = 0
         var linearProgressTrack = 0
         var segmentedIndicator = 0
-        var segmentedDisabledText = 0
         var tabPagerText = 0
 
         buildVNodeTree {
@@ -546,28 +464,18 @@ class ThemeTest {
                 buttonTonal = ButtonDefaults.containerColor(ButtonVariant.Tonal)
                 outlinedBorder = ButtonDefaults.borderColor(ButtonVariant.Outlined)
                 disabledPrimary = ButtonDefaults.containerColor(ButtonVariant.Primary, enabled = false)
-                textFieldTonal = TextFieldDefaults.containerColor(TextFieldVariant.Tonal)
-                textFieldError = TextFieldDefaults.borderColor(TextFieldVariant.Outlined, isError = true)
-                checkboxDisabled = InputControlDefaults.checkboxControlColor(enabled = false)
-                sliderDisabled = InputControlDefaults.sliderControlColor(enabled = false)
                 linearProgressTrack = ProgressIndicatorDefaults.linearTrackColor()
                 segmentedIndicator = SegmentedControlDefaults.indicatorColor()
-                segmentedDisabledText = SegmentedControlDefaults.textColor(enabled = false)
                 tabPagerText = TabPagerDefaults.unselectedTextColor()
             }
         }
 
-        assertEquals(105, buttonTonal)
-        assertEquals(108, outlinedBorder)
-        assertEquals(109, disabledPrimary)
-        assertEquals(202, textFieldTonal)
-        assertEquals(209, textFieldError)
-        assertEquals(213, checkboxDisabled)
-        assertEquals(223, sliderDisabled)
-        assertEquals(225, linearProgressTrack)
-        assertEquals(306, segmentedIndicator)
-        assertEquals(309, segmentedDisabledText)
-        assertEquals(314, tabPagerText)
+        assertEquals(customTheme.colors.surfaceVariant, buttonTonal)
+        assertEquals(customTheme.colors.divider, outlinedBorder)
+        assertEquals(customTheme.colors.divider, disabledPrimary)
+        assertEquals(customTheme.colors.divider, linearProgressTrack)
+        assertEquals(customTheme.colors.primary, segmentedIndicator)
+        assertEquals(customTheme.colors.textSecondary, tabPagerText)
     }
 
     @Test
@@ -678,8 +586,9 @@ class ThemeTest {
         }
 
         val text = tree.single().children.single()
+        val spec = text.spec as TextNodeProps
 
-        assertEquals(SurfaceDefaults.variantContentColor(), text.props[TypedPropKeys.TextColor])
+        assertEquals(SurfaceDefaults.variantContentColor(), spec.textColor)
     }
 
     @Test
@@ -802,7 +711,7 @@ class ThemeTest {
     }
 
     @Test
-    fun `component style override only changes targeted component domain`() {
+    fun `color override via ProvideButtonColors changes targeted defaults`() {
         val baseTheme = UiThemeDefaults.light()
         var buttonPrimary = 0
         var segmentedIndicator = 0
@@ -811,37 +720,39 @@ class ThemeTest {
 
         buildVNodeTree {
             UiTheme(baseTheme) {
-                UiThemeOverride(
-                    components = {
-                        copy(
-                            button = button.copy(
-                                primaryContainer = 0xFF778899.toInt(),
-                            ),
-                            checkbox = checkbox.copy(
-                                controlDisabled = 0xFF556677.toInt(),
-                            ),
-                            segmentedControl = segmentedControl.copy(
-                                indicator = 0xFF998877.toInt(),
-                            ),
-                        )
-                    },
+                ProvideButtonColors(
+                    ButtonColorOverride(
+                        primaryContainer = 0xFF778899.toInt(),
+                    ),
                 ) {
                     buttonPrimary = ButtonDefaults.containerColor(ButtonVariant.Primary)
-                    segmentedIndicator = SegmentedControlDefaults.indicatorColor()
-                    disabledControl = InputControlDefaults.checkboxControlColor(enabled = false)
-                    baseTextField = TextFieldDefaults.containerColor(TextFieldVariant.Filled)
                 }
+                ProvideSegmentedControlColors(
+                    SegmentedControlColorOverride(
+                        indicator = 0xFF998877.toInt(),
+                    ),
+                ) {
+                    segmentedIndicator = SegmentedControlDefaults.indicatorColor()
+                }
+                ProvideCheckboxColors(
+                    InputControlColorOverride(
+                        controlDisabled = 0xFF556677.toInt(),
+                    ),
+                ) {
+                    disabledControl = InputControlDefaults.checkboxControlColor(enabled = false)
+                }
+                baseTextField = TextFieldDefaults.containerColor(TextFieldVariant.Filled)
             }
         }
 
         assertEquals(0xFF778899.toInt(), buttonPrimary)
         assertEquals(0xFF998877.toInt(), segmentedIndicator)
         assertEquals(0xFF556677.toInt(), disabledControl)
-        assertEquals(baseTheme.components.textField.filledContainer, baseTextField)
+        assertEquals(baseTheme.input.fieldContainer, baseTextField)
     }
 
     @Test
-    fun `component style override supports disabled button and text field states`() {
+    fun `color override supports disabled button and text field states`() {
         val baseTheme = UiThemeDefaults.light()
         var disabledButton = 0
         var disabledField = 0
@@ -849,23 +760,22 @@ class ThemeTest {
 
         buildVNodeTree {
             UiTheme(baseTheme) {
-                UiThemeOverride(
-                    components = {
-                        copy(
-                            button = button.copy(
-                                primaryDisabledContainer = 0xFF111122.toInt(),
-                            ),
-                            textField = textField.copy(
-                                filledDisabledContainer = 0xFF222233.toInt(),
-                                outlinedErrorBorder = 0xFF333344.toInt(),
-                            ),
-                        )
-                    },
+                ProvideButtonColors(
+                    ButtonColorOverride(
+                        primaryDisabledContainer = 0xFF111122.toInt(),
+                    ),
                 ) {
                     disabledButton = ButtonDefaults.containerColor(
                         variant = ButtonVariant.Primary,
                         enabled = false,
                     )
+                }
+                ProvideTextFieldColors(
+                    TextFieldColorOverride(
+                        filledDisabledContainer = 0xFF222233.toInt(),
+                        outlinedErrorBorder = 0xFF333344.toInt(),
+                    ),
+                ) {
                     disabledField = TextFieldDefaults.containerColor(
                         variant = TextFieldVariant.Filled,
                         enabled = false,

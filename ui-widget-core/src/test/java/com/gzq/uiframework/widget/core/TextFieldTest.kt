@@ -3,7 +3,6 @@ package com.gzq.uiframework.widget.core
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TextFieldImeAction
 import com.gzq.uiframework.renderer.node.TextFieldType
-import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -45,23 +44,24 @@ class TextFieldTest {
         }
 
         val node = tree.single()
+        val spec = node.spec as TextFieldNodeProps
+
         assertEquals(NodeType.TextField, node.type)
-        assertEquals("hello", node.props[TypedPropKeys.Value])
-        assertEquals("Type here", node.props[TypedPropKeys.Hint])
-        assertEquals("Display name", node.props[TypedPropKeys.Label])
-        assertEquals("Type here", node.props[TypedPropKeys.Placeholder])
-        assertEquals("Shown in profile", node.props[TypedPropKeys.SupportingText])
-        assertEquals(true, node.props[TypedPropKeys.SingleLine])
-        assertEquals(TextFieldType.Text, node.props[TypedPropKeys.TextFieldType])
-        assertEquals(3, node.props[TypedPropKeys.MaxLines])
-        assertEquals(TextFieldImeAction.Next, node.props[TypedPropKeys.ImeAction])
-        assertEquals(customTheme.colors.textSecondary, node.props[TypedPropKeys.HintTextColor])
-        assertEquals(customTheme.colors.textPrimary, node.props[TypedPropKeys.TextColor])
-        assertEquals(customTheme.typography.body.fontSizeSp, node.props[TypedPropKeys.TextSizeSp])
-        assertEquals(customTheme.input.fieldContainer, node.props[TypedPropKeys.StyleBackgroundColor])
-        assertEquals(customTheme.shapes.controlCornerRadius, node.props[TypedPropKeys.StyleCornerRadius])
-        assertEquals(customTheme.interactions.pressedOverlay, node.props[TypedPropKeys.StyleRippleColor])
-        assertEquals(true, node.props[TypedPropKeys.Enabled])
+        assertEquals("hello", spec.value)
+        assertEquals("Type here", spec.placeholder)
+        assertEquals("Display name", spec.label)
+        assertEquals("Shown in profile", spec.supportingText)
+        assertEquals(true, spec.singleLine)
+        assertEquals(TextFieldType.Text, spec.keyboardType)
+        assertEquals(3, spec.maxLines)
+        assertEquals(TextFieldImeAction.Next, spec.imeAction)
+        assertEquals(customTheme.colors.textSecondary, spec.hintColor)
+        assertEquals(customTheme.colors.textPrimary, spec.textColor)
+        assertEquals(customTheme.typography.body.fontSizeSp, spec.textSizeSp)
+        assertEquals(customTheme.input.fieldContainer, spec.backgroundColor)
+        assertEquals(customTheme.shapes.controlCornerRadius, spec.cornerRadius)
+        assertEquals(customTheme.interactions.pressedOverlay, spec.rippleColor)
+        assertEquals(true, spec.enabled)
         assertTrue(node.spec is TextFieldNodeProps)
     }
 
@@ -78,12 +78,13 @@ class TextFieldTest {
         }
 
         val node = tree.single()
+        val spec = node.spec as TextFieldNodeProps
 
         assertEquals(NodeType.TextField, node.type)
-        assertEquals(TextFieldType.Password, node.props[TypedPropKeys.TextFieldType])
-        assertEquals("Password", node.props[TypedPropKeys.Label])
-        assertEquals("At least 8 characters", node.props[TypedPropKeys.SupportingText])
-        assertTrue(node.props[TypedPropKeys.SingleLine] as Boolean)
+        assertEquals(TextFieldType.Password, spec.keyboardType)
+        assertEquals("Password", spec.label)
+        assertEquals("At least 8 characters", spec.supportingText)
+        assertTrue(spec.singleLine)
     }
 
     @Test
@@ -102,14 +103,15 @@ class TextFieldTest {
         }
 
         val node = tree.single()
+        val spec = node.spec as TextFieldNodeProps
 
-        assertEquals(false, node.props[TypedPropKeys.SingleLine])
-        assertEquals(true, node.props[TypedPropKeys.ReadOnly])
-        assertEquals(4, node.props[TypedPropKeys.MinLines])
-        assertEquals(6, node.props[TypedPropKeys.MaxLines])
-        assertEquals(TextFieldImeAction.Done, node.props[TypedPropKeys.ImeAction])
-        assertEquals("Bio", node.props[TypedPropKeys.Label])
-        assertEquals("Visible to collaborators", node.props[TypedPropKeys.SupportingText])
+        assertEquals(false, spec.singleLine)
+        assertEquals(true, spec.readOnly)
+        assertEquals(4, spec.minLines)
+        assertEquals(6, spec.maxLines)
+        assertEquals(TextFieldImeAction.Done, spec.imeAction)
+        assertEquals("Bio", spec.label)
+        assertEquals("Visible to collaborators", spec.supportingText)
     }
 
     @Test
@@ -124,11 +126,11 @@ class TextFieldTest {
             }
         }
 
-        val node = tree.single()
+        val spec = tree.single().spec as TextFieldNodeProps
 
-        assertEquals(0x00000000, node.props[TypedPropKeys.StyleBackgroundColor])
-        assertEquals(Theme.input.control, node.props[TypedPropKeys.StyleBorderColor])
-        assertEquals(1.dp, node.props[TypedPropKeys.StyleBorderWidth])
+        assertEquals(0x00000000, spec.backgroundColor)
+        assertEquals(Theme.input.control, spec.borderColor)
+        assertEquals(1.dp, spec.borderWidth)
     }
 
     @Test
@@ -144,64 +146,56 @@ class TextFieldTest {
         }
 
         val elements = tree.single().modifier.readModifierElements()
+        val spec = tree.single().spec as TextFieldNodeProps
 
         assertFalse(elements.any { it is com.gzq.uiframework.renderer.modifier.HeightModifierElement })
-        assertEquals(TextFieldDefaults.height(TextFieldSize.Compact), tree.single().props[TypedPropKeys.StyleMinHeight])
-        assertEquals(Theme.typography.label.fontSizeSp, tree.single().props[TypedPropKeys.TextSizeSp])
+        assertEquals(TextFieldDefaults.height(TextFieldSize.Compact), spec.minHeight)
+        assertEquals(Theme.typography.label.fontSizeSp, spec.textSizeSp)
     }
 
     @Test
-    fun `disabled and error text field states use themed component styles`() {
+    fun `disabled and error text field states use color overrides`() {
         val baseTheme = UiThemeDefaults.light()
-        val customTheme = UiThemeTokens(
-            colors = baseTheme.colors,
-            typography = baseTheme.typography,
-            input = baseTheme.input,
-            components = UiComponentStyles(
-                button = baseTheme.components.button,
-                textField = UiTextFieldStyles(
-                    filledContainer = 201,
-                    filledDisabledContainer = 202,
-                    filledErrorContainer = 203,
-                    tonalContainer = 204,
-                    tonalDisabledContainer = 205,
-                    tonalErrorContainer = 206,
-                    outlinedBorder = 207,
-                    outlinedDisabledBorder = 208,
-                    outlinedErrorBorder = 209,
-                ),
-                checkbox = baseTheme.components.checkbox,
-                switchControl = baseTheme.components.switchControl,
-                radioButton = baseTheme.components.radioButton,
-                slider = baseTheme.components.slider,
-                segmentedControl = baseTheme.components.segmentedControl,
-                progressIndicator = baseTheme.components.progressIndicator,
-                tabPager = baseTheme.components.tabPager,
-            ),
-        )
 
         val disabledTree = buildVNodeTree {
-            UiTheme(customTheme) {
-                TextField(
-                    value = "hello",
-                    onValueChange = {},
-                    enabled = false,
-                )
+            UiTheme(baseTheme) {
+                ProvideTextFieldColors(
+                    TextFieldColorOverride(
+                        filledDisabledContainer = 202,
+                        outlinedErrorBorder = 209,
+                    ),
+                ) {
+                    TextField(
+                        value = "hello",
+                        onValueChange = {},
+                        enabled = false,
+                    )
+                }
             }
         }
         val errorTree = buildVNodeTree {
-            UiTheme(customTheme) {
-                TextField(
-                    value = "hello",
-                    onValueChange = {},
-                    variant = TextFieldVariant.Outlined,
-                    isError = true,
-                )
+            UiTheme(baseTheme) {
+                ProvideTextFieldColors(
+                    TextFieldColorOverride(
+                        filledDisabledContainer = 202,
+                        outlinedErrorBorder = 209,
+                    ),
+                ) {
+                    TextField(
+                        value = "hello",
+                        onValueChange = {},
+                        variant = TextFieldVariant.Outlined,
+                        isError = true,
+                    )
+                }
             }
         }
 
-        assertEquals(202, disabledTree.single().props[TypedPropKeys.StyleBackgroundColor])
-        assertEquals(209, errorTree.single().props[TypedPropKeys.StyleBorderColor])
+        val disabledSpec = disabledTree.single().spec as TextFieldNodeProps
+        val errorSpec = errorTree.single().spec as TextFieldNodeProps
+
+        assertEquals(202, disabledSpec.backgroundColor)
+        assertEquals(209, errorSpec.borderColor)
     }
 
     private fun com.gzq.uiframework.renderer.modifier.Modifier.readModifierElements(): List<Any?> {

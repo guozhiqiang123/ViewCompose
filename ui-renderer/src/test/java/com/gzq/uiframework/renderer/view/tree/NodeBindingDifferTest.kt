@@ -5,8 +5,6 @@ import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.Props
 import com.gzq.uiframework.renderer.node.VNode
-import com.gzq.uiframework.renderer.node.TypedPropKeys
-import com.gzq.uiframework.renderer.node.props
 import com.gzq.uiframework.renderer.node.spec.BoxNodeProps
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
 import com.gzq.uiframework.renderer.node.spec.ColumnNodeProps
@@ -38,6 +36,8 @@ class NodeBindingDifferTest {
                         maxLines = 1,
                         overflow = com.gzq.uiframework.renderer.node.TextOverflow.Clip,
                         textAlign = com.gzq.uiframework.renderer.node.TextAlign.Start,
+                        textColor = 0xFF000000.toInt(),
+                        textSizeSp = 14,
                     ),
                 ),
             ),
@@ -51,6 +51,8 @@ class NodeBindingDifferTest {
                         maxLines = 1,
                         overflow = com.gzq.uiframework.renderer.node.TextOverflow.Clip,
                         textAlign = com.gzq.uiframework.renderer.node.TextAlign.Start,
+                        textColor = 0xFF000000.toInt(),
+                        textSizeSp = 14,
                     ),
                 ),
             ),
@@ -60,7 +62,7 @@ class NodeBindingDifferTest {
     }
 
     @Test
-    fun `rebinds when node spec changes`() {
+    fun `patches when node spec changes`() {
         val previous = textNode(text = "before")
         val next = textNode(text = "after")
 
@@ -95,7 +97,7 @@ class NodeBindingDifferTest {
     }
 
     @Test
-    fun `patches button semantic updates when style is unchanged`() {
+    fun `patches button when text changes`() {
         val previous = buttonNode(text = "Continue")
         val next = buttonNode(text = "Continue now")
 
@@ -106,15 +108,18 @@ class NodeBindingDifferTest {
     }
 
     @Test
-    fun `rebinds button when style props change`() {
+    fun `patches button when style changes instead of rebinding`() {
         val previous = buttonNode(textColor = 0xFF000000.toInt())
         val next = buttonNode(textColor = 0xFFFF0000.toInt())
 
-        assertSame(NodeBindingPlan.Rebind, NodeBindingDiffer.plan(previous, next))
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is ButtonNodePatch)
     }
 
     @Test
-    fun `patches text field semantic updates when style is unchanged`() {
+    fun `patches text field semantic updates`() {
         val previous = textFieldNode(value = "before")
         val next = textFieldNode(value = "after")
 
@@ -125,11 +130,14 @@ class NodeBindingDifferTest {
     }
 
     @Test
-    fun `rebinds text field when style props change`() {
+    fun `patches text field when style changes instead of rebinding`() {
         val previous = textFieldNode(textColor = 0xFF000000.toInt())
         val next = textFieldNode(textColor = 0xFFFF0000.toInt())
 
-        assertSame(NodeBindingPlan.Rebind, NodeBindingDiffer.plan(previous, next))
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is TextFieldNodePatch)
     }
 
     @Test
@@ -271,12 +279,13 @@ class NodeBindingDifferTest {
     ): VNode {
         return VNode(
             type = NodeType.Text,
-            props = Props.Empty,
             spec = TextNodeProps(
                 text = text,
                 maxLines = 1,
                 overflow = com.gzq.uiframework.renderer.node.TextOverflow.Clip,
                 textAlign = com.gzq.uiframework.renderer.node.TextAlign.Start,
+                textColor = 0xFF000000.toInt(),
+                textSizeSp = 14,
             ),
             modifier = modifier,
             children = children,
@@ -289,18 +298,25 @@ class NodeBindingDifferTest {
     ): VNode {
         return VNode(
             type = NodeType.Button,
-            props = props {
-                set(TypedPropKeys.TextColor, textColor)
-            },
             spec = ButtonNodeProps(
                 text = text,
                 enabled = true,
-                iconSpacing = 8,
+                onClick = null,
+                textColor = textColor,
+                textSizeSp = 14,
+                backgroundColor = 0xFF0000FF.toInt(),
+                borderWidth = 0,
+                borderColor = 0,
+                cornerRadius = 8,
+                rippleColor = 0x33000000,
+                minHeight = 48,
+                paddingHorizontal = 16,
+                paddingVertical = 8,
                 leadingIcon = null,
                 trailingIcon = null,
                 iconTint = textColor,
                 iconSize = 18,
-                onClick = null,
+                iconSpacing = 8,
             ),
             modifier = Modifier,
         )
@@ -312,9 +328,6 @@ class NodeBindingDifferTest {
     ): VNode {
         return VNode(
             type = NodeType.TextField,
-            props = props {
-                set(TypedPropKeys.TextColor, textColor)
-            },
             spec = TextFieldNodeProps(
                 value = value,
                 label = "Label",
@@ -333,6 +346,16 @@ class NodeBindingDifferTest {
                 hintColor = 0xFF888888.toInt(),
                 readOnly = false,
                 onValueChange = null,
+                textColor = textColor,
+                textSizeSp = 16,
+                backgroundColor = 0xFFEEEEEE.toInt(),
+                borderWidth = 0,
+                borderColor = 0,
+                cornerRadius = 8,
+                rippleColor = 0x33000000,
+                minHeight = 56,
+                paddingHorizontal = 16,
+                paddingVertical = 12,
             ),
             modifier = Modifier,
         )
@@ -343,7 +366,6 @@ class NodeBindingDifferTest {
     ): VNode {
         return VNode(
             type = NodeType.TabPager,
-            props = Props.Empty,
             spec = TabPagerNodeProps(
                 pages = emptyList(),
                 selectedTabIndex = selectedTabIndex,
@@ -367,7 +389,6 @@ class NodeBindingDifferTest {
     ): VNode {
         return VNode(
             type = NodeType.SegmentedControl,
-            props = Props.Empty,
             spec = SegmentedControlNodeProps(
                 items = emptyList(),
                 selectedIndex = selectedIndex,
@@ -392,7 +413,6 @@ class NodeBindingDifferTest {
     ): VNode {
         return VNode(
             type = NodeType.LazyColumn,
-            props = Props.Empty,
             spec = LazyColumnNodeProps(
                 contentPadding = 12,
                 spacing = spacing,
@@ -407,13 +427,15 @@ class NodeBindingDifferTest {
     ): VNode {
         return VNode(
             type = NodeType.Checkbox,
-            props = Props.Empty,
             spec = ToggleNodeProps(
                 text = "Toggle",
                 enabled = true,
                 checked = checked,
                 controlColor = 0xFF000000.toInt(),
                 onCheckedChange = null,
+                textColor = 0xFF000000.toInt(),
+                textSizeSp = 14,
+                rippleColor = 0x33000000,
             ),
             modifier = Modifier,
         )
@@ -424,7 +446,6 @@ class NodeBindingDifferTest {
     ): VNode {
         return VNode(
             type = NodeType.Slider,
-            props = Props.Empty,
             spec = SliderNodeProps(
                 min = 0,
                 max = 100,
@@ -442,7 +463,6 @@ class NodeBindingDifferTest {
     ): VNode {
         return VNode(
             type = NodeType.LinearProgressIndicator,
-            props = Props.Empty,
             spec = ProgressIndicatorNodeProps(
                 enabled = true,
                 progress = progress,
@@ -460,7 +480,6 @@ class NodeBindingDifferTest {
     ): VNode {
         return VNode(
             type = NodeType.Divider,
-            props = Props.Empty,
             spec = DividerNodeProps(
                 color = color,
                 thickness = 1,
@@ -474,7 +493,6 @@ class NodeBindingDifferTest {
     ): VNode {
         return VNode(
             type = NodeType.Row,
-            props = Props.Empty,
             spec = RowNodeProps(
                 spacing = spacing,
                 arrangement = com.gzq.uiframework.renderer.layout.MainAxisArrangement.Start,
@@ -489,7 +507,6 @@ class NodeBindingDifferTest {
     ): VNode {
         return VNode(
             type = NodeType.Column,
-            props = Props.Empty,
             spec = ColumnNodeProps(
                 spacing = spacing,
                 arrangement = com.gzq.uiframework.renderer.layout.MainAxisArrangement.Start,
@@ -504,7 +521,6 @@ class NodeBindingDifferTest {
     ): VNode {
         return VNode(
             type = NodeType.Box,
-            props = Props.Empty,
             spec = BoxNodeProps(
                 contentAlignment = contentAlignment,
             ),
@@ -517,7 +533,6 @@ class NodeBindingDifferTest {
     ): VNode {
         return VNode(
             type = NodeType.Image,
-            props = Props.Empty,
             spec = ImageNodeProps(
                 contentDescription = null,
                 contentScale = com.gzq.uiframework.renderer.node.ImageContentScale.Fit,
@@ -537,7 +552,6 @@ class NodeBindingDifferTest {
     ): VNode {
         return VNode(
             type = NodeType.IconButton,
-            props = Props.Empty,
             spec = IconButtonNodeProps(
                 contentDescription = null,
                 contentScale = com.gzq.uiframework.renderer.node.ImageContentScale.Fit,
@@ -548,6 +562,12 @@ class NodeBindingDifferTest {
                 fallback = null,
                 remoteImageLoader = null,
                 enabled = enabled,
+                backgroundColor = 0xFF0000FF.toInt(),
+                borderWidth = 0,
+                borderColor = 0,
+                cornerRadius = 8,
+                rippleColor = 0x33000000,
+                contentPadding = 8,
             ),
             modifier = Modifier,
         )

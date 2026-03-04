@@ -2,7 +2,6 @@ package com.gzq.uiframework.widget.core
 
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TabPage
-import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -29,79 +28,60 @@ class TabPagerTest {
         }
 
         val node = tree.single()
-        val pages = node.props[TypedPropKeys.TabPages] as List<TabPage>
-        val onTabSelected = node.props[TypedPropKeys.OnTabSelected]
+        val spec = node.spec as TabPagerNodeProps
 
         assertEquals(NodeType.TabPager, node.type)
-        assertEquals(1, node.props[TypedPropKeys.SelectedTabIndex])
-        assertEquals(TabPagerDefaults.backgroundColor(), node.props[TypedPropKeys.TabBackgroundColor])
-        assertEquals(TabPagerDefaults.indicatorColor(), node.props[TypedPropKeys.TabIndicatorColor])
-        assertEquals(TabPagerDefaults.cornerRadius(), node.props[TypedPropKeys.TabCornerRadius])
-        assertEquals(TabPagerDefaults.indicatorHeight(), node.props[TypedPropKeys.TabIndicatorHeight])
-        assertEquals(
-            TabPagerDefaults.tabPaddingHorizontal(),
-            node.props[TypedPropKeys.TabContentPaddingHorizontal],
-        )
-        assertEquals(
-            TabPagerDefaults.tabPaddingVertical(),
-            node.props[TypedPropKeys.TabContentPaddingVertical],
-        )
-        assertEquals(TabPagerDefaults.selectedTextColor(), node.props[TypedPropKeys.TabSelectedTextColor])
-        assertEquals(TabPagerDefaults.unselectedTextColor(), node.props[TypedPropKeys.TabUnselectedTextColor])
-        assertEquals(TabPagerDefaults.rippleColor(), node.props[TypedPropKeys.TabRippleColor])
-        assertEquals(2, pages.size)
-        assertEquals("Overview", pages[0].title)
-        assertEquals("Input", pages[1].title)
+        assertEquals(1, spec.selectedTabIndex)
+        assertEquals(TabPagerDefaults.backgroundColor(), spec.backgroundColor)
+        assertEquals(TabPagerDefaults.indicatorColor(), spec.indicatorColor)
+        assertEquals(TabPagerDefaults.cornerRadius(), spec.cornerRadius)
+        assertEquals(TabPagerDefaults.indicatorHeight(), spec.indicatorHeight)
+        assertEquals(TabPagerDefaults.tabPaddingHorizontal(), spec.tabPaddingHorizontal)
+        assertEquals(TabPagerDefaults.tabPaddingVertical(), spec.tabPaddingVertical)
+        assertEquals(TabPagerDefaults.selectedTextColor(), spec.selectedTextColor)
+        assertEquals(TabPagerDefaults.unselectedTextColor(), spec.unselectedTextColor)
+        assertEquals(TabPagerDefaults.rippleColor(), spec.rippleColor)
+        assertEquals(2, spec.pages.size)
+        assertEquals("Overview", spec.pages[0].title)
+        assertEquals("Input", spec.pages[1].title)
         assertTrue(node.spec is TabPagerNodeProps)
 
-        onTabSelected?.invoke(0)
+        spec.onTabSelected?.invoke(0)
         assertEquals(0, selectedIndex)
-        assertNotNull(pages[0].item.sessionFactory)
+        assertNotNull(spec.pages[0].item.sessionFactory)
     }
 
     @Test
-    fun `tab pager uses component style tokens`() {
+    fun `tab pager uses color override tokens`() {
         val baseTheme = UiThemeDefaults.light()
-        val customTheme = UiThemeTokens(
-            colors = baseTheme.colors,
-            typography = baseTheme.typography,
-            input = baseTheme.input,
-            components = UiComponentStyles(
-                button = baseTheme.components.button,
-                textField = baseTheme.components.textField,
-                segmentedControl = baseTheme.components.segmentedControl,
-                checkbox = baseTheme.components.checkbox,
-                switchControl = baseTheme.components.switchControl,
-                radioButton = baseTheme.components.radioButton,
-                slider = baseTheme.components.slider,
-                progressIndicator = baseTheme.components.progressIndicator,
-                tabPager = UiTabPagerStyles(
-                    background = 601,
-                    indicator = 602,
-                    text = 603,
-                    selectedText = 604,
-                ),
-            ),
-        )
 
         val tree = buildVNodeTree {
-            UiTheme(customTheme) {
-                TabPager(
-                    selectedTabIndex = 0,
-                    onTabSelected = {},
+            UiTheme(baseTheme) {
+                ProvideTabPagerColors(
+                    TabPagerColorOverride(
+                        background = 601,
+                        indicator = 602,
+                        text = 603,
+                        selectedText = 604,
+                    ),
                 ) {
-                    Page(title = "Overview", key = "overview") {
-                        Text("Overview content")
+                    TabPager(
+                        selectedTabIndex = 0,
+                        onTabSelected = {},
+                    ) {
+                        Page(title = "Overview", key = "overview") {
+                            Text("Overview content")
+                        }
                     }
                 }
             }
         }
 
-        val node = tree.single()
+        val spec = tree.single().spec as TabPagerNodeProps
 
-        assertEquals(601, node.props[TypedPropKeys.TabBackgroundColor])
-        assertEquals(602, node.props[TypedPropKeys.TabIndicatorColor])
-        assertEquals(603, node.props[TypedPropKeys.TabUnselectedTextColor])
-        assertEquals(604, node.props[TypedPropKeys.TabSelectedTextColor])
+        assertEquals(601, spec.backgroundColor)
+        assertEquals(602, spec.indicatorColor)
+        assertEquals(603, spec.unselectedTextColor)
+        assertEquals(604, spec.selectedTextColor)
     }
 }

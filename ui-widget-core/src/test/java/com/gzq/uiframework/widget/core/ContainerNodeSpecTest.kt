@@ -7,7 +7,6 @@ import com.gzq.uiframework.renderer.layout.HorizontalAlignment
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.node.NodeType
-import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.spec.AndroidViewNodeProps
 import com.gzq.uiframework.renderer.node.spec.BoxNodeProps
 import com.gzq.uiframework.renderer.node.spec.ColumnNodeProps
@@ -32,7 +31,6 @@ class ContainerNodeSpecTest {
         val node = tree.single()
 
         assertEquals(NodeType.Box, node.type)
-        assertEquals(BoxAlignment.BottomEnd, node.props[TypedPropKeys.BoxAlignment])
         val spec = node.spec as BoxNodeProps
         assertEquals(BoxAlignment.BottomEnd, spec.contentAlignment)
     }

@@ -4,8 +4,6 @@ import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TextFieldImeAction
 import com.gzq.uiframework.renderer.node.TextFieldType
-import com.gzq.uiframework.renderer.node.TypedPropKeys
-import com.gzq.uiframework.renderer.node.props
 import com.gzq.uiframework.renderer.node.spec.SliderNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
 import com.gzq.uiframework.renderer.node.spec.ToggleNodeProps
@@ -46,55 +44,6 @@ fun UiTreeBuilder.TextField(
     emit(
         type = NodeType.TextField,
         key = key,
-        props = props {
-            set(TypedPropKeys.Value, value)
-            set(TypedPropKeys.OnValueChange, onValueChange)
-            set(TypedPropKeys.Hint, hint)
-            set(TypedPropKeys.Label, label)
-            set(TypedPropKeys.Placeholder, placeholder)
-            set(TypedPropKeys.SupportingText, supportingText)
-            set(TypedPropKeys.SingleLine, singleLine)
-            set(TypedPropKeys.TextFieldType, keyboardType)
-            set(TypedPropKeys.ReadOnly, readOnly)
-            set(TypedPropKeys.MaxLines, maxLines)
-            set(TypedPropKeys.MinLines, minLines)
-            set(TypedPropKeys.ImeAction, imeAction)
-            set(TypedPropKeys.Enabled, enabled)
-            set(TypedPropKeys.IsError, isError)
-            set(TypedPropKeys.TextColor, TextFieldDefaults.textColor(enabled))
-            set(TypedPropKeys.TextSizeSp, style.fontSizeSp)
-            if (singleLine) {
-                set(TypedPropKeys.StyleMinHeight, TextFieldDefaults.height(size))
-            }
-            set(TypedPropKeys.StylePaddingLeft, TextFieldDefaults.horizontalPadding(size))
-            set(TypedPropKeys.StylePaddingTop, TextFieldDefaults.verticalPadding(size))
-            set(TypedPropKeys.StylePaddingRight, TextFieldDefaults.horizontalPadding(size))
-            set(TypedPropKeys.StylePaddingBottom, TextFieldDefaults.verticalPadding(size))
-            set(
-                TypedPropKeys.StyleBackgroundColor,
-                TextFieldDefaults.containerColor(
-                    variant = variant,
-                    enabled = enabled,
-                    isError = isError,
-                ),
-            )
-            set(TypedPropKeys.StyleBorderWidth, TextFieldDefaults.borderWidth(variant))
-            set(
-                TypedPropKeys.StyleBorderColor,
-                TextFieldDefaults.borderColor(
-                    variant = variant,
-                    enabled = enabled,
-                    isError = isError,
-                ),
-            )
-            set(TypedPropKeys.StyleCornerRadius, TextFieldDefaults.cornerRadius())
-            set(TypedPropKeys.StyleRippleColor, TextFieldDefaults.pressedColor())
-            set(TypedPropKeys.HintTextColor, hintColor)
-            set(TypedPropKeys.LabelTextColor, labelColor)
-            set(TypedPropKeys.SupportingTextColor, supportingTextColor)
-            set(TypedPropKeys.LabelTextSizeSp, TextFieldDefaults.labelTextStyle().fontSizeSp)
-            set(TypedPropKeys.SupportingTextSizeSp, TextFieldDefaults.supportingTextStyle().fontSizeSp)
-        },
         spec = TextFieldNodeProps(
             value = value,
             label = label,
@@ -113,6 +62,24 @@ fun UiTreeBuilder.TextField(
             hintColor = hintColor,
             readOnly = readOnly,
             onValueChange = onValueChange,
+            textColor = TextFieldDefaults.textColor(enabled),
+            textSizeSp = style.fontSizeSp,
+            backgroundColor = TextFieldDefaults.containerColor(
+                variant = variant,
+                enabled = enabled,
+                isError = isError,
+            ),
+            borderWidth = TextFieldDefaults.borderWidth(variant),
+            borderColor = TextFieldDefaults.borderColor(
+                variant = variant,
+                enabled = enabled,
+                isError = isError,
+            ),
+            cornerRadius = TextFieldDefaults.cornerRadius(),
+            rippleColor = TextFieldDefaults.pressedColor(),
+            minHeight = if (singleLine) TextFieldDefaults.height(size) else 0,
+            paddingHorizontal = TextFieldDefaults.horizontalPadding(size),
+            paddingVertical = TextFieldDefaults.verticalPadding(size),
         ),
         modifier = modifier,
     )
@@ -271,22 +238,15 @@ fun UiTreeBuilder.Checkbox(
     emit(
         type = NodeType.Checkbox,
         key = key,
-        props = props {
-            set(TypedPropKeys.Text, text)
-            set(TypedPropKeys.Checked, checked)
-            set(TypedPropKeys.OnCheckedChange, onCheckedChange)
-            set(TypedPropKeys.Enabled, enabled)
-            set(TypedPropKeys.ControlColor, controlColor)
-            set(TypedPropKeys.TextColor, InputControlDefaults.checkboxLabelColor(enabled))
-            set(TypedPropKeys.TextSizeSp, style.fontSizeSp)
-            set(TypedPropKeys.StyleRippleColor, InputControlDefaults.pressedColor())
-        },
         spec = ToggleNodeProps(
             text = text,
             enabled = enabled,
             checked = checked,
             controlColor = controlColor,
             onCheckedChange = onCheckedChange,
+            textColor = InputControlDefaults.checkboxLabelColor(enabled),
+            textSizeSp = style.fontSizeSp,
+            rippleColor = InputControlDefaults.pressedColor(),
         ),
         modifier = modifier,
     )
@@ -305,22 +265,15 @@ fun UiTreeBuilder.Switch(
     emit(
         type = NodeType.Switch,
         key = key,
-        props = props {
-            set(TypedPropKeys.Text, text)
-            set(TypedPropKeys.Checked, checked)
-            set(TypedPropKeys.OnCheckedChange, onCheckedChange)
-            set(TypedPropKeys.Enabled, enabled)
-            set(TypedPropKeys.ControlColor, controlColor)
-            set(TypedPropKeys.TextColor, InputControlDefaults.switchLabelColor(enabled))
-            set(TypedPropKeys.TextSizeSp, style.fontSizeSp)
-            set(TypedPropKeys.StyleRippleColor, InputControlDefaults.pressedColor())
-        },
         spec = ToggleNodeProps(
             text = text,
             enabled = enabled,
             checked = checked,
             controlColor = controlColor,
             onCheckedChange = onCheckedChange,
+            textColor = InputControlDefaults.switchLabelColor(enabled),
+            textSizeSp = style.fontSizeSp,
+            rippleColor = InputControlDefaults.pressedColor(),
         ),
         modifier = modifier,
     )
@@ -339,22 +292,15 @@ fun UiTreeBuilder.RadioButton(
     emit(
         type = NodeType.RadioButton,
         key = key,
-        props = props {
-            set(TypedPropKeys.Text, text)
-            set(TypedPropKeys.Checked, checked)
-            set(TypedPropKeys.OnCheckedChange, onCheckedChange)
-            set(TypedPropKeys.Enabled, enabled)
-            set(TypedPropKeys.ControlColor, controlColor)
-            set(TypedPropKeys.TextColor, InputControlDefaults.radioButtonLabelColor(enabled))
-            set(TypedPropKeys.TextSizeSp, style.fontSizeSp)
-            set(TypedPropKeys.StyleRippleColor, InputControlDefaults.pressedColor())
-        },
         spec = ToggleNodeProps(
             text = text,
             enabled = enabled,
             checked = checked,
             controlColor = controlColor,
             onCheckedChange = onCheckedChange,
+            textColor = InputControlDefaults.radioButtonLabelColor(enabled),
+            textSizeSp = style.fontSizeSp,
+            rippleColor = InputControlDefaults.pressedColor(),
         ),
         modifier = modifier,
     )
@@ -373,14 +319,6 @@ fun UiTreeBuilder.Slider(
     emit(
         type = NodeType.Slider,
         key = key,
-        props = props {
-            set(TypedPropKeys.SliderValue, value)
-            set(TypedPropKeys.MinValue, min)
-            set(TypedPropKeys.MaxValue, max)
-            set(TypedPropKeys.Enabled, enabled)
-            set(TypedPropKeys.ControlColor, controlColor)
-            set(TypedPropKeys.OnSliderValueChange, onValueChange)
-        },
         spec = SliderNodeProps(
             min = min,
             max = max,
