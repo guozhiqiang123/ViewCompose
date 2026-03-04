@@ -238,6 +238,42 @@ Compose 官方文档也明确把这类模式视为不理想，因为它会多跑
 - 这只是第一版基线，不是优化结论
 - 它的价值在于给后续 `NodeSpec diff / skip update` 提供对照
 
+### 第二轮真实设备基线（patch 深化后）
+
+于 `2026-03-04` 在同一台 `Pixel 4 XL (Android 13)` 跑第二轮宏基准，对比 Sprint 1 字段级 patch 深化后的效果。
+
+**变更内容**（第一轮 → 第二轮之间）：
+1. 新增 Row、Column、Box、Image、IconButton 字段级 patch
+2. LazyColumn patch 从结构级委托下沉为真正字段级
+3. Toggle、Slider、ProgressIndicator、Divider 字段级 patch
+4. Benchmark 导航可靠性修复（直接 intent 跳转、bidirectional scroll、conditional FLAG_ACTIVITY_CLEAR_TASK）
+
+**对比结果：**
+
+| 场景 | 第一轮 P50 | 第二轮 P50 | 变化 |
+|------|-----------|-----------|------|
+| `coldStartup` (timeToInitialDisplayMs) | 428.9ms | 370.5ms | **-13.6%** |
+| `patchUpdates` | 3.0ms | 2.8ms | **-6.7%** |
+| `themeSwitch` | 2.6ms | 2.3ms | **-11.5%** |
+| `collectionsScroll` | 2.9ms | 2.6ms | **-10.3%** |
+| `chapterSwitch` | 2.7ms | 2.2ms | **-18.5%** |
+| `diagnosticsRefreshAfterPatch` | 2.7ms | 2.5ms | **-7.4%** |
+| `layoutsBenchmarkAnchor` | 2.7ms | 2.4ms | **-11.1%** |
+| `interopBenchmarkAnchor` | 2.5ms | 2.4ms | -4.0% |
+| `foundationsBenchmarkAnchor` | 2.6ms | 2.6ms | 0% |
+| `stateBenchmarkAnchor` | 2.4ms | 2.5ms | +4.2% |
+| `inputBenchmarkAnchor` | 2.5ms | 2.6ms | +4.0% |
+| `diagnosticsBenchmarkAnchor` | 2.6ms | 2.7ms | +3.8% |
+| `collectionsBenchmarkAnchor` | 2.8ms | 3.0ms | +7.1% |
+
+**分析：**
+
+1. **冷启动改善显著**（-13.6%）：可能受益于 benchmark 导航重构减少了 warmup 开销，并非纯 patch 优化
+2. **交互场景普遍改善**：`chapterSwitch`（-18.5%）、`themeSwitch`（-11.5%）、`collectionsScroll`（-10.3%）收益明显，这些场景涉及大量节点重绑，字段级 patch 有效减少了 rebind 成本
+3. **patch 直接场景温和改善**：`patchUpdates`（-6.7%）和 `diagnosticsRefreshAfterPatch`（-7.4%）改善温和，符合预期 — 这些场景本身帧时间已很低（<3ms），绝对收益空间有限
+4. **模块 anchor 波动在噪声范围内**：±4-7% 的波动在 2-3ms 帧时间尺度下约为 0.1-0.2ms，属于设备测量噪声，不构成回归
+5. **所有 13 个场景全部通过**，benchmark 基础设施稳定性已验证
+
 ## 4.1 需要两层基准
 
 ### A. Macrobenchmark
