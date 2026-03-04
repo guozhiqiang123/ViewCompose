@@ -18,6 +18,7 @@ import com.gzq.uiframework.renderer.modifier.ClickableModifierElement
 import com.gzq.uiframework.renderer.modifier.ClipModifierElement
 import com.gzq.uiframework.renderer.modifier.ContentDescriptionModifierElement
 import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
+import com.gzq.uiframework.renderer.modifier.ElevationModifierElement
 import com.gzq.uiframework.renderer.modifier.MinHeightModifierElement
 import com.gzq.uiframework.renderer.modifier.MinWidthModifierElement
 import com.gzq.uiframework.renderer.modifier.NativeViewElement
@@ -110,6 +111,8 @@ internal object ViewModifierApplier {
             .lastOrNull { it is CornerRadiusModifierElement } as? CornerRadiusModifierElement
         val clip = node.modifier.elements
             .lastOrNull { it is ClipModifierElement } as? ClipModifierElement
+        val elevation = node.modifier.elements
+            .lastOrNull { it is ElevationModifierElement } as? ElevationModifierElement
         val offset = node.modifier.elements
             .lastOrNull { it is OffsetModifierElement } as? OffsetModifierElement
         val padding = node.modifier.elements.lastOrNull { it is PaddingModifierElement } as? PaddingModifierElement
@@ -146,6 +149,7 @@ internal object ViewModifierApplier {
             view.translationX = offset?.x ?: 0f
             view.translationY = offset?.y ?: 0f
             view.z = zIndex?.zIndex ?: 0f
+            view.elevation = elevation?.elevation?.toFloat() ?: 0f
             view.isClickable = false
             view.setOnClickListener(null)
             view.minimumHeight = 0
@@ -185,6 +189,7 @@ internal object ViewModifierApplier {
         view.translationX = offset?.x ?: 0f
         view.translationY = offset?.y ?: 0f
         view.z = zIndex?.zIndex ?: 0f
+        view.elevation = elevation?.elevation?.toFloat() ?: 0f
         view.minimumHeight = resolvedMinHeight
         view.minimumWidth = resolvedMinWidth
         view.contentDescription = contentDescriptionElement?.contentDescription

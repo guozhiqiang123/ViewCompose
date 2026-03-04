@@ -47,6 +47,10 @@ data class ClipModifierElement(
     val clip: Boolean = true,
 ) : ModifierElement
 
+data class ElevationModifierElement(
+    val elevation: Int,
+) : ModifierElement
+
 data class RippleColorModifierElement(
     val color: Int,
 ) : ModifierElement
@@ -191,6 +195,12 @@ fun Modifier.cornerRadius(radius: Int): Modifier {
 fun Modifier.clip(): Modifier {
     return then(
         ClipModifierElement(clip = true),
+    )
+}
+
+fun Modifier.elevation(elevation: Int): Modifier {
+    return then(
+        ElevationModifierElement(elevation),
     )
 }
 
