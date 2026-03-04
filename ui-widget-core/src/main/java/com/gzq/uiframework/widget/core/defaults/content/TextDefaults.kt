@@ -1,6 +1,8 @@
 package com.gzq.uiframework.widget.core
 
 object TextDefaults {
+    fun currentStyle(): UiTextStyle = TextStyle.current
+
     fun titleStyle(): UiTextStyle = Theme.typography.title
 
     fun bodyStyle(): UiTextStyle = Theme.typography.body

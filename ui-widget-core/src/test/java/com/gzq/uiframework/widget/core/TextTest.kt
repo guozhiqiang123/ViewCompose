@@ -29,4 +29,26 @@ class TextTest {
         assertEquals(TextAlign.Center, spec.textAlign)
         assertTrue(node.spec is TextNodeProps)
     }
+
+    @Test
+    fun `text inherits content color from ProvideContentColor`() {
+        val tree = buildVNodeTree {
+            ProvideContentColor(0xFFABCDEF.toInt()) {
+                Text("colored")
+            }
+        }
+
+        val spec = tree.single().spec as TextNodeProps
+        assertEquals(0xFFABCDEF.toInt(), spec.textColor)
+    }
+
+    @Test
+    fun `text defaults to ContentColor current`() {
+        val tree = buildVNodeTree {
+            Text("default color")
+        }
+
+        val spec = tree.single().spec as TextNodeProps
+        assertEquals(Theme.colors.textPrimary, spec.textColor)
+    }
 }

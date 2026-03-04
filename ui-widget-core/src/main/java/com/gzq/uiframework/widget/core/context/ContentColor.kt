@@ -7,7 +7,7 @@ object ContentColor {
         get() = LocalContext.current(LocalContentColor)
 }
 
-internal fun UiTreeBuilder.ProvideContentColor(
+fun UiTreeBuilder.ProvideContentColor(
     color: Int,
     content: UiTreeBuilder.() -> Unit,
 ) {

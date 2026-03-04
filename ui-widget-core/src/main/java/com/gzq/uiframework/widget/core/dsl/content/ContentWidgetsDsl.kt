@@ -15,7 +15,7 @@ import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 
 fun UiTreeBuilder.Text(
     text: String,
-    style: UiTextStyle = TextDefaults.bodyStyle(),
+    style: UiTextStyle = TextDefaults.currentStyle(),
     color: Int = TextDefaults.primaryColor(),
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
