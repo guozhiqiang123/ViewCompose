@@ -2,7 +2,7 @@
 
 > **审计日期**：2026-03-04
 > **审计范围**：框架 P1 控件完整属性对照（16 种控件 × Android 原生属性）
-> **框架版本**：16 NodeSpec · 11 Defaults · 27 Modifier · 35 DSL
+> **框架版本**：16 NodeSpec · 12 Defaults · 30 Modifier · 35 DSL
 > **底层映射**：Android View / AppCompat / Material Components
 
 本文档系统性地将 Android 原生 View 属性与框架四层分类体系（Spec / Theme·Defaults / Modifier / nativeView）做完整对照，标注每个属性的当前状态，形成统一的改进规划。
@@ -963,8 +963,8 @@ val trackColor: Int? = null   // null 时回退到 controlColor
 
 | 属性 | 当前硬编码位置 | 当前值 | 建议 | 优先级 |
 |------|--------------|-------|------|--------|
-| Icon size | `ContentWidgetsDsl.kt` `Icon()` 函数 | `24.dp` | 📋 创建 `IconDefaults.size()` → `24.dp` | Phase 2 |
-| Icon tint | `ContentWidgetsDsl.kt` `Icon()` 函数 | `ContentColor.current` | 🔧 已通过 `ContentColor.current` 间接主题化，但缺少独立 `IconDefaults.tint()` | Phase 2 |
+| Icon size | `ContentWidgetsDsl.kt` `Icon()` 函数 | `IconDefaults.size()` | ✅ 已通过 `IconDefaults` 提供默认值 | Phase 2 ✅ |
+| Icon tint | `ContentWidgetsDsl.kt` `Icon()` 函数 | `IconDefaults.tint()` | ✅ 已通过 `IconDefaults` 提供默认值 | Phase 2 ✅ |
 | Icon contentScale | `ContentWidgetsDsl.kt` `Icon()` 函数 | `Fit` (硬编码在 DSL 实现中) | ⚪ 图标通常固定 Fit，无需主题化 | — |
 | Slider min/max | `InputWidgetsDsl.kt` `Slider()` 函数 | `0` / `100` | ⚪ 业务语义，不适合主题化 | — |
 | TextArea minLines | `InputWidgetsDsl.kt` `TextArea()` 函数 | `3` | ⚪ 合理默认值，不需要主题化 | — |
@@ -986,9 +986,9 @@ object IconDefaults {
 
 ## §5 改进行动计划
 
-### Phase 1：快速收益（< 1 周）
+### Phase 1：快速收益（< 1 周） ✅ 已完成
 
-> 均为低实现难度的 P0/P1 项，修改范围可控，对开发体验提升最大。
+> 均为低实现难度的 P0/P1 项，修改范围可控，对开发体验提升最大。已于 commit 6938680 全部完成。
 
 | # | 改进项 | 涉及文件 | 对应审计项 | 预估工作量 |
 |---|--------|---------|-----------|-----------|
@@ -1002,18 +1002,19 @@ object IconDefaults {
 ### Phase 2：中等工作量（1-2 周）
 
 > P1 优先级项，需要新增 ModifierElement 或涉及较大 API 设计。
+> 简单项（2.5-2.9）已于 commit c6c5504 完成；复杂项（2.1-2.4）待后续实施。
 
-| # | 改进项 | 涉及文件 | 对应审计项 | 预估工作量 |
-|---|--------|---------|-----------|-----------|
-| 2.1 | **elevation / shadow Modifier**：新增 `Modifier.elevation(dp: Int)` → `ElevationModifierElement`，渲染器调用 `view.elevation` + `view.outlineProvider` | `Modifier.kt`, 通用渲染器 `ModifierApplier` | §2.2 elevation/shadow 📋 | 1-2 天 |
-| 2.2 | **textDecoration**：UiTextStyle 新增 `textDecoration: Set<TextDecoration>?`，枚举 `TextDecoration.Underline/LineThrough`，渲染器通过 `paintFlags` 实现 | `UiTextStyle.kt`, Text 渲染器 | §3.1 textDecoration 📋 | 1 天 |
-| 2.3 | **TextField cursorColor**：TextFieldNodeProps 新增 `cursorColor: Int?`，TextFieldDefaults 新增 `cursorColor()` → `Theme.colors.primary`，渲染器通过 `setTextCursorDrawable` (API 29+) 或反射实现 | `TextFieldNodeProps.kt`, `TextFieldDefaults.kt`, TextField 渲染器, DSL | §3.6 cursorColor 📋 | 1 天 |
-| 2.4 | **LazyColumn scrollToPosition API**：设计 `LazyListState` 接口，DSL 新增 `state` 参数，通过命令式 API 桥接 `RecyclerView.scrollToPosition` | `LazyColumnNodeProps.kt`, RecyclerView 渲染器, DSL | §3.15 scrollToPosition 📋 | 2-3 天 |
-| 2.5 | **clipToOutline Modifier**：新增 `Modifier.clip()` → `ClipModifierElement`，渲染器调用 `view.clipToOutline = true` | `Modifier.kt`, 通用渲染器 | §2.2 clipToOutline 📋 | 0.5 天 |
-| 2.6 | **contentDescription 通用 Modifier**：新增 `Modifier.semantics(contentDescription: String?)` → `SemanticsModifierElement`，渲染器调用 `view.contentDescription` | `Modifier.kt`, 通用渲染器 | §2.2 / §4.3 contentDescription 📋 | 0.5 天 |
-| 2.7 | **minWidth Modifier**：新增 `Modifier.minWidth(minWidth: Int)` → `MinWidthModifierElement`，渲染器调用 `view.minimumWidth` | `Modifier.kt` | §2.2 minWidth 📋 | 0.5 天 |
-| 2.8 | **Checkbox/RadioButton buttonTint 拆分**：ToggleNodeProps 新增 `checkedColor: Int?` + `uncheckedColor: Int?`，InputControlDefaults 新增对应函数 | `ToggleNodeProps.kt`, `InputControlDefaults.kt`, Checkbox/RadioButton 渲染器 | §3.7/§3.9 buttonTint 🔧 | 1 天 |
-| 2.9 | **IconDefaults 创建**：新建 `IconDefaults` 对象，提供 `size()`, `tint()` 函数，Icon DSL 使用 Defaults 替代硬编码 | `defaults/content/IconDefaults.kt`, `ContentWidgetsDsl.kt` | §4.4 Icon 硬编码 📋 | 0.5 天 |
+| # | 改进项 | 涉及文件 | 对应审计项 | 预估工作量 | 状态 |
+|---|--------|---------|-----------|-----------|------|
+| 2.1 | **elevation / shadow Modifier**：新增 `Modifier.elevation(dp: Int)` → `ElevationModifierElement`，渲染器调用 `view.elevation` + `view.outlineProvider` | `Modifier.kt`, 通用渲染器 `ModifierApplier` | §2.2 elevation/shadow 📋 | 1-2 天 | 待实施 |
+| 2.2 | **textDecoration**：UiTextStyle 新增 `textDecoration: Set<TextDecoration>?`，枚举 `TextDecoration.Underline/LineThrough`，渲染器通过 `paintFlags` 实现 | `UiTextStyle.kt`, Text 渲染器 | §3.1 textDecoration 📋 | 1 天 | 待实施 |
+| 2.3 | **TextField cursorColor**：TextFieldNodeProps 新增 `cursorColor: Int?`，TextFieldDefaults 新增 `cursorColor()` → `Theme.colors.primary`，渲染器通过 `setTextCursorDrawable` (API 29+) 或反射实现 | `TextFieldNodeProps.kt`, `TextFieldDefaults.kt`, TextField 渲染器, DSL | §3.6 cursorColor 📋 | 1 天 | 待实施 |
+| 2.4 | **LazyColumn scrollToPosition API**：设计 `LazyListState` 接口，DSL 新增 `state` 参数，通过命令式 API 桥接 `RecyclerView.scrollToPosition` | `LazyColumnNodeProps.kt`, RecyclerView 渲染器, DSL | §3.15 scrollToPosition 📋 | 2-3 天 | 待实施 |
+| 2.5 | **clipToOutline Modifier**：新增 `Modifier.clip()` → `ClipModifierElement`，渲染器调用 `view.clipToOutline = true` | `Modifier.kt`, 通用渲染器 | §2.2 clipToOutline ✅ | 0.5 天 | ✅ 已完成 |
+| 2.6 | **contentDescription 通用 Modifier**：新增 `Modifier.contentDescription(description: String?)` → `ContentDescriptionModifierElement`，渲染器调用 `view.contentDescription` | `Modifier.kt`, 通用渲染器 | §2.2 / §4.3 contentDescription ✅ | 0.5 天 | ✅ 已完成 |
+| 2.7 | **minWidth Modifier**：新增 `Modifier.minWidth(minWidth: Int)` → `MinWidthModifierElement`，渲染器调用 `view.minimumWidth` | `Modifier.kt` | §2.2 minWidth ✅ | 0.5 天 | ✅ 已完成 |
+| 2.8 | **Checkbox/RadioButton buttonTint 拆分**：ToggleNodeProps 新增 `checkedColor: Int?` + `uncheckedColor: Int?`，InputControlDefaults 新增对应函数，渲染器通过 `ColorStateList` 实现 checked/unchecked 状态颜色 | `ToggleNodeProps.kt`, `InputControlDefaults.kt`, Checkbox/RadioButton 渲染器 | §3.7/§3.9 buttonTint ✅ | 1 天 | ✅ 已完成 |
+| 2.9 | **IconDefaults 创建**：新建 `IconDefaults` 对象，提供 `size()`, `tint()` 函数，Icon DSL 使用 Defaults 替代硬编码 | `defaults/content/IconDefaults.kt`, `ContentWidgetsDsl.kt` | §4.4 Icon 硬编码 ✅ | 0.5 天 | ✅ 已完成 |
 
 ### Phase 3：长期优化
 
@@ -1032,11 +1033,11 @@ object IconDefaults {
 | 3.9 | **TextField onImeAction 回调**：TextFieldNodeProps 新增 `onImeAction: (() -> Unit)?`，渲染器设置 `setOnEditorActionListener` | `TextFieldNodeProps.kt`, TextField 渲染器, DSL | §3.6 onImeAction 📋 | 1 天 |
 | 3.10 | **LazyColumn contentPadding 四边独立**：`contentPadding: Int` → `contentPadding: ContentPadding` 或重载 | `LazyColumnNodeProps.kt`, DSL | §3.15 contentPadding 📋 | 1 天 |
 | 2.4 | **LazyColumn scrollToPosition API**：新增命令式滚动 API | `LazyColumnNodeProps.kt`, RecyclerView 渲染器 | §3.15 scrollToPosition 📋 |
-| 2.5 | **clipToOutline Modifier**：新增 `Modifier.clip(shape)` | `Modifier.kt`, 通用渲染器 | §2.2 clipToOutline 📋 |
-| 2.6 | **contentDescription 通用 Modifier**：新增 `Modifier.semantics(contentDescription)` | `Modifier.kt`, 通用渲染器 | §2.2 / §4.3 contentDescription 📋 |
-| 2.7 | **minWidth Modifier**：新增 `Modifier.minWidth(minWidth)` | `Modifier.kt` | §2.2 minWidth 📋 |
-| 2.8 | **Checkbox/RadioButton buttonTint 拆分**：区分 checked/unchecked 状态颜色 | `ToggleNodeProps.kt`, `InputControlDefaults.kt` | §3.7/§3.9 buttonTint 🔧 |
-| 2.9 | **IconDefaults 创建**：新建 `IconDefaults` 对象，管理 `size()`, `tint()` | `defaults/content/IconDefaults.kt` | §4.4 Icon 硬编码 📋 |
+| 2.5 | **clipToOutline Modifier**：新增 `Modifier.clip()` | `Modifier.kt`, 通用渲染器 | §2.2 clipToOutline ✅ |
+| 2.6 | **contentDescription 通用 Modifier**：新增 `Modifier.contentDescription(description)` | `Modifier.kt`, 通用渲染器 | §2.2 / §4.3 contentDescription ✅ |
+| 2.7 | **minWidth Modifier**：新增 `Modifier.minWidth(minWidth)` | `Modifier.kt` | §2.2 minWidth ✅ |
+| 2.8 | **Checkbox/RadioButton buttonTint 拆分**：区分 checked/unchecked 状态颜色 | `ToggleNodeProps.kt`, `InputControlDefaults.kt` | §3.7/§3.9 buttonTint ✅ |
+| 2.9 | **IconDefaults 创建**：新建 `IconDefaults` 对象，管理 `size()`, `tint()` | `defaults/content/IconDefaults.kt` | §4.4 Icon 硬编码 ✅ |
 
 ### Phase 3：长期优化
 
@@ -1071,12 +1072,12 @@ object IconDefaults {
 
 ### Phase 小结
 
-| 阶段 | 改进项数 | 预估总工作量 | 覆盖率提升预期 |
-|------|---------|------------|--------------|
-| Phase 1 | 6 项 | 3-4 天 | Text 32% → 50%, Switch 38% → 50% |
-| Phase 2 | 9 项 | 6-8 天 | 全局 +10%（elevation, clip, semantics） |
-| Phase 3 | 10 项 | 6-8 天 | Text 50% → 60%, LazyColumn 21% → 35% |
-| Phase 4 | 按需 | 持续 | 不影响覆盖率统计 |
+| 阶段 | 改进项数 | 预估总工作量 | 覆盖率提升预期 | 状态 |
+|------|---------|------------|--------------|------|
+| Phase 1 | 6 项 | 3-4 天 | Text 32% → 50%, Switch 38% → 50% | ✅ 已完成 |
+| Phase 2 | 9 项（5 项已完成） | 6-8 天 | 全局 +10%（elevation, clip, semantics） | 🔧 进行中 |
+| Phase 3 | 10 项 | 6-8 天 | Text 50% → 60%, LazyColumn 21% → 35% | 待实施 |
+| Phase 4 | 按需 | 持续 | 不影响覆盖率统计 | 待实施 |
 
 ---
 
@@ -1087,7 +1088,7 @@ object IconDefaults {
 1. **源码扫描**：逐一读取框架全部关键源文件
    - 16 个 NodeSpec 文件（`ui-renderer/.../node/spec/`）
    - 11 个 Defaults 文件（`ui-widget-core/.../defaults/`）
-   - Modifier.kt（27 个扩展函数 + 20 个 ModifierElement 数据类）
+   - Modifier.kt（30 个扩展函数 + 23 个 ModifierElement 数据类）
    - 6 个 DSL 文件（35 个 DSL 函数）
 2. **原生 API 对照**：对照每个控件底层 Android View 类（通过 ViewNodeFactory 确认映射关系）的公开 setter 和 XML attr 属性
 3. **分类评估**：按框架四层体系（Spec / Theme·Defaults / Modifier / nativeView）逐一归类每个原生属性
