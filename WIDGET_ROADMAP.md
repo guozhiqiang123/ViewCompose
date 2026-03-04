@@ -422,11 +422,13 @@ v1 应支持：
 
 ### 9.2 主题系统负责默认 look
 
+当前已实现：默认值从 `Theme.colors` 即时派生，不再读预计算 token。
+
 例如：
 
-- 默认按钮主色
-- 默认输入框 border / container
-- 默认 checkbox / slider 状态色
+- 默认按钮主色 → `Theme.colors.primary`
+- 默认输入框 border / container → 从 `Theme.colors` 派生
+- 默认 checkbox / slider 状态色 → 从 `Theme.colors` 派生
 
 ### 9.3 组件参数只解决“语义选择”
 
@@ -491,7 +493,7 @@ v1 应支持：
 后续如果仍在 `P1` 范围内继续打磨，优先级更高的是：
 
 1. 收紧现有控件的交互细节和状态语义
-2. 完善主题 token 与组件默认值映射
+2. ~~完善主题 token 与组件默认值映射~~ → ✅ 已完成：Defaults 已改为从 `Theme.colors` 即时派生
 3. 补更细的测试和调试能力
 
 ### 10.3 当前已存在但应视为 P2 的控件

@@ -17,18 +17,19 @@
 
 ## 2. 当前问题
 
-当前主链路已经基本迁到 `typed props`：
+当前主链路已完成向 `NodeSpec` 的迁移：
 
-- DSL 侧通过 `props { set(TypedPropKeys.Xxx, ...) }`
-- renderer / binder 侧通过 `node.props[TypedPropKeys.Xxx]`
+- DSL 侧直接写入 `spec` 字段（样式属性已纳入 spec）
+- renderer / binder 侧优先读 `node.spec`
 - 测试侧也基本切到 typed accessor
+- `Props` 已降级为兼容层和扩展层，不再是第一方控件主模型
 
-这比早期字符串 key 已经强很多，但仍然存在 4 个长期问题：
+早期存在的 4 个长期问题已通过 Sprint B 统一解决：
 
-1. 节点结构可读性仍偏弱
-2. 节点不变式分散
-3. 调试/文档/工具化能力受限
-4. 后续做节点级优化时，结构约束不够强
+1. ~~节点结构可读性仍偏弱~~ → NodeSpec 提供了集中结构
+2. ~~节点不变式分散~~ → 不变式集中在 data class 字段上
+3. ~~调试/文档/工具化能力受限~~ → 可直接 inspect spec 字段
+4. ~~后续做节点级优化时，结构约束不够强~~ → 字段级 patch 已基于 spec 落地
 
 ## 3. 设计原则
 
@@ -83,15 +84,15 @@ data class TextFieldNodeProps(...) : NodeSpec
 1. 优先 `node.spec as? XxxNodeProps`
 2. 否则回退到 `node.props[TypedPropKeys.Xxx]`
 
-### 4.4 `Props` 的长期角色
+### 4.4 `Props` 的长期角色（✅ Sprint B 已完成降级）
 
-`Props` 仍然保留，但它的职责应收缩为：
+`Props` 仍然保留，但它的职责已收缩为：
 
 1. 兼容层
 2. 扩展层
 3. 底层桥接容器
 
-不再把它作为第一方控件的长期主模型。
+不再作为第一方控件的主模型。
 
 更具体地说：
 

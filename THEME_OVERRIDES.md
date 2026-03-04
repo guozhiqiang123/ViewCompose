@@ -46,7 +46,7 @@
 
 所以 override 不是增强项，而是主题系统成立的前提。
 
-## 4. 当前实现中的结构性问题
+## 4. 当前实现中的结构性问题（✅ 已解决）
 
 当前实现已经提供了：
 
@@ -56,13 +56,11 @@
 
 这些 API 本身没有问题。
 
-真正的问题是当前的数据模型：
+此前的结构性问题已全部解决：
 
-- `UiThemeTokens` 内直接持有 `components`
-- `components` 里保存的是完整组件样式结果
-- `override(colors = ...)` 时，组件默认值不会天然重算
-
-这会导致局部语义覆盖与组件默认值覆盖的职责不清。
+- ~~`UiThemeTokens` 内直接持有 `components`~~ → 已删除，组件默认值改为 Defaults 即时派生
+- ~~`components` 里保存的是完整组件样式结果~~ → 已删除 `UiComponentStyles` 和 `rebaseComponentStyles()`
+- ~~`override(colors = ...)` 时，组件默认值不会天然重算~~ → 现在 Defaults 从当前 `Theme.colors` 即时派生，天然跟随
 
 例子：
 
@@ -93,8 +91,6 @@ UiThemeOverride(
 - `typography`
 - `shapes`
 - `controls`
-- `interactions`
-- `input`
 
 示例：
 
@@ -143,57 +139,46 @@ UiThemeOverride(
 
 > 它是 patch，不是完整结果。
 
-## 6. 推荐的数据模型
+## 6. 当前数据模型
 
-### 6.1 不推荐的形态
+### 6.1 不推荐的形态（已废弃）
+
+```kotlin
+// 已删除 — 不再使用
+data class UiThemeTokens(
+    val colors: UiColors,
+    val typography: UiTypography,
+    val components: UiComponentStyles,  // ← 已删除
+)
+```
+
+问题（已解决）：
+
+- ~~`components` 太早被解析~~ → 已删除
+- ~~semantic override 和 component override 容易互相打架~~ → 已分层
+- ~~扩展到更多控件后，维护成本会越来越高~~ → 新控件无需碰 Theme
+
+### 6.2 当前形态
 
 ```kotlin
 data class UiThemeTokens(
     val colors: UiColors,
     val typography: UiTypography,
-    val components: UiComponentStyles,
+    val shapes: UiShapes = UiShapeDefaults.default(),
+    val controls: UiControlSizing = UiControlSizeDefaults.default(),
 )
 ```
 
-问题：
-
-- `components` 太早被解析
-- semantic override 和 component override 容易互相打架
-- 扩展到更多控件后，维护成本会越来越高
-
-### 6.2 推荐的形态
+组件覆盖通过稀疏 `LocalValue` 承载：
 
 ```kotlin
-data class UiThemeTokens(
-    val colors: UiColors,
-    val typography: UiTypography,
-    val shapes: UiShapes,
-    val controls: UiControlSizing,
-    val interactions: UiInteractionColors,
-    val input: UiInputColors,
-)
-```
-
-再配一层：
-
-```kotlin
-data class UiComponentOverrides(
-    val button: UiButtonOverride? = null,
-    val textField: UiTextFieldOverride? = null,
-    val checkbox: UiCheckboxOverride? = null,
+data class ButtonColorOverride(
+    val primaryContainer: Int? = null,
+    val primaryContent: Int? = null,
     ...
 )
-```
 
-每个 override 对象应该尽量稀疏：
-
-```kotlin
-data class UiCheckboxOverride(
-    val control: Int? = null,
-    val controlDisabled: Int? = null,
-    val label: Int? = null,
-    val labelDisabled: Int? = null,
-)
+private val LocalButtonColors = LocalValue<ButtonColorOverride?> { null }
 ```
 
 语义：
@@ -224,33 +209,33 @@ UiThemeOverride(
 
 ### 7.3 局部组件默认值覆盖
 
-推荐长期 API 方向：
+当前 API 通过 `LocalValue` 实现稀疏覆盖：
 
 ```kotlin
-UiThemeOverride(
-    componentOverrides = {
-        copy(
-            button = button.copy(
-                primaryContainer = brandRed,
-            ),
-        )
-    },
+fun UiTreeBuilder.UiButtonColorOverride(
+    override: ButtonColorOverride,
+    content: UiTreeBuilder.() -> Unit,
 ) {
-    ...
+    LocalContext.provide(LocalButtonColors, override) { content() }
 }
 ```
 
 ### 7.4 更细粒度局部上下文
 
-未来应补：
+当前已实现：
 
 ```kotlin
-ProvideTextStyle(...)
-ProvideContentColor(...)
+ProvideTextStyle(style) { ... }
+ProvideContentColor(color) { ... }
+```
+
+后续可按需补充：
+
+```kotlin
 ProvideIndication(...)
 ```
 
-这些能力可以减少 `UiThemeOverride` 的职责膨胀。
+这些能力减少了 `UiThemeOverride` 的职责膨胀。
 
 ## 8. override 优先级
 
@@ -306,24 +291,26 @@ override 设计必须和控件规划联动。
 
 更具体的控件分级见 [WIDGET_ROADMAP.md](/Users/gzq/AndroidStudioProjects/UIFramework/WIDGET_ROADMAP.md)。
 
-## 11. 推荐迁移路径
+## 11. 迁移完成记录
 
-### Phase 1
+### Phase 1 ✅
 
-- 保留现有 `UiThemeOverride(...)` API
-- 文档层冻结新的语义解释
+- `UiThemeOverride(...)` API 保留
+- 文档层冻结语义解释
 
-### Phase 2
+### Phase 2 ✅
 
-- 把当前 `components` 逐步从 resolved values 改成 sparse overrides
+- `components` 已从 resolved values 改为稀疏 `LocalValue` 覆盖
+- `UiComponentStyles` 已删除
 
-### Phase 3
+### Phase 3 ✅
 
-- `ButtonDefaults / TextFieldDefaults / CheckboxDefaults / TabPagerDefaults` 等改成动态解析
+- `ButtonDefaults / TextFieldDefaults / CheckboxDefaults / TabPagerDefaults` 等已改为即时派生
 
-### Phase 4
+### Phase 4 ✅
 
-- 增加更细的 local，上下文复用不再只依赖 `UiThemeOverride`
+- `ProvideTextStyle` / `ProvideContentColor` 已实现
+- 上下文复用不再只依赖 `UiThemeOverride`
 
 ## 12. 当前判断
 
@@ -331,9 +318,7 @@ override 设计必须和控件规划联动。
 
 - `方向正确`
 - `入口保留`
-- `内部模型必须调整`
+- `内部模型已完成调整`
 
-如果后续继续基于“完整 resolved component tokens”堆功能，局部复用会越来越难维护。
-
-如果按本文档收敛，override 会更符合 Compose 心智，也更适合长期扩展。
+override 已按照 Compose 心智收敛为三层：语义主题覆盖（`UiThemeOverride`）、组件默认值覆盖（`LocalValue<XxxOverride?>`）、细粒度上下文（`ProvideTextStyle` / `ProvideContentColor`）。
 

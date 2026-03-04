@@ -104,7 +104,7 @@ fun render() {
 
 ---
 
-#### 问题 C：`Theme.kt` 886 行——单文件过大且 `rebaseComponentStyles` 有结构性风险
+#### 问题 C：`Theme.kt` 886 行——单文件过大且 `rebaseComponentStyles` 有结构性风险（✅ 已解决）
 
 **文件：** `ui-widget-core/.../context/Theme.kt`
 
@@ -201,7 +201,7 @@ object ViewTreeRenderer {
 
 ---
 
-#### 问题 F：主题系统 Phase B 仍未启动——结构性技术债
+#### 问题 F：主题系统 Phase B 仍未启动——结构性技术债（✅ 已完成）
 
 THEMING.md 和 THEME_OVERRIDES.md 都已经明确描述了正确方向：
 
@@ -215,7 +215,7 @@ THEMING.md 和 THEME_OVERRIDES.md 都已经明确描述了正确方向：
 
 ---
 
-#### 问题 G：缺少 `LocalTextStyle` / `LocalContentColor`
+#### 问题 G：缺少 `LocalTextStyle` / `LocalContentColor`（✅ 已实现）
 
 当前主题覆盖只有一个入口：`UiThemeOverride`。这对"修改一小块区域的默认文字颜色"来说太重了。
 
@@ -353,19 +353,19 @@ SESSION_CONTAINER_CHECKLIST.md 定义了 6 类必测场景，LazyColumn 和 TabP
 
 | # | 任务 | 依赖 | 收益 |
 | --- | --- | --- | --- |
-| 9 | Theme.kt 拆文件（5 个文件，纯重构） | 无 | 可维护性 |
-| 10 | 设计 UiComponentOverrides 稀疏模型 | #9 | Phase B 基础 |
-| 11 | 迁移 ButtonDefaults → 动态解析器 | #10 | 试点验证 |
-| 12 | 扩展到 TextFieldDefaults / CheckboxDefaults 等 | #11 | 全面生效 |
-| 13 | 删除 rebaseComponentStyles | #12 | 消除技术债 |
+| 9 | Theme.kt 拆文件（5 个文件，纯重构） | 无 | 可维护性 | ✅ 已完成 (`b79ee39`) |
+| 10 | 设计 UiComponentOverrides 稀疏模型 | #9 | Phase B 基础 | ✅ 已完成 (`62b072f`) |
+| 11 | 迁移 ButtonDefaults → 动态解析器 | #10 | 试点验证 | ✅ 已完成 (`62b072f`) |
+| 12 | 扩展到 TextFieldDefaults / CheckboxDefaults 等 | #11 | 全面生效 | ✅ 已完成 (`62b072f`) |
+| 13 | 删除 rebaseComponentStyles | #12 | 消除技术债 | ✅ 已完成 (`62b072f`) |
 
 ### Sprint 4：能力补全（中优先级，可穿插在 Sprint 2/3 之间）
 
-| # | 任务 | 收益 |
-| --- | --- | --- |
-| 14 | 补 LocalTextStyle / LocalContentColor | 细粒度局部样式 |
-| 15 | 文档间交叉引用统一 + 章节编号修复 | 文档一致性 |
-| 16 | NodeViewBinderRegistry unchecked cast 加注释 | 可读性 |
+| # | 任务 | 收益 | 状态 |
+| --- | --- | --- | --- |
+| 14 | 补 LocalTextStyle / LocalContentColor | 细粒度局部样式 | ✅ 已完成 (`44a51c9`) |
+| 15 | 文档间交叉引用统一 + 章节编号修复 | 文档一致性 | |
+| 16 | NodeViewBinderRegistry unchecked cast 加注释 | 可读性 | |
 
 ### 长期（按需推进）
 
@@ -385,10 +385,10 @@ SESSION_CONTAINER_CHECKLIST.md 定义了 6 类必测场景，LazyColumn 和 TabP
 
 | 能力 | Compose 有 | 我们缺 | 建议 |
 | --- | --- | --- | --- |
-| 节点级 skip/patch | skippable composable | NodeSpec 比较器 | Sprint 2 |
+| 节点级 skip/patch | skippable composable | ~~NodeSpec 比较器~~ | ✅ 已完成：字段级 patch 已覆盖 13 种节点 |
 | 错误边界 | ErrorBoundary pattern | ~~render 无 try-catch~~ | ✅ Sprint 1 已完成 |
-| 细粒度 local | LocalTextStyle, LocalContentColor | 只有 Theme 级 | Sprint 4 |
-| 组件默认值动态解析 | defaults() 读当前 Theme | 预解析 resolved values | Sprint 3 |
+| 细粒度 local | LocalTextStyle, LocalContentColor | ~~只有 Theme 级~~ | ✅ 已完成 (`44a51c9`) |
+| 组件默认值动态解析 | defaults() 读当前 Theme | ~~预解析 resolved values~~ | ✅ 已完成 (`62b072f`) |
 | Baseline Profiles | 官方推荐 | 未落地 | 长期 |
 
 ### 6.2 不必追赶的（当前阶段收益低）
@@ -412,7 +412,7 @@ SESSION_CONTAINER_CHECKLIST.md 定义了 6 类必测场景，LazyColumn 和 TabP
 | TODO / FIXME / HACK | 0 | 极为罕见的纪律 |
 | 空 catch 块 | 0 | 无隐藏的异常吞没 |
 | @Suppress("UNCHECKED_CAST") | 4 | 全部有类型安全理由 |
-| 最大单文件 | Theme.kt (886 行) | 应拆分 |
+| 最大单文件 | ~~Theme.kt (886 行)~~ 已拆为 5 个文件 | ✅ 已解决 (`b79ee39`) |
 | object 单例 | ChildReconciler, ViewTreeRenderer | 长期应改 class |
 
 ---
@@ -421,13 +421,13 @@ SESSION_CONTAINER_CHECKLIST.md 定义了 6 类必测场景，LazyColumn 和 TabP
 
 > **UIFramework 是一个架构方向正确、文档质量高、代码纪律极强的 Android View 声明式 UI 框架 v1。**
 >
-> 当前最紧迫的三件事：
-> 1. 补 RenderSession 错误边界（防 crash 循环，30 分钟工作量）
-> 2. 修 ChildReconciler O(n²)（性能正确性，1 小时工作量）
-> 3. ViewTreeRenderer warning 加 reset/cap（测试可靠性，1 小时工作量）
+> 此前最紧迫的三件事已全部解决：
+> 1. ~~补 RenderSession 错误边界~~ → ✅ 已完成
+> 2. ~~修 ChildReconciler O(n²)~~ → ✅ 已完成
+> 3. ~~ViewTreeRenderer warning 加 reset/cap~~ → ✅ 已完成
 >
-> 当前最有价值的演进方向：
-> - **NodeSpec 增量 patch**（性能路线核心，所有基础设施已就绪）
-> - **主题系统 Phase B**（正确性 + 可维护性，消除最大单文件技术债）
+> 此前最有价值的两条演进方向也已完成：
+> - **NodeSpec 增量 patch** → ✅ 已完成：13 种节点支持真正字段级 patch
+> - **主题系统 Phase B** → ✅ 已完成：`UiThemeTokens` 精简为 4 字段，`rebaseComponentStyles` 已删除，`LocalTextStyle` / `ProvideContentColor` 已实现
 >
-> 不应改动的设计：根级 session 模型、Gradle 模块划分、NodeSpec 渐进迁移、Modifier 职责边界、延迟 session 容器测试规范。
+> 不应改动的设计（确认仍有效）：根级 session 模型、Gradle 模块划分、NodeSpec 渐进迁移、Modifier 职责边界、延迟 session 容器测试规范。

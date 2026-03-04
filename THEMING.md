@@ -4,10 +4,12 @@
 
 本文档定义 `UIFramework` 的主题系统目标、分层模型、与 Android View / Compose 的边界，以及后续重构方向。
 
-这份文档现在不再只是“记录当前实现”，而是同时承担两件事：
+这份文档是主题系统的编码标准，后续新增控件和主题扩展都应以此为准。
 
-1. 解释当前主题系统哪些部分已经成立
-2. 明确下一阶段应该往什么结构收敛，避免全局主题和局部复用继续耦合
+它承担两件事：
+
+1. 定义当前主题系统的架构和编码规范
+2. 明确主题系统的分层模型、优先级规则和扩展约束
 
 补充专题：
 
@@ -17,73 +19,33 @@
 
 ## 2. 结论
 
-当前主题系统的 `API 形态` 是合理的：
+当前主题系统的 `API 形态` 和 `内部数据模型` 都已收敛到推荐形态：
 
 - 有全局主题入口 `UiTheme(...)`
 - 有局部主题入口 `UiThemeOverride(...)`
 - 有统一上下文机制 `LocalValue / LocalContext`
 - 有语义 token 和组件默认值体系
-
-但当前 `内部数据模型` 还不够理想。
-
-核心问题是：
-
-> 当前把 `components` 作为“已解析的组件默认值结果”直接存进 `UiThemeTokens`，这会让“基础主题变了，但组件默认值不一定自动跟着变”。
-
-更准确地说，当前模型把下面 3 件事绑得太紧了：
-
-1. 基础语义主题是什么
-2. 组件默认值如何从语义主题推导
-3. 局部想覆盖哪些组件默认值
-
-后续推荐收敛到更接近 Compose 的四层结构：
-
-1. `Semantic Theme`
-2. `Contextual Locals`
-3. `Component Default Resolvers`
-4. `Sparse Component Overrides`
+- 内部数据模型已精简为 4 字段：`colors`, `typography`, `shapes`, `controls`
+- 组件默认值改为从 `Theme.colors` 即时派生，不再预计算
+- 已有 `LocalTextStyle`、`LocalContentColor`、`ProvideTextStyle`、`ProvideContentColor` 等细粒度上下文
+- 稀疏组件覆盖通过 `LocalValue<ButtonColorOverride?>` 等机制实现
 
 简化结论：
 
-> 保留现在的 `UiTheme / UiThemeOverride` API 方向，但内部实现应逐步从“完整 resolved component tokens”演进到“语义主题 + 局部上下文 + 默认值按需计算 + 稀疏组件 override”。
+> `UiTheme / UiThemeOverride` API 方向正确，内部实现已完成从”完整 resolved component tokens”到”语义主题 + 局部上下文 + 默认值按需计算 + 稀疏组件 override”的重构。
 
-## 3. 为什么要调整
+## 3. 已完成的调整
 
-当前主题系统已经支持：
+以下调整已在 Sprint A-F 中全部完成：
 
-- 全局主题切换
-- 暗色 / 亮色
-- Android Theme Bridge
-- 局部颜色 / 形状 / 组件默认值覆盖
-
-这些能力本身没有问题。
-
-真正的问题出现在“主题改动的传导链”上。
-
-例如：
-
-```kotlin
-UiThemeOverride(
-    colors = { copy(primary = brandRed) }
-) {
-    Button(text = "Delete")
-}
-```
-
-按直觉：
-
-- 局部主色变成 `brandRed`
-- 默认按钮主色也应该一起变成 `brandRed`
-
-但如果 `ButtonDefaults` 读的是预先固化好的 `Theme.components.button.primaryContainer`，而不是基于当前 `Theme.colors` 动态解析，就可能出现：
-
-- `Theme.colors.primary` 已经变了
-- `ButtonDefaults` 仍然停在旧色
-
-这会直接伤害两件事：
-
-1. 全局主题的可信度
-2. 局部复用的可预测性
+1. **删除 `UiThemeTokens.components`**：组件默认值不再存储在主题 token 中，改为 Defaults 对象从 `Theme.colors` 即时派生（commit `62b072f`）
+2. **删除 `rebaseComponentStyles()` (270 行)**：不再需要手动级联组件字段（commit `62b072f`）
+3. **降级 `UiInputColors` 和 `UiInteractionColors`**：从 theme 一级字段降为 Defaults 内部派生（commit `44b82b4`）
+4. **Props 统一到 typed NodeSpec**：样式属性纳入 spec，字段级 patch 可覆盖颜色变化（commit `440f847`）
+5. **新增 `Modifier.nativeView(key, configure)`**：冷门 View 属性逃生通道（commit `00cde4f`）
+6. **Android 桥接补全**：typography 桥接和 uiMode 暗色自动检测（commit `78295b1`）
+7. **新增细粒度 local**：`LocalTextStyle`、`ProvideTextStyle`、`ProvideContentColor` 公开 API（commit `44a51c9`）
+8. **Theme.kt 拆分**：从 886 行拆为 5 个文件——`ThemeTokens.kt`、`ComponentStyles.kt`、`ThemeDefaults.kt`、`ThemeRebase.kt`、`Theme.kt`（commit `b79ee39`）
 
 ## 4. Compose 是如何解决这个问题的
 
@@ -144,7 +106,7 @@ Compose 不会要求你每次为了局部文字风格调整都复制整套主题
 ### 5.3 `Theme.xxx`
 
 - 作为读取当前主题的统一入口是合理的
-- 后续仍应保留 `Theme.colors / typography / shapes / controls / interactions`
+- 后续仍应保留 `Theme.colors / typography / shapes / controls`
 
 ### 5.4 `LocalValue / LocalContext`
 
@@ -157,32 +119,23 @@ Compose 不会要求你每次为了局部文字风格调整都复制整套主题
 
 ### 6.1 Semantic Theme Layer
 
-这层只存“全局语义主题”，不存完整的组件默认值结果。
+这层只存”全局语义主题”，不存完整的组件默认值结果。
 
-推荐保留的核心域：
+当前核心域（4 字段）：
 
 - `colors`
 - `typography`
 - `shapes`
 - `controls`
-- `interactions`
-- `input`
 
-其中：
-
-- `input` 可以保留，因为它本质上仍然是基础语义域
-- 但它不应被视为完整组件样式结果
-
-推荐形态：
+当前形态：
 
 ```kotlin
 data class UiThemeTokens(
     val colors: UiColors,
     val typography: UiTypography,
-    val shapes: UiShapes,
-    val controls: UiControlSizing,
-    val interactions: UiInteractionColors,
-    val input: UiInputColors,
+    val shapes: UiShapes = UiShapeDefaults.default(),
+    val controls: UiControlSizing = UiControlSizeDefaults.default(),
 )
 ```
 
@@ -193,21 +146,19 @@ data class UiThemeTokens(
 
 ### 6.2 Contextual Local Layer
 
-这层用于表达“比整套主题更细的局部语义”。
+这层用于表达”比整套主题更细的局部语义”。
 
-推荐后续逐步补齐：
+当前已实现：
 
-- `LocalTextStyle`
-- `LocalContentColor`
+- `LocalTextStyle` / `ProvideTextStyle` — 子树默认文字样式
+- `LocalContentColor` / `ProvideContentColor` — 子树默认内容色
+- `Theme` — 全局主题上下文
+- `Environment` — 环境上下文
+
+后续可按需补齐：
+
 - `LocalIndication`
 - `LocalContentAlpha` 或等效机制
-
-当前已有：
-
-- `Theme`
-- `Environment`
-
-这说明 local 机制已经具备基础条件。
 
 设计目标：
 
@@ -216,9 +167,7 @@ data class UiThemeTokens(
 
 ### 6.3 Component Default Resolver Layer
 
-这层是主题系统的真正关键。
-
-组件默认值应该通过 resolver 按当前上下文动态计算，而不是直接从“预先固化好的组件 token 树”读取。
+这层是主题系统的真正关键。当前已改为从 `Theme.colors` 即时派生，不再读预计算 token。
 
 例如：
 
@@ -231,48 +180,39 @@ object ButtonDefaults {
 }
 ```
 
-其解析来源应当是：
+其解析来源：
 
 1. 当前 `Theme.colors`
 2. 当前 `Theme.shapes`
 3. 当前 `Theme.controls`
-4. 当前 `Theme.interactions`
-5. 当前局部 component override
-6. 当前局部 local（如 content color / indication）
-
-这才是后期可扩展的结构。
+4. 当前局部 component override（`LocalValue<ButtonColorOverride?>`）
+5. 当前局部 local（如 `ContentColor` / `LocalTextStyle`）
 
 ### 6.4 Sparse Component Override Layer
 
-这层不是“完整组件样式结果”，而是“局部 patch”。
+这层不是”完整组件样式结果”，而是”局部 patch”。当前已通过 `LocalValue<ButtonColorOverride?>` 等机制实现。
 
-推荐模型不是：
-
-```kotlin
-data class UiComponentStyles(
-    val button: UiButtonStyles,
-    ...
-)
-```
-
-而更接近：
+当前模型：
 
 ```kotlin
-data class UiComponentOverrides(
-    val button: UiButtonOverride? = null,
-    val textField: UiTextFieldOverride? = null,
-    ...
-)
-```
-
-其中每个 override 应该尽量是 `nullable` 字段：
-
-```kotlin
-data class UiButtonOverride(
+data class ButtonColorOverride(
     val primaryContainer: Int? = null,
     val primaryContent: Int? = null,
     val outlinedBorder: Int? = null,
 )
+
+private val LocalButtonColors = LocalValue<ButtonColorOverride?> { null }
+```
+
+使用侧：
+
+```kotlin
+fun UiTreeBuilder.UiButtonColorOverride(
+    override: ButtonColorOverride,
+    content: UiTreeBuilder.() -> Unit,
+) {
+    LocalContext.provide(LocalButtonColors, override) { content() }
+}
 ```
 
 好处：
@@ -425,30 +365,33 @@ UiThemeOverride(
 
 后续即使内部主题结构重构，也不影响这个原则。
 
-## 11. 推荐重构路径
+## 11. 重构完成记录
 
-不建议一次性推翻当前主题实现，推荐渐进迁移：
+以下 Phase 已全部完成：
 
-### Phase A
+### Phase A ✅
 
 - 保留现有 `UiTheme / UiThemeOverride` API
 - 新文档冻结新的语义边界
 
-### Phase B
+### Phase B ✅
 
-- 把 `UiThemeTokens.components` 从“resolved values” 逐步迁到“override patches”
-- `ButtonDefaults / TextFieldDefaults / CheckboxDefaults` 改成动态解析
+- `UiThemeTokens.components` 已删除，组件颜色改为 Defaults 即时派生
+- `ButtonDefaults / TextFieldDefaults / CheckboxDefaults` 等已改为从 `Theme.colors` 动态解析
+- 稀疏覆盖通过 `LocalValue<XxxColorOverride?>` 实现
 
-### Phase C
+### Phase C ✅
 
-- 引入更细的 local：
-  - `LocalTextStyle`
-  - `LocalContentColor`
-  - `LocalIndication`
+- `LocalTextStyle` / `ProvideTextStyle` 已实现
+- `LocalContentColor` / `ProvideContentColor` 已实现（公开 API）
+- `LocalIndication` 可按需后续补充
 
-### Phase D
+### Phase D ✅
 
-- 清理旧的“完整组件 token 树”思路
+- 旧的”完整组件 token 树”已彻底清理
+- `rebaseComponentStyles()`（270 行）已删除
+- `UiInputColors` / `UiInteractionColors` 已从 theme 降级
+- `ThemeRebase.kt` 从 93 行简化为 15 行（只做 `copy()`）
 - 文档与实现完全对齐
 
 ## 12. 当前判断
@@ -457,18 +400,19 @@ UiThemeOverride(
 
 > 现在这套全局主题 + 局部复用设计是否合理？
 
-我的判断是：
+当前判断是：
 
 - `方向合理`
 - `API 合理`
-- `内部模型需要重构`
+- `内部模型已完成重构`
 
 如果只问一句：
 
 > 后期是否容易扩展？
 
-我的判断是：
+当前判断是：
 
-- 按当前实现直接继续堆功能，不够理想
-- 按本文档推荐的分层重构后，会明显更稳
+- 4 字段 `UiThemeTokens` + 即时派生 Defaults + 稀疏 LocalValue 覆盖，结构清晰
+- 新增控件无需修改 Theme / Rebase，只需新增 Defaults 对象
+- 局部上下文通过 `ProvideTextStyle` / `ProvideContentColor` 等轻量 local 承载，不膨胀 `UiThemeOverride`
 

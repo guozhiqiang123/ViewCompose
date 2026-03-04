@@ -50,6 +50,7 @@
 - 外观修饰：`backgroundColor`、`border`、`cornerRadius`、`alpha`
 - 可见性与层级：`visibility`、`offset`、`zIndex`
 - 通用交互：`clickable`
+- 逃生通道：`nativeView(key, configure)` — 在所有框架 binding 完成后，对底层 Android View 执行用户回调，用于设置框架未映射的冷门属性（如 `contentDescription`、`clipChildren`、`elevation` 等）
 
 这些能力的共同点是：
 
@@ -181,34 +182,34 @@ Theme -> Modifier -> Renderer
 - 新增能力优先回到控件参数 / `Prop`
 - 文本、输入、按钮等控件默认值链路逐步从 `Modifier` 转为 `Prop`
 
-当前状态：已开始
+当前状态：✅ 已完成
 
-当前已完成的子项：
+已完成的子项：
 
 - 内置 `Text`、`Button`、`TextField`、`Checkbox`、`Switch`、`RadioButton` 的文本颜色 / 字号默认值已优先走 `Prop`
 - 选择类控件的默认 pressed/ripple 样式已优先走 `Prop`
-- renderer 已实现“优先读 `Prop`，兼容旧 modifier”的过渡逻辑
+- renderer 已实现”优先读 `Prop`，兼容旧 modifier”的过渡逻辑
 - `Text` 已提供显式 `color` 参数，demo 已不再依赖 `Modifier.textColor(...)`
 - `Button`、`TextField`、`Surface`、`IconButton` 的默认背景 / 描边 / 圆角 / ripple / 最小高度 / 内边距已开始通过 style props 下发
-- renderer 已实现“显式 modifier 覆盖 style props”的优先级规则，用于兼容现有外部调用
-- renderer 已开始对 `Modifier.textColor` / `Modifier.textSize` 输出一次性迁移 warning，避免旧兼容层继续被静默使用
+- renderer 已实现”显式 modifier 覆盖 style props”的优先级规则，用于兼容现有外部调用
+- 所有样式属性已统一纳入 typed NodeSpec，旧 `Modifier.textColor` / `Modifier.textSize` 及对应 legacy element 已删除
 
 ### Phase 3
 
 - 引入 `RowScope`、`ColumnScope`、`BoxScope`
 - 将 `weight`、`align` 等父布局相关能力迁入 scope
 
-当前状态：已开始铺垫
+当前状态：✅ 已完成
 
-当前已完成的子项：
+已完成的子项：
 
 - `weight`、`align` 的 parent-data 规则已抽成统一校验
 - renderer 已在运行时对错误宿主输出一次性 warning
 - `ui-renderer` 已补 parent-data 校验单测
 - `Row`、`Column`、`Box`、`Surface` 的内容 lambda 已切到对应 scope receiver
 - scope 内已提供 `weight` / `align` / `FlexibleSpacer` 的正确入口
-- 全局 `weight` / `align` / `FlexibleSpacer` 已开始标记为迁移型 API，用于把调用面逐步引导到 scope
-- demo 与框架内部调用已优先切到 scope 解析，不再显式导入全局 parent-data API
+- 全局 `weight` / `align` / `FlexibleSpacer` 已标记为迁移型 API
+- demo 与框架内部调用已优先切到 scope 解析
 
 ### Phase 4
 

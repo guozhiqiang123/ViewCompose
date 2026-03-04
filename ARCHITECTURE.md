@@ -29,7 +29,7 @@
 - 已经能稳定支撑“声明式 API + View 互操作 + keyed 更新 + demo/manual test”
 - 复杂度仍然可控
 - 和 Android View 主线程模型是兼容的
-- `typed props` 已经完成向 `NodeProps` 的过渡基础设施建设
+- `typed props` 已经完成向 `NodeSpec` 的统一迁移，Props 已降级为兼容层
 
 但它还不是最终形态。和 Compose 相比，当前架构仍然有 5 个明显短板：
 
@@ -37,7 +37,7 @@
 2. renderer 仍然过于集中，`ViewTreeRenderer` 是明显的大类
 3. 组合运行时还主要住在 `ui-widget-core`，`ui-runtime` 仍然过薄
 4. `VNode + Props` 仍然偏动态，类型约束和错误发现能力弱于 Compose
-5. `Props` 仍然存在于主链路里，尚未完全收缩为兼容/扩展层
+5. ~~`Props` 仍然存在于主链路里，尚未完全收缩为兼容/扩展层~~ → `Props` 已降级为兼容层，第一方控件主模型已迁移到 NodeSpec
 
 所以正确结论不是“架构已经成熟”，而是：
 
@@ -193,7 +193,7 @@ widget/core/
 解释：
 
 - `bridge/` 放 Android theme/environment 桥接
-- `context/` 只放 local、theme、environment、content color、image loading 这类 ambient context
+- `context/` 只放 local、theme、environment、content color、text style local、image loading 这类 ambient context。当前包含 `Theme.kt`、`ThemeTokens.kt`、`ThemeDefaults.kt`、`ThemeRebase.kt`、`ComponentStyles.kt`、`ContentColor.kt`、`TextStyleLocal.kt`、`Environment.kt`、`LocalValue.kt`、`ImageLoading.kt`
 - `defaults/content/` 放文本、divider 等内容控件默认值
 - `defaults/input/` 放 text field、toggle、slider 等输入控件默认值
 - `defaults/action/` 放 button、icon button、segmented control 默认值
@@ -315,7 +315,8 @@ flowchart TD
 
 结论：
 
-- `context/` 现在重新回到“ambient context”职责
+- `context/` 现在重新回到”ambient context”职责，Theme 已从 886 行拆为 5 个文件（`Theme.kt`、`ThemeTokens.kt`、`ThemeDefaults.kt`、`ThemeRebase.kt`、`ComponentStyles.kt`），另新增 `ContentColor.kt` 和 `TextStyleLocal.kt`
+- `UiThemeTokens` 已精简为 4 字段（`colors`, `typography`, `shapes`, `controls`），context 边界清晰
 - overlay 相关契约和 reducer 已经移到 `overlay/`、`overlay/runtime/`
 - `dsl/` 已经从单个 `Widgets.kt` 拆成按控件族归类的文件
 - `defaults/` 也已经和 DSL 一样按语义目录归类
@@ -511,16 +512,17 @@ flowchart TD
 - 这次拆分是合理中间态
 - 后续如果继续扩控件，应优先继续下沉 props 解析与节点 binder，而不是回到大文件堆逻辑
 
-### 7.3 `VNode + Props` 仍然过于动态
+### 7.4 `VNode + Props` 仍然过于动态
 
-当前 `Props` 的底层仍是 `Map<String, Any?>`，但已经开始引入渐进式类型边界：
+当前 `Props` 的底层仍是 `Map<String, Any?>`，但已经完成渐进式类型边界迁移：
 
 - `PropKey<T>`
 - `Props.get(key: PropKey<T>)`
-- `props { set(...) }`
-- 高频控件、核心容器和通用样式读取开始迁移到 typed prop keys
+- 所有第一方控件（除 Spacer）已完成 NodeSpec 覆盖
+- Props 已降级为兼容层和扩展层，不再是第一方控件主模型
+- 样式属性已统一纳入 typed NodeSpec，字段级 patch 可覆盖颜色变化
 
-即使第一方常用节点已经基本完成 `NodeProps` 覆盖，`Props` 仍然会带来：
+即使第一方常用节点已经基本完成 `NodeSpec` 覆盖，`Props` 仍然会带来：
 
 - prop key 拼写和组合错误只能运行时发现
 - 节点类型与 prop 集合之间没有强类型约束
@@ -540,32 +542,24 @@ Compose 的优势在于：
 
 - 现在的 typed prop 方向是合理的
 - 但它目前还是“typed key 包裹动态 map”，不是完整强类型节点参数模型
-- 当前第一方控件节点已经基本完成 `NodeProps` 覆盖，`Spacer` 之外的常用节点都已有结构化 spec
-- 下一阶段不该继续停留在“补更多 spec 文件”，而应开始利用现有 spec 结果做节点级 diff、binder 局部跳过更新和 debug 能力
-- `Props` 应继续保留，但它的角色应收缩成兼容层和扩展层，而不是第一方控件主模型
+- 当前第一方控件节点已经全部完成 `NodeSpec` 覆盖（除 Spacer），样式属性也已纳入 spec
+- 下一阶段应继续利用现有 spec 结果做节点级 diff、binder 局部跳过更新和 debug 能力
+- `Props` 已收缩为兼容层和扩展层，不再是第一方控件主模型
 
-### 7.35 `typed props` 还不是长期终态
+### 7.45 `typed props` 已完成迁移到 NodeSpec
 
-当前 `PropKey<T> + Props(Map)` 已经明显优于纯字符串 key，但它仍然是动态容器。
+所有第一方控件（除 Spacer）已完成 NodeSpec 覆盖，样式属性已统一纳入 typed spec：
 
-问题在于：
-
-- 复杂节点仍然缺少集中结构
-- 节点不变式仍然分散
-- 后续做调试、schema、节点级优化时，结构约束不够强
-
-因此当前更合理的下一步已经从“继续堆更多 typed key”推进到了：
-
-- 保留 `typed props` 作为底层兼容层
-- 在第一方高频节点上优先读取 `NodeProps`
-- 基于 `NodeProps` 设计更细的节点级更新边界
-- 在时机成熟后，把 `Props` 从主模型收缩为 internal bridge
+- `Button`、`Text`、`TextField` 等 13 种节点已接入真正字段级 patch
+- `TabPager`、`SegmentedControl` 走结构级 patch（委托 full bind）
+- `Props` 保留为底层兼容层
+- 基于 `NodeSpec` 的字段级 diff + patch 已落地，样式变化（包括主题切换引发的颜色变化）可走 Patch 而非 Rebind
 
 详细方案见 [NODE_PROPS.md](/Users/gzq/AndroidStudioProjects/UIFramework/NODE_PROPS.md)。
 性能主线见 [PERFORMANCE.md](/Users/gzq/AndroidStudioProjects/UIFramework/PERFORMANCE.md)。
 延迟 session 容器专项检查见 [SESSION_CONTAINER_CHECKLIST.md](/Users/gzq/AndroidStudioProjects/UIFramework/SESSION_CONTAINER_CHECKLIST.md)。
 
-### 7.4 通用页面节点更新粒度仍偏粗
+### 7.5 通用页面节点更新粒度仍偏粗
 
 当前普通页面节点仍然主要依赖：
 
@@ -588,7 +582,7 @@ Compose 的优势在于：
 - 这不是当前最优先要解决的问题
 - 但它是长期扩展上限的核心瓶颈
 
-### 7.5 package 分层已开始，但 public API 仍需克制演进
+### 7.6 package 分层已开始，但 public API 仍需克制演进
 
 这一轮整理不再只是“按文件夹归类”，`ui-runtime` 和 `ui-renderer/view` 的内部实现已经开始和目录同步做 package 分层：
 
