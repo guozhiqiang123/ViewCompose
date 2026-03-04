@@ -140,10 +140,10 @@ internal fun UiTreeBuilder.OverviewPage(
                 ThemeSwatchRow(
                     "Input",
                     listOf(
-                        ThemeSwatch("Field", Theme.input.fieldContainer),
-                        ThemeSwatch("Control", Theme.input.control),
-                        ThemeSwatch("Error", Theme.input.fieldError),
-                        ThemeSwatch("Pressed", Theme.interactions.pressedOverlay),
+                        ThemeSwatch("Field", Theme.colors.surface),
+                        ThemeSwatch("Control", Theme.colors.primary),
+                        ThemeSwatch("Error", 0xFFB3261E.toInt()),
+                        ThemeSwatch("Pressed", 0x22000000 or (Theme.colors.textPrimary and 0x00FFFFFF)),
                     ),
                 )
                 Text(
@@ -230,44 +230,36 @@ internal fun UiTreeBuilder.OverviewPage(
                         }
                     }
                 }
-                UiThemeOverride(
-                    interactions = {
-                        copy(
-                            pressedOverlay = (Theme.colors.primary and 0x00FFFFFF) or 0x44000000,
-                        )
-                    },
+                Column(
+                    spacing = 8.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .backgroundColor(SurfaceDefaults.backgroundColor())
+                        .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                        .padding(12.dp),
                 ) {
-                    Column(
+                    Text(text = "Pressed Overlay (derived)")
+                    ThemeSwatchRow(
+                        label = "Pressed Overlay",
+                        swatches = listOf(
+                            ThemeSwatch("Base", 0x22000000 or (Theme.colors.textPrimary and 0x00FFFFFF)),
+                            ThemeSwatch("Primary", Theme.colors.primary),
+                        ),
+                    )
+                    Row(
                         spacing = 8.dp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .backgroundColor(SurfaceDefaults.backgroundColor())
-                            .cornerRadius(SurfaceDefaults.cardCornerRadius())
-                            .padding(12.dp),
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Text(text = "Interaction Override")
-                        ThemeSwatchRow(
-                            label = "Pressed Overlay",
-                            swatches = listOf(
-                                ThemeSwatch("Base", Theme.interactions.pressedOverlay),
-                                ThemeSwatch("Primary", Theme.colors.primary),
-                            ),
+                        Button(
+                            text = "Press Me",
+                            variant = ButtonVariant.Primary,
+                            modifier = Modifier.weight(1f),
                         )
-                        Row(
-                            spacing = 8.dp,
-                            modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            Button(
-                                text = "Press Me",
-                                variant = ButtonVariant.Primary,
-                                modifier = Modifier.weight(1f),
-                            )
-                            Button(
-                                text = "Outlined",
-                                variant = ButtonVariant.Outlined,
-                                modifier = Modifier.weight(1f),
-                            )
-                        }
+                        Button(
+                            text = "Outlined",
+                            variant = ButtonVariant.Outlined,
+                            modifier = Modifier.weight(1f),
+                        )
                     }
                 }
                 ProvideButtonColors(

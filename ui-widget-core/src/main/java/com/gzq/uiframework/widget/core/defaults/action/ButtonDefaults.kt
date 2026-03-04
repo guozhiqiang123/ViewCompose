@@ -163,5 +163,5 @@ object ButtonDefaults {
         }
     }
 
-    fun pressedColor(): Int = Theme.interactions.pressedOverlay
+    fun pressedColor(): Int = pressedOverlayColorFor(Theme.colors.textPrimary)
 }

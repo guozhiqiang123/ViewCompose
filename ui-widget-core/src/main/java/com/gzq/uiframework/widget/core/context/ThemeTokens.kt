@@ -11,25 +11,9 @@ data class UiColors(
     val textSecondary: Int,
 )
 
-data class UiInputColors(
-    val fieldContainer: Int,
-    val fieldContainerDisabled: Int,
-    val fieldError: Int,
-    val fieldText: Int,
-    val fieldTextDisabled: Int,
-    val fieldHint: Int,
-    val fieldHintDisabled: Int,
-    val control: Int,
-    val controlDisabled: Int,
-)
-
 data class UiShapes(
     val cardCornerRadius: Int,
     val controlCornerRadius: Int,
-)
-
-data class UiInteractionColors(
-    val pressedOverlay: Int,
 )
 
 data class UiTextStyle(
@@ -45,11 +29,14 @@ data class UiTypography(
 data class UiThemeTokens(
     val colors: UiColors,
     val typography: UiTypography,
-    val input: UiInputColors = UiInputDefaults.fromColors(colors),
     val shapes: UiShapes = UiShapeDefaults.default(),
     val controls: UiControlSizing = UiControlSizeDefaults.default(),
-    val interactions: UiInteractionColors = UiInteractionDefaults.fromColors(colors),
 )
+
+internal fun pressedOverlayColorFor(textPrimary: Int): Int {
+    val base = textPrimary and 0x00FFFFFF
+    return 0x22000000 or base
+}
 
 internal fun contentColorFor(backgroundColor: Int): Int {
     val red = backgroundColor shr 16 and 0xFF

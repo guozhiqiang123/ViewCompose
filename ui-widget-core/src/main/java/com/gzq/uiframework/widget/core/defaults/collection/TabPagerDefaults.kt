@@ -29,5 +29,5 @@ object TabPagerDefaults {
         return override?.text ?: Theme.colors.textSecondary
     }
 
-    fun rippleColor(): Int = Theme.interactions.pressedOverlay
+    fun rippleColor(): Int = pressedOverlayColorFor(Theme.colors.textPrimary)
 }

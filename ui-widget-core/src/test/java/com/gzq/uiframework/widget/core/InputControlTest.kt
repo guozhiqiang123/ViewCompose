@@ -26,17 +26,6 @@ class InputControlTest {
                 body = UiTextStyle(fontSizeSp = 19),
                 label = UiTextStyle(fontSizeSp = 13),
             ),
-            input = UiInputColors(
-                fieldContainer = 81,
-                fieldContainerDisabled = 82,
-                fieldError = 83,
-                fieldText = 91,
-                fieldTextDisabled = 92,
-                fieldHint = 85,
-                fieldHintDisabled = 86,
-                control = 93,
-                controlDisabled = 94,
-            ),
         )
         val tree = buildVNodeTree {
             UiTheme(customTheme) {
@@ -55,10 +44,10 @@ class InputControlTest {
         assertEquals("Enable logs", spec.text)
         assertEquals(true, spec.checked)
         assertEquals(true, spec.enabled)
-        assertEquals(93, spec.controlColor)
-        assertEquals(91, spec.textColor)
+        assertEquals(customTheme.colors.primary, spec.controlColor)
+        assertEquals(customTheme.colors.textPrimary, spec.textColor)
         assertEquals(customTheme.typography.body.fontSizeSp, spec.textSizeSp)
-        assertEquals(customTheme.interactions.pressedOverlay, spec.rippleColor)
+        assertEquals(pressedOverlayColorFor(customTheme.colors.textPrimary), spec.rippleColor)
         assertTrue(node.spec is ToggleNodeProps)
     }
 

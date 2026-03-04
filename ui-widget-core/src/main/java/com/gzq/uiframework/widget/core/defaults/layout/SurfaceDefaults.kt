@@ -30,7 +30,7 @@ object SurfaceDefaults {
 
     fun variantContentColor(): Int = TextDefaults.secondaryColor()
 
-    fun pressedColor(): Int = Theme.interactions.pressedOverlay
+    fun pressedColor(): Int = pressedOverlayColorFor(Theme.colors.textPrimary)
 
     fun disabledAlpha(): Float = 0.72f
 }

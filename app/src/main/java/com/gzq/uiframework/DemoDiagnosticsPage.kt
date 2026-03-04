@@ -124,7 +124,7 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                         DiagnosticFact("Surface", Theme.colors.surface.asColorHex()),
                         DiagnosticFact("Primary", Theme.colors.primary.asColorHex()),
                         DiagnosticFact("Accent", Theme.colors.accent.asColorHex()),
-                        DiagnosticFact("Pressed", Theme.interactions.pressedOverlay.asColorHex()),
+                        DiagnosticFact("Pressed", (0x22000000 or (Theme.colors.textPrimary and 0x00FFFFFF)).asColorHex()),
                         DiagnosticFact("Card radius", "${Theme.shapes.cardCornerRadius}px"),
                     ),
                 )

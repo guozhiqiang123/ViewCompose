@@ -58,9 +58,9 @@ class TextFieldTest {
         assertEquals(customTheme.colors.textSecondary, spec.hintColor)
         assertEquals(customTheme.colors.textPrimary, spec.textColor)
         assertEquals(customTheme.typography.body.fontSizeSp, spec.textSizeSp)
-        assertEquals(customTheme.input.fieldContainer, spec.backgroundColor)
+        assertEquals(customTheme.colors.surface, spec.backgroundColor)
         assertEquals(customTheme.shapes.controlCornerRadius, spec.cornerRadius)
-        assertEquals(customTheme.interactions.pressedOverlay, spec.rippleColor)
+        assertEquals(pressedOverlayColorFor(customTheme.colors.textPrimary), spec.rippleColor)
         assertEquals(true, spec.enabled)
         assertTrue(node.spec is TextFieldNodeProps)
     }
@@ -129,7 +129,7 @@ class TextFieldTest {
         val spec = tree.single().spec as TextFieldNodeProps
 
         assertEquals(0x00000000, spec.backgroundColor)
-        assertEquals(Theme.input.control, spec.borderColor)
+        assertEquals(Theme.colors.primary, spec.borderColor)
         assertEquals(1.dp, spec.borderWidth)
     }
 

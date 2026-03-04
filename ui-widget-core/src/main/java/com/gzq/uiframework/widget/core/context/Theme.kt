@@ -14,17 +14,11 @@ object Theme {
     val typography: UiTypography
         get() = current.typography
 
-    val input: UiInputColors
-        get() = current.input
-
     val shapes: UiShapes
         get() = current.shapes
 
     val controls: UiControlSizing
         get() = current.controls
-
-    val interactions: UiInteractionColors
-        get() = current.interactions
 }
 
 fun UiTreeBuilder.UiTheme(
@@ -43,10 +37,8 @@ fun UiTreeBuilder.UiTheme(
 fun UiTreeBuilder.UiThemeOverride(
     colors: UiColors? = null,
     typography: UiTypography? = null,
-    input: UiInputColors? = null,
     shapes: UiShapes? = null,
     controls: UiControlSizing? = null,
-    interactions: UiInteractionColors? = null,
     content: UiTreeBuilder.() -> Unit,
 ) {
     LocalContext.provide(
@@ -54,10 +46,8 @@ fun UiTreeBuilder.UiThemeOverride(
         value = Theme.current.override(
             colors = colors,
             typography = typography,
-            input = input,
             shapes = shapes,
             controls = controls,
-            interactions = interactions,
         ),
     ) {
         content()
@@ -67,19 +57,15 @@ fun UiTreeBuilder.UiThemeOverride(
 fun UiTreeBuilder.UiThemeOverride(
     colors: (UiColors.() -> UiColors)? = null,
     typography: (UiTypography.() -> UiTypography)? = null,
-    input: (UiInputColors.() -> UiInputColors)? = null,
     shapes: (UiShapes.() -> UiShapes)? = null,
     controls: (UiControlSizing.() -> UiControlSizing)? = null,
-    interactions: (UiInteractionColors.() -> UiInteractionColors)? = null,
     content: UiTreeBuilder.() -> Unit,
 ) {
     UiThemeOverride(
         colors = colors?.invoke(Theme.colors),
         typography = typography?.invoke(Theme.typography),
-        input = input?.invoke(Theme.input),
         shapes = shapes?.invoke(Theme.shapes),
         controls = controls?.invoke(Theme.controls),
-        interactions = interactions?.invoke(Theme.interactions),
         content = content,
     )
 }

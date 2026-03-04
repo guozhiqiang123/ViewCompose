@@ -1,21 +1,5 @@
 package com.gzq.uiframework.widget.core
 
-object UiInputDefaults {
-    fun fromColors(colors: UiColors): UiInputColors {
-        return UiInputColors(
-            fieldContainer = colors.surface,
-            fieldContainerDisabled = colors.surfaceVariant,
-            fieldError = 0xFFB3261E.toInt(),
-            fieldText = colors.textPrimary,
-            fieldTextDisabled = colors.textSecondary,
-            fieldHint = colors.textSecondary,
-            fieldHintDisabled = colors.divider,
-            control = colors.primary,
-            controlDisabled = colors.divider,
-        )
-    }
-}
-
 object UiShapeDefaults {
     fun default(): UiShapes {
         return UiShapes(
@@ -66,15 +50,6 @@ object UiControlSizeDefaults {
                 circularSize = 32.dp,
                 circularTrackThickness = 4.dp,
             ),
-        )
-    }
-}
-
-object UiInteractionDefaults {
-    fun fromColors(colors: UiColors): UiInteractionColors {
-        val base = colors.textPrimary and 0x00FFFFFF
-        return UiInteractionColors(
-            pressedOverlay = 0x22000000 or base,
         )
     }
 }

@@ -26,9 +26,9 @@ object TextFieldDefaults {
 
     fun textColor(enabled: Boolean = true): Int {
         return if (enabled) {
-            Theme.input.fieldText
+            Theme.colors.textPrimary
         } else {
-            Theme.input.fieldTextDisabled
+            Theme.colors.textSecondary
         }
     }
 
@@ -37,9 +37,9 @@ object TextFieldDefaults {
         isError: Boolean = false,
     ): Int {
         return when {
-            isError -> Theme.input.fieldError
-            enabled -> Theme.input.fieldHint
-            else -> Theme.input.fieldHintDisabled
+            isError -> 0xFFB3261E.toInt()
+            enabled -> Theme.colors.textSecondary
+            else -> Theme.colors.divider
         }
     }
 
@@ -66,22 +66,22 @@ object TextFieldDefaults {
         return when {
             variant == TextFieldVariant.Outlined -> 0x00000000
             isError && variant == TextFieldVariant.Tonal ->
-                override?.tonalErrorContainer ?: Theme.input.fieldError
+                override?.tonalErrorContainer ?: 0xFFB3261E.toInt()
 
             isError ->
-                override?.filledErrorContainer ?: Theme.input.fieldError
+                override?.filledErrorContainer ?: 0xFFB3261E.toInt()
 
             variant == TextFieldVariant.Tonal && enabled ->
                 override?.tonalContainer ?: Theme.colors.surfaceVariant
 
             variant == TextFieldVariant.Tonal ->
-                override?.tonalDisabledContainer ?: Theme.input.fieldContainerDisabled
+                override?.tonalDisabledContainer ?: Theme.colors.surfaceVariant
 
             enabled ->
-                override?.filledContainer ?: Theme.input.fieldContainer
+                override?.filledContainer ?: Theme.colors.surface
 
             else ->
-                override?.filledDisabledContainer ?: Theme.input.fieldContainerDisabled
+                override?.filledDisabledContainer ?: Theme.colors.surfaceVariant
         }
     }
 
@@ -93,13 +93,13 @@ object TextFieldDefaults {
         val override = LocalContext.current(LocalTextFieldColors)
         return when {
             isError ->
-                override?.outlinedErrorBorder ?: Theme.input.fieldError
+                override?.outlinedErrorBorder ?: 0xFFB3261E.toInt()
 
             variant == TextFieldVariant.Outlined && enabled ->
-                override?.outlinedBorder ?: Theme.input.control
+                override?.outlinedBorder ?: Theme.colors.primary
 
             variant == TextFieldVariant.Outlined ->
-                override?.outlinedDisabledBorder ?: Theme.input.controlDisabled
+                override?.outlinedDisabledBorder ?: Theme.colors.divider
 
             else -> 0x00000000
         }
@@ -146,5 +146,5 @@ object TextFieldDefaults {
         }
     }
 
-    fun pressedColor(): Int = Theme.interactions.pressedOverlay
+    fun pressedColor(): Int = pressedOverlayColorFor(Theme.colors.textPrimary)
 }

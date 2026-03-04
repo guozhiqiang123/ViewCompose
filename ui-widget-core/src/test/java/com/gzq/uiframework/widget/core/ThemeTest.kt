@@ -106,8 +106,6 @@ class ThemeTest {
         val baseTheme = UiThemeDefaults.light()
         var primary = 0
         var bodySize = 0
-        var controlColor = 0
-        var pressedOverlay = 0
 
         buildVNodeTree {
             UiTheme(baseTheme) {
@@ -116,16 +114,12 @@ class ThemeTest {
                 ) {
                     primary = Theme.colors.primary
                     bodySize = Theme.typography.body.fontSizeSp
-                    controlColor = Theme.input.control
-                    pressedOverlay = Theme.interactions.pressedOverlay
                 }
             }
         }
 
         assertEquals(0xFF225577.toInt(), primary)
         assertEquals(baseTheme.typography.body.fontSizeSp, bodySize)
-        assertEquals(0xFF225577.toInt(), controlColor)
-        assertEquals(UiInteractionDefaults.fromColors(baseTheme.colors.copy(primary = 0xFF225577.toInt())).pressedOverlay, pressedOverlay)
     }
 
     @Test
@@ -224,7 +218,6 @@ class ThemeTest {
     fun `builder theme override composes with object override`() {
         val baseTheme = UiThemeDefaults.light()
         var resolvedPrimary = 0
-        var resolvedPressed = 0
 
         buildVNodeTree {
             UiTheme(baseTheme) {
@@ -233,41 +226,36 @@ class ThemeTest {
                 ) {
                     UiThemeOverride(
                         colors = { copy(primary = 0xFF222222.toInt()) },
-                        interactions = { copy(pressedOverlay = 0x33445566) },
                     ) {
                         resolvedPrimary = Theme.colors.primary
-                        resolvedPressed = Theme.interactions.pressedOverlay
                     }
                 }
             }
         }
 
         assertEquals(0xFF222222.toInt(), resolvedPrimary)
-        assertEquals(0x33445566, resolvedPressed)
     }
 
     @Test
-    fun `theme override preserves explicit interaction overrides while rebasing colors`() {
+    fun `theme override preserves explicit shape overrides while changing colors`() {
         val baseTheme = UiThemeDefaults.light()
-        var pressedOverlay = 0
+        var cornerRadius = 0
 
         buildVNodeTree {
             UiTheme(baseTheme) {
                 UiThemeOverride(
-                    interactions = {
-                        copy(pressedOverlay = 0x44112233)
-                    },
+                    shapes = { copy(controlCornerRadius = 99) },
                 ) {
                     UiThemeOverride(
                         colors = { copy(primary = 0xFF778899.toInt()) },
                     ) {
-                        pressedOverlay = Theme.interactions.pressedOverlay
+                        cornerRadius = Theme.shapes.controlCornerRadius
                     }
                 }
             }
         }
 
-        assertEquals(0x44112233, pressedOverlay)
+        assertEquals(99, cornerRadius)
     }
 
     @Test
@@ -299,7 +287,7 @@ class ThemeTest {
         val spec = tree.single().spec as ButtonNodeProps
         assertEquals(customTheme.colors.primary, spec.backgroundColor)
         assertEquals(customTheme.shapes.controlCornerRadius, spec.cornerRadius)
-        assertEquals(customTheme.interactions.pressedOverlay, spec.rippleColor)
+        assertEquals(pressedOverlayColorFor(customTheme.colors.textPrimary), spec.rippleColor)
         assertEquals(0xFFFFFFFF.toInt(), spec.textColor)
         assertEquals(customTheme.typography.label.fontSizeSp, spec.textSizeSp)
         assertEquals(customTheme.controls.button.mediumHeight, ButtonDefaults.height())
@@ -609,17 +597,6 @@ class ThemeTest {
                 body = UiTextStyle(fontSizeSp = 19),
                 label = UiTextStyle(fontSizeSp = 13),
             ),
-            input = UiInputColors(
-                fieldContainer = 101,
-                fieldContainerDisabled = 102,
-                fieldError = 103,
-                fieldText = 104,
-                fieldTextDisabled = 105,
-                fieldHint = 106,
-                fieldHintDisabled = 107,
-                control = 108,
-                controlDisabled = 109,
-            ),
         )
         var container = 0
         var disabledContainer = 0
@@ -639,12 +616,12 @@ class ThemeTest {
             }
         }
 
-        assertEquals(101, container)
-        assertEquals(102, disabledContainer)
-        assertEquals(103, errorColor)
-        assertEquals(108, controlColor)
+        assertEquals(customTheme.colors.surface, container)
+        assertEquals(customTheme.colors.surfaceVariant, disabledContainer)
+        assertEquals(0xFFB3261E.toInt(), errorColor)
+        assertEquals(customTheme.colors.primary, controlColor)
         assertEquals(customTheme.shapes.cardCornerRadius, cardCornerRadius)
-        assertEquals(customTheme.interactions.pressedOverlay, pressedColor)
+        assertEquals(pressedOverlayColorFor(customTheme.colors.textPrimary), pressedColor)
     }
 
     @Test
@@ -691,14 +668,12 @@ class ThemeTest {
     fun `theme current exposes fully overridden tokens`() {
         val baseTheme = UiThemeDefaults.light()
         val overrideShapes = baseTheme.shapes.copy(controlCornerRadius = 99)
-        val overrideInteractions = baseTheme.interactions.copy(pressedOverlay = 0x12345678)
         var current: UiThemeTokens? = null
 
         buildVNodeTree {
             UiTheme(baseTheme) {
                 UiThemeOverride(
                     shapes = overrideShapes,
-                    interactions = overrideInteractions,
                 ) {
                     current = Theme.current
                 }
@@ -706,7 +681,6 @@ class ThemeTest {
         }
 
         assertEquals(overrideShapes, current?.shapes)
-        assertEquals(overrideInteractions, current?.interactions)
         assertEquals(baseTheme.colors, current?.colors)
     }
 
@@ -748,7 +722,7 @@ class ThemeTest {
         assertEquals(0xFF778899.toInt(), buttonPrimary)
         assertEquals(0xFF998877.toInt(), segmentedIndicator)
         assertEquals(0xFF556677.toInt(), disabledControl)
-        assertEquals(baseTheme.input.fieldContainer, baseTextField)
+        assertEquals(baseTheme.colors.surface, baseTextField)
     }
 
     @Test
