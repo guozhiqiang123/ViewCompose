@@ -14,6 +14,8 @@ import com.gzq.uiframework.renderer.node.spec.BoxNodeProps
 import com.gzq.uiframework.renderer.node.spec.ColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.DividerNodeProps
 import com.gzq.uiframework.renderer.node.spec.RowNodeProps
+import com.gzq.uiframework.renderer.node.spec.ScrollableColumnNodeProps
+import com.gzq.uiframework.renderer.node.spec.ScrollableRowNodeProps
 
 fun UiTreeBuilder.Box(
     key: Any? = null,
@@ -178,5 +180,47 @@ fun UiTreeBuilder.Column(
         ),
         modifier = modifier,
         children = ColumnScope().apply(content).build(),
+    )
+}
+
+fun UiTreeBuilder.ScrollableColumn(
+    key: Any? = null,
+    spacing: Int = 0,
+    arrangement: MainAxisArrangement = MainAxisArrangement.Start,
+    horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Start,
+    modifier: Modifier = Modifier,
+    content: ColumnScope.() -> Unit,
+) {
+    emitResolved(
+        type = NodeType.ScrollableColumn,
+        key = key,
+        spec = ScrollableColumnNodeProps(
+            spacing = spacing,
+            arrangement = arrangement,
+            horizontalAlignment = horizontalAlignment,
+        ),
+        modifier = modifier,
+        children = ColumnScope().apply(content).build(),
+    )
+}
+
+fun UiTreeBuilder.ScrollableRow(
+    key: Any? = null,
+    spacing: Int = 0,
+    arrangement: MainAxisArrangement = MainAxisArrangement.Start,
+    verticalAlignment: VerticalAlignment = VerticalAlignment.Top,
+    modifier: Modifier = Modifier,
+    content: RowScope.() -> Unit,
+) {
+    emitResolved(
+        type = NodeType.ScrollableRow,
+        key = key,
+        spec = ScrollableRowNodeProps(
+            spacing = spacing,
+            arrangement = arrangement,
+            verticalAlignment = verticalAlignment,
+        ),
+        modifier = modifier,
+        children = RowScope().apply(content).build(),
     )
 }

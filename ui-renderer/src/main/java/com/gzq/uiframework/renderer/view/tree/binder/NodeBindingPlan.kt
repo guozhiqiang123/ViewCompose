@@ -7,8 +7,11 @@ import com.gzq.uiframework.renderer.node.spec.DividerNodeProps
 import com.gzq.uiframework.renderer.node.spec.IconButtonNodeProps
 import com.gzq.uiframework.renderer.node.spec.ImageNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
+import com.gzq.uiframework.renderer.node.spec.LazyRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.ProgressIndicatorNodeProps
 import com.gzq.uiframework.renderer.node.spec.RowNodeProps
+import com.gzq.uiframework.renderer.node.spec.ScrollableColumnNodeProps
+import com.gzq.uiframework.renderer.node.spec.ScrollableRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
 import com.gzq.uiframework.renderer.node.spec.SliderNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
@@ -58,6 +61,11 @@ internal data class LazyColumnNodePatch(
     val next: LazyColumnNodeProps,
 ) : NodeViewPatch
 
+internal data class LazyRowNodePatch(
+    val previous: LazyRowNodeProps,
+    val next: LazyRowNodeProps,
+) : NodeViewPatch
+
 internal data class ToggleNodePatch(
     val previous: ToggleNodeProps,
     val next: ToggleNodeProps,
@@ -101,4 +109,14 @@ internal data class IconButtonNodePatch(
 internal data class DividerNodePatch(
     val previous: DividerNodeProps,
     val next: DividerNodeProps,
+) : NodeViewPatch
+
+internal data class ScrollableColumnNodePatch(
+    val previous: ScrollableColumnNodeProps,
+    val next: ScrollableColumnNodeProps,
+) : NodeViewPatch
+
+internal data class ScrollableRowNodePatch(
+    val previous: ScrollableRowNodeProps,
+    val next: ScrollableRowNodeProps,
 ) : NodeViewPatch

@@ -8,8 +8,11 @@ import com.gzq.uiframework.renderer.node.spec.DividerNodeProps
 import com.gzq.uiframework.renderer.node.spec.IconButtonNodeProps
 import com.gzq.uiframework.renderer.node.spec.ImageNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
+import com.gzq.uiframework.renderer.node.spec.LazyRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.ProgressIndicatorNodeProps
 import com.gzq.uiframework.renderer.node.spec.RowNodeProps
+import com.gzq.uiframework.renderer.node.spec.ScrollableColumnNodeProps
+import com.gzq.uiframework.renderer.node.spec.ScrollableRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
 import com.gzq.uiframework.renderer.node.spec.SliderNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
@@ -92,6 +95,16 @@ internal object NodeBindingDiffer {
                     patch = LazyColumnNodePatch(
                         previous = previousLazyColumn,
                         next = nextLazyColumn,
+                    ),
+                )
+            }
+            val previousLazyRow = previous.spec as? LazyRowNodeProps
+            val nextLazyRow = next.spec as? LazyRowNodeProps
+            if (previousLazyRow != null && nextLazyRow != null) {
+                return NodeBindingPlan.Patch(
+                    patch = LazyRowNodePatch(
+                        previous = previousLazyRow,
+                        next = nextLazyRow,
                     ),
                 )
             }
@@ -182,6 +195,26 @@ internal object NodeBindingDiffer {
                     patch = DividerNodePatch(
                         previous = previousDivider,
                         next = nextDivider,
+                    ),
+                )
+            }
+            val previousScrollableColumn = previous.spec as? ScrollableColumnNodeProps
+            val nextScrollableColumn = next.spec as? ScrollableColumnNodeProps
+            if (previousScrollableColumn != null && nextScrollableColumn != null) {
+                return NodeBindingPlan.Patch(
+                    patch = ScrollableColumnNodePatch(
+                        previous = previousScrollableColumn,
+                        next = nextScrollableColumn,
+                    ),
+                )
+            }
+            val previousScrollableRow = previous.spec as? ScrollableRowNodeProps
+            val nextScrollableRow = next.spec as? ScrollableRowNodeProps
+            if (previousScrollableRow != null && nextScrollableRow != null) {
+                return NodeBindingPlan.Patch(
+                    patch = ScrollableRowNodePatch(
+                        previous = previousScrollableRow,
+                        next = nextScrollableRow,
                     ),
                 )
             }

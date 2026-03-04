@@ -1,6 +1,7 @@
 package com.gzq.uiframework.renderer.view.tree
 
 import android.widget.LinearLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.gzq.uiframework.renderer.R
 import com.gzq.uiframework.renderer.layout.BoxAlignment
@@ -10,6 +11,8 @@ import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout
 import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
@@ -24,7 +27,10 @@ import com.gzq.uiframework.renderer.node.spec.BoxNodeProps
 import com.gzq.uiframework.renderer.node.spec.ColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.DividerNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
+import com.gzq.uiframework.renderer.node.spec.LazyRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.RowNodeProps
+import com.gzq.uiframework.renderer.node.spec.ScrollableColumnNodeProps
+import com.gzq.uiframework.renderer.node.spec.ScrollableRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
 import android.view.Gravity
@@ -114,6 +120,20 @@ internal object ContainerViewBinder {
         view.contentGravity = spec.gravity
     }
 
+    fun bindScrollableColumn(
+        view: DeclarativeScrollableColumnLayout,
+        spec: LinearSpec,
+    ) {
+        bindColumn(view.innerLayout, spec)
+    }
+
+    fun bindScrollableRow(
+        view: DeclarativeScrollableRowLayout,
+        spec: LinearSpec,
+    ) {
+        bindRow(view.innerLayout, spec)
+    }
+
     fun bindLazyColumn(
         view: RecyclerView,
         spec: LazyColumnSpec,
@@ -122,7 +142,21 @@ internal object ContainerViewBinder {
             view.adapter = it
         }
         applyLazyListPadding(view, spec.contentPadding)
-        applyLazyListSpacing(view, spec.spacing)
+        applyLazyListSpacing(view, spec.spacing, LinearLayoutManager.VERTICAL)
+        adapter.submitItems(spec.items)
+        spec.state?.recyclerView = view
+    }
+
+    fun bindLazyRow(
+        view: RecyclerView,
+        spec: LazyColumnSpec,
+    ) {
+        val adapter = view.adapter as? LazyColumnAdapter
+            ?: LazyColumnAdapter(LinearLayoutManager.HORIZONTAL).also {
+                view.adapter = it
+            }
+        applyLazyListPadding(view, spec.contentPadding)
+        applyLazyListSpacing(view, spec.spacing, LinearLayoutManager.HORIZONTAL)
         adapter.submitItems(spec.items)
         spec.state?.recyclerView = view
     }
@@ -200,6 +234,38 @@ internal object ContainerViewBinder {
         )
     }
 
+    fun readScrollableColumnSpec(node: VNode): LinearSpec {
+        val spec = node.spec as? ScrollableColumnNodeProps
+        if (spec != null) {
+            return LinearSpec(
+                spacing = spec.spacing,
+                arrangement = spec.arrangement,
+                gravity = spec.horizontalAlignment.toGravity(),
+            )
+        }
+        return LinearSpec(
+            spacing = node.props[TypedPropKeys.LinearSpacing] ?: 0,
+            arrangement = node.props[TypedPropKeys.ColumnMainAxisArrangement] ?: MainAxisArrangement.Start,
+            gravity = (node.props[TypedPropKeys.ColumnHorizontalAlignment] ?: HorizontalAlignment.Start).toGravity(),
+        )
+    }
+
+    fun readScrollableRowSpec(node: VNode): LinearSpec {
+        val spec = node.spec as? ScrollableRowNodeProps
+        if (spec != null) {
+            return LinearSpec(
+                spacing = spec.spacing,
+                arrangement = spec.arrangement,
+                gravity = spec.verticalAlignment.toGravity(),
+            )
+        }
+        return LinearSpec(
+            spacing = node.props[TypedPropKeys.LinearSpacing] ?: 0,
+            arrangement = node.props[TypedPropKeys.RowMainAxisArrangement] ?: MainAxisArrangement.Start,
+            gravity = (node.props[TypedPropKeys.RowVerticalAlignment] ?: VerticalAlignment.Top).toGravity(),
+        )
+    }
+
     fun readBoxSpec(node: VNode): BoxSpec {
         val spec = node.spec as? BoxNodeProps
         if (spec != null) {
@@ -214,6 +280,23 @@ internal object ContainerViewBinder {
 
     fun readLazyColumnSpec(node: VNode): LazyColumnSpec {
         val spec = node.spec as? LazyColumnNodeProps
+        if (spec != null) {
+            return LazyColumnSpec(
+                contentPadding = spec.contentPadding,
+                spacing = spec.spacing,
+                items = spec.items,
+                state = spec.state,
+            )
+        }
+        return LazyColumnSpec(
+            contentPadding = node.props[TypedPropKeys.LazyContentPadding] ?: 0,
+            spacing = node.props[TypedPropKeys.LazySpacing] ?: 0,
+            items = node.props[TypedPropKeys.LazyItems] ?: emptyList(),
+        )
+    }
+
+    fun readLazyRowSpec(node: VNode): LazyColumnSpec {
+        val spec = node.spec as? LazyRowNodeProps
         if (spec != null) {
             return LazyColumnSpec(
                 contentPadding = spec.contentPadding,
@@ -334,6 +417,7 @@ internal object ContainerViewBinder {
     internal fun applyLazyListSpacing(
         recyclerView: RecyclerView,
         spacing: Int,
+        orientation: Int = LinearLayoutManager.VERTICAL,
     ) {
         val existing = recyclerView.getTag(R.id.ui_framework_lazy_spacing_decoration) as? LazyItemSpacingDecoration
         if (existing != null) {
@@ -341,7 +425,7 @@ internal object ContainerViewBinder {
             recyclerView.invalidateItemDecorations()
             return
         }
-        val decoration = LazyItemSpacingDecoration(spacing)
+        val decoration = LazyItemSpacingDecoration(spacing, orientation)
         recyclerView.setTag(R.id.ui_framework_lazy_spacing_decoration, decoration)
         recyclerView.addItemDecoration(decoration)
     }

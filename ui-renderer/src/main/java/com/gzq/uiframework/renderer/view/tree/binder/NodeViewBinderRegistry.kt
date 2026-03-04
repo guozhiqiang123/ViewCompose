@@ -12,6 +12,8 @@ import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
 import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
@@ -144,6 +146,12 @@ internal object NodeViewBinderRegistry {
                     spec = ContainerViewBinder.readLazyColumnSpec(node),
                 )
             },
+            NodeType.LazyRow to { view, node ->
+                ContainerViewBinder.bindLazyRow(
+                    view = view as RecyclerView,
+                    spec = ContainerViewBinder.readLazyRowSpec(node),
+                )
+            },
             NodeType.TabPager to { view, node ->
                 ContainerViewBinder.bindTabPager(
                     view = view as DeclarativeTabPagerLayout,
@@ -160,6 +168,18 @@ internal object NodeViewBinderRegistry {
                         node = node,
                         defaultRippleColor = defaultRippleColor,
                     ),
+                )
+            },
+            NodeType.ScrollableColumn to { view, node ->
+                ContainerViewBinder.bindScrollableColumn(
+                    view = view as DeclarativeScrollableColumnLayout,
+                    spec = ContainerViewBinder.readScrollableColumnSpec(node),
+                )
+            },
+            NodeType.ScrollableRow to { view, node ->
+                ContainerViewBinder.bindScrollableRow(
+                    view = view as DeclarativeScrollableRowLayout,
+                    spec = ContainerViewBinder.readScrollableRowSpec(node),
                 )
             },
         )
@@ -243,6 +263,12 @@ internal object NodeViewBinderRegistry {
                     patch = patch,
                 )
             }
+            is LazyRowNodePatch -> {
+                ContainerNodePatchApplier.applyLazyRowPatch(
+                    view = view as RecyclerView,
+                    patch = patch,
+                )
+            }
             is ToggleNodePatch -> {
                 InputNodePatchApplier.applyTogglePatch(
                     view = view as android.widget.CompoundButton,
@@ -264,6 +290,18 @@ internal object NodeViewBinderRegistry {
             is DividerNodePatch -> {
                 ContentNodePatchApplier.applyDividerPatch(
                     view = view,
+                    patch = patch,
+                )
+            }
+            is ScrollableColumnNodePatch -> {
+                ContainerNodePatchApplier.applyScrollableColumnPatch(
+                    view = view as DeclarativeScrollableColumnLayout,
+                    patch = patch,
+                )
+            }
+            is ScrollableRowNodePatch -> {
+                ContainerNodePatchApplier.applyScrollableRowPatch(
+                    view = view as DeclarativeScrollableRowLayout,
                     patch = patch,
                 )
             }

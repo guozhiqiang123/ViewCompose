@@ -2,7 +2,7 @@
 
 > **日期**：2026-03-04
 > **对照基准**：Jetpack Compose Material 3 1.4.x (stable) + Foundation 1.9.x
-> **框架当前状态**：16 NodeSpec · 11 Defaults · 27 Modifier · 35 DSL · 21 NodeType
+> **框架当前状态**：18 NodeSpec · 11 Defaults · 27 Modifier · 50 DSL · 24 NodeType
 
 ---
 
@@ -12,13 +12,13 @@
 
 | 类别 | 已有组件 |
 |------|---------|
-| 布局容器 | Box, Row, Column, Surface, Spacer, Divider, Card (3 variant), ListItem |
+| 布局容器 | Box, Row, Column, Surface, Spacer, Divider, Card (3 variant), ListItem, ScrollableColumn, ScrollableRow |
 | 内容展示 | Text, Image, Icon, Badge, BadgedBox |
 | 按钮动作 | Button (5 variant incl. Text), TextButton, IconButton (4 variant), SegmentedControl, FloatingActionButton, ExtendedFloatingActionButton |
 | 文本输入 | TextField, PasswordField, EmailField, NumberField, TextArea |
 | 选择输入 | Checkbox, Switch, RadioButton, Slider |
 | 反馈提示 | LinearProgressIndicator, CircularProgressIndicator, Snackbar, Toast, Dialog, Popup, AlertDialog, PlainTooltip |
-| 集合列表 | LazyColumn, TabPager |
+| 集合列表 | LazyColumn, LazyRow, TabPager |
 | 导航 | TopAppBar, BottomAppBar |
 | 逃生通道 | AndroidView |
 
@@ -58,7 +58,7 @@
 | 5 | BottomNavigationBar | `NavigationBar`, `NavigationBarItem` | ⭐⭐⭐⭐⭐ | 新增虚拟组件 | P2-A |
 | 6 | AlertDialog | `AlertDialog` | ⭐⭐⭐⭐ | 组合封装（Dialog + 标准布局） | P2-A |
 | 7 | DropdownMenu | `DropdownMenu`, `DropdownMenuItem` | ⭐⭐⭐⭐ | 新增虚拟组件 | P2-B |
-| 8 | LazyRow | `LazyRow` | ⭐⭐⭐⭐ | 新增虚拟组件（复用 LazyColumn 架构） | P2-A |
+| 8 | ~~LazyRow~~ | `LazyRow` | ⭐⭐⭐⭐ | ~~新增虚拟组件（复用 LazyColumn 架构）~~ | ✅ Phase B |
 | 9 | ListItem | `ListItem` | ⭐⭐⭐⭐ | 组合封装（Row + Column + Icon/Image） | P2-A |
 | 10 | Badge | `Badge`, `BadgedBox` | ⭐⭐⭐ | 组合封装（Box + Text） | P2-B |
 
@@ -399,7 +399,7 @@ fun UiTreeBuilder.Badge(
 | 14 | HorizontalPager | `HorizontalPager` | ⭐⭐⭐ | 新增虚拟组件（复用 ViewPager2） | P2-B |
 | 15 | FlowRow / FlowColumn | `FlowRow`, `FlowColumn` | ⭐⭐⭐ | 新增虚拟组件 | P2-B |
 | 16 | BottomAppBar | `BottomAppBar` | ⭐⭐⭐ | 组合封装（Row 变体） | P2-B |
-| 17 | ScrollableContainer | `verticalScroll`, `horizontalScroll` | ⭐⭐⭐ | 新增虚拟组件 | P2-B |
+| 17 | ~~ScrollableContainer~~ | `verticalScroll`, `horizontalScroll` | ⭐⭐⭐ | ~~新增虚拟组件~~ | ✅ Phase B |
 | 18 | TriStateCheckbox | `TriStateCheckbox` | ⭐⭐ | 组合封装（Checkbox 扩展） | P2-C |
 | 19 | Tab / TabRow | `Tab`, `TabRow`, `ScrollableTabRow` | ⭐⭐⭐ | 已有 TabPager，可补充独立 TabRow | P2-C |
 | 20 | Carousel | `HorizontalMultiBrowseCarousel` | ⭐⭐ | 组合封装（HorizontalPager 变体） | P2-C |
@@ -809,6 +809,8 @@ fun UiTreeBuilder.ListItem(
 | `Spacer` | ✅ 已有 | `Spacer()` | — |
 | `FlowRow` | ❌ 缺失 | — | T2 新增虚拟 |
 | `FlowColumn` | ❌ 缺失 | — | T2 新增虚拟 |
+| `Modifier.verticalScroll` | ✅ 已有 | `ScrollableColumn()` | Phase B |
+| `Modifier.horizontalScroll` | ✅ 已有 | `ScrollableRow()` | Phase B |
 | `Scaffold` | ❌ 缺失 | — | T1 新增虚拟 |
 | `BottomSheetScaffold` | ❌ 缺失 | — | T2 新增虚拟 |
 
@@ -902,7 +904,7 @@ fun UiTreeBuilder.ListItem(
 | Compose 组件 | 框架状态 | 框架对应 | 归类 |
 |-------------|---------|---------|------|
 | `LazyColumn` | ✅ 已有 | `LazyColumn()` | — |
-| `LazyRow` | ❌ 缺失 | — | T1 新增虚拟 |
+| `LazyRow` | ✅ 已有 | `LazyRow()` | Phase B |
 | `LazyVerticalGrid` | ❌ 缺失 | — | T2 新增虚拟 |
 | `LazyHorizontalGrid` | ❌ 缺失 | — | T2 新增虚拟 |
 | `LazyVerticalStaggeredGrid` | ❌ 缺失 | — | T2 新增虚拟 |
@@ -942,14 +944,14 @@ fun UiTreeBuilder.ListItem(
 
 > 需要新增 NodeType + 自定义 View/Layout + ViewBinder。
 
-| # | 组件 | 工作量 | 依赖 |
-|---|------|--------|------|
-| B.1 | LazyRow | 1 天 | 复用 LazyColumn 架构 |
-| B.2 | NavigationBar | 2-3 天 | — |
-| B.3 | Scaffold | 2-3 天 | TopAppBar, BottomAppBar (Phase A) |
-| B.4 | DropdownMenu | 2 天 | 复用 Popup 架构 |
-| B.5 | FlowRow / FlowColumn | 2 天 | — |
-| B.6 | ScrollableColumn / ScrollableRow | 1 天 | — |
+| # | 组件 | 工作量 | 依赖 | 状态 |
+|---|------|--------|------|------|
+| B.1 | LazyRow | 1 天 | 复用 LazyColumn 架构 | ✅ |
+| B.2 | NavigationBar | 2-3 天 | — | |
+| B.3 | Scaffold | 2-3 天 | TopAppBar, BottomAppBar (Phase A) | |
+| B.4 | DropdownMenu | 2 天 | 复用 Popup 架构 | |
+| B.5 | FlowRow / FlowColumn | 2 天 | — | |
+| B.6 | ScrollableColumn / ScrollableRow | 1 天 | — | ✅ |
 
 ### Phase C：中等组件（3-4 周）
 
@@ -987,10 +989,10 @@ fun UiTreeBuilder.ListItem(
 | 维度 | 数量 |
 |------|------|
 | Compose M3 核心组件（去重、去 Expressive） | ~90 |
-| 框架已覆盖 | 37 |
+| 框架已覆盖 | 40 |
 | 框架部分覆盖 | 4 |
-| T1 核心缺口 | 10 → 3 (Phase A 关闭 7) |
-| T2 中等缺口 | 20 → 18 (Phase A 关闭 2) |
+| T1 核心缺口 | 10 → 2 (Phase A 关闭 7, Phase B 关闭 1) |
+| T2 中等缺口 | 20 → 17 (Phase A 关闭 2, Phase B 关闭 1) |
 | T3 AndroidView | 14 |
 | T4 可组合封装 | 14 → 5 (Phase A 关闭 9) |
 
@@ -1031,11 +1033,11 @@ T3 AndroidView (14) ████████░░░░░░░░░░░░
 | `NavigationBar { ... }` | ❌ 手动 Row + Column |
 | `FloatingActionButton(onClick) { Icon(...) }` | `IconButton(icon, onClick)` 近似 → 待 `FloatingActionButton()` |
 | `DropdownMenu(expanded, onDismiss) { ... }` | `Popup(visible, anchorId) { 手动布局 }` → 待 `DropdownMenu()` |
-| `LazyRow { items(list) { ... } }` | ❌ 需要 AndroidView |
+| `LazyRow { items(list) { ... } }` | `LazyRow(list) { ... }` ✅ |
 | `FlowRow { chips }` | ❌ 需要新增 |
 | `ModalBottomSheet { ... }` | ❌ 需要新增 |
 | `Chip(onClick, label = { Text("Tag") })` | ❌ 需要组合封装 |
-| `Modifier.verticalScroll()` | ❌ 需要新增 |
+| `Modifier.verticalScroll()` | `ScrollableColumn { ... }` ✅ |
 
 ### 8.2 命名对照约定
 

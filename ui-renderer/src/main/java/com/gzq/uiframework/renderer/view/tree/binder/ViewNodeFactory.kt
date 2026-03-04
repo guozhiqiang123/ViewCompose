@@ -19,6 +19,8 @@ import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
@@ -55,8 +57,14 @@ internal object ViewNodeFactory {
                 layoutManager = LinearLayoutManager(context)
                 adapter = LazyColumnAdapter()
             }
+            NodeType.LazyRow -> RecyclerView(context).apply {
+                layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+                adapter = LazyColumnAdapter(LinearLayoutManager.HORIZONTAL)
+            }
             NodeType.TabPager -> DeclarativeTabPagerLayout(context)
             NodeType.SegmentedControl -> DeclarativeSegmentedControlLayout(context)
+            NodeType.ScrollableColumn -> DeclarativeScrollableColumnLayout(context)
+            NodeType.ScrollableRow -> DeclarativeScrollableRowLayout(context)
         }
     }
 }

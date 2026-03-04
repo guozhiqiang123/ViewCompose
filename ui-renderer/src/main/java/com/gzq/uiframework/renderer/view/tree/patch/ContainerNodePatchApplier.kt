@@ -1,15 +1,21 @@
 package com.gzq.uiframework.renderer.view.tree.patch
 
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout
 import com.gzq.uiframework.renderer.view.tree.BoxNodePatch
 import com.gzq.uiframework.renderer.view.tree.ColumnNodePatch
 import com.gzq.uiframework.renderer.view.tree.ContainerViewBinder
 import com.gzq.uiframework.renderer.view.tree.LazyColumnNodePatch
+import com.gzq.uiframework.renderer.view.tree.LazyRowNodePatch
 import com.gzq.uiframework.renderer.view.tree.RowNodePatch
+import com.gzq.uiframework.renderer.view.tree.ScrollableColumnNodePatch
+import com.gzq.uiframework.renderer.view.tree.ScrollableRowNodePatch
 import com.gzq.uiframework.renderer.view.tree.SegmentedControlNodePatch
 import com.gzq.uiframework.renderer.view.tree.TabPagerNodePatch
 import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
@@ -76,12 +82,37 @@ internal object ContainerNodePatchApplier {
             ContainerViewBinder.applyLazyListPadding(view, next.contentPadding)
         }
         if (previous.spacing != next.spacing) {
-            ContainerViewBinder.applyLazyListSpacing(view, next.spacing)
+            ContainerViewBinder.applyLazyListSpacing(view, next.spacing, LinearLayoutManager.VERTICAL)
         }
         if (previous.items != next.items) {
             val adapter = view.adapter as? LazyColumnAdapter ?: LazyColumnAdapter().also {
                 view.adapter = it
             }
+            adapter.submitItems(next.items)
+        }
+        if (previous.state !== next.state) {
+            previous.state?.recyclerView = null
+            next.state?.recyclerView = view
+        }
+    }
+
+    fun applyLazyRowPatch(
+        view: RecyclerView,
+        patch: LazyRowNodePatch,
+    ) {
+        val previous = patch.previous
+        val next = patch.next
+        if (previous.contentPadding != next.contentPadding) {
+            ContainerViewBinder.applyLazyListPadding(view, next.contentPadding)
+        }
+        if (previous.spacing != next.spacing) {
+            ContainerViewBinder.applyLazyListSpacing(view, next.spacing, LinearLayoutManager.HORIZONTAL)
+        }
+        if (previous.items != next.items) {
+            val adapter = view.adapter as? LazyColumnAdapter
+                ?: LazyColumnAdapter(LinearLayoutManager.HORIZONTAL).also {
+                    view.adapter = it
+                }
             adapter.submitItems(next.items)
         }
         if (previous.state !== next.state) {
@@ -135,5 +166,43 @@ internal object ContainerNodePatchApplier {
                 paddingVertical = patch.next.paddingVertical,
             ),
         )
+    }
+
+    fun applyScrollableColumnPatch(
+        view: DeclarativeScrollableColumnLayout,
+        patch: ScrollableColumnNodePatch,
+    ) {
+        val previous = patch.previous
+        val next = patch.next
+        if (previous.spacing != next.spacing) {
+            view.innerLayout.itemSpacing = next.spacing
+        }
+        if (previous.arrangement != next.arrangement) {
+            view.innerLayout.mainAxisArrangement = next.arrangement
+        }
+        if (previous.horizontalAlignment != next.horizontalAlignment) {
+            with(ContainerViewBinder) {
+                view.innerLayout.gravity = next.horizontalAlignment.toGravity()
+            }
+        }
+    }
+
+    fun applyScrollableRowPatch(
+        view: DeclarativeScrollableRowLayout,
+        patch: ScrollableRowNodePatch,
+    ) {
+        val previous = patch.previous
+        val next = patch.next
+        if (previous.spacing != next.spacing) {
+            view.innerLayout.itemSpacing = next.spacing
+        }
+        if (previous.arrangement != next.arrangement) {
+            view.innerLayout.mainAxisArrangement = next.arrangement
+        }
+        if (previous.verticalAlignment != next.verticalAlignment) {
+            with(ContainerViewBinder) {
+                view.innerLayout.gravity = next.verticalAlignment.toGravity()
+            }
+        }
     }
 }

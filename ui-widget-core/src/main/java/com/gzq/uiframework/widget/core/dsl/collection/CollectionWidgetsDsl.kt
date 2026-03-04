@@ -8,6 +8,7 @@ import com.gzq.uiframework.renderer.node.LazyListItemSessionFactory
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TabPage
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
+import com.gzq.uiframework.renderer.node.spec.LazyRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
 import com.gzq.uiframework.renderer.view.lazy.LazyListState
 
@@ -47,6 +48,51 @@ fun <T> UiTreeBuilder.LazyColumn(
     emit(
         type = NodeType.LazyColumn,
         spec = LazyColumnNodeProps(
+            contentPadding = contentPadding,
+            spacing = spacing,
+            items = resolvedItems,
+            state = state,
+        ),
+        modifier = modifier,
+    )
+}
+
+fun <T> UiTreeBuilder.LazyRow(
+    items: List<T>,
+    key: ((T) -> Any)? = null,
+    contentPadding: Int = 0,
+    spacing: Int = 0,
+    state: LazyListState? = null,
+    modifier: Modifier = Modifier,
+    itemContent: UiTreeBuilder.(T) -> Unit,
+) {
+    val localSnapshot = LocalContext.snapshot()
+    val resolvedItems = items.map { item ->
+        LazyListItem(
+            key = key?.invoke(item),
+            contentToken = item,
+            sessionFactory = LazyListItemSessionFactory { container ->
+                WidgetLazyListItemSession(
+                    container = container,
+                    localSnapshot = localSnapshot,
+                    content = {
+                        itemContent(item)
+                    },
+                )
+            },
+            sessionUpdater = { session ->
+                (session as? WidgetLazyListItemSession)?.updateContent(
+                    localSnapshot = localSnapshot,
+                    content = {
+                        itemContent(item)
+                    },
+                )
+            },
+        )
+    }
+    emit(
+        type = NodeType.LazyRow,
+        spec = LazyRowNodeProps(
             contentPadding = contentPadding,
             spacing = spacing,
             items = resolvedItems,

@@ -4,13 +4,16 @@ import android.util.Log
 import android.graphics.Rect
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.reconcile.LazyListDiff
 import com.gzq.uiframework.renderer.reconcile.LazyListIdentityInspector
 import com.gzq.uiframework.renderer.reconcile.LazyListUpdate
 
-internal class LazyColumnAdapter : RecyclerView.Adapter<LazyColumnViewHolder>() {
+internal class LazyColumnAdapter(
+    private val orientation: Int = LinearLayoutManager.VERTICAL,
+) : RecyclerView.Adapter<LazyColumnViewHolder>() {
     private var items: List<LazyListItem> = emptyList()
     private val holderRegistry = LazyHolderRegistry<LazyColumnViewHolder> { holder ->
         holder.recycle()
@@ -26,10 +29,17 @@ internal class LazyColumnAdapter : RecyclerView.Adapter<LazyColumnViewHolder>() 
         viewType: Int,
     ): LazyColumnViewHolder {
         val container = FrameLayout(parent.context).apply {
-            layoutParams = RecyclerView.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-            )
+            layoutParams = if (orientation == LinearLayoutManager.HORIZONTAL) {
+                RecyclerView.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                )
+            } else {
+                RecyclerView.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                )
+            }
         }
         return LazyColumnViewHolder(container)
     }
@@ -117,6 +127,7 @@ internal class LazyColumnAdapter : RecyclerView.Adapter<LazyColumnViewHolder>() 
 
 internal class LazyItemSpacingDecoration(
     private var spacing: Int,
+    private val orientation: Int = LinearLayoutManager.VERTICAL,
 ) : RecyclerView.ItemDecoration() {
     fun updateSpacing(spacing: Int) {
         this.spacing = spacing
@@ -137,7 +148,15 @@ internal class LazyItemSpacingDecoration(
             outRect.setEmpty()
             return
         }
-        outRect.top = if (position == 0) 0 else spacing
+        if (position == 0) {
+            outRect.setEmpty()
+            return
+        }
+        if (orientation == LinearLayoutManager.HORIZONTAL) {
+            outRect.left = spacing
+        } else {
+            outRect.top = spacing
+        }
     }
 }
 

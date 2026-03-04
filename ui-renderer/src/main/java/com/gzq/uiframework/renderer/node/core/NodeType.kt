@@ -20,6 +20,9 @@ sealed interface NodeType {
     data object Image : NodeType
     data object AndroidView : NodeType
     data object LazyColumn : NodeType
+    data object LazyRow : NodeType
     data object TabPager : NodeType
     data object SegmentedControl : NodeType
+    data object ScrollableColumn : NodeType
+    data object ScrollableRow : NodeType
 }
