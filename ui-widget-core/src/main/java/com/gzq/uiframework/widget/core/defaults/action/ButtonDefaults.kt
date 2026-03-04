@@ -5,6 +5,7 @@ enum class ButtonVariant {
     Secondary,
     Tonal,
     Outlined,
+    Text,
 }
 
 enum class ButtonSize {
@@ -39,6 +40,8 @@ object ButtonDefaults {
             }
 
             ButtonVariant.Outlined -> 0x00000000
+
+            ButtonVariant.Text -> 0x00000000
         }
     }
 
@@ -70,6 +73,12 @@ object ButtonDefaults {
                 override?.outlinedContent ?: Theme.colors.textPrimary
             } else {
                 override?.outlinedDisabledContent ?: Theme.colors.textSecondary
+            }
+
+            ButtonVariant.Text -> if (enabled) {
+                Theme.colors.primary
+            } else {
+                Theme.colors.textSecondary
             }
         }
     }

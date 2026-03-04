@@ -103,6 +103,27 @@ fun UiTreeBuilder.IconButton(
     )
 }
 
+fun UiTreeBuilder.TextButton(
+    text: String,
+    onClick: (() -> Unit)? = null,
+    size: ButtonSize = ButtonSize.Medium,
+    enabled: Boolean = true,
+    style: UiTextStyle = ButtonDefaults.textStyle(size),
+    key: Any? = null,
+    modifier: Modifier = Modifier,
+) {
+    Button(
+        text = text,
+        onClick = onClick,
+        variant = ButtonVariant.Text,
+        size = size,
+        enabled = enabled,
+        style = style,
+        key = key,
+        modifier = modifier,
+    )
+}
+
 fun UiTreeBuilder.SegmentedControl(
     items: List<String>,
     selectedIndex: Int,
