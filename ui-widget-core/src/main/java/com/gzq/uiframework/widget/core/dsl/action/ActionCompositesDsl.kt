@@ -3,7 +3,9 @@ package com.gzq.uiframework.widget.core
 import com.gzq.uiframework.renderer.layout.BoxAlignment
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.modifier.Modifier
+import com.gzq.uiframework.renderer.modifier.alpha
 import com.gzq.uiframework.renderer.modifier.backgroundColor
+import com.gzq.uiframework.renderer.modifier.border
 import com.gzq.uiframework.renderer.modifier.clickable
 import com.gzq.uiframework.renderer.modifier.clip
 import com.gzq.uiframework.renderer.modifier.cornerRadius
@@ -84,6 +86,79 @@ fun UiTreeBuilder.ExtendedFloatingActionButton(
                 style = FabDefaults.extendedTextStyle(),
                 color = contentColor,
             )
+        }
+    }
+}
+
+fun UiTreeBuilder.Chip(
+    label: String,
+    onClick: () -> Unit,
+    variant: ChipVariant = ChipVariant.Assist,
+    selected: Boolean = false,
+    leadingIcon: ImageSource? = null,
+    onTrailingIconClick: (() -> Unit)? = null,
+    enabled: Boolean = true,
+    key: Any? = null,
+    modifier: Modifier = Modifier,
+) {
+    val bgColor = ChipDefaults.containerColor(variant, selected, enabled)
+    val cColor = ChipDefaults.contentColor(variant, selected, enabled)
+    val bw = ChipDefaults.borderWidth(variant, selected)
+    val bc = ChipDefaults.borderColor(variant, selected, enabled)
+    val radius = ChipDefaults.cornerRadius()
+    val leftPadding = if (leadingIcon != null) {
+        ChipDefaults.leadingIconPadding()
+    } else {
+        ChipDefaults.horizontalPadding()
+    }
+    val rightPadding = if (onTrailingIconClick != null) {
+        ChipDefaults.leadingIconPadding()
+    } else {
+        ChipDefaults.horizontalPadding()
+    }
+    val semanticModifier = Modifier
+        .height(ChipDefaults.height())
+        .backgroundColor(bgColor)
+        .let { m -> if (bw > 0) m.border(bw, bc) else m }
+        .cornerRadius(radius)
+        .clip()
+        .let { m ->
+            if (enabled) {
+                m.rippleColor(ChipDefaults.pressedColor()).clickable(onClick)
+            } else {
+                m.alpha(0.38f)
+            }
+        }
+        .padding(left = leftPadding, right = rightPadding)
+        .then(modifier)
+    ProvideContentColor(cColor) {
+        Row(
+            key = key,
+            spacing = ChipDefaults.iconSpacing(),
+            verticalAlignment = VerticalAlignment.Center,
+            modifier = semanticModifier,
+        ) {
+            if (leadingIcon != null) {
+                Icon(
+                    source = leadingIcon,
+                    tint = cColor,
+                    size = ChipDefaults.iconSize(),
+                )
+            }
+            Text(
+                text = label,
+                style = ChipDefaults.textStyle(),
+                color = cColor,
+                maxLines = 1,
+            )
+            if (onTrailingIconClick != null) {
+                Icon(
+                    source = ImageSource.Resource(android.R.drawable.ic_menu_close_clear_cancel),
+                    tint = cColor,
+                    size = ChipDefaults.trailingIconSize(),
+                    modifier = Modifier.clickable(onTrailingIconClick),
+                )
+            }
         }
     }
 }
