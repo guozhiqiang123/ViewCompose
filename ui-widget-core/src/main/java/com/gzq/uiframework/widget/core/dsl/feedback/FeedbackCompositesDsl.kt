@@ -3,12 +3,19 @@ package com.gzq.uiframework.widget.core
 import com.gzq.uiframework.renderer.layout.BoxAlignment
 import com.gzq.uiframework.renderer.layout.HorizontalAlignment
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
+import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.modifier.Modifier
+import com.gzq.uiframework.renderer.modifier.alpha
 import com.gzq.uiframework.renderer.modifier.backgroundColor
+import com.gzq.uiframework.renderer.modifier.clickable
 import com.gzq.uiframework.renderer.modifier.clip
 import com.gzq.uiframework.renderer.modifier.cornerRadius
+import com.gzq.uiframework.renderer.modifier.elevation
+import com.gzq.uiframework.renderer.modifier.fillMaxWidth
+import com.gzq.uiframework.renderer.modifier.height
 import com.gzq.uiframework.renderer.modifier.minWidth
 import com.gzq.uiframework.renderer.modifier.padding
+import com.gzq.uiframework.renderer.modifier.width
 import com.gzq.uiframework.renderer.node.ImageSource
 
 fun UiTreeBuilder.AlertDialog(
@@ -115,6 +122,88 @@ fun UiTreeBuilder.PlainTooltip(
                 text = text,
                 style = TooltipDefaults.textStyle(),
                 color = TooltipDefaults.contentColor(),
+            )
+        }
+    }
+}
+
+fun UiTreeBuilder.DropdownMenu(
+    expanded: Boolean,
+    anchorId: String,
+    onDismissRequest: () -> Unit,
+    alignment: PopupAlignment = PopupAlignment.BelowStart,
+    requestKey: String = "dropdown_menu",
+    modifier: Modifier = Modifier,
+    content: ColumnScope.() -> Unit,
+) {
+    Popup(
+        visible = expanded,
+        anchorId = anchorId,
+        requestKey = requestKey,
+        alignment = alignment,
+        dismissOnClickOutside = true,
+        onDismissRequest = onDismissRequest,
+    ) {
+        Box(
+            modifier = Modifier
+                .minWidth(DropdownMenuDefaults.minWidth())
+                .backgroundColor(DropdownMenuDefaults.containerColor())
+                .cornerRadius(DropdownMenuDefaults.cornerRadius())
+                .clip()
+                .elevation(DropdownMenuDefaults.elevation())
+                .then(modifier),
+        ) {
+            Column(
+                modifier = Modifier.padding(vertical = DropdownMenuDefaults.verticalPadding()),
+                content = content,
+            )
+        }
+    }
+}
+
+fun UiTreeBuilder.DropdownMenuItem(
+    text: String,
+    onClick: () -> Unit,
+    leadingIcon: ImageSource? = null,
+    trailingText: String? = null,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier,
+) {
+    val itemModifier = Modifier
+        .fillMaxWidth()
+        .height(DropdownMenuDefaults.itemHeight())
+        .padding(horizontal = DropdownMenuDefaults.itemHorizontalPadding())
+        .then(
+            if (enabled) {
+                Modifier.clickable(onClick)
+            } else {
+                Modifier.alpha(DropdownMenuDefaults.disabledAlpha())
+            },
+        )
+        .then(modifier)
+    Row(
+        verticalAlignment = VerticalAlignment.Center,
+        modifier = itemModifier,
+    ) {
+        if (leadingIcon != null) {
+            Icon(
+                source = leadingIcon,
+                tint = DropdownMenuDefaults.contentColor(),
+                size = DropdownMenuDefaults.iconSize(),
+            )
+            Spacer(modifier = Modifier.width(DropdownMenuDefaults.iconToTextSpacing()))
+        }
+        Text(
+            text = text,
+            style = DropdownMenuDefaults.textStyle(),
+            color = DropdownMenuDefaults.contentColor(),
+            modifier = Modifier.weight(1f),
+        )
+        if (trailingText != null) {
+            Text(
+                text = trailingText,
+                style = DropdownMenuDefaults.textStyle(),
+                color = DropdownMenuDefaults.trailingTextColor(),
             )
         }
     }

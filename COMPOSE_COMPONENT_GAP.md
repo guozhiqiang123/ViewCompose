@@ -2,7 +2,7 @@
 
 > **日期**：2026-03-04
 > **对照基准**：Jetpack Compose Material 3 1.4.x (stable) + Foundation 1.9.x
-> **框架当前状态**：20 NodeSpec · 11 Defaults · 27 Modifier · 52 DSL · 26 NodeType
+> **框架当前状态**：20 NodeSpec · 12 Defaults · 27 Modifier · 54 DSL · 26 NodeType
 
 ---
 
@@ -17,7 +17,7 @@
 | 按钮动作 | Button (5 variant incl. Text), TextButton, IconButton (4 variant), SegmentedControl, FloatingActionButton, ExtendedFloatingActionButton |
 | 文本输入 | TextField, PasswordField, EmailField, NumberField, TextArea |
 | 选择输入 | Checkbox, Switch, RadioButton, Slider |
-| 反馈提示 | LinearProgressIndicator, CircularProgressIndicator, Snackbar, Toast, Dialog, Popup, AlertDialog, PlainTooltip |
+| 反馈提示 | LinearProgressIndicator, CircularProgressIndicator, Snackbar, Toast, Dialog, Popup, AlertDialog, PlainTooltip, DropdownMenu |
 | 集合列表 | LazyColumn, LazyRow, TabPager |
 | 导航 | TopAppBar, BottomAppBar |
 | 逃生通道 | AndroidView |
@@ -57,7 +57,7 @@
 | 4 | TopAppBar | `TopAppBar`, `CenterAligned~`, `Medium~`, `Large~` | ⭐⭐⭐⭐⭐ | 组合封装（Row + IconButton + Text） | P2-A |
 | 5 | BottomNavigationBar | `NavigationBar`, `NavigationBarItem` | ⭐⭐⭐⭐⭐ | 新增虚拟组件 | P2-A |
 | 6 | AlertDialog | `AlertDialog` | ⭐⭐⭐⭐ | 组合封装（Dialog + 标准布局） | P2-A |
-| 7 | DropdownMenu | `DropdownMenu`, `DropdownMenuItem` | ⭐⭐⭐⭐ | 新增虚拟组件 | P2-B |
+| 7 | ~~DropdownMenu~~ | `DropdownMenu`, `DropdownMenuItem` | ⭐⭐⭐⭐ | ~~新增虚拟组件~~ 组合封装（复用 Popup） | ✅ Phase B |
 | 8 | ~~LazyRow~~ | `LazyRow` | ⭐⭐⭐⭐ | ~~新增虚拟组件（复用 LazyColumn 架构）~~ | ✅ Phase B |
 | 9 | ListItem | `ListItem` | ⭐⭐⭐⭐ | 组合封装（Row + Column + Icon/Image） | P2-A |
 | 10 | Badge | `Badge`, `BadgedBox` | ⭐⭐⭐ | 组合封装（Box + Text） | P2-B |
@@ -870,7 +870,7 @@ fun UiTreeBuilder.ListItem(
 | `Slider` | ✅ 已有 | `Slider()` | — |
 | `RangeSlider` | ❌ 缺失 | — | T2 新增虚拟 |
 | `SegmentedButton` | ✅ 已有 | `SegmentedControl()` | — |
-| `DropdownMenu` | ❌ 缺失 | — | T1 新增虚拟 |
+| `DropdownMenu` | ✅ 已有 | `DropdownMenu()` | Phase B |
 | `ExposedDropdownMenuBox` | ❌ 缺失 | — | T2 新增虚拟 |
 
 ### 5.7 导航
@@ -949,7 +949,7 @@ fun UiTreeBuilder.ListItem(
 | B.1 | LazyRow | 1 天 | 复用 LazyColumn 架构 | ✅ |
 | B.2 | NavigationBar | 2-3 天 | — | |
 | B.3 | Scaffold | 2-3 天 | TopAppBar, BottomAppBar (Phase A) | |
-| B.4 | DropdownMenu | 2 天 | 复用 Popup 架构 | |
+| B.4 | DropdownMenu | 2 天 | 复用 Popup 架构 | ✅ |
 | B.5 | FlowRow / FlowColumn | 2 天 | — | ✅ |
 | B.6 | ScrollableColumn / ScrollableRow | 1 天 | — | ✅ |
 
@@ -989,9 +989,9 @@ fun UiTreeBuilder.ListItem(
 | 维度 | 数量 |
 |------|------|
 | Compose M3 核心组件（去重、去 Expressive） | ~90 |
-| 框架已覆盖 | 42 |
+| 框架已覆盖 | 43 |
 | 框架部分覆盖 | 4 |
-| T1 核心缺口 | 10 → 2 (Phase A 关闭 7, Phase B 关闭 1) |
+| T1 核心缺口 | 10 → 1 (Phase A 关闭 7, Phase B 关闭 2) |
 | T2 中等缺口 | 20 → 15 (Phase A 关闭 2, Phase B 关闭 3) |
 | T3 AndroidView | 14 |
 | T4 可组合封装 | 14 → 5 (Phase A 关闭 9) |
@@ -1032,7 +1032,7 @@ T3 AndroidView (14) ████████░░░░░░░░░░░░
 | `AlertDialog(onDismiss, ...) { ... }` | `Dialog(visible) { 手动布局 }` → 待 `AlertDialog()` |
 | `NavigationBar { ... }` | ❌ 手动 Row + Column |
 | `FloatingActionButton(onClick) { Icon(...) }` | `IconButton(icon, onClick)` 近似 → 待 `FloatingActionButton()` |
-| `DropdownMenu(expanded, onDismiss) { ... }` | `Popup(visible, anchorId) { 手动布局 }` → 待 `DropdownMenu()` |
+| `DropdownMenu(expanded, onDismiss) { ... }` | `DropdownMenu(expanded, anchorId, onDismissRequest) { DropdownMenuItem(...) }` ✅ |
 | `LazyRow { items(list) { ... } }` | `LazyRow(list) { ... }` ✅ |
 | `FlowRow { chips }` | `FlowRow { chips }` ✅ |
 | `ModalBottomSheet { ... }` | ❌ 需要新增 |
