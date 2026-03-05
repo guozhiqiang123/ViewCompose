@@ -2,8 +2,10 @@ package com.gzq.uiframework.overlay.android.host
 
 import android.view.View
 import com.gzq.uiframework.overlay.android.presenter.AndroidDialogOverlayPresenter
+import com.gzq.uiframework.overlay.android.presenter.AndroidModalBottomSheetPresenter
 import com.gzq.uiframework.overlay.android.presenter.AndroidPopupOverlayPresenter
 import com.gzq.uiframework.widget.core.DialogOverlayHost
+import com.gzq.uiframework.widget.core.ModalBottomSheetOverlayHost
 import com.gzq.uiframework.widget.core.OverlayHost
 import com.gzq.uiframework.widget.core.OverlayRequest
 import com.gzq.uiframework.widget.core.OverlaySessionId
@@ -15,6 +17,7 @@ class AndroidOverlayHost(
     private val delegate = CompositeOverlayHost(
         DialogOverlayHost(AndroidDialogOverlayPresenter(rootView)),
         PopupOverlayHost(AndroidPopupOverlayPresenter(rootView)),
+        ModalBottomSheetOverlayHost(AndroidModalBottomSheetPresenter(rootView)),
         AndroidTransientFeedbackOverlayHost(rootView),
     )
 

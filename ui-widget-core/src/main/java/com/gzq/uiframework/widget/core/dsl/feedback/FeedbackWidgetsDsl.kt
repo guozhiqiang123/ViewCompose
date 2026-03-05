@@ -174,3 +174,34 @@ fun UiTreeBuilder.Popup(
         ),
     )
 }
+
+fun UiTreeBuilder.ModalBottomSheet(
+    visible: Boolean,
+    requestKey: String = "bottom_sheet",
+    dismissOnBackPress: Boolean = true,
+    dismissOnClickOutside: Boolean = true,
+    skipPartiallyExpanded: Boolean = false,
+    scrimOpacity: Float = ModalBottomSheetDefaults.scrimOpacity(),
+    onDismissRequest: (() -> Unit)? = null,
+    content: UiTreeBuilder.() -> Unit,
+) {
+    if (!visible) {
+        return
+    }
+    submitOverlayRequest(
+        OverlayRequest(
+            key = requestKey,
+            type = OverlayType.ModalBottomSheet,
+            payload = ModalBottomSheetOverlaySpec(
+                dismissOnBackPress = dismissOnBackPress,
+                dismissOnClickOutside = dismissOnClickOutside,
+                skipPartiallyExpanded = skipPartiallyExpanded,
+                scrimOpacity = scrimOpacity,
+                onDismissRequest = onDismissRequest,
+            ),
+            contentToken = ModalBottomSheetOverlayContent(
+                surface = captureOverlaySurfaceContent(content),
+            ),
+        ),
+    )
+}

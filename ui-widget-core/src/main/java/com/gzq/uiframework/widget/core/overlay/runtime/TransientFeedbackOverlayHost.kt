@@ -98,6 +98,7 @@ class TransientFeedbackOverlayHost(
 
             OverlayType.Dialog,
             OverlayType.Popup,
+            OverlayType.ModalBottomSheet,
             -> Unit
         }
     }
@@ -111,6 +112,7 @@ class TransientFeedbackOverlayHost(
             OverlayType.Toast -> toastPresenter.dismiss(entryId)
             OverlayType.Dialog,
             OverlayType.Popup,
+            OverlayType.ModalBottomSheet,
             -> Unit
         }
     }
@@ -137,6 +139,7 @@ class TransientFeedbackOverlayHost(
 
             OverlayType.Dialog,
             OverlayType.Popup,
+            OverlayType.ModalBottomSheet,
             -> null
         }
     }
