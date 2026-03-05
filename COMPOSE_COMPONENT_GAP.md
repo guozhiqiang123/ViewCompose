@@ -384,13 +384,13 @@ fun UiTreeBuilder.Badge(
 | # | 组件 | Compose 对应 | 使用频率 | 建议实现方式 | 优先级 |
 |---|------|-------------|---------|------------|--------|
 | 1 | ~~Chip~~ | `AssistChip`, `FilterChip`, `InputChip`, `SuggestionChip` | ⭐⭐⭐⭐ | ~~组合封装（Button 小变体）~~ | ✅ Phase C |
-| 2 | ModalBottomSheet | `ModalBottomSheet` | ⭐⭐⭐⭐ | 新增虚拟组件 | P2-B |
+| 2 | ~~ModalBottomSheet~~ | `ModalBottomSheet` | ⭐⭐⭐⭐ | ~~新增虚拟组件~~ | ✅ Phase D.2 |
 | 3 | NavigationDrawer | `ModalNavigationDrawer`, `PermanentNavigationDrawer` | ⭐⭐⭐ | 新增虚拟组件 | P2-C |
 | 4 | NavigationRail | `NavigationRail`, `NavigationRailItem` | ⭐⭐ | 新增虚拟组件 | P2-C |
 | 5 | ~~SearchBar~~ | `SearchBar`, `DockedSearchBar` | ⭐⭐⭐ | ~~组合封装（TextField 变体）~~ | ✅ Phase C |
 | 6 | Tooltip | `PlainTooltip`, `RichTooltip`, `TooltipBox` | ⭐⭐⭐ | 组合封装（Popup 变体） | P2-C |
 | 7 | SwipeToDismiss | `SwipeToDismissBox` | ⭐⭐⭐ | 新增虚拟组件（手势） | P2-C |
-| 8 | PullToRefresh | `PullToRefreshBox` | ⭐⭐⭐⭐ | 新增虚拟组件（手势） | P2-B |
+| 8 | ~~PullToRefresh~~ | `PullToRefreshBox` | ⭐⭐⭐⭐ | ~~新增虚拟组件（手势）~~ | ✅ Phase D.2 |
 | 9 | DatePicker | `DatePicker`, `DateRangePicker`, `DatePickerDialog` | ⭐⭐⭐ | AndroidView 或新增虚拟组件 | P2-C |
 | 10 | TimePicker | `TimePicker`, `TimeInput` | ⭐⭐ | AndroidView | P3 |
 | 11 | RangeSlider | `RangeSlider` | ⭐⭐ | 新增虚拟组件 | P2-C |
@@ -894,8 +894,8 @@ fun UiTreeBuilder.ListItem(
 | `AlertDialog` | ✅ 已有 | `AlertDialog()` | Phase A |
 | `CircularProgressIndicator` | ✅ 已有 | `CircularProgressIndicator()` | — |
 | `LinearProgressIndicator` | ✅ 已有 | `LinearProgressIndicator()` | — |
-| `ModalBottomSheet` | ❌ 缺失 | — | T2 新增虚拟 |
-| `PullToRefreshBox` | ❌ 缺失 | — | T2 新增虚拟 |
+| `ModalBottomSheet` | ✅ 已有 | `ModalBottomSheet()` | Phase D.2 Overlay |
+| `PullToRefreshBox` | ✅ 已有 | `PullToRefresh()` | Phase D.2 新原语 |
 | `SwipeToDismissBox` | ❌ 缺失 | — | T2 新增虚拟 |
 | `PlainTooltip` / `RichTooltip` | 🔧 部分 | `PlainTooltip()` (RichTooltip 待实现) | Phase A |
 
@@ -960,8 +960,8 @@ fun UiTreeBuilder.ListItem(
 | # | 组件 | 工作量 | 依赖 |
 |---|------|--------|------|
 | C.1 | Chip (4 variants) | 1 天 | — | ✅ |
-| C.2 | ModalBottomSheet | 3-4 天 | 手势系统 | |
-| C.3 | PullToRefresh | 2 天 | LazyColumn 集成 | |
+| C.2 | ~~ModalBottomSheet~~ | 3-4 天 | 手势系统 | ✅ Phase D.2 |
+| C.3 | ~~PullToRefresh~~ | 2 天 | LazyColumn 集成 | ✅ Phase D.2 |
 | C.4 | ~~LazyVerticalGrid~~ | 2 天 | 复用 LazyColumn 架构 | ✅ Phase D.1 |
 | C.5 | ~~HorizontalPager + TabRow~~ | 2 天 | TabPager 重构为组合 DSL | ✅ |
 | C.6 | SearchBar | 1 天 | TextField | ✅ |
@@ -992,7 +992,7 @@ fun UiTreeBuilder.ListItem(
 | 框架已覆盖 | 45 |
 | 框架部分覆盖 | 4 |
 | T1 核心缺口 | 10 → 0 (Phase A 关闭 7, Phase B 关闭 3) |
-| T2 中等缺口 | 20 → 8 (Phase A 关闭 2, Phase B 关闭 3, Phase C 关闭 2, Phase C.5 关闭 2, Phase D.1 关闭 3) |
+| T2 中等缺口 | 20 → 6 (Phase A 关闭 2, Phase B 关闭 3, Phase C 关闭 2, Phase C.5 关闭 2, Phase D.1 关闭 3, Phase D.2 关闭 2) |
 | T3 AndroidView | 14 |
 | T4 可组合封装 | 14 → 3 (Phase A 关闭 9, Phase C 关闭 2) |
 
@@ -1040,7 +1040,7 @@ T3 AndroidView (14) ████████░░░░░░░░░░░░
 | `ElevatedCard { ... }` | `ElevatedCard() { ... }` ✅ |
 | `OutlinedCard { ... }` | `OutlinedCard() { ... }` ✅ |
 | `FlowRow { chips }` | `FlowRow { chips }` ✅ |
-| `ModalBottomSheet { ... }` | ❌ 需要新增 |
+| `ModalBottomSheet { ... }` | `ModalBottomSheet() { ... }` ✅ |
 | `Chip(onClick, label = { Text("Tag") })` | `Chip("Tag", onClick, variant = Assist)` ✅ |
 | `Modifier.verticalScroll()` | `ScrollableColumn { ... }` ✅ |
 
@@ -1060,7 +1060,7 @@ T3 AndroidView (14) ████████░░░░░░░░░░░░
 | `FlowRow` | `FlowRow` | 保持一致 |
 | `Card` / `ElevatedCard` / `OutlinedCard` | `Card(variant = Filled/Elevated/Outlined)` | 使用 variant 枚举 |
 | `AssistChip` / `FilterChip` / `InputChip` | `Chip(variant = Assist/Filter/Input)` | 使用 variant 枚举 |
-| `PullToRefreshBox` | `PullToRefreshBox` | 保持一致 |
+| `PullToRefreshBox` | `PullToRefresh` | 去掉 Box 后缀 |
 
 ### 8.3 关联文档
 
