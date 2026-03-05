@@ -21,6 +21,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeNavigationBarLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
@@ -69,6 +70,7 @@ internal object ViewNodeFactory {
             NodeType.ScrollableRow -> DeclarativeScrollableRowLayout(context)
             NodeType.FlowRow -> DeclarativeFlowRowLayout(context)
             NodeType.FlowColumn -> DeclarativeFlowColumnLayout(context)
+            NodeType.NavigationBar -> DeclarativeNavigationBarLayout(context)
         }
     }
 }

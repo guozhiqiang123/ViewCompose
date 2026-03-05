@@ -9,10 +9,12 @@ import com.gzq.uiframework.renderer.layout.HorizontalAlignment
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.node.LazyListItem
+import com.gzq.uiframework.renderer.node.NavigationBarItem
 import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeNavigationBarLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
@@ -32,6 +34,7 @@ import com.gzq.uiframework.renderer.node.spec.FlowColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.FlowRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyRowNodeProps
+import com.gzq.uiframework.renderer.node.spec.NavigationBarNodeProps
 import com.gzq.uiframework.renderer.node.spec.RowNodeProps
 import com.gzq.uiframework.renderer.node.spec.ScrollableColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.ScrollableRowNodeProps
@@ -107,6 +110,23 @@ internal object ContainerViewBinder {
         val horizontalSpacing: Int,
         val verticalSpacing: Int,
         val maxItemsInEachColumn: Int,
+    )
+
+    data class NavigationBarSpec(
+        val items: List<NavigationBarItem>,
+        val selectedIndex: Int,
+        val onItemSelected: ((Int) -> Unit)?,
+        val containerColor: Int,
+        val selectedIconColor: Int,
+        val unselectedIconColor: Int,
+        val selectedLabelColor: Int,
+        val unselectedLabelColor: Int,
+        val indicatorColor: Int,
+        val rippleColor: Int,
+        val iconSize: Int,
+        val labelSizeSp: Int,
+        val badgeColor: Int,
+        val badgeTextColor: Int,
     )
 
     fun bindRow(
@@ -441,6 +461,64 @@ internal object ContainerViewBinder {
             textSizeSp = node.props[TypedPropKeys.SegmentTextSizeSp] ?: 14,
             paddingHorizontal = node.props[TypedPropKeys.SegmentContentPaddingHorizontal] ?: 0,
             paddingVertical = node.props[TypedPropKeys.SegmentContentPaddingVertical] ?: 0,
+        )
+    }
+
+    fun bindNavigationBar(
+        view: DeclarativeNavigationBarLayout,
+        spec: NavigationBarSpec,
+    ) {
+        view.bind(
+            items = spec.items,
+            selectedIndex = spec.selectedIndex,
+            onItemSelected = spec.onItemSelected,
+            containerColor = spec.containerColor,
+            selectedIconColor = spec.selectedIconColor,
+            unselectedIconColor = spec.unselectedIconColor,
+            selectedLabelColor = spec.selectedLabelColor,
+            unselectedLabelColor = spec.unselectedLabelColor,
+            indicatorColor = spec.indicatorColor,
+            rippleColor = spec.rippleColor,
+            iconSize = spec.iconSize,
+            labelSizeSp = spec.labelSizeSp,
+            badgeColor = spec.badgeColor,
+            badgeTextColor = spec.badgeTextColor,
+        )
+    }
+
+    fun readNavigationBarSpec(node: VNode): NavigationBarSpec {
+        val spec = node.spec as? NavigationBarNodeProps
+            ?: return NavigationBarSpec(
+                items = emptyList(),
+                selectedIndex = 0,
+                onItemSelected = null,
+                containerColor = 0,
+                selectedIconColor = 0,
+                unselectedIconColor = 0,
+                selectedLabelColor = 0,
+                unselectedLabelColor = 0,
+                indicatorColor = 0,
+                rippleColor = 0,
+                iconSize = 0,
+                labelSizeSp = 12,
+                badgeColor = 0,
+                badgeTextColor = 0,
+            )
+        return NavigationBarSpec(
+            items = spec.items,
+            selectedIndex = spec.selectedIndex,
+            onItemSelected = spec.onItemSelected,
+            containerColor = spec.containerColor,
+            selectedIconColor = spec.selectedIconColor,
+            unselectedIconColor = spec.unselectedIconColor,
+            selectedLabelColor = spec.selectedLabelColor,
+            unselectedLabelColor = spec.unselectedLabelColor,
+            indicatorColor = spec.indicatorColor,
+            rippleColor = spec.rippleColor,
+            iconSize = spec.iconSize,
+            labelSizeSp = spec.labelSizeSp,
+            badgeColor = spec.badgeColor,
+            badgeTextColor = spec.badgeTextColor,
         )
     }
 

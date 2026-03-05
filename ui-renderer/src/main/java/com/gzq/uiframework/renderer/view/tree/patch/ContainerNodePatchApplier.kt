@@ -6,6 +6,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeNavigationBarLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
@@ -14,6 +15,7 @@ import com.gzq.uiframework.renderer.view.tree.BoxNodePatch
 import com.gzq.uiframework.renderer.view.tree.ColumnNodePatch
 import com.gzq.uiframework.renderer.view.tree.ContainerViewBinder
 import com.gzq.uiframework.renderer.view.tree.FlowColumnNodePatch
+import com.gzq.uiframework.renderer.view.tree.NavigationBarNodePatch
 import com.gzq.uiframework.renderer.view.tree.FlowRowNodePatch
 import com.gzq.uiframework.renderer.view.tree.LazyColumnNodePatch
 import com.gzq.uiframework.renderer.view.tree.LazyRowNodePatch
@@ -242,5 +244,30 @@ internal object ContainerNodePatchApplier {
         if (previous.maxItemsInEachColumn != next.maxItemsInEachColumn) {
             view.maxItemsInEachColumn = next.maxItemsInEachColumn
         }
+    }
+
+    fun applyNavigationBarPatch(
+        view: DeclarativeNavigationBarLayout,
+        patch: NavigationBarNodePatch,
+    ) {
+        ContainerViewBinder.bindNavigationBar(
+            view = view,
+            spec = ContainerViewBinder.NavigationBarSpec(
+                items = patch.next.items,
+                selectedIndex = patch.next.selectedIndex,
+                onItemSelected = patch.next.onItemSelected,
+                containerColor = patch.next.containerColor,
+                selectedIconColor = patch.next.selectedIconColor,
+                unselectedIconColor = patch.next.unselectedIconColor,
+                selectedLabelColor = patch.next.selectedLabelColor,
+                unselectedLabelColor = patch.next.unselectedLabelColor,
+                indicatorColor = patch.next.indicatorColor,
+                rippleColor = patch.next.rippleColor,
+                iconSize = patch.next.iconSize,
+                labelSizeSp = patch.next.labelSizeSp,
+                badgeColor = patch.next.badgeColor,
+                badgeTextColor = patch.next.badgeTextColor,
+            ),
+        )
     }
 }

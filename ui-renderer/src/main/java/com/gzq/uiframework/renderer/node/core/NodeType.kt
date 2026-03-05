@@ -27,4 +27,5 @@ sealed interface NodeType {
     data object ScrollableRow : NodeType
     data object FlowRow : NodeType
     data object FlowColumn : NodeType
+    data object NavigationBar : NodeType
 }

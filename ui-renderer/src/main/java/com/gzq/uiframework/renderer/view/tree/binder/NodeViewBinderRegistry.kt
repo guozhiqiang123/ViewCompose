@@ -14,6 +14,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeNavigationBarLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
@@ -196,6 +197,12 @@ internal object NodeViewBinderRegistry {
                     spec = ContainerViewBinder.readFlowColumnSpec(node),
                 )
             },
+            NodeType.NavigationBar to { view, node ->
+                ContainerViewBinder.bindNavigationBar(
+                    view = view as DeclarativeNavigationBarLayout,
+                    spec = ContainerViewBinder.readNavigationBarSpec(node),
+                )
+            },
         )
     }
 
@@ -328,6 +335,12 @@ internal object NodeViewBinderRegistry {
             is FlowColumnNodePatch -> {
                 ContainerNodePatchApplier.applyFlowColumnPatch(
                     view = view as DeclarativeFlowColumnLayout,
+                    patch = patch,
+                )
+            }
+            is NavigationBarNodePatch -> {
+                ContainerNodePatchApplier.applyNavigationBarPatch(
+                    view = view as DeclarativeNavigationBarLayout,
                     patch = patch,
                 )
             }

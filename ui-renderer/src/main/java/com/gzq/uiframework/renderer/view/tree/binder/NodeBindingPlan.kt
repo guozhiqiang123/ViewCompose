@@ -10,6 +10,7 @@ import com.gzq.uiframework.renderer.node.spec.IconButtonNodeProps
 import com.gzq.uiframework.renderer.node.spec.ImageNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyRowNodeProps
+import com.gzq.uiframework.renderer.node.spec.NavigationBarNodeProps
 import com.gzq.uiframework.renderer.node.spec.ProgressIndicatorNodeProps
 import com.gzq.uiframework.renderer.node.spec.RowNodeProps
 import com.gzq.uiframework.renderer.node.spec.ScrollableColumnNodeProps
@@ -131,4 +132,9 @@ internal data class FlowRowNodePatch(
 internal data class FlowColumnNodePatch(
     val previous: FlowColumnNodeProps,
     val next: FlowColumnNodeProps,
+) : NodeViewPatch
+
+internal data class NavigationBarNodePatch(
+    val previous: NavigationBarNodeProps,
+    val next: NavigationBarNodeProps,
 ) : NodeViewPatch

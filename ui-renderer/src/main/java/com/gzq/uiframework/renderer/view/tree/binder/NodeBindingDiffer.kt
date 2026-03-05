@@ -11,6 +11,7 @@ import com.gzq.uiframework.renderer.node.spec.IconButtonNodeProps
 import com.gzq.uiframework.renderer.node.spec.ImageNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyRowNodeProps
+import com.gzq.uiframework.renderer.node.spec.NavigationBarNodeProps
 import com.gzq.uiframework.renderer.node.spec.ProgressIndicatorNodeProps
 import com.gzq.uiframework.renderer.node.spec.RowNodeProps
 import com.gzq.uiframework.renderer.node.spec.ScrollableColumnNodeProps
@@ -237,6 +238,16 @@ internal object NodeBindingDiffer {
                     patch = FlowColumnNodePatch(
                         previous = previousFlowColumn,
                         next = nextFlowColumn,
+                    ),
+                )
+            }
+            val previousNavigationBar = previous.spec as? NavigationBarNodeProps
+            val nextNavigationBar = next.spec as? NavigationBarNodeProps
+            if (previousNavigationBar != null && nextNavigationBar != null) {
+                return NodeBindingPlan.Patch(
+                    patch = NavigationBarNodePatch(
+                        previous = previousNavigationBar,
+                        next = nextNavigationBar,
                     ),
                 )
             }
