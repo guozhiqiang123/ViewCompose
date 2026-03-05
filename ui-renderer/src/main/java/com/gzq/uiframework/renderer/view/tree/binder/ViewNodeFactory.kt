@@ -18,6 +18,8 @@ import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeFlowColumnLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeFlowRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
@@ -65,6 +67,8 @@ internal object ViewNodeFactory {
             NodeType.SegmentedControl -> DeclarativeSegmentedControlLayout(context)
             NodeType.ScrollableColumn -> DeclarativeScrollableColumnLayout(context)
             NodeType.ScrollableRow -> DeclarativeScrollableRowLayout(context)
+            NodeType.FlowRow -> DeclarativeFlowRowLayout(context)
+            NodeType.FlowColumn -> DeclarativeFlowColumnLayout(context)
         }
     }
 }

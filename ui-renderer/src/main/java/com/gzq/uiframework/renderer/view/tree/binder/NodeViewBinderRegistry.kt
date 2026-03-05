@@ -11,6 +11,8 @@ import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
 import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeFlowColumnLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeFlowRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
@@ -182,6 +184,18 @@ internal object NodeViewBinderRegistry {
                     spec = ContainerViewBinder.readScrollableRowSpec(node),
                 )
             },
+            NodeType.FlowRow to { view, node ->
+                ContainerViewBinder.bindFlowRow(
+                    view = view as DeclarativeFlowRowLayout,
+                    spec = ContainerViewBinder.readFlowRowSpec(node),
+                )
+            },
+            NodeType.FlowColumn to { view, node ->
+                ContainerViewBinder.bindFlowColumn(
+                    view = view as DeclarativeFlowColumnLayout,
+                    spec = ContainerViewBinder.readFlowColumnSpec(node),
+                )
+            },
         )
     }
 
@@ -302,6 +316,18 @@ internal object NodeViewBinderRegistry {
             is ScrollableRowNodePatch -> {
                 ContainerNodePatchApplier.applyScrollableRowPatch(
                     view = view as DeclarativeScrollableRowLayout,
+                    patch = patch,
+                )
+            }
+            is FlowRowNodePatch -> {
+                ContainerNodePatchApplier.applyFlowRowPatch(
+                    view = view as DeclarativeFlowRowLayout,
+                    patch = patch,
+                )
+            }
+            is FlowColumnNodePatch -> {
+                ContainerNodePatchApplier.applyFlowColumnPatch(
+                    view = view as DeclarativeFlowColumnLayout,
                     patch = patch,
                 )
             }

@@ -4,6 +4,8 @@ import com.gzq.uiframework.renderer.node.spec.BoxNodeProps
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
 import com.gzq.uiframework.renderer.node.spec.ColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.DividerNodeProps
+import com.gzq.uiframework.renderer.node.spec.FlowColumnNodeProps
+import com.gzq.uiframework.renderer.node.spec.FlowRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.IconButtonNodeProps
 import com.gzq.uiframework.renderer.node.spec.ImageNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
@@ -119,4 +121,14 @@ internal data class ScrollableColumnNodePatch(
 internal data class ScrollableRowNodePatch(
     val previous: ScrollableRowNodeProps,
     val next: ScrollableRowNodeProps,
+) : NodeViewPatch
+
+internal data class FlowRowNodePatch(
+    val previous: FlowRowNodeProps,
+    val next: FlowRowNodeProps,
+) : NodeViewPatch
+
+internal data class FlowColumnNodePatch(
+    val previous: FlowColumnNodeProps,
+    val next: FlowColumnNodeProps,
 ) : NodeViewPatch

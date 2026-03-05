@@ -10,6 +10,8 @@ import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeFlowColumnLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeFlowRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
@@ -26,6 +28,8 @@ import com.gzq.uiframework.renderer.node.spec.AndroidViewNodeProps
 import com.gzq.uiframework.renderer.node.spec.BoxNodeProps
 import com.gzq.uiframework.renderer.node.spec.ColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.DividerNodeProps
+import com.gzq.uiframework.renderer.node.spec.FlowColumnNodeProps
+import com.gzq.uiframework.renderer.node.spec.FlowRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.RowNodeProps
@@ -93,6 +97,18 @@ internal object ContainerViewBinder {
         val update: ((android.view.View) -> Unit)?,
     )
 
+    data class FlowRowSpec(
+        val horizontalSpacing: Int,
+        val verticalSpacing: Int,
+        val maxItemsInEachRow: Int,
+    )
+
+    data class FlowColumnSpec(
+        val horizontalSpacing: Int,
+        val verticalSpacing: Int,
+        val maxItemsInEachColumn: Int,
+    )
+
     fun bindRow(
         view: DeclarativeLinearLayout,
         spec: LinearSpec,
@@ -132,6 +148,24 @@ internal object ContainerViewBinder {
         spec: LinearSpec,
     ) {
         bindRow(view.innerLayout, spec)
+    }
+
+    fun bindFlowRow(
+        view: DeclarativeFlowRowLayout,
+        spec: FlowRowSpec,
+    ) {
+        view.horizontalSpacing = spec.horizontalSpacing
+        view.verticalSpacing = spec.verticalSpacing
+        view.maxItemsInEachRow = spec.maxItemsInEachRow
+    }
+
+    fun bindFlowColumn(
+        view: DeclarativeFlowColumnLayout,
+        spec: FlowColumnSpec,
+    ) {
+        view.horizontalSpacing = spec.horizontalSpacing
+        view.verticalSpacing = spec.verticalSpacing
+        view.maxItemsInEachColumn = spec.maxItemsInEachColumn
     }
 
     fun bindLazyColumn(
@@ -263,6 +297,34 @@ internal object ContainerViewBinder {
             spacing = node.props[TypedPropKeys.LinearSpacing] ?: 0,
             arrangement = node.props[TypedPropKeys.RowMainAxisArrangement] ?: MainAxisArrangement.Start,
             gravity = (node.props[TypedPropKeys.RowVerticalAlignment] ?: VerticalAlignment.Top).toGravity(),
+        )
+    }
+
+    fun readFlowRowSpec(node: VNode): FlowRowSpec {
+        val spec = node.spec as? FlowRowNodeProps
+            ?: return FlowRowSpec(
+                horizontalSpacing = 0,
+                verticalSpacing = 0,
+                maxItemsInEachRow = Int.MAX_VALUE,
+            )
+        return FlowRowSpec(
+            horizontalSpacing = spec.horizontalSpacing,
+            verticalSpacing = spec.verticalSpacing,
+            maxItemsInEachRow = spec.maxItemsInEachRow,
+        )
+    }
+
+    fun readFlowColumnSpec(node: VNode): FlowColumnSpec {
+        val spec = node.spec as? FlowColumnNodeProps
+            ?: return FlowColumnSpec(
+                horizontalSpacing = 0,
+                verticalSpacing = 0,
+                maxItemsInEachColumn = Int.MAX_VALUE,
+            )
+        return FlowColumnSpec(
+            horizontalSpacing = spec.horizontalSpacing,
+            verticalSpacing = spec.verticalSpacing,
+            maxItemsInEachColumn = spec.maxItemsInEachColumn,
         )
     }
 

@@ -9,6 +9,8 @@ import com.gzq.uiframework.renderer.node.spec.BoxNodeProps
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
 import com.gzq.uiframework.renderer.node.spec.ColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.DividerNodeProps
+import com.gzq.uiframework.renderer.node.spec.FlowColumnNodeProps
+import com.gzq.uiframework.renderer.node.spec.FlowRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.IconButtonNodeProps
 import com.gzq.uiframework.renderer.node.spec.ImageNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
@@ -270,6 +272,28 @@ class NodeBindingDifferTest {
 
         assertTrue(plan is NodeBindingPlan.Patch)
         assertTrue((plan as NodeBindingPlan.Patch).patch is IconButtonNodePatch)
+    }
+
+    @Test
+    fun `patches flow row semantic updates`() {
+        val previous = flowRowNode(horizontalSpacing = 8)
+        val next = flowRowNode(horizontalSpacing = 16)
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is FlowRowNodePatch)
+    }
+
+    @Test
+    fun `patches flow column semantic updates`() {
+        val previous = flowColumnNode(verticalSpacing = 8)
+        val next = flowColumnNode(verticalSpacing = 16)
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is FlowColumnNodePatch)
     }
 
     private fun textNode(
@@ -569,6 +593,34 @@ class NodeBindingDifferTest {
                 cornerRadius = 8,
                 rippleColor = 0x33000000,
                 contentPadding = 8,
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun flowRowNode(
+        horizontalSpacing: Int = 8,
+    ): VNode {
+        return VNode(
+            type = NodeType.FlowRow,
+            spec = FlowRowNodeProps(
+                horizontalSpacing = horizontalSpacing,
+                verticalSpacing = 4,
+                maxItemsInEachRow = Int.MAX_VALUE,
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun flowColumnNode(
+        verticalSpacing: Int = 8,
+    ): VNode {
+        return VNode(
+            type = NodeType.FlowColumn,
+            spec = FlowColumnNodeProps(
+                horizontalSpacing = 4,
+                verticalSpacing = verticalSpacing,
+                maxItemsInEachColumn = Int.MAX_VALUE,
             ),
             modifier = Modifier,
         )

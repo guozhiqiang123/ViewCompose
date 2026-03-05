@@ -5,6 +5,8 @@ import com.gzq.uiframework.renderer.node.spec.BoxNodeProps
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
 import com.gzq.uiframework.renderer.node.spec.ColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.DividerNodeProps
+import com.gzq.uiframework.renderer.node.spec.FlowColumnNodeProps
+import com.gzq.uiframework.renderer.node.spec.FlowRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.IconButtonNodeProps
 import com.gzq.uiframework.renderer.node.spec.ImageNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
@@ -215,6 +217,26 @@ internal object NodeBindingDiffer {
                     patch = ScrollableRowNodePatch(
                         previous = previousScrollableRow,
                         next = nextScrollableRow,
+                    ),
+                )
+            }
+            val previousFlowRow = previous.spec as? FlowRowNodeProps
+            val nextFlowRow = next.spec as? FlowRowNodeProps
+            if (previousFlowRow != null && nextFlowRow != null) {
+                return NodeBindingPlan.Patch(
+                    patch = FlowRowNodePatch(
+                        previous = previousFlowRow,
+                        next = nextFlowRow,
+                    ),
+                )
+            }
+            val previousFlowColumn = previous.spec as? FlowColumnNodeProps
+            val nextFlowColumn = next.spec as? FlowColumnNodeProps
+            if (previousFlowColumn != null && nextFlowColumn != null) {
+                return NodeBindingPlan.Patch(
+                    patch = FlowColumnNodePatch(
+                        previous = previousFlowColumn,
+                        next = nextFlowColumn,
                     ),
                 )
             }

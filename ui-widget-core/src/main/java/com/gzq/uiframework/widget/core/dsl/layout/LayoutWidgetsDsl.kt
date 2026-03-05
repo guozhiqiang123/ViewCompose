@@ -13,6 +13,8 @@ import com.gzq.uiframework.renderer.node.props
 import com.gzq.uiframework.renderer.node.spec.BoxNodeProps
 import com.gzq.uiframework.renderer.node.spec.ColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.DividerNodeProps
+import com.gzq.uiframework.renderer.node.spec.FlowColumnNodeProps
+import com.gzq.uiframework.renderer.node.spec.FlowRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.RowNodeProps
 import com.gzq.uiframework.renderer.node.spec.ScrollableColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.ScrollableRowNodeProps
@@ -222,5 +224,47 @@ fun UiTreeBuilder.ScrollableRow(
         ),
         modifier = modifier,
         children = RowScope().apply(content).build(),
+    )
+}
+
+fun UiTreeBuilder.FlowRow(
+    key: Any? = null,
+    horizontalSpacing: Int = 0,
+    verticalSpacing: Int = 0,
+    maxItemsInEachRow: Int = Int.MAX_VALUE,
+    modifier: Modifier = Modifier,
+    content: LayoutScope.() -> Unit,
+) {
+    emitResolved(
+        type = NodeType.FlowRow,
+        key = key,
+        spec = FlowRowNodeProps(
+            horizontalSpacing = horizontalSpacing,
+            verticalSpacing = verticalSpacing,
+            maxItemsInEachRow = maxItemsInEachRow,
+        ),
+        modifier = modifier,
+        children = LayoutScope().apply(content).build(),
+    )
+}
+
+fun UiTreeBuilder.FlowColumn(
+    key: Any? = null,
+    horizontalSpacing: Int = 0,
+    verticalSpacing: Int = 0,
+    maxItemsInEachColumn: Int = Int.MAX_VALUE,
+    modifier: Modifier = Modifier,
+    content: LayoutScope.() -> Unit,
+) {
+    emitResolved(
+        type = NodeType.FlowColumn,
+        key = key,
+        spec = FlowColumnNodeProps(
+            horizontalSpacing = horizontalSpacing,
+            verticalSpacing = verticalSpacing,
+            maxItemsInEachColumn = maxItemsInEachColumn,
+        ),
+        modifier = modifier,
+        children = LayoutScope().apply(content).build(),
     )
 }

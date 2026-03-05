@@ -2,7 +2,7 @@
 
 > **日期**：2026-03-04
 > **对照基准**：Jetpack Compose Material 3 1.4.x (stable) + Foundation 1.9.x
-> **框架当前状态**：18 NodeSpec · 11 Defaults · 27 Modifier · 50 DSL · 24 NodeType
+> **框架当前状态**：20 NodeSpec · 11 Defaults · 27 Modifier · 52 DSL · 26 NodeType
 
 ---
 
@@ -12,7 +12,7 @@
 
 | 类别 | 已有组件 |
 |------|---------|
-| 布局容器 | Box, Row, Column, Surface, Spacer, Divider, Card (3 variant), ListItem, ScrollableColumn, ScrollableRow |
+| 布局容器 | Box, Row, Column, Surface, Spacer, Divider, Card (3 variant), ListItem, ScrollableColumn, ScrollableRow, FlowRow, FlowColumn |
 | 内容展示 | Text, Image, Icon, Badge, BadgedBox |
 | 按钮动作 | Button (5 variant incl. Text), TextButton, IconButton (4 variant), SegmentedControl, FloatingActionButton, ExtendedFloatingActionButton |
 | 文本输入 | TextField, PasswordField, EmailField, NumberField, TextArea |
@@ -397,7 +397,7 @@ fun UiTreeBuilder.Badge(
 | 12 | LazyGrid | `LazyVerticalGrid`, `LazyHorizontalGrid` | ⭐⭐⭐ | 新增虚拟组件 | P2-B |
 | 13 | StaggeredGrid | `LazyVerticalStaggeredGrid` | ⭐⭐ | 新增虚拟组件 | P2-C |
 | 14 | HorizontalPager | `HorizontalPager` | ⭐⭐⭐ | 新增虚拟组件（复用 ViewPager2） | P2-B |
-| 15 | FlowRow / FlowColumn | `FlowRow`, `FlowColumn` | ⭐⭐⭐ | 新增虚拟组件 | P2-B |
+| 15 | ~~FlowRow / FlowColumn~~ | `FlowRow`, `FlowColumn` | ⭐⭐⭐ | ~~新增虚拟组件~~ | ✅ Phase B |
 | 16 | BottomAppBar | `BottomAppBar` | ⭐⭐⭐ | 组合封装（Row 变体） | P2-B |
 | 17 | ~~ScrollableContainer~~ | `verticalScroll`, `horizontalScroll` | ⭐⭐⭐ | ~~新增虚拟组件~~ | ✅ Phase B |
 | 18 | TriStateCheckbox | `TriStateCheckbox` | ⭐⭐ | 组合封装（Checkbox 扩展） | P2-C |
@@ -807,8 +807,8 @@ fun UiTreeBuilder.ListItem(
 | `Column` | ✅ 已有 | `Column()` | — |
 | `Surface` | ✅ 已有 | `Surface()` | — |
 | `Spacer` | ✅ 已有 | `Spacer()` | — |
-| `FlowRow` | ❌ 缺失 | — | T2 新增虚拟 |
-| `FlowColumn` | ❌ 缺失 | — | T2 新增虚拟 |
+| `FlowRow` | ✅ 已有 | `FlowRow()` | Phase B |
+| `FlowColumn` | ✅ 已有 | `FlowColumn()` | Phase B |
 | `Modifier.verticalScroll` | ✅ 已有 | `ScrollableColumn()` | Phase B |
 | `Modifier.horizontalScroll` | ✅ 已有 | `ScrollableRow()` | Phase B |
 | `Scaffold` | ❌ 缺失 | — | T1 新增虚拟 |
@@ -950,7 +950,7 @@ fun UiTreeBuilder.ListItem(
 | B.2 | NavigationBar | 2-3 天 | — | |
 | B.3 | Scaffold | 2-3 天 | TopAppBar, BottomAppBar (Phase A) | |
 | B.4 | DropdownMenu | 2 天 | 复用 Popup 架构 | |
-| B.5 | FlowRow / FlowColumn | 2 天 | — | |
+| B.5 | FlowRow / FlowColumn | 2 天 | — | ✅ |
 | B.6 | ScrollableColumn / ScrollableRow | 1 天 | — | ✅ |
 
 ### Phase C：中等组件（3-4 周）
@@ -989,10 +989,10 @@ fun UiTreeBuilder.ListItem(
 | 维度 | 数量 |
 |------|------|
 | Compose M3 核心组件（去重、去 Expressive） | ~90 |
-| 框架已覆盖 | 40 |
+| 框架已覆盖 | 42 |
 | 框架部分覆盖 | 4 |
 | T1 核心缺口 | 10 → 2 (Phase A 关闭 7, Phase B 关闭 1) |
-| T2 中等缺口 | 20 → 17 (Phase A 关闭 2, Phase B 关闭 1) |
+| T2 中等缺口 | 20 → 15 (Phase A 关闭 2, Phase B 关闭 3) |
 | T3 AndroidView | 14 |
 | T4 可组合封装 | 14 → 5 (Phase A 关闭 9) |
 
@@ -1034,7 +1034,7 @@ T3 AndroidView (14) ████████░░░░░░░░░░░░
 | `FloatingActionButton(onClick) { Icon(...) }` | `IconButton(icon, onClick)` 近似 → 待 `FloatingActionButton()` |
 | `DropdownMenu(expanded, onDismiss) { ... }` | `Popup(visible, anchorId) { 手动布局 }` → 待 `DropdownMenu()` |
 | `LazyRow { items(list) { ... } }` | `LazyRow(list) { ... }` ✅ |
-| `FlowRow { chips }` | ❌ 需要新增 |
+| `FlowRow { chips }` | `FlowRow { chips }` ✅ |
 | `ModalBottomSheet { ... }` | ❌ 需要新增 |
 | `Chip(onClick, label = { Text("Tag") })` | ❌ 需要组合封装 |
 | `Modifier.verticalScroll()` | `ScrollableColumn { ... }` ✅ |

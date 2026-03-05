@@ -3,6 +3,8 @@ package com.gzq.uiframework.renderer.view.tree.patch
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeFlowColumnLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeFlowRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
@@ -11,6 +13,8 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout
 import com.gzq.uiframework.renderer.view.tree.BoxNodePatch
 import com.gzq.uiframework.renderer.view.tree.ColumnNodePatch
 import com.gzq.uiframework.renderer.view.tree.ContainerViewBinder
+import com.gzq.uiframework.renderer.view.tree.FlowColumnNodePatch
+import com.gzq.uiframework.renderer.view.tree.FlowRowNodePatch
 import com.gzq.uiframework.renderer.view.tree.LazyColumnNodePatch
 import com.gzq.uiframework.renderer.view.tree.LazyRowNodePatch
 import com.gzq.uiframework.renderer.view.tree.RowNodePatch
@@ -203,6 +207,40 @@ internal object ContainerNodePatchApplier {
             with(ContainerViewBinder) {
                 view.innerLayout.gravity = next.verticalAlignment.toGravity()
             }
+        }
+    }
+
+    fun applyFlowRowPatch(
+        view: DeclarativeFlowRowLayout,
+        patch: FlowRowNodePatch,
+    ) {
+        val previous = patch.previous
+        val next = patch.next
+        if (previous.horizontalSpacing != next.horizontalSpacing) {
+            view.horizontalSpacing = next.horizontalSpacing
+        }
+        if (previous.verticalSpacing != next.verticalSpacing) {
+            view.verticalSpacing = next.verticalSpacing
+        }
+        if (previous.maxItemsInEachRow != next.maxItemsInEachRow) {
+            view.maxItemsInEachRow = next.maxItemsInEachRow
+        }
+    }
+
+    fun applyFlowColumnPatch(
+        view: DeclarativeFlowColumnLayout,
+        patch: FlowColumnNodePatch,
+    ) {
+        val previous = patch.previous
+        val next = patch.next
+        if (previous.horizontalSpacing != next.horizontalSpacing) {
+            view.horizontalSpacing = next.horizontalSpacing
+        }
+        if (previous.verticalSpacing != next.verticalSpacing) {
+            view.verticalSpacing = next.verticalSpacing
+        }
+        if (previous.maxItemsInEachColumn != next.maxItemsInEachColumn) {
+            view.maxItemsInEachColumn = next.maxItemsInEachColumn
         }
     }
 }

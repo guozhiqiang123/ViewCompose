@@ -25,4 +25,6 @@ sealed interface NodeType {
     data object SegmentedControl : NodeType
     data object ScrollableColumn : NodeType
     data object ScrollableRow : NodeType
+    data object FlowRow : NodeType
+    data object FlowColumn : NodeType
 }
