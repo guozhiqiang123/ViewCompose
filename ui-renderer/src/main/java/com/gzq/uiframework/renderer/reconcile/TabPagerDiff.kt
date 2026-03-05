@@ -31,6 +31,7 @@ data class TabPagerDiffResult(
     val pages: List<TabPage>,
 )
 
+@Deprecated("Use LazyListDiff directly")
 object TabPagerDiff {
     fun calculate(
         previous: List<TabPage>,

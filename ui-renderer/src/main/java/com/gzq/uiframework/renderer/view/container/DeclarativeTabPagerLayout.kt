@@ -18,6 +18,7 @@ import com.gzq.uiframework.renderer.view.tree.LayoutPassTracker
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
+@Deprecated("Use DeclarativeTabRowLayout + DeclarativeHorizontalPagerLayout instead")
 internal class DeclarativeTabPagerLayout(
     context: Context,
 ) : LinearLayout(context) {

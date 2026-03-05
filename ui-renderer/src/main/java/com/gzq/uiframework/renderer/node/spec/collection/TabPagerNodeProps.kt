@@ -2,6 +2,7 @@ package com.gzq.uiframework.renderer.node.spec
 
 import com.gzq.uiframework.renderer.node.TabPage
 
+@Deprecated("Use TabRowNodeProps + HorizontalPagerNodeProps instead")
 data class TabPagerNodeProps(
     val pages: List<TabPage>,
     val selectedTabIndex: Int,

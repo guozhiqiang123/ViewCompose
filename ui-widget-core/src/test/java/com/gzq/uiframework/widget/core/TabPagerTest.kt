@@ -1,16 +1,15 @@
 package com.gzq.uiframework.widget.core
 
 import com.gzq.uiframework.renderer.node.NodeType
-import com.gzq.uiframework.renderer.node.TabPage
-import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
+import com.gzq.uiframework.renderer.node.spec.HorizontalPagerNodeProps
+import com.gzq.uiframework.renderer.node.spec.TabRowNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class TabPagerTest {
     @Test
-    fun `tab pager emits mapped tab page models`() {
+    fun `tab pager emits column with tab row and horizontal pager`() {
         var selectedIndex = -1
 
         val tree = buildVNodeTree {
@@ -27,28 +26,25 @@ class TabPagerTest {
             }
         }
 
-        val node = tree.single()
-        val spec = node.spec as TabPagerNodeProps
+        val column = tree.single()
+        assertEquals(NodeType.Column, column.type)
+        assertEquals(2, column.children.size)
 
-        assertEquals(NodeType.TabPager, node.type)
-        assertEquals(1, spec.selectedTabIndex)
-        assertEquals(TabPagerDefaults.backgroundColor(), spec.backgroundColor)
-        assertEquals(TabPagerDefaults.indicatorColor(), spec.indicatorColor)
-        assertEquals(TabPagerDefaults.cornerRadius(), spec.cornerRadius)
-        assertEquals(TabPagerDefaults.indicatorHeight(), spec.indicatorHeight)
-        assertEquals(TabPagerDefaults.tabPaddingHorizontal(), spec.tabPaddingHorizontal)
-        assertEquals(TabPagerDefaults.tabPaddingVertical(), spec.tabPaddingVertical)
-        assertEquals(TabPagerDefaults.selectedTextColor(), spec.selectedTextColor)
-        assertEquals(TabPagerDefaults.unselectedTextColor(), spec.unselectedTextColor)
-        assertEquals(TabPagerDefaults.rippleColor(), spec.rippleColor)
-        assertEquals(2, spec.pages.size)
-        assertEquals("Overview", spec.pages[0].title)
-        assertEquals("Input", spec.pages[1].title)
-        assertTrue(node.spec is TabPagerNodeProps)
+        val tabRowNode = column.children[0]
+        assertEquals(NodeType.TabRow, tabRowNode.type)
+        val tabRowSpec = tabRowNode.spec as TabRowNodeProps
+        assertEquals(1, tabRowSpec.selectedIndex)
+        assertEquals(2, tabRowSpec.tabs.size)
 
-        spec.onTabSelected?.invoke(0)
+        val pagerNode = column.children[1]
+        assertEquals(NodeType.HorizontalPager, pagerNode.type)
+        val pagerSpec = pagerNode.spec as HorizontalPagerNodeProps
+        assertEquals(1, pagerSpec.currentPage)
+        assertEquals(2, pagerSpec.pages.size)
+
+        tabRowSpec.onTabSelected?.invoke(0)
         assertEquals(0, selectedIndex)
-        assertNotNull(spec.pages[0].item.sessionFactory)
+        assertNotNull(pagerSpec.pages[0].sessionFactory)
     }
 
     @Test
@@ -77,11 +73,10 @@ class TabPagerTest {
             }
         }
 
-        val spec = tree.single().spec as TabPagerNodeProps
+        val column = tree.single()
+        val tabRowSpec = column.children[0].spec as TabRowNodeProps
 
-        assertEquals(601, spec.backgroundColor)
-        assertEquals(602, spec.indicatorColor)
-        assertEquals(603, spec.unselectedTextColor)
-        assertEquals(604, spec.selectedTextColor)
+        assertEquals(601, tabRowSpec.containerColor)
+        assertEquals(602, tabRowSpec.indicatorColor)
     }
 }
