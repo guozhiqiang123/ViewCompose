@@ -14,8 +14,8 @@
 |------|---------|
 | 布局容器 | Box, Row, Column, Surface, Spacer, Divider, Card (3 variant), ListItem, ScrollableColumn, ScrollableRow, FlowRow, FlowColumn, Scaffold |
 | 内容展示 | Text, Image, Icon, Badge, BadgedBox |
-| 按钮动作 | Button (5 variant incl. Text), TextButton, IconButton (4 variant), SegmentedControl, FloatingActionButton, ExtendedFloatingActionButton |
-| 文本输入 | TextField, PasswordField, EmailField, NumberField, TextArea |
+| 按钮动作 | Button (5 variant incl. Text), TextButton, IconButton (4 variant), SegmentedControl, FloatingActionButton, ExtendedFloatingActionButton, Chip (4 variant) |
+| 文本输入 | TextField, PasswordField, EmailField, NumberField, TextArea, SearchBar |
 | 选择输入 | Checkbox, Switch, RadioButton, Slider |
 | 反馈提示 | LinearProgressIndicator, CircularProgressIndicator, Snackbar, Toast, Dialog, Popup, AlertDialog, PlainTooltip, DropdownMenu |
 | 集合列表 | LazyColumn, LazyRow, TabPager |
@@ -383,11 +383,11 @@ fun UiTreeBuilder.Badge(
 
 | # | 组件 | Compose 对应 | 使用频率 | 建议实现方式 | 优先级 |
 |---|------|-------------|---------|------------|--------|
-| 1 | Chip | `AssistChip`, `FilterChip`, `InputChip`, `SuggestionChip` | ⭐⭐⭐⭐ | 组合封装（Button 小变体） | P2-B |
+| 1 | ~~Chip~~ | `AssistChip`, `FilterChip`, `InputChip`, `SuggestionChip` | ⭐⭐⭐⭐ | ~~组合封装（Button 小变体）~~ | ✅ Phase C |
 | 2 | ModalBottomSheet | `ModalBottomSheet` | ⭐⭐⭐⭐ | 新增虚拟组件 | P2-B |
 | 3 | NavigationDrawer | `ModalNavigationDrawer`, `PermanentNavigationDrawer` | ⭐⭐⭐ | 新增虚拟组件 | P2-C |
 | 4 | NavigationRail | `NavigationRail`, `NavigationRailItem` | ⭐⭐ | 新增虚拟组件 | P2-C |
-| 5 | SearchBar | `SearchBar`, `DockedSearchBar` | ⭐⭐⭐ | 组合封装（TextField 变体） | P2-B |
+| 5 | ~~SearchBar~~ | `SearchBar`, `DockedSearchBar` | ⭐⭐⭐ | ~~组合封装（TextField 变体）~~ | ✅ Phase C |
 | 6 | Tooltip | `PlainTooltip`, `RichTooltip`, `TooltipBox` | ⭐⭐⭐ | 组合封装（Popup 变体） | P2-C |
 | 7 | SwipeToDismiss | `SwipeToDismissBox` | ⭐⭐⭐ | 新增虚拟组件（手势） | P2-C |
 | 8 | PullToRefresh | `PullToRefreshBox` | ⭐⭐⭐⭐ | 新增虚拟组件（手势） | P2-B |
@@ -845,10 +845,10 @@ fun UiTreeBuilder.ListItem(
 
 | Compose 组件 | 框架状态 | 框架对应 | 归类 |
 |-------------|---------|---------|------|
-| `AssistChip` | ❌ 缺失 | — | T4 组合封装 |
-| `FilterChip` | ❌ 缺失 | — | T4 组合封装 |
-| `InputChip` | ❌ 缺失 | — | T4 组合封装 |
-| `SuggestionChip` | ❌ 缺失 | — | T4 组合封装 |
+| `AssistChip` | ✅ 已有 | `Chip(variant = Assist)` | Phase C |
+| `FilterChip` | ✅ 已有 | `Chip(variant = Filter)` | Phase C |
+| `InputChip` | ✅ 已有 | `Chip(variant = Input)` | Phase C |
+| `SuggestionChip` | ✅ 已有 | `Chip(variant = Suggestion)` | Phase C |
 
 ### 5.5 文本输入
 
@@ -857,7 +857,7 @@ fun UiTreeBuilder.ListItem(
 | `TextField` (Filled) | ✅ 已有 | `TextField(variant = Filled)` | — |
 | `OutlinedTextField` | ✅ 已有 | `TextField(variant = Outlined)` | — |
 | `SecureTextField` | ✅ 已有 | `PasswordField()` | — |
-| `SearchBar` | ❌ 缺失 | — | T4 组合封装 |
+| `SearchBar` | ✅ 已有 | `SearchBar()` | Phase C |
 
 ### 5.6 选择控件
 
@@ -959,12 +959,12 @@ fun UiTreeBuilder.ListItem(
 
 | # | 组件 | 工作量 | 依赖 |
 |---|------|--------|------|
-| C.1 | Chip (4 variants) | 1 天 | — |
-| C.2 | ModalBottomSheet | 3-4 天 | 手势系统 |
-| C.3 | PullToRefresh | 2 天 | LazyColumn 集成 |
-| C.4 | LazyVerticalGrid | 2 天 | 复用 LazyColumn 架构 |
-| C.5 | HorizontalPager / VerticalPager | 2 天 | 复用 TabPager 架构 |
-| C.6 | SearchBar | 1 天 | TextField |
+| C.1 | Chip (4 variants) | 1 天 | — | ✅ |
+| C.2 | ModalBottomSheet | 3-4 天 | 手势系统 | |
+| C.3 | PullToRefresh | 2 天 | LazyColumn 集成 | |
+| C.4 | LazyVerticalGrid | 2 天 | 复用 LazyColumn 架构 | |
+| C.5 | HorizontalPager / VerticalPager | 2 天 | 复用 TabPager 架构 | |
+| C.6 | SearchBar | 1 天 | TextField | ✅ |
 | C.7 | ElevatedCard | 0.5 天 | elevation Modifier |
 | C.8 | SwipeToDismiss | 2-3 天 | 手势系统 |
 | C.9 | NavigationDrawer | 2-3 天 | — |
@@ -992,9 +992,9 @@ fun UiTreeBuilder.ListItem(
 | 框架已覆盖 | 45 |
 | 框架部分覆盖 | 4 |
 | T1 核心缺口 | 10 → 0 (Phase A 关闭 7, Phase B 关闭 3) |
-| T2 中等缺口 | 20 → 15 (Phase A 关闭 2, Phase B 关闭 3) |
+| T2 中等缺口 | 20 → 13 (Phase A 关闭 2, Phase B 关闭 3, Phase C 关闭 2) |
 | T3 AndroidView | 14 |
-| T4 可组合封装 | 14 → 5 (Phase A 关闭 9) |
+| T4 可组合封装 | 14 → 3 (Phase A 关闭 9, Phase C 关闭 2) |
 
 ### 缺口分布
 
@@ -1036,7 +1036,7 @@ T3 AndroidView (14) ████████░░░░░░░░░░░░
 | `LazyRow { items(list) { ... } }` | `LazyRow(list) { ... }` ✅ |
 | `FlowRow { chips }` | `FlowRow { chips }` ✅ |
 | `ModalBottomSheet { ... }` | ❌ 需要新增 |
-| `Chip(onClick, label = { Text("Tag") })` | ❌ 需要组合封装 |
+| `Chip(onClick, label = { Text("Tag") })` | `Chip("Tag", onClick, variant = Assist)` ✅ |
 | `Modifier.verticalScroll()` | `ScrollableColumn { ... }` ✅ |
 
 ### 8.2 命名对照约定
