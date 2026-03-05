@@ -9,6 +9,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeHorizontalPagerLay
 import com.gzq.uiframework.renderer.view.container.DeclarativeLazyVerticalGridLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeNavigationBarLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativePullToRefreshLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
@@ -25,6 +26,7 @@ import com.gzq.uiframework.renderer.view.tree.HorizontalPagerNodePatch
 import com.gzq.uiframework.renderer.view.tree.LazyColumnNodePatch
 import com.gzq.uiframework.renderer.view.tree.LazyRowNodePatch
 import com.gzq.uiframework.renderer.view.tree.LazyVerticalGridNodePatch
+import com.gzq.uiframework.renderer.view.tree.PullToRefreshNodePatch
 import com.gzq.uiframework.renderer.view.tree.RowNodePatch
 import com.gzq.uiframework.renderer.view.tree.ScrollableColumnNodePatch
 import com.gzq.uiframework.renderer.view.tree.ScrollableRowNodePatch
@@ -357,5 +359,33 @@ internal object ContainerNodePatchApplier {
                 state = patch.next.state,
             ),
         )
+    }
+
+    fun applyPullToRefreshPatch(
+        view: DeclarativePullToRefreshLayout,
+        patch: PullToRefreshNodePatch,
+    ) {
+        val previous = patch.previous
+        val next = patch.next
+        if (previous.isRefreshing != next.isRefreshing) {
+            view.swipeRefreshLayout.isRefreshing = next.isRefreshing
+        }
+        if (previous.onRefresh !== next.onRefresh) {
+            view.swipeRefreshLayout.setOnRefreshListener { next.onRefresh?.invoke() }
+        }
+        if (previous.indicatorColor != next.indicatorColor) {
+            view.swipeRefreshLayout.setColorSchemeColors(next.indicatorColor)
+        }
+        if (previous.spacing != next.spacing) {
+            view.innerLayout.itemSpacing = next.spacing
+        }
+        if (previous.arrangement != next.arrangement) {
+            view.innerLayout.mainAxisArrangement = next.arrangement
+        }
+        if (previous.horizontalAlignment != next.horizontalAlignment) {
+            with(ContainerViewBinder) {
+                view.innerLayout.gravity = next.horizontalAlignment.toGravity()
+            }
+        }
     }
 }

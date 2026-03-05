@@ -33,4 +33,5 @@ sealed interface NodeType {
     data object VerticalPager : NodeType
     data object TabRow : NodeType
     data object LazyVerticalGrid : NodeType
+    data object PullToRefresh : NodeType
 }

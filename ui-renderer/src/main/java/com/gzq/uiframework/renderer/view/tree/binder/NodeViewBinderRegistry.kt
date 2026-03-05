@@ -17,6 +17,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeHorizontalPagerLay
 import com.gzq.uiframework.renderer.view.container.DeclarativeLazyVerticalGridLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeNavigationBarLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativePullToRefreshLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
@@ -231,6 +232,12 @@ internal object NodeViewBinderRegistry {
                     spec = ContainerViewBinder.readLazyVerticalGridSpec(node),
                 )
             },
+            NodeType.PullToRefresh to { view, node ->
+                ContainerViewBinder.bindPullToRefresh(
+                    view = view as DeclarativePullToRefreshLayout,
+                    spec = ContainerViewBinder.readPullToRefreshSpec(node),
+                )
+            },
         )
     }
 
@@ -393,6 +400,12 @@ internal object NodeViewBinderRegistry {
             is LazyVerticalGridNodePatch -> {
                 ContainerNodePatchApplier.applyLazyVerticalGridPatch(
                     view = view as DeclarativeLazyVerticalGridLayout,
+                    patch = patch,
+                )
+            }
+            is PullToRefreshNodePatch -> {
+                ContainerNodePatchApplier.applyPullToRefreshPatch(
+                    view = view as DeclarativePullToRefreshLayout,
                     patch = patch,
                 )
             }

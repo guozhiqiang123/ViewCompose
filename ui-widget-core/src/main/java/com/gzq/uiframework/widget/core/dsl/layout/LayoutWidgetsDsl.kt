@@ -15,6 +15,7 @@ import com.gzq.uiframework.renderer.node.spec.ColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.DividerNodeProps
 import com.gzq.uiframework.renderer.node.spec.FlowColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.FlowRowNodeProps
+import com.gzq.uiframework.renderer.node.spec.PullToRefreshNodeProps
 import com.gzq.uiframework.renderer.node.spec.RowNodeProps
 import com.gzq.uiframework.renderer.node.spec.ScrollableColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.ScrollableRowNodeProps
@@ -266,5 +267,32 @@ fun UiTreeBuilder.FlowColumn(
         ),
         modifier = modifier,
         children = LayoutScope().apply(content).build(),
+    )
+}
+
+fun UiTreeBuilder.PullToRefresh(
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
+    indicatorColor: Int = PullToRefreshDefaults.indicatorColor(),
+    spacing: Int = 0,
+    arrangement: MainAxisArrangement = MainAxisArrangement.Start,
+    horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Start,
+    key: Any? = null,
+    modifier: Modifier = Modifier,
+    content: ColumnScope.() -> Unit,
+) {
+    emitResolved(
+        type = NodeType.PullToRefresh,
+        key = key,
+        spec = PullToRefreshNodeProps(
+            isRefreshing = isRefreshing,
+            onRefresh = onRefresh,
+            indicatorColor = indicatorColor,
+            spacing = spacing,
+            arrangement = arrangement,
+            horizontalAlignment = horizontalAlignment,
+        ),
+        modifier = modifier,
+        children = ColumnScope().apply(content).build(),
     )
 }

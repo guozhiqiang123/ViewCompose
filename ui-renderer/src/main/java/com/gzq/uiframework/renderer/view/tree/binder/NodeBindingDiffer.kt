@@ -15,6 +15,7 @@ import com.gzq.uiframework.renderer.node.spec.LazyRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyVerticalGridNodeProps
 import com.gzq.uiframework.renderer.node.spec.NavigationBarNodeProps
 import com.gzq.uiframework.renderer.node.spec.ProgressIndicatorNodeProps
+import com.gzq.uiframework.renderer.node.spec.PullToRefreshNodeProps
 import com.gzq.uiframework.renderer.node.spec.RowNodeProps
 import com.gzq.uiframework.renderer.node.spec.ScrollableColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.ScrollableRowNodeProps
@@ -292,6 +293,16 @@ internal object NodeBindingDiffer {
                     patch = LazyVerticalGridNodePatch(
                         previous = previousLazyVerticalGrid,
                         next = nextLazyVerticalGrid,
+                    ),
+                )
+            }
+            val previousPullToRefresh = previous.spec as? PullToRefreshNodeProps
+            val nextPullToRefresh = next.spec as? PullToRefreshNodeProps
+            if (previousPullToRefresh != null && nextPullToRefresh != null) {
+                return NodeBindingPlan.Patch(
+                    patch = PullToRefreshNodePatch(
+                        previous = previousPullToRefresh,
+                        next = nextPullToRefresh,
                     ),
                 )
             }

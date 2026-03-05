@@ -19,6 +19,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeHorizontalPagerLay
 import com.gzq.uiframework.renderer.view.container.DeclarativeLazyVerticalGridLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeNavigationBarLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativePullToRefreshLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
@@ -43,6 +44,7 @@ import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyVerticalGridNodeProps
 import com.gzq.uiframework.renderer.node.spec.NavigationBarNodeProps
+import com.gzq.uiframework.renderer.node.spec.PullToRefreshNodeProps
 import com.gzq.uiframework.renderer.node.spec.RowNodeProps
 import com.gzq.uiframework.renderer.node.spec.ScrollableColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.ScrollableRowNodeProps
@@ -166,6 +168,13 @@ internal object ContainerViewBinder {
         val state: com.gzq.uiframework.renderer.view.lazy.LazyListState?,
     )
 
+    data class PullToRefreshSpec(
+        val isRefreshing: Boolean,
+        val onRefresh: (() -> Unit)?,
+        val indicatorColor: Int,
+        val innerLinear: LinearSpec,
+    )
+
     data class TabRowSpec(
         val tabs: List<com.gzq.uiframework.renderer.node.collection.TabRowTab>,
         val selectedIndex: Int,
@@ -219,6 +228,16 @@ internal object ContainerViewBinder {
         spec: LinearSpec,
     ) {
         bindColumn(view.innerLayout, spec)
+    }
+
+    fun bindPullToRefresh(
+        view: DeclarativePullToRefreshLayout,
+        spec: PullToRefreshSpec,
+    ) {
+        view.swipeRefreshLayout.isRefreshing = spec.isRefreshing
+        view.swipeRefreshLayout.setOnRefreshListener { spec.onRefresh?.invoke() }
+        view.swipeRefreshLayout.setColorSchemeColors(spec.indicatorColor)
+        bindColumn(view.innerLayout, spec.innerLinear)
     }
 
     fun bindScrollableRow(
@@ -359,6 +378,30 @@ internal object ContainerViewBinder {
             spacing = node.props[TypedPropKeys.LinearSpacing] ?: 0,
             arrangement = node.props[TypedPropKeys.ColumnMainAxisArrangement] ?: MainAxisArrangement.Start,
             gravity = (node.props[TypedPropKeys.ColumnHorizontalAlignment] ?: HorizontalAlignment.Start).toGravity(),
+        )
+    }
+
+    fun readPullToRefreshSpec(node: VNode): PullToRefreshSpec {
+        val spec = node.spec as? PullToRefreshNodeProps
+            ?: return PullToRefreshSpec(
+                isRefreshing = false,
+                onRefresh = null,
+                indicatorColor = 0,
+                innerLinear = LinearSpec(
+                    spacing = 0,
+                    arrangement = MainAxisArrangement.Start,
+                    gravity = Gravity.START or Gravity.TOP,
+                ),
+            )
+        return PullToRefreshSpec(
+            isRefreshing = spec.isRefreshing,
+            onRefresh = spec.onRefresh,
+            indicatorColor = spec.indicatorColor,
+            innerLinear = LinearSpec(
+                spacing = spec.spacing,
+                arrangement = spec.arrangement,
+                gravity = spec.horizontalAlignment.toGravity(),
+            ),
         )
     }
 

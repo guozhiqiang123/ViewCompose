@@ -14,6 +14,7 @@ import com.gzq.uiframework.renderer.node.spec.LazyRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyVerticalGridNodeProps
 import com.gzq.uiframework.renderer.node.spec.NavigationBarNodeProps
 import com.gzq.uiframework.renderer.node.spec.ProgressIndicatorNodeProps
+import com.gzq.uiframework.renderer.node.spec.PullToRefreshNodeProps
 import com.gzq.uiframework.renderer.node.spec.RowNodeProps
 import com.gzq.uiframework.renderer.node.spec.ScrollableColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.ScrollableRowNodeProps
@@ -161,4 +162,9 @@ internal data class VerticalPagerNodePatch(
 internal data class LazyVerticalGridNodePatch(
     val previous: LazyVerticalGridNodeProps,
     val next: LazyVerticalGridNodeProps,
+) : NodeViewPatch
+
+internal data class PullToRefreshNodePatch(
+    val previous: PullToRefreshNodeProps,
+    val next: PullToRefreshNodeProps,
 ) : NodeViewPatch
