@@ -396,12 +396,12 @@ fun UiTreeBuilder.Badge(
 | 11 | RangeSlider | `RangeSlider` | ⭐⭐ | 新增虚拟组件 | P2-C |
 | 12 | LazyGrid | `LazyVerticalGrid`, `LazyHorizontalGrid` | ⭐⭐⭐ | 新增虚拟组件 | P2-B |
 | 13 | StaggeredGrid | `LazyVerticalStaggeredGrid` | ⭐⭐ | 新增虚拟组件 | P2-C |
-| 14 | HorizontalPager | `HorizontalPager` | ⭐⭐⭐ | 新增虚拟组件（复用 ViewPager2） | P2-B |
+| 14 | ~~HorizontalPager~~ | `HorizontalPager` | ⭐⭐⭐ | ~~新增虚拟组件（复用 ViewPager2）~~ | ✅ Phase C.5 |
 | 15 | ~~FlowRow / FlowColumn~~ | `FlowRow`, `FlowColumn` | ⭐⭐⭐ | ~~新增虚拟组件~~ | ✅ Phase B |
 | 16 | BottomAppBar | `BottomAppBar` | ⭐⭐⭐ | 组合封装（Row 变体） | P2-B |
 | 17 | ~~ScrollableContainer~~ | `verticalScroll`, `horizontalScroll` | ⭐⭐⭐ | ~~新增虚拟组件~~ | ✅ Phase B |
 | 18 | TriStateCheckbox | `TriStateCheckbox` | ⭐⭐ | 组合封装（Checkbox 扩展） | P2-C |
-| 19 | Tab / TabRow | `Tab`, `TabRow`, `ScrollableTabRow` | ⭐⭐⭐ | 已有 TabPager，可补充独立 TabRow | P2-C |
+| 19 | ~~Tab / TabRow~~ | `Tab`, `TabRow`, `ScrollableTabRow` | ⭐⭐⭐ | ~~独立 TabRow + PagerState 跟手 indicator~~ | ✅ Phase C.5 |
 | 20 | Carousel | `HorizontalMultiBrowseCarousel` | ⭐⭐ | 组合封装（HorizontalPager 变体） | P2-C |
 
 ### 2.2 重点组件详述
@@ -883,8 +883,8 @@ fun UiTreeBuilder.ListItem(
 | `NavigationBar` | ✅ 已有 | `NavigationBar()` | Phase B |
 | `NavigationRail` | ❌ 缺失 | — | T2 新增虚拟 |
 | `ModalNavigationDrawer` | ❌ 缺失 | — | T2 新增虚拟 |
-| `Tab` / `TabRow` | ✅ 已有 | `TabPager()` | 已绑定 Pager |
-| `ScrollableTabRow` | 🔧 部分 | `TabPager()` | 缺独立 TabRow |
+| `Tab` / `TabRow` | ✅ 已有 | `TabRow()` | Phase C.5，独立原语 |
+| `ScrollableTabRow` | ✅ 已有 | `TabRow(scrollable = true)` | Phase C.5 |
 
 ### 5.8 反馈与弹层
 
@@ -908,7 +908,7 @@ fun UiTreeBuilder.ListItem(
 | `LazyVerticalGrid` | ❌ 缺失 | — | T2 新增虚拟 |
 | `LazyHorizontalGrid` | ❌ 缺失 | — | T2 新增虚拟 |
 | `LazyVerticalStaggeredGrid` | ❌ 缺失 | — | T2 新增虚拟 |
-| `HorizontalPager` | ❌ 缺失 | — | T2 新增虚拟 |
+| `HorizontalPager` | ✅ 已有 | `HorizontalPager()` | Phase C.5 新原语 |
 | `VerticalPager` | ❌ 缺失 | — | T2 新增虚拟 |
 
 ### 5.10 日期与时间
@@ -963,7 +963,7 @@ fun UiTreeBuilder.ListItem(
 | C.2 | ModalBottomSheet | 3-4 天 | 手势系统 | |
 | C.3 | PullToRefresh | 2 天 | LazyColumn 集成 | |
 | C.4 | LazyVerticalGrid | 2 天 | 复用 LazyColumn 架构 | |
-| C.5 | HorizontalPager / VerticalPager | 2 天 | 复用 TabPager 架构 | |
+| C.5 | ~~HorizontalPager + TabRow~~ | 2 天 | TabPager 重构为组合 DSL | ✅ |
 | C.6 | SearchBar | 1 天 | TextField | ✅ |
 | C.7 | ElevatedCard | 0.5 天 | elevation Modifier |
 | C.8 | SwipeToDismiss | 2-3 天 | 手势系统 |
@@ -992,7 +992,7 @@ fun UiTreeBuilder.ListItem(
 | 框架已覆盖 | 45 |
 | 框架部分覆盖 | 4 |
 | T1 核心缺口 | 10 → 0 (Phase A 关闭 7, Phase B 关闭 3) |
-| T2 中等缺口 | 20 → 13 (Phase A 关闭 2, Phase B 关闭 3, Phase C 关闭 2) |
+| T2 中等缺口 | 20 → 11 (Phase A 关闭 2, Phase B 关闭 3, Phase C 关闭 2, Phase C.5 关闭 2) |
 | T3 AndroidView | 14 |
 | T4 可组合封装 | 14 → 3 (Phase A 关闭 9, Phase C 关闭 2) |
 
