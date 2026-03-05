@@ -2,7 +2,7 @@
 
 > **日期**：2026-03-04
 > **对照基准**：Jetpack Compose Material 3 1.4.x (stable) + Foundation 1.9.x
-> **框架当前状态**：20 NodeSpec · 12 Defaults · 27 Modifier · 54 DSL · 26 NodeType
+> **框架当前状态**：21 NodeSpec · 13 Defaults · 27 Modifier · 56 DSL · 27 NodeType
 
 ---
 
@@ -12,14 +12,14 @@
 
 | 类别 | 已有组件 |
 |------|---------|
-| 布局容器 | Box, Row, Column, Surface, Spacer, Divider, Card (3 variant), ListItem, ScrollableColumn, ScrollableRow, FlowRow, FlowColumn |
+| 布局容器 | Box, Row, Column, Surface, Spacer, Divider, Card (3 variant), ListItem, ScrollableColumn, ScrollableRow, FlowRow, FlowColumn, Scaffold |
 | 内容展示 | Text, Image, Icon, Badge, BadgedBox |
 | 按钮动作 | Button (5 variant incl. Text), TextButton, IconButton (4 variant), SegmentedControl, FloatingActionButton, ExtendedFloatingActionButton |
 | 文本输入 | TextField, PasswordField, EmailField, NumberField, TextArea |
 | 选择输入 | Checkbox, Switch, RadioButton, Slider |
 | 反馈提示 | LinearProgressIndicator, CircularProgressIndicator, Snackbar, Toast, Dialog, Popup, AlertDialog, PlainTooltip, DropdownMenu |
 | 集合列表 | LazyColumn, LazyRow, TabPager |
-| 导航 | TopAppBar, BottomAppBar |
+| 导航 | TopAppBar, BottomAppBar, NavigationBar |
 | 逃生通道 | AndroidView |
 
 ### Compose Material 3 组件总量
@@ -53,9 +53,9 @@
 |---|------|-------------|---------|------------|--------|
 | 1 | Card | `Card`, `ElevatedCard`, `OutlinedCard` | ⭐⭐⭐⭐⭐ | 组合封装（Surface 变体） | P2-A |
 | 2 | FloatingActionButton | `FloatingActionButton`, `Extended~`, `Small~`, `Large~` | ⭐⭐⭐⭐⭐ | 组合封装（IconButton / Button 变体） | P2-A |
-| 3 | Scaffold | `Scaffold` | ⭐⭐⭐⭐⭐ | 新增虚拟组件 | P2-A |
+| 3 | ~~Scaffold~~ | `Scaffold` | ⭐⭐⭐⭐⭐ | ~~新增虚拟组件~~ 组合封装（Column + Box） | ✅ Phase B |
 | 4 | TopAppBar | `TopAppBar`, `CenterAligned~`, `Medium~`, `Large~` | ⭐⭐⭐⭐⭐ | 组合封装（Row + IconButton + Text） | P2-A |
-| 5 | BottomNavigationBar | `NavigationBar`, `NavigationBarItem` | ⭐⭐⭐⭐⭐ | 新增虚拟组件 | P2-A |
+| 5 | ~~BottomNavigationBar~~ | `NavigationBar`, `NavigationBarItem` | ⭐⭐⭐⭐⭐ | ~~新增虚拟组件~~ 自定义 ViewGroup | ✅ Phase B |
 | 6 | AlertDialog | `AlertDialog` | ⭐⭐⭐⭐ | 组合封装（Dialog + 标准布局） | P2-A |
 | 7 | ~~DropdownMenu~~ | `DropdownMenu`, `DropdownMenuItem` | ⭐⭐⭐⭐ | ~~新增虚拟组件~~ 组合封装（复用 Popup） | ✅ Phase B |
 | 8 | ~~LazyRow~~ | `LazyRow` | ⭐⭐⭐⭐ | ~~新增虚拟组件（复用 LazyColumn 架构）~~ | ✅ Phase B |
@@ -811,7 +811,7 @@ fun UiTreeBuilder.ListItem(
 | `FlowColumn` | ✅ 已有 | `FlowColumn()` | Phase B |
 | `Modifier.verticalScroll` | ✅ 已有 | `ScrollableColumn()` | Phase B |
 | `Modifier.horizontalScroll` | ✅ 已有 | `ScrollableRow()` | Phase B |
-| `Scaffold` | ❌ 缺失 | — | T1 新增虚拟 |
+| `Scaffold` | ✅ 已有 | `Scaffold()` | Phase B |
 | `BottomSheetScaffold` | ❌ 缺失 | — | T2 新增虚拟 |
 
 ### 5.2 内容展示
@@ -880,7 +880,7 @@ fun UiTreeBuilder.ListItem(
 | `TopAppBar` | ✅ 已有 | `TopAppBar()` | Phase A |
 | `CenterAlignedTopAppBar` | ❌ 缺失 | — | T4 组合封装 |
 | `BottomAppBar` | ✅ 已有 | `BottomAppBar()` | Phase A |
-| `NavigationBar` | ❌ 缺失 | — | T1 新增虚拟 |
+| `NavigationBar` | ✅ 已有 | `NavigationBar()` | Phase B |
 | `NavigationRail` | ❌ 缺失 | — | T2 新增虚拟 |
 | `ModalNavigationDrawer` | ❌ 缺失 | — | T2 新增虚拟 |
 | `Tab` / `TabRow` | ✅ 已有 | `TabPager()` | 已绑定 Pager |
@@ -947,8 +947,8 @@ fun UiTreeBuilder.ListItem(
 | # | 组件 | 工作量 | 依赖 | 状态 |
 |---|------|--------|------|------|
 | B.1 | LazyRow | 1 天 | 复用 LazyColumn 架构 | ✅ |
-| B.2 | NavigationBar | 2-3 天 | — | |
-| B.3 | Scaffold | 2-3 天 | TopAppBar, BottomAppBar (Phase A) | |
+| B.2 | NavigationBar | 2-3 天 | — | ✅ |
+| B.3 | Scaffold | 2-3 天 | TopAppBar, BottomAppBar (Phase A) | ✅ |
 | B.4 | DropdownMenu | 2 天 | 复用 Popup 架构 | ✅ |
 | B.5 | FlowRow / FlowColumn | 2 天 | — | ✅ |
 | B.6 | ScrollableColumn / ScrollableRow | 1 天 | — | ✅ |
@@ -989,9 +989,9 @@ fun UiTreeBuilder.ListItem(
 | 维度 | 数量 |
 |------|------|
 | Compose M3 核心组件（去重、去 Expressive） | ~90 |
-| 框架已覆盖 | 43 |
+| 框架已覆盖 | 45 |
 | 框架部分覆盖 | 4 |
-| T1 核心缺口 | 10 → 1 (Phase A 关闭 7, Phase B 关闭 2) |
+| T1 核心缺口 | 10 → 0 (Phase A 关闭 7, Phase B 关闭 3) |
 | T2 中等缺口 | 20 → 15 (Phase A 关闭 2, Phase B 关闭 3) |
 | T3 AndroidView | 14 |
 | T4 可组合封装 | 14 → 5 (Phase A 关闭 9) |
@@ -1028,9 +1028,9 @@ T3 AndroidView (14) ████████░░░░░░░░░░░░
 | `TextField(value, onValueChange)` | `TextField(value, onValueChange)` ✅ |
 | `Card { ... }` | `Surface(variant = Default) { ... }` → 待 `Card()` |
 | `LazyColumn { items(list) { ... } }` | `LazyColumn(list) { ... }` ✅ |
-| `Scaffold(topBar = {...}) { ... }` | ❌ 手动 Column + Box |
+| `Scaffold(topBar = {...}) { ... }` | `Scaffold(topBar = {...}) { ... }` ✅ |
 | `AlertDialog(onDismiss, ...) { ... }` | `Dialog(visible) { 手动布局 }` → 待 `AlertDialog()` |
-| `NavigationBar { ... }` | ❌ 手动 Row + Column |
+| `NavigationBar { ... }` | `NavigationBar(selectedIndex, onItemSelected) { Item(...) }` ✅ |
 | `FloatingActionButton(onClick) { Icon(...) }` | `IconButton(icon, onClick)` 近似 → 待 `FloatingActionButton()` |
 | `DropdownMenu(expanded, onDismiss) { ... }` | `DropdownMenu(expanded, anchorId, onDismissRequest) { DropdownMenuItem(...) }` ✅ |
 | `LazyRow { items(list) { ... } }` | `LazyRow(list) { ... }` ✅ |
