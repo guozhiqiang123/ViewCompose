@@ -13,12 +13,14 @@ import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
 import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowRowLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeHorizontalPagerLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeNavigationBarLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeTabRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
 import com.gzq.uiframework.renderer.view.tree.patch.ContainerNodePatchApplier
 import com.gzq.uiframework.renderer.view.tree.patch.ContentNodePatchApplier
@@ -203,6 +205,18 @@ internal object NodeViewBinderRegistry {
                     spec = ContainerViewBinder.readNavigationBarSpec(node),
                 )
             },
+            NodeType.HorizontalPager to { view, node ->
+                ContainerViewBinder.bindHorizontalPager(
+                    view = view as DeclarativeHorizontalPagerLayout,
+                    spec = ContainerViewBinder.readHorizontalPagerSpec(node),
+                )
+            },
+            NodeType.TabRow to { view, node ->
+                ContainerViewBinder.bindTabRow(
+                    view = view as DeclarativeTabRowLayout,
+                    spec = ContainerViewBinder.readTabRowSpec(node),
+                )
+            },
         )
     }
 
@@ -341,6 +355,18 @@ internal object NodeViewBinderRegistry {
             is NavigationBarNodePatch -> {
                 ContainerNodePatchApplier.applyNavigationBarPatch(
                     view = view as DeclarativeNavigationBarLayout,
+                    patch = patch,
+                )
+            }
+            is HorizontalPagerNodePatch -> {
+                ContainerNodePatchApplier.applyHorizontalPagerPatch(
+                    view = view as DeclarativeHorizontalPagerLayout,
+                    patch = patch,
+                )
+            }
+            is TabRowNodePatch -> {
+                ContainerNodePatchApplier.applyTabRowPatch(
+                    view = view as DeclarativeTabRowLayout,
                     patch = patch,
                 )
             }

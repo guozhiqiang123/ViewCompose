@@ -10,15 +10,19 @@ import com.gzq.uiframework.renderer.layout.MainAxisArrangement
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.NavigationBarItem
+import com.gzq.uiframework.renderer.node.collection.TabIndicatorPosition
+import com.gzq.uiframework.renderer.node.collection.TabIndicatorWidthMode
 import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowRowLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeHorizontalPagerLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeNavigationBarLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeTabRowLayout
 import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
 import com.gzq.uiframework.renderer.view.lazy.LazyItemSpacingDecoration
 import com.gzq.uiframework.renderer.view.lazy.LazyListState
@@ -32,6 +36,7 @@ import com.gzq.uiframework.renderer.node.spec.ColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.DividerNodeProps
 import com.gzq.uiframework.renderer.node.spec.FlowColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.FlowRowNodeProps
+import com.gzq.uiframework.renderer.node.spec.HorizontalPagerNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.NavigationBarNodeProps
@@ -40,6 +45,7 @@ import com.gzq.uiframework.renderer.node.spec.ScrollableColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.ScrollableRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
+import com.gzq.uiframework.renderer.node.spec.TabRowNodeProps
 import android.view.Gravity
 
 internal object ContainerViewBinder {
@@ -127,6 +133,36 @@ internal object ContainerViewBinder {
         val labelSizeSp: Int,
         val badgeColor: Int,
         val badgeTextColor: Int,
+    )
+
+    data class HorizontalPagerSpec(
+        val pages: List<LazyListItem>,
+        val currentPage: Int,
+        val onPageChanged: ((Int) -> Unit)?,
+        val offscreenPageLimit: Int,
+        val pagerState: com.gzq.uiframework.renderer.view.lazy.PagerState?,
+        val userScrollEnabled: Boolean,
+    )
+
+    data class TabRowSpec(
+        val tabs: List<com.gzq.uiframework.renderer.node.collection.TabRowTab>,
+        val selectedIndex: Int,
+        val onTabSelected: ((Int) -> Unit)?,
+        val pagerState: com.gzq.uiframework.renderer.view.lazy.PagerState?,
+        val indicatorColor: Int,
+        val indicatorHeight: Int,
+        val indicatorCornerRadius: Int,
+        val indicatorPosition: TabIndicatorPosition,
+        val indicatorWidthMode: TabIndicatorWidthMode,
+        val indicatorFixedWidth: Int,
+        val containerColor: Int,
+        val scrollable: Boolean,
+        val equalWidth: Boolean,
+        val rippleColor: Int,
+        val itemSpacing: Int,
+        val itemPaddingHorizontal: Int,
+        val itemPaddingVertical: Int,
+        val minItemWidth: Int,
     )
 
     fun bindRow(
@@ -519,6 +555,110 @@ internal object ContainerViewBinder {
             labelSizeSp = spec.labelSizeSp,
             badgeColor = spec.badgeColor,
             badgeTextColor = spec.badgeTextColor,
+        )
+    }
+
+    fun bindHorizontalPager(
+        view: DeclarativeHorizontalPagerLayout,
+        spec: HorizontalPagerSpec,
+    ) {
+        view.bind(
+            pages = spec.pages,
+            currentPage = spec.currentPage,
+            onPageChanged = spec.onPageChanged,
+            offscreenPageLimit = spec.offscreenPageLimit,
+            pagerState = spec.pagerState,
+            userScrollEnabled = spec.userScrollEnabled,
+        )
+    }
+
+    fun readHorizontalPagerSpec(node: VNode): HorizontalPagerSpec {
+        val spec = node.spec as? HorizontalPagerNodeProps
+            ?: return HorizontalPagerSpec(
+                pages = emptyList(),
+                currentPage = 0,
+                onPageChanged = null,
+                offscreenPageLimit = 1,
+                pagerState = null,
+                userScrollEnabled = true,
+            )
+        return HorizontalPagerSpec(
+            pages = spec.pages,
+            currentPage = spec.currentPage,
+            onPageChanged = spec.onPageChanged,
+            offscreenPageLimit = spec.offscreenPageLimit,
+            pagerState = spec.pagerState,
+            userScrollEnabled = spec.userScrollEnabled,
+        )
+    }
+
+    fun bindTabRow(
+        view: DeclarativeTabRowLayout,
+        spec: TabRowSpec,
+    ) {
+        view.bind(
+            tabs = spec.tabs,
+            selectedIndex = spec.selectedIndex,
+            onTabSelected = spec.onTabSelected,
+            pagerState = spec.pagerState,
+            indicatorColor = spec.indicatorColor,
+            indicatorHeight = spec.indicatorHeight,
+            indicatorCornerRadius = spec.indicatorCornerRadius,
+            indicatorPosition = spec.indicatorPosition,
+            indicatorWidthMode = spec.indicatorWidthMode,
+            indicatorFixedWidth = spec.indicatorFixedWidth,
+            containerColor = spec.containerColor,
+            scrollable = spec.scrollable,
+            equalWidth = spec.equalWidth,
+            rippleColor = spec.rippleColor,
+            itemSpacing = spec.itemSpacing,
+            itemPaddingHorizontal = spec.itemPaddingHorizontal,
+            itemPaddingVertical = spec.itemPaddingVertical,
+            minItemWidth = spec.minItemWidth,
+        )
+    }
+
+    fun readTabRowSpec(node: VNode): TabRowSpec {
+        val spec = node.spec as? TabRowNodeProps
+            ?: return TabRowSpec(
+                tabs = emptyList(),
+                selectedIndex = 0,
+                onTabSelected = null,
+                pagerState = null,
+                indicatorColor = 0,
+                indicatorHeight = 0,
+                indicatorCornerRadius = 0,
+                indicatorPosition = TabIndicatorPosition.Bottom,
+                indicatorWidthMode = TabIndicatorWidthMode.MatchItem,
+                indicatorFixedWidth = 0,
+                containerColor = 0,
+                scrollable = false,
+                equalWidth = true,
+                rippleColor = 0,
+                itemSpacing = 0,
+                itemPaddingHorizontal = 0,
+                itemPaddingVertical = 0,
+                minItemWidth = 0,
+            )
+        return TabRowSpec(
+            tabs = spec.tabs,
+            selectedIndex = spec.selectedIndex,
+            onTabSelected = spec.onTabSelected,
+            pagerState = spec.pagerState,
+            indicatorColor = spec.indicatorColor,
+            indicatorHeight = spec.indicatorHeight,
+            indicatorCornerRadius = spec.indicatorCornerRadius,
+            indicatorPosition = spec.indicatorPosition,
+            indicatorWidthMode = spec.indicatorWidthMode,
+            indicatorFixedWidth = spec.indicatorFixedWidth,
+            containerColor = spec.containerColor,
+            scrollable = spec.scrollable,
+            equalWidth = spec.equalWidth,
+            rippleColor = spec.rippleColor,
+            itemSpacing = spec.itemSpacing,
+            itemPaddingHorizontal = spec.itemPaddingHorizontal,
+            itemPaddingVertical = spec.itemPaddingVertical,
+            minItemWidth = spec.minItemWidth,
         )
     }
 

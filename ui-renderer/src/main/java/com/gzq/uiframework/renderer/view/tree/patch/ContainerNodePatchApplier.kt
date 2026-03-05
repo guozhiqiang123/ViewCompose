@@ -5,18 +5,21 @@ import androidx.recyclerview.widget.RecyclerView
 import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowRowLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeHorizontalPagerLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeNavigationBarLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeTabRowLayout
 import com.gzq.uiframework.renderer.view.tree.BoxNodePatch
 import com.gzq.uiframework.renderer.view.tree.ColumnNodePatch
 import com.gzq.uiframework.renderer.view.tree.ContainerViewBinder
 import com.gzq.uiframework.renderer.view.tree.FlowColumnNodePatch
 import com.gzq.uiframework.renderer.view.tree.NavigationBarNodePatch
 import com.gzq.uiframework.renderer.view.tree.FlowRowNodePatch
+import com.gzq.uiframework.renderer.view.tree.HorizontalPagerNodePatch
 import com.gzq.uiframework.renderer.view.tree.LazyColumnNodePatch
 import com.gzq.uiframework.renderer.view.tree.LazyRowNodePatch
 import com.gzq.uiframework.renderer.view.tree.RowNodePatch
@@ -24,6 +27,7 @@ import com.gzq.uiframework.renderer.view.tree.ScrollableColumnNodePatch
 import com.gzq.uiframework.renderer.view.tree.ScrollableRowNodePatch
 import com.gzq.uiframework.renderer.view.tree.SegmentedControlNodePatch
 import com.gzq.uiframework.renderer.view.tree.TabPagerNodePatch
+import com.gzq.uiframework.renderer.view.tree.TabRowNodePatch
 import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
 
 internal object ContainerNodePatchApplier {
@@ -267,6 +271,52 @@ internal object ContainerNodePatchApplier {
                 labelSizeSp = patch.next.labelSizeSp,
                 badgeColor = patch.next.badgeColor,
                 badgeTextColor = patch.next.badgeTextColor,
+            ),
+        )
+    }
+
+    fun applyHorizontalPagerPatch(
+        view: DeclarativeHorizontalPagerLayout,
+        patch: HorizontalPagerNodePatch,
+    ) {
+        ContainerViewBinder.bindHorizontalPager(
+            view = view,
+            spec = ContainerViewBinder.HorizontalPagerSpec(
+                pages = patch.next.pages,
+                currentPage = patch.next.currentPage,
+                onPageChanged = patch.next.onPageChanged,
+                offscreenPageLimit = patch.next.offscreenPageLimit,
+                pagerState = patch.next.pagerState,
+                userScrollEnabled = patch.next.userScrollEnabled,
+            ),
+        )
+    }
+
+    fun applyTabRowPatch(
+        view: DeclarativeTabRowLayout,
+        patch: TabRowNodePatch,
+    ) {
+        ContainerViewBinder.bindTabRow(
+            view = view,
+            spec = ContainerViewBinder.TabRowSpec(
+                tabs = patch.next.tabs,
+                selectedIndex = patch.next.selectedIndex,
+                onTabSelected = patch.next.onTabSelected,
+                pagerState = patch.next.pagerState,
+                indicatorColor = patch.next.indicatorColor,
+                indicatorHeight = patch.next.indicatorHeight,
+                indicatorCornerRadius = patch.next.indicatorCornerRadius,
+                indicatorPosition = patch.next.indicatorPosition,
+                indicatorWidthMode = patch.next.indicatorWidthMode,
+                indicatorFixedWidth = patch.next.indicatorFixedWidth,
+                containerColor = patch.next.containerColor,
+                scrollable = patch.next.scrollable,
+                equalWidth = patch.next.equalWidth,
+                rippleColor = patch.next.rippleColor,
+                itemSpacing = patch.next.itemSpacing,
+                itemPaddingHorizontal = patch.next.itemPaddingHorizontal,
+                itemPaddingVertical = patch.next.itemPaddingVertical,
+                minItemWidth = patch.next.minItemWidth,
             ),
         )
     }

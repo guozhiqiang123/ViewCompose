@@ -6,6 +6,7 @@ import com.gzq.uiframework.renderer.node.spec.ColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.DividerNodeProps
 import com.gzq.uiframework.renderer.node.spec.FlowColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.FlowRowNodeProps
+import com.gzq.uiframework.renderer.node.spec.HorizontalPagerNodeProps
 import com.gzq.uiframework.renderer.node.spec.IconButtonNodeProps
 import com.gzq.uiframework.renderer.node.spec.ImageNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
@@ -18,6 +19,7 @@ import com.gzq.uiframework.renderer.node.spec.ScrollableRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
 import com.gzq.uiframework.renderer.node.spec.SliderNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
+import com.gzq.uiframework.renderer.node.spec.TabRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
 import com.gzq.uiframework.renderer.node.spec.ToggleNodeProps
@@ -137,4 +139,14 @@ internal data class FlowColumnNodePatch(
 internal data class NavigationBarNodePatch(
     val previous: NavigationBarNodeProps,
     val next: NavigationBarNodeProps,
+) : NodeViewPatch
+
+internal data class HorizontalPagerNodePatch(
+    val previous: HorizontalPagerNodeProps,
+    val next: HorizontalPagerNodeProps,
+) : NodeViewPatch
+
+internal data class TabRowNodePatch(
+    val previous: TabRowNodeProps,
+    val next: TabRowNodeProps,
 ) : NodeViewPatch
