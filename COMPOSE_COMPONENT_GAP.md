@@ -1,8 +1,8 @@
 # Compose 组件对照与缺口分析
 
-> **日期**：2026-03-04
+> **日期**：2026-03-05
 > **对照基准**：Jetpack Compose Material 3 1.4.x (stable) + Foundation 1.9.x
-> **框架当前状态**：21 NodeSpec · 13 Defaults · 27 Modifier · 56 DSL · 27 NodeType
+> **框架当前状态**：25 NodeSpec · 25 Defaults · 31 Modifier · 66 DSL · 31 NodeType
 
 ---
 
@@ -18,7 +18,7 @@
 | 文本输入 | TextField, PasswordField, EmailField, NumberField, TextArea, SearchBar |
 | 选择输入 | Checkbox, Switch, RadioButton, Slider |
 | 反馈提示 | LinearProgressIndicator, CircularProgressIndicator, Snackbar, Toast, Dialog, Popup, AlertDialog, PlainTooltip, DropdownMenu |
-| 集合列表 | LazyColumn, LazyRow, TabPager |
+| 集合列表 | LazyColumn, LazyRow, LazyVerticalGrid, TabPager, HorizontalPager, VerticalPager |
 | 导航 | TopAppBar, BottomAppBar, NavigationBar |
 | 逃生通道 | AndroidView |
 
@@ -394,7 +394,7 @@ fun UiTreeBuilder.Badge(
 | 9 | DatePicker | `DatePicker`, `DateRangePicker`, `DatePickerDialog` | ⭐⭐⭐ | AndroidView 或新增虚拟组件 | P2-C |
 | 10 | TimePicker | `TimePicker`, `TimeInput` | ⭐⭐ | AndroidView | P3 |
 | 11 | RangeSlider | `RangeSlider` | ⭐⭐ | 新增虚拟组件 | P2-C |
-| 12 | LazyGrid | `LazyVerticalGrid`, `LazyHorizontalGrid` | ⭐⭐⭐ | 新增虚拟组件 | P2-B |
+| 12 | LazyGrid | `LazyVerticalGrid`, `LazyHorizontalGrid` | ⭐⭐⭐ | ~~新增虚拟组件~~ | ✅ Phase D.1 (LazyVerticalGrid) |
 | 13 | StaggeredGrid | `LazyVerticalStaggeredGrid` | ⭐⭐ | 新增虚拟组件 | P2-C |
 | 14 | ~~HorizontalPager~~ | `HorizontalPager` | ⭐⭐⭐ | ~~新增虚拟组件（复用 ViewPager2）~~ | ✅ Phase C.5 |
 | 15 | ~~FlowRow / FlowColumn~~ | `FlowRow`, `FlowColumn` | ⭐⭐⭐ | ~~新增虚拟组件~~ | ✅ Phase B |
@@ -825,7 +825,7 @@ fun UiTreeBuilder.ListItem(
 | `VerticalDivider` | ❌ 缺失 | — | T4 组合（Divider 旋转） |
 | `Badge` / `BadgedBox` | ✅ 已有 | `Badge()`, `BadgedBox()` | Phase A |
 | `ListItem` | ✅ 已有 | `ListItem()` | Phase A |
-| `Card` / `ElevatedCard` / `OutlinedCard` | ✅ 已有 | `Card(variant = Filled/Elevated/Outlined)` | Phase A |
+| `Card` / `ElevatedCard` / `OutlinedCard` | ✅ 已有 | `Card(variant=...)` / `ElevatedCard()` / `OutlinedCard()` | Phase A + D.1 |
 
 ### 5.3 按钮与动作
 
@@ -905,11 +905,11 @@ fun UiTreeBuilder.ListItem(
 |-------------|---------|---------|------|
 | `LazyColumn` | ✅ 已有 | `LazyColumn()` | — |
 | `LazyRow` | ✅ 已有 | `LazyRow()` | Phase B |
-| `LazyVerticalGrid` | ❌ 缺失 | — | T2 新增虚拟 |
+| `LazyVerticalGrid` | ✅ 已有 | `LazyVerticalGrid()` | Phase D.1 新原语 |
 | `LazyHorizontalGrid` | ❌ 缺失 | — | T2 新增虚拟 |
 | `LazyVerticalStaggeredGrid` | ❌ 缺失 | — | T2 新增虚拟 |
 | `HorizontalPager` | ✅ 已有 | `HorizontalPager()` | Phase C.5 新原语 |
-| `VerticalPager` | ❌ 缺失 | — | T2 新增虚拟 |
+| `VerticalPager` | ✅ 已有 | `VerticalPager()` | Phase D.1 新原语 |
 
 ### 5.10 日期与时间
 
@@ -962,10 +962,10 @@ fun UiTreeBuilder.ListItem(
 | C.1 | Chip (4 variants) | 1 天 | — | ✅ |
 | C.2 | ModalBottomSheet | 3-4 天 | 手势系统 | |
 | C.3 | PullToRefresh | 2 天 | LazyColumn 集成 | |
-| C.4 | LazyVerticalGrid | 2 天 | 复用 LazyColumn 架构 | |
+| C.4 | ~~LazyVerticalGrid~~ | 2 天 | 复用 LazyColumn 架构 | ✅ Phase D.1 |
 | C.5 | ~~HorizontalPager + TabRow~~ | 2 天 | TabPager 重构为组合 DSL | ✅ |
 | C.6 | SearchBar | 1 天 | TextField | ✅ |
-| C.7 | ElevatedCard | 0.5 天 | elevation Modifier |
+| C.7 | ~~ElevatedCard / OutlinedCard~~ | 0.5 天 | elevation Modifier | ✅ Phase D.1 |
 | C.8 | SwipeToDismiss | 2-3 天 | 手势系统 |
 | C.9 | NavigationDrawer | 2-3 天 | — |
 | C.10 | RangeSlider | 2 天 | — |
@@ -992,7 +992,7 @@ fun UiTreeBuilder.ListItem(
 | 框架已覆盖 | 45 |
 | 框架部分覆盖 | 4 |
 | T1 核心缺口 | 10 → 0 (Phase A 关闭 7, Phase B 关闭 3) |
-| T2 中等缺口 | 20 → 11 (Phase A 关闭 2, Phase B 关闭 3, Phase C 关闭 2, Phase C.5 关闭 2) |
+| T2 中等缺口 | 20 → 8 (Phase A 关闭 2, Phase B 关闭 3, Phase C 关闭 2, Phase C.5 关闭 2, Phase D.1 关闭 3) |
 | T3 AndroidView | 14 |
 | T4 可组合封装 | 14 → 3 (Phase A 关闭 9, Phase C 关闭 2) |
 
@@ -1034,6 +1034,11 @@ T3 AndroidView (14) ████████░░░░░░░░░░░░
 | `FloatingActionButton(onClick) { Icon(...) }` | `IconButton(icon, onClick)` 近似 → 待 `FloatingActionButton()` |
 | `DropdownMenu(expanded, onDismiss) { ... }` | `DropdownMenu(expanded, anchorId, onDismissRequest) { DropdownMenuItem(...) }` ✅ |
 | `LazyRow { items(list) { ... } }` | `LazyRow(list) { ... }` ✅ |
+| `LazyVerticalGrid(columns = Fixed(2)) { items(list) { ... } }` | `LazyVerticalGrid(list, spanCount = 2) { ... }` ✅ |
+| `HorizontalPager(state) { ... }` | `HorizontalPager(currentPage, onPageChanged) { Page { ... } }` ✅ |
+| `VerticalPager(state) { ... }` | `VerticalPager(currentPage, onPageChanged) { Page { ... } }` ✅ |
+| `ElevatedCard { ... }` | `ElevatedCard() { ... }` ✅ |
+| `OutlinedCard { ... }` | `OutlinedCard() { ... }` ✅ |
 | `FlowRow { chips }` | `FlowRow { chips }` ✅ |
 | `ModalBottomSheet { ... }` | ❌ 需要新增 |
 | `Chip(onClick, label = { Text("Tag") })` | `Chip("Tag", onClick, variant = Assist)` ✅ |
