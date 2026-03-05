@@ -7,10 +7,12 @@ import com.gzq.uiframework.renderer.modifier.clip
 import com.gzq.uiframework.renderer.modifier.clickable
 import com.gzq.uiframework.renderer.modifier.cornerRadius
 import com.gzq.uiframework.renderer.modifier.elevation
+import com.gzq.uiframework.renderer.modifier.fillMaxSize
 import com.gzq.uiframework.renderer.modifier.fillMaxWidth
 import com.gzq.uiframework.renderer.modifier.minHeight
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.renderer.modifier.rippleColor
+import com.gzq.uiframework.renderer.layout.BoxAlignment
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
 
 fun UiTreeBuilder.Card(
@@ -109,6 +111,47 @@ fun UiTreeBuilder.ListItem(
         }
         if (trailingContent != null) {
             trailingContent()
+        }
+    }
+}
+
+fun UiTreeBuilder.Scaffold(
+    topBar: (UiTreeBuilder.() -> Unit)? = null,
+    bottomBar: (UiTreeBuilder.() -> Unit)? = null,
+    floatingActionButton: (UiTreeBuilder.() -> Unit)? = null,
+    containerColor: Int = ScaffoldDefaults.containerColor(),
+    contentColor: Int = ScaffoldDefaults.contentColor(),
+    key: Any? = null,
+    modifier: Modifier = Modifier,
+    content: BoxScope.() -> Unit,
+) {
+    ProvideContentColor(contentColor) {
+        Column(
+            key = key,
+            modifier = Modifier
+                .fillMaxSize()
+                .backgroundColor(containerColor)
+                .then(modifier),
+        ) {
+            if (topBar != null) {
+                topBar()
+            }
+            Box(
+                modifier = Modifier.weight(1f).fillMaxWidth(),
+            ) {
+                content()
+                if (floatingActionButton != null) {
+                    Box(
+                        contentAlignment = BoxAlignment.BottomEnd,
+                        modifier = Modifier.fillMaxSize().padding(16.dp),
+                    ) {
+                        floatingActionButton()
+                    }
+                }
+            }
+            if (bottomBar != null) {
+                bottomBar()
+            }
         }
     }
 }
