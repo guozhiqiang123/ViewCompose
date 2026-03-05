@@ -9,6 +9,7 @@ enum class OverlayType {
     Snackbar,
     Toast,
     Popup,
+    ModalBottomSheet,
 }
 
 data class OverlayRequest(
