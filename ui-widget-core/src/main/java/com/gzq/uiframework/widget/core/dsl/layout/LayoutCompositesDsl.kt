@@ -51,6 +51,40 @@ fun UiTreeBuilder.Card(
     }
 }
 
+fun UiTreeBuilder.ElevatedCard(
+    onClick: (() -> Unit)? = null,
+    enabled: Boolean = true,
+    key: Any? = null,
+    modifier: Modifier = Modifier,
+    content: BoxScope.() -> Unit,
+) {
+    Card(
+        onClick = onClick,
+        variant = CardVariant.Elevated,
+        enabled = enabled,
+        key = key,
+        modifier = modifier,
+        content = content,
+    )
+}
+
+fun UiTreeBuilder.OutlinedCard(
+    onClick: (() -> Unit)? = null,
+    enabled: Boolean = true,
+    key: Any? = null,
+    modifier: Modifier = Modifier,
+    content: BoxScope.() -> Unit,
+) {
+    Card(
+        onClick = onClick,
+        variant = CardVariant.Outlined,
+        enabled = enabled,
+        key = key,
+        modifier = modifier,
+        content = content,
+    )
+}
+
 fun UiTreeBuilder.ListItem(
     headlineText: String,
     supportingText: String? = null,
