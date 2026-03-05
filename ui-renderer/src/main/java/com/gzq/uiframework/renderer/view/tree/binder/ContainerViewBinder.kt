@@ -16,6 +16,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeHorizontalPagerLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeLazyVerticalGridLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeNavigationBarLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
@@ -23,6 +24,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayou
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabRowLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeVerticalPagerLayout
 import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
 import com.gzq.uiframework.renderer.view.lazy.LazyItemSpacingDecoration
 import com.gzq.uiframework.renderer.view.lazy.LazyListState
@@ -39,6 +41,7 @@ import com.gzq.uiframework.renderer.node.spec.FlowRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.HorizontalPagerNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyRowNodeProps
+import com.gzq.uiframework.renderer.node.spec.LazyVerticalGridNodeProps
 import com.gzq.uiframework.renderer.node.spec.NavigationBarNodeProps
 import com.gzq.uiframework.renderer.node.spec.RowNodeProps
 import com.gzq.uiframework.renderer.node.spec.ScrollableColumnNodeProps
@@ -46,6 +49,7 @@ import com.gzq.uiframework.renderer.node.spec.ScrollableRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabRowNodeProps
+import com.gzq.uiframework.renderer.node.spec.VerticalPagerNodeProps
 import android.view.Gravity
 
 internal object ContainerViewBinder {
@@ -142,6 +146,24 @@ internal object ContainerViewBinder {
         val offscreenPageLimit: Int,
         val pagerState: com.gzq.uiframework.renderer.view.lazy.PagerState?,
         val userScrollEnabled: Boolean,
+    )
+
+    data class VerticalPagerSpec(
+        val pages: List<LazyListItem>,
+        val currentPage: Int,
+        val onPageChanged: ((Int) -> Unit)?,
+        val offscreenPageLimit: Int,
+        val pagerState: com.gzq.uiframework.renderer.view.lazy.PagerState?,
+        val userScrollEnabled: Boolean,
+    )
+
+    data class LazyVerticalGridSpec(
+        val spanCount: Int,
+        val contentPadding: Int,
+        val horizontalSpacing: Int,
+        val verticalSpacing: Int,
+        val items: List<LazyListItem>,
+        val state: com.gzq.uiframework.renderer.view.lazy.LazyListState?,
     )
 
     data class TabRowSpec(
@@ -659,6 +681,74 @@ internal object ContainerViewBinder {
             itemPaddingHorizontal = spec.itemPaddingHorizontal,
             itemPaddingVertical = spec.itemPaddingVertical,
             minItemWidth = spec.minItemWidth,
+        )
+    }
+
+    fun bindVerticalPager(
+        view: DeclarativeVerticalPagerLayout,
+        spec: VerticalPagerSpec,
+    ) {
+        view.bind(
+            pages = spec.pages,
+            currentPage = spec.currentPage,
+            onPageChanged = spec.onPageChanged,
+            offscreenPageLimit = spec.offscreenPageLimit,
+            pagerState = spec.pagerState,
+            userScrollEnabled = spec.userScrollEnabled,
+        )
+    }
+
+    fun readVerticalPagerSpec(node: VNode): VerticalPagerSpec {
+        val spec = node.spec as? VerticalPagerNodeProps
+            ?: return VerticalPagerSpec(
+                pages = emptyList(),
+                currentPage = 0,
+                onPageChanged = null,
+                offscreenPageLimit = 1,
+                pagerState = null,
+                userScrollEnabled = true,
+            )
+        return VerticalPagerSpec(
+            pages = spec.pages,
+            currentPage = spec.currentPage,
+            onPageChanged = spec.onPageChanged,
+            offscreenPageLimit = spec.offscreenPageLimit,
+            pagerState = spec.pagerState,
+            userScrollEnabled = spec.userScrollEnabled,
+        )
+    }
+
+    fun bindLazyVerticalGrid(
+        view: DeclarativeLazyVerticalGridLayout,
+        spec: LazyVerticalGridSpec,
+    ) {
+        view.bind(
+            spanCount = spec.spanCount,
+            contentPadding = spec.contentPadding,
+            horizontalSpacing = spec.horizontalSpacing,
+            verticalSpacing = spec.verticalSpacing,
+            items = spec.items,
+            state = spec.state,
+        )
+    }
+
+    fun readLazyVerticalGridSpec(node: VNode): LazyVerticalGridSpec {
+        val spec = node.spec as? LazyVerticalGridNodeProps
+            ?: return LazyVerticalGridSpec(
+                spanCount = 2,
+                contentPadding = 0,
+                horizontalSpacing = 0,
+                verticalSpacing = 0,
+                items = emptyList(),
+                state = null,
+            )
+        return LazyVerticalGridSpec(
+            spanCount = spec.spanCount,
+            contentPadding = spec.contentPadding,
+            horizontalSpacing = spec.horizontalSpacing,
+            verticalSpacing = spec.verticalSpacing,
+            items = spec.items,
+            state = spec.state,
         )
     }
 

@@ -6,6 +6,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeHorizontalPagerLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeLazyVerticalGridLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeNavigationBarLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
@@ -13,6 +14,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayou
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabRowLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeVerticalPagerLayout
 import com.gzq.uiframework.renderer.view.tree.BoxNodePatch
 import com.gzq.uiframework.renderer.view.tree.ColumnNodePatch
 import com.gzq.uiframework.renderer.view.tree.ContainerViewBinder
@@ -22,12 +24,14 @@ import com.gzq.uiframework.renderer.view.tree.FlowRowNodePatch
 import com.gzq.uiframework.renderer.view.tree.HorizontalPagerNodePatch
 import com.gzq.uiframework.renderer.view.tree.LazyColumnNodePatch
 import com.gzq.uiframework.renderer.view.tree.LazyRowNodePatch
+import com.gzq.uiframework.renderer.view.tree.LazyVerticalGridNodePatch
 import com.gzq.uiframework.renderer.view.tree.RowNodePatch
 import com.gzq.uiframework.renderer.view.tree.ScrollableColumnNodePatch
 import com.gzq.uiframework.renderer.view.tree.ScrollableRowNodePatch
 import com.gzq.uiframework.renderer.view.tree.SegmentedControlNodePatch
 import com.gzq.uiframework.renderer.view.tree.TabPagerNodePatch
 import com.gzq.uiframework.renderer.view.tree.TabRowNodePatch
+import com.gzq.uiframework.renderer.view.tree.VerticalPagerNodePatch
 import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
 
 internal object ContainerNodePatchApplier {
@@ -317,6 +321,40 @@ internal object ContainerNodePatchApplier {
                 itemPaddingHorizontal = patch.next.itemPaddingHorizontal,
                 itemPaddingVertical = patch.next.itemPaddingVertical,
                 minItemWidth = patch.next.minItemWidth,
+            ),
+        )
+    }
+
+    fun applyVerticalPagerPatch(
+        view: DeclarativeVerticalPagerLayout,
+        patch: VerticalPagerNodePatch,
+    ) {
+        ContainerViewBinder.bindVerticalPager(
+            view = view,
+            spec = ContainerViewBinder.VerticalPagerSpec(
+                pages = patch.next.pages,
+                currentPage = patch.next.currentPage,
+                onPageChanged = patch.next.onPageChanged,
+                offscreenPageLimit = patch.next.offscreenPageLimit,
+                pagerState = patch.next.pagerState,
+                userScrollEnabled = patch.next.userScrollEnabled,
+            ),
+        )
+    }
+
+    fun applyLazyVerticalGridPatch(
+        view: DeclarativeLazyVerticalGridLayout,
+        patch: LazyVerticalGridNodePatch,
+    ) {
+        ContainerViewBinder.bindLazyVerticalGrid(
+            view = view,
+            spec = ContainerViewBinder.LazyVerticalGridSpec(
+                spanCount = patch.next.spanCount,
+                contentPadding = patch.next.contentPadding,
+                horizontalSpacing = patch.next.horizontalSpacing,
+                verticalSpacing = patch.next.verticalSpacing,
+                items = patch.next.items,
+                state = patch.next.state,
             ),
         )
     }

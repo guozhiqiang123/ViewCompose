@@ -14,6 +14,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeHorizontalPagerLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeLazyVerticalGridLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeNavigationBarLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
@@ -22,6 +23,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLa
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeVerticalPagerLayout
 import com.gzq.uiframework.renderer.view.tree.patch.ContainerNodePatchApplier
 import com.gzq.uiframework.renderer.view.tree.patch.ContentNodePatchApplier
 import com.gzq.uiframework.renderer.view.tree.patch.FeedbackNodePatchApplier
@@ -217,6 +219,18 @@ internal object NodeViewBinderRegistry {
                     spec = ContainerViewBinder.readTabRowSpec(node),
                 )
             },
+            NodeType.VerticalPager to { view, node ->
+                ContainerViewBinder.bindVerticalPager(
+                    view = view as DeclarativeVerticalPagerLayout,
+                    spec = ContainerViewBinder.readVerticalPagerSpec(node),
+                )
+            },
+            NodeType.LazyVerticalGrid to { view, node ->
+                ContainerViewBinder.bindLazyVerticalGrid(
+                    view = view as DeclarativeLazyVerticalGridLayout,
+                    spec = ContainerViewBinder.readLazyVerticalGridSpec(node),
+                )
+            },
         )
     }
 
@@ -367,6 +381,18 @@ internal object NodeViewBinderRegistry {
             is TabRowNodePatch -> {
                 ContainerNodePatchApplier.applyTabRowPatch(
                     view = view as DeclarativeTabRowLayout,
+                    patch = patch,
+                )
+            }
+            is VerticalPagerNodePatch -> {
+                ContainerNodePatchApplier.applyVerticalPagerPatch(
+                    view = view as DeclarativeVerticalPagerLayout,
+                    patch = patch,
+                )
+            }
+            is LazyVerticalGridNodePatch -> {
+                ContainerNodePatchApplier.applyLazyVerticalGridPatch(
+                    view = view as DeclarativeLazyVerticalGridLayout,
                     patch = patch,
                 )
             }

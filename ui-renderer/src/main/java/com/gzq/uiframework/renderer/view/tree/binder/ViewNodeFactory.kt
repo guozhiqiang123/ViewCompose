@@ -21,6 +21,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeHorizontalPagerLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeLazyVerticalGridLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeNavigationBarLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
@@ -29,6 +30,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLa
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeVerticalPagerLayout
 import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
 
 internal object ViewNodeFactory {
@@ -74,7 +76,9 @@ internal object ViewNodeFactory {
             NodeType.FlowColumn -> DeclarativeFlowColumnLayout(context)
             NodeType.NavigationBar -> DeclarativeNavigationBarLayout(context)
             NodeType.HorizontalPager -> DeclarativeHorizontalPagerLayout(context)
+            NodeType.VerticalPager -> DeclarativeVerticalPagerLayout(context)
             NodeType.TabRow -> DeclarativeTabRowLayout(context)
+            NodeType.LazyVerticalGrid -> DeclarativeLazyVerticalGridLayout(context)
         }
     }
 }

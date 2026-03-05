@@ -11,6 +11,7 @@ import com.gzq.uiframework.renderer.node.spec.IconButtonNodeProps
 import com.gzq.uiframework.renderer.node.spec.ImageNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyRowNodeProps
+import com.gzq.uiframework.renderer.node.spec.LazyVerticalGridNodeProps
 import com.gzq.uiframework.renderer.node.spec.NavigationBarNodeProps
 import com.gzq.uiframework.renderer.node.spec.ProgressIndicatorNodeProps
 import com.gzq.uiframework.renderer.node.spec.RowNodeProps
@@ -23,6 +24,7 @@ import com.gzq.uiframework.renderer.node.spec.TabRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
 import com.gzq.uiframework.renderer.node.spec.ToggleNodeProps
+import com.gzq.uiframework.renderer.node.spec.VerticalPagerNodeProps
 
 internal sealed interface NodeBindingPlan {
     data object Skip : NodeBindingPlan
@@ -149,4 +151,14 @@ internal data class HorizontalPagerNodePatch(
 internal data class TabRowNodePatch(
     val previous: TabRowNodeProps,
     val next: TabRowNodeProps,
+) : NodeViewPatch
+
+internal data class VerticalPagerNodePatch(
+    val previous: VerticalPagerNodeProps,
+    val next: VerticalPagerNodeProps,
+) : NodeViewPatch
+
+internal data class LazyVerticalGridNodePatch(
+    val previous: LazyVerticalGridNodeProps,
+    val next: LazyVerticalGridNodeProps,
 ) : NodeViewPatch

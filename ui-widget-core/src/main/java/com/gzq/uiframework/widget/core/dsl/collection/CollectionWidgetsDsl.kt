@@ -13,7 +13,9 @@ import com.gzq.uiframework.renderer.node.collection.TabRowTab
 import com.gzq.uiframework.renderer.node.spec.HorizontalPagerNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyRowNodeProps
+import com.gzq.uiframework.renderer.node.spec.LazyVerticalGridNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabRowNodeProps
+import com.gzq.uiframework.renderer.node.spec.VerticalPagerNodeProps
 import com.gzq.uiframework.renderer.view.lazy.LazyListState
 import com.gzq.uiframework.renderer.view.lazy.PagerState
 
@@ -107,6 +109,55 @@ fun <T> UiTreeBuilder.LazyRow(
     )
 }
 
+fun <T> UiTreeBuilder.LazyVerticalGrid(
+    items: List<T>,
+    spanCount: Int = 2,
+    key: ((T) -> Any)? = null,
+    contentPadding: Int = 0,
+    horizontalSpacing: Int = 0,
+    verticalSpacing: Int = 0,
+    state: LazyListState? = null,
+    modifier: Modifier = Modifier,
+    itemContent: UiTreeBuilder.(T) -> Unit,
+) {
+    val localSnapshot = LocalContext.snapshot()
+    val resolvedItems = items.map { item ->
+        LazyListItem(
+            key = key?.invoke(item),
+            contentToken = item,
+            sessionFactory = LazyListItemSessionFactory { container ->
+                WidgetLazyListItemSession(
+                    container = container,
+                    localSnapshot = localSnapshot,
+                    content = {
+                        itemContent(item)
+                    },
+                )
+            },
+            sessionUpdater = { session ->
+                (session as? WidgetLazyListItemSession)?.updateContent(
+                    localSnapshot = localSnapshot,
+                    content = {
+                        itemContent(item)
+                    },
+                )
+            },
+        )
+    }
+    emit(
+        type = NodeType.LazyVerticalGrid,
+        spec = LazyVerticalGridNodeProps(
+            spanCount = spanCount,
+            contentPadding = contentPadding,
+            horizontalSpacing = horizontalSpacing,
+            verticalSpacing = verticalSpacing,
+            items = resolvedItems,
+            state = state,
+        ),
+        modifier = modifier,
+    )
+}
+
 // ─── HorizontalPager ───────────────────────────────────────────────
 
 @UiDslMarker
@@ -179,6 +230,54 @@ internal data class HorizontalPagerPage(
     val contentToken: Any?,
     val content: UiTreeBuilder.() -> Unit,
 )
+
+// ─── VerticalPager ────────────────────────────────────────────────
+
+fun UiTreeBuilder.VerticalPager(
+    currentPage: Int,
+    onPageChanged: (Int) -> Unit,
+    pagerState: PagerState? = null,
+    offscreenPageLimit: Int = 1,
+    userScrollEnabled: Boolean = true,
+    key: Any? = null,
+    modifier: Modifier = Modifier,
+    pages: HorizontalPagerScope.() -> Unit,
+) {
+    val builtPages = HorizontalPagerScope().apply(pages).build()
+    val localSnapshot = LocalContext.snapshot()
+    val resolvedPages = builtPages.map { page ->
+        LazyListItem(
+            key = page.key,
+            contentToken = page.contentToken,
+            sessionFactory = LazyListItemSessionFactory { container ->
+                WidgetLazyListItemSession(
+                    container = container,
+                    localSnapshot = localSnapshot,
+                    content = page.content,
+                )
+            },
+            sessionUpdater = { session ->
+                (session as? WidgetLazyListItemSession)?.updateContent(
+                    localSnapshot = localSnapshot,
+                    content = page.content,
+                )
+            },
+        )
+    }
+    emit(
+        type = NodeType.VerticalPager,
+        key = key,
+        spec = VerticalPagerNodeProps(
+            pages = resolvedPages,
+            currentPage = currentPage,
+            onPageChanged = onPageChanged,
+            offscreenPageLimit = offscreenPageLimit,
+            pagerState = pagerState,
+            userScrollEnabled = userScrollEnabled,
+        ),
+        modifier = modifier,
+    )
+}
 
 // ─── TabRow ────────────────────────────────────────────────────────
 

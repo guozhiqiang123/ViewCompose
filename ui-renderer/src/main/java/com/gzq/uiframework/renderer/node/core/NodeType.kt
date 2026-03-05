@@ -30,5 +30,7 @@ sealed interface NodeType {
     data object FlowColumn : NodeType
     data object NavigationBar : NodeType
     data object HorizontalPager : NodeType
+    data object VerticalPager : NodeType
     data object TabRow : NodeType
+    data object LazyVerticalGrid : NodeType
 }
