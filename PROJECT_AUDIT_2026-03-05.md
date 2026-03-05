@@ -23,7 +23,7 @@
 
 - 规划层：模块边界、分阶段路线、workflow 思路基本合理
 - 执行层：小步提交和 docs/feat 同步总体成立
-- 质量层：存在 **P0 级问题**（主模块编译失败、UI 测试基线大面积失败）
+- 质量层：存在 **P0 级问题**（当前工作区有未提交编译断裂改动、UI 测试基线大面积失败）
 
 如果以“可持续稳定演进”为目标，当前状态应定义为：**可演进，但未达到可发布稳定基线**。
 
@@ -64,7 +64,7 @@
    - 随后 `ef1a4ca` 已将 Phase 项标记完成。
 2. 新组件在 demo/test 的可见度不足。
    - 全仓检索仅能找到 DSL 定义，未发现 `app` 页面对 `Chip/SearchBar/Scaffold/NavigationBar/LazyRow/FlowRow/Scrollable*` 的调用。
-3. 质量门禁未有效拦截回归（见第 4 节 P0）。
+3. 当前工作区存在进行中的断裂改动，建议补本地 pre-commit 质量门禁（见第 4 节 P0）。
 
 结论：**提交节奏和规划轨迹“形式上高度一致”，但“完成定义”与“验证闭环”不一致。**
 
@@ -74,11 +74,12 @@
 
 ## 4.1 P0（立即处理）
 
-1. `ui-renderer` 当前无法编译通过（主干断裂）。
+1. `ui-renderer` 在**当前工作区（含未提交改动）**无法编译通过。
    - 复现命令：`./gradlew :ui-renderer:compileDebugKotlin`
    - 结果：FAIL
    - 主要原因：遗留 `TabRow` 相关引用仍在 binder/patch/factory 中，但对应类型/实现已缺失（如 `TabRowNodeProps`、`DeclarativeTabRowLayout` 等）。
    - 关键文件：`ContainerViewBinder.kt`、`NodeBindingPlan.kt`、`NodeBindingDiffer.kt`、`NodeViewBinderRegistry.kt`、`ViewNodeFactory.kt`、`ContainerNodePatchApplier.kt`
+   - 对照验证：在独立临时 worktree（纯 `HEAD`）执行同命令结果为 `COMPILE_OK`，说明该问题来自当前未提交改动，而非已提交主干。
 
 2. instrumentation UI 测试基线大面积失败。
    - 复现命令：`./gradlew :app:connectedDebugAndroidTest`
@@ -103,7 +104,7 @@
 
 ## 5. 建议的整改顺序（可执行）
 
-1. **恢复构建基线（P0）**：清理/补全 `TabRow` 遗留引用，使 `:ui-renderer:compileDebugKotlin` 先回到绿色。
+1. **清理当前工作区断裂改动（P0）**：先收敛 `TabRow` 遗留引用相关未提交变更，再进入后续功能迭代。
 2. **恢复回归基线（P0）**：修复 UI 测试 helper 的滚动/可见性策略，再重跑 `connectedDebugAndroidTest`。
 3. **收紧完成定义（P1）**：更新 `WORKFLOW.md`，增加“标记完成前必须通过的命令清单”。
 4. **回填验证资产（P1）**：为近期标记完成但缺 demo/test 的组件补齐最小验证（至少 demo 场景 + 1 条 UI 测试）。
@@ -115,4 +116,3 @@
 
 当前项目已经具备较强的架构与提交纪律基础，但“质量闭环”尚未与“文档完成态”绑定。  
 下一阶段的关键不是继续扩功能，而是先修复基线与门禁，让“完成”在文档、提交、代码、测试四个层面同时成立。
-
