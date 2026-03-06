@@ -40,7 +40,7 @@
 
 | Milestone | 状态 | 完成态字段（C/U/D/UI） | 说明 |
 | --- | --- | --- | --- |
-| A：Overlay 稳定性收口 | In Progress | C:✅ U:✅ D:✅ UI:✅ | Dialog/Popup/Snackbar/Toast 主链路已打通，仍需补齐定位与队列策略收口 |
+| A：Overlay 稳定性收口 | In Progress | C:✅ U:✅ D:✅ UI:✅ | Overlay host 已统一 reconcile 模板，仍需补齐定位与队列策略收口 |
 | B：Collections 与容器扩展 | Next | C:✅ U:✅ D:✅ UI:✅ | 已补 Collections/Layouts 关键 smoke 基线，`LazyGrid` 与容器专项仍待推进 |
 | C：Input 与表单态增强 | Next | C:✅ U:✅ D:✅ UI:✅ | 已补 Input/Navigation 关键 smoke 基线，focus/IME/表单组合专项仍待系统化补齐 |
 | D：Diagnostics + Performance 联动 | In Progress | C:✅ U:✅ D:✅ UI:✅ | 已有基线与起步能力，需继续增强可视化与发布态优化 |

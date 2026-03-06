@@ -91,9 +91,9 @@
 
 ### W4 - Overlay Host 去重（P1）
 
-- [ ] 抽象 session-bound overlay host 通用 reconcile 模板
-- [ ] Refactor `DialogOverlayHost` / `PopupOverlayHost` / `ModalBottomSheetOverlayHost`
-- [ ] 补齐 `ModalBottomSheetOverlayHost` 测试
+- [x] 抽象 session-bound overlay host 通用 reconcile 模板
+- [x] Refactor `DialogOverlayHost` / `PopupOverlayHost` / `ModalBottomSheetOverlayHost`
+- [x] 补齐 `ModalBottomSheetOverlayHost` 测试
 
 完成标准：
 
@@ -145,3 +145,8 @@
 18. 已跑通 `:app:connectedDebugAndroidTest`（16/16）。
 19. 已同步 `ROADMAP.md` 与 `PERFORMANCE.md` 的基线状态。
 20. W3 已完成，下一步进入 W4（Overlay Host 去重）。
+21. 已新增 `SessionBoundSurfaceOverlayHost` 通用模板，统一会话级 diff/reconcile/clear 流程。
+22. `DialogOverlayHost`、`PopupOverlayHost`、`ModalBottomSheetOverlayHost` 已完成模板化重构。
+23. 已新增 `ModalBottomSheetOverlayHostTest`，补齐 show/update/dismiss/clear 覆盖。
+24. 已跑通 `qaFull`（含 connected UI 测试）。
+25. W4 已完成，下一步进入 W5（目录与大文件治理）。
