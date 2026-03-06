@@ -40,5 +40,6 @@
 | `WIDGET_PROPERTY_AUDIT.md` | 一次性属性审计快照 |
 | `REVIEW.md` | 一次性架构审查快照 |
 | `PROJECT_AUDIT_2026-03-05.md` | 一次性项目审计快照 |
+| `PROJECT_REAUDIT_2026-03-06.md` | 二次审计快照（文档去旧 + 架构偏差复核） |
 | `REFACTOR_PLAN.md` | 已完成的阶段性执行计划 |
 | `AUDIT_REMEDIATION_PLAN_2026-03.md` | 已完成的审计整改执行计划 |
