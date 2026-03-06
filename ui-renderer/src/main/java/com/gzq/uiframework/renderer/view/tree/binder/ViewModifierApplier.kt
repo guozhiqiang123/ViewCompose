@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewOutlineProvider
 import android.widget.TextView
 import com.gzq.uiframework.renderer.R
+import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
 import com.gzq.uiframework.renderer.modifier.NativeViewElement
 import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
 import com.gzq.uiframework.renderer.modifier.ResolvedModifiers
@@ -71,12 +72,17 @@ internal object ViewModifierApplier {
         rippleColor: Int,
         clickable: Boolean,
     ) {
+        val corners = if (cornerRadius > 0) {
+            CornerRadiusModifierElement(cornerRadius, cornerRadius, cornerRadius, cornerRadius)
+        } else {
+            null
+        }
         applyBackgroundAndInteraction(
             view = view,
             backgroundColor = backgroundColor,
             borderWidth = borderWidth,
             borderColor = borderColor,
-            cornerRadius = cornerRadius,
+            cornerRadius = corners,
             rippleColor = rippleColor,
             clickable = clickable,
         )
@@ -92,7 +98,10 @@ internal object ViewModifierApplier {
         val resolvedBackgroundColor = resolved.backgroundColor?.color ?: readNodeBackgroundColor(node)
         val resolvedBorderWidth = resolved.border?.width ?: readNodeBorderWidth(node) ?: 0
         val resolvedBorderColor = resolved.border?.color ?: readNodeBorderColor(node) ?: Color.TRANSPARENT
-        val resolvedCornerRadius = resolved.cornerRadius?.radius ?: readNodeCornerRadius(node) ?: 0
+        val resolvedCornerRadius = resolved.cornerRadius
+            ?: readNodeCornerRadius(node)?.let {
+                CornerRadiusModifierElement(it, it, it, it)
+            }
         val resolvedPadding = resolved.padding ?: readNodePadding(node)
         val resolvedMinHeight = resolved.minHeight?.minHeight ?: readNodeMinHeight(node) ?: 0
         val resolvedMinWidth = resolved.minWidth?.minWidth ?: 0
@@ -211,18 +220,21 @@ internal object ViewModifierApplier {
         backgroundColor: Int?,
         borderWidth: Int,
         borderColor: Int,
-        cornerRadius: Int,
+        cornerRadius: CornerRadiusModifierElement?,
         rippleColor: Int,
         clickable: Boolean,
         forceClip: Boolean = false,
     ) {
-        val hasCustomShape = backgroundColor != null || cornerRadius > 0 || borderWidth > 0
+        val hasCorner = cornerRadius != null &&
+            (cornerRadius.topStart > 0 || cornerRadius.topEnd > 0 ||
+                cornerRadius.bottomEnd > 0 || cornerRadius.bottomStart > 0)
+        val hasCustomShape = backgroundColor != null || hasCorner || borderWidth > 0
         if (hasCustomShape) {
             view.background = createBackgroundDrawable(
                 backgroundColor = backgroundColor ?: Color.TRANSPARENT,
                 borderWidth = borderWidth,
                 borderColor = borderColor,
-                cornerRadiusPx = cornerRadius,
+                cornerRadius = cornerRadius,
                 rippleColor = rippleColor,
                 clickable = clickable,
             )
@@ -246,7 +258,7 @@ internal object ViewModifierApplier {
         backgroundColor: Int,
         borderWidth: Int,
         borderColor: Int,
-        cornerRadiusPx: Int,
+        cornerRadius: CornerRadiusModifierElement?,
         rippleColor: Int,
         clickable: Boolean,
     ): Drawable {
@@ -256,7 +268,7 @@ internal object ViewModifierApplier {
             if (borderWidth > 0) {
                 setStroke(borderWidth, borderColor)
             }
-            cornerRadius = cornerRadiusPx.toFloat()
+            applyCornerRadiusToDrawable(this, cornerRadius)
         }
         if (!clickable) {
             return content
@@ -270,27 +282,61 @@ internal object ViewModifierApplier {
                 if (borderWidth > 0) {
                     setStroke(borderWidth, borderColor)
                 }
-                cornerRadius = cornerRadiusPx.toFloat()
+                applyCornerRadiusToDrawable(this, cornerRadius)
             },
         )
     }
 
+    private fun applyCornerRadiusToDrawable(
+        drawable: GradientDrawable,
+        cornerRadius: CornerRadiusModifierElement?,
+    ) {
+        if (cornerRadius == null) return
+        if (cornerRadius.isUniform) {
+            drawable.cornerRadius = cornerRadius.topStart.toFloat()
+        } else {
+            val tl = cornerRadius.topStart.toFloat()
+            val tr = cornerRadius.topEnd.toFloat()
+            val br = cornerRadius.bottomEnd.toFloat()
+            val bl = cornerRadius.bottomStart.toFloat()
+            drawable.cornerRadii = floatArrayOf(tl, tl, tr, tr, br, br, bl, bl)
+        }
+    }
+
     private fun applyCornerOutline(
         view: View,
-        cornerRadius: Int,
+        cornerRadius: CornerRadiusModifierElement?,
         forceClip: Boolean = false,
     ) {
-        if (cornerRadius <= 0 && !forceClip) {
+        val hasCorner = cornerRadius != null &&
+            (cornerRadius.topStart > 0 || cornerRadius.topEnd > 0 ||
+                cornerRadius.bottomEnd > 0 || cornerRadius.bottomStart > 0)
+        if (!hasCorner && !forceClip) {
             view.clipToOutline = false
             view.outlineProvider = ViewOutlineProvider.BACKGROUND
             view.invalidateOutline()
             return
         }
         view.clipToOutline = true
-        if (cornerRadius > 0) {
-            view.outlineProvider = object : ViewOutlineProvider() {
-                override fun getOutline(view: View, outline: Outline) {
-                    outline.setRoundRect(0, 0, view.width, view.height, cornerRadius.toFloat())
+        if (cornerRadius != null && hasCorner) {
+            if (cornerRadius.isUniform) {
+                val r = cornerRadius.topStart.toFloat()
+                view.outlineProvider = object : ViewOutlineProvider() {
+                    override fun getOutline(view: View, outline: Outline) {
+                        outline.setRoundRect(0, 0, view.width, view.height, r)
+                    }
+                }
+            } else {
+                val r = maxOf(
+                    cornerRadius.topStart,
+                    cornerRadius.topEnd,
+                    cornerRadius.bottomEnd,
+                    cornerRadius.bottomStart,
+                ).toFloat()
+                view.outlineProvider = object : ViewOutlineProvider() {
+                    override fun getOutline(view: View, outline: Outline) {
+                        outline.setRoundRect(0, 0, view.width, view.height, r)
+                    }
                 }
             }
         }
@@ -302,7 +348,7 @@ internal object ViewModifierApplier {
         backgroundColor: Int?,
         borderWidth: Int,
         borderColor: Int,
-        cornerRadius: Int,
+        cornerRadius: CornerRadiusModifierElement?,
         rippleColor: Int,
         padding: PaddingModifierElement?,
         minHeight: Int,

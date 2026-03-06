@@ -40,8 +40,14 @@ data class BorderModifierElement(
 ) : ModifierElement
 
 data class CornerRadiusModifierElement(
-    val radius: Int,
-) : ModifierElement
+    val topStart: Int,
+    val topEnd: Int,
+    val bottomEnd: Int,
+    val bottomStart: Int,
+) : ModifierElement {
+    val isUniform: Boolean
+        get() = topStart == topEnd && topEnd == bottomEnd && bottomEnd == bottomStart
+}
 
 data class ClipModifierElement(
     val clip: Boolean = true,
@@ -187,8 +193,34 @@ fun Modifier.border(
 }
 
 fun Modifier.cornerRadius(radius: Int): Modifier {
+    return cornerRadius(top = radius, bottom = radius)
+}
+
+fun Modifier.cornerRadius(
+    top: Int = 0,
+    bottom: Int = 0,
+): Modifier {
+    return cornerRadius(
+        topStart = top,
+        topEnd = top,
+        bottomEnd = bottom,
+        bottomStart = bottom,
+    )
+}
+
+fun Modifier.cornerRadius(
+    topStart: Int = 0,
+    topEnd: Int = 0,
+    bottomEnd: Int = 0,
+    bottomStart: Int = 0,
+): Modifier {
     return then(
-        CornerRadiusModifierElement(radius),
+        CornerRadiusModifierElement(
+            topStart = topStart,
+            topEnd = topEnd,
+            bottomEnd = bottomEnd,
+            bottomStart = bottomStart,
+        ),
     )
 }
 
