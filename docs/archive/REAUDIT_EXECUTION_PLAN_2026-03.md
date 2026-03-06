@@ -30,7 +30,7 @@
 - [x] Step 11: F5 split `DemoWidgetShowcaseDetails` into section files and commit.
 - [x] Step 12: Run `qaQuick` (and `qaFull` if available), record result and commit any doc waiver if needed.
 - [x] Step 13: Archive this plan doc into `docs/archive/` and update archive index.
-- [ ] Step 14: Final root docs state alignment for remaining `In Progress/Next` markers, then commit.
+- [x] Step 14: Final root docs state alignment for remaining `In Progress/Next` markers, then commit.
 
 ## 4. Execution Log
 
@@ -47,8 +47,9 @@
 | 2026-03-06 | Step 9 | `8cb8417` | Split `DemoFeedbackPage` into main/model/overlay/sections files. |
 | 2026-03-06 | Step 10 | `30f041a` | Split `DemoModifiersPage` into main + visual/core/layering section files. |
 | 2026-03-06 | Step 11 | `a2aad69` | Split `DemoWidgetShowcaseDetails` into seven section files (<300 LOC each) with behavior unchanged. |
-| 2026-03-06 | Step 12 | pending | `qaQuick` + `qaFull` executed on Pixel 4 XL API 33; fixed one BottomSheet instrumentation flake (`9d8e78f` / `8c3eb03`), final gate all green (19/19). |
-| 2026-03-06 | Step 13 | pending | Moved this plan from root into `docs/archive/` and updated archive index. |
+| 2026-03-06 | Step 12 | `c6c58bf` | `qaQuick` + `qaFull` executed on Pixel 4 XL API 33；中途修复 BottomSheet instrumentation flake（`9d8e78f` / `8c3eb03`）。 |
+| 2026-03-06 | Step 13 | `85c2efe` | Moved this plan from root into `docs/archive/` and updated archive index. |
+| 2026-03-06 | Step 14 | pending | Root docs re-aligned with latest remediation state; added VerticalPager instrumentation closure (`fe1b092`) and refreshed `qaFull` baseline to 20/20. |
 
 ## 5. Blockers
 
