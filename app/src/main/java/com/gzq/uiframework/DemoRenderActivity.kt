@@ -6,13 +6,10 @@ import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.gzq.uiframework.overlay.android.host.AndroidOverlayHost
-import com.gzq.uiframework.widget.core.RenderSession
 import com.gzq.uiframework.widget.core.UiTreeBuilder
 import com.gzq.uiframework.widget.core.setUiContent
 
 abstract class DemoRenderActivity : AppCompatActivity() {
-    private var renderSession: RenderSession? = null
-
     protected open fun redirectTargetIntent(): Intent? = null
 
     protected abstract val demoTitle: String
@@ -28,8 +25,7 @@ abstract class DemoRenderActivity : AppCompatActivity() {
             return
         }
         enableEdgeToEdge()
-        renderSession?.dispose()
-        renderSession = setUiContent(
+        setUiContent(
             debug = true,
             debugTag = "UIFrameworkSample",
             applySystemBarsInsetsPadding = true,
@@ -37,7 +33,7 @@ abstract class DemoRenderActivity : AppCompatActivity() {
             onRenderResult = DemoRenderDiagnosticsStore::record,
         ) { root ->
             buildRootScaffold(root)
-        }.session
+        }
     }
 
     protected open fun UiTreeBuilder.buildRootScaffold(root: ViewGroup) {
@@ -47,12 +43,6 @@ abstract class DemoRenderActivity : AppCompatActivity() {
         ) { builder ->
             buildDemoContent(root, builder)
         }
-    }
-
-    override fun onDestroy() {
-        renderSession?.dispose()
-        renderSession = null
-        super.onDestroy()
     }
 
     override fun onNewIntent(intent: Intent) {

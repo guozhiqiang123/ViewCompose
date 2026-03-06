@@ -8,8 +8,11 @@ import androidx.activity.ComponentActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import com.gzq.uiframework.renderer.view.tree.RenderStats
 import com.gzq.uiframework.renderer.view.tree.RenderTreeResult
+import java.util.WeakHashMap
 
 data class UiContentHost(
     val root: ViewGroup,
@@ -42,7 +45,7 @@ fun ComponentActivity.setUiContent(
     onRenderStats: ((RenderStats) -> Unit)? = null,
     onRenderResult: ((RenderTreeResult) -> Unit)? = null,
     content: UiTreeBuilder.(ViewGroup) -> Unit,
-): UiContentHost {
+): ViewGroup {
     val root = createUiContentRoot(
         applySystemBarsInsetsPadding = applySystemBarsInsetsPadding,
     )
@@ -57,10 +60,11 @@ fun ComponentActivity.setUiContent(
     ) {
         content(root)
     }
-    return UiContentHost(
-        root = root,
+    ActivityRenderSessionRegistry.bind(
+        activity = this,
         session = session,
     )
+    return root
 }
 
 fun Fragment.createUiContent(
@@ -126,4 +130,28 @@ private fun View.requestApplyInsetsWhenAttached() {
             override fun onViewDetachedFromWindow(view: View) = Unit
         },
     )
+}
+
+private object ActivityRenderSessionRegistry {
+    private val sessions = WeakHashMap<ComponentActivity, RenderSession>()
+    private val observers = WeakHashMap<ComponentActivity, DefaultLifecycleObserver>()
+
+    fun bind(
+        activity: ComponentActivity,
+        session: RenderSession,
+    ) {
+        sessions.remove(activity)?.dispose()
+        observers.remove(activity)?.let(activity.lifecycle::removeObserver)
+
+        val observer = object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                sessions.remove(activity)?.dispose()
+                observers.remove(activity)
+                owner.lifecycle.removeObserver(this)
+            }
+        }
+        sessions[activity] = session
+        observers[activity] = observer
+        activity.lifecycle.addObserver(observer)
+    }
 }
