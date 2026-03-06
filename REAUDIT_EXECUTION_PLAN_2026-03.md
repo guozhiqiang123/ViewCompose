@@ -27,7 +27,7 @@
 - [x] Step 8: F3 sync `ROADMAP.md` overlay UI status and commit.
 - [x] Step 9: F5 split `DemoFeedbackPage` into section files and commit.
 - [x] Step 10: F5 split `DemoModifiersPage` into section files and commit.
-- [ ] Step 11: F5 split `DemoWidgetShowcaseDetails` into section files and commit.
+- [x] Step 11: F5 split `DemoWidgetShowcaseDetails` into section files and commit.
 - [ ] Step 12: Run `qaQuick` (and `qaFull` if available), record result and commit any doc waiver if needed.
 - [ ] Step 13: Archive this plan doc into `docs/archive/` and update archive index.
 - [ ] Step 14: Final root docs state alignment for remaining `In Progress/Next` markers, then commit.
@@ -45,7 +45,8 @@
 | 2026-03-06 | Step 7 | `0a49ecf` | Added bottom-sheet test tags and visual regression flow coverage. |
 | 2026-03-06 | Step 8 | `e3dd944` | Synced overlay milestone UI status after bottom-sheet instrumentation coverage. |
 | 2026-03-06 | Step 9 | `8cb8417` | Split `DemoFeedbackPage` into main/model/overlay/sections files. |
-| 2026-03-06 | Step 10 | pending | Split `DemoModifiersPage` into main + visual/core/layering section files. |
+| 2026-03-06 | Step 10 | `30f041a` | Split `DemoModifiersPage` into main + visual/core/layering section files. |
+| 2026-03-06 | Step 11 | pending | Split `DemoWidgetShowcaseDetails` into seven section files (<300 LOC each) with behavior unchanged. |
 
 ## 5. Blockers
 
