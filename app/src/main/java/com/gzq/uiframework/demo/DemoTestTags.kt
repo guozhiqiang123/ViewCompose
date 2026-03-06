@@ -17,6 +17,9 @@ internal object DemoTestTags {
     const val COLLECTIONS_STRESS_EDGE = "collections_stress_edge"
     const val COLLECTIONS_STRESS_ACTIVE_IDS = "collections_stress_active_ids"
     const val COLLECTIONS_LAZY_ROW_PRIMARY = "collections_lazy_row_primary"
+    const val COLLECTIONS_GRID_TWO_COLS = "collections_grid_two_cols"
+    const val COLLECTIONS_GRID_THREE_COLS = "collections_grid_three_cols"
+    const val COLLECTIONS_GRID_FIRST_ITEM = "collections_grid_first_item"
 
     const val INTEROP_BENCHMARK_TOGGLE = "interop_benchmark_toggle"
     const val INTEROP_BENCHMARK_RESET = "interop_benchmark_reset"

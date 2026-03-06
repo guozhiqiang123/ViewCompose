@@ -271,6 +271,30 @@ class DemoVisualUiTest {
     }
 
     @Test
+    fun collectionsGrid_spanToggle_refreshesVisibleItemContent() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            CollectionsActivity::class.java,
+        ).putExtra(EXTRA_COLLECTIONS_PAGE_INDEX, 5)
+        launchDemoActivity<CollectionsActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val firstItem = activity.requireTextViewByTestTag(DemoTestTags.COLLECTIONS_GRID_FIRST_ITEM)
+                assertViewFullyVisible(firstItem)
+                assertTrue(firstItem.text.toString().contains("2列"))
+                activity.clickByTestTag(DemoTestTags.COLLECTIONS_GRID_THREE_COLS)
+            }
+            waitForUiIdle()
+            captureDeviceScreenshot("collections-grid-refresh-light")
+            scenario.onActivity { activity ->
+                val firstItem = activity.requireTextViewByTestTag(DemoTestTags.COLLECTIONS_GRID_FIRST_ITEM)
+                assertViewFullyVisible(firstItem)
+                assertTrue(firstItem.text.toString().contains("3列"))
+            }
+        }
+    }
+
+    @Test
     fun statePatchStress_refreshesStableTabContent() {
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),
@@ -288,6 +312,29 @@ class DemoVisualUiTest {
                 assertViewFullyVisible(summary)
                 assertTextNotEllipsized(summary)
                 assertTrue(summary.text.toString().contains("1"))
+            }
+        }
+    }
+
+    @Test
+    fun statePatchStress_horizontalPagerContentUpdatesAcrossAdvances() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            StateActivity::class.java,
+        ).putExtra(EXTRA_STATE_PAGE_INDEX, 2)
+        launchDemoActivity<StateActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                activity.clickByTestTag(DemoTestTags.STATE_PATCH_ADVANCE)
+                activity.clickByTestTag(DemoTestTags.STATE_PATCH_ADVANCE)
+            }
+            waitForUiIdle()
+            captureDeviceScreenshot("state-patch-stable-tab-step2-light")
+            scenario.onActivity { activity ->
+                val summary = activity.requireTextViewByTestTag(DemoTestTags.STATE_STABLE_SUMMARY)
+                assertViewFullyVisible(summary)
+                assertTextNotEllipsized(summary)
+                assertTrue(summary.text.toString().contains("2"))
             }
         }
     }

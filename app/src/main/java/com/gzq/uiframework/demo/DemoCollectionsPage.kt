@@ -424,13 +424,17 @@ internal fun UiTreeBuilder.CollectionPage(
                         text = "2 列",
                         variant = if (spanCountState.value == 2) ButtonVariant.Primary else ButtonVariant.Outlined,
                         onClick = { spanCountState.value = 2 },
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .weight(1f)
+                            .testTag(DemoTestTags.COLLECTIONS_GRID_TWO_COLS),
                     )
                     Button(
                         text = "3 列",
                         variant = if (spanCountState.value == 3) ButtonVariant.Primary else ButtonVariant.Outlined,
                         onClick = { spanCountState.value = 3 },
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .weight(1f)
+                            .testTag(DemoTestTags.COLLECTIONS_GRID_THREE_COLS),
                     )
                 }
                 LazyVerticalGrid(
@@ -464,8 +468,13 @@ internal fun UiTreeBuilder.CollectionPage(
                                     .cornerRadius(8.dp),
                             ) {}
                             Text(
-                                text = item.title,
+                                text = "${item.title} · ${spanCountState.value}列",
                                 style = UiTextStyle(fontSizeSp = 13.sp),
+                                modifier = if (item.id == "1") {
+                                    Modifier.testTag(DemoTestTags.COLLECTIONS_GRID_FIRST_ITEM)
+                                } else {
+                                    Modifier
+                                },
                             )
                         }
                     }
