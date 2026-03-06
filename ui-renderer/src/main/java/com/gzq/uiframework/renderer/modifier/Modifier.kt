@@ -105,6 +105,10 @@ data class ContentDescriptionModifierElement(
     val contentDescription: String?,
 ) : ModifierElement
 
+data class TestTagModifierElement(
+    val tag: String,
+) : ModifierElement
+
 data class WeightModifierElement(
     val weight: Float,
 ) : ModifierElement
@@ -357,6 +361,12 @@ fun Modifier.clickable(onClick: () -> Unit): Modifier {
 fun Modifier.contentDescription(description: String?): Modifier {
     return then(
         ContentDescriptionModifierElement(description),
+    )
+}
+
+fun Modifier.testTag(tag: String): Modifier {
+    return then(
+        TestTagModifierElement(tag),
     )
 }
 

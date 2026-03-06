@@ -51,6 +51,7 @@
 - 外观修饰：`backgroundColor`、`border`、`cornerRadius`、`alpha`
 - 可见性与层级：`visibility`、`offset`、`zIndex`
 - 通用交互：`clickable`
+- 测试锚点：`testTag`（仅用于测试定位，不参与视觉语义）
 - 逃生通道：`nativeView(key, configure)` — 在所有框架 binding 完成后，对底层 Android View 执行用户回调，用于设置框架未映射的冷门属性（如 `contentDescription`、`clipChildren`、`elevation` 等）
 
 这些能力的共同点是：

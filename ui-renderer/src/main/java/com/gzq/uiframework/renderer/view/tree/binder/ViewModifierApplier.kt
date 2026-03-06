@@ -115,6 +115,7 @@ internal object ViewModifierApplier {
         view.alpha = resolvedAlpha
         if (view is DeclarativeTextFieldLayout) {
             applyAnchorId(view, anchorId)
+            applyTestTag(view, resolved.testTag?.tag)
             view.visibility = when (resolved.visibility?.visibility ?: Visibility.Visible) {
                 Visibility.Visible -> View.VISIBLE
                 Visibility.Invisible -> View.INVISIBLE
@@ -159,6 +160,7 @@ internal object ViewModifierApplier {
             forceClip = resolved.clip?.clip ?: false,
         )
         applyAnchorId(view, anchorId)
+        applyTestTag(view, resolved.testTag?.tag)
         view.visibility = when (resolved.visibility?.visibility ?: Visibility.Visible) {
             Visibility.Visible -> View.VISIBLE
             Visibility.Invisible -> View.INVISIBLE
@@ -221,6 +223,13 @@ internal object ViewModifierApplier {
         anchorId: String?,
     ) {
         view.setTag(R.id.ui_framework_anchor_id, anchorId)
+    }
+
+    private fun applyTestTag(
+        view: View,
+        testTag: String?,
+    ) {
+        view.setTag(R.id.ui_framework_test_tag, testTag)
     }
 
     private fun applyBackgroundAndInteraction(

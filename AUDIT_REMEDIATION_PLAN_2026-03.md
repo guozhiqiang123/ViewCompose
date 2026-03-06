@@ -64,7 +64,7 @@
 
 ### W2 - UI 测试基线恢复（P0）
 
-- [ ] 新增稳定测试锚点能力（`Modifier.testTag`）
+- [x] 新增稳定测试锚点能力（`Modifier.testTag`）
 - [ ] 重构 `DemoUiTestHelpers` 为 tag-first，不再依赖易变文案滚动
 - [ ] 迁移 `DemoVisualUiTest` 到稳定锚点断言
 - [ ] 跑通 `:app:connectedDebugAndroidTest`
@@ -130,4 +130,8 @@
 6. 已执行 `./gradlew qaQuick`，当前失败点：`IconButtonTest.icon button emits themed defaults`。
 7. 已在 `ROADMAP.md` 增加完成态字段（`C/U/D/UI`）及统一判定口径。
 8. W1 清单项已完成；当前门禁结果仍为阻塞态（unit/UI 未全绿），需在 W2/W3 中继续收口。
-9. 下一步：进入 W2（UI 测试基线恢复），先补稳定 test tag 锚点。
+9. W2 进展：
+   - 已新增 `Modifier.testTag`，渲染链路支持写入 view tag（`ui_framework_test_tag`）。
+   - 已补文档 `MODIFIER.md` 中的能力归类。
+   - `:ui-renderer:testDebugUnitTest` 已通过。
+10. 下一步：重构 `DemoUiTestHelpers` 为 tag-first，并迁移 `DemoVisualUiTest`。

@@ -7,5 +7,6 @@
     <item name="ui_framework_lazy_spacing_decoration" type="id" />
     <item name="ui_framework_lazy_grid_spacing_decoration" type="id" />
     <item name="ui_framework_anchor_id" type="id" />
+    <item name="ui_framework_test_tag" type="id" />
     <item name="ui_framework_system_bars_padding_state" type="id" />
 </resources>
