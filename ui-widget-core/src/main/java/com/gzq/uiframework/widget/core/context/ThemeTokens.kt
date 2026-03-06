@@ -9,6 +9,7 @@ data class UiColors(
     val divider: Int,
     val textPrimary: Int,
     val textSecondary: Int,
+    val ripple: Int = pressedOverlayColorFor(textPrimary),
 )
 
 data class UiShapes(

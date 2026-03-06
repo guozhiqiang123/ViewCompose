@@ -47,5 +47,5 @@ object FabDefaults {
 
     fun extendedTextStyle(): UiTextStyle = Theme.typography.label
 
-    fun pressedColor(): Int = pressedOverlayColorFor(contentColorFor(Theme.colors.primary))
+    fun pressedColor(): Int = Theme.colors.ripple
 }

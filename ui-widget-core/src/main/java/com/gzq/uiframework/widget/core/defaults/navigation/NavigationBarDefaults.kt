@@ -13,7 +13,7 @@ object NavigationBarDefaults {
 
     fun indicatorColor(): Int = Theme.colors.surfaceVariant
 
-    fun rippleColor(): Int = pressedOverlayColorFor(Theme.colors.textPrimary)
+    fun rippleColor(): Int = Theme.colors.ripple
 
     fun height(): Int = 80.dp
 

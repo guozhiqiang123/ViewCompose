@@ -9,7 +9,7 @@ object TabRowDefaults {
 
     fun indicatorCornerRadius(): Int = 2.dp
 
-    fun rippleColor(): Int = pressedOverlayColorFor(Theme.colors.primary)
+    fun rippleColor(): Int = Theme.colors.ripple
 
     fun itemPaddingHorizontal(): Int = 16.dp
 

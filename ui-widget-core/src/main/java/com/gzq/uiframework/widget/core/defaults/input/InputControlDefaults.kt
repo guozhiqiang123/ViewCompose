@@ -142,5 +142,5 @@ object InputControlDefaults {
         }
     }
 
-    fun pressedColor(): Int = pressedOverlayColorFor(Theme.colors.textPrimary)
+    fun pressedColor(): Int = Theme.colors.ripple
 }

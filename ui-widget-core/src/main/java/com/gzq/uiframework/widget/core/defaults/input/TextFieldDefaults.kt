@@ -146,7 +146,7 @@ object TextFieldDefaults {
         }
     }
 
-    fun pressedColor(): Int = pressedOverlayColorFor(Theme.colors.textPrimary)
+    fun pressedColor(): Int = Theme.colors.ripple
 
     fun cursorColor(): Int = Theme.colors.primary
 }

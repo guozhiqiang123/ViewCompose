@@ -47,7 +47,7 @@ object SegmentedControlDefaults {
 
     fun rippleColor(enabled: Boolean = true): Int {
         return if (enabled) {
-            pressedOverlayColorFor(Theme.colors.textPrimary)
+            Theme.colors.ripple
         } else {
             0x00000000
         }
