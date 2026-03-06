@@ -34,7 +34,7 @@ object DemoThemeTokens {
             textSecondary = 0xFF6A5A4A.toInt(),
         ),
         typography = UiTypography(
-            title = UiTextStyle(fontSizeSp = 30.sp),
+            title = UiTextStyle(fontSizeSp = 22.sp),
             body = UiTextStyle(fontSizeSp = 16.sp),
             label = UiTextStyle(fontSizeSp = 14.sp),
         ),
@@ -96,7 +96,7 @@ object DemoThemeTokens {
             textSecondary = 0xFFD0C4B6.toInt(),
         ),
         typography = UiTypography(
-            title = UiTextStyle(fontSizeSp = 30.sp),
+            title = UiTextStyle(fontSizeSp = 22.sp),
             body = UiTextStyle(fontSizeSp = 16.sp),
             label = UiTextStyle(fontSizeSp = 14.sp),
         ),
