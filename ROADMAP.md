@@ -34,16 +34,16 @@
 1. demo 已稳定在多 `Activity` 结构
 2. 已实现章节具备统一 scenario 模板
 3. instrumentation 已覆盖关键回归路径（含延迟 session 容器专项）
-4. 当前阻塞（2026-03-06）：`:app:connectedDebugAndroidTest` 仍有 16/19 失败，主要集中在 `DemoVisualUiTest` 的文案/滚动脆弱断言，尚未达到“稳定回归基线”。
+4. 基线更新（2026-03-06）：已完成 tag-first UI 测试迁移，`:app:connectedDebugAndroidTest` 15/15 全绿，`qaQuick` 与 `qaFull` 均可通过。
 
 ## 2.3 里程碑进度快照（2026-03-06）
 
 | Milestone | 状态 | 完成态字段（C/U/D/UI） | 说明 |
 | --- | --- | --- | --- |
-| A：Overlay 稳定性收口 | In Progress | C:✅ U:✅ D:✅ UI:❌ | Dialog/Popup/Snackbar/Toast 主链路已打通，仍需补齐定位与队列策略收口 |
-| B：Collections 与容器扩展 | Next | C:✅ U:⚠ D:⚠ UI:❌ | `LazyRow/LazyGrid` 与容器专项回归仍待推进 |
-| C：Input 与表单态增强 | Next | C:✅ U:⚠ D:⚠ UI:❌ | focus/IME/表单组合与文案裁剪专项待系统化补齐 |
-| D：Diagnostics + Performance 联动 | In Progress | C:✅ U:⚠ D:✅ UI:❌ | 已有基线与起步能力，需继续增强可视化与发布态优化 |
+| A：Overlay 稳定性收口 | In Progress | C:✅ U:✅ D:✅ UI:✅ | Dialog/Popup/Snackbar/Toast 主链路已打通，仍需补齐定位与队列策略收口 |
+| B：Collections 与容器扩展 | Next | C:✅ U:✅ D:⚠ UI:⚠ | `LazyRow/LazyGrid` 与容器专项回归仍待推进 |
+| C：Input 与表单态增强 | Next | C:✅ U:✅ D:⚠ UI:⚠ | focus/IME/表单组合与文案裁剪专项待系统化补齐 |
+| D：Diagnostics + Performance 联动 | In Progress | C:✅ U:✅ D:✅ UI:✅ | 已有基线与起步能力，需继续增强可视化与发布态优化 |
 
 ## 3. 统一设计原则
 

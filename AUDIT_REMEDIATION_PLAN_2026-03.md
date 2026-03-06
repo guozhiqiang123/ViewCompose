@@ -20,11 +20,11 @@
 已核验事实：
 
 1. `:ui-renderer:compileDebugKotlin` 通过，审计里“TabRow 断裂编译”问题已不复现。
-2. `:app:connectedDebugAndroidTest` 当前失败：19 条中 16 条失败（主要集中在 `DemoVisualUiTest` 的文案/滚动脆弱断言）。
+2. `:app:connectedDebugAndroidTest` 已通过：15/15。
 3. 审计提到“Chip/SearchBar 等无 demo 使用”已过期：当前 demo 已存在调用。
 4. 审计提到的 overlay host 重复实现仍存在（Dialog/Popup/ModalBottomSheet 三套近似 commit/clear 逻辑）。
-5. `WORKFLOW` 仍缺少“完成态命令门禁”的硬性命令清单。
-6. `qaQuick` 新门禁已接入并可执行，但当前失败于 `:ui-widget-core:testDebugUnitTest`（`IconButtonTest` 1 条断言失败）。
+5. `WORKFLOW` 已补齐“完成态门禁命令 + 计划防丢失”约束。
+6. `qaQuick` 与 `qaFull` 均已通过。
 
 ## 3. 执行总原则
 
@@ -65,9 +65,9 @@
 ### W2 - UI 测试基线恢复（P0）
 
 - [x] 新增稳定测试锚点能力（`Modifier.testTag`）
-- [ ] 重构 `DemoUiTestHelpers` 为 tag-first，不再依赖易变文案滚动
-- [ ] 迁移 `DemoVisualUiTest` 到稳定锚点断言
-- [ ] 跑通 `:app:connectedDebugAndroidTest`
+- [x] 重构 `DemoUiTestHelpers` 为 tag-first，不再依赖易变文案滚动
+- [x] 迁移 `DemoVisualUiTest` 到稳定锚点断言
+- [x] 跑通 `:app:connectedDebugAndroidTest`
 
 完成标准：
 
@@ -134,4 +134,9 @@
    - 已新增 `Modifier.testTag`，渲染链路支持写入 view tag（`ui_framework_test_tag`）。
    - 已补文档 `MODIFIER.md` 中的能力归类。
    - `:ui-renderer:testDebugUnitTest` 已通过。
-10. 下一步：重构 `DemoUiTestHelpers` 为 tag-first，并迁移 `DemoVisualUiTest`。
+10. 已完成 `DemoUiTestHelpers` tag-first 改造，新增 testTag 定位/点击/滚动可见性辅助能力。
+11. 已完成 `DemoVisualUiTest` 到 testTag 断言迁移，去除易变文案滚动依赖。
+12. 已跑通 `:app:connectedDebugAndroidTest`（15/15）。
+13. 已修复 `IconButtonTest` 默认变体断言漂移，`qaQuick` 通过。
+14. 已跑通 `qaFull`（含 connected UI 测试）。
+15. 下一步：进入 W3（验证资产回填）。
