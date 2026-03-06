@@ -10,6 +10,7 @@ import com.gzq.uiframework.renderer.modifier.height
 import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.renderer.modifier.size
+import com.gzq.uiframework.renderer.modifier.testTag
 import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.Badge
@@ -321,6 +322,7 @@ internal fun UiTreeBuilder.ActionsPage(
                         onClick = { chipSelectedState.value = !chipSelectedState.value },
                         variant = ChipVariant.Filter,
                         selected = chipSelectedState.value,
+                        modifier = Modifier.testTag(DemoTestTags.ACTIONS_CHIP_FILTER),
                     )
                     Chip(
                         label = "输入标签",

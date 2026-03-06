@@ -9,6 +9,7 @@ import com.gzq.uiframework.renderer.modifier.fillMaxWidth
 import com.gzq.uiframework.renderer.modifier.height
 import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
+import com.gzq.uiframework.renderer.modifier.testTag
 import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.Badge
@@ -169,7 +170,8 @@ internal fun UiTreeBuilder.NavigationPage(
                     onItemSelected = { navSelectedState.value = it },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .margin(bottom = 16.dp),
+                        .margin(bottom = 16.dp)
+                        .testTag(DemoTestTags.NAVIGATION_BAR_PRIMARY),
                 ) {
                     Item(
                         label = "首页",
@@ -267,7 +269,8 @@ internal fun UiTreeBuilder.NavigationPage(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(400.dp),
+                        .height(400.dp)
+                        .testTag(DemoTestTags.NAVIGATION_SCAFFOLD),
                 ) {
                     Column(
                         spacing = 8.dp,

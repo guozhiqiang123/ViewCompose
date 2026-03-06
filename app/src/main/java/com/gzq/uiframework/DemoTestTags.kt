@@ -7,12 +7,16 @@ internal object DemoTestTags {
     const val LAYOUTS_EDGE_WEIGHTED = "layouts_edge_weighted"
     const val LAYOUTS_EDGE_ACTION = "layouts_edge_action"
     const val LAYOUTS_EDGE_PROBE_ICON = "layouts_edge_probe_icon"
+    const val LAYOUTS_FLOW_ROW = "layouts_flow_row"
+    const val LAYOUTS_SCROLLABLE_COLUMN = "layouts_scrollable_column"
+    const val LAYOUTS_SCROLLABLE_ROW = "layouts_scrollable_row"
 
     const val COLLECTIONS_BENCHMARK_TOGGLE = "collections_benchmark_toggle"
     const val COLLECTIONS_BENCHMARK_RESET = "collections_benchmark_reset"
     const val COLLECTIONS_STRESS_ROTATE = "collections_stress_rotate"
     const val COLLECTIONS_STRESS_EDGE = "collections_stress_edge"
     const val COLLECTIONS_STRESS_ACTIVE_IDS = "collections_stress_active_ids"
+    const val COLLECTIONS_LAZY_ROW_PRIMARY = "collections_lazy_row_primary"
 
     const val INTEROP_BENCHMARK_TOGGLE = "interop_benchmark_toggle"
     const val INTEROP_BENCHMARK_RESET = "interop_benchmark_reset"
@@ -29,10 +33,16 @@ internal object DemoTestTags {
     const val INPUT_BENCHMARK_TOGGLE = "input_benchmark_toggle"
     const val INPUT_BENCHMARK_RESET = "input_benchmark_reset"
     const val INPUT_BENCHMARK_FIELD = "input_benchmark_field"
+    const val INPUT_SEARCH_PRIMARY = "input_search_primary"
     const val INPUT_STRESS_EXPAND = "input_stress_expand"
     const val INPUT_STRESS_READONLY = "input_stress_readonly"
     const val INPUT_STRESS_ERROR = "input_stress_error"
     const val INPUT_STRESS_PROTECTED_FIELD = "input_stress_protected_field"
+
+    const val ACTIONS_CHIP_FILTER = "actions_chip_filter"
+
+    const val NAVIGATION_BAR_PRIMARY = "navigation_bar_primary"
+    const val NAVIGATION_SCAFFOLD = "navigation_scaffold"
 
     const val FEEDBACK_LAST_EVENT = "feedback_last_event"
     const val FEEDBACK_SHOW_SNACKBAR = "feedback_show_snackbar"

@@ -28,7 +28,7 @@
    - 正确复用
    - 跳过不必要更新
    - 容器刷新语义稳定
-3. 基线更新（2026-03-06）：`qaQuick` 与 `qaFull` 均通过，`connectedDebugAndroidTest` 15/15 全绿；后续性能改动继续要求功能回归同轨验证。
+3. 基线更新（2026-03-06）：`qaQuick` 与 `qaFull` 均通过，`connectedDebugAndroidTest` 16/16 全绿；后续性能改动继续要求功能回归同轨验证。
 
 ## 3. 性能门禁指标
 

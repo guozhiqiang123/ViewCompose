@@ -318,7 +318,8 @@ internal fun UiTreeBuilder.LayoutPage(
                     verticalSpacing = 8.dp,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .margin(bottom = 16.dp),
+                        .margin(bottom = 16.dp)
+                        .testTag(DemoTestTags.LAYOUTS_FLOW_ROW),
                 ) {
                     (1..flowItemCountState.value).forEach { i ->
                         Surface(
@@ -371,7 +372,8 @@ internal fun UiTreeBuilder.LayoutPage(
                         .height(200.dp)
                         .backgroundColor(SurfaceDefaults.variantBackgroundColor())
                         .cornerRadius(SurfaceDefaults.cardCornerRadius())
-                        .padding(12.dp),
+                        .padding(12.dp)
+                        .testTag(DemoTestTags.LAYOUTS_SCROLLABLE_COLUMN),
                 ) {
                     (1..15).forEach { i ->
                         Surface(
@@ -401,7 +403,8 @@ internal fun UiTreeBuilder.LayoutPage(
                         .fillMaxWidth()
                         .backgroundColor(SurfaceDefaults.variantBackgroundColor())
                         .cornerRadius(SurfaceDefaults.cardCornerRadius())
-                        .padding(8.dp),
+                        .padding(8.dp)
+                        .testTag(DemoTestTags.LAYOUTS_SCROLLABLE_ROW),
                 ) {
                     (1..20).forEach { i ->
                         Surface(

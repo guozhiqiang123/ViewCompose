@@ -79,8 +79,8 @@
 ### W3 - 验证资产回填（P1）
 
 - [x] 为审计提及组件补最小单测闭环（Chip/SearchBar/NavigationBar/Scaffold/LazyRow/FlowRow/Scrollable）
-- [ ] 为关键组件族补至少 1 条 instrumentation smoke 回归
-- [ ] 更新 `ROADMAP` 的对应状态
+- [x] 为关键组件族补至少 1 条 instrumentation smoke 回归
+- [x] 更新 `ROADMAP` 的对应状态
 
 完成标准：
 
@@ -141,4 +141,7 @@
 14. 已跑通 `qaFull`（含 connected UI 测试）。
 15. W3 进展：已新增 `AdditionalWidgetCoverageTest`，补齐 Chip/SearchBar/NavigationBar/Scaffold/LazyRow/FlowRow/Scrollable 最小单测闭环。
 16. `:ui-widget-core:testDebugUnitTest` 已通过。
-17. 下一步：补关键组件族 instrumentation smoke，并更新 `ROADMAP` 对应状态。
+17. 已新增 `ComponentFamilySmokeUiTest`，覆盖 Actions/Input/Navigation/Collections/Layouts 关键组件族 smoke 锚点断言。
+18. 已跑通 `:app:connectedDebugAndroidTest`（16/16）。
+19. 已同步 `ROADMAP.md` 与 `PERFORMANCE.md` 的基线状态。
+20. W3 已完成，下一步进入 W4（Overlay Host 去重）。

@@ -457,7 +457,8 @@ internal fun UiTreeBuilder.InputPage(
                     leadingIcon = ImageSource.Resource(R.drawable.demo_media_icon),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .margin(bottom = 12.dp),
+                        .margin(bottom = 12.dp)
+                        .testTag(DemoTestTags.INPUT_SEARCH_PRIMARY),
                 )
                 if (searchResultState.value.isNotEmpty()) {
                     Text(

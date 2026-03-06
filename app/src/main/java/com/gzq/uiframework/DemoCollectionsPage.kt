@@ -359,7 +359,8 @@ internal fun UiTreeBuilder.CollectionPage(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(140.dp)
-                        .margin(bottom = 16.dp),
+                        .margin(bottom = 16.dp)
+                        .testTag(DemoTestTags.COLLECTIONS_LAZY_ROW_PRIMARY),
                 ) { item ->
                     Card(
                         variant = CardVariant.Outlined,
