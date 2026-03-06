@@ -258,8 +258,8 @@ Popup(
 
 当前 demo 的宿主基础已经够用：
 
-1. `DemoRenderActivity` 已经持有根 `ViewGroup`
-2. `renderInto(root)` 是统一入口
+1. `DemoRenderActivity` 通过 `ComponentActivity.setUiContent(...)` 统一创建根 `ViewGroup`
+2. `renderInto(root)` 仍是底层统一入口
 
 因此 v1 可以直接在 `DemoRenderActivity` 所在宿主上挂 overlay host，而不需要先引入 fragment 容器。
 

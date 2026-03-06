@@ -193,6 +193,7 @@ widget/core/
 解释：
 
 - `bridge/` 放 Android theme/environment 桥接
+- `bridge/` 还包含宿主接入扩展：`ComponentActivity.setUiContent`、`Fragment.createUiContentRoot/createUiContent`
 - `context/` 只放 local、theme、environment、content color、text style local、image loading 这类 ambient context。当前包含 `Theme.kt`、`ThemeTokens.kt`、`ThemeDefaults.kt`、`ThemeRebase.kt`、`ComponentStyles.kt`、`ContentColor.kt`、`TextStyleLocal.kt`、`Environment.kt`、`LocalValue.kt`、`ImageLoading.kt`
 - `defaults/content/` 放文本、divider 等内容控件默认值
 - `defaults/input/` 放 text field、toggle、slider 等输入控件默认值
@@ -259,20 +260,22 @@ overlay/android/
 
 ```mermaid
 flowchart TD
-    A["Business DSL"] --> B["renderInto(container)"]
-    B --> C["RenderSession"]
-    C --> D["buildVNodeTree"]
-    D --> E["RuntimeObservation.observeReads"]
-    E --> F["VNode Tree"]
-    F --> G["ChildReconciler"]
-    G --> H["ViewTreeRenderer"]
-    H --> I["Android View Tree"]
-    C --> J["Remember / Effect / Local Stores"]
-    H --> K["LazyColumnAdapter / Item Sessions"]
+    A["Business DSL"] --> B["setUiContent(...) / createUiContent(...)"]
+    B --> C["renderInto(container)"]
+    C --> D["RenderSession"]
+    D --> E["buildVNodeTree"]
+    E --> F["RuntimeObservation.observeReads"]
+    F --> G["VNode Tree"]
+    G --> H["ChildReconciler"]
+    H --> I["ViewTreeRenderer"]
+    I --> J["Android View Tree"]
+    D --> K["Remember / Effect / Local Stores"]
+    I --> L["LazyColumnAdapter / Item Sessions"]
 ```
 
 当前真实主干是：
 
+- `ComponentActivity.setUiContent(...)` / `Fragment.createUiContent(...)`
 - `renderInto(...)`
 - `RenderSession`
 - `buildVNodeTree(...)`

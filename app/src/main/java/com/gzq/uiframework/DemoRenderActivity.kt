@@ -5,12 +5,10 @@ import android.os.Bundle
 import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.gzq.uiframework.overlay.android.host.AndroidOverlayHost
 import com.gzq.uiframework.widget.core.RenderSession
 import com.gzq.uiframework.widget.core.UiTreeBuilder
-import com.gzq.uiframework.widget.core.renderInto
+import com.gzq.uiframework.widget.core.setUiContent
 
 abstract class DemoRenderActivity : AppCompatActivity() {
     private var renderSession: RenderSession? = null
@@ -30,23 +28,16 @@ abstract class DemoRenderActivity : AppCompatActivity() {
             return
         }
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        val root = findViewById<ViewGroup>(R.id.main)
-        ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
         renderSession?.dispose()
-        renderSession = renderInto(
-            container = root,
+        renderSession = setUiContent(
             debug = true,
             debugTag = "UIFrameworkSample",
-            overlayHost = AndroidOverlayHost(root),
+            applySystemBarsInsetsPadding = true,
+            overlayHostFactory = ::AndroidOverlayHost,
             onRenderResult = DemoRenderDiagnosticsStore::record,
-        ) {
+        ) { root ->
             buildRootScaffold(root)
-        }
+        }.session
     }
 
     protected open fun UiTreeBuilder.buildRootScaffold(root: ViewGroup) {
