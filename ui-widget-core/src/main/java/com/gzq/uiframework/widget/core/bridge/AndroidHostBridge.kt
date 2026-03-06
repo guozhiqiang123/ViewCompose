@@ -31,6 +31,10 @@ fun Fragment.createUiContentRoot(
     )
 }
 
+/**
+ * Creates and returns a Fragment content root and binds the internal [RenderSession]
+ * to the Fragment view lifecycle. Session disposal is handled automatically.
+ */
 fun Fragment.setUiContent(
     debug: Boolean = false,
     debugTag: String = "UIFramework",
@@ -84,6 +88,10 @@ fun ComponentActivity.setUiContent(
     return root
 }
 
+@Deprecated(
+    message = "Use Fragment.setUiContent(...) for official host API with internal lifecycle disposal. " +
+        "createUiContent(...) is kept as a low-level migration API.",
+)
 fun Fragment.createUiContent(
     debug: Boolean = false,
     debugTag: String = "UIFramework",
@@ -151,8 +159,7 @@ private object FragmentRenderSessionRegistry {
         var disposed: Boolean = false
         var fragmentObserver: DefaultLifecycleObserver? = null
         var ownerObserver: Observer<LifecycleOwner>? = null
-        var viewOwner: LifecycleOwner? = null
-        var viewObserver: DefaultLifecycleObserver? = null
+        var viewLifecycleBinding: LifecycleBoundDisposer? = null
     }
 
     private val bindings = WeakHashMap<Fragment, Binding>()
@@ -164,6 +171,9 @@ private object FragmentRenderSessionRegistry {
         clear(fragment)
         val binding = Binding(session)
         bindings[fragment] = binding
+        binding.viewLifecycleBinding = LifecycleBoundDisposer {
+            clear(fragment)
+        }
 
         val fragmentObserver = object : DefaultLifecycleObserver {
             override fun onDestroy(owner: LifecycleOwner) {
@@ -196,20 +206,10 @@ private object FragmentRenderSessionRegistry {
         binding: Binding,
         owner: LifecycleOwner,
     ) {
-        if (binding.disposed || bindings[fragment] !== binding || binding.viewOwner === owner) {
+        if (binding.disposed || bindings[fragment] !== binding) {
             return
         }
-        binding.viewOwner?.let { previousOwner ->
-            binding.viewObserver?.let(previousOwner.lifecycle::removeObserver)
-        }
-        val observer = object : DefaultLifecycleObserver {
-            override fun onDestroy(owner: LifecycleOwner) {
-                clear(fragment)
-            }
-        }
-        binding.viewObserver = observer
-        binding.viewOwner = owner
-        owner.lifecycle.addObserver(observer)
+        binding.viewLifecycleBinding?.bind(owner)
     }
 
     private fun clear(
@@ -218,9 +218,7 @@ private object FragmentRenderSessionRegistry {
         val binding = bindings.remove(fragment) ?: return
         binding.ownerObserver?.let(fragment.viewLifecycleOwnerLiveData::removeObserver)
         binding.fragmentObserver?.let(fragment.lifecycle::removeObserver)
-        binding.viewOwner?.let { owner ->
-            binding.viewObserver?.let(owner.lifecycle::removeObserver)
-        }
+        binding.viewLifecycleBinding?.clearObserver()
         dispose(binding)
     }
 

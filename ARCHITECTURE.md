@@ -92,8 +92,9 @@ flowchart TD
 ### 4.3 宿主接入边界
 
 1. `ComponentActivity.setUiContent(...)` 不暴露 `RenderSession` 给页面调用方，并由宿主自动管理 `dispose`。
-2. `Fragment.createUiContent(...)` 当前返回 `UiContentHost(root + session)`；调用方需确保在 `viewLifecycleOwner` 销毁时释放会话。
-3. system bars insets 走组件侧 `Modifier.systemBarsInsetsPadding(...)`，不绑死 Activity 全局参数。
+2. `Fragment.setUiContent(...)` 是官方入口：不暴露 `RenderSession`，并在 `viewLifecycleOwner` 销毁时自动 `dispose`。
+3. `Fragment.createUiContent(...) -> UiContentHost(root + session)` 为迁移型低层 API（已标记 deprecated），仅用于需要直接访问 session 的特殊场景。
+4. system bars insets 走组件侧 `Modifier.systemBarsInsetsPadding(...)`，不绑死 Activity 全局参数。
 
 ### 4.4 延迟 session 容器边界
 
