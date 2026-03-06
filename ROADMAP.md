@@ -24,7 +24,7 @@
 1. `NodeSpec` 已覆盖第一方高频控件（`Spacer` 仍属于轻量例外）
 2. `Modifier` 边界已收口到“通用修饰 + scoped parent-data”
 3. `Overlay` 已分层为：
-   - session-bound surface：`Dialog`、`Popup`
+   - session-bound surface：`Dialog`、`Popup`、`ModalBottomSheet`
    - host-driven feedback：`Snackbar`、`Toast`
 4. `Activity` 宿主接入已经提供 `setUiContent(...)`，并内部管理 `RenderSession` 生命周期
 5. `system bars insets` 已转为组件侧 `Modifier.systemBarsInsetsPadding(...)`
@@ -33,16 +33,16 @@
 
 1. demo 已稳定在多 `Activity` 结构
 2. 已实现章节具备统一 scenario 模板
-3. instrumentation 已覆盖关键回归路径（含延迟 session 容器专项）
+3. instrumentation 已覆盖关键 smoke 回归路径，延迟 session 容器仅覆盖部分专项（`LazyVerticalGrid`、`VerticalPager`、`ModalBottomSheet` 仍待补齐）
 4. 基线更新（2026-03-06）：已完成 tag-first UI 测试迁移并补关键组件族 smoke，`:app:connectedDebugAndroidTest` 16/16 全绿，`qaQuick` 与 `qaFull` 均可通过。
 
 ## 2.3 里程碑进度快照（2026-03-06）
 
 | Milestone | 状态 | 完成态字段（C/U/D/UI） | 说明 |
 | --- | --- | --- | --- |
-| A：Overlay 稳定性收口 | In Progress | C:✅ U:✅ D:✅ UI:✅ | Overlay host 已统一 reconcile 模板，仍需补齐定位与队列策略收口 |
-| B：Collections 与容器扩展 | Next | C:✅ U:✅ D:✅ UI:✅ | 已补 Collections/Layouts 关键 smoke 基线，`LazyGrid` 与容器专项仍待推进 |
-| C：Input 与表单态增强 | Next | C:✅ U:✅ D:✅ UI:✅ | 已补 Input/Navigation 关键 smoke 基线，focus/IME/表单组合专项仍待系统化补齐 |
+| A：Overlay 稳定性收口 | In Progress | C:✅ U:✅ D:✅ UI:⚠ | Overlay host 已统一 reconcile 模板，Dialog/Popup/反馈流已回归，ModalBottomSheet 专项 UI 回归仍待补齐 |
+| B：Collections 与容器扩展 | Next | C:✅ U:✅ D:✅ UI:⚠ | 已补 Collections/Layouts smoke 基线；`LazyVerticalGrid` 与容器专项回归仍待推进 |
+| C：Input 与表单态增强 | Next | C:✅ U:✅ D:✅ UI:⚠ | 已补 Input/Navigation smoke 基线；focus/IME/表单组合专项仍待系统化补齐 |
 | D：Diagnostics + Performance 联动 | In Progress | C:✅ U:✅ D:✅ UI:✅ | 已有基线与起步能力，需继续增强可视化与发布态优化 |
 
 ## 3. 统一设计原则
@@ -57,8 +57,8 @@
 | 方向 | 当前状态 | 下一阶段重点 |
 | --- | --- | --- |
 | Foundations / Input / Layout / State | 已形成 v1 主能力 | 聚焦边界态、表单/焦点态与复杂组合场景 |
-| Collections | `LazyColumn` + 基础集合能力可用 | `LazyRow`、`LazyGrid`、sticky headers、list state 抽象 |
-| Overlay | Dialog/Snackbar/Toast/Popup 主链路已打通 | Popup 锚点定位增强、多 overlay 管理、反馈队列策略收口 |
+| Collections | `LazyColumn/LazyRow/LazyVerticalGrid` + 基础分页容器可用 | sticky headers、list state 抽象、`HorizontalPager/VerticalPager` 专项回归 |
+| Overlay | Dialog/Popup/ModalBottomSheet/Snackbar/Toast 主链路已打通 | Popup 锚点定位增强、ModalBottomSheet 专项回归、反馈队列策略收口 |
 | Theming | 语义 token + override + defaults 路线稳定 | Android 动态色/shape 桥接与细节一致性 |
 | Interop | `AndroidView` 可用 | 强化复杂原生 View 场景与主题/生命周期协同 |
 | Diagnostics | 基础 render/layout 诊断已落地 | locals/render tree/patch 可视化与告警可读性 |
@@ -96,18 +96,19 @@
 1. `Dialog`：位置、蒙层、dismiss 语义全量回归
 2. `Popup`：对齐策略、锚点刷新、窗口切换稳定性
 3. `Snackbar/Toast`：队列和重复触发策略文档化并测试覆盖
+4. `ModalBottomSheet`：show/update/dismiss 行为与宿主生命周期回归
 
 完成标准：
 
 1. 单测覆盖 show/hide/update/dismiss 一致性
-2. instrumentation 覆盖真实宿主中的可见性与交互
+2. instrumentation 覆盖真实宿主中的可见性与交互（含 bottom sheet 路径）
 3. `Activity` finish / 配置变化无泄漏
 
 ### Milestone B：Collections 与容器扩展
 
 交付：
 
-1. `LazyRow`、`LazyGrid` 最小可用实现
+1. `LazyRow`、`LazyVerticalGrid`、`HorizontalPager/VerticalPager` 最小可用实现
 2. 新增容器纳入 [SESSION_CONTAINER_CHECKLIST.md](/Users/gzq/AndroidStudioProjects/UIFramework/SESSION_CONTAINER_CHECKLIST.md)
 3. 结构稳定 + 闭包变化刷新路径专项测试
 

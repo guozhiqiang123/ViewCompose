@@ -2,243 +2,100 @@
 
 ## 1. 文档定位
 
-本文档定义 `UIFramework` 中 `Modifier`、控件 `Prop`、主题默认值三者的职责边界。
+本文档定义 `Modifier`、组件 `Prop/NodeSpec`、`Theme/Defaults` 的当前边界。
 
-目标不是描述当前实现细节，而是给后续重构和新增控件提供统一规则，避免继续把控件语义、布局语义、主题默认值混在一起。
+目标是保证新增能力时落点明确，避免语义混放。
 
-本文档优先级高于局部实现。如果实现与本文档冲突，应先更新本文档，再继续开发。
+## 2. 当前基线（2026-03）
 
-## 2. 当前问题
+1. identity 入口统一为 `Modifier`（`Modifier.Empty` 已移除）
+2. 文本语义类历史 modifier（如 `textColor/textSize`）已退场
+3. `weight/align/FlexibleSpacer` 仅通过 `RowScope/ColumnScope/BoxScope` 暴露
+4. system bars 适配走组件侧 `Modifier.systemBarsInsetsPadding(...)`
 
-当前实现已经暴露出两个结构性问题：
+## 3. 角色边界
 
-1. `Modifier.Empty` 作为 identity 写法不自然，调用成本高
-2. `Modifier` 同时承担了布局、装饰、交互、文本样式、控件默认样式等多种职责，边界已经模糊
+### 3.1 Modifier（通用外层修饰）
 
-最典型的例子：
+适合放入 `Modifier` 的能力：
 
-- `padding`、`margin`、`width`、`alpha` 这类能力，天然适合放在 `Modifier`
-- `textColor`、`textSize` 这类能力，当前也被放进了 `Modifier`
-- 但 `textColor` 对 `Row`、`Column`、`Box` 这类非文本节点并不具备稳定语义
+1. 尺寸与占位：`size/width/height/minWidth/minHeight/padding/margin`
+2. 外观修饰：`backgroundColor/border/cornerRadius/alpha/elevation`
+3. 可见性与层级：`visibility/offset/zIndex`
+4. 通用交互与可访问性：`clickable/contentDescription`
+5. 测试定位：`testTag`
+6. 系统栏内边距：`systemBarsInsetsPadding`
+7. 逃生通道：`nativeView(key, configure)`
 
-这会带来三个后果：
+### 3.2 Scoped Modifier（父容器相关 parent-data）
 
-1. `Modifier` 失去通用性边界，任何节点都能挂不适合自己的能力
-2. 父布局约束型能力缺少作用域限制，比如 `weight` 可以在任意节点上调用
-3. 主题默认值不得不通过“先算 token，再拼 `Modifier`”的方式下发，链路过长
+只在特定父容器内成立的能力，通过作用域暴露：
 
-## 3. 设计目标
+1. `RowScope.weight`
+2. `RowScope.align`
+3. `ColumnScope.weight`
+4. `ColumnScope.align`
+5. `BoxScope.align`
 
-后续 `Modifier` 体系必须满足以下目标：
+### 3.3 Props / NodeSpec（组件语义）
 
-1. 调用体验接近 Compose，不再依赖 `Modifier.Empty`
-2. `Modifier` 只承载跨节点通用修饰能力
-3. 控件自身语义回到控件参数 / `Prop`
-4. 父容器相关布局数据通过作用域约束暴露
-5. 主题只负责默认值，不直接驱动通用 `Modifier`
+组件自身语义进入组件参数与 `NodeSpec`，例如：
 
-## 4. 角色划分
+1. `Text`：`color/style/maxLines/overflow/textAlign`
+2. `Image`：`contentScale/tint/placeholder/error/fallback`
+3. `Button`：`variant/size/enabled/leadingIcon/trailingIcon`
+4. `TextField`：`label/placeholder/supportingText/readOnly/imeAction/isError`
 
-### 4.1 Modifier
+### 3.4 Theme / Defaults（默认值来源）
 
-`Modifier` 负责“外部修饰”，而不是“控件是什么”。
+默认值链路固定为：
 
-允许放入 `Modifier` 的能力：
+`Theme -> Defaults -> NodeSpec/Props -> Renderer`
 
-- 布局尺寸：`width`、`height`、`size`、`minHeight`
-- 布局占位：`padding`、`margin`
-- 窗口 inset：`systemBarsInsetsPadding`（可按边选择 top/bottom/left/right）
-- 外观修饰：`backgroundColor`、`border`、`cornerRadius`、`alpha`
-- 可见性与层级：`visibility`、`offset`、`zIndex`
-- 通用交互：`clickable`
-- 测试锚点：`testTag`（仅用于测试定位，不参与视觉语义）
-- 逃生通道：`nativeView(key, configure)` — 在所有框架 binding 完成后，对底层 Android View 执行用户回调，用于设置框架未映射的冷门属性（如 `contentDescription`、`clipChildren`、`elevation` 等）
+约束：
 
-这些能力的共同点是：
+1. 不把主题默认值直接编码为通用 `Modifier`
+2. 不在 renderer 写组件业务默认值
 
-- 对大多数节点都成立
-- 本质上是节点外层约束或外层外观
-- 不依赖某个具体控件类型
+## 4. 新能力落点判断
 
-`systemBarsInsetsPadding` 的定位：
+新增一个属性时，按顺序判断：
 
-- 这是“组件侧”能力，不再绑在 `Activity` 宿主参数上
-- 适合沉浸式页面按组件精细控制 inset，而不是全局一刀切
+1. 是否对大多数节点都稳定成立的外层修饰？
+2. 是否父容器相关的布局数据？
+3. 是否某个组件自身语义？
+4. 是否默认值来源（主题/默认样式）？
 
-### 4.2 Scoped Modifier
+命中哪一类，就落到对应层，不跨层混放。
 
-一部分 modifier 不是“全局通用修饰”，而是“父容器给子节点的布局数据”。
+## 5. 反模式清单
 
-这类能力不应作为全局 `Modifier` 扩展暴露，而应通过作用域限制：
-
-- `RowScope.weight`
-- `RowScope.align`
-- `ColumnScope.weight`
-- `ColumnScope.align`
-- `BoxScope.align`
-
-这类能力的共同点是：
-
-- 只在特定父布局内成立
-- 语义依赖父容器
-- 如果全局开放，会制造大量无意义调用
-
-### 4.3 Props
-
-控件 `Prop` 负责“控件自身语义”。
-
-应进入 `Prop` 或控件参数层的能力包括：
-
-- `Text`
-  - `color`
-  - `style`
-  - `maxLines`
-  - `overflow`
-  - `textAlign`
-- `Image`
-  - `contentScale`
-  - `tint`
-  - `placeholder`
-  - `error`
-  - `fallback`
-- `Button`
-  - `variant`
-  - `size`
-  - `enabled`
-  - `leadingIcon`
-  - `trailingIcon`
-- `TextField`
-  - `label`
-  - `placeholder`
-  - `supportingText`
-  - `readOnly`
-  - `imeAction`
-  - `isError`
-
-规则很简单：
-
-> 只要某个属性离开具体控件类型就不稳定，它就不该放在通用 `Modifier` 中。
-
-### 4.4 Theme
-
-主题只负责“默认值来源”，不负责定义通用 `Modifier`。
-
-更准确地说：
-
-- `Theme` 提供 token 和默认样式
-- `Defaults` 根据 `Theme` 解析控件默认值
-- 控件参数 / `Prop` 作为显式覆盖
-- `Modifier` 只做外层修饰
-
-正确链路应为：
-
-```text
-Theme -> Defaults -> Props -> Renderer
-```
-
-而不是：
-
-```text
-Theme -> Modifier -> Renderer
-```
-
-## 5. 推荐规则
-
-后续新增能力时，按以下顺序判断落点：
-
-1. 这是所有节点都能稳定理解的外部修饰吗？
-   - 是：进入 `Modifier`
-2. 这是只在某个父容器内成立的布局数据吗？
-   - 是：进入对应 scope modifier
-3. 这是某个控件自己的语义吗？
-   - 是：进入控件参数 / `Prop`
-4. 这是控件的默认值来源吗？
-   - 是：进入 `Theme` / `Defaults`
+1. 在通用 `Modifier` 新增组件专属语义字段
+2. 在全局 `Modifier` 暴露父容器特定能力
+3. 为了快速接入把第一方长期语义回流到动态 map
+4. 把主题覆盖当作组件参数替代方案
 
 ## 6. Compose 对齐原则
 
-`UIFramework` 不需要复刻 Compose Runtime，但应在 API 分层上尽量对齐 Compose 的成熟经验：
+`UIFramework` 不复刻 Compose runtime/compiler，但在 API 分层上保持对齐：
 
-- `Modifier` 是通用修饰链
-- 父布局相关能力通过 scope 暴露
-- 控件自身语义是参数，不是 modifier
-- 主题通过 `Theme + Local` 提供默认值
+1. `Modifier` = 通用修饰链
+2. parent-data = scope API
+3. 组件语义 = 参数/`NodeSpec`
+4. 主题 = 默认值来源
 
-因此，后续不建议继续新增以下类型的通用 modifier：
+## 7. 变更门禁
 
-- `textColor`
-- `textSize`
-- `hintColor`
-- `labelColor`
-- `contentScale`
-- 其他明显依赖具体控件类型的能力
+涉及 `Modifier` 边界变化时，至少完成：
 
-## 7. 重构路线
+1. 本文档同步
+2. 对应 `NodeSpec/renderer` 路径回归
+3. demo 验证与必要 UI 测试
 
-### Phase 1
+流程规则见 [WORKFLOW.md](/Users/gzq/AndroidStudioProjects/UIFramework/WORKFLOW.md)。
 
-- 引入 `Modifier` identity 写法
-- 调用侧默认改为 `Modifier`
-- 旧 `Modifier.Empty` 迁移到 `Modifier`
+## 8. 关联文档
 
-当前状态：已完成
-
-### Phase 2
-
-- 禁止继续新增控件语义型 modifier
-- 新增能力优先回到控件参数 / `Prop`
-- 文本、输入、按钮等控件默认值链路逐步从 `Modifier` 转为 `Prop`
-
-当前状态：✅ 已完成
-
-已完成的子项：
-
-- 内置 `Text`、`Button`、`TextField`、`Checkbox`、`Switch`、`RadioButton` 的文本颜色 / 字号默认值已优先走 `Prop`
-- 选择类控件的默认 pressed/ripple 样式已优先走 `Prop`
-- renderer 已实现”优先读 `Prop`，兼容旧 modifier”的过渡逻辑
-- `Text` 已提供显式 `color` 参数，demo 已不再依赖 `Modifier.textColor(...)`
-- `Button`、`TextField`、`Surface`、`IconButton` 的默认背景 / 描边 / 圆角 / ripple / 最小高度 / 内边距已开始通过 style props 下发
-- renderer 已实现”显式 modifier 覆盖 style props”的优先级规则，用于兼容现有外部调用
-- 所有样式属性已统一纳入 typed NodeSpec，旧 `Modifier.textColor` / `Modifier.textSize` 及对应 legacy element 已删除
-
-### Phase 3
-
-- 引入 `RowScope`、`ColumnScope`、`BoxScope`
-- 将 `weight`、`align` 等父布局相关能力迁入 scope
-
-当前状态：✅ 已完成
-
-已完成的子项：
-
-- `weight`、`align` 的 parent-data 规则已抽成统一校验
-- renderer 已在运行时对错误宿主输出一次性 warning
-- `ui-renderer` 已补 parent-data 校验单测
-- `Row`、`Column`、`Box`、`Surface` 的内容 lambda 已切到对应 scope receiver
-- scope 内已提供 `weight` / `align` / `FlexibleSpacer` 的正确入口
-- 全局 `weight` / `align` / `FlexibleSpacer` 已标记为迁移型 API
-- demo 与框架内部调用已优先切到 scope 解析
-
-### Phase 4
-
-- 清理历史兼容层
-- `Modifier.Empty` 标记移除
-- `textColor` / `textSize` 等历史通用 modifier 彻底退场
-
-当前状态：已完成
-
-当前已完成的子项：
-
-- `Modifier.Empty` 已移除，identity 入口统一为 `Modifier`
-- `Modifier.textColor` / `Modifier.textSize` 与对应 legacy element 已删除
-- renderer 已移除对 legacy text modifier 的 warning 和读取分支
-
-## 8. 当前实施结论
-
-当前建议按以下顺序执行：
-
-1. 先完成 `Modifier` identity API 收口
-2. 再把文本样式类能力移出通用 `Modifier`
-3. 再做 scope modifier
-4. 最后统一清理主题默认值到 `Prop` 的链路
-
-这是当前最稳、最不容易引入回归的重构顺序。
+1. [NODE_PROPS.md](/Users/gzq/AndroidStudioProjects/UIFramework/NODE_PROPS.md)
+2. [THEMING.md](/Users/gzq/AndroidStudioProjects/UIFramework/THEMING.md)
+3. [ARCHITECTURE.md](/Users/gzq/AndroidStudioProjects/UIFramework/ARCHITECTURE.md)

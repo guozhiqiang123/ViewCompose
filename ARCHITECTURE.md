@@ -19,7 +19,7 @@
 
 - 技术基线：Kotlin + Android View System
 - SDK：`minSdk 24`、`compileSdk 36`
-- 当前模块：`:ui-runtime`、`:ui-renderer`、`:ui-widget-core`、`:ui-overlay-android`、`:ui-image-coil`、`:app`
+- 当前模块：`:ui-runtime`、`:ui-renderer`、`:ui-widget-core`、`:ui-overlay-android`、`:ui-image-coil`、`:benchmark`、`:app`
 
 ### 2.1 模块职责
 
@@ -28,8 +28,9 @@
 | `ui-runtime` | 状态与读依赖观察（`state/observation`） | 不承载 Android 视图实现 |
 | `ui-renderer` | `VNode/NodeSpec`、reconcile、View 挂载与 patch | 不承载业务 DSL |
 | `ui-widget-core` | DSL、session、context/theme/defaults、overlay 声明契约 | 不放 Android 平台弹层实现 |
-| `ui-overlay-android` | Android overlay host/presenter（Dialog/Popup/Snackbar/Toast） | 只做平台实现 |
+| `ui-overlay-android` | Android overlay host/presenter（Dialog/Popup/ModalBottomSheet/Snackbar/Toast） | 只做平台实现 |
 | `ui-image-coil` | 远程图片加载桥接 | 不回流核心渲染逻辑 |
+| `benchmark` | 宏基准入口与性能回归数据采集 | 不承载业务 demo 与框架语义逻辑 |
 | `app` | demo、manual verification、ui tests 入口 | 不承载框架核心实现 |
 
 ### 2.2 当前架构判断
@@ -90,8 +91,8 @@ flowchart TD
 
 ### 4.3 宿主接入边界
 
-1. `ComponentActivity.setUiContent(...)` 不暴露 `RenderSession` 给页面调用方。
-2. session 生命周期由宿主扩展内部绑定并自动 `dispose`。
+1. `ComponentActivity.setUiContent(...)` 不暴露 `RenderSession` 给页面调用方，并由宿主自动管理 `dispose`。
+2. `Fragment.createUiContent(...)` 当前返回 `UiContentHost(root + session)`；调用方需确保在 `viewLifecycleOwner` 销毁时释放会话。
 3. system bars insets 走组件侧 `Modifier.systemBarsInsetsPadding(...)`，不绑死 Activity 全局参数。
 
 ### 4.4 延迟 session 容器边界
@@ -111,6 +112,9 @@ flowchart TD
 1. `ViewTreeRenderer` 仍是复杂度热点，新增能力优先拆辅助对象，不继续堆主类。
 2. 普通页面仍偏根级重跑，后续优化应聚焦“可跳过更新”与诊断能力。
 3. `ui-widget-core` 仍承担较多职责，演进时优先收边界，不盲目拆模块。
+4. `Fragment.createUiContent(...)` 仍暴露 `RenderSession`，存在 API 复杂度和生命周期误用风险。
+5. 延迟 session 容器的测试覆盖仍不均衡，`LazyVerticalGrid` 与 `VerticalPager` 缺少专项回归。
+6. `ui-widget-core` 中仍包含 `AndroidHostBridge/AndroidThemeBridge/AndroidEnvironmentBridge`，若后续目标扩展到跨平台，需要规划独立 host bridge 模块，避免 core 继续增重。
 
 ## 6. 变更落地清单（必须执行）
 
