@@ -25,7 +25,7 @@
 - [x] Step 6: F2 sync `SESSION_CONTAINER_CHECKLIST.md` + `ROADMAP.md` status and commit.
 - [x] Step 7: F3 add bottom-sheet test tags + visual UI test coverage and commit.
 - [x] Step 8: F3 sync `ROADMAP.md` overlay UI status and commit.
-- [ ] Step 9: F5 split `DemoFeedbackPage` into section files and commit.
+- [x] Step 9: F5 split `DemoFeedbackPage` into section files and commit.
 - [ ] Step 10: F5 split `DemoModifiersPage` into section files and commit.
 - [ ] Step 11: F5 split `DemoWidgetShowcaseDetails` into section files and commit.
 - [ ] Step 12: Run `qaQuick` (and `qaFull` if available), record result and commit any doc waiver if needed.
@@ -43,7 +43,8 @@
 | 2026-03-06 | Step 5 | `34e063f` | Added instrumentation coverage for grid span refresh and horizontal pager repeated refresh. |
 | 2026-03-06 | Step 6 | `fd4971a` | Synced delayed-container checklist and roadmap progress status. |
 | 2026-03-06 | Step 7 | `0a49ecf` | Added bottom-sheet test tags and visual regression flow coverage. |
-| 2026-03-06 | Step 8 | pending | Synced overlay milestone UI status after bottom-sheet instrumentation coverage. |
+| 2026-03-06 | Step 8 | `e3dd944` | Synced overlay milestone UI status after bottom-sheet instrumentation coverage. |
+| 2026-03-06 | Step 9 | pending | Split `DemoFeedbackPage` into main/model/overlay/sections files. |
 
 ## 5. Blockers
 
