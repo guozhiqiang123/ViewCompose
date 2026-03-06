@@ -104,9 +104,9 @@
 
 ### W5 - 目录与大文件治理（P1/P2）
 
-- [ ] `app` demo 文件按子目录归类（保持行为不变）
+- [x] `app` demo 文件按子目录归类（保持行为不变）
 - [ ] 拆分大文件（优先 `DemoFoundationsPage.kt`、`InputWidgetsDsl.kt`、`ContainerViewBinder.kt`）
-- [ ] 文档同步更新模块/目录归属说明
+- [x] 文档同步更新模块/目录归属说明
 
 完成标准：
 
@@ -150,3 +150,5 @@
 23. 已新增 `ModalBottomSheetOverlayHostTest`，补齐 show/update/dismiss/clear 覆盖。
 24. 已跑通 `qaFull`（含 connected UI 测试）。
 25. W4 已完成，下一步进入 W5（目录与大文件治理）。
+26. 已完成 `app` 目录首轮归类：`activity/`（入口）与 `demo/`（演示逻辑）分层，保持包名不变。
+27. 已在 `ARCHITECTURE.md` 增补 `app` 目录落位基线说明。

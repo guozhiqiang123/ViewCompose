@@ -41,6 +41,17 @@
 3. overlay：声明契约与平台实现已分层
 4. typed props：第一方高频节点已收敛到 `NodeSpec`
 
+### 2.3 `app` 目录落位基线
+
+`app` 模块采用“入口与演示分层”：
+
+1. `app/src/main/java/com/gzq/uiframework/activity`
+   - `Activity` 入口与路由组装
+2. `app/src/main/java/com/gzq/uiframework/demo`
+   - demo 页面、catalog、主题会话、测试锚点等演示逻辑
+3. `app/src/androidTest/java/com/gzq/uiframework`
+   - demo/UI 回归测试
+
 ## 3. 核心调用链
 
 ```mermaid
