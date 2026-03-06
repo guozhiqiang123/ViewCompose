@@ -24,7 +24,7 @@
 - [x] Step 5: F2 add instrumentation coverage for grid/pager visible refresh paths and commit.
 - [x] Step 6: F2 sync `SESSION_CONTAINER_CHECKLIST.md` + `ROADMAP.md` status and commit.
 - [x] Step 7: F3 add bottom-sheet test tags + visual UI test coverage and commit.
-- [ ] Step 8: F3 sync `ROADMAP.md` overlay UI status and commit.
+- [x] Step 8: F3 sync `ROADMAP.md` overlay UI status and commit.
 - [ ] Step 9: F5 split `DemoFeedbackPage` into section files and commit.
 - [ ] Step 10: F5 split `DemoModifiersPage` into section files and commit.
 - [ ] Step 11: F5 split `DemoWidgetShowcaseDetails` into section files and commit.
@@ -42,7 +42,8 @@
 | 2026-03-06 | Step 4 | `6f6f4c2` | Added delayed-container unit tests for grid/horizontal pager/vertical pager. |
 | 2026-03-06 | Step 5 | `34e063f` | Added instrumentation coverage for grid span refresh and horizontal pager repeated refresh. |
 | 2026-03-06 | Step 6 | `fd4971a` | Synced delayed-container checklist and roadmap progress status. |
-| 2026-03-06 | Step 7 | pending | Added bottom-sheet test tags and visual regression flow coverage. |
+| 2026-03-06 | Step 7 | `0a49ecf` | Added bottom-sheet test tags and visual regression flow coverage. |
+| 2026-03-06 | Step 8 | pending | Synced overlay milestone UI status after bottom-sheet instrumentation coverage. |
 
 ## 5. Blockers
 
