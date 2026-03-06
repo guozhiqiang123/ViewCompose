@@ -43,3 +43,4 @@
 | `PROJECT_REAUDIT_2026-03-06.md` | 二次审计快照（文档去旧 + 架构偏差复核） |
 | `REFACTOR_PLAN.md` | 已完成的阶段性执行计划 |
 | `AUDIT_REMEDIATION_PLAN_2026-03.md` | 已完成的审计整改执行计划 |
+| `REAUDIT_EXECUTION_PLAN_2026-03.md` | 已完成的 re-audit 闭环执行计划（F1/F2/F3/F5） |
