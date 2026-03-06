@@ -72,6 +72,19 @@
 
 如果某一步暂时做不到，提交说明里必须明确缺什么、为什么缺。
 
+## 4.1 完成态门禁命令
+
+统一命令入口：
+
+1. 快速门禁：`./gradlew qaQuick`
+2. 全量门禁：`./gradlew qaFull`
+
+说明：
+
+1. `qaQuick` = 核心模块编译 + unit test
+2. `qaFull` = `qaQuick` + `:app:connectedDebugAndroidTest`
+3. 能力标记为“完成”前，默认要求 `qaFull` 通过；若当前缺设备或存在临时豁免，必须在 roadmap 写明豁免范围和补齐时间
+
 ## 5. 新增代码归类原则
 
 新增代码必须先判断“属于哪个模块、哪个目录层级”，再开始落文件。

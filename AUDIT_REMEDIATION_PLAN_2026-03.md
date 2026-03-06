@@ -24,6 +24,7 @@
 3. 审计提到“Chip/SearchBar 等无 demo 使用”已过期：当前 demo 已存在调用。
 4. 审计提到的 overlay host 重复实现仍存在（Dialog/Popup/ModalBottomSheet 三套近似 commit/clear 逻辑）。
 5. `WORKFLOW` 仍缺少“完成态命令门禁”的硬性命令清单。
+6. `qaQuick` 新门禁已接入并可执行，但当前失败于 `:ui-widget-core:testDebugUnitTest`（`IconButtonTest` 1 条断言失败）。
 
 ## 3. 执行总原则
 
@@ -49,9 +50,9 @@
 
 ### W1 - 质量门禁收紧（完成态定义）
 
-- [ ] 在 `WORKFLOW.md` 增加双层门禁命令清单
+- [x] 在 `WORKFLOW.md` 增加双层门禁命令清单
 - [ ] 在 `ROADMAP.md` 增加能力项完成态字段（编译/单测/demo/UI）
-- [ ] 提供统一执行入口（`qaQuick` + `qaFull`，以 Gradle 任务或脚本形式）
+- [x] 提供统一执行入口（`qaQuick` + `qaFull`，以 Gradle 任务或脚本形式）
 
 完成标准：
 
@@ -123,3 +124,8 @@
    - `PERFORMANCE.md`：补充性能推进与 UI 回归稳定化联动约束。
    - `WORKFLOW.md`：新增“执行计划防丢失约定”。
 4. W0 已完成，下一步进入 W1（质量门禁收紧）。
+5. W1 进展：
+   - 已新增 root Gradle 统一门禁入口：`qaQuick` / `qaFull`。
+   - 已在 `WORKFLOW.md` 增加双层门禁命令清单与完成态约束。
+6. 已执行 `./gradlew qaQuick`，当前失败点：`IconButtonTest.icon button emits themed defaults`。
+7. 下一步：完成 W1 第 2 项（ROADMAP 完成态字段），并处理 `qaQuick` 失败项。
