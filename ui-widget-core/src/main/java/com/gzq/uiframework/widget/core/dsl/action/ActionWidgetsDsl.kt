@@ -58,13 +58,14 @@ fun UiTreeBuilder.IconButton(
     icon: ImageSource,
     contentDescription: String? = null,
     onClick: (() -> Unit)? = null,
-    variant: ButtonVariant = ButtonVariant.Primary,
+    variant: ButtonVariant = ButtonVariant.Text,
     size: ButtonSize = ButtonSize.Medium,
+    tint: Int? = null,
     enabled: Boolean = true,
     key: Any? = null,
     modifier: Modifier = Modifier,
 ) {
-    val tint = IconButtonDefaults.contentColor(variant, enabled)
+    val resolvedTint = tint ?: IconButtonDefaults.contentColor(variant, enabled)
     val contentPaddingValue = IconButtonDefaults.contentPadding(size)
     val semanticModifier = Modifier
         .size(
@@ -85,7 +86,7 @@ fun UiTreeBuilder.IconButton(
         spec = IconButtonNodeProps(
             contentDescription = contentDescription,
             contentScale = ImageContentScale.Inside,
-            tint = tint,
+            tint = resolvedTint,
             source = icon,
             placeholder = null,
             error = null,

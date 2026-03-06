@@ -408,7 +408,8 @@ internal fun UiTreeBuilder.OverviewPage(
                     spacing = 12.dp,
                     modifier = Modifier.fillMaxWidth().margin(top = 12.dp),
                 ) {
-                    IconButton(icon = ImageSource.Resource(R.drawable.demo_media_icon), contentDescription = "Primary 图标按钮")
+                    IconButton(icon = ImageSource.Resource(R.drawable.demo_media_icon), contentDescription = "默认图标按钮")
+                    IconButton(icon = ImageSource.Resource(R.drawable.demo_media_icon), contentDescription = "Primary 图标按钮", variant = ButtonVariant.Primary)
                     IconButton(icon = ImageSource.Resource(R.drawable.demo_media_icon), contentDescription = "Tonal 图标按钮", variant = ButtonVariant.Tonal)
                     IconButton(icon = ImageSource.Resource(R.drawable.demo_media_icon), contentDescription = "Outlined 图标按钮", variant = ButtonVariant.Outlined)
                     IconButton(icon = ImageSource.Resource(R.drawable.demo_media_icon), contentDescription = "禁用图标按钮", enabled = false)

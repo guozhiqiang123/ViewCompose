@@ -17,6 +17,7 @@ import com.gzq.uiframework.widget.core.Scaffold
 import com.gzq.uiframework.widget.core.SideEffect
 import com.gzq.uiframework.widget.core.Theme
 import com.gzq.uiframework.widget.core.TopAppBar
+import com.gzq.uiframework.widget.core.TopAppBarDefaults
 import com.gzq.uiframework.widget.core.UiEnvironment
 import com.gzq.uiframework.widget.core.UiTheme
 import com.gzq.uiframework.widget.core.UiTreeBuilder
@@ -50,6 +51,7 @@ internal fun UiTreeBuilder.DemoSubPageScaffold(
                                     icon = ImageSource.Resource(R.drawable.ic_arrow_back),
                                     contentDescription = "返回",
                                     onClick = { activity?.finish() },
+                                    tint = TopAppBarDefaults.titleColor(),
                                 )
                             },
                         )
