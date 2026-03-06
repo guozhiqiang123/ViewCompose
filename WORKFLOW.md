@@ -49,10 +49,10 @@
 优先更新根目录文档，例如：
 
 1. `ARCHITECTURE.md`
-2. `WIDGET_ROADMAP.md`
-3. `DEMO_ROADMAP.md`
-4. `UI_TESTING.md`
-5. 相关专项 roadmap 文档
+2. `ROADMAP.md`
+3. `THEMING.md`
+4. `MODIFIER.md`
+5. `NODE_PROPS.md`
 
 补充要求：
 
@@ -141,3 +141,15 @@
 
 1. 每一步都可回退、可审阅、可恢复
 2. 任何线程丢失后，都能从仓库状态继续工作
+
+## 9. 文档分层约定
+
+为避免文档继续膨胀，后续统一按下面分层维护：
+
+1. 当前有效规范：根目录文档（入口见 `CONTEXT.md`）
+2. 历史审计/快照：`docs/archive/`
+
+执行规则：
+
+1. 新规划优先并入现有主文档，避免新增平行 roadmap
+2. 阶段性文档完成后应迁入归档，不留在根目录长期并列

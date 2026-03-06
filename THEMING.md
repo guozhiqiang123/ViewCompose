@@ -13,9 +13,8 @@
 
 补充专题：
 
-- 主题局部覆盖设计见 [THEME_OVERRIDES.md](/Users/gzq/AndroidStudioProjects/UIFramework/THEME_OVERRIDES.md)
-- 主题系统实现层审计见 [THEME_AUDIT.md](/Users/gzq/AndroidStudioProjects/UIFramework/THEME_AUDIT.md)
-- 控件规划与属性分级见 [WIDGET_ROADMAP.md](/Users/gzq/AndroidStudioProjects/UIFramework/WIDGET_ROADMAP.md)
+- 统一路线图见 [ROADMAP.md](/Users/gzq/AndroidStudioProjects/UIFramework/ROADMAP.md)
+- 主题相关历史审计和拆分记录见 [docs/archive/README.md](/Users/gzq/AndroidStudioProjects/UIFramework/docs/archive/README.md)
 
 ## 2. 结论
 
@@ -415,4 +414,3 @@ UiThemeOverride(
 - 4 字段 `UiThemeTokens` + 即时派生 Defaults + 稀疏 LocalValue 覆盖，结构清晰
 - 新增控件无需修改 Theme / Rebase，只需新增 Defaults 对象
 - 局部上下文通过 `ProvideTextStyle` / `ProvideContentColor` 等轻量 local 承载，不膨胀 `UiThemeOverride`
-
