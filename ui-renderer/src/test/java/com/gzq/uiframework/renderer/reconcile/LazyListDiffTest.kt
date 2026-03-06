@@ -67,6 +67,34 @@ class LazyListDiffTest {
         assertSame(next, result.items.first())
     }
 
+    @Test
+    fun `keeps latest page instances when pager pages are structurally stable`() {
+        val previous = item("page-1", contentToken = "stable")
+        val next = item("page-1", contentToken = "stable")
+
+        val result = LazyListDiff.calculate(
+            previous = listOf(previous),
+            next = listOf(next),
+        )
+
+        assertEquals(emptyList<LazyListUpdate>(), result.updates)
+        assertSame(next, result.items.first())
+    }
+
+    @Test
+    fun `keeps latest grid item instances when grid rows are structurally stable`() {
+        val previous = item("grid-1", contentToken = "stable")
+        val next = item("grid-1", contentToken = "stable")
+
+        val result = LazyListDiff.calculate(
+            previous = listOf(previous),
+            next = listOf(next),
+        )
+
+        assertEquals(emptyList<LazyListUpdate>(), result.updates)
+        assertSame(next, result.items.first())
+    }
+
     private fun item(
         key: String?,
         contentToken: Any? = key,

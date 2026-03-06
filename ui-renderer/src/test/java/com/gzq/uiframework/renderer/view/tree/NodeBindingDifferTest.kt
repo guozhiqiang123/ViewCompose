@@ -2,6 +2,9 @@ package com.gzq.uiframework.renderer.view.tree
 
 import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.modifier.padding
+import com.gzq.uiframework.renderer.node.LazyListItem
+import com.gzq.uiframework.renderer.node.LazyListItemSession
+import com.gzq.uiframework.renderer.node.LazyListItemSessionFactory
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.Props
 import com.gzq.uiframework.renderer.node.VNode
@@ -11,9 +14,11 @@ import com.gzq.uiframework.renderer.node.spec.ColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.DividerNodeProps
 import com.gzq.uiframework.renderer.node.spec.FlowColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.FlowRowNodeProps
+import com.gzq.uiframework.renderer.node.spec.HorizontalPagerNodeProps
 import com.gzq.uiframework.renderer.node.spec.IconButtonNodeProps
 import com.gzq.uiframework.renderer.node.spec.ImageNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
+import com.gzq.uiframework.renderer.node.spec.LazyVerticalGridNodeProps
 import com.gzq.uiframework.renderer.node.spec.ProgressIndicatorNodeProps
 import com.gzq.uiframework.renderer.node.spec.RowNodeProps
 import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
@@ -21,6 +26,7 @@ import com.gzq.uiframework.renderer.node.spec.SliderNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
 import com.gzq.uiframework.renderer.node.spec.ToggleNodeProps
+import com.gzq.uiframework.renderer.node.spec.VerticalPagerNodeProps
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -161,6 +167,39 @@ class NodeBindingDifferTest {
 
         assertTrue(plan is NodeBindingPlan.Patch)
         assertTrue((plan as NodeBindingPlan.Patch).patch is LazyColumnNodePatch)
+    }
+
+    @Test
+    fun `patches lazy vertical grid semantic updates`() {
+        val previous = lazyVerticalGridNode(spanCount = 2)
+        val next = lazyVerticalGridNode(spanCount = 3)
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is LazyVerticalGridNodePatch)
+    }
+
+    @Test
+    fun `patches horizontal pager semantic updates`() {
+        val previous = horizontalPagerNode(currentPage = 0)
+        val next = horizontalPagerNode(currentPage = 1)
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is HorizontalPagerNodePatch)
+    }
+
+    @Test
+    fun `patches vertical pager semantic updates`() {
+        val previous = verticalPagerNode(currentPage = 0)
+        val next = verticalPagerNode(currentPage = 1)
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is VerticalPagerNodePatch)
     }
 
     @Test
@@ -408,6 +447,82 @@ class NodeBindingDifferTest {
                 items = emptyList(),
             ),
             modifier = Modifier,
+        )
+    }
+
+    private fun lazyVerticalGridNode(
+        spanCount: Int = 2,
+    ): VNode {
+        return VNode(
+            type = NodeType.LazyVerticalGrid,
+            spec = LazyVerticalGridNodeProps(
+                spanCount = spanCount,
+                contentPadding = 8,
+                horizontalSpacing = 8,
+                verticalSpacing = 8,
+                items = listOf(
+                    lazyItem("grid-1"),
+                    lazyItem("grid-2"),
+                ),
+                state = null,
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun horizontalPagerNode(
+        currentPage: Int = 0,
+    ): VNode {
+        return VNode(
+            type = NodeType.HorizontalPager,
+            spec = HorizontalPagerNodeProps(
+                pages = listOf(
+                    lazyItem("page-1"),
+                    lazyItem("page-2"),
+                ),
+                currentPage = currentPage,
+                onPageChanged = null,
+                offscreenPageLimit = 1,
+                pagerState = null,
+                userScrollEnabled = true,
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun verticalPagerNode(
+        currentPage: Int = 0,
+    ): VNode {
+        return VNode(
+            type = NodeType.VerticalPager,
+            spec = VerticalPagerNodeProps(
+                pages = listOf(
+                    lazyItem("v-page-1"),
+                    lazyItem("v-page-2"),
+                ),
+                currentPage = currentPage,
+                onPageChanged = null,
+                offscreenPageLimit = 1,
+                pagerState = null,
+                userScrollEnabled = true,
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun lazyItem(
+        key: String,
+    ): LazyListItem {
+        return LazyListItem(
+            key = key,
+            contentToken = key,
+            sessionFactory = LazyListItemSessionFactory {
+                object : LazyListItemSession {
+                    override fun render() = Unit
+
+                    override fun dispose() = Unit
+                }
+            },
         )
     }
 

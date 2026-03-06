@@ -20,7 +20,7 @@
 - [x] Step 1: Add this execution plan doc in project root and commit.
 - [x] Step 2: F1 implement Fragment official host API with auto-dispose and commit.
 - [x] Step 3: F1 deprecate low-level Fragment API and update docs with migration guidance, then commit.
-- [ ] Step 4: F2 add delayed-container unit tests (`LazyVerticalGrid/HorizontalPager/VerticalPager`) and commit.
+- [x] Step 4: F2 add delayed-container unit tests (`LazyVerticalGrid/HorizontalPager/VerticalPager`) and commit.
 - [ ] Step 5: F2 add instrumentation coverage for grid/pager visible refresh paths and commit.
 - [ ] Step 6: F2 sync `SESSION_CONTAINER_CHECKLIST.md` + `ROADMAP.md` status and commit.
 - [ ] Step 7: F3 add bottom-sheet test tags + visual UI test coverage and commit.
@@ -38,7 +38,8 @@
 | --- | --- | --- | --- |
 | 2026-03-06 | Step 1 | `ee4ffb8` | Plan file created in root. |
 | 2026-03-06 | Step 2 | `407ca88` | Added `Fragment.setUiContent(...)` and internal auto-dispose registry. |
-| 2026-03-06 | Step 3 | pending | Deprecated low-level Fragment API, added migration note and lifecycle unit tests. |
+| 2026-03-06 | Step 3 | `798d14e` | Deprecated low-level Fragment API, added migration note and lifecycle unit tests. |
+| 2026-03-06 | Step 4 | pending | Added delayed-container unit tests for grid/horizontal pager/vertical pager. |
 
 ## 5. Blockers
 
