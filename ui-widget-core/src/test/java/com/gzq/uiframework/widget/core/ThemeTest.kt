@@ -445,7 +445,6 @@ class ThemeTest {
         var disabledPrimary = 0
         var linearProgressTrack = 0
         var segmentedIndicator = 0
-        var tabPagerText = 0
 
         buildVNodeTree {
             UiTheme(customTheme) {
@@ -454,7 +453,6 @@ class ThemeTest {
                 disabledPrimary = ButtonDefaults.containerColor(ButtonVariant.Primary, enabled = false)
                 linearProgressTrack = ProgressIndicatorDefaults.linearTrackColor()
                 segmentedIndicator = SegmentedControlDefaults.indicatorColor()
-                tabPagerText = TabPagerDefaults.unselectedTextColor()
             }
         }
 
@@ -463,7 +461,6 @@ class ThemeTest {
         assertEquals(customTheme.colors.divider, disabledPrimary)
         assertEquals(customTheme.colors.divider, linearProgressTrack)
         assertEquals(customTheme.colors.primary, segmentedIndicator)
-        assertEquals(customTheme.colors.textSecondary, tabPagerText)
     }
 
     @Test

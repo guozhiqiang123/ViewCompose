@@ -134,21 +134,3 @@ fun UiTreeBuilder.ProvideProgressIndicatorColors(
 ) {
     LocalContext.provide(LocalProgressIndicatorColors, override) { content() }
 }
-
-// --- TabPager ---
-
-data class TabPagerColorOverride(
-    val background: Int? = null,
-    val indicator: Int? = null,
-    val text: Int? = null,
-    val selectedText: Int? = null,
-)
-
-internal val LocalTabPagerColors = LocalValue<TabPagerColorOverride?> { null }
-
-fun UiTreeBuilder.ProvideTabPagerColors(
-    override: TabPagerColorOverride,
-    content: UiTreeBuilder.() -> Unit,
-) {
-    LocalContext.provide(LocalTabPagerColors, override) { content() }
-}

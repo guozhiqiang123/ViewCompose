@@ -20,7 +20,6 @@ import com.gzq.uiframework.renderer.node.spec.ScrollableColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.ScrollableRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
 import com.gzq.uiframework.renderer.node.spec.SliderNodeProps
-import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
@@ -53,11 +52,6 @@ internal data class TextNodePatch(
 internal data class TextFieldNodePatch(
     val previous: TextFieldNodeProps,
     val next: TextFieldNodeProps,
-) : NodeViewPatch
-
-internal data class TabPagerNodePatch(
-    val previous: TabPagerNodeProps,
-    val next: TabPagerNodeProps,
 ) : NodeViewPatch
 
 internal data class SegmentedControlNodePatch(

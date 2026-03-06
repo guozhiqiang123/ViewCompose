@@ -590,7 +590,7 @@ internal fun UiTreeBuilder.OverviewPage(
                 }
                 Text(text = "Text, TextField, EmailField, PasswordField, NumberField, TextArea")
                 Text(text = "Row, Column, Box, Divider, Spacer, FlexibleSpacer, LazyColumn")
-                Text(text = "Progress indicators, AndroidView interop, TabPager, state runtime, effect runtime")
+                Text(text = "Progress indicators, AndroidView interop, TabRow + HorizontalPager, state runtime, effect runtime")
             }
 
             else -> VerificationNotesSection(
@@ -603,7 +603,7 @@ internal fun UiTreeBuilder.OverviewPage(
                 expected = listOf(
                     "所有基础控件在亮色、暗色和系统模式下都保持可读。",
                     "Image 的 placeholder / fallback 场景可见，Icon 跟随 ContentColor 变化。",
-                    "TabPager 顶部导航可滚动，不会因为章节增多而截断。",
+                    "TabRow + HorizontalPager 顶部导航可滚动，不会因为章节增多而截断。",
                 ),
                 relatedGaps = listOf(
                     "还没有更细的 page 内二级导航。",

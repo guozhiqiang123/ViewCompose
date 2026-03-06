@@ -13,7 +13,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
-import com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeVerticalPagerLayout
 import com.gzq.uiframework.renderer.view.tree.BoxNodePatch
@@ -33,7 +32,6 @@ import com.gzq.uiframework.renderer.view.tree.RowNodePatch
 import com.gzq.uiframework.renderer.view.tree.ScrollableColumnNodePatch
 import com.gzq.uiframework.renderer.view.tree.ScrollableRowNodePatch
 import com.gzq.uiframework.renderer.view.tree.SegmentedControlNodePatch
-import com.gzq.uiframework.renderer.view.tree.TabPagerNodePatch
 import com.gzq.uiframework.renderer.view.tree.TabRowNodePatch
 import com.gzq.uiframework.renderer.view.tree.VerticalPagerNodePatch
 import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
@@ -137,29 +135,6 @@ internal object ContainerNodePatchApplier {
             previous.state?.recyclerView = null
             next.state?.recyclerView = view
         }
-    }
-
-    fun applyTabPagerPatch(
-        view: DeclarativeTabPagerLayout,
-        patch: TabPagerNodePatch,
-    ) {
-        PagerViewBinder.bindTabPager(
-            view = view,
-            spec = PagerViewBinder.TabPagerSpec(
-                pages = patch.next.pages,
-                selectedTabIndex = patch.next.selectedTabIndex,
-                onTabSelected = patch.next.onTabSelected,
-                backgroundColor = patch.next.backgroundColor,
-                indicatorColor = patch.next.indicatorColor,
-                cornerRadius = patch.next.cornerRadius,
-                indicatorHeight = patch.next.indicatorHeight,
-                tabPaddingHorizontal = patch.next.tabPaddingHorizontal,
-                tabPaddingVertical = patch.next.tabPaddingVertical,
-                selectedTextColor = patch.next.selectedTextColor,
-                unselectedTextColor = patch.next.unselectedTextColor,
-                rippleColor = patch.next.rippleColor,
-            ),
-        )
     }
 
     fun applySegmentedControlPatch(

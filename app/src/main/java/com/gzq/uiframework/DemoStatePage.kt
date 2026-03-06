@@ -18,11 +18,12 @@ import com.gzq.uiframework.widget.core.Box
 import com.gzq.uiframework.widget.core.Button
 import com.gzq.uiframework.widget.core.Column
 import com.gzq.uiframework.widget.core.Image
+import com.gzq.uiframework.widget.core.HorizontalPager
 import com.gzq.uiframework.widget.core.LazyColumn
 import com.gzq.uiframework.widget.core.Row
 import com.gzq.uiframework.widget.core.SegmentedControl
 import com.gzq.uiframework.widget.core.SurfaceDefaults
-import com.gzq.uiframework.widget.core.TabPager
+import com.gzq.uiframework.widget.core.TabRow
 import com.gzq.uiframework.widget.core.Text
 import com.gzq.uiframework.widget.core.TextField
 import com.gzq.uiframework.widget.core.TextDefaults
@@ -221,7 +222,7 @@ internal fun UiTreeBuilder.StatePage(
                 val step = patchStepState.value
                 Text(text = "Patch headline $step")
                 Text(
-                    text = "Patched nodes: Text, Button, TextField, SegmentedControl, TabPager, Row, Column, Box, Image",
+                    text = "Patched nodes: Text, Button, TextField, SegmentedControl, TabRow, Row, Column, Box, Image",
                     color = TextDefaults.secondaryColor(),
                     modifier = Modifier.padding(vertical = 4.dp),
                 )
@@ -311,39 +312,58 @@ internal fun UiTreeBuilder.StatePage(
                     tint = if (step % 2 == 0) 0xFF000000.toInt() else 0xFFFF0000.toInt(),
                     modifier = Modifier.margin(bottom = 12.dp),
                 )
-                TabPager(
-                    selectedTabIndex = patchTabIndexState.value,
-                    onTabSelected = { patchTabIndexState.value = it },
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Page(title = "Summary", key = "summary", contentToken = "summary-$step") {
-                        Column(
-                            spacing = 8.dp,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .backgroundColor(SurfaceDefaults.variantBackgroundColor())
-                                .padding(12.dp),
-                        ) {
-                            Text(text = "Tab summary $step")
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    TabRow(
+                        selectedIndex = patchTabIndexState.value,
+                        onTabSelected = { patchTabIndexState.value = it },
+                    ) {
+                        Tab(key = "summary") { selected ->
                             Text(
-                                text = "Patch scenario keeps tab host stable while page metadata changes.",
-                                color = TextDefaults.secondaryColor(),
+                                text = "Summary",
+                                color = if (selected) TextDefaults.primaryColor() else TextDefaults.secondaryColor(),
+                            )
+                        }
+                        Tab(key = "details") { selected ->
+                            Text(
+                                text = "Details",
+                                color = if (selected) TextDefaults.primaryColor() else TextDefaults.secondaryColor(),
                             )
                         }
                     }
-                    Page(title = "Details", key = "details", contentToken = "details-$step") {
-                        Column(
-                            spacing = 8.dp,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .backgroundColor(SurfaceDefaults.variantBackgroundColor())
-                                .padding(12.dp),
-                        ) {
-                            Text(text = "Tab details $step")
-                            Text(
-                                text = "Use this page when checking tab selection patching under repeated updates.",
-                                color = TextDefaults.secondaryColor(),
-                            )
+                    HorizontalPager(
+                        currentPage = patchTabIndexState.value,
+                        onPageChanged = { patchTabIndexState.value = it },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Page(key = "summary", contentToken = "summary-$step") {
+                            Column(
+                                spacing = 8.dp,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                                    .padding(12.dp),
+                            ) {
+                                Text(text = "Tab summary $step")
+                                Text(
+                                    text = "Patch scenario keeps tab host stable while page metadata changes.",
+                                    color = TextDefaults.secondaryColor(),
+                                )
+                            }
+                        }
+                        Page(key = "details", contentToken = "details-$step") {
+                            Column(
+                                spacing = 8.dp,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                                    .padding(12.dp),
+                            ) {
+                                Text(text = "Tab details $step")
+                                Text(
+                                    text = "Use this page when checking tab selection patching under repeated updates.",
+                                    color = TextDefaults.secondaryColor(),
+                                )
+                            }
                         }
                     }
                 }
@@ -353,39 +373,58 @@ internal fun UiTreeBuilder.StatePage(
                     modifier = Modifier
                         .padding(top = 12.dp, bottom = 4.dp),
                 )
-                TabPager(
-                    selectedTabIndex = stableTabIndexState.value,
-                    onTabSelected = { stableTabIndexState.value = it },
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Page(title = "Stable Summary", key = "stable-summary", contentToken = "stable-summary") {
-                        Column(
-                            spacing = 8.dp,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .backgroundColor(SurfaceDefaults.variantBackgroundColor())
-                                .padding(12.dp),
-                        ) {
-                            Text(text = "Stable summary $step")
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    TabRow(
+                        selectedIndex = stableTabIndexState.value,
+                        onTabSelected = { stableTabIndexState.value = it },
+                    ) {
+                        Tab(key = "stable-summary") { selected ->
                             Text(
-                                text = "This page should still refresh after Advance patch state even though the tab page token stays stable.",
-                                color = TextDefaults.secondaryColor(),
+                                text = "Stable Summary",
+                                color = if (selected) TextDefaults.primaryColor() else TextDefaults.secondaryColor(),
+                            )
+                        }
+                        Tab(key = "stable-details") { selected ->
+                            Text(
+                                text = "Stable Details",
+                                color = if (selected) TextDefaults.primaryColor() else TextDefaults.secondaryColor(),
                             )
                         }
                     }
-                    Page(title = "Stable Details", key = "stable-details", contentToken = "stable-details") {
-                        Column(
-                            spacing = 8.dp,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .backgroundColor(SurfaceDefaults.variantBackgroundColor())
-                                .padding(12.dp),
-                        ) {
-                            Text(text = "Stable details $step")
-                            Text(
-                                text = "Use this page to catch stale tab page closures when keyed page metadata does not change.",
-                                color = TextDefaults.secondaryColor(),
-                            )
+                    HorizontalPager(
+                        currentPage = stableTabIndexState.value,
+                        onPageChanged = { stableTabIndexState.value = it },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Page(key = "stable-summary", contentToken = "stable-summary") {
+                            Column(
+                                spacing = 8.dp,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                                    .padding(12.dp),
+                            ) {
+                                Text(text = "Stable summary $step")
+                                Text(
+                                    text = "This page should still refresh after Advance patch state even though the tab page token stays stable.",
+                                    color = TextDefaults.secondaryColor(),
+                                )
+                            }
+                        }
+                        Page(key = "stable-details", contentToken = "stable-details") {
+                            Column(
+                                spacing = 8.dp,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                                    .padding(12.dp),
+                            ) {
+                                Text(text = "Stable details $step")
+                                Text(
+                                    text = "Use this page to catch stale tab page closures when keyed page metadata does not change.",
+                                    color = TextDefaults.secondaryColor(),
+                                )
+                            }
                         }
                     }
                 }
@@ -396,7 +435,7 @@ internal fun UiTreeBuilder.StatePage(
                 howToVerify = listOf(
                     "连续点击 Increment 和 Reset，确认派生文案与 timeline 一起更新。",
                     "隐藏再显示 transient panel，确认 panel 内点击计数会被重建。",
-                    "进入 Patch 页面，连续点击 Advance patch state，确认 Text、Button、TextField、SegmentedControl 和 TabPager 都同步更新。",
+                    "进入 Patch 页面，连续点击 Advance patch state，确认 Text、Button、TextField、SegmentedControl 和 TabRow 都同步更新。",
                     "切换 theme mode 后再继续点击，确认状态值不受主题刷新影响。",
                 ),
                 expected = listOf(

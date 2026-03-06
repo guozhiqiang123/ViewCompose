@@ -1,15 +1,16 @@
 package com.gzq.uiframework.renderer.layout
 
+import com.gzq.uiframework.renderer.modifier.BoxAlignModifierElement
+import com.gzq.uiframework.renderer.modifier.HorizontalAlignModifierElement
 import com.gzq.uiframework.renderer.modifier.Modifier
-import com.gzq.uiframework.renderer.modifier.align
-import com.gzq.uiframework.renderer.modifier.weight
+import com.gzq.uiframework.renderer.modifier.VerticalAlignModifierElement
+import com.gzq.uiframework.renderer.modifier.WeightModifierElement
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.VNode
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-@Suppress("DEPRECATION")
 class ModifierParentDataValidatorTest {
     @Test
     fun `weight is valid inside linear layout`() {
@@ -17,7 +18,7 @@ class ModifierParentDataValidatorTest {
             parent = ParentDataHost.Row,
             node = VNode(
                 type = NodeType.Text,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.then(WeightModifierElement(1f)),
             ),
         )
 
@@ -30,7 +31,7 @@ class ModifierParentDataValidatorTest {
             parent = ParentDataHost.Box,
             node = VNode(
                 type = NodeType.Text,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.then(WeightModifierElement(1f)),
             ),
         )
 
@@ -43,7 +44,7 @@ class ModifierParentDataValidatorTest {
             parent = ParentDataHost.Row,
             node = VNode(
                 type = NodeType.Text,
-                modifier = Modifier.align(BoxAlignment.Center),
+                modifier = Modifier.then(BoxAlignModifierElement(BoxAlignment.Center)),
             ),
         )
 
@@ -56,21 +57,21 @@ class ModifierParentDataValidatorTest {
             parent = ParentDataHost.Row,
             node = VNode(
                 type = NodeType.Text,
-                modifier = Modifier.align(VerticalAlignment.Center),
+                modifier = Modifier.then(VerticalAlignModifierElement(VerticalAlignment.Center)),
             ),
         )
         val horizontalWarnings = ModifierParentDataValidator.validate(
             parent = ParentDataHost.Column,
             node = VNode(
                 type = NodeType.Text,
-                modifier = Modifier.align(HorizontalAlignment.Center),
+                modifier = Modifier.then(HorizontalAlignModifierElement(HorizontalAlignment.Center)),
             ),
         )
         val mismatchedVerticalWarnings = ModifierParentDataValidator.validate(
             parent = ParentDataHost.Column,
             node = VNode(
                 type = NodeType.Text,
-                modifier = Modifier.align(VerticalAlignment.Center),
+                modifier = Modifier.then(VerticalAlignModifierElement(VerticalAlignment.Center)),
             ),
         )
 

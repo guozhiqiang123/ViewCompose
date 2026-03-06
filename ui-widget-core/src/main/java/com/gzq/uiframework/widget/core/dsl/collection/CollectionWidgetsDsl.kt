@@ -2,7 +2,6 @@ package com.gzq.uiframework.widget.core
 
 import android.view.ViewGroup
 import com.gzq.uiframework.renderer.modifier.Modifier
-import com.gzq.uiframework.renderer.modifier.weight
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.LazyListItemSession
 import com.gzq.uiframework.renderer.node.LazyListItemSessionFactory
@@ -376,85 +375,6 @@ internal data class TabRowTabEntry(
     val content: UiTreeBuilder.(selected: Boolean) -> Unit,
 )
 
-// ─── TabPager (composite: TabRow + HorizontalPager) ────────────────
-
-@UiDslMarker
-class TabPagerScope internal constructor() {
-    private val pages = mutableListOf<TabPagerPage>()
-
-    fun Page(
-        title: String,
-        key: Any? = title,
-        contentToken: Any? = title,
-        content: UiTreeBuilder.() -> Unit,
-    ) {
-        pages += TabPagerPage(
-            title = title,
-            key = key,
-            contentToken = contentToken,
-            content = content,
-        )
-    }
-
-    internal fun build(): List<TabPagerPage> = pages.toList()
-}
-
-fun UiTreeBuilder.TabPager(
-    selectedTabIndex: Int,
-    onTabSelected: (Int) -> Unit,
-    pagerState: PagerState? = null,
-    key: Any? = null,
-    backgroundColor: Int = TabPagerDefaults.backgroundColor(),
-    indicatorColor: Int = TabPagerDefaults.indicatorColor(),
-    indicatorHeight: Int = TabPagerDefaults.indicatorHeight(),
-    tabPaddingHorizontal: Int = TabPagerDefaults.tabPaddingHorizontal(),
-    tabPaddingVertical: Int = TabPagerDefaults.tabPaddingVertical(),
-    selectedTextColor: Int = TabPagerDefaults.selectedTextColor(),
-    unselectedTextColor: Int = TabPagerDefaults.unselectedTextColor(),
-    rippleColor: Int = TabPagerDefaults.rippleColor(),
-    modifier: Modifier = Modifier,
-    pages: TabPagerScope.() -> Unit,
-) {
-    val builtPages = TabPagerScope().apply(pages).build()
-    Column(key = key, modifier = modifier) {
-        TabRow(
-            selectedIndex = selectedTabIndex,
-            onTabSelected = onTabSelected,
-            pagerState = pagerState,
-            containerColor = backgroundColor,
-            indicatorColor = indicatorColor,
-            indicatorHeight = indicatorHeight,
-            rippleColor = rippleColor,
-            itemPaddingHorizontal = tabPaddingHorizontal,
-            itemPaddingVertical = tabPaddingVertical,
-        ) {
-            builtPages.forEach { page ->
-                Tab(key = page.key) { selected ->
-                    Text(
-                        text = page.title,
-                        color = if (selected) selectedTextColor else unselectedTextColor,
-                    )
-                }
-            }
-        }
-        HorizontalPager(
-            currentPage = selectedTabIndex,
-            onPageChanged = onTabSelected,
-            pagerState = pagerState,
-            offscreenPageLimit = builtPages.size.coerceAtLeast(1),
-            modifier = Modifier.weight(1f),
-        ) {
-            builtPages.forEach { page ->
-                Page(
-                    key = page.key,
-                    contentToken = page.contentToken,
-                    content = page.content,
-                )
-            }
-        }
-    }
-}
-
 private class WidgetLazyListItemSession(
     container: ViewGroup,
     localSnapshot: LocalSnapshot,
@@ -487,10 +407,3 @@ private class WidgetLazyListItemSession(
         renderContent = content
     }
 }
-
-internal data class TabPagerPage(
-    val title: String,
-    val key: Any?,
-    val contentToken: Any?,
-    val content: UiTreeBuilder.() -> Unit,
-)

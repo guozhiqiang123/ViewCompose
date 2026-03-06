@@ -21,8 +21,6 @@ sealed interface NodeType {
     data object AndroidView : NodeType
     data object LazyColumn : NodeType
     data object LazyRow : NodeType
-    @Deprecated("Use HorizontalPager + TabRow instead")
-    data object TabPager : NodeType
     data object SegmentedControl : NodeType
     data object ScrollableColumn : NodeType
     data object ScrollableRow : NodeType

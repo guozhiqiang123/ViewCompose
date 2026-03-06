@@ -2,39 +2,21 @@ package com.gzq.uiframework.renderer.view.tree
 
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.SegmentedControlItem
-import com.gzq.uiframework.renderer.node.TabPage
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.node.collection.TabIndicatorPosition
 import com.gzq.uiframework.renderer.node.collection.TabIndicatorWidthMode
 import com.gzq.uiframework.renderer.node.spec.HorizontalPagerNodeProps
 import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
-import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.VerticalPagerNodeProps
 import com.gzq.uiframework.renderer.view.container.DeclarativeHorizontalPagerLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
-import com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeVerticalPagerLayout
 import com.gzq.uiframework.renderer.view.lazy.PagerState
 
 internal object PagerViewBinder {
-    data class TabPagerSpec(
-        val pages: List<TabPage>,
-        val selectedTabIndex: Int,
-        val onTabSelected: ((Int) -> Unit)?,
-        val backgroundColor: Int,
-        val indicatorColor: Int,
-        val cornerRadius: Int,
-        val indicatorHeight: Int,
-        val tabPaddingHorizontal: Int,
-        val tabPaddingVertical: Int,
-        val selectedTextColor: Int,
-        val unselectedTextColor: Int,
-        val rippleColor: Int,
-    )
-
     data class SegmentedControlSpec(
         val items: List<SegmentedControlItem>,
         val selectedIndex: Int,
@@ -89,26 +71,6 @@ internal object PagerViewBinder {
         val itemPaddingVertical: Int,
         val minItemWidth: Int,
     )
-
-    fun bindTabPager(
-        view: DeclarativeTabPagerLayout,
-        spec: TabPagerSpec,
-    ) {
-        view.bind(
-            pages = spec.pages,
-            selectedTabIndex = spec.selectedTabIndex,
-            onTabSelected = spec.onTabSelected,
-            backgroundColor = spec.backgroundColor,
-            indicatorColor = spec.indicatorColor,
-            cornerRadius = spec.cornerRadius,
-            indicatorHeight = spec.indicatorHeight,
-            tabPaddingHorizontal = spec.tabPaddingHorizontal,
-            tabPaddingVertical = spec.tabPaddingVertical,
-            selectedTextColor = spec.selectedTextColor,
-            unselectedTextColor = spec.unselectedTextColor,
-            rippleColor = spec.rippleColor,
-        )
-    }
 
     fun bindSegmentedControl(
         view: DeclarativeSegmentedControlLayout,
@@ -182,40 +144,6 @@ internal object PagerViewBinder {
             offscreenPageLimit = spec.offscreenPageLimit,
             pagerState = spec.pagerState,
             userScrollEnabled = spec.userScrollEnabled,
-        )
-    }
-
-    fun readTabPagerSpec(node: VNode, defaultRippleColor: Int): TabPagerSpec {
-        val spec = node.spec as? TabPagerNodeProps
-        if (spec != null) {
-            return TabPagerSpec(
-                pages = spec.pages,
-                selectedTabIndex = spec.selectedTabIndex,
-                onTabSelected = spec.onTabSelected,
-                backgroundColor = spec.backgroundColor,
-                indicatorColor = spec.indicatorColor,
-                cornerRadius = spec.cornerRadius,
-                indicatorHeight = spec.indicatorHeight,
-                tabPaddingHorizontal = spec.tabPaddingHorizontal,
-                tabPaddingVertical = spec.tabPaddingVertical,
-                selectedTextColor = spec.selectedTextColor,
-                unselectedTextColor = spec.unselectedTextColor,
-                rippleColor = spec.rippleColor,
-            )
-        }
-        return TabPagerSpec(
-            pages = node.props[TypedPropKeys.TabPages] ?: emptyList(),
-            selectedTabIndex = node.props[TypedPropKeys.SelectedTabIndex] ?: 0,
-            onTabSelected = node.props[TypedPropKeys.OnTabSelected],
-            backgroundColor = node.props[TypedPropKeys.TabBackgroundColor] ?: 0,
-            indicatorColor = node.props[TypedPropKeys.TabIndicatorColor] ?: 0,
-            cornerRadius = node.props[TypedPropKeys.TabCornerRadius] ?: 0,
-            indicatorHeight = node.props[TypedPropKeys.TabIndicatorHeight] ?: 0,
-            tabPaddingHorizontal = node.props[TypedPropKeys.TabContentPaddingHorizontal] ?: 0,
-            tabPaddingVertical = node.props[TypedPropKeys.TabContentPaddingVertical] ?: 0,
-            selectedTextColor = node.props[TypedPropKeys.TabSelectedTextColor] ?: 0,
-            unselectedTextColor = node.props[TypedPropKeys.TabUnselectedTextColor] ?: 0,
-            rippleColor = node.props[TypedPropKeys.TabRippleColor] ?: defaultRippleColor,
         )
     }
 

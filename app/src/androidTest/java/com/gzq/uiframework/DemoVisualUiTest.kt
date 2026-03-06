@@ -367,7 +367,7 @@ class DemoVisualUiTest {
     }
 
     @Test
-    fun statePatchStress_refreshesStableTabPagerPageContent() {
+    fun statePatchStress_refreshesStableTabContent() {
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),
             StateActivity::class.java,

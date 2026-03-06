@@ -21,7 +21,6 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeNavigationBarLayou
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
-import com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeVerticalPagerLayout
@@ -160,15 +159,6 @@ internal object NodeViewBinderRegistry {
                     spec = CollectionViewBinder.readLazyRowSpec(node),
                 )
             },
-            NodeType.TabPager to { view, node ->
-                PagerViewBinder.bindTabPager(
-                    view = view as DeclarativeTabPagerLayout,
-                    spec = PagerViewBinder.readTabPagerSpec(
-                        node = node,
-                        defaultRippleColor = defaultRippleColor,
-                    ),
-                )
-            },
             NodeType.SegmentedControl to { view, node ->
                 PagerViewBinder.bindSegmentedControl(
                     view = view as DeclarativeSegmentedControlLayout,
@@ -298,12 +288,6 @@ internal object NodeViewBinderRegistry {
             is TextFieldNodePatch -> {
                 InputNodePatchApplier.applyTextFieldPatch(
                     view = view as DeclarativeTextFieldLayout,
-                    patch = patch,
-                )
-            }
-            is TabPagerNodePatch -> {
-                ContainerNodePatchApplier.applyTabPagerPatch(
-                    view = view as DeclarativeTabPagerLayout,
                     patch = patch,
                 )
             }

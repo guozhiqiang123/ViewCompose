@@ -22,7 +22,6 @@ import com.gzq.uiframework.renderer.node.spec.ScrollableColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.ScrollableRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
 import com.gzq.uiframework.renderer.node.spec.SliderNodeProps
-import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextNodeProps
@@ -37,7 +36,6 @@ internal object NodeBindingDiffer {
         ButtonNodeProps::class to { p, n -> ButtonNodePatch(p as ButtonNodeProps, n as ButtonNodeProps) },
         TextNodeProps::class to { p, n -> TextNodePatch(p as TextNodeProps, n as TextNodeProps) },
         TextFieldNodeProps::class to { p, n -> TextFieldNodePatch(p as TextFieldNodeProps, n as TextFieldNodeProps) },
-        TabPagerNodeProps::class to { p, n -> TabPagerNodePatch(p as TabPagerNodeProps, n as TabPagerNodeProps) },
         SegmentedControlNodeProps::class to { p, n -> SegmentedControlNodePatch(p as SegmentedControlNodeProps, n as SegmentedControlNodeProps) },
         LazyColumnNodeProps::class to { p, n -> LazyColumnNodePatch(p as LazyColumnNodeProps, n as LazyColumnNodeProps) },
         LazyRowNodeProps::class to { p, n -> LazyRowNodePatch(p as LazyRowNodeProps, n as LazyRowNodeProps) },

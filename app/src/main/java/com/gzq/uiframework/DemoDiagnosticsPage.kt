@@ -232,7 +232,7 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                         DiagnosticFact("Render root", "Single root RenderSession"),
                         DiagnosticFact("Update model", "Root rerender + keyed mounted reuse"),
                         DiagnosticFact("Lazy containers", "Per-item lazy sessions"),
-                        DiagnosticFact("Top navigation", "TabPager mapped to ViewPager2 + TabLayout"),
+                        DiagnosticFact("Top navigation", "TabRow + HorizontalPager via ViewPager2 + RecyclerView"),
                         DiagnosticFact("Local propagation", "Captured across lazy and pager sessions"),
                         DiagnosticFact("Visual inspector", "Not implemented"),
                     ),

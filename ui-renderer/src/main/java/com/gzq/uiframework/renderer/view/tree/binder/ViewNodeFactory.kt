@@ -28,7 +28,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
-import com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeVerticalPagerLayout
@@ -69,7 +68,6 @@ internal object ViewNodeFactory {
                 layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
                 adapter = LazyColumnAdapter(LinearLayoutManager.HORIZONTAL)
             }
-            NodeType.TabPager -> DeclarativeTabPagerLayout(context)
             NodeType.SegmentedControl -> DeclarativeSegmentedControlLayout(context)
             NodeType.ScrollableColumn -> DeclarativeScrollableColumnLayout(context)
             NodeType.ScrollableRow -> DeclarativeScrollableRowLayout(context)
