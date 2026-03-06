@@ -78,6 +78,7 @@ internal object ContentViewBinder {
         view.text = spec.text
         view.isEnabled = spec.enabled
         view.isAllCaps = false
+        view.stateListAnimator = null
         view.setSingleLine(false)
         view.maxLines = 2
         view.ellipsize = TextUtils.TruncateAt.END

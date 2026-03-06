@@ -141,6 +141,7 @@ internal object ViewModifierApplier {
             )
             return
         }
+        val isClickable = resolved.clickable != null || readNodeClickable(node)
         applyBackgroundAndInteraction(
             view = view,
             backgroundColor = resolvedBackgroundColor,
@@ -148,7 +149,7 @@ internal object ViewModifierApplier {
             borderColor = resolvedBorderColor,
             cornerRadius = resolvedCornerRadius,
             rippleColor = resolvedRippleColor,
-            clickable = resolved.clickable != null,
+            clickable = isClickable,
             forceClip = resolved.clip?.clip ?: false,
         )
         applyAnchorId(view, anchorId)
@@ -435,6 +436,12 @@ internal object ViewModifierApplier {
         is IconButtonNodeProps -> spec.rippleColor
         is ToggleNodeProps -> spec.rippleColor
         else -> node.props[TypedPropKeys.StyleRippleColor]
+    }
+
+    private fun readNodeClickable(node: VNode): Boolean = when (val spec = node.spec) {
+        is ButtonNodeProps -> spec.onClick != null && spec.enabled
+        is IconButtonNodeProps -> spec.enabled
+        else -> false
     }
 
     private fun readNodeMinHeight(node: VNode): Int? = when (val spec = node.spec) {
