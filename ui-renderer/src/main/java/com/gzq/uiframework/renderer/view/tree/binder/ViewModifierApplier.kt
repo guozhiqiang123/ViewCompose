@@ -121,8 +121,10 @@ internal object ViewModifierApplier {
             view.translationY = resolved.offset?.y ?: 0f
             view.z = resolved.zIndex?.zIndex ?: 0f
             view.elevation = resolved.elevation?.elevation?.toFloat() ?: 0f
-            view.isClickable = false
             view.setOnClickListener(null)
+            view.isClickable = false
+            view.isFocusable = false
+            view.isFocusableInTouchMode = false
             view.minimumHeight = 0
             view.minimumWidth = 0
             view.contentDescription = resolved.contentDescription?.contentDescription
@@ -165,14 +167,14 @@ internal object ViewModifierApplier {
         view.minimumHeight = resolvedMinHeight
         view.minimumWidth = resolvedMinWidth
         view.contentDescription = resolved.contentDescription?.contentDescription
-        view.isClickable = resolved.clickable != null
-        view.setOnClickListener(
-            if (resolved.clickable == null) {
-                null
-            } else {
-                View.OnClickListener { resolved.clickable!!.onClick() }
-            },
-        )
+        val clickListener = resolved.clickable?.let { clickableElement ->
+            View.OnClickListener { clickableElement.onClick() }
+        }
+        view.setOnClickListener(clickListener)
+        val hasClickListener = clickListener != null
+        view.isClickable = hasClickListener
+        view.isFocusable = hasClickListener
+        view.isFocusableInTouchMode = false
         if (resolvedPadding == null) {
             view.setPadding(0, 0, 0, 0)
         } else {
