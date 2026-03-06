@@ -8,6 +8,7 @@ import com.gzq.uiframework.renderer.modifier.fillMaxWidth
 import com.gzq.uiframework.renderer.modifier.height
 import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
+import com.gzq.uiframework.renderer.modifier.testTag
 import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.AnchorTarget
@@ -99,7 +100,9 @@ internal fun UiTreeBuilder.FeedbackPage(
                         dialogVisibleState.value = false
                         lastEventState.value = "Dialog 确认 ${dialogCountState.value}"
                     },
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .testTag(DemoTestTags.FEEDBACK_DIALOG_CONFIRM),
                 )
                 Button(
                     text = "关闭",
@@ -108,7 +111,9 @@ internal fun UiTreeBuilder.FeedbackPage(
                         dialogVisibleState.value = false
                         lastEventState.value = "Dialog 关闭 ${dialogCountState.value}"
                     },
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .testTag(DemoTestTags.FEEDBACK_DIALOG_CLOSE),
                 )
             }
         }
@@ -148,7 +153,9 @@ internal fun UiTreeBuilder.FeedbackPage(
                     popupVisibleState.value = false
                     lastEventState.value = "Popup 手动关闭 ${popupCountState.value}"
                 },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag(DemoTestTags.FEEDBACK_POPUP_DISMISS),
             )
         }
     }
@@ -349,7 +356,9 @@ internal fun UiTreeBuilder.FeedbackPage(
                     text = "最后事件: ${lastEventState.value}",
                     style = UiTextStyle(fontSizeSp = 13.sp),
                     color = TextDefaults.secondaryColor(),
-                    modifier = Modifier.margin(bottom = 8.dp),
+                    modifier = Modifier
+                        .margin(bottom = 8.dp)
+                        .testTag(DemoTestTags.FEEDBACK_LAST_EVENT),
                 )
                 Row(
                     spacing = 8.dp,
@@ -364,7 +373,9 @@ internal fun UiTreeBuilder.FeedbackPage(
                             snackbarVisibleState.value = true
                             lastEventState.value = "Snackbar 请求 ${snackbarCountState.value}"
                         },
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .weight(1f)
+                            .testTag(DemoTestTags.FEEDBACK_SHOW_SNACKBAR),
                     )
                     Button(
                         text = "隐藏 Snackbar",
@@ -387,7 +398,9 @@ internal fun UiTreeBuilder.FeedbackPage(
                             toastCountState.value += 1
                             lastEventState.value = "Toast 请求 ${toastCountState.value}"
                         },
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .weight(1f)
+                            .testTag(DemoTestTags.FEEDBACK_SHOW_TOAST),
                     )
                     Button(
                         text = "显示 Dialog",
@@ -396,7 +409,9 @@ internal fun UiTreeBuilder.FeedbackPage(
                             dialogVisibleState.value = true
                             lastEventState.value = "Dialog 请求 ${dialogCountState.value}"
                         },
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .weight(1f)
+                            .testTag(DemoTestTags.FEEDBACK_SHOW_DIALOG),
                     )
                 }
                 Row(
@@ -417,7 +432,9 @@ internal fun UiTreeBuilder.FeedbackPage(
                                 popupVisibleState.value = true
                                 lastEventState.value = "Popup 请求 ${popupCountState.value}"
                             },
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag(DemoTestTags.FEEDBACK_SHOW_POPUP),
                         )
                     }
                     Button(
@@ -433,17 +450,28 @@ internal fun UiTreeBuilder.FeedbackPage(
                             toastCountState.value = 0
                             lastEventState.value = "空闲"
                         },
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .weight(1f)
+                            .testTag(DemoTestTags.FEEDBACK_RESET),
                     )
                 }
                 Column(
                     spacing = 6.dp,
                     modifier = Modifier.margin(top = 12.dp),
                 ) {
-                    Text(text = "Dialog 次数: ${dialogCountState.value}")
-                    Text(text = "Popup 次数: ${popupCountState.value}")
+                    Text(
+                        text = "Dialog 次数: ${dialogCountState.value}",
+                        modifier = Modifier.testTag(DemoTestTags.FEEDBACK_DIALOG_COUNT),
+                    )
+                    Text(
+                        text = "Popup 次数: ${popupCountState.value}",
+                        modifier = Modifier.testTag(DemoTestTags.FEEDBACK_POPUP_COUNT),
+                    )
                     Text(text = "Snackbar 次数: ${snackbarCountState.value}")
-                    Text(text = "Toast 次数: ${toastCountState.value}")
+                    Text(
+                        text = "Toast 次数: ${toastCountState.value}",
+                        modifier = Modifier.testTag(DemoTestTags.FEEDBACK_TOAST_COUNT),
+                    )
                 }
             }
 

@@ -6,6 +6,7 @@ import com.gzq.uiframework.renderer.modifier.fillMaxSize
 import com.gzq.uiframework.renderer.modifier.fillMaxWidth
 import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
+import com.gzq.uiframework.renderer.modifier.testTag
 import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.AndroidView
 import com.gzq.uiframework.widget.core.Button
@@ -59,19 +60,23 @@ internal fun UiTreeBuilder.InteropPage() {
                     text = if (benchmarkToggleState.value) "Benchmark 替代" else "Benchmark 主要",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .margin(bottom = 8.dp),
+                        .margin(bottom = 8.dp)
+                        .testTag(DemoTestTags.INTEROP_BENCHMARK_TOGGLE),
                     onClick = { benchmarkToggleState.value = !benchmarkToggleState.value },
                 )
                 Button(
                     text = "重置互操作 Benchmark",
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag(DemoTestTags.INTEROP_BENCHMARK_RESET),
                     onClick = { benchmarkToggleState.value = false },
                 )
                 AndroidView(
                     key = "interop_benchmark_text_view",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 4.dp),
+                        .padding(vertical = 4.dp)
+                        .testTag(DemoTestTags.INTEROP_BENCHMARK_NATIVE_TEXT),
                     factory = { context -> TextView(context) },
                     update = { view ->
                         (view as TextView).text = if (benchmarkToggleState.value) {

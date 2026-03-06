@@ -1,0 +1,52 @@
+package com.gzq.uiframework
+
+internal object DemoTestTags {
+    const val LAYOUTS_BENCHMARK_TOGGLE = "layouts_benchmark_toggle"
+    const val LAYOUTS_BENCHMARK_RESET = "layouts_benchmark_reset"
+    const val LAYOUTS_EDGE_TOGGLE = "layouts_edge_toggle"
+    const val LAYOUTS_EDGE_WEIGHTED = "layouts_edge_weighted"
+    const val LAYOUTS_EDGE_ACTION = "layouts_edge_action"
+    const val LAYOUTS_EDGE_PROBE_ICON = "layouts_edge_probe_icon"
+
+    const val COLLECTIONS_BENCHMARK_TOGGLE = "collections_benchmark_toggle"
+    const val COLLECTIONS_BENCHMARK_RESET = "collections_benchmark_reset"
+    const val COLLECTIONS_STRESS_ROTATE = "collections_stress_rotate"
+    const val COLLECTIONS_STRESS_EDGE = "collections_stress_edge"
+    const val COLLECTIONS_STRESS_ACTIVE_IDS = "collections_stress_active_ids"
+
+    const val INTEROP_BENCHMARK_TOGGLE = "interop_benchmark_toggle"
+    const val INTEROP_BENCHMARK_RESET = "interop_benchmark_reset"
+    const val INTEROP_BENCHMARK_NATIVE_TEXT = "interop_benchmark_native_text"
+
+    const val FOUNDATIONS_BENCHMARK_TOGGLE = "foundations_benchmark_toggle"
+    const val FOUNDATIONS_BENCHMARK_RESET = "foundations_benchmark_reset"
+    const val FOUNDATIONS_ACCENT_PRIMARY = "foundations_accent_primary"
+    const val FOUNDATIONS_PRIMARY_TOKEN = "foundations_primary_token"
+    const val FOUNDATIONS_REMOTE_IMAGE = "foundations_remote_image"
+    const val FOUNDATIONS_FALLBACK_IMAGE = "foundations_fallback_image"
+    const val FOUNDATIONS_PRIMARY_ICON_BUTTON = "foundations_primary_icon_button"
+
+    const val INPUT_BENCHMARK_TOGGLE = "input_benchmark_toggle"
+    const val INPUT_BENCHMARK_RESET = "input_benchmark_reset"
+    const val INPUT_BENCHMARK_FIELD = "input_benchmark_field"
+    const val INPUT_STRESS_EXPAND = "input_stress_expand"
+    const val INPUT_STRESS_READONLY = "input_stress_readonly"
+    const val INPUT_STRESS_ERROR = "input_stress_error"
+    const val INPUT_STRESS_PROTECTED_FIELD = "input_stress_protected_field"
+
+    const val FEEDBACK_LAST_EVENT = "feedback_last_event"
+    const val FEEDBACK_SHOW_SNACKBAR = "feedback_show_snackbar"
+    const val FEEDBACK_SHOW_TOAST = "feedback_show_toast"
+    const val FEEDBACK_SHOW_DIALOG = "feedback_show_dialog"
+    const val FEEDBACK_SHOW_POPUP = "feedback_show_popup"
+    const val FEEDBACK_RESET = "feedback_reset"
+    const val FEEDBACK_DIALOG_CONFIRM = "feedback_dialog_confirm"
+    const val FEEDBACK_DIALOG_CLOSE = "feedback_dialog_close"
+    const val FEEDBACK_POPUP_DISMISS = "feedback_popup_dismiss"
+    const val FEEDBACK_DIALOG_COUNT = "feedback_dialog_count"
+    const val FEEDBACK_POPUP_COUNT = "feedback_popup_count"
+    const val FEEDBACK_TOAST_COUNT = "feedback_toast_count"
+
+    const val STATE_PATCH_ADVANCE = "state_patch_advance"
+    const val STATE_STABLE_SUMMARY = "state_stable_summary"
+}

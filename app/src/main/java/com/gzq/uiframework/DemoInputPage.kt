@@ -8,6 +8,7 @@ import com.gzq.uiframework.renderer.modifier.fillMaxWidth
 import com.gzq.uiframework.renderer.modifier.height
 import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
+import com.gzq.uiframework.renderer.modifier.testTag
 import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.renderer.node.TextFieldImeAction
 import com.gzq.uiframework.runtime.derivedStateOf
@@ -115,7 +116,8 @@ internal fun UiTreeBuilder.InputPage(
                     text = if (benchmarkExpandedState.value) "输入 Benchmark 已展开" else "输入 Benchmark 已收起",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .margin(bottom = 8.dp),
+                        .margin(bottom = 8.dp)
+                        .testTag(DemoTestTags.INPUT_BENCHMARK_TOGGLE),
                     onClick = { benchmarkExpandedState.value = !benchmarkExpandedState.value },
                 )
                 Button(
@@ -123,7 +125,8 @@ internal fun UiTreeBuilder.InputPage(
                     variant = ButtonVariant.Outlined,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .margin(bottom = 8.dp),
+                        .margin(bottom = 8.dp)
+                        .testTag(DemoTestTags.INPUT_BENCHMARK_RESET),
                     onClick = { benchmarkExpandedState.value = false },
                 )
                 TextField(
@@ -138,7 +141,9 @@ internal fun UiTreeBuilder.InputPage(
                     readOnly = true,
                     variant = TextFieldVariant.Outlined,
                     size = TextFieldSize.Medium,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag(DemoTestTags.INPUT_BENCHMARK_FIELD),
                 )
             }
 
@@ -360,18 +365,21 @@ internal fun UiTreeBuilder.InputPage(
                     Button(
                         text = if (stressExpandedState.value) "紧凑文案" else "展开文案",
                         size = ButtonSize.Compact,
+                        modifier = Modifier.testTag(DemoTestTags.INPUT_STRESS_EXPAND),
                         onClick = { stressExpandedState.value = !stressExpandedState.value },
                     )
                     Button(
                         text = if (stressReadonlyState.value) "可编辑" else "只读",
                         size = ButtonSize.Compact,
                         variant = ButtonVariant.Outlined,
+                        modifier = Modifier.testTag(DemoTestTags.INPUT_STRESS_READONLY),
                         onClick = { stressReadonlyState.value = !stressReadonlyState.value },
                     )
                     Button(
                         text = if (stressErrorState.value) "清除错误" else "显示错误",
                         size = ButtonSize.Compact,
                         variant = ButtonVariant.Tonal,
+                        modifier = Modifier.testTag(DemoTestTags.INPUT_STRESS_ERROR),
                         onClick = { stressErrorState.value = !stressErrorState.value },
                     )
                 }
@@ -425,7 +433,9 @@ internal fun UiTreeBuilder.InputPage(
                     isError = stressErrorState.value,
                     variant = TextFieldVariant.Filled,
                     size = TextFieldSize.Medium,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag(DemoTestTags.INPUT_STRESS_PROTECTED_FIELD),
                 )
             }
 

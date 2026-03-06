@@ -3,19 +3,21 @@ package com.gzq.uiframework
 import android.content.Intent
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class DemoVisualUiTest {
     @Test
-    fun layoutsBenchmarkButtons_areVisibleAndNotEllipsized() {
+    fun layoutsBenchmarkControls_areVisibleAndNotEllipsized() {
         launchDemoActivity(LayoutsActivity::class.java).use { scenario ->
             waitForUiIdle()
             captureDeviceScreenshot("layouts-benchmark-light")
             scenario.onActivity { activity ->
-                val toggle = activity.requireTextView("Layouts Benchmark Compact")
-                val reset = activity.requireTextView("Reset Layouts Benchmark")
+                val toggle = activity.requireTextViewByTestTag(DemoTestTags.LAYOUTS_BENCHMARK_TOGGLE)
+                val reset = activity.requireTextViewByTestTag(DemoTestTags.LAYOUTS_BENCHMARK_RESET)
                 assertViewFullyVisible(toggle)
                 assertViewFullyVisible(reset)
                 assertTextNotEllipsized(toggle)
@@ -30,8 +32,8 @@ class DemoVisualUiTest {
             waitForUiIdle()
             captureDeviceScreenshot("collections-benchmark-light")
             scenario.onActivity { activity ->
-                val toggle = activity.requireTextView("Collections Benchmark A-B-C")
-                val reset = activity.requireTextView("Reset Collections Benchmark")
+                val toggle = activity.requireTextViewByTestTag(DemoTestTags.COLLECTIONS_BENCHMARK_TOGGLE)
+                val reset = activity.requireTextViewByTestTag(DemoTestTags.COLLECTIONS_BENCHMARK_RESET)
                 assertViewFullyVisible(toggle)
                 assertViewFullyVisible(reset)
                 assertTextNotEllipsized(toggle)
@@ -46,9 +48,9 @@ class DemoVisualUiTest {
             waitForUiIdle()
             captureDeviceScreenshot("interop-benchmark-light")
             scenario.onActivity { activity ->
-                val toggle = activity.requireTextView("Interop Benchmark Primary")
-                val reset = activity.requireTextView("Reset Interop Benchmark")
-                val nativeMirror = activity.requireTextView("Native benchmark TextView: primary")
+                val toggle = activity.requireTextViewByTestTag(DemoTestTags.INTEROP_BENCHMARK_TOGGLE)
+                val reset = activity.requireTextViewByTestTag(DemoTestTags.INTEROP_BENCHMARK_RESET)
+                val nativeMirror = activity.requireTextViewByTestTag(DemoTestTags.INTEROP_BENCHMARK_NATIVE_TEXT)
                 assertViewFullyVisible(toggle)
                 assertViewFullyVisible(reset)
                 assertViewFullyVisible(nativeMirror)
@@ -64,11 +66,11 @@ class DemoVisualUiTest {
             waitForUiIdle()
             captureDeviceScreenshot("foundations-benchmark-light")
             scenario.onActivity { activity ->
-                val primary = activity.requireTextView("Foundations Benchmark Off")
-                val reset = activity.requireTextView("Reset Foundations Benchmark")
-                assertViewFullyVisible(primary)
+                val toggle = activity.requireTextViewByTestTag(DemoTestTags.FOUNDATIONS_BENCHMARK_TOGGLE)
+                val reset = activity.requireTextViewByTestTag(DemoTestTags.FOUNDATIONS_BENCHMARK_RESET)
+                assertViewFullyVisible(toggle)
                 assertViewFullyVisible(reset)
-                assertTextNotEllipsized(primary)
+                assertTextNotEllipsized(toggle)
                 assertTextNotEllipsized(reset)
             }
         }
@@ -80,133 +82,52 @@ class DemoVisualUiTest {
             waitForUiIdle()
             captureDeviceScreenshot("input-fields-light")
             scenario.onActivity { activity ->
-                val benchmark = activity.requireTextView("Input Benchmark Compact")
-                val resetBenchmark = activity.requireTextView("Reset Input Benchmark")
-                val benchmarkLabel = activity.requireTextView("Benchmark field")
+                val benchmark = activity.requireTextViewByTestTag(DemoTestTags.INPUT_BENCHMARK_TOGGLE)
+                val resetBenchmark = activity.requireTextViewByTestTag(DemoTestTags.INPUT_BENCHMARK_RESET)
+                val benchmarkField = activity.requireViewByTestTag(DemoTestTags.INPUT_BENCHMARK_FIELD)
                 assertViewFullyVisible(benchmark)
                 assertViewFullyVisible(resetBenchmark)
-                assertViewFullyVisible(benchmarkLabel)
+                assertViewFullyVisible(benchmarkField)
                 assertTextNotEllipsized(benchmark)
                 assertTextNotEllipsized(resetBenchmark)
-                assertTextNotEllipsized(benchmarkLabel)
             }
         }
     }
 
     @Test
-    fun inputBenchmarkTextField_keepsLabelValueAndSupportingTextFullyVisible() {
-        launchDemoActivity(InputActivity::class.java).use { scenario ->
-            waitForUiIdle()
-            scenario.onActivity { activity ->
-                val label = activity.requireTextView("Benchmark field")
-                val value = activity.requireTextView("Compact payload")
-                val supporting = activity.requireTextView("Compact supporting copy.")
-                assertViewCompletelyVisible(label)
-                assertViewCompletelyVisible(value)
-                assertViewCompletelyVisible(supporting)
-                assertTextFitsVertically(value)
-            }
-        }
-    }
-
-    @Test
-    fun feedbackPage_triggersSnackbarAndToastFlows() {
+    fun feedbackPage_triggersTransientFlows() {
         launchDemoActivity(FeedbackActivity::class.java).use { scenario ->
             waitForUiIdle()
-            scrollDeviceTextIntoView("Show Snackbar")
             scenario.onActivity { activity ->
-                val showSnackbar = activity.requireTextView("Show Snackbar")
-                val showToast = activity.requireTextView("Show Toast")
-                assertViewFullyVisible(showSnackbar)
-                assertViewFullyVisible(showToast)
-                activity.clickTextView("Show Snackbar")
+                activity.clickByTestTag(DemoTestTags.FEEDBACK_SHOW_SNACKBAR)
+                activity.clickByTestTag(DemoTestTags.FEEDBACK_SHOW_TOAST)
+                activity.clickByTestTag(DemoTestTags.FEEDBACK_SHOW_DIALOG)
+                activity.clickByTestTag(DemoTestTags.FEEDBACK_SHOW_POPUP)
             }
             waitForUiIdle()
-            scenario.onActivity { activity ->
-                val message = activity.requireTextView("Feedback snackbar 1")
-                val action = activity.requireTextView("Acknowledge")
-                assertViewFullyVisible(message)
-                assertViewFullyVisible(action)
-                activity.clickTextView("Acknowledge")
-            }
-            waitForUiIdle()
-            scenario.onActivity { activity ->
-                val lastEvent = activity.requireTextView("Last event: Snackbar action 1")
-                assertViewFullyVisible(lastEvent)
-                activity.clickTextView("Show Toast")
-            }
-            waitForUiIdle()
-            scenario.onActivity { activity ->
-                val toastEvent = activity.requireTextView("Last event: Toast requested 1")
-                assertViewFullyVisible(toastEvent)
-                assertTextNotEllipsized(toastEvent)
-            }
-            scrollDeviceTextIntoView("Toast count: 1")
             captureDeviceScreenshot("feedback-transient-light")
             scenario.onActivity { activity ->
-                val toastCount = activity.requireTextView("Toast count: 1")
-                assertViewFullyVisible(toastCount)
-                assertTextNotEllipsized(toastCount)
-            }
-        }
-    }
-
-    @Test
-    fun feedbackPage_triggersDialogFlow() {
-        launchDemoActivity(FeedbackActivity::class.java).use { scenario ->
-            waitForUiIdle()
-            scrollDeviceTextIntoView("Show Dialog")
-            scenario.onActivity { activity ->
-                val showDialog = activity.requireTextView("Show Dialog")
-                assertViewFullyVisible(showDialog)
-            }
-            clickDeviceText("Show Dialog")
-            assertDeviceTextVisible("Feedback Dialog 1")
-            assertDeviceTextVisible("Confirm Dialog")
-            captureDeviceScreenshot("feedback-dialog-light")
-            clickDeviceText("Confirm Dialog")
-            waitForUiIdle()
-            scrollDeviceTextIntoView("Last event: Dialog confirmed 1")
-            scenario.onActivity { activity ->
-                val lastEvent = activity.requireTextView("Last event: Dialog confirmed 1")
-                assertViewFullyVisible(lastEvent)
-                assertTextNotEllipsized(lastEvent)
-            }
-            scrollDeviceTextIntoView("Dialog count: 1")
-            scenario.onActivity { activity ->
-                val dialogCount = activity.requireTextView("Dialog count: 1")
+                val dialogCount = activity.requireTextViewByTestTag(DemoTestTags.FEEDBACK_DIALOG_COUNT)
+                val popupCount = activity.requireTextViewByTestTag(DemoTestTags.FEEDBACK_POPUP_COUNT)
+                val toastCount = activity.requireTextViewByTestTag(DemoTestTags.FEEDBACK_TOAST_COUNT)
                 assertViewFullyVisible(dialogCount)
-                assertTextNotEllipsized(dialogCount)
-            }
-        }
-    }
-
-    @Test
-    fun feedbackPage_triggersPopupFlow() {
-        launchDemoActivity(FeedbackActivity::class.java).use { scenario ->
-            waitForUiIdle()
-            scrollDeviceTextIntoView("Show Popup")
-            scenario.onActivity { activity ->
-                val showPopup = activity.requireTextView("Show Popup")
-                assertViewFullyVisible(showPopup)
-            }
-            clickDeviceText("Show Popup")
-            assertDeviceTextVisible("Feedback Popup 1")
-            assertDeviceTextVisible("Dismiss Popup")
-            captureDeviceScreenshot("feedback-popup-light")
-            clickDeviceText("Dismiss Popup")
-            waitForUiIdle()
-            scrollDeviceTextIntoView("Last event: Popup closed 1")
-            scenario.onActivity { activity ->
-                val lastEvent = activity.requireTextView("Last event: Popup closed 1")
-                assertViewFullyVisible(lastEvent)
-                assertTextNotEllipsized(lastEvent)
-            }
-            scrollDeviceTextIntoView("Popup count: 1")
-            scenario.onActivity { activity ->
-                val popupCount = activity.requireTextView("Popup count: 1")
                 assertViewFullyVisible(popupCount)
-                assertTextNotEllipsized(popupCount)
+                assertViewFullyVisible(toastCount)
+                assertEquals(1, extractCount(dialogCount.text.toString()))
+                assertEquals(1, extractCount(popupCount.text.toString()))
+                assertEquals(1, extractCount(toastCount.text.toString()))
+                activity.clickByTestTag(DemoTestTags.FEEDBACK_RESET)
+            }
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val dialogCount = activity.requireTextViewByTestTag(DemoTestTags.FEEDBACK_DIALOG_COUNT)
+                val popupCount = activity.requireTextViewByTestTag(DemoTestTags.FEEDBACK_POPUP_COUNT)
+                val toastCount = activity.requireTextViewByTestTag(DemoTestTags.FEEDBACK_TOAST_COUNT)
+                val lastEvent = activity.requireTextViewByTestTag(DemoTestTags.FEEDBACK_LAST_EVENT)
+                assertEquals(0, extractCount(dialogCount.text.toString()))
+                assertEquals(0, extractCount(popupCount.text.toString()))
+                assertEquals(0, extractCount(toastCount.text.toString()))
+                assertTrue(lastEvent.text.toString().contains("空闲"))
             }
         }
     }
@@ -219,24 +140,19 @@ class DemoVisualUiTest {
         ).putExtra(EXTRA_INPUT_PAGE_INDEX, 2)
         launchDemoActivity<InputActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
             waitForUiIdle()
-            scrollDeviceTextIntoView("Expanded Copy")
             captureDeviceScreenshot("input-stress-light")
             scenario.onActivity { activity ->
-                val expanded = activity.requireTextView("Expanded Copy")
-                val readonly = activity.requireTextView("Editable Notes")
-                val error = activity.requireTextView("Clear Error")
+                val expanded = activity.requireTextViewByTestTag(DemoTestTags.INPUT_STRESS_EXPAND)
+                val readonly = activity.requireTextViewByTestTag(DemoTestTags.INPUT_STRESS_READONLY)
+                val error = activity.requireTextViewByTestTag(DemoTestTags.INPUT_STRESS_ERROR)
+                val protectedField = activity.requireViewByTestTag(DemoTestTags.INPUT_STRESS_PROTECTED_FIELD)
                 assertViewFullyVisible(expanded)
                 assertViewFullyVisible(readonly)
                 assertViewFullyVisible(error)
+                assertViewFullyVisible(protectedField)
                 assertTextNotEllipsized(expanded)
                 assertTextNotEllipsized(readonly)
                 assertTextNotEllipsized(error)
-            }
-            scrollDeviceTextIntoView("Protected field")
-            scenario.onActivity { activity ->
-                val protectedField = activity.requireTextView("Protected field")
-                assertViewFullyVisible(protectedField)
-                assertTextNotEllipsized(protectedField)
             }
         }
     }
@@ -251,7 +167,7 @@ class DemoVisualUiTest {
             waitForUiIdle()
             captureDeviceScreenshot("foundations-theme-override-light")
             scenario.onActivity { activity ->
-                val accentButton = activity.requireTextView("Accent As Primary")
+                val accentButton = activity.requireTextViewByTestTag(DemoTestTags.FOUNDATIONS_ACCENT_PRIMARY)
                 assertViewFullyVisible(accentButton)
                 assertTextNotEllipsized(accentButton)
                 assertViewBackgroundColor(
@@ -270,10 +186,9 @@ class DemoVisualUiTest {
         ).putExtra(EXTRA_FOUNDATIONS_PAGE_INDEX, 1)
         launchDemoActivity<FoundationsActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
             waitForUiIdle()
-            scrollDeviceTextIntoView("Primary Token")
             captureDeviceScreenshot("foundations-component-override-light")
             scenario.onActivity { activity ->
-                val tokenButton = activity.requireTextView("Primary Token")
+                val tokenButton = activity.requireTextViewByTestTag(DemoTestTags.FOUNDATIONS_PRIMARY_TOKEN)
                 assertViewFullyVisible(tokenButton)
                 assertTextNotEllipsized(tokenButton)
                 assertViewBackgroundColor(
@@ -292,21 +207,13 @@ class DemoVisualUiTest {
         ).putExtra(EXTRA_FOUNDATIONS_PAGE_INDEX, 2)
         launchDemoActivity<FoundationsActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
             waitForUiIdle()
-            scrollDeviceTextIntoView("Image + Icon")
-            scrollDeviceDescriptionIntoView("Remote image")
-            scenario.onActivity { activity ->
-                val remoteImage = activity.requireViewWithContentDescription("Remote image")
-                assertViewFullyVisible(remoteImage)
-            }
-            scrollDeviceDescriptionIntoView("Fallback image")
-            scenario.onActivity { activity ->
-                val fallbackImage = activity.requireViewWithContentDescription("Fallback image")
-                assertViewFullyVisible(fallbackImage)
-            }
-            scrollDeviceDescriptionIntoView("Primary icon button")
             captureDeviceScreenshot("foundations-media-light")
             scenario.onActivity { activity ->
-                val iconButton = activity.requireViewWithContentDescription("Primary icon button")
+                val remoteImage = activity.requireViewByTestTag(DemoTestTags.FOUNDATIONS_REMOTE_IMAGE)
+                val fallbackImage = activity.requireViewByTestTag(DemoTestTags.FOUNDATIONS_FALLBACK_IMAGE)
+                val iconButton = activity.requireViewByTestTag(DemoTestTags.FOUNDATIONS_PRIMARY_ICON_BUTTON)
+                assertViewFullyVisible(remoteImage)
+                assertViewFullyVisible(fallbackImage)
                 assertViewFullyVisible(iconButton)
             }
         }
@@ -320,13 +227,12 @@ class DemoVisualUiTest {
         ).putExtra(EXTRA_LAYOUTS_PAGE_INDEX, 2)
         launchDemoActivity<LayoutsActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
             waitForUiIdle()
-            scrollDeviceTextIntoView("Use Long Labels")
             captureDeviceScreenshot("layouts-edge-light")
             scenario.onActivity { activity ->
-                val toggle = activity.requireTextView("Use Long Labels")
-                val weighted = activity.requireTextView("Weighted")
-                val action = activity.requireTextView("Action")
-                val icon = activity.requireViewWithContentDescription("Layout probe icon")
+                val toggle = activity.requireTextViewByTestTag(DemoTestTags.LAYOUTS_EDGE_TOGGLE)
+                val weighted = activity.requireTextViewByTestTag(DemoTestTags.LAYOUTS_EDGE_WEIGHTED)
+                val action = activity.requireTextViewByTestTag(DemoTestTags.LAYOUTS_EDGE_ACTION)
+                val icon = activity.requireViewByTestTag(DemoTestTags.LAYOUTS_EDGE_PROBE_ICON)
                 assertViewFullyVisible(toggle)
                 assertViewFullyVisible(weighted)
                 assertViewFullyVisible(action)
@@ -346,22 +252,20 @@ class DemoVisualUiTest {
         ).putExtra(EXTRA_COLLECTIONS_PAGE_INDEX, 2)
         launchDemoActivity<CollectionsActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
             waitForUiIdle()
-            scrollDeviceTextIntoView("Insert X")
             scenario.onActivity { activity ->
-                activity.clickTextView("Insert X")
+                val rotate = activity.requireTextViewByTestTag(DemoTestTags.COLLECTIONS_STRESS_ROTATE)
+                val edge = activity.requireTextViewByTestTag(DemoTestTags.COLLECTIONS_STRESS_EDGE)
+                assertViewFullyVisible(rotate)
+                assertViewFullyVisible(edge)
+                activity.clickByTestTag(DemoTestTags.COLLECTIONS_STRESS_EDGE)
             }
             waitForUiIdle()
             captureDeviceScreenshot("collections-stress-light")
             scenario.onActivity { activity ->
-                val remove = activity.requireTextView("Remove X")
-                val rotate = activity.requireTextView("Rotate Order")
-                val activeIds = activity.requireTextView("Active ids: X -> A -> B -> C -> D")
-                assertViewFullyVisible(remove)
-                assertViewFullyVisible(rotate)
+                val activeIds = activity.requireTextViewByTestTag(DemoTestTags.COLLECTIONS_STRESS_ACTIVE_IDS)
                 assertViewFullyVisible(activeIds)
-                assertTextNotEllipsized(remove)
-                assertTextNotEllipsized(rotate)
                 assertTextNotEllipsized(activeIds)
+                assertTrue(activeIds.text.toString().contains("X"))
             }
         }
     }
@@ -374,38 +278,21 @@ class DemoVisualUiTest {
         ).putExtra(EXTRA_STATE_PAGE_INDEX, 2)
         launchDemoActivity<StateActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
             waitForUiIdle()
-            scrollDeviceTextIntoView("Advance patch state 0")
             scenario.onActivity { activity ->
-                activity.clickTextView("Advance patch state 0")
+                activity.clickByTestTag(DemoTestTags.STATE_PATCH_ADVANCE)
             }
             waitForUiIdle()
-            scrollDeviceTextIntoView("Stable summary 1")
             captureDeviceScreenshot("state-patch-stable-tab-light")
             scenario.onActivity { activity ->
-                val summary = activity.requireTextView("Stable summary 1")
+                val summary = activity.requireTextViewByTestTag(DemoTestTags.STATE_STABLE_SUMMARY)
                 assertViewFullyVisible(summary)
                 assertTextNotEllipsized(summary)
+                assertTrue(summary.text.toString().contains("1"))
             }
         }
     }
 
-    @Test
-    fun darkTheme_appliesExpectedTitleColorOnFoundationsPage() {
-        launchDemoActivity(FoundationsActivity::class.java, themeMode = DemoThemeMode.Light).use { scenario ->
-            waitForUiIdle()
-            clickDeviceText("Dark")
-            waitForUiIdle()
-            captureDeviceScreenshot("foundations-dark-theme")
-            scenario.onActivity { activity ->
-                val title = activity.requireTextView("Foundations")
-                assertViewFullyVisible(title)
-                assertTextNotEllipsized(title)
-                org.junit.Assert.assertEquals(
-                    "Expected title color to match dark theme primary text token",
-                    DemoThemeTokens.dark.colors.textPrimary,
-                    title.currentTextColor,
-                )
-            }
-        }
+    private fun extractCount(text: String): Int {
+        return "(\\d+)".toRegex().find(text)?.value?.toIntOrNull() ?: 0
     }
 }

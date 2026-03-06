@@ -11,6 +11,7 @@ import com.gzq.uiframework.renderer.modifier.height
 import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.renderer.modifier.size
+import com.gzq.uiframework.renderer.modifier.testTag
 import com.gzq.uiframework.renderer.node.ImageContentScale
 import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.renderer.node.TextDecoration
@@ -100,13 +101,17 @@ internal fun UiTreeBuilder.OverviewPage(
             ) {
                 Button(
                     text = if (benchmarkState.value) "Benchmark 已开启" else "Benchmark 已关闭",
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag(DemoTestTags.FOUNDATIONS_BENCHMARK_TOGGLE),
                     onClick = { benchmarkState.value = !benchmarkState.value },
                 )
                 Button(
                     text = "重置 Benchmark",
                     variant = ButtonVariant.Outlined,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag(DemoTestTags.FOUNDATIONS_BENCHMARK_RESET),
                     onClick = { benchmarkState.value = false },
                 )
                 BenchmarkRouteCallout(
@@ -173,7 +178,9 @@ internal fun UiTreeBuilder.OverviewPage(
                         )
                         Button(
                             text = "Accent 作为 Primary",
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag(DemoTestTags.FOUNDATIONS_ACCENT_PRIMARY),
                         )
                     }
                 }
@@ -281,7 +288,13 @@ internal fun UiTreeBuilder.OverviewPage(
                         SegmentedControl(items = listOf("Alpha", "Beta", "Gamma"), selectedIndex = 1, onSelectionChange = {}, modifier = Modifier.fillMaxWidth())
                         SegmentedControl(items = listOf("禁用", "状态"), selectedIndex = 0, enabled = false, onSelectionChange = {}, modifier = Modifier.fillMaxWidth())
                         Row(spacing = 8.dp, modifier = Modifier.fillMaxWidth()) {
-                            Button(text = "Primary Token", leadingIcon = ImageSource.Resource(R.drawable.demo_media_icon), modifier = Modifier.weight(1f))
+                            Button(
+                                text = "Primary Token",
+                                leadingIcon = ImageSource.Resource(R.drawable.demo_media_icon),
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .testTag(DemoTestTags.FOUNDATIONS_PRIMARY_TOKEN),
+                            )
                             Button(text = "Outlined Token", trailingIcon = ImageSource.Resource(R.drawable.demo_media_icon), variant = ButtonVariant.Outlined, modifier = Modifier.weight(1f))
                         }
                         Row(spacing = 8.dp, modifier = Modifier.fillMaxWidth()) {
@@ -372,6 +385,7 @@ internal fun UiTreeBuilder.OverviewPage(
                         .height(140.dp)
                         .backgroundColor(SurfaceDefaults.variantBackgroundColor())
                         .cornerRadius(Theme.shapes.cardCornerRadius)
+                        .testTag(DemoTestTags.FOUNDATIONS_REMOTE_IMAGE)
                         .margin(bottom = 12.dp),
                 )
                 Image(
@@ -384,6 +398,7 @@ internal fun UiTreeBuilder.OverviewPage(
                         .height(88.dp)
                         .backgroundColor(SurfaceDefaults.variantBackgroundColor())
                         .cornerRadius(Theme.shapes.cardCornerRadius)
+                        .testTag(DemoTestTags.FOUNDATIONS_FALLBACK_IMAGE)
                         .margin(bottom = 12.dp),
                 )
                 Row(
@@ -409,7 +424,12 @@ internal fun UiTreeBuilder.OverviewPage(
                     modifier = Modifier.fillMaxWidth().margin(top = 12.dp),
                 ) {
                     IconButton(icon = ImageSource.Resource(R.drawable.demo_media_icon), contentDescription = "默认图标按钮")
-                    IconButton(icon = ImageSource.Resource(R.drawable.demo_media_icon), contentDescription = "Primary 图标按钮", variant = ButtonVariant.Primary)
+                    IconButton(
+                        icon = ImageSource.Resource(R.drawable.demo_media_icon),
+                        contentDescription = "Primary 图标按钮",
+                        variant = ButtonVariant.Primary,
+                        modifier = Modifier.testTag(DemoTestTags.FOUNDATIONS_PRIMARY_ICON_BUTTON),
+                    )
                     IconButton(icon = ImageSource.Resource(R.drawable.demo_media_icon), contentDescription = "Tonal 图标按钮", variant = ButtonVariant.Tonal)
                     IconButton(icon = ImageSource.Resource(R.drawable.demo_media_icon), contentDescription = "Outlined 图标按钮", variant = ButtonVariant.Outlined)
                     IconButton(icon = ImageSource.Resource(R.drawable.demo_media_icon), contentDescription = "禁用图标按钮", enabled = false)

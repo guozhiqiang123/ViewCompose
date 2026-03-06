@@ -14,6 +14,7 @@ import com.gzq.uiframework.renderer.modifier.height
 import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.offset
 import com.gzq.uiframework.renderer.modifier.padding
+import com.gzq.uiframework.renderer.modifier.testTag
 import com.gzq.uiframework.renderer.modifier.zIndex
 import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.runtime.mutableStateOf
@@ -90,7 +91,9 @@ internal fun UiTreeBuilder.LayoutPage(
                 )
                 Button(
                     text = if (benchmarkState.value) "布局 Benchmark 已展开" else "布局 Benchmark 已收起",
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag(DemoTestTags.LAYOUTS_BENCHMARK_TOGGLE),
                     onClick = { benchmarkState.value = !benchmarkState.value },
                 )
                 Row(
@@ -114,6 +117,7 @@ internal fun UiTreeBuilder.LayoutPage(
                     Button(
                         text = "重置",
                         variant = ButtonVariant.Outlined,
+                        modifier = Modifier.testTag(DemoTestTags.LAYOUTS_BENCHMARK_RESET),
                         onClick = { benchmarkState.value = false },
                     )
                 }
@@ -216,7 +220,9 @@ internal fun UiTreeBuilder.LayoutPage(
                 )
                 Button(
                     text = if (useLongLabelsState.value) "使用短标签" else "使用长标签",
-                    modifier = Modifier.margin(bottom = 12.dp),
+                    modifier = Modifier
+                        .margin(bottom = 12.dp)
+                        .testTag(DemoTestTags.LAYOUTS_EDGE_TOGGLE),
                     onClick = { useLongLabelsState.value = !useLongLabelsState.value },
                 )
                 Row(
@@ -233,6 +239,7 @@ internal fun UiTreeBuilder.LayoutPage(
                         Icon(
                             source = ImageSource.Resource(R.drawable.demo_media_icon),
                             contentDescription = "布局探测图标",
+                            modifier = Modifier.testTag(DemoTestTags.LAYOUTS_EDGE_PROBE_ICON),
                         )
                     }
                     Button(
@@ -241,12 +248,16 @@ internal fun UiTreeBuilder.LayoutPage(
                         } else {
                             "Weighted"
                         },
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .weight(1f)
+                            .testTag(DemoTestTags.LAYOUTS_EDGE_WEIGHTED),
                     )
                     Button(
                         text = "操作",
                         variant = ButtonVariant.Outlined,
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .weight(1f)
+                            .testTag(DemoTestTags.LAYOUTS_EDGE_ACTION),
                     )
                 }
                 Row(

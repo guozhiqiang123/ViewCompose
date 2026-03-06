@@ -7,6 +7,7 @@ import com.gzq.uiframework.renderer.modifier.fillMaxSize
 import com.gzq.uiframework.renderer.modifier.fillMaxWidth
 import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
+import com.gzq.uiframework.renderer.modifier.testTag
 import com.gzq.uiframework.renderer.modifier.visibility
 import com.gzq.uiframework.renderer.layout.BoxAlignment
 import com.gzq.uiframework.renderer.layout.MainAxisArrangement
@@ -234,6 +235,7 @@ internal fun UiTreeBuilder.StatePage(
                 ) {
                     Button(
                         text = "推进 Patch 状态 $step",
+                        modifier = Modifier.testTag(DemoTestTags.STATE_PATCH_ADVANCE),
                         onClick = {
                             val nextStep = patchStepState.value + 1
                             patchStepState.value = nextStep
@@ -404,7 +406,10 @@ internal fun UiTreeBuilder.StatePage(
                                     .backgroundColor(SurfaceDefaults.variantBackgroundColor())
                                     .padding(12.dp),
                             ) {
-                                Text(text = "稳定摘要 $step")
+                                Text(
+                                    text = "稳定摘要 $step",
+                                    modifier = Modifier.testTag(DemoTestTags.STATE_STABLE_SUMMARY),
+                                )
                                 Text(
                                     text = "即使 Tab 页面 token 保持稳定，推进 Patch 状态后此页面仍应刷新。",
                                     color = TextDefaults.secondaryColor(),

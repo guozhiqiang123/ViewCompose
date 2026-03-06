@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewParent
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
@@ -19,6 +20,7 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
+import com.gzq.uiframework.renderer.R as RendererR
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -100,6 +102,52 @@ internal fun Activity.requireTextView(text: String): TextView {
     val view = findTextViewByText(root, text)
     assertNotNull("Expected to find TextView with text: $text", view)
     return view!!
+}
+
+internal fun Activity.requireViewByTestTag(tag: String): View {
+    return requireViewByTestTagVisible(tag)
+}
+
+internal fun Activity.requireTextViewByTestTag(tag: String): TextView {
+    return requireTextViewByTestTagVisible(tag)
+}
+
+internal fun Activity.requireViewByTestTagVisible(
+    tag: String,
+    maxScrollAttempts: Int = 24,
+): View {
+    val root = findViewById<ViewGroup>(android.R.id.content)
+    repeat(maxScrollAttempts) {
+        val view = findViewByTestTag(root, tag)
+        if (view != null && isViewVisible(view)) {
+            return view
+        }
+        val recyclerView = findFirstRecyclerView(root) ?: return@repeat
+        val delta = (recyclerView.height * 0.7f).toInt().coerceAtLeast(1)
+        recyclerView.scrollBy(0, delta)
+    }
+    val view = findViewByTestTag(root, tag)
+    assertNotNull("Expected to find view with testTag: $tag", view)
+    assertViewFullyVisible(view!!)
+    return view
+}
+
+internal fun Activity.requireTextViewByTestTagVisible(
+    tag: String,
+    maxScrollAttempts: Int = 24,
+): TextView {
+    val view = requireViewByTestTagVisible(tag, maxScrollAttempts)
+    assertTrue("Expected testTag=$tag to map to TextView, but was ${view.javaClass.simpleName}", view is TextView)
+    return view as TextView
+}
+
+internal fun Activity.clickByTestTag(tag: String) {
+    var current: View? = requireViewByTestTagVisible(tag)
+    while (current != null && !current.isClickable) {
+        current = current.parent as? View
+    }
+    assertNotNull("Expected clickable host for testTag: $tag", current)
+    current!!.performClick()
 }
 
 internal fun Activity.clickTextView(text: String) {
@@ -195,6 +243,42 @@ internal fun findViewByContentDescription(root: View, description: String): View
         }
     }
     return null
+}
+
+internal fun findViewByTestTag(root: View, tag: String): View? {
+    if (root.getTag(RendererR.id.ui_framework_test_tag) == tag) {
+        return root
+    }
+    if (root is ViewGroup) {
+        for (index in 0 until root.childCount) {
+            val match = findViewByTestTag(root.getChildAt(index), tag)
+            if (match != null) {
+                return match
+            }
+        }
+    }
+    return null
+}
+
+private fun findFirstRecyclerView(root: View): RecyclerView? {
+    if (root is RecyclerView) {
+        return root
+    }
+    if (root is ViewGroup) {
+        for (index in 0 until root.childCount) {
+            val match = findFirstRecyclerView(root.getChildAt(index))
+            if (match != null) {
+                return match
+            }
+        }
+    }
+    return null
+}
+
+private fun isViewVisible(view: View): Boolean {
+    if (!view.isShown) return false
+    val rect = Rect()
+    return view.getGlobalVisibleRect(rect) && rect.width() > 0 && rect.height() > 0
 }
 
 internal fun assertViewBackgroundColor(view: View, expectedColor: Int) {

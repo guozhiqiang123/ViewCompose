@@ -11,6 +11,7 @@ import com.gzq.uiframework.renderer.modifier.height
 import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.renderer.modifier.size
+import com.gzq.uiframework.renderer.modifier.testTag
 import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.AndroidView
@@ -148,7 +149,8 @@ internal fun UiTreeBuilder.CollectionPage(
                     text = if (benchmarkRotateState.value) "Benchmark C-A-B" else "Benchmark A-B-C",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .margin(bottom = 8.dp),
+                        .margin(bottom = 8.dp)
+                        .testTag(DemoTestTags.COLLECTIONS_BENCHMARK_TOGGLE),
                     onClick = { benchmarkRotateState.value = !benchmarkRotateState.value },
                 )
                 Button(
@@ -156,7 +158,8 @@ internal fun UiTreeBuilder.CollectionPage(
                     variant = ButtonVariant.Outlined,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .margin(bottom = 8.dp),
+                        .margin(bottom = 8.dp)
+                        .testTag(DemoTestTags.COLLECTIONS_BENCHMARK_RESET),
                     onClick = { benchmarkRotateState.value = false },
                 )
                 LazyColumn(
@@ -263,11 +266,13 @@ internal fun UiTreeBuilder.CollectionPage(
                     Button(
                         text = if (stressRotateState.value) "线性顺序" else "旋转顺序",
                         size = ButtonSize.Compact,
+                        modifier = Modifier.testTag(DemoTestTags.COLLECTIONS_STRESS_ROTATE),
                         onClick = { stressRotateState.value = !stressRotateState.value },
                     )
                     Button(
                         text = if (stressEdgeItemState.value) "移除 X" else "插入 X",
                         size = ButtonSize.Compact,
+                        modifier = Modifier.testTag(DemoTestTags.COLLECTIONS_STRESS_EDGE),
                         onClick = { stressEdgeItemState.value = !stressEdgeItemState.value },
                     )
                 }
@@ -275,7 +280,9 @@ internal fun UiTreeBuilder.CollectionPage(
                     text = "当前 IDs: ${stressItems.joinToString(" -> ") { it.id }}",
                     style = UiTextStyle(fontSizeSp = 13.sp),
                     color = TextDefaults.secondaryColor(),
-                    modifier = Modifier.margin(bottom = 12.dp),
+                    modifier = Modifier
+                        .margin(bottom = 12.dp)
+                        .testTag(DemoTestTags.COLLECTIONS_STRESS_ACTIVE_IDS),
                 )
                 LazyColumn(
                     items = stressItems,
