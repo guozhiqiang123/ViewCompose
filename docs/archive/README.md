@@ -41,3 +41,4 @@
 | `REVIEW.md` | 一次性架构审查快照 |
 | `PROJECT_AUDIT_2026-03-05.md` | 一次性项目审计快照 |
 | `REFACTOR_PLAN.md` | 已完成的阶段性执行计划 |
+| `AUDIT_REMEDIATION_PLAN_2026-03.md` | 已完成的审计整改执行计划 |

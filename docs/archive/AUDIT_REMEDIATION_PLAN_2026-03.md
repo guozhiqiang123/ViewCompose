@@ -20,7 +20,7 @@
 已核验事实：
 
 1. `:ui-renderer:compileDebugKotlin` 通过，审计里“TabRow 断裂编译”问题已不复现。
-2. `:app:connectedDebugAndroidTest` 已通过：15/15。
+2. `:app:connectedDebugAndroidTest` 已通过：16/16。
 3. 审计提到“Chip/SearchBar 等无 demo 使用”已过期：当前 demo 已存在调用。
 4. 审计提到的 overlay host 重复实现仍存在（Dialog/Popup/ModalBottomSheet 三套近似 commit/clear 逻辑）。
 5. `WORKFLOW` 已补齐“完成态门禁命令 + 计划防丢失”约束。
@@ -105,7 +105,7 @@
 ### W5 - 目录与大文件治理（P1/P2）
 
 - [x] `app` demo 文件按子目录归类（保持行为不变）
-- [ ] 拆分大文件（优先 `DemoFoundationsPage.kt`、`InputWidgetsDsl.kt`、`ContainerViewBinder.kt`）
+- [x] 拆分大文件（优先 `DemoFoundationsPage.kt`、`InputWidgetsDsl.kt`、`ContainerViewBinder.kt`）
 - [x] 文档同步更新模块/目录归属说明
 
 完成标准：
@@ -154,3 +154,5 @@
 27. 已在 `ARCHITECTURE.md` 增补 `app` 目录落位基线说明。
 28. 大文件拆分进展：`ContainerViewBinder.kt` 已抽离 `ContainerViewSpecReader`，保留原 API 并减少主文件复杂度。
 29. 大文件拆分进展：`InputWidgetsDsl.kt` 已按输入控件族拆分为 `TextFieldWidgetsDsl`、`InputControlsDsl`、`SearchBarDsl`。
+30. 大文件拆分进展：`DemoFoundationsPage.kt` 已拆为主调度 + section 文件，降低单文件认知负担。
+31. W5 已完成，W0~W5 全部完成；下一步执行计划文档归档与归档索引登记。
