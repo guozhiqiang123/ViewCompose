@@ -1,223 +1,90 @@
-# Node Props Roadmap
+# Node Props
 
-## 1. 目标
+## 1. 文档定位
 
-`typed props` 已经把 `UIFramework` 从“纯字符串 key + 动态 map”推进到了“带泛型 key 的动态 props”。
+本文档是 `NodeSpec/Props` 规范版，定义：
 
-这一步已经足够支撑当前 v1，但它还不是长期终态。
+1. 当前模型边界
+2. `NodeSpec` 与 `Props` 的角色分工
+3. 新节点接入规则
+4. 后续演进方向
 
-如果框架后续要继续往更稳定、更健壮、更易扩展的方向走，下一阶段需要在高收益节点上引入更明确的 `NodeProps` 结构。
+历史长版见：
 
-本文档定义：
+- [NODE_PROPS_FULL_2026-03-06.md](/Users/gzq/AndroidStudioProjects/UIFramework/docs/archive/NODE_PROPS_FULL_2026-03-06.md)
 
-1. 为什么要做 `NodeProps`
-2. `NodeProps` 和当前 `VNode.props` 如何并存
-3. 哪些节点优先做
-4. 迁移顺序和收口标准
+## 2. 当前模型结论
 
-## 2. 当前问题
-
-当前主链路已完成向 `NodeSpec` 的迁移：
-
-- DSL 侧直接写入 `spec` 字段（样式属性已纳入 spec）
-- renderer / binder 侧优先读 `node.spec`
-- 测试侧也基本切到 typed accessor
-- `Props` 已降级为兼容层和扩展层，不再是第一方控件主模型
-
-早期存在的 4 个长期问题已通过 Sprint B 统一解决：
-
-1. ~~节点结构可读性仍偏弱~~ → NodeSpec 提供了集中结构
-2. ~~节点不变式分散~~ → 不变式集中在 data class 字段上
-3. ~~调试/文档/工具化能力受限~~ → 可直接 inspect spec 字段
-4. ~~后续做节点级优化时，结构约束不够强~~ → 字段级 patch 已基于 spec 落地
-
-## 3. 设计原则
-
-`NodeProps` 不应推翻当前 `typed props`，而应建立在其之上。
-
-原则如下：
-
-1. `VNode.props` 继续保留，但降级为兼容层和扩展层
-2. 第一方控件的主输入模型应转向 `NodeProps`
-3. renderer 优先读 `NodeProps`
-4. DSL 现阶段继续同时写入 `spec + props`
-5. `NodeProps` 只表达节点语义，不承载 `Modifier`
-6. `Props` 不再作为第一方新控件的主建模方式
-
-## 4. 推荐模型
-
-### 4.1 `VNode`
-
-目标形态：
-
-```kotlin
-data class VNode(
-    val type: NodeType,
-    val key: Any? = null,
-    val props: Props = Props.Empty,
-    val spec: NodeSpec? = null,
-    val modifier: Modifier = Modifier,
-    val children: List<VNode> = emptyList(),
-)
-```
-
-### 4.2 `NodeSpec`
-
-先用轻量 marker：
-
-```kotlin
-interface NodeSpec
-```
-
-然后按节点定义：
-
-```kotlin
-data class ButtonNodeProps(...) : NodeSpec
-data class TabPagerNodeProps(...) : NodeSpec
-data class TextFieldNodeProps(...) : NodeSpec
-```
-
-### 4.3 renderer 读取顺序
-
-统一规则：
-
-1. 优先 `node.spec as? XxxNodeProps`
-2. 否则回退到 `node.props[TypedPropKeys.Xxx]`
-
-### 4.4 `Props` 的长期角色（✅ Sprint B 已完成降级）
-
-`Props` 仍然保留，但它的职责已收缩为：
+当前第一方高频节点已以 `NodeSpec` 为主链路，`Props` 角色已收敛为：
 
 1. 兼容层
-2. 扩展层
-3. 底层桥接容器
+2. 扩展层（冷门/第三方扩展）
 
-不再作为第一方控件的主模型。
+不再接受“第一方核心语义长期停留在动态 map”。
 
-更具体地说：
+## 3. 角色边界
 
-- `NodeSpec` 负责节点语义
-- `Modifier` 负责通用修饰与 parent-data
-- `Props` 负责兼容字段、未结构化字段、以及开放扩展入口
+### 3.1 `NodeSpec`
 
-因此后续方向不是“删除 `Props`”，而是“降级 `Props`”。
+负责：
 
-## 5. 优先级
+1. 第一方组件字段语义
+2. 字段级 diff/patch 的稳定输入
+3. 编译期可读的参数结构
 
-### P1：先做，收益最高
+### 3.2 `Props`
 
-1. `Button`
-2. `TabPager`
-3. `TextField`
+负责：
 
-### P2：在试点跑通后继续推进
+1. 向后兼容
+2. 扩展透传
+3. 非核心临时能力过渡
 
-1. `SegmentedControl`
-2. `LazyColumn`
-3. `Image`
-4. `IconButton`
-5. `Text`
-6. `Checkbox / Switch / RadioButton / Slider`
-7. `LinearProgressIndicator / CircularProgressIndicator`
+约束：
 
-### P3：最后补全容器与互操作
+1. 不新增第一方长期核心语义到 `Props`
+2. 新实现优先 `NodeSpec`
 
-1. `Row / Column`
-2. `Box / Surface`
-3. `Divider`
-4. `AndroidView`
+## 4. 新节点接入清单
 
-### P4：可长期保留在 typed props
+新增第一方节点时必须完成：
 
-1. `Spacer`
+1. `NodeSpec` 数据结构定义
+2. DSL 参数映射到 `NodeSpec`
+3. renderer 绑定与 patch 路径
+4. 覆盖样式变化、状态变化、交互变化测试
+5. demo 场景验证
 
-## 6. 与 Compose 的关系
+## 5. 与 Modifier/Theme 的分工
 
-Compose 的本质是：
+1. 组件语义字段进入 `NodeSpec`
+2. 通用修饰进入 `Modifier`
+3. 默认值由 `Theme -> Defaults` 解析后写入 `NodeSpec`
 
-- composable 参数本身就是强类型节点输入
-- 编译器参与参数稳定性和重组判断
-- 默认值通过 `MaterialTheme` / `CompositionLocal` 动态解析
+相关规范：
 
-`UIFramework` 还到不了这个层级，但 `NodeProps` 可以把当前结构从：
+- [MODIFIER.md](/Users/gzq/AndroidStudioProjects/UIFramework/MODIFIER.md)
+- [THEMING.md](/Users/gzq/AndroidStudioProjects/UIFramework/THEMING.md)
 
-- `typed dynamic props`
+## 6. 当前风险与防线
 
-推进到：
+风险：
 
-- `semi-structured node model`
+1. 新能力为赶进度回流到 `Props` 动态字段
+2. `NodeSpec` 字段增长后 patch 路径缺测试
 
-## 7. 分阶段计划
+防线：
 
-### Phase 1：基础设施
+1. 新字段必须带最小 patch 回归
+2. 评审时把“是否应入 `NodeSpec`”作为必查项
+3. 变更后同步更新本文件
 
-- 给 `VNode` 增加 `spec`
-- 引入 `NodeSpec`
+## 7. 后续方向
 
-### Phase 2：P1 试点
+1. 利用现有 `NodeSpec` 覆盖继续扩大“跳过更新”收益。
+2. 对高频热点节点继续优化字段级 patch 粒度。
+3. 保持 `Props` 轻量，不再回到“动态 map 主链路”。
 
-- `ButtonNodeProps`
-- `TabPagerNodeProps`
-- `TextFieldNodeProps`
+总体路线见：
 
-要求：
-
-- DSL 写入 `spec + props`
-- binder 优先读 `spec`
-- 现有测试继续通过
-
-### Phase 3：扩展到高频控件
-
-- `SegmentedControlNodeProps`
-- `LazyColumnNodeProps`
-- `ImageNodeProps`
-- `IconButtonNodeProps`
-- `TextNodeProps`
-- `ToggleNodeProps`
-- `SliderNodeProps`
-- `ProgressIndicatorNodeProps`
-
-### Phase 4：补齐容器和互操作
-
-- `RowNodeProps`
-- `ColumnNodeProps`
-- `BoxNodeProps`
-- `DividerNodeProps`
-- `AndroidViewNodeProps`
-
-### Phase 5：验证收益
-
-重点验证：
-
-1. binder 代码是否更短、更清晰
-2. 节点不变式是否更集中
-3. 测试断言是否更直接
-4. 后续新增字段是否更容易
-
-### Phase 6：按需继续扩展
-
-仅在当前结构确实对节点级 diff、debug 和 binder 拆分有明显收益后，才考虑把 spec 模型继续推向更细粒度更新。
-
-### Phase 7：收缩 `Props` 角色
-
-在以下前提都成立后，再继续收缩 `Props`：
-
-1. 第一方控件 binder 全部优先读 `NodeSpec`
-2. debug / inspector 开始优先展示 `NodeSpec`
-3. 节点级 diff 开始基于 `NodeSpec`
-
-这一步的目标是让 `Props` 成为 internal bridge，而不是外部主抽象。
-
-## 8. 当前执行策略
-
-当前状态：
-
-1. `Button / TabPager / TextField` 已完成 spec 化
-2. `Text / Image / IconButton / Checkbox / Switch / RadioButton / Slider / LinearProgressIndicator / CircularProgressIndicator` 已完成 spec 化
-3. `SegmentedControl / Row / Column / Box / Surface / Divider / LazyColumn / AndroidView` 已完成 spec 化
-4. `Spacer` 暂不 spec 化，因为它目前仅承担纯布局占位，不包含额外语义字段
-5. 所有有 `NodeSpec` 的第一方节点都已接入 `NodeBindingDiffer` patch 路径，spec 变化时走 Patch 而非 Rebind：
-   - 真正字段级 patch：`Button`、`Text`、`TextField`、`Toggle`、`Slider`、`ProgressIndicator`、`Divider`、`Row`、`Column`、`Box`、`Image`、`IconButton`、`LazyColumn`
-   - 结构级 patch（委托 full bind）：`TabPager`、`SegmentedControl`
-
-下一步不再继续追求”所有节点都先 spec 化”，而是开始利用现有 spec 结果讨论节点级 diff、跳过更新和更细粒度重组。
+- [ROADMAP.md](/Users/gzq/AndroidStudioProjects/UIFramework/ROADMAP.md)
