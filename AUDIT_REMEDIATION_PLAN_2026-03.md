@@ -1,0 +1,125 @@
+# Audit Remediation Plan (2026-03)
+
+## 1. 文档定位
+
+本文件是 `PROJECT_AUDIT_2026-03-05` 的执行中计划文档。
+
+目标：
+
+1. 防止线程/上下文丢失
+2. 逐步记录每个整改项的实施状态
+3. 每完成一步即回写状态
+4. 全部完成后迁移到 `docs/archive/`
+
+审计来源：
+
+- [PROJECT_AUDIT_2026-03-05.md](/Users/gzq/AndroidStudioProjects/UIFramework/docs/archive/PROJECT_AUDIT_2026-03-05.md)
+
+## 2. 当前基线（2026-03-06）
+
+已核验事实：
+
+1. `:ui-renderer:compileDebugKotlin` 通过，审计里“TabRow 断裂编译”问题已不复现。
+2. `:app:connectedDebugAndroidTest` 当前失败：19 条中 16 条失败（主要集中在 `DemoVisualUiTest` 的文案/滚动脆弱断言）。
+3. 审计提到“Chip/SearchBar 等无 demo 使用”已过期：当前 demo 已存在调用。
+4. 审计提到的 overlay host 重复实现仍存在（Dialog/Popup/ModalBottomSheet 三套近似 commit/clear 逻辑）。
+5. `WORKFLOW` 仍缺少“完成态命令门禁”的硬性命令清单。
+
+## 3. 执行总原则
+
+1. 按小步提交推进，每个可独立验证步骤一个 commit。
+2. 每步完成后立即更新本文件的状态与结果。
+3. 任何步骤如果影响到根目录规范文档，代码与文档同一步或相邻提交。
+4. 全部步骤完成后，将本文件迁移到 `docs/archive/` 并在归档索引登记。
+
+## 4. 工作分解与状态
+
+### W0 - 计划与文档状态同步
+
+- [x] 创建本执行文档
+- [x] 扫描根目录文档中的“进行中/未完成/Next”标记
+- [x] 把“当前真实阻塞”同步到主文档（ROADMAP/PERFORMANCE/WORKFLOW）
+
+完成标准：
+
+1. 主文档状态与当前测试/编译事实一致
+2. 不出现“文档显示稳定、实际回归失败”的矛盾
+
+---
+
+### W1 - 质量门禁收紧（完成态定义）
+
+- [ ] 在 `WORKFLOW.md` 增加双层门禁命令清单
+- [ ] 在 `ROADMAP.md` 增加能力项完成态字段（编译/单测/demo/UI）
+- [ ] 提供统一执行入口（`qaQuick` + `qaFull`，以 Gradle 任务或脚本形式）
+
+完成标准：
+
+1. 能用一条命令执行快速门禁
+2. 设备可用时能执行全量门禁
+3. 文档明确“何时允许标记完成”
+
+---
+
+### W2 - UI 测试基线恢复（P0）
+
+- [ ] 新增稳定测试锚点能力（`Modifier.testTag`）
+- [ ] 重构 `DemoUiTestHelpers` 为 tag-first，不再依赖易变文案滚动
+- [ ] 迁移 `DemoVisualUiTest` 到稳定锚点断言
+- [ ] 跑通 `:app:connectedDebugAndroidTest`
+
+完成标准：
+
+1. `connectedDebugAndroidTest` 全绿
+2. 文案调整不会导致大面积测试失效
+
+---
+
+### W3 - 验证资产回填（P1）
+
+- [ ] 为审计提及组件补最小单测闭环（Chip/SearchBar/NavigationBar/Scaffold/LazyRow/FlowRow/Scrollable）
+- [ ] 为关键组件族补至少 1 条 instrumentation smoke 回归
+- [ ] 更新 `ROADMAP` 的对应状态
+
+完成标准：
+
+1. 新增组件不再只有 DSL/Defaults 实现而无验证
+2. 单测与 UI 测试均可追溯到具体组件族
+
+---
+
+### W4 - Overlay Host 去重（P1）
+
+- [ ] 抽象 session-bound overlay host 通用 reconcile 模板
+- [ ] Refactor `DialogOverlayHost` / `PopupOverlayHost` / `ModalBottomSheetOverlayHost`
+- [ ] 补齐 `ModalBottomSheetOverlayHost` 测试
+
+完成标准：
+
+1. 三个 host 不再维护重复的 commit/clear 模板
+2. 现有 overlay 相关测试全绿
+
+---
+
+### W5 - 目录与大文件治理（P1/P2）
+
+- [ ] `app` demo 文件按子目录归类（保持行为不变）
+- [ ] 拆分大文件（优先 `DemoFoundationsPage.kt`、`InputWidgetsDsl.kt`、`ContainerViewBinder.kt`）
+- [ ] 文档同步更新模块/目录归属说明
+
+完成标准：
+
+1. `app/src/main/java/com/gzq/uiframework` 不再平铺大量文件
+2. 大文件拆分后可读性提升且无行为回归
+
+## 5. 执行日志
+
+### 2026-03-06
+
+1. 建立执行文档并登记 W0~W5。
+2. 完成基线核验：编译通过、connected 测试失败 16/19。
+3. 已同步主文档状态：
+   - `ROADMAP.md`：补充当前 connected 测试阻塞与里程碑完成态门禁。
+   - `PERFORMANCE.md`：补充性能推进与 UI 回归稳定化联动约束。
+   - `WORKFLOW.md`：新增“执行计划防丢失约定”。
+4. W0 已完成，下一步进入 W1（质量门禁收紧）。

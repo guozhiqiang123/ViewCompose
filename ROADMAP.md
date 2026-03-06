@@ -34,6 +34,7 @@
 1. demo 已稳定在多 `Activity` 结构
 2. 已实现章节具备统一 scenario 模板
 3. instrumentation 已覆盖关键回归路径（含延迟 session 容器专项）
+4. 当前阻塞（2026-03-06）：`:app:connectedDebugAndroidTest` 仍有 16/19 失败，主要集中在 `DemoVisualUiTest` 的文案/滚动脆弱断言，尚未达到“稳定回归基线”。
 
 ## 2.3 里程碑进度快照（2026-03-06）
 
@@ -133,6 +134,11 @@
 1. 基于 `RecyclerView/ViewPager2` 的复用型容器
 2. 结构 diff 与可见内容刷新可能解耦的容器
 3. overlay surface 的独立 session 容器
+
+里程碑标记为 `Completed` 之前，必须满足：
+
+1. `:ui-renderer:compileDebugKotlin` 与 `:app:compileDebugKotlin` 通过
+2. `:app:connectedDebugAndroidTest` 全绿（或在 roadmap 中登记明确豁免范围与截止时间）
 
 ## 7. 非目标（当前阶段）
 
