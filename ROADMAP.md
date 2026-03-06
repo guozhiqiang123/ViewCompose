@@ -38,12 +38,12 @@
 
 ## 2.3 里程碑进度快照（2026-03-06）
 
-| Milestone | 状态 | 说明 |
-| --- | --- | --- |
-| A：Overlay 稳定性收口 | In Progress | Dialog/Popup/Snackbar/Toast 主链路已打通，仍需补齐定位与队列策略收口 |
-| B：Collections 与容器扩展 | Next | `LazyRow/LazyGrid` 与容器专项回归仍待推进 |
-| C：Input 与表单态增强 | Next | focus/IME/表单组合与文案裁剪专项待系统化补齐 |
-| D：Diagnostics + Performance 联动 | In Progress | 已有基线与起步能力，需继续增强可视化与发布态优化 |
+| Milestone | 状态 | 完成态字段（C/U/D/UI） | 说明 |
+| --- | --- | --- | --- |
+| A：Overlay 稳定性收口 | In Progress | C:✅ U:✅ D:✅ UI:❌ | Dialog/Popup/Snackbar/Toast 主链路已打通，仍需补齐定位与队列策略收口 |
+| B：Collections 与容器扩展 | Next | C:✅ U:⚠ D:⚠ UI:❌ | `LazyRow/LazyGrid` 与容器专项回归仍待推进 |
+| C：Input 与表单态增强 | Next | C:✅ U:⚠ D:⚠ UI:❌ | focus/IME/表单组合与文案裁剪专项待系统化补齐 |
+| D：Diagnostics + Performance 联动 | In Progress | C:✅ U:⚠ D:✅ UI:❌ | 已有基线与起步能力，需继续增强可视化与发布态优化 |
 
 ## 3. 统一设计原则
 
@@ -64,6 +64,28 @@
 | Diagnostics | 基础 render/layout 诊断已落地 | locals/render tree/patch 可视化与告警可读性 |
 | UI Testing | 核心 instrumentation 路径已建立 | 扩展容器专项、overlay 宿主专项、主题断言覆盖 |
 | Performance | 已有 benchmark 基线和 Phase 2 起步 | 继续“跳过更新”优化、诊断指标、发布态优化 |
+
+### 4.1 完成态字段定义（C/U/D/UI）
+
+统一字段：
+
+1. `C`（Compile）：编译门禁
+2. `U`（Unit）：单元测试门禁
+3. `D`（Demo）：demo 场景与验证说明
+4. `UI`（Instrumentation）：设备 UI 回归门禁
+
+状态值：
+
+1. `✅` 已通过
+2. `⚠` 部分通过或存在阻塞
+3. `❌` 未通过
+
+默认判定口径：
+
+1. `C`：`qaQuick` 中编译任务通过
+2. `U`：`qaQuick` 中 unit test 通过
+3. `D`：对应能力已有 demo 页面和验证点说明
+4. `UI`：`qaFull` 中 instrumentation 通过，或在 roadmap 登记豁免范围与补齐时间
 
 ## 5. 里程碑计划
 

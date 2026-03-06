@@ -51,7 +51,7 @@
 ### W1 - 质量门禁收紧（完成态定义）
 
 - [x] 在 `WORKFLOW.md` 增加双层门禁命令清单
-- [ ] 在 `ROADMAP.md` 增加能力项完成态字段（编译/单测/demo/UI）
+- [x] 在 `ROADMAP.md` 增加能力项完成态字段（编译/单测/demo/UI）
 - [x] 提供统一执行入口（`qaQuick` + `qaFull`，以 Gradle 任务或脚本形式）
 
 完成标准：
@@ -128,4 +128,6 @@
    - 已新增 root Gradle 统一门禁入口：`qaQuick` / `qaFull`。
    - 已在 `WORKFLOW.md` 增加双层门禁命令清单与完成态约束。
 6. 已执行 `./gradlew qaQuick`，当前失败点：`IconButtonTest.icon button emits themed defaults`。
-7. 下一步：完成 W1 第 2 项（ROADMAP 完成态字段），并处理 `qaQuick` 失败项。
+7. 已在 `ROADMAP.md` 增加完成态字段（`C/U/D/UI`）及统一判定口径。
+8. W1 清单项已完成；当前门禁结果仍为阻塞态（unit/UI 未全绿），需在 W2/W3 中继续收口。
+9. 下一步：进入 W2（UI 测试基线恢复），先补稳定 test tag 锚点。
