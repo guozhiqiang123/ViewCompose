@@ -274,12 +274,9 @@ fun UiTreeBuilder.PullToRefresh(
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     indicatorColor: Int = PullToRefreshDefaults.indicatorColor(),
-    spacing: Int = 0,
-    arrangement: MainAxisArrangement = MainAxisArrangement.Start,
-    horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Start,
     key: Any? = null,
     modifier: Modifier = Modifier,
-    content: ColumnScope.() -> Unit,
+    content: ScrollableScope.() -> Unit,
 ) {
     emitResolved(
         type = NodeType.PullToRefresh,
@@ -288,11 +285,8 @@ fun UiTreeBuilder.PullToRefresh(
             isRefreshing = isRefreshing,
             onRefresh = onRefresh,
             indicatorColor = indicatorColor,
-            spacing = spacing,
-            arrangement = arrangement,
-            horizontalAlignment = horizontalAlignment,
         ),
         modifier = modifier,
-        children = ColumnScope().apply(content).build(),
+        children = ScrollableScope().apply(content).build(),
     )
 }

@@ -17,7 +17,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeHorizontalPagerLay
 import com.gzq.uiframework.renderer.view.container.DeclarativeLazyVerticalGridLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeNavigationBarLayout
-import com.gzq.uiframework.renderer.view.container.DeclarativePullToRefreshLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
@@ -234,7 +234,7 @@ internal object NodeViewBinderRegistry {
             },
             NodeType.PullToRefresh to { view, node ->
                 ContainerViewBinder.bindPullToRefresh(
-                    view = view as DeclarativePullToRefreshLayout,
+                    view = view as SwipeRefreshLayout,
                     spec = ContainerViewBinder.readPullToRefreshSpec(node),
                 )
             },
@@ -405,7 +405,7 @@ internal object NodeViewBinderRegistry {
             }
             is PullToRefreshNodePatch -> {
                 ContainerNodePatchApplier.applyPullToRefreshPatch(
-                    view = view as DeclarativePullToRefreshLayout,
+                    view = view as SwipeRefreshLayout,
                     patch = patch,
                 )
             }

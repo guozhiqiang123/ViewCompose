@@ -19,7 +19,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeHorizontalPagerLay
 import com.gzq.uiframework.renderer.view.container.DeclarativeLazyVerticalGridLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeNavigationBarLayout
-import com.gzq.uiframework.renderer.view.container.DeclarativePullToRefreshLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
@@ -172,7 +172,6 @@ internal object ContainerViewBinder {
         val isRefreshing: Boolean,
         val onRefresh: (() -> Unit)?,
         val indicatorColor: Int,
-        val innerLinear: LinearSpec,
     )
 
     data class TabRowSpec(
@@ -231,13 +230,12 @@ internal object ContainerViewBinder {
     }
 
     fun bindPullToRefresh(
-        view: DeclarativePullToRefreshLayout,
+        view: SwipeRefreshLayout,
         spec: PullToRefreshSpec,
     ) {
-        view.swipeRefreshLayout.isRefreshing = spec.isRefreshing
-        view.swipeRefreshLayout.setOnRefreshListener { spec.onRefresh?.invoke() }
-        view.swipeRefreshLayout.setColorSchemeColors(spec.indicatorColor)
-        bindColumn(view.innerLayout, spec.innerLinear)
+        view.isRefreshing = spec.isRefreshing
+        view.setOnRefreshListener { spec.onRefresh?.invoke() }
+        view.setColorSchemeColors(spec.indicatorColor)
     }
 
     fun bindScrollableRow(
@@ -387,21 +385,11 @@ internal object ContainerViewBinder {
                 isRefreshing = false,
                 onRefresh = null,
                 indicatorColor = 0,
-                innerLinear = LinearSpec(
-                    spacing = 0,
-                    arrangement = MainAxisArrangement.Start,
-                    gravity = Gravity.START or Gravity.TOP,
-                ),
             )
         return PullToRefreshSpec(
             isRefreshing = spec.isRefreshing,
             onRefresh = spec.onRefresh,
             indicatorColor = spec.indicatorColor,
-            innerLinear = LinearSpec(
-                spacing = spec.spacing,
-                arrangement = spec.arrangement,
-                gravity = spec.horizontalAlignment.toGravity(),
-            ),
         )
     }
 

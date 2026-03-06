@@ -9,7 +9,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeHorizontalPagerLay
 import com.gzq.uiframework.renderer.view.container.DeclarativeLazyVerticalGridLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeNavigationBarLayout
-import com.gzq.uiframework.renderer.view.container.DeclarativePullToRefreshLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
@@ -362,30 +362,19 @@ internal object ContainerNodePatchApplier {
     }
 
     fun applyPullToRefreshPatch(
-        view: DeclarativePullToRefreshLayout,
+        view: SwipeRefreshLayout,
         patch: PullToRefreshNodePatch,
     ) {
         val previous = patch.previous
         val next = patch.next
         if (previous.isRefreshing != next.isRefreshing) {
-            view.swipeRefreshLayout.isRefreshing = next.isRefreshing
+            view.isRefreshing = next.isRefreshing
         }
         if (previous.onRefresh !== next.onRefresh) {
-            view.swipeRefreshLayout.setOnRefreshListener { next.onRefresh?.invoke() }
+            view.setOnRefreshListener { next.onRefresh?.invoke() }
         }
         if (previous.indicatorColor != next.indicatorColor) {
-            view.swipeRefreshLayout.setColorSchemeColors(next.indicatorColor)
-        }
-        if (previous.spacing != next.spacing) {
-            view.innerLayout.itemSpacing = next.spacing
-        }
-        if (previous.arrangement != next.arrangement) {
-            view.innerLayout.mainAxisArrangement = next.arrangement
-        }
-        if (previous.horizontalAlignment != next.horizontalAlignment) {
-            with(ContainerViewBinder) {
-                view.innerLayout.gravity = next.horizontalAlignment.toGravity()
-            }
+            view.setColorSchemeColors(next.indicatorColor)
         }
     }
 }
