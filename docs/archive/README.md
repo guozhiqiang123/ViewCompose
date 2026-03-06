@@ -29,6 +29,7 @@
 | `COMPOSE_COMPONENT_GAP.md` | 阶段性对照快照，数据口径易过期 |
 | `ARCHITECTURE_FULL_2026-03-06.md` | 根文档已收敛为规范版，此文件保留完整历史分析 |
 | `PERFORMANCE_FULL_2026-03-06.md` | 根文档已收敛为规范版，此文件保留完整历史分析 |
+| `THEMING_FULL_2026-03-06.md` | 根文档已收敛为规范版，此文件保留完整历史分析 |
 | `WIDGET_ROADMAP.md` | 已合并到 `ROADMAP.md` |
 | `DEMO_ROADMAP.md` | 已合并到 `ROADMAP.md` |
 | `OVERLAY_COMPONENTS_ROADMAP.md` | 已合并到 `ROADMAP.md` |
