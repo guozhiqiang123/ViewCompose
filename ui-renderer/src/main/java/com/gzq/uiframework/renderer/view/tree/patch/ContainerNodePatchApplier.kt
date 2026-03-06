@@ -33,6 +33,7 @@ import com.gzq.uiframework.renderer.view.tree.ScrollableColumnNodePatch
 import com.gzq.uiframework.renderer.view.tree.ScrollableRowNodePatch
 import com.gzq.uiframework.renderer.view.tree.SegmentedControlNodePatch
 import com.gzq.uiframework.renderer.view.tree.TabRowNodePatch
+import com.gzq.uiframework.renderer.view.tree.ContainerViewSpecReader
 import com.gzq.uiframework.renderer.view.tree.VerticalPagerNodePatch
 import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
 
@@ -50,7 +51,7 @@ internal object ContainerNodePatchApplier {
             view.mainAxisArrangement = next.arrangement
         }
         if (previous.verticalAlignment != next.verticalAlignment) {
-            with(ContainerViewBinder) {
+            with(ContainerViewSpecReader) {
                 view.gravity = next.verticalAlignment.toGravity()
             }
         }
@@ -69,7 +70,7 @@ internal object ContainerNodePatchApplier {
             view.mainAxisArrangement = next.arrangement
         }
         if (previous.horizontalAlignment != next.horizontalAlignment) {
-            with(ContainerViewBinder) {
+            with(ContainerViewSpecReader) {
                 view.gravity = next.horizontalAlignment.toGravity()
             }
         }
@@ -82,7 +83,7 @@ internal object ContainerNodePatchApplier {
         val previous = patch.previous
         val next = patch.next
         if (previous.contentAlignment != next.contentAlignment) {
-            with(ContainerViewBinder) {
+            with(ContainerViewSpecReader) {
                 view.contentGravity = next.contentAlignment.toGravity()
             }
         }
@@ -174,7 +175,7 @@ internal object ContainerNodePatchApplier {
             view.innerLayout.mainAxisArrangement = next.arrangement
         }
         if (previous.horizontalAlignment != next.horizontalAlignment) {
-            with(ContainerViewBinder) {
+            with(ContainerViewSpecReader) {
                 view.innerLayout.gravity = next.horizontalAlignment.toGravity()
             }
         }
@@ -193,7 +194,7 @@ internal object ContainerNodePatchApplier {
             view.innerLayout.mainAxisArrangement = next.arrangement
         }
         if (previous.verticalAlignment != next.verticalAlignment) {
-            with(ContainerViewBinder) {
+            with(ContainerViewSpecReader) {
                 view.innerLayout.gravity = next.verticalAlignment.toGravity()
             }
         }

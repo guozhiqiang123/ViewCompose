@@ -152,3 +152,4 @@
 25. W4 已完成，下一步进入 W5（目录与大文件治理）。
 26. 已完成 `app` 目录首轮归类：`activity/`（入口）与 `demo/`（演示逻辑）分层，保持包名不变。
 27. 已在 `ARCHITECTURE.md` 增补 `app` 目录落位基线说明。
+28. 大文件拆分进展：`ContainerViewBinder.kt` 已抽离 `ContainerViewSpecReader`，保留原 API 并减少主文件复杂度。

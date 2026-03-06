@@ -48,13 +48,13 @@ internal object ScrollableViewBinder {
             return ContainerViewBinder.LinearSpec(
                 spacing = spec.spacing,
                 arrangement = spec.arrangement,
-                gravity = with(ContainerViewBinder) { spec.horizontalAlignment.toGravity() },
+                gravity = with(ContainerViewSpecReader) { spec.horizontalAlignment.toGravity() },
             )
         }
         return ContainerViewBinder.LinearSpec(
             spacing = node.props[TypedPropKeys.LinearSpacing] ?: 0,
             arrangement = node.props[TypedPropKeys.ColumnMainAxisArrangement] ?: MainAxisArrangement.Start,
-            gravity = with(ContainerViewBinder) {
+            gravity = with(ContainerViewSpecReader) {
                 (node.props[TypedPropKeys.ColumnHorizontalAlignment] ?: HorizontalAlignment.Start).toGravity()
             },
         )
@@ -66,13 +66,13 @@ internal object ScrollableViewBinder {
             return ContainerViewBinder.LinearSpec(
                 spacing = spec.spacing,
                 arrangement = spec.arrangement,
-                gravity = with(ContainerViewBinder) { spec.verticalAlignment.toGravity() },
+                gravity = with(ContainerViewSpecReader) { spec.verticalAlignment.toGravity() },
             )
         }
         return ContainerViewBinder.LinearSpec(
             spacing = node.props[TypedPropKeys.LinearSpacing] ?: 0,
             arrangement = node.props[TypedPropKeys.RowMainAxisArrangement] ?: MainAxisArrangement.Start,
-            gravity = with(ContainerViewBinder) {
+            gravity = with(ContainerViewSpecReader) {
                 (node.props[TypedPropKeys.RowVerticalAlignment] ?: VerticalAlignment.Top).toGravity()
             },
         )
