@@ -53,13 +53,14 @@
 当前已覆盖专项：
 
 1. `LazyColumn`：`collectionsStress_toggleUpdatesVisibleControls`（UI）
-2. `TabRow + HorizontalPager`：`statePatchStress_refreshesStableTabContent`（UI）
+2. `LazyVerticalGrid`：`collectionsGrid_spanToggle_refreshesVisibleItemContent`（UI）
+3. `TabRow + HorizontalPager`：`statePatchStress_refreshesStableTabContent`（UI）
+4. `HorizontalPager`：`statePatchStress_horizontalPagerContentUpdatesAcrossAdvances`（UI）
+5. `LazyVerticalGrid/HorizontalPager/VerticalPager`：`NodeBindingDifferTest` 容器 patch 单测（U）
 
 当前缺口（需补专项回归）：
 
-1. `LazyVerticalGrid`：缺“结构稳定 + 闭包变化”专项（U/UI）
-2. `VerticalPager`：缺空 diff/复用专项（U/UI）
-3. `HorizontalPager`：已有间接覆盖，缺容器级专门用例（U）
+1. `VerticalPager`：缺 instrumentation 专项（U 已覆盖，UI 未覆盖）
 
 ## 6. 新容器接入流程
 
