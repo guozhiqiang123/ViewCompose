@@ -20,17 +20,17 @@ internal fun UiTreeBuilder.ChapterPlaceholderPage(
         when (section) {
             "overview" -> ChapterPageOverviewSection(
                 title = title,
-                goal = "Keep this chapter visible now so the demo capability map stays stable while the underlying framework work is still missing.",
+                goal = "保持此章节可见，使 demo 能力地图在底层框架工作尚未完成时依然保持稳定。",
                 modules = listOf("roadmap placeholder", "future scenario groups"),
             )
 
             "planned" -> ScenarioSection(
                 kind = ScenarioKind.Guide,
-                title = "Planned Pages",
+                title = "规划页面",
                 subtitle = subtitle,
             ) {
                 Text(
-                    text = "This chapter is intentionally present now so the demo structure stays stable while framework capability catches up.",
+                    text = "此章节现在就有意呈现，以便 demo 结构在框架能力追赶期间保持稳定。",
                 )
                 plannedPages.forEach { page ->
                     Text(text = "• $page")
@@ -39,8 +39,8 @@ internal fun UiTreeBuilder.ChapterPlaceholderPage(
 
             "gaps" -> ScenarioSection(
                 kind = ScenarioKind.Guide,
-                title = "Current Gaps",
-                subtitle = "These gaps map directly to framework work that is still missing compared with Compose.",
+                title = "当前缺口",
+                subtitle = "这些缺口直接对应与 Compose 相比仍然缺失的框架工作。",
             ) {
                 currentGaps.forEach { gap ->
                     Text(text = "• $gap")
@@ -48,14 +48,14 @@ internal fun UiTreeBuilder.ChapterPlaceholderPage(
             }
 
             else -> VerificationNotesSection(
-                what = "Use this placeholder chapter as a stable roadmap surface instead of a dead-end catalog card.",
+                what = "将此 placeholder 章节用作稳定的路线图界面，而不是死胡同目录卡片。",
                 howToVerify = listOf(
                     "从目录进入该章节，确认可以正常打开并返回。",
-                    "检查 planned pages 与 current gaps 是否和当前 roadmap 一致。",
+                    "检查规划页面与当前缺口是否和当前 roadmap 一致。",
                     "切换全局主题，确认 placeholder 页面仍保持和正式模块一致的壳层表现。",
                 ),
                 expected = listOf(
-                    "planned 模块已经进入统一的 Activity 壳。",
+                    "规划中模块已经进入统一的 Activity 壳。",
                     "后续补能力时只需要替换章节内容，不需要重做 demo 导航结构。",
                     "placeholder 页面本身不会影响现有 benchmark 路径。",
                 ),

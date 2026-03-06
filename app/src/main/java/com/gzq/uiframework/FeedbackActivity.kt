@@ -3,16 +3,20 @@ package com.gzq.uiframework
 import android.view.ViewGroup
 import com.gzq.uiframework.widget.core.UiTreeBuilder
 
+internal const val EXTRA_FEEDBACK_PAGE_INDEX = "feedback_page_index"
+
 class FeedbackActivity : DemoRenderActivity() {
     override val demoTitle: String = "Feedback"
 
     override val demoSubtitle: String =
-        "Transient feedback overlays, host-driven presentation, and manual verification paths."
+        "Snackbar, Toast, Dialog, Popup, AlertDialog, DropdownMenu, Tooltip, ModalBottomSheet。"
 
     override fun buildDemoContent(
         root: ViewGroup,
         builder: UiTreeBuilder,
     ) {
-        builder.FeedbackPage()
+        builder.FeedbackPage(
+            initialPageIndex = intent?.getIntExtra(EXTRA_FEEDBACK_PAGE_INDEX, 0) ?: 0,
+        )
     }
 }

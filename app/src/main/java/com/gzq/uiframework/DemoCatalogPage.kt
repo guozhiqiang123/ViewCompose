@@ -30,26 +30,26 @@ internal fun UiTreeBuilder.DemoCatalogPage(
     ) { section ->
         when (section) {
             "intro" -> DemoSection(
-                title = "Capability Modules",
-                subtitle = "The demo now follows module-level manual test paths so each activity corresponds to one framework concern and one benchmark-friendly entry.",
+                title = "功能模块",
+                subtitle = "Demo 现在按模块级手动测试路径组织，每个 Activity 对应一个框架关注点和一个适合 benchmark 的入口。",
             ) {
                 Text(
-                    text = "Structure follows the Compose Tutorials idea: foundations, state, layouts, input, collections, interop, diagnostics, then planned chapters for gestures, animation, graphics, and navigation.",
+                    text = "结构遵循 Compose Tutorials 思路: foundations、state、layouts、input、collections、interop、diagnostics，以及 gestures、animation、graphics、navigation 等规划章节。",
                 )
                 Text(
-                    text = "Use this catalog as the stable entry for manual regression and macrobenchmark flows.",
+                    text = "使用此目录作为手动回归和 macrobenchmark 流程的稳定入口。",
                     color = TextDefaults.secondaryColor(),
                 )
             }
 
             "available" -> DemoSection(
-                title = "Implemented Modules",
-                subtitle = "Each card opens a dedicated Activity so state, diagnostics, and benchmark setup do not depend on a giant in-page pager.",
+                title = "已实现模块",
+                subtitle = "每张卡片打开一个独立 Activity，状态、诊断和 benchmark 设置不依赖一个巨大的页内 pager。",
             ) {
                 AVAILABLE_DEMO_MODULES.forEach { module ->
                     ModuleCard(
                         module = module,
-                        actionLabel = "Open ${module.title}",
+                        actionLabel = "打开 ${module.title}",
                         actionVariant = ButtonVariant.Primary,
                         onClick = {
                             val target = module.activityClass ?: return@ModuleCard
@@ -60,13 +60,13 @@ internal fun UiTreeBuilder.DemoCatalogPage(
             }
 
             else -> DemoSection(
-                title = "Planned Modules",
-                subtitle = "These chapters stay visible so the demo roadmap keeps matching the Compose capability map even before implementation lands.",
+                title = "规划中模块",
+                subtitle = "这些章节保持可见，使 demo 路线图在实现落地前就与 Compose 能力地图保持一致。",
             ) {
                 PLANNED_DEMO_MODULES.forEach { module ->
                     ModuleCard(
                         module = module,
-                        actionLabel = "Preview",
+                        actionLabel = "预览",
                         actionVariant = ButtonVariant.Outlined,
                         onClick = {
                             val target = module.activityClass ?: return@ModuleCard
@@ -107,11 +107,11 @@ private fun UiTreeBuilder.ModuleCard(
                 color = TextDefaults.secondaryColor(),
             )
             Text(
-                text = "Manual focus: ${module.manualFocus}",
+                text = "手动焦点: ${module.manualFocus}",
                 color = TextDefaults.secondaryColor(),
             )
             Text(
-                text = "Benchmark path: ${module.benchmarkPath}",
+                text = "Benchmark 路径: ${module.benchmarkPath}",
                 color = TextDefaults.secondaryColor(),
             )
             Button(

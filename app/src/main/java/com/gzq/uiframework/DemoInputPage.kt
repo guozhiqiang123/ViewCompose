@@ -8,6 +8,8 @@ import com.gzq.uiframework.renderer.modifier.fillMaxWidth
 import com.gzq.uiframework.renderer.modifier.height
 import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
+import com.gzq.uiframework.renderer.node.ImageSource
+import com.gzq.uiframework.renderer.node.TextFieldImeAction
 import com.gzq.uiframework.runtime.derivedStateOf
 import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.Button
@@ -16,16 +18,19 @@ import com.gzq.uiframework.widget.core.ButtonVariant
 import com.gzq.uiframework.widget.core.Checkbox
 import com.gzq.uiframework.widget.core.Column
 import com.gzq.uiframework.widget.core.EmailField
+import com.gzq.uiframework.widget.core.Icon
+import com.gzq.uiframework.widget.core.IconButton
 import com.gzq.uiframework.widget.core.InputControlColorOverride
+import com.gzq.uiframework.widget.core.LazyColumn
+import com.gzq.uiframework.widget.core.NumberField
+import com.gzq.uiframework.widget.core.PasswordField
 import com.gzq.uiframework.widget.core.ProvideCheckboxColors
 import com.gzq.uiframework.widget.core.ProvideRadioButtonColors
 import com.gzq.uiframework.widget.core.ProvideSliderColors
 import com.gzq.uiframework.widget.core.ProvideSwitchColors
-import com.gzq.uiframework.widget.core.LazyColumn
-import com.gzq.uiframework.widget.core.NumberField
-import com.gzq.uiframework.widget.core.PasswordField
 import com.gzq.uiframework.widget.core.RadioButton
 import com.gzq.uiframework.widget.core.Row
+import com.gzq.uiframework.widget.core.SearchBar
 import com.gzq.uiframework.widget.core.Slider
 import com.gzq.uiframework.widget.core.SurfaceDefaults
 import com.gzq.uiframework.widget.core.Switch
@@ -42,8 +47,6 @@ import com.gzq.uiframework.widget.core.UiTreeBuilder
 import com.gzq.uiframework.widget.core.dp
 import com.gzq.uiframework.widget.core.remember
 import com.gzq.uiframework.widget.core.sp
-import com.gzq.uiframework.renderer.node.ImageSource
-import com.gzq.uiframework.renderer.node.TextFieldImeAction
 
 internal fun UiTreeBuilder.InputPage(
     initialPageIndex: Int = 0,
@@ -53,7 +56,7 @@ internal fun UiTreeBuilder.InputPage(
     val emailState = remember { mutableStateOf("demo@uiframework.dev") }
     val passwordState = remember { mutableStateOf("") }
     val ageState = remember { mutableStateOf("3") }
-    val bioState = remember { mutableStateOf("Built on virtual nodes, keyed diff, and Android View interop.") }
+    val bioState = remember { mutableStateOf("基于虚拟节点、键控 diff 和 Android View 互操作构建。") }
     val notificationsEnabledState = remember { mutableStateOf(true) }
     val analyticsEnabledState = remember { mutableStateOf(false) }
     val selectedTierState = remember { mutableStateOf("Alpha") }
@@ -61,18 +64,21 @@ internal fun UiTreeBuilder.InputPage(
     val stressExpandedState = remember { mutableStateOf(false) }
     val stressReadonlyState = remember { mutableStateOf(true) }
     val stressErrorState = remember { mutableStateOf(true) }
+    val searchQueryState = remember { mutableStateOf("") }
+    val searchResultState = remember { mutableStateOf("") }
     val summaryState = remember {
         derivedStateOf {
-            "Preview: ${nameState.value.ifBlank { "Anonymous" }} · " +
-                "${emailState.value.ifBlank { "no-email" }} · " +
+            "预览: ${nameState.value.ifBlank { "匿名" }} · " +
+                "${emailState.value.ifBlank { "无邮箱" }} · " +
                 "${ageState.value.ifBlank { "-" }}y"
         }
     }
-    val selectedPageState = remember { mutableStateOf(initialPageIndex.coerceIn(0, 3)) }
+    val selectedPageState = remember { mutableStateOf(initialPageIndex.coerceIn(0, 4)) }
     val pageItems = when (selectedPageState.value) {
         0 -> listOf("benchmark", "page", "page_filter", "intro", "form", "verify")
         1 -> listOf("page", "page_filter", "controls", "verify")
         2 -> listOf("page", "page_filter", "stress", "verify")
+        3 -> listOf("page", "page_filter", "search", "verify")
         else -> listOf("page", "page_filter", "summary", "verify")
     }
 
@@ -83,63 +89,51 @@ internal fun UiTreeBuilder.InputPage(
     ) { section ->
         when (section) {
             "page" -> ChapterPageOverviewSection(
-                title = "Input",
-                goal = "Verify that text fields and selection controls stay declarative across value updates, error states, variants, and local theme overrides.",
-                modules = listOf("TextField family", "selection widgets", "input defaults", "theme components"),
+                title = "输入组件",
+                goal = "验证文本输入、选择控件和搜索栏在值更新、错误态、变体和主题覆盖下的声明式行为。",
+                modules = listOf("TextField family", "selection widgets", "SearchBar", "input defaults", "theme components"),
             )
 
             "page_filter" -> ChapterPageFilterSection(
-                pages = listOf("Fields", "Selection", "Stress", "Summary"),
+                pages = listOf("字段", "选择", "压力", "搜索", "摘要"),
                 selectedIndex = selectedPageState.value,
                 onSelectionChange = { selectedPageState.value = it },
             )
 
             "benchmark" -> ScenarioSection(
                 kind = ScenarioKind.Benchmark,
-                title = "Input Benchmark Anchor",
-                subtitle = "This block stays on the default Fields page and keeps the benchmark controls inside the first viewport.",
+                title = "输入 Benchmark 锚点",
+                subtitle = "默认字段页的 benchmark 控件。",
             ) {
                 Text(
-                    text = "Stable route: launcher -> input module -> benchmark anchor",
+                    text = "稳定路径: launcher -> input -> benchmark anchor",
                     style = UiTextStyle(fontSizeSp = 12.sp),
                     color = TextDefaults.secondaryColor(),
                     modifier = Modifier.margin(bottom = 8.dp),
                 )
                 Button(
-                    text = if (benchmarkExpandedState.value) {
-                        "Input Benchmark Expanded"
-                    } else {
-                        "Input Benchmark Compact"
-                    },
+                    text = if (benchmarkExpandedState.value) "输入 Benchmark 已展开" else "输入 Benchmark 已收起",
                     modifier = Modifier
                         .fillMaxWidth()
                         .margin(bottom = 8.dp),
-                    onClick = {
-                        benchmarkExpandedState.value = !benchmarkExpandedState.value
-                    },
+                    onClick = { benchmarkExpandedState.value = !benchmarkExpandedState.value },
                 )
                 Button(
-                    text = "Reset Input Benchmark",
+                    text = "重置输入 Benchmark",
                     variant = ButtonVariant.Outlined,
                     modifier = Modifier
                         .fillMaxWidth()
                         .margin(bottom = 8.dp),
-                    onClick = {
-                        benchmarkExpandedState.value = false
-                    },
+                    onClick = { benchmarkExpandedState.value = false },
                 )
                 TextField(
-                    value = if (benchmarkExpandedState.value) {
-                        "Expanded benchmark payload"
-                    } else {
-                        "Compact payload"
-                    },
+                    value = if (benchmarkExpandedState.value) "展开的 benchmark 数据" else "紧凑数据",
                     onValueChange = {},
-                    label = "Benchmark field",
+                    label = "Benchmark 字段",
                     supportingText = if (benchmarkExpandedState.value) {
-                        "Expanded supporting copy keeps this scenario deterministic while still stressing text field container layout."
+                        "展开的辅助文案保持场景确定性，同时压力测试 TextField 容器布局。"
                     } else {
-                        "Compact supporting copy."
+                        "紧凑辅助文案。"
                     },
                     readOnly = true,
                     variant = TextFieldVariant.Outlined,
@@ -150,11 +144,11 @@ internal fun UiTreeBuilder.InputPage(
 
             "intro" -> ScenarioSection(
                 kind = ScenarioKind.Guide,
-                title = "Text And Input Family",
-                subtitle = "The framework now maps multiple `EditText` variants: text, password, email, number, and multiline text.",
+                title = "文本和输入家族",
+                subtitle = "框架现在映射多个 EditText 变体: text, password, email, number, multiline。",
             ) {
                 Text(
-                    text = "Typography also uses the formal dp/sp DSL in sample code.",
+                    text = "排版也使用正式的 dp/sp DSL。",
                     style = UiTextStyle(fontSizeSp = 13.sp),
                     color = TextDefaults.secondaryColor(),
                 )
@@ -162,15 +156,15 @@ internal fun UiTreeBuilder.InputPage(
 
             "form" -> ScenarioSection(
                 kind = ScenarioKind.Core,
-                title = "Form Controls",
-                subtitle = "All fields are state-driven and update the same render session.",
+                title = "表单控件",
+                subtitle = "所有字段由状态驱动，更新同一个 render session。",
             ) {
                 TextField(
                     value = nameState.value,
                     onValueChange = { nameState.value = it },
-                    hint = "Name",
-                    label = "Display name",
-                    supportingText = "Shown in your profile header",
+                    hint = "姓名",
+                    label = "显示名称",
+                    supportingText = "显示在个人资料头部",
                     imeAction = TextFieldImeAction.Next,
                     variant = TextFieldVariant.Filled,
                     size = TextFieldSize.Large,
@@ -181,9 +175,9 @@ internal fun UiTreeBuilder.InputPage(
                 EmailField(
                     value = emailState.value,
                     onValueChange = { emailState.value = it },
-                    hint = "Email",
-                    label = "Work email",
-                    supportingText = "Used for notifications only",
+                    hint = "邮箱",
+                    label = "工作邮箱",
+                    supportingText = "仅用于通知",
                     imeAction = TextFieldImeAction.Next,
                     variant = TextFieldVariant.Tonal,
                     size = TextFieldSize.Medium,
@@ -194,9 +188,9 @@ internal fun UiTreeBuilder.InputPage(
                 PasswordField(
                     value = passwordState.value,
                     onValueChange = { passwordState.value = it },
-                    hint = "Password",
-                    label = "Access key",
-                    supportingText = "Blank keeps the current password",
+                    hint = "密码",
+                    label = "访问密钥",
+                    supportingText = "留空保持当前密码",
                     imeAction = TextFieldImeAction.Done,
                     variant = TextFieldVariant.Outlined,
                     size = TextFieldSize.Medium,
@@ -208,9 +202,9 @@ internal fun UiTreeBuilder.InputPage(
                 NumberField(
                     value = ageState.value,
                     onValueChange = { ageState.value = it },
-                    hint = "Version age",
-                    label = "Project age",
-                    supportingText = "Semantic version generations",
+                    hint = "版本年龄",
+                    label = "项目年龄",
+                    supportingText = "语义版本代数",
                     variant = TextFieldVariant.Outlined,
                     size = TextFieldSize.Compact,
                     modifier = Modifier
@@ -220,9 +214,9 @@ internal fun UiTreeBuilder.InputPage(
                 EmailField(
                     value = "disabled@uiframework.dev",
                     onValueChange = {},
-                    hint = "Disabled email",
-                    label = "Readonly contact",
-                    supportingText = "Inherited from organization settings",
+                    hint = "禁用邮箱",
+                    label = "只读联系人",
+                    supportingText = "从组织设置继承",
                     variant = TextFieldVariant.Tonal,
                     size = TextFieldSize.Medium,
                     enabled = false,
@@ -233,9 +227,9 @@ internal fun UiTreeBuilder.InputPage(
                 TextArea(
                     value = bioState.value,
                     onValueChange = { bioState.value = it },
-                    hint = "Short bio",
-                    label = "Summary",
-                    supportingText = "Supports multiline notes and local state updates",
+                    hint = "简介",
+                    label = "摘要",
+                    supportingText = "支持多行编辑和本地状态更新",
                     maxLines = 6,
                     imeAction = TextFieldImeAction.Done,
                     variant = TextFieldVariant.Filled,
@@ -246,7 +240,7 @@ internal fun UiTreeBuilder.InputPage(
                         .margin(bottom = 12.dp),
                 )
                 Button(
-                    text = "Reset Form",
+                    text = "重置表单",
                     leadingIcon = ImageSource.Resource(R.drawable.demo_media_icon),
                     trailingIcon = ImageSource.Resource(R.drawable.demo_media_icon),
                     size = ButtonSize.Large,
@@ -255,50 +249,42 @@ internal fun UiTreeBuilder.InputPage(
                         emailState.value = "demo@uiframework.dev"
                         passwordState.value = ""
                         ageState.value = "3"
-                        bioState.value = "Built on virtual nodes, keyed diff, and Android View interop."
+                        bioState.value = "基于虚拟节点、键控 diff 和 Android View 互操作构建。"
                     },
                 )
             }
 
             "controls" -> ScenarioSection(
                 kind = ScenarioKind.Core,
-                title = "Selection + Slider Controls",
-                subtitle = "Checkbox, switch, radio button, and slider now live in the same declarative input family.",
+                title = "选择 + Slider 控件",
+                subtitle = "Checkbox、Switch、RadioButton 和 Slider 属于同一声明式输入家族。",
             ) {
                 Checkbox(
-                    text = "Notifications",
+                    text = "通知",
                     checked = notificationsEnabledState.value,
                     onCheckedChange = { notificationsEnabledState.value = it },
                     modifier = Modifier.margin(bottom = 8.dp),
                 )
                 Switch(
-                    text = "Analytics",
+                    text = "数据分析",
                     checked = analyticsEnabledState.value,
                     onCheckedChange = { analyticsEnabledState.value = it },
                     modifier = Modifier.margin(bottom = 8.dp),
                 )
                 RadioButton(
-                    text = "Alpha tier",
+                    text = "Alpha 层级",
                     checked = selectedTierState.value == "Alpha",
-                    onCheckedChange = { checked ->
-                        if (checked) {
-                            selectedTierState.value = "Alpha"
-                        }
-                    },
+                    onCheckedChange = { checked -> if (checked) selectedTierState.value = "Alpha" },
                     modifier = Modifier.margin(bottom = 8.dp),
                 )
                 RadioButton(
-                    text = "Beta tier",
+                    text = "Beta 层级",
                     checked = selectedTierState.value == "Beta",
-                    onCheckedChange = { checked ->
-                        if (checked) {
-                            selectedTierState.value = "Beta"
-                        }
-                    },
+                    onCheckedChange = { checked -> if (checked) selectedTierState.value = "Beta" },
                     modifier = Modifier.margin(bottom = 8.dp),
                 )
                 Text(
-                    text = "Intensity: ${intensityState.value}",
+                    text = "强度: ${intensityState.value}",
                     modifier = Modifier.padding(bottom = 6.dp),
                 )
                 Slider(
@@ -346,31 +332,11 @@ internal fun UiTreeBuilder.InputPage(
                             .cornerRadius(SurfaceDefaults.cardCornerRadius())
                             .padding(12.dp),
                     ) {
-                        Text(text = "Input Control Override")
-                        Checkbox(
-                            text = "Local Accent Checkbox",
-                            checked = true,
-                            onCheckedChange = {},
-                        )
-                        Switch(
-                            text = "Disabled Accent Switch",
-                            checked = false,
-                            enabled = false,
-                            onCheckedChange = {},
-                        )
-                        RadioButton(
-                            text = "Local Accent Radio",
-                            checked = true,
-                            onCheckedChange = {},
-                        )
-                        Slider(
-                            value = 56,
-                            min = 0,
-                            max = 100,
-                            enabled = false,
-                            onValueChange = {},
-                            modifier = Modifier.fillMaxWidth(),
-                        )
+                        Text(text = "输入控件颜色覆盖")
+                        Checkbox(text = "本地 Accent Checkbox", checked = true, onCheckedChange = {})
+                        Switch(text = "禁用 Accent Switch", checked = false, enabled = false, onCheckedChange = {})
+                        RadioButton(text = "本地 Accent Radio", checked = true, onCheckedChange = {})
+                        Slider(value = 56, min = 0, max = 100, enabled = false, onValueChange = {}, modifier = Modifier.fillMaxWidth())
                     }
                 }
                 }
@@ -380,59 +346,48 @@ internal fun UiTreeBuilder.InputPage(
 
             "stress" -> ScenarioSection(
                 kind = ScenarioKind.Stress,
-                title = "Input Edge Cases",
-                subtitle = "This page focuses on long labels, read-only text, multiline growth, and persistent error styling under theme changes.",
+                title = "输入边界用例",
+                subtitle = "长标签、只读文本、多行增长和持久错误样式的压力测试。",
             ) {
                 BenchmarkRouteCallout(
-                    route = "Catalog -> Open Input -> Stress page",
-                    stableTargets = listOf(
-                        "Expanded Copy / Compact Copy",
-                        "Editable Notes / Readonly Notes",
-                        "Clear Error / Show Error",
-                        "Protected field",
-                    ),
+                    route = "Catalog -> Input -> 压力页",
+                    stableTargets = listOf("展开/紧凑", "可编辑/只读", "清除错误/显示错误"),
                 )
                 Row(
                     spacing = 8.dp,
                     modifier = Modifier.margin(bottom = 12.dp),
                 ) {
                     Button(
-                        text = if (stressExpandedState.value) "Compact Copy" else "Expanded Copy",
+                        text = if (stressExpandedState.value) "紧凑文案" else "展开文案",
                         size = ButtonSize.Compact,
-                        onClick = {
-                            stressExpandedState.value = !stressExpandedState.value
-                        },
+                        onClick = { stressExpandedState.value = !stressExpandedState.value },
                     )
                     Button(
-                        text = if (stressReadonlyState.value) "Editable Notes" else "Readonly Notes",
+                        text = if (stressReadonlyState.value) "可编辑" else "只读",
                         size = ButtonSize.Compact,
                         variant = ButtonVariant.Outlined,
-                        onClick = {
-                            stressReadonlyState.value = !stressReadonlyState.value
-                        },
+                        onClick = { stressReadonlyState.value = !stressReadonlyState.value },
                     )
                     Button(
-                        text = if (stressErrorState.value) "Clear Error" else "Show Error",
+                        text = if (stressErrorState.value) "清除错误" else "显示错误",
                         size = ButtonSize.Compact,
                         variant = ButtonVariant.Tonal,
-                        onClick = {
-                            stressErrorState.value = !stressErrorState.value
-                        },
+                        onClick = { stressErrorState.value = !stressErrorState.value },
                     )
                 }
                 TextField(
                     value = if (stressExpandedState.value) {
-                        "A much longer project title that should still keep label, placeholder, and supporting text readable without clipping."
+                        "一个很长的项目标题，应该仍然保持标签、占位符和辅助文案可读而不被裁切。"
                     } else {
-                        "Compact title"
+                        "紧凑标题"
                     },
                     onValueChange = {},
                     readOnly = true,
-                    label = "Release channel display name",
+                    label = "发布渠道显示名称",
                     supportingText = if (stressExpandedState.value) {
-                        "Long supporting text should wrap cleanly and remain aligned with the field container even when the content spans multiple lines."
+                        "长辅助文案应该整齐换行，并与字段容器保持对齐。"
                     } else {
-                        "Short supporting text"
+                        "短辅助文案"
                     },
                     variant = TextFieldVariant.Outlined,
                     size = TextFieldSize.Large,
@@ -442,13 +397,13 @@ internal fun UiTreeBuilder.InputPage(
                 )
                 TextArea(
                     value = if (stressExpandedState.value) {
-                        "Readonly stress note:\n- Local theme overrides stay active\n- Multiline container should keep padding stable\n- Long copy should not push helper text outside the card"
+                        "只读压力笔记:\n- 本地主题覆盖保持活跃\n- 多行容器应保持 padding 稳定\n- 长文案不应把辅助文本推出卡片"
                     } else {
-                        "Readonly note"
+                        "只读笔记"
                     },
                     onValueChange = {},
-                    label = "Reviewer notes",
-                    supportingText = "Toggle readonly and expanded copy to inspect multiline stability.",
+                    label = "审阅者笔记",
+                    supportingText = "切换只读和展开文案检查多行稳定性。",
                     readOnly = stressReadonlyState.value,
                     maxLines = 6,
                     variant = TextFieldVariant.Tonal,
@@ -461,11 +416,11 @@ internal fun UiTreeBuilder.InputPage(
                 PasswordField(
                     value = if (stressErrorState.value) "" else "stable-password",
                     onValueChange = {},
-                    label = "Protected field",
+                    label = "受保护字段",
                     supportingText = if (stressErrorState.value) {
-                        "Error state must remain visible through theme switches and page changes."
+                        "错误态必须在主题切换和页面变化中保持可见。"
                     } else {
-                        "Resolved state should return to standard themed styling."
+                        "解决态应恢复标准主题样式。"
                     },
                     isError = stressErrorState.value,
                     variant = TextFieldVariant.Filled,
@@ -474,17 +429,83 @@ internal fun UiTreeBuilder.InputPage(
                 )
             }
 
+            "search" -> ScenarioSection(
+                kind = ScenarioKind.Core,
+                title = "SearchBar 搜索栏",
+                subtitle = "SearchBar 提供搜索输入框，支持 query 绑定、onSearch 回调和清除按钮。",
+            ) {
+                Text(
+                    text = "基础搜索栏",
+                    style = UiTextStyle(fontSizeSp = 14.sp),
+                    modifier = Modifier.margin(bottom = 8.dp),
+                )
+                SearchBar(
+                    query = searchQueryState.value,
+                    onQueryChange = { searchQueryState.value = it },
+                    onSearch = { query -> searchResultState.value = "搜索: $query" },
+                    placeholder = "搜索商品…",
+                    leadingIcon = ImageSource.Resource(R.drawable.demo_media_icon),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .margin(bottom = 12.dp),
+                )
+                if (searchResultState.value.isNotEmpty()) {
+                    Text(
+                        text = searchResultState.value,
+                        style = UiTextStyle(fontSizeSp = 13.sp),
+                        color = TextDefaults.secondaryColor(),
+                        modifier = Modifier.margin(bottom = 12.dp),
+                    )
+                }
+                Text(
+                    text = "带清除按钮的搜索栏",
+                    style = UiTextStyle(fontSizeSp = 14.sp),
+                    modifier = Modifier.margin(bottom = 8.dp),
+                )
+                SearchBar(
+                    query = searchQueryState.value,
+                    onQueryChange = { searchQueryState.value = it },
+                    onSearch = { query -> searchResultState.value = "搜索: $query" },
+                    placeholder = "搜索历史…",
+                    leadingIcon = ImageSource.Resource(R.drawable.demo_media_icon),
+                    trailingIcon = {
+                        if (searchQueryState.value.isNotEmpty()) {
+                            IconButton(
+                                icon = ImageSource.Resource(R.drawable.demo_media_icon),
+                                contentDescription = "清除",
+                                onClick = { searchQueryState.value = "" },
+                            )
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .margin(bottom = 12.dp),
+                )
+                Text(
+                    text = "禁用搜索栏",
+                    style = UiTextStyle(fontSizeSp = 14.sp),
+                    modifier = Modifier.margin(bottom = 8.dp),
+                )
+                SearchBar(
+                    query = "",
+                    onQueryChange = {},
+                    placeholder = "搜索不可用",
+                    enabled = false,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+
             "summary" -> ScenarioSection(
                 kind = ScenarioKind.Benchmark,
-                title = "Derived Summary",
-                subtitle = "This section is driven by `derivedStateOf`, not duplicated imperative updates.",
+                title = "派生摘要",
+                subtitle = "此区域由 derivedStateOf 驱动，非命令式重复更新。",
             ) {
                 Text(text = summaryState.value)
                 Text(
-                    text = "Notifications=${notificationsEnabledState.value}, " +
-                        "Analytics=${analyticsEnabledState.value}, " +
-                        "Tier=${selectedTierState.value}, " +
-                        "Intensity=${intensityState.value}",
+                    text = "通知=${notificationsEnabledState.value}, " +
+                        "分析=${analyticsEnabledState.value}, " +
+                        "层级=${selectedTierState.value}, " +
+                        "强度=${intensityState.value}",
                     style = UiTextStyle(fontSizeSp = 13.sp),
                 )
                 Text(
@@ -495,20 +516,19 @@ internal fun UiTreeBuilder.InputPage(
             }
 
             else -> VerificationNotesSection(
-                what = "Input chapter should prove that value, enabled/error state, component variants, and local overrides stay in sync with the runtime.",
+                what = "输入组件应验证值、启用/错误状态、组件变体和本地覆盖与运行时的同步。",
                 howToVerify = listOf(
-                    "输入文本并点击 Reset Form，确认所有字段一起回到初始值。",
+                    "输入文本并点击重置表单，确认所有字段一起回到初始值。",
                     "观察空密码时的错误态，并切换 theme mode，确认错误色和容器色同步变化。",
-                    "打开 Stress 页切换 expanded / readonly / error，确认长文案、多行和只读态不会把布局撑坏。",
-                    "切换 selection controls 和 slider，确认摘要区立即反映变化。",
+                    "打开压力页切换展开/只读/错误，确认长文案和多行布局稳定。",
+                    "在搜索栏输入文字并提交，确认 onSearch 回调正确触发。",
+                    "点击清除按钮，确认查询内容被清空。",
                 ),
                 expected = listOf(
                     "TextField label、supportingText、placeholder 和内容布局稳定。",
                     "禁用态和错误态不会丢失主题样式。",
-                    "derived summary 始终和输入状态保持一致。",
-                ),
-                relatedGaps = listOf(
-                    "还没有 focus 管理、IME 回调链和表单状态抽象。",
+                    "SearchBar 输入/清除/提交流程完整。",
+                    "派生摘要始终和输入状态保持一致。",
                 ),
             )
         }

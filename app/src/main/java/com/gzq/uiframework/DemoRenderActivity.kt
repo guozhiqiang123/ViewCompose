@@ -17,6 +17,8 @@ abstract class DemoRenderActivity : AppCompatActivity() {
 
     protected open val showBackButton: Boolean = true
 
+    protected open val useBottomNav: Boolean = false
+
     protected open fun redirectTargetIntent(): Intent? = null
 
     protected abstract val demoTitle: String
@@ -54,6 +56,7 @@ abstract class DemoRenderActivity : AppCompatActivity() {
                 title = demoTitle,
                 subtitle = demoSubtitle,
                 showBackButton = showBackButton,
+                useBottomNav = useBottomNav,
             ) { builder ->
                 buildDemoContent(root, builder)
             }

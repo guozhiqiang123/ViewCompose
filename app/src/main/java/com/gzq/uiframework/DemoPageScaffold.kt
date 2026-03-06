@@ -5,38 +5,32 @@ import androidx.appcompat.app.AppCompatActivity
 import com.gzq.uiframework.image.coil.CoilRemoteImageLoader
 import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.modifier.backgroundColor
-import com.gzq.uiframework.renderer.modifier.cornerRadius
 import com.gzq.uiframework.renderer.modifier.fillMaxSize
 import com.gzq.uiframework.renderer.modifier.fillMaxWidth
-import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
+import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.runtime.mutableStateOf
-import com.gzq.uiframework.widget.core.Button
 import com.gzq.uiframework.widget.core.Column
-import com.gzq.uiframework.widget.core.ColumnScope
-import com.gzq.uiframework.widget.core.Environment
+import com.gzq.uiframework.widget.core.HorizontalPager
+import com.gzq.uiframework.widget.core.IconButton
+import com.gzq.uiframework.widget.core.NavigationBar
 import com.gzq.uiframework.widget.core.ProvideRemoteImageLoader
-import com.gzq.uiframework.widget.core.SegmentedControl
-import com.gzq.uiframework.widget.core.SegmentedControlSize
+import com.gzq.uiframework.widget.core.Scaffold
 import com.gzq.uiframework.widget.core.SideEffect
-import com.gzq.uiframework.widget.core.SurfaceDefaults
-import com.gzq.uiframework.widget.core.Text
-import com.gzq.uiframework.widget.core.TextDefaults
 import com.gzq.uiframework.widget.core.Theme
+import com.gzq.uiframework.widget.core.TopAppBar
 import com.gzq.uiframework.widget.core.UiEnvironment
-import com.gzq.uiframework.widget.core.UiTextStyle
 import com.gzq.uiframework.widget.core.UiTheme
 import com.gzq.uiframework.widget.core.UiTreeBuilder
 import com.gzq.uiframework.widget.core.dp
 import com.gzq.uiframework.widget.core.remember
-import com.gzq.uiframework.widget.core.sp
-import java.util.Locale
 
 internal fun UiTreeBuilder.DemoPageScaffold(
     root: ViewGroup,
     title: String,
     subtitle: String,
     showBackButton: Boolean,
+    useBottomNav: Boolean = false,
     content: (UiTreeBuilder) -> Unit,
 ) {
     val themeModeState = remember { mutableStateOf(DemoThemeSession.mode) }
@@ -49,101 +43,75 @@ internal fun UiTreeBuilder.DemoPageScaffold(
         )
         ProvideRemoteImageLoader(remoteImageLoader) {
             UiTheme(tokens = resolvedTheme) {
-                val environmentLabel = "Env: ${Environment.localeTags.firstOrNull() ?: "und"} · " +
-                    "${Environment.layoutDirection.name} · " +
-                    "${"%.2f".format(Locale.US, Environment.density.density)}x · " +
-                    DemoThemeTokens.modeLabel(themeModeState.value, root.context)
-                SideEffect {
-                    activity?.title = "$title · ${DemoThemeTokens.modeLabel(themeModeState.value, root.context)}"
-                }
-                Column(
-                    spacing = 10.dp,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .backgroundColor(Theme.colors.background)
-                        .padding(24.dp),
-                ) {
-                    DemoPageHeader(
-                        title = title,
-                        subtitle = subtitle,
-                        environmentLabel = environmentLabel,
-                        showBackButton = showBackButton,
-                        onBack = { activity?.finish() },
-                    )
-                    ThemeModeSection(
-                        themeModeState = themeModeState,
-                    )
-                    Column(
-                        spacing = 0.dp,
+                if (useBottomNav) {
+                    val navIndex = remember { mutableStateOf(0) }
+                    val diagnosticsPageState = remember { mutableStateOf(0) }
+                    SideEffect {
+                        activity?.title = "UIFramework · ${DemoThemeTokens.modeLabel(themeModeState.value, root.context)}"
+                    }
+                    Scaffold(
+                        bottomBar = {
+                            NavigationBar(
+                                selectedIndex = navIndex.value,
+                                onItemSelected = { navIndex.value = it },
+                            ) {
+                                Item(label = "目录", icon = ImageSource.Resource(R.drawable.demo_media_icon))
+                                Item(label = "诊断", icon = ImageSource.Resource(R.drawable.demo_media_icon))
+                                Item(label = "设置", icon = ImageSource.Resource(R.drawable.demo_media_icon))
+                                Item(label = "关于", icon = ImageSource.Resource(R.drawable.demo_media_icon))
+                            }
+                        },
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                            .margin(top = 8.dp),
+                            .fillMaxSize()
+                            .backgroundColor(Theme.colors.background),
                     ) {
-                        content(this)
+                        HorizontalPager(
+                            currentPage = navIndex.value,
+                            onPageChanged = { navIndex.value = it },
+                            modifier = Modifier.fillMaxSize(),
+                        ) {
+                            Page(key = "catalog") { DemoCatalogPage(root) }
+                            Page(key = "diagnostics") { DiagnosticsPage(diagnosticsPageState) }
+                            Page(key = "settings") { SettingsPage(themeModeState, root) }
+                            Page(key = "about") { AboutPage() }
+                        }
+                    }
+                } else {
+                    SideEffect {
+                        activity?.title = "$title · ${DemoThemeTokens.modeLabel(themeModeState.value, root.context)}"
+                    }
+                    Scaffold(
+                        topBar = {
+                            TopAppBar(
+                                title = title,
+                                navigationIcon = if (showBackButton) {
+                                    {
+                                        IconButton(
+                                            icon = ImageSource.Resource(R.drawable.ic_arrow_back),
+                                            contentDescription = "返回",
+                                            onClick = { activity?.finish() },
+                                        )
+                                    }
+                                } else {
+                                    null
+                                },
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .backgroundColor(Theme.colors.background),
+                    ) {
+                        Column(
+                            spacing = 0.dp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp),
+                        ) {
+                            content(this)
+                        }
                     }
                 }
             }
         }
-    }
-}
-
-private fun ColumnScope.DemoPageHeader(
-    title: String,
-    subtitle: String,
-    environmentLabel: String,
-    showBackButton: Boolean,
-    onBack: () -> Unit,
-) {
-    if (showBackButton) {
-        Button(
-            text = "Back to catalog",
-            onClick = onBack,
-            modifier = Modifier.margin(bottom = 4.dp),
-        )
-    }
-    Text(
-        text = title,
-        style = UiTextStyle(fontSizeSp = 30.sp),
-    )
-    Text(
-        text = subtitle,
-        style = UiTextStyle(fontSizeSp = 14.sp),
-        color = TextDefaults.secondaryColor(),
-    )
-    Text(
-        text = environmentLabel,
-        style = UiTextStyle(fontSizeSp = 12.sp),
-        color = TextDefaults.secondaryColor(),
-        modifier = Modifier.padding(vertical = 4.dp),
-    )
-}
-
-private fun ColumnScope.ThemeModeSection(
-    themeModeState: com.gzq.uiframework.runtime.MutableState<DemoThemeMode>,
-) {
-    Column(
-        spacing = 8.dp,
-        modifier = Modifier
-            .fillMaxWidth()
-            .backgroundColor(SurfaceDefaults.variantBackgroundColor())
-            .cornerRadius(SurfaceDefaults.cardCornerRadius())
-            .padding(12.dp),
-    ) {
-        Text(
-            text = "Demo Theme",
-            style = UiTextStyle(fontSizeSp = 14.sp),
-        )
-        SegmentedControl(
-            items = listOf("System", "Light", "Dark"),
-            selectedIndex = themeModeState.value.ordinal,
-            onSelectionChange = { index ->
-                val mode = DemoThemeMode.entries[index]
-                DemoThemeSession.mode = mode
-                themeModeState.value = mode
-            },
-            size = SegmentedControlSize.Medium,
-            modifier = Modifier.fillMaxWidth(),
-        )
     }
 }

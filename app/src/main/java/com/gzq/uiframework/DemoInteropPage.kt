@@ -35,76 +35,58 @@ internal fun UiTreeBuilder.InteropPage() {
     ) { section ->
         when (section) {
             "page" -> ChapterPageOverviewSection(
-                title = "Interop",
-                goal = "Keep AndroidView as a first-class migration path and verify that native widgets still fit inside framework theme and state boundaries.",
+                title = "互操作",
+                goal = "保持 AndroidView 作为一等迁移路径，验证原生控件仍然适配框架主题和状态边界。",
                 modules = listOf("AndroidView", "theme bridge", "local propagation"),
             )
 
             "page_filter" -> ChapterPageFilterSection(
-                pages = listOf("Basics", "Theme", "Why"),
+                pages = listOf("基础", "主题桥接", "意义"),
                 selectedIndex = selectedPageState.value,
                 onSelectionChange = { selectedPageState.value = it },
             )
 
             "benchmark" -> ScenarioSection(
                 kind = ScenarioKind.Benchmark,
-                title = "Interop Benchmark Anchor",
-                subtitle = "Keep a native TextView interop update path visible in the first viewport so benchmark runs do not depend on the longer guide content below.",
+                title = "互操作 Benchmark 锚点",
+                subtitle = "保持原生 TextView 互操作更新路径在首屏可见。",
             ) {
                 Text(
-                    text = if (benchmarkToggleState.value) {
-                        "Interop benchmark native state: alternate"
-                    } else {
-                        "Interop benchmark native state: primary"
-                    },
+                    text = if (benchmarkToggleState.value) "互操作 benchmark 原生状态: 替代" else "互操作 benchmark 原生状态: 主要",
                     modifier = Modifier.margin(bottom = 8.dp),
                 )
                 Button(
-                    text = if (benchmarkToggleState.value) {
-                        "Interop Benchmark Alternate"
-                    } else {
-                        "Interop Benchmark Primary"
-                    },
+                    text = if (benchmarkToggleState.value) "Benchmark 替代" else "Benchmark 主要",
                     modifier = Modifier
                         .fillMaxWidth()
                         .margin(bottom = 8.dp),
-                    onClick = {
-                        benchmarkToggleState.value = !benchmarkToggleState.value
-                    },
+                    onClick = { benchmarkToggleState.value = !benchmarkToggleState.value },
                 )
                 Button(
-                    text = "Reset Interop Benchmark",
+                    text = "重置互操作 Benchmark",
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        benchmarkToggleState.value = false
-                    },
+                    onClick = { benchmarkToggleState.value = false },
                 )
                 AndroidView(
                     key = "interop_benchmark_text_view",
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp),
-                    factory = { context ->
-                        TextView(context)
-                    },
+                    factory = { context -> TextView(context) },
                     update = { view ->
-                        val textView = view as TextView
-                        textView.text = if (benchmarkToggleState.value) {
-                            "Native benchmark TextView: alternate"
+                        (view as TextView).text = if (benchmarkToggleState.value) {
+                            "原生 benchmark TextView: 替代"
                         } else {
-                            "Native benchmark TextView: primary"
+                            "原生 benchmark TextView: 主要"
                         }
                     },
                 )
                 BenchmarkRouteCallout(
-                    route = "Launcher -> MainActivity(extra=interop) -> Interop -> Interop Benchmark Anchor",
-                    stableTargets = listOf(
-                        "Interop Benchmark Primary",
-                        "Reset Interop Benchmark",
-                    ),
+                    route = "Launcher -> Interop -> Benchmark Anchor",
+                    stableTargets = listOf("Benchmark Primary", "Reset"),
                 )
                 Text(
-                    text = "Stable route: launcher -> interop module -> benchmark anchor",
+                    text = "稳定路径: launcher -> interop -> benchmark anchor",
                     style = UiTextStyle(fontSizeSp = 12.sp),
                     color = TextDefaults.secondaryColor(),
                     modifier = Modifier.margin(top = 8.dp),
@@ -113,18 +95,16 @@ internal fun UiTreeBuilder.InteropPage() {
 
             "basics" -> ScenarioSection(
                 kind = ScenarioKind.Core,
-                title = "AndroidView Basics",
-                subtitle = "Legacy native views still mount inside the same declarative tree and can react to framework state.",
+                title = "AndroidView 基础",
+                subtitle = "旧版原生 View 仍然挂载在同一声明式树中，可响应框架状态。",
             ) {
                 Row(
                     spacing = 8.dp,
                     modifier = Modifier.margin(bottom = 12.dp),
                 ) {
                     Button(
-                        text = if (alternateLabelsState.value) "Show Primary Copy" else "Show Alternate Copy",
-                        onClick = {
-                            alternateLabelsState.value = !alternateLabelsState.value
-                        },
+                        text = if (alternateLabelsState.value) "显示主要文案" else "显示替代文案",
+                        onClick = { alternateLabelsState.value = !alternateLabelsState.value },
                     )
                 }
                 AndroidView(
@@ -132,15 +112,12 @@ internal fun UiTreeBuilder.InteropPage() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp),
-                    factory = { context ->
-                        TextView(context)
-                    },
+                    factory = { context -> TextView(context) },
                     update = { view ->
-                        val textView = view as TextView
-                        textView.text = if (alternateLabelsState.value) {
-                            "Native TextView mirror: alternate content enabled"
+                        (view as TextView).text = if (alternateLabelsState.value) {
+                            "原生 TextView: 替代内容已启用"
                         } else {
-                            "Native TextView mirror: primary content enabled"
+                            "原生 TextView: 主要内容已启用"
                         }
                     },
                 )
@@ -148,14 +125,12 @@ internal fun UiTreeBuilder.InteropPage() {
 
             "theme_bridge" -> ScenarioSection(
                 kind = ScenarioKind.Visual,
-                title = "Theme Bridge",
-                subtitle = "Interop pages should prove that framework theme locals and Android view defaults can coexist instead of fighting each other.",
+                title = "主题桥接",
+                subtitle = "验证框架主题 locals 和 Android View 默认值可以共存。",
             ) {
+                Text(text = "当前章节将 AndroidView 保持在同一主题容器中，文本、间距和周围的 Surface 仍由 UIFramework token 驱动。")
                 Text(
-                    text = "Current chapter keeps AndroidView inside the same theme container so text, spacing, and surrounding surfaces are still driven by UIFramework tokens.",
-                )
-                Text(
-                    text = "Later this page should verify themed native widgets, custom view adapters, and fragment host containers.",
+                    text = "后续应验证主题化原生控件、自定义 View 适配器和 Fragment host 容器。",
                     style = UiTextStyle(fontSizeSp = 13.sp),
                     color = TextDefaults.secondaryColor(),
                 )
@@ -163,25 +138,23 @@ internal fun UiTreeBuilder.InteropPage() {
 
             "why_it_matters" -> ScenarioSection(
                 kind = ScenarioKind.Guide,
-                title = "Why Interop Matters",
-                subtitle = "Interop is one of the biggest practical advantages of this framework compared with a pure Compose rewrite path.",
+                title = "互操作的意义",
+                subtitle = "互操作是本框架相比纯 Compose 重写路径的最大实际优势之一。",
             ) {
-                Text(
-                    text = "Use this chapter to validate gradual migration: existing custom views, business widgets, and SDK surfaces should still be mountable without rewriting them first.",
-                )
+                Text(text = "使用此章节验证渐进式迁移：现有自定义 View、业务控件和 SDK 界面应可直接挂载，无需先行重写。")
             }
 
             else -> VerificationNotesSection(
-                what = "Interop chapter should prove that old View widgets can stay mounted inside the declarative tree without losing state or theme alignment.",
+                what = "互操作章节应证明旧 View 控件可以在声明式树中保持挂载，不丢失状态或主题对齐。",
                 howToVerify = listOf(
                     "点击切换文案按钮，确认原生 TextView 文案实时更新。",
                     "切换全局 theme mode，确认原生 View 所在容器仍与框架主题协调。",
-                    "反复切换章节并返回 Interop，确认 AndroidView 依旧可用。",
+                    "反复切换章节并返回互操作，确认 AndroidView 依旧可用。",
                 ),
                 expected = listOf(
                     "AndroidView update 会响应框架状态变化。",
                     "theme locals 和 Android theme bridge 可以共存。",
-                    "Interop 章节不会因为延迟 session 丢失 local 上下文。",
+                    "互操作章节不会因为延迟 session 丢失 local 上下文。",
                 ),
                 relatedGaps = listOf(
                     "还没有 custom view adapter catalog 和 Fragment host demo。",

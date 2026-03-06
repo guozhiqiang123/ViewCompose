@@ -3,30 +3,20 @@ package com.gzq.uiframework
 import android.view.ViewGroup
 import com.gzq.uiframework.widget.core.UiTreeBuilder
 
+internal const val EXTRA_NAVIGATION_PAGE_INDEX = "navigation_page_index"
+
 class NavigationActivity : DemoRenderActivity() {
     override val demoTitle: String = "Navigation"
 
     override val demoSubtitle: String =
-        "Planned host integration, stack modeling, and state preservation scenarios."
+        "TopAppBar, BottomAppBar, NavigationBar, Scaffold 导航组件。"
 
     override fun buildDemoContent(
         root: ViewGroup,
         builder: UiTreeBuilder,
     ) {
-        builder.ChapterPlaceholderPage(
-            title = "Navigation",
-            subtitle = "This chapter holds the future host integration and navigation model work while the framework still relies on Activity-based shells.",
-            plannedPages = listOf(
-                "Host integration and screen switching",
-                "Back stack experiments",
-                "State restoration across screens",
-                "Deep link simulation",
-            ),
-            currentGaps = listOf(
-                "No framework-level navigation model yet",
-                "No page stack or deep link abstraction",
-                "No navigation benchmark or diagnostics flow",
-            ),
+        builder.NavigationPage(
+            initialPageIndex = intent?.getIntExtra(EXTRA_NAVIGATION_PAGE_INDEX, 0) ?: 0,
         )
     }
 }

@@ -52,17 +52,17 @@ internal fun UiTreeBuilder.StatePage(
         derivedStateOf {
             val value = clickCountState.value
             when {
-                value == 0 -> "No clicks yet"
-                value % 2 == 0 -> "Even clicks: $value"
-                else -> "Odd clicks: $value"
+                value == 0 -> "尚无点击"
+                value % 2 == 0 -> "偶数次点击: $value"
+                else -> "奇数次点击: $value"
             }
         }
     }
     val timelineState = produceState(
-        initialValue = "Last update: waiting",
+        initialValue = "最近更新: 等待中",
         clickCountState.value,
     ) {
-        value = "Last update: ${clickCountState.value} tap(s) committed"
+        value = "最近更新: 已提交 ${clickCountState.value} 次点击"
         null
     }
     val pageItems = when (selectedPageState.value) {
@@ -79,28 +79,28 @@ internal fun UiTreeBuilder.StatePage(
     ) { section ->
         when (section) {
             "page" -> ChapterPageOverviewSection(
-                title = "State & Effects",
-                goal = "Exercise the runtime primitives directly so remember, derived state, produced values, and keyed identity can be inspected by hand.",
+                title = "状态与副作用",
+                goal = "直接操练运行时基元，以便手动检查 remember、derivedState、produceState 和 key 标识的行为。",
                 modules = listOf("ui-runtime", "remember", "effects", "key scopes"),
             )
 
             "page_filter" -> ChapterPageFilterSection(
-                pages = listOf("Core", "Identity", "Patch", "Checklist"),
+                pages = listOf("核心", "标识", "Patch", "清单"),
                 selectedIndex = selectedPageState.value,
                 onSelectionChange = { selectedPageState.value = it },
             )
 
             "benchmark" -> ScenarioSection(
                 kind = ScenarioKind.Benchmark,
-                title = "State Benchmark Anchor",
-                subtitle = "This block stays on the default Core page and keeps the benchmark controls inside the first viewport.",
+                title = "State Benchmark 锚点",
+                subtitle = "此区块固定在默认的核心页面，让 benchmark 控件始终保持在首屏可见。",
             ) {
                 Text(
-                    text = "Benchmark step ${benchmarkStepState.value}",
+                    text = "Benchmark 步骤 ${benchmarkStepState.value}",
                     modifier = Modifier.margin(bottom = 8.dp),
                 )
                 Button(
-                    text = "Advance State Benchmark ${benchmarkStepState.value}",
+                    text = "推进 State Benchmark ${benchmarkStepState.value}",
                     modifier = Modifier
                         .fillMaxWidth()
                         .margin(bottom = 8.dp),
@@ -109,7 +109,7 @@ internal fun UiTreeBuilder.StatePage(
                     },
                 )
                 Button(
-                    text = "Reset State Benchmark",
+                    text = "重置 State Benchmark",
                     modifier = Modifier
                         .fillMaxWidth()
                         .margin(bottom = 8.dp),
@@ -125,7 +125,7 @@ internal fun UiTreeBuilder.StatePage(
                     ),
                 )
                 Text(
-                    text = "Stable route: launcher -> state module -> benchmark anchor",
+                    text = "稳定路径: launcher -> state module -> benchmark anchor",
                     style = UiTextStyle(fontSizeSp = 12.sp),
                     color = TextDefaults.secondaryColor(),
                 )
@@ -134,9 +134,9 @@ internal fun UiTreeBuilder.StatePage(
             "counter" -> ScenarioSection(
                 kind = ScenarioKind.Core,
                 title = "remember + derivedStateOf + produceState",
-                subtitle = "This block shows local state, derived labels, and a small produced status string.",
+                subtitle = "展示本地状态、派生标签和 produceState 生成的状态文本。",
             ) {
-                Text(text = "Clicks: ${clickCountState.value}")
+                Text(text = "点击次数: ${clickCountState.value}")
                 Text(
                     text = summaryState.value,
                     color = TextDefaults.secondaryColor(),
@@ -154,13 +154,13 @@ internal fun UiTreeBuilder.StatePage(
                     modifier = Modifier.margin(top = 12.dp),
                 ) {
                     Button(
-                        text = "Increment",
+                        text = "递增",
                         onClick = {
                             clickCountState.value = clickCountState.value + 1
                         },
                     )
                     Button(
-                        text = "Reset",
+                        text = "重置",
                         onClick = {
                             clickCountState.value = 0
                         },
@@ -170,18 +170,18 @@ internal fun UiTreeBuilder.StatePage(
 
             "panel" -> ScenarioSection(
                 kind = ScenarioKind.Visual,
-                title = "key Scope + Conditional UI",
-                subtitle = "The transient panel keeps its own state while visible, and is fully recreated when toggled back in.",
+                title = "key 作用域 + 条件 UI",
+                subtitle = "临时面板在可见时保持自身状态，切走后再切回时会完全重建。",
             ) {
                 Button(
-                    text = if (panelVisibleState.value) "Hide panel" else "Show panel",
+                    text = if (panelVisibleState.value) "隐藏面板" else "显示面板",
                     modifier = Modifier.margin(bottom = 12.dp),
                     onClick = {
                         panelVisibleState.value = !panelVisibleState.value
                     },
                 )
                 Text(
-                    text = "Visibility sample: hidden when the panel is off",
+                    text = "Visibility 示例: 面板关闭时隐藏",
                     modifier = Modifier
                         .visibility(
                             if (panelVisibleState.value) {
@@ -202,9 +202,9 @@ internal fun UiTreeBuilder.StatePage(
                                 .backgroundColor(SurfaceDefaults.variantBackgroundColor())
                                 .padding(12.dp),
                         ) {
-                            Text(text = "Keyed transient panel")
+                            Text(text = "有 key 的临时面板")
                             Button(
-                                text = "Panel taps: ${panelTapState.value}",
+                                text = "面板点击次数: ${panelTapState.value}",
                                 onClick = {
                                     panelTapState.value = panelTapState.value + 1
                                 },
@@ -216,13 +216,13 @@ internal fun UiTreeBuilder.StatePage(
 
             "patch" -> ScenarioSection(
                 kind = ScenarioKind.Benchmark,
-                title = "Patch Stress",
-                subtitle = "Drive the first batch of node-level patch targets together so manual testing and benchmark runs hit the same update path.",
+                title = "Patch 压力测试",
+                subtitle = "将第一批节点级 patch 目标放在一起驱动，使手动测试和 benchmark 运行命中同一更新路径。",
             ) {
                 val step = patchStepState.value
-                Text(text = "Patch headline $step")
+                Text(text = "Patch 标题 $step")
                 Text(
-                    text = "Patched nodes: Text, Button, TextField, SegmentedControl, TabRow, Row, Column, Box, Image",
+                    text = "已 Patch 节点: Text, Button, TextField, SegmentedControl, TabRow, Row, Column, Box, Image",
                     color = TextDefaults.secondaryColor(),
                     modifier = Modifier.padding(vertical = 4.dp),
                 )
@@ -233,7 +233,7 @@ internal fun UiTreeBuilder.StatePage(
                         .margin(top = 8.dp, bottom = 12.dp),
                 ) {
                     Button(
-                        text = "Advance patch state $step",
+                        text = "推进 Patch 状态 $step",
                         onClick = {
                             val nextStep = patchStepState.value + 1
                             patchStepState.value = nextStep
@@ -243,7 +243,7 @@ internal fun UiTreeBuilder.StatePage(
                         },
                     )
                     Button(
-                        text = "Reset patch state",
+                        text = "重置 Patch 状态",
                         onClick = {
                             patchStepState.value = 0
                             patchFieldValueState.value = "value-0"
@@ -253,20 +253,20 @@ internal fun UiTreeBuilder.StatePage(
                     )
                 }
                 Button(
-                    text = "Patch action $step",
+                    text = "Patch 操作 $step",
                     onClick = {},
                     modifier = Modifier.margin(bottom = 12.dp),
                 )
                 Button(
-                    text = "Open diagnostics renderer",
+                    text = "打开诊断渲染器",
                     onClick = onOpenDiagnostics,
                     modifier = Modifier.margin(bottom = 12.dp),
                 )
                 TextField(
                     value = patchFieldValueState.value,
                     onValueChange = { patchFieldValueState.value = it },
-                    label = "Patched field",
-                    supportingText = "Current patch step: $step",
+                    label = "已 Patch 字段",
+                    supportingText = "当前 Patch 步骤: $step",
                     modifier = Modifier.margin(bottom = 12.dp),
                 )
                 SegmentedControl(
@@ -294,8 +294,8 @@ internal fun UiTreeBuilder.StatePage(
                         .fillMaxWidth()
                         .margin(bottom = 12.dp),
                 ) {
-                    Text(text = "Col item 1")
-                    Text(text = "Col item 2")
+                    Text(text = "Col 项 1")
+                    Text(text = "Col 项 2")
                 }
                 Box(
                     contentAlignment = if (step % 2 == 0) BoxAlignment.TopStart else BoxAlignment.Center,
@@ -305,7 +305,7 @@ internal fun UiTreeBuilder.StatePage(
                         .padding(12.dp)
                         .margin(bottom = 12.dp),
                 ) {
-                    Text(text = "Box content $step")
+                    Text(text = "Box 内容 $step")
                 }
                 Image(
                     source = ImageSource.Resource(android.R.drawable.ic_menu_gallery),
@@ -319,13 +319,13 @@ internal fun UiTreeBuilder.StatePage(
                     ) {
                         Tab(key = "summary") { selected ->
                             Text(
-                                text = "Summary",
+                                text = "摘要",
                                 color = if (selected) TextDefaults.primaryColor() else TextDefaults.secondaryColor(),
                             )
                         }
                         Tab(key = "details") { selected ->
                             Text(
-                                text = "Details",
+                                text = "详情",
                                 color = if (selected) TextDefaults.primaryColor() else TextDefaults.secondaryColor(),
                             )
                         }
@@ -343,9 +343,9 @@ internal fun UiTreeBuilder.StatePage(
                                     .backgroundColor(SurfaceDefaults.variantBackgroundColor())
                                     .padding(12.dp),
                             ) {
-                                Text(text = "Tab summary $step")
+                                Text(text = "Tab 摘要 $step")
                                 Text(
-                                    text = "Patch scenario keeps tab host stable while page metadata changes.",
+                                    text = "Patch 场景保持 Tab 宿主稳定，同时页面元数据随状态变化。",
                                     color = TextDefaults.secondaryColor(),
                                 )
                             }
@@ -358,9 +358,9 @@ internal fun UiTreeBuilder.StatePage(
                                     .backgroundColor(SurfaceDefaults.variantBackgroundColor())
                                     .padding(12.dp),
                             ) {
-                                Text(text = "Tab details $step")
+                                Text(text = "Tab 详情 $step")
                                 Text(
-                                    text = "Use this page when checking tab selection patching under repeated updates.",
+                                    text = "使用此页面检查重复更新时 Tab 选中状态的 Patch 行为。",
                                     color = TextDefaults.secondaryColor(),
                                 )
                             }
@@ -368,7 +368,7 @@ internal fun UiTreeBuilder.StatePage(
                     }
                 }
                 Text(
-                    text = "Stable token tab pager keeps page identity fixed while the page closure still reflects the latest outer state.",
+                    text = "稳定 token 的 Tab Pager 保持页面标识不变，同时页面闭包仍会反映最新的外部状态。",
                     color = TextDefaults.secondaryColor(),
                     modifier = Modifier
                         .padding(top = 12.dp, bottom = 4.dp),
@@ -380,13 +380,13 @@ internal fun UiTreeBuilder.StatePage(
                     ) {
                         Tab(key = "stable-summary") { selected ->
                             Text(
-                                text = "Stable Summary",
+                                text = "稳定摘要",
                                 color = if (selected) TextDefaults.primaryColor() else TextDefaults.secondaryColor(),
                             )
                         }
                         Tab(key = "stable-details") { selected ->
                             Text(
-                                text = "Stable Details",
+                                text = "稳定详情",
                                 color = if (selected) TextDefaults.primaryColor() else TextDefaults.secondaryColor(),
                             )
                         }
@@ -404,9 +404,9 @@ internal fun UiTreeBuilder.StatePage(
                                     .backgroundColor(SurfaceDefaults.variantBackgroundColor())
                                     .padding(12.dp),
                             ) {
-                                Text(text = "Stable summary $step")
+                                Text(text = "稳定摘要 $step")
                                 Text(
-                                    text = "This page should still refresh after Advance patch state even though the tab page token stays stable.",
+                                    text = "即使 Tab 页面 token 保持稳定，推进 Patch 状态后此页面仍应刷新。",
                                     color = TextDefaults.secondaryColor(),
                                 )
                             }
@@ -419,9 +419,9 @@ internal fun UiTreeBuilder.StatePage(
                                     .backgroundColor(SurfaceDefaults.variantBackgroundColor())
                                     .padding(12.dp),
                             ) {
-                                Text(text = "Stable details $step")
+                                Text(text = "稳定详情 $step")
                                 Text(
-                                    text = "Use this page to catch stale tab page closures when keyed page metadata does not change.",
+                                    text = "使用此页面捕获当 key 页面元数据不变时 Tab 页面闭包是否过期。",
                                     color = TextDefaults.secondaryColor(),
                                 )
                             }
@@ -431,11 +431,11 @@ internal fun UiTreeBuilder.StatePage(
             }
 
             else -> VerificationNotesSection(
-                what = "State chapter should reveal whether root rerendering, local identity, and conditional recreation behave predictably under repeated interaction.",
+                what = "State 章节应揭示根重渲染、本地标识和条件重建在反复操作下是否行为可预测。",
                 howToVerify = listOf(
-                    "连续点击 Increment 和 Reset，确认派生文案与 timeline 一起更新。",
+                    "连续点击递增和重置，确认派生文案与 timeline 一起更新。",
                     "隐藏再显示 transient panel，确认 panel 内点击计数会被重建。",
-                    "进入 Patch 页面，连续点击 Advance patch state，确认 Text、Button、TextField、SegmentedControl 和 TabRow 都同步更新。",
+                    "进入 Patch 页面，连续点击推进 Patch 状态，确认 Text、Button、TextField、SegmentedControl 和 TabRow 都同步更新。",
                     "切换 theme mode 后再继续点击，确认状态值不受主题刷新影响。",
                 ),
                 expected = listOf(

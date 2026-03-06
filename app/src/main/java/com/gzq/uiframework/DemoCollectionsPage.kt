@@ -10,18 +10,29 @@ import com.gzq.uiframework.renderer.modifier.fillMaxWidth
 import com.gzq.uiframework.renderer.modifier.height
 import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
+import com.gzq.uiframework.renderer.modifier.size
+import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.AndroidView
+import com.gzq.uiframework.widget.core.Box
 import com.gzq.uiframework.widget.core.Button
 import com.gzq.uiframework.widget.core.ButtonSize
+import com.gzq.uiframework.widget.core.ButtonVariant
+import com.gzq.uiframework.widget.core.Card
+import com.gzq.uiframework.widget.core.CardVariant
 import com.gzq.uiframework.widget.core.Column
+import com.gzq.uiframework.widget.core.Image
 import com.gzq.uiframework.widget.core.LazyColumn
+import com.gzq.uiframework.widget.core.LazyRow
+import com.gzq.uiframework.widget.core.LazyVerticalGrid
+import com.gzq.uiframework.widget.core.PullToRefresh
 import com.gzq.uiframework.widget.core.Row
 import com.gzq.uiframework.widget.core.Surface
 import com.gzq.uiframework.widget.core.SurfaceDefaults
 import com.gzq.uiframework.widget.core.SurfaceVariant
 import com.gzq.uiframework.widget.core.Text
 import com.gzq.uiframework.widget.core.TextDefaults
+import com.gzq.uiframework.widget.core.Theme
 import com.gzq.uiframework.widget.core.UiTextStyle
 import com.gzq.uiframework.widget.core.UiTreeBuilder
 import com.gzq.uiframework.widget.core.dp
@@ -37,12 +48,15 @@ internal fun UiTreeBuilder.CollectionPage(
     val alternateLabelsState = remember { mutableStateOf(false) }
     val stressRotateState = remember { mutableStateOf(false) }
     val stressEdgeItemState = remember { mutableStateOf(false) }
-    val selectedPageState = remember { mutableStateOf(initialPageIndex.coerceIn(0, 3)) }
+    val selectedPageState = remember { mutableStateOf(initialPageIndex.coerceIn(0, 6)) }
+    val spanCountState = remember { mutableStateOf(2) }
+    val refreshingState = remember { mutableStateOf(false) }
+    val refreshCountState = remember { mutableStateOf(0) }
     val listOrderState = produceState(
-        initialValue = "List order: A-B-C",
+        initialValue = "列表顺序: A-B-C",
         reversedState.value,
     ) {
-        value = if (reversedState.value) "List order: C-B-A" else "List order: A-B-C"
+        value = if (reversedState.value) "列表顺序: C-B-A" else "列表顺序: A-B-C"
         null
     }
     val keyedItems = if (reversedState.value) {
@@ -53,9 +67,9 @@ internal fun UiTreeBuilder.CollectionPage(
         DemoListItem(
             id = id,
             title = if (alternateLabelsState.value) {
-                "Lazy item $id (alt)"
+                "Lazy 项 $id（替代）"
             } else {
-                "Lazy item $id"
+                "Lazy 项 $id"
             },
         )
     }
@@ -66,22 +80,13 @@ internal fun UiTreeBuilder.CollectionPage(
             listOf("A", "B", "C", "D")
         }
         if (stressEdgeItemState.value) {
-            add(
-                DemoListItem(
-                    id = "X",
-                    title = "Inserted item X",
-                ),
-            )
+            add(DemoListItem(id = "X", title = "插入项 X"))
         }
         baseIds.forEach { id ->
             add(
                 DemoListItem(
                     id = id,
-                    title = if (alternateLabelsState.value) {
-                        "Stress item $id (alt)"
-                    } else {
-                        "Stress item $id"
-                    },
+                    title = if (alternateLabelsState.value) "压力项 $id（替代）" else "压力项 $id",
                 ),
             )
         }
@@ -93,18 +98,21 @@ internal fun UiTreeBuilder.CollectionPage(
     }.map { id ->
         DemoListItem(
             id = id,
-            title = if (benchmarkRotateState.value) {
-                "Benchmark item $id expanded"
-            } else {
-                "Benchmark item $id"
-            },
+            title = if (benchmarkRotateState.value) "Benchmark 项 $id 展开" else "Benchmark 项 $id",
         )
     }
+    val horizontalItems = (1..10).map { DemoListItem(id = "$it", title = "横向卡片 $it") }
+    val gridItems = (1..12).map { DemoListItem(id = "$it", title = "网格项 $it") }
+    val pullItems = (1..8).map { DemoListItem(id = "$it", title = "刷新列表项 $it · 刷新 ${refreshCountState.value} 次") }
+
     val pageItems = when (selectedPageState.value) {
         0 -> listOf("benchmark", "page", "page_filter", "controls", "verify")
         1 -> listOf("page", "page_filter", "list", "verify")
         2 -> listOf("page", "page_filter", "stress", "verify")
-        else -> listOf("page", "page_filter", "interop", "verify")
+        3 -> listOf("page", "page_filter", "interop", "verify")
+        4 -> listOf("page", "page_filter", "lazy_row", "verify")
+        5 -> listOf("page", "page_filter", "grid", "verify")
+        else -> listOf("page", "page_filter", "pull_refresh", "verify")
     }
 
     LazyColumn(
@@ -114,50 +122,42 @@ internal fun UiTreeBuilder.CollectionPage(
     ) { section ->
         when (section) {
             "page" -> ChapterPageOverviewSection(
-                title = "Collections",
-                goal = "Validate keyed list reuse, local item state preservation, and AndroidView coexistence inside lazy containers.",
-                modules = listOf("LazyColumn", "diff", "lazy item sessions", "AndroidView"),
+                title = "集合组件",
+                goal = "验证 LazyColumn/LazyRow/LazyVerticalGrid 的键控复用、PullToRefresh 的下拉刷新、以及 AndroidView 互操作。",
+                modules = listOf("LazyColumn", "LazyRow", "LazyVerticalGrid", "PullToRefresh", "diff", "lazy item sessions", "AndroidView"),
             )
 
             "page_filter" -> ChapterPageFilterSection(
-                pages = listOf("Controls", "List", "Stress", "Interop"),
+                pages = listOf("控制", "列表", "压力", "互操作", "横向列表", "网格", "下拉刷新"),
                 selectedIndex = selectedPageState.value,
                 onSelectionChange = { selectedPageState.value = it },
             )
 
             "benchmark" -> ScenarioSection(
                 kind = ScenarioKind.Benchmark,
-                title = "Collections Benchmark Anchor",
-                subtitle = "This block stays on the default Controls page and keeps the benchmark controls inside the first viewport.",
+                title = "集合组件 Benchmark 锚点",
+                subtitle = "键控列表排序切换和网格 spanCount 切换的稳定路径。",
             ) {
                 Text(
-                    text = "Stable route: launcher -> collections module -> benchmark anchor",
+                    text = "稳定路径: launcher -> collections -> benchmark anchor",
                     style = UiTextStyle(fontSizeSp = 12.sp),
                     color = TextDefaults.secondaryColor(),
                     modifier = Modifier.margin(bottom = 8.dp),
                 )
                 Button(
-                    text = if (benchmarkRotateState.value) {
-                        "Collections Benchmark C-A-B"
-                    } else {
-                        "Collections Benchmark A-B-C"
-                    },
+                    text = if (benchmarkRotateState.value) "Benchmark C-A-B" else "Benchmark A-B-C",
                     modifier = Modifier
                         .fillMaxWidth()
                         .margin(bottom = 8.dp),
-                    onClick = {
-                        benchmarkRotateState.value = !benchmarkRotateState.value
-                    },
+                    onClick = { benchmarkRotateState.value = !benchmarkRotateState.value },
                 )
                 Button(
-                    text = "Reset Collections Benchmark",
-                    variant = com.gzq.uiframework.widget.core.ButtonVariant.Outlined,
+                    text = "重置 Benchmark",
+                    variant = ButtonVariant.Outlined,
                     modifier = Modifier
                         .fillMaxWidth()
                         .margin(bottom = 8.dp),
-                    onClick = {
-                        benchmarkRotateState.value = false
-                    },
+                    onClick = { benchmarkRotateState.value = false },
                 )
                 LazyColumn(
                     items = benchmarkItems,
@@ -183,7 +183,7 @@ internal fun UiTreeBuilder.CollectionPage(
                         ) {
                             Text(text = item.title)
                             Text(
-                                text = "Stable key: ${item.id}",
+                                text = "稳定 key: ${item.id}",
                                 style = UiTextStyle(fontSizeSp = 12.sp),
                                 color = TextDefaults.secondaryColor(),
                                 modifier = Modifier.weight(1f),
@@ -195,8 +195,8 @@ internal fun UiTreeBuilder.CollectionPage(
 
             "controls" -> ScenarioSection(
                 kind = ScenarioKind.Guide,
-                title = "Collection Controls",
-                subtitle = "These buttons mutate the source list and labels while preserving keyed item state.",
+                title = "集合控制",
+                subtitle = "这些按钮变更数据源和标签，同时保持键控 item 状态。",
             ) {
                 Text(text = listOrderState.value)
                 Row(
@@ -205,16 +205,12 @@ internal fun UiTreeBuilder.CollectionPage(
                     modifier = Modifier.margin(top = 12.dp),
                 ) {
                     Button(
-                        text = if (reversedState.value) "Show A-B-C" else "Show C-B-A",
-                        onClick = {
-                            reversedState.value = !reversedState.value
-                        },
+                        text = if (reversedState.value) "显示 A-B-C" else "显示 C-B-A",
+                        onClick = { reversedState.value = !reversedState.value },
                     )
                     Button(
-                        text = if (alternateLabelsState.value) "Primary labels" else "Alternate labels",
-                        onClick = {
-                            alternateLabelsState.value = !alternateLabelsState.value
-                        },
+                        text = if (alternateLabelsState.value) "主要标签" else "替代标签",
+                        onClick = { alternateLabelsState.value = !alternateLabelsState.value },
                     )
                 }
             }
@@ -222,7 +218,7 @@ internal fun UiTreeBuilder.CollectionPage(
             "list" -> ScenarioSection(
                 kind = ScenarioKind.Core,
                 title = "LazyColumn",
-                subtitle = "Each item keeps its own local state while keyed reorder and content updates pass through the diff layer.",
+                subtitle = "每个 item 保持独立的本地状态，键控排序和内容更新通过 diff 层处理。",
             ) {
                 LazyColumn(
                     items = keyedItems,
@@ -242,10 +238,8 @@ internal fun UiTreeBuilder.CollectionPage(
                     ) {
                         Text(text = item.title)
                         Button(
-                            text = "Item ${item.id} taps: ${itemCountState.value}",
-                            onClick = {
-                                itemCountState.value = itemCountState.value + 1
-                            },
+                            text = "项 ${item.id} 点击: ${itemCountState.value}",
+                            onClick = { itemCountState.value = itemCountState.value + 1 },
                         )
                     }
                 }
@@ -253,16 +247,12 @@ internal fun UiTreeBuilder.CollectionPage(
 
             "stress" -> ScenarioSection(
                 kind = ScenarioKind.Stress,
-                title = "Lazy Stress Cases",
-                subtitle = "This page compresses reorder, insertion, label mutation, and constrained height into one repeatable manual test path.",
+                title = "Lazy 压力测试",
+                subtitle = "排序、插入、标签变更和受限高度集中在一个可重复的测试路径中。",
             ) {
                 BenchmarkRouteCallout(
-                    route = "Catalog -> Open Collections -> Stress page",
-                    stableTargets = listOf(
-                        "Linear Order / Rotate Order",
-                        "Insert X / Remove X",
-                        "Stable key: A/B/C/D/X",
-                    ),
+                    route = "Catalog -> Collections -> 压力页",
+                    stableTargets = listOf("Linear Order / Rotate Order", "Insert X / Remove X"),
                 )
                 Row(
                     spacing = 8.dp,
@@ -271,26 +261,21 @@ internal fun UiTreeBuilder.CollectionPage(
                         .margin(bottom = 12.dp),
                 ) {
                     Button(
-                        text = if (stressRotateState.value) "Linear Order" else "Rotate Order",
+                        text = if (stressRotateState.value) "线性顺序" else "旋转顺序",
                         size = ButtonSize.Compact,
-                        onClick = {
-                            stressRotateState.value = !stressRotateState.value
-                        },
+                        onClick = { stressRotateState.value = !stressRotateState.value },
                     )
                     Button(
-                        text = if (stressEdgeItemState.value) "Remove X" else "Insert X",
+                        text = if (stressEdgeItemState.value) "移除 X" else "插入 X",
                         size = ButtonSize.Compact,
-                        onClick = {
-                            stressEdgeItemState.value = !stressEdgeItemState.value
-                        },
+                        onClick = { stressEdgeItemState.value = !stressEdgeItemState.value },
                     )
                 }
                 Text(
-                    text = "Active ids: ${stressItems.joinToString(separator = " -> ") { it.id }}",
+                    text = "当前 IDs: ${stressItems.joinToString(" -> ") { it.id }}",
                     style = UiTextStyle(fontSizeSp = 13.sp),
                     color = TextDefaults.secondaryColor(),
-                    modifier = Modifier
-                        .margin(bottom = 12.dp),
+                    modifier = Modifier.margin(bottom = 12.dp),
                 )
                 LazyColumn(
                     items = stressItems,
@@ -317,16 +302,14 @@ internal fun UiTreeBuilder.CollectionPage(
                         ) {
                             Text(text = item.title)
                             Text(
-                                text = "Stable key: ${item.id}",
+                                text = "稳定 key: ${item.id}",
                                 style = UiTextStyle(fontSizeSp = 12.sp),
                                 color = TextDefaults.secondaryColor(),
                             )
                             Button(
-                                text = "Item ${item.id} taps: ${itemCountState.value}",
+                                text = "项 ${item.id} 点击: ${itemCountState.value}",
                                 size = ButtonSize.Compact,
-                                onClick = {
-                                    itemCountState.value = itemCountState.value + 1
-                                },
+                                onClick = { itemCountState.value = itemCountState.value + 1 },
                             )
                         }
                     }
@@ -335,41 +318,230 @@ internal fun UiTreeBuilder.CollectionPage(
 
             "interop" -> ScenarioSection(
                 kind = ScenarioKind.Benchmark,
-                title = "AndroidView Interop",
-                subtitle = "Legacy views still plug into the same declarative state flow.",
+                title = "AndroidView 互操作",
+                subtitle = "原生 View 插入声明式状态流。",
             ) {
                 val summaryText = if (alternateLabelsState.value) {
-                    "Legacy TextView mirror: alternate labels enabled"
+                    "原生 TextView: 替代标签已启用"
                 } else {
-                    "Legacy TextView mirror: primary labels enabled"
+                    "原生 TextView: 主要标签已启用"
                 }
                 AndroidView(
                     key = "legacy_summary",
                     modifier = Modifier.padding(vertical = 4.dp),
-                    factory = { context ->
-                        TextView(context)
+                    factory = { context -> TextView(context) },
+                    update = { view -> (view as TextView).text = summaryText },
+                )
+            }
+
+            "lazy_row" -> ScenarioSection(
+                kind = ScenarioKind.Core,
+                title = "LazyRow 横向列表",
+                subtitle = "LazyRow 提供横向滚动的 RecyclerView，支持 key、spacing 和 contentPadding。",
+            ) {
+                Text(
+                    text = "图片卡片横向列表",
+                    style = UiTextStyle(fontSizeSp = 14.sp),
+                    modifier = Modifier.margin(bottom = 8.dp),
+                )
+                LazyRow(
+                    items = horizontalItems,
+                    key = { item -> item.id },
+                    spacing = 12.dp,
+                    contentPadding = 8.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(140.dp)
+                        .margin(bottom = 16.dp),
+                ) { item ->
+                    Card(
+                        variant = CardVariant.Outlined,
+                        modifier = Modifier.size(120.dp, 120.dp),
+                    ) {
+                        Column(
+                            spacing = 4.dp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(60.dp)
+                                    .backgroundColor(Theme.colors.surfaceVariant)
+                                    .cornerRadius(8.dp),
+                            ) {}
+                            Text(
+                                text = item.title,
+                                style = UiTextStyle(fontSizeSp = 12.sp),
+                            )
+                        }
+                    }
+                }
+                Text(
+                    text = "文字标签横向列表",
+                    style = UiTextStyle(fontSizeSp = 14.sp),
+                    modifier = Modifier.margin(bottom = 8.dp),
+                )
+                LazyRow(
+                    items = (1..15).map { "标签 $it" },
+                    key = { it },
+                    spacing = 8.dp,
+                    contentPadding = 4.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                ) { label ->
+                    Surface(
+                        variant = SurfaceVariant.Variant,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                    ) {
+                        Text(text = label)
+                    }
+                }
+            }
+
+            "grid" -> ScenarioSection(
+                kind = ScenarioKind.Core,
+                title = "LazyVerticalGrid 网格",
+                subtitle = "LazyVerticalGrid 基于 GridLayoutManager 实现，支持 spanCount 切换。",
+            ) {
+                Row(
+                    spacing = 8.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .margin(bottom = 12.dp),
+                ) {
+                    Button(
+                        text = "2 列",
+                        variant = if (spanCountState.value == 2) ButtonVariant.Primary else ButtonVariant.Outlined,
+                        onClick = { spanCountState.value = 2 },
+                        modifier = Modifier.weight(1f),
+                    )
+                    Button(
+                        text = "3 列",
+                        variant = if (spanCountState.value == 3) ButtonVariant.Primary else ButtonVariant.Outlined,
+                        onClick = { spanCountState.value = 3 },
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+                LazyVerticalGrid(
+                    items = gridItems,
+                    spanCount = spanCountState.value,
+                    key = { item -> item.id },
+                    horizontalSpacing = 8.dp,
+                    verticalSpacing = 8.dp,
+                    contentPadding = 8.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(400.dp)
+                        .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                        .cornerRadius(SurfaceDefaults.cardCornerRadius()),
+                ) { item ->
+                    Card(
+                        variant = CardVariant.Filled,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Column(
+                            spacing = 4.dp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(60.dp)
+                                    .backgroundColor(Theme.colors.surfaceVariant)
+                                    .cornerRadius(8.dp),
+                            ) {}
+                            Text(
+                                text = item.title,
+                                style = UiTextStyle(fontSizeSp = 13.sp),
+                            )
+                        }
+                    }
+                }
+            }
+
+            "pull_refresh" -> ScenarioSection(
+                kind = ScenarioKind.Core,
+                title = "PullToRefresh 下拉刷新",
+                subtitle = "PullToRefresh 包裹 ScrollableColumn，支持下拉触发刷新回调。",
+            ) {
+                Text(
+                    text = "刷新次数: ${refreshCountState.value}",
+                    style = UiTextStyle(fontSizeSp = 13.sp),
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier.margin(bottom = 8.dp),
+                )
+                Button(
+                    text = if (refreshingState.value) "正在刷新…" else "模拟刷新",
+                    onClick = {
+                        refreshingState.value = true
+                        refreshCountState.value += 1
                     },
-                    update = { view ->
-                        (view as TextView).text = summaryText
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .margin(bottom = 8.dp),
+                )
+                Button(
+                    text = "停止刷新",
+                    variant = ButtonVariant.Outlined,
+                    onClick = { refreshingState.value = false },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .margin(bottom = 12.dp),
+                )
+                PullToRefresh(
+                    isRefreshing = refreshingState.value,
+                    onRefresh = {
+                        refreshingState.value = true
+                        refreshCountState.value += 1
                     },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(300.dp),
+                ) {
+                    ScrollableColumn(
+                        spacing = 8.dp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                    ) {
+                        pullItems.forEach { item ->
+                            Surface(
+                                variant = SurfaceVariant.Default,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(12.dp),
+                            ) {
+                                Text(text = item.title)
+                            }
+                        }
+                    }
+                }
+                Text(
+                    text = "向下拉动上方区域触发刷新，或点击模拟刷新按钮。",
+                    style = UiTextStyle(fontSizeSp = 13.sp),
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier.margin(top = 8.dp),
                 )
             }
 
             else -> VerificationNotesSection(
-                what = "Collections should reveal list diff bugs, state leakage between items, and local propagation problems in nested sessions.",
+                what = "集合组件应验证键控复用、LazyRow/LazyVerticalGrid 的渲染、PullToRefresh 的刷新流程。",
                 howToVerify = listOf(
-                    "对单个 item 连续点击计数，再切换 A-B-C / C-B-A 顺序，确认同 key 的计数被保留。",
-                    "切换 Alternate labels，确认标题变化但 item 本地状态不丢。",
-                    "在 Stress 页先点某个 item，再切 Rotate Order / Insert X，确认同 id 的计数继续保留。",
-                    "观察 AndroidView interop 区域，确认它能跟随列表外部状态同步更新。",
+                    "对单个 item 连续点击计数，再切换顺序，确认同 key 的计数被保留。",
+                    "横向滑动 LazyRow，确认滚动流畅，卡片不重叠。",
+                    "切换网格列数（2列/3列），确认布局即时重排。",
+                    "下拉 PullToRefresh 区域，确认刷新指示器出现。",
+                    "点击停止刷新，确认指示器消失。",
                 ),
                 expected = listOf(
-                    "keyed reorder 只移动节点，不重建对应 item session。",
-                    "lazy item remember 状态不会串位。",
-                    "列表与原生 View 互操作不会丢 local 上下文。",
-                ),
-                relatedGaps = listOf(
-                    "还没有 LazyRow、LazyGrid、sticky headers 和显式 list state。",
+                    "键控 reorder 只移动节点，不重建 item session。",
+                    "LazyRow 横向滚动和 LazyVerticalGrid 网格布局稳定。",
+                    "PullToRefresh 刷新指示器跟随状态正确显隐。",
                 ),
             )
         }

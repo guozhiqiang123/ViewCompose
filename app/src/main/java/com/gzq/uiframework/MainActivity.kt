@@ -7,6 +7,8 @@ import com.gzq.uiframework.widget.core.UiTreeBuilder
 class MainActivity : DemoRenderActivity() {
     override val showBackButton: Boolean = false
 
+    override val useBottomNav: Boolean = true
+
     override val demoTitle: String = "UIFramework Demo"
 
     override val demoSubtitle: String =
