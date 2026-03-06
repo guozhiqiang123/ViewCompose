@@ -362,6 +362,29 @@ class DemoVisualUiTest {
         }
     }
 
+    @Test
+    fun statePatchStress_verticalPagerContentUpdatesAcrossAdvances() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            StateActivity::class.java,
+        ).putExtra(EXTRA_STATE_PAGE_INDEX, 2)
+        launchDemoActivity<StateActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                activity.clickByTestTag(DemoTestTags.STATE_PATCH_ADVANCE)
+                activity.clickByTestTag(DemoTestTags.STATE_PATCH_ADVANCE)
+            }
+            waitForUiIdle()
+            captureDeviceScreenshot("state-patch-vertical-pager-step2-light")
+            scenario.onActivity { activity ->
+                val summary = activity.requireTextViewByTestTag(DemoTestTags.STATE_VERTICAL_PAGER_SUMMARY)
+                assertViewFullyVisible(summary)
+                assertTextNotEllipsized(summary)
+                assertTrue(summary.text.toString().contains("2"))
+            }
+        }
+    }
+
     private fun extractCount(text: String): Int {
         return "(\\d+)".toRegex().find(text)?.value?.toIntOrNull() ?: 0
     }

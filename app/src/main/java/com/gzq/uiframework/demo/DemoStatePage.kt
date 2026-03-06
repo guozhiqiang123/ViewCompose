@@ -5,6 +5,7 @@ import com.gzq.uiframework.renderer.modifier.Visibility
 import com.gzq.uiframework.renderer.modifier.backgroundColor
 import com.gzq.uiframework.renderer.modifier.fillMaxSize
 import com.gzq.uiframework.renderer.modifier.fillMaxWidth
+import com.gzq.uiframework.renderer.modifier.height
 import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.renderer.modifier.testTag
@@ -30,6 +31,7 @@ import com.gzq.uiframework.widget.core.TextField
 import com.gzq.uiframework.widget.core.TextDefaults
 import com.gzq.uiframework.widget.core.UiTextStyle
 import com.gzq.uiframework.widget.core.UiTreeBuilder
+import com.gzq.uiframework.widget.core.VerticalPager
 import com.gzq.uiframework.widget.core.dp
 import com.gzq.uiframework.widget.core.key
 import com.gzq.uiframework.widget.core.produceState
@@ -49,6 +51,7 @@ internal fun UiTreeBuilder.StatePage(
     val patchSegmentIndexState = remember { mutableStateOf(0) }
     val patchTabIndexState = remember { mutableStateOf(0) }
     val stableTabIndexState = remember { mutableStateOf(0) }
+    val stableVerticalPagerIndexState = remember { mutableStateOf(0) }
     val summaryState = remember {
         derivedStateOf {
             val value = clickCountState.value
@@ -430,6 +433,53 @@ internal fun UiTreeBuilder.StatePage(
                                     color = TextDefaults.secondaryColor(),
                                 )
                             }
+                        }
+                    }
+                }
+                Text(
+                    text = "VerticalPager 在稳定 token 下也应在 patch 推进时刷新页面闭包内容。",
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier
+                        .padding(top = 12.dp, bottom = 4.dp),
+                )
+                VerticalPager(
+                    currentPage = stableVerticalPagerIndexState.value,
+                    onPageChanged = { stableVerticalPagerIndexState.value = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(180.dp),
+                ) {
+                    Page(key = "vertical-summary", contentToken = "vertical-summary") {
+                        Column(
+                            spacing = 8.dp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                                .padding(12.dp),
+                        ) {
+                            Text(
+                                text = "Vertical 摘要 $step",
+                                modifier = Modifier.testTag(DemoTestTags.STATE_VERTICAL_PAGER_SUMMARY),
+                            )
+                            Text(
+                                text = "用于验证 VerticalPager 在无结构变化时也会刷新可见页面内容。",
+                                color = TextDefaults.secondaryColor(),
+                            )
+                        }
+                    }
+                    Page(key = "vertical-details", contentToken = "vertical-details") {
+                        Column(
+                            spacing = 8.dp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                                .padding(12.dp),
+                        ) {
+                            Text(text = "Vertical 详情 $step")
+                            Text(
+                                text = "切换到第二页后继续推进 patch，页面文案也应与外部状态同步。",
+                                color = TextDefaults.secondaryColor(),
+                            )
                         }
                     }
                 }
