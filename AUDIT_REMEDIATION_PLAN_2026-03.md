@@ -78,7 +78,7 @@
 
 ### W3 - 验证资产回填（P1）
 
-- [ ] 为审计提及组件补最小单测闭环（Chip/SearchBar/NavigationBar/Scaffold/LazyRow/FlowRow/Scrollable）
+- [x] 为审计提及组件补最小单测闭环（Chip/SearchBar/NavigationBar/Scaffold/LazyRow/FlowRow/Scrollable）
 - [ ] 为关键组件族补至少 1 条 instrumentation smoke 回归
 - [ ] 更新 `ROADMAP` 的对应状态
 
@@ -139,4 +139,6 @@
 12. 已跑通 `:app:connectedDebugAndroidTest`（15/15）。
 13. 已修复 `IconButtonTest` 默认变体断言漂移，`qaQuick` 通过。
 14. 已跑通 `qaFull`（含 connected UI 测试）。
-15. 下一步：进入 W3（验证资产回填）。
+15. W3 进展：已新增 `AdditionalWidgetCoverageTest`，补齐 Chip/SearchBar/NavigationBar/Scaffold/LazyRow/FlowRow/Scrollable 最小单测闭环。
+16. `:ui-widget-core:testDebugUnitTest` 已通过。
+17. 下一步：补关键组件族 instrumentation smoke，并更新 `ROADMAP` 对应状态。
