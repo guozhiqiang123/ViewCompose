@@ -144,6 +144,10 @@ class DemoVisualUiTest {
                 activity.clickByTestTag(DemoTestTags.FEEDBACK_SHOW_BOTTOM_SHEET)
             }
             waitForUiIdle()
+            waitForTestTagVisible(
+                scenario = scenario,
+                tag = DemoTestTags.FEEDBACK_BOTTOM_SHEET_TITLE,
+            )
             captureDeviceScreenshot("feedback-bottom-sheet-light")
             scenario.onActivity { activity ->
                 val title = activity.requireTextViewByTestTag(DemoTestTags.FEEDBACK_BOTTOM_SHEET_TITLE)
@@ -367,5 +371,29 @@ class DemoVisualUiTest {
 
     private fun extractCount(text: String): Int {
         return "(\\d+)".toRegex().find(text)?.value?.toIntOrNull() ?: 0
+    }
+
+    private fun <A : android.app.Activity> waitForTestTagVisible(
+        scenario: androidx.test.core.app.ActivityScenario<A>,
+        tag: String,
+        timeoutMs: Long = 3_000L,
+        pollIntervalMs: Long = 50L,
+    ) {
+        val deadline = System.currentTimeMillis() + timeoutMs
+        while (System.currentTimeMillis() < deadline) {
+            var isVisible = false
+            scenario.onActivity { activity ->
+                val root = activity.findViewById<android.view.ViewGroup>(android.R.id.content)
+                val view = findViewByTestTag(root, tag)
+                isVisible = view?.isShown == true
+            }
+            if (isVisible) {
+                return
+            }
+            Thread.sleep(pollIntervalMs)
+        }
+        scenario.onActivity { activity ->
+            activity.requireViewByTestTagVisible(tag)
+        }
     }
 }
