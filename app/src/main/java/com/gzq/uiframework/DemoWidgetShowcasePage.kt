@@ -1,14 +1,14 @@
 package com.gzq.uiframework
 
-import android.graphics.Color
 import com.gzq.uiframework.renderer.modifier.Modifier
-import com.gzq.uiframework.renderer.modifier.backgroundColor
 import com.gzq.uiframework.renderer.modifier.fillMaxSize
 import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.Button
 import com.gzq.uiframework.widget.core.ButtonVariant
+import com.gzq.uiframework.widget.core.Card
+import com.gzq.uiframework.widget.core.CardVariant
 import com.gzq.uiframework.widget.core.Divider
 import com.gzq.uiframework.widget.core.LazyColumn
 import com.gzq.uiframework.widget.core.ListItem
@@ -135,12 +135,13 @@ internal fun UiTreeBuilder.WidgetShowcasePage() {
             item.startsWith("widget:") -> {
                 val key = item.removePrefix("widget:")
                 val widget = WIDGET_MAP[key] ?: return@LazyColumn
-                ListItem(
-                    headlineText = widget.name,
-                    supportingText = widget.description,
-                    onClick = { selectedWidget.value = widget.key },
-                    modifier = Modifier.margin(bottom = 2.dp).backgroundColor(Color.RED),
-                )
+                Card(variant = CardVariant.Outlined, modifier = Modifier.margin(bottom = 4.dp)) {
+                    ListItem(
+                        headlineText = widget.name,
+                        supportingText = widget.description,
+                        onClick = { selectedWidget.value = widget.key },
+                    )
+                }
             }
         }
     }
