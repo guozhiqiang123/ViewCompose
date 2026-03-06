@@ -35,6 +35,15 @@
 2. 已实现章节具备统一 scenario 模板
 3. instrumentation 已覆盖关键回归路径（含延迟 session 容器专项）
 
+## 2.3 里程碑进度快照（2026-03-06）
+
+| Milestone | 状态 | 说明 |
+| --- | --- | --- |
+| A：Overlay 稳定性收口 | In Progress | Dialog/Popup/Snackbar/Toast 主链路已打通，仍需补齐定位与队列策略收口 |
+| B：Collections 与容器扩展 | Next | `LazyRow/LazyGrid` 与容器专项回归仍待推进 |
+| C：Input 与表单态增强 | Next | focus/IME/表单组合与文案裁剪专项待系统化补齐 |
+| D：Diagnostics + Performance 联动 | In Progress | 已有基线与起步能力，需继续增强可视化与发布态优化 |
+
 ## 3. 统一设计原则
 
 1. 组件参数负责语义，`Modifier` 负责通用修饰，`Theme/Defaults` 负责默认值。
