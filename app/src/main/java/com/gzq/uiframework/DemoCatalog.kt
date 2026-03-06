@@ -21,6 +21,15 @@ internal data class DemoModule(
 
 internal val DEMO_MODULES = listOf(
     DemoModule(
+        key = "widget_showcase",
+        title = "控件展示",
+        subtitle = "所有基础控件的 Props 样式展示，按类别分组，逐项演示每个属性的视觉效果。",
+        status = DemoModuleStatus.Available,
+        manualFocus = "控件 Props 全覆盖、变体对比、启用/禁用态",
+        benchmarkPath = "Catalog -> Open 控件展示 -> 选择控件",
+        activityClass = WidgetShowcaseActivity::class.java,
+    ),
+    DemoModule(
         key = "foundations",
         title = "Foundations",
         subtitle = "Text, surface, theme, media, buttons, and feedback primitives.",

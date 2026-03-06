@@ -17,6 +17,9 @@
             android:shell="true"
             tools:targetApi="29" />
         <activity
+            android:name=".WidgetShowcaseActivity"
+            android:exported="false" />
+        <activity
             android:name=".ActionsActivity"
             android:exported="false" />
         <activity
