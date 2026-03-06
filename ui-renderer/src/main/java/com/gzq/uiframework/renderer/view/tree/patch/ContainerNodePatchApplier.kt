@@ -17,15 +17,17 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeTabPagerLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeVerticalPagerLayout
 import com.gzq.uiframework.renderer.view.tree.BoxNodePatch
+import com.gzq.uiframework.renderer.view.tree.CollectionViewBinder
 import com.gzq.uiframework.renderer.view.tree.ColumnNodePatch
 import com.gzq.uiframework.renderer.view.tree.ContainerViewBinder
 import com.gzq.uiframework.renderer.view.tree.FlowColumnNodePatch
-import com.gzq.uiframework.renderer.view.tree.NavigationBarNodePatch
 import com.gzq.uiframework.renderer.view.tree.FlowRowNodePatch
 import com.gzq.uiframework.renderer.view.tree.HorizontalPagerNodePatch
 import com.gzq.uiframework.renderer.view.tree.LazyColumnNodePatch
 import com.gzq.uiframework.renderer.view.tree.LazyRowNodePatch
 import com.gzq.uiframework.renderer.view.tree.LazyVerticalGridNodePatch
+import com.gzq.uiframework.renderer.view.tree.NavigationBarNodePatch
+import com.gzq.uiframework.renderer.view.tree.PagerViewBinder
 import com.gzq.uiframework.renderer.view.tree.PullToRefreshNodePatch
 import com.gzq.uiframework.renderer.view.tree.RowNodePatch
 import com.gzq.uiframework.renderer.view.tree.ScrollableColumnNodePatch
@@ -141,9 +143,9 @@ internal object ContainerNodePatchApplier {
         view: DeclarativeTabPagerLayout,
         patch: TabPagerNodePatch,
     ) {
-        ContainerViewBinder.bindTabPager(
+        PagerViewBinder.bindTabPager(
             view = view,
-            spec = ContainerViewBinder.TabPagerSpec(
+            spec = PagerViewBinder.TabPagerSpec(
                 pages = patch.next.pages,
                 selectedTabIndex = patch.next.selectedTabIndex,
                 onTabSelected = patch.next.onTabSelected,
@@ -164,9 +166,9 @@ internal object ContainerNodePatchApplier {
         view: DeclarativeSegmentedControlLayout,
         patch: SegmentedControlNodePatch,
     ) {
-        ContainerViewBinder.bindSegmentedControl(
+        PagerViewBinder.bindSegmentedControl(
             view = view,
-            spec = ContainerViewBinder.SegmentedControlSpec(
+            spec = PagerViewBinder.SegmentedControlSpec(
                 items = patch.next.items,
                 selectedIndex = patch.next.selectedIndex,
                 onSelectionChange = patch.next.onSelectionChange,
@@ -260,9 +262,9 @@ internal object ContainerNodePatchApplier {
         view: DeclarativeNavigationBarLayout,
         patch: NavigationBarNodePatch,
     ) {
-        ContainerViewBinder.bindNavigationBar(
+        CollectionViewBinder.bindNavigationBar(
             view = view,
-            spec = ContainerViewBinder.NavigationBarSpec(
+            spec = CollectionViewBinder.NavigationBarSpec(
                 items = patch.next.items,
                 selectedIndex = patch.next.selectedIndex,
                 onItemSelected = patch.next.onItemSelected,
@@ -285,9 +287,9 @@ internal object ContainerNodePatchApplier {
         view: DeclarativeHorizontalPagerLayout,
         patch: HorizontalPagerNodePatch,
     ) {
-        ContainerViewBinder.bindHorizontalPager(
+        PagerViewBinder.bindHorizontalPager(
             view = view,
-            spec = ContainerViewBinder.HorizontalPagerSpec(
+            spec = PagerViewBinder.HorizontalPagerSpec(
                 pages = patch.next.pages,
                 currentPage = patch.next.currentPage,
                 onPageChanged = patch.next.onPageChanged,
@@ -302,9 +304,9 @@ internal object ContainerNodePatchApplier {
         view: DeclarativeTabRowLayout,
         patch: TabRowNodePatch,
     ) {
-        ContainerViewBinder.bindTabRow(
+        PagerViewBinder.bindTabRow(
             view = view,
-            spec = ContainerViewBinder.TabRowSpec(
+            spec = PagerViewBinder.TabRowSpec(
                 tabs = patch.next.tabs,
                 selectedIndex = patch.next.selectedIndex,
                 onTabSelected = patch.next.onTabSelected,
@@ -331,9 +333,9 @@ internal object ContainerNodePatchApplier {
         view: DeclarativeVerticalPagerLayout,
         patch: VerticalPagerNodePatch,
     ) {
-        ContainerViewBinder.bindVerticalPager(
+        PagerViewBinder.bindVerticalPager(
             view = view,
-            spec = ContainerViewBinder.VerticalPagerSpec(
+            spec = PagerViewBinder.VerticalPagerSpec(
                 pages = patch.next.pages,
                 currentPage = patch.next.currentPage,
                 onPageChanged = patch.next.onPageChanged,
@@ -348,9 +350,9 @@ internal object ContainerNodePatchApplier {
         view: DeclarativeLazyVerticalGridLayout,
         patch: LazyVerticalGridNodePatch,
     ) {
-        ContainerViewBinder.bindLazyVerticalGrid(
+        CollectionViewBinder.bindLazyVerticalGrid(
             view = view,
-            spec = ContainerViewBinder.LazyVerticalGridSpec(
+            spec = CollectionViewBinder.LazyVerticalGridSpec(
                 spanCount = patch.next.spanCount,
                 contentPadding = patch.next.contentPadding,
                 horizontalSpacing = patch.next.horizontalSpacing,

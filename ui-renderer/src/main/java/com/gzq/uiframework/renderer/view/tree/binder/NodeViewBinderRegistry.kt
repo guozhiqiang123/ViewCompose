@@ -2,8 +2,9 @@ package com.gzq.uiframework.renderer.view.tree
 
 import android.graphics.Color
 import android.view.View
-import androidx.recyclerview.widget.RecyclerView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.gzq.uiframework.renderer.node.NodeType
@@ -17,7 +18,6 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeHorizontalPagerLay
 import com.gzq.uiframework.renderer.view.container.DeclarativeLazyVerticalGridLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeNavigationBarLayout
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLayout
@@ -149,45 +149,45 @@ internal object NodeViewBinderRegistry {
                 update?.invoke(view)
             },
             NodeType.LazyColumn to { view, node ->
-                ContainerViewBinder.bindLazyColumn(
+                CollectionViewBinder.bindLazyColumn(
                     view = view as RecyclerView,
-                    spec = ContainerViewBinder.readLazyColumnSpec(node),
+                    spec = CollectionViewBinder.readLazyColumnSpec(node),
                 )
             },
             NodeType.LazyRow to { view, node ->
-                ContainerViewBinder.bindLazyRow(
+                CollectionViewBinder.bindLazyRow(
                     view = view as RecyclerView,
-                    spec = ContainerViewBinder.readLazyRowSpec(node),
+                    spec = CollectionViewBinder.readLazyRowSpec(node),
                 )
             },
             NodeType.TabPager to { view, node ->
-                ContainerViewBinder.bindTabPager(
+                PagerViewBinder.bindTabPager(
                     view = view as DeclarativeTabPagerLayout,
-                    spec = ContainerViewBinder.readTabPagerSpec(
+                    spec = PagerViewBinder.readTabPagerSpec(
                         node = node,
                         defaultRippleColor = defaultRippleColor,
                     ),
                 )
             },
             NodeType.SegmentedControl to { view, node ->
-                ContainerViewBinder.bindSegmentedControl(
+                PagerViewBinder.bindSegmentedControl(
                     view = view as DeclarativeSegmentedControlLayout,
-                    spec = ContainerViewBinder.readSegmentedControlSpec(
+                    spec = PagerViewBinder.readSegmentedControlSpec(
                         node = node,
                         defaultRippleColor = defaultRippleColor,
                     ),
                 )
             },
             NodeType.ScrollableColumn to { view, node ->
-                ContainerViewBinder.bindScrollableColumn(
+                ScrollableViewBinder.bindScrollableColumn(
                     view = view as DeclarativeScrollableColumnLayout,
-                    spec = ContainerViewBinder.readScrollableColumnSpec(node),
+                    spec = ScrollableViewBinder.readScrollableColumnSpec(node),
                 )
             },
             NodeType.ScrollableRow to { view, node ->
-                ContainerViewBinder.bindScrollableRow(
+                ScrollableViewBinder.bindScrollableRow(
                     view = view as DeclarativeScrollableRowLayout,
-                    spec = ContainerViewBinder.readScrollableRowSpec(node),
+                    spec = ScrollableViewBinder.readScrollableRowSpec(node),
                 )
             },
             NodeType.FlowRow to { view, node ->
@@ -203,39 +203,39 @@ internal object NodeViewBinderRegistry {
                 )
             },
             NodeType.NavigationBar to { view, node ->
-                ContainerViewBinder.bindNavigationBar(
+                CollectionViewBinder.bindNavigationBar(
                     view = view as DeclarativeNavigationBarLayout,
-                    spec = ContainerViewBinder.readNavigationBarSpec(node),
+                    spec = CollectionViewBinder.readNavigationBarSpec(node),
                 )
             },
             NodeType.HorizontalPager to { view, node ->
-                ContainerViewBinder.bindHorizontalPager(
+                PagerViewBinder.bindHorizontalPager(
                     view = view as DeclarativeHorizontalPagerLayout,
-                    spec = ContainerViewBinder.readHorizontalPagerSpec(node),
+                    spec = PagerViewBinder.readHorizontalPagerSpec(node),
                 )
             },
             NodeType.TabRow to { view, node ->
-                ContainerViewBinder.bindTabRow(
+                PagerViewBinder.bindTabRow(
                     view = view as DeclarativeTabRowLayout,
-                    spec = ContainerViewBinder.readTabRowSpec(node),
+                    spec = PagerViewBinder.readTabRowSpec(node),
                 )
             },
             NodeType.VerticalPager to { view, node ->
-                ContainerViewBinder.bindVerticalPager(
+                PagerViewBinder.bindVerticalPager(
                     view = view as DeclarativeVerticalPagerLayout,
-                    spec = ContainerViewBinder.readVerticalPagerSpec(node),
+                    spec = PagerViewBinder.readVerticalPagerSpec(node),
                 )
             },
             NodeType.LazyVerticalGrid to { view, node ->
-                ContainerViewBinder.bindLazyVerticalGrid(
+                CollectionViewBinder.bindLazyVerticalGrid(
                     view = view as DeclarativeLazyVerticalGridLayout,
-                    spec = ContainerViewBinder.readLazyVerticalGridSpec(node),
+                    spec = CollectionViewBinder.readLazyVerticalGridSpec(node),
                 )
             },
             NodeType.PullToRefresh to { view, node ->
-                ContainerViewBinder.bindPullToRefresh(
+                ScrollableViewBinder.bindPullToRefresh(
                     view = view as SwipeRefreshLayout,
-                    spec = ContainerViewBinder.readPullToRefreshSpec(node),
+                    spec = ScrollableViewBinder.readPullToRefreshSpec(node),
                 )
             },
         )

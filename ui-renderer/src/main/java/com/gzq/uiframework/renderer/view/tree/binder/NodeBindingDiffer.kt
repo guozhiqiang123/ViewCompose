@@ -14,6 +14,7 @@ import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyVerticalGridNodeProps
 import com.gzq.uiframework.renderer.node.spec.NavigationBarNodeProps
+import com.gzq.uiframework.renderer.node.spec.NodeSpec
 import com.gzq.uiframework.renderer.node.spec.ProgressIndicatorNodeProps
 import com.gzq.uiframework.renderer.node.spec.PullToRefreshNodeProps
 import com.gzq.uiframework.renderer.node.spec.RowNodeProps
@@ -23,12 +24,44 @@ import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
 import com.gzq.uiframework.renderer.node.spec.SliderNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabPagerNodeProps
 import com.gzq.uiframework.renderer.node.spec.TabRowNodeProps
-import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
+import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 import com.gzq.uiframework.renderer.node.spec.ToggleNodeProps
 import com.gzq.uiframework.renderer.node.spec.VerticalPagerNodeProps
+import kotlin.reflect.KClass
+
+private typealias PatchFactory = (previous: NodeSpec, next: NodeSpec) -> NodeViewPatch
 
 internal object NodeBindingDiffer {
+    private val patchFactories: Map<KClass<out NodeSpec>, PatchFactory> = mapOf(
+        ButtonNodeProps::class to { p, n -> ButtonNodePatch(p as ButtonNodeProps, n as ButtonNodeProps) },
+        TextNodeProps::class to { p, n -> TextNodePatch(p as TextNodeProps, n as TextNodeProps) },
+        TextFieldNodeProps::class to { p, n -> TextFieldNodePatch(p as TextFieldNodeProps, n as TextFieldNodeProps) },
+        TabPagerNodeProps::class to { p, n -> TabPagerNodePatch(p as TabPagerNodeProps, n as TabPagerNodeProps) },
+        SegmentedControlNodeProps::class to { p, n -> SegmentedControlNodePatch(p as SegmentedControlNodeProps, n as SegmentedControlNodeProps) },
+        LazyColumnNodeProps::class to { p, n -> LazyColumnNodePatch(p as LazyColumnNodeProps, n as LazyColumnNodeProps) },
+        LazyRowNodeProps::class to { p, n -> LazyRowNodePatch(p as LazyRowNodeProps, n as LazyRowNodeProps) },
+        ToggleNodeProps::class to { p, n -> ToggleNodePatch(p as ToggleNodeProps, n as ToggleNodeProps) },
+        SliderNodeProps::class to { p, n -> SliderNodePatch(p as SliderNodeProps, n as SliderNodeProps) },
+        ProgressIndicatorNodeProps::class to { p, n -> ProgressIndicatorNodePatch(p as ProgressIndicatorNodeProps, n as ProgressIndicatorNodeProps) },
+        RowNodeProps::class to { p, n -> RowNodePatch(p as RowNodeProps, n as RowNodeProps) },
+        ColumnNodeProps::class to { p, n -> ColumnNodePatch(p as ColumnNodeProps, n as ColumnNodeProps) },
+        BoxNodeProps::class to { p, n -> BoxNodePatch(p as BoxNodeProps, n as BoxNodeProps) },
+        ImageNodeProps::class to { p, n -> ImageNodePatch(p as ImageNodeProps, n as ImageNodeProps) },
+        IconButtonNodeProps::class to { p, n -> IconButtonNodePatch(p as IconButtonNodeProps, n as IconButtonNodeProps) },
+        DividerNodeProps::class to { p, n -> DividerNodePatch(p as DividerNodeProps, n as DividerNodeProps) },
+        ScrollableColumnNodeProps::class to { p, n -> ScrollableColumnNodePatch(p as ScrollableColumnNodeProps, n as ScrollableColumnNodeProps) },
+        ScrollableRowNodeProps::class to { p, n -> ScrollableRowNodePatch(p as ScrollableRowNodeProps, n as ScrollableRowNodeProps) },
+        FlowRowNodeProps::class to { p, n -> FlowRowNodePatch(p as FlowRowNodeProps, n as FlowRowNodeProps) },
+        FlowColumnNodeProps::class to { p, n -> FlowColumnNodePatch(p as FlowColumnNodeProps, n as FlowColumnNodeProps) },
+        NavigationBarNodeProps::class to { p, n -> NavigationBarNodePatch(p as NavigationBarNodeProps, n as NavigationBarNodeProps) },
+        HorizontalPagerNodeProps::class to { p, n -> HorizontalPagerNodePatch(p as HorizontalPagerNodeProps, n as HorizontalPagerNodeProps) },
+        TabRowNodeProps::class to { p, n -> TabRowNodePatch(p as TabRowNodeProps, n as TabRowNodeProps) },
+        VerticalPagerNodeProps::class to { p, n -> VerticalPagerNodePatch(p as VerticalPagerNodeProps, n as VerticalPagerNodeProps) },
+        LazyVerticalGridNodeProps::class to { p, n -> LazyVerticalGridNodePatch(p as LazyVerticalGridNodeProps, n as LazyVerticalGridNodeProps) },
+        PullToRefreshNodeProps::class to { p, n -> PullToRefreshNodePatch(p as PullToRefreshNodeProps, n as PullToRefreshNodeProps) },
+    )
+
     fun plan(
         previous: VNode,
         next: VNode,
@@ -36,279 +69,31 @@ internal object NodeBindingDiffer {
         if (previous.type != next.type) {
             return NodeBindingPlan.Rebind
         }
-        if (previous.modifier != next.modifier) {
-            return NodeBindingPlan.Rebind
-        }
+        val modifierChanged = previous.modifier != next.modifier
         if (previous.spec != null || next.spec != null) {
             if (previous.spec == next.spec) {
-                if (previous.props != next.props) {
-                    return NodeBindingPlan.Rebind
+                return if (modifierChanged) {
+                    NodeBindingPlan.Rebind
+                } else if (previous.props != next.props) {
+                    NodeBindingPlan.Rebind
+                } else {
+                    NodeBindingPlan.Skip
                 }
-                return NodeBindingPlan.Skip
             }
-            val previousButton = previous.spec as? ButtonNodeProps
-            val nextButton = next.spec as? ButtonNodeProps
-            if (previousButton != null && nextButton != null) {
-                return NodeBindingPlan.Patch(
-                    patch = ButtonNodePatch(
-                        previous = previousButton,
-                        next = nextButton,
-                    ),
-                )
-            }
-            val previousText = previous.spec as? TextNodeProps
-            val nextText = next.spec as? TextNodeProps
-            if (previousText != null && nextText != null) {
-                return NodeBindingPlan.Patch(
-                    patch = TextNodePatch(
-                        previous = previousText,
-                        next = nextText,
-                    ),
-                )
-            }
-            val previousTextField = previous.spec as? TextFieldNodeProps
-            val nextTextField = next.spec as? TextFieldNodeProps
-            if (previousTextField != null && nextTextField != null) {
-                return NodeBindingPlan.Patch(
-                    patch = TextFieldNodePatch(
-                        previous = previousTextField,
-                        next = nextTextField,
-                    ),
-                )
-            }
-            val previousTabPager = previous.spec as? TabPagerNodeProps
-            val nextTabPager = next.spec as? TabPagerNodeProps
-            if (previousTabPager != null && nextTabPager != null) {
-                return NodeBindingPlan.Patch(
-                    patch = TabPagerNodePatch(
-                        previous = previousTabPager,
-                        next = nextTabPager,
-                    ),
-                )
-            }
-            val previousSegmentedControl = previous.spec as? SegmentedControlNodeProps
-            val nextSegmentedControl = next.spec as? SegmentedControlNodeProps
-            if (previousSegmentedControl != null && nextSegmentedControl != null) {
-                return NodeBindingPlan.Patch(
-                    patch = SegmentedControlNodePatch(
-                        previous = previousSegmentedControl,
-                        next = nextSegmentedControl,
-                    ),
-                )
-            }
-            val previousLazyColumn = previous.spec as? LazyColumnNodeProps
-            val nextLazyColumn = next.spec as? LazyColumnNodeProps
-            if (previousLazyColumn != null && nextLazyColumn != null) {
-                return NodeBindingPlan.Patch(
-                    patch = LazyColumnNodePatch(
-                        previous = previousLazyColumn,
-                        next = nextLazyColumn,
-                    ),
-                )
-            }
-            val previousLazyRow = previous.spec as? LazyRowNodeProps
-            val nextLazyRow = next.spec as? LazyRowNodeProps
-            if (previousLazyRow != null && nextLazyRow != null) {
-                return NodeBindingPlan.Patch(
-                    patch = LazyRowNodePatch(
-                        previous = previousLazyRow,
-                        next = nextLazyRow,
-                    ),
-                )
-            }
-            val previousToggle = previous.spec as? ToggleNodeProps
-            val nextToggle = next.spec as? ToggleNodeProps
-            if (previousToggle != null && nextToggle != null) {
-                return NodeBindingPlan.Patch(
-                    patch = ToggleNodePatch(
-                        previous = previousToggle,
-                        next = nextToggle,
-                    ),
-                )
-            }
-            val previousSlider = previous.spec as? SliderNodeProps
-            val nextSlider = next.spec as? SliderNodeProps
-            if (previousSlider != null && nextSlider != null) {
-                return NodeBindingPlan.Patch(
-                    patch = SliderNodePatch(
-                        previous = previousSlider,
-                        next = nextSlider,
-                    ),
-                )
-            }
-            val previousProgress = previous.spec as? ProgressIndicatorNodeProps
-            val nextProgress = next.spec as? ProgressIndicatorNodeProps
-            if (previousProgress != null && nextProgress != null) {
-                return NodeBindingPlan.Patch(
-                    patch = ProgressIndicatorNodePatch(
-                        previous = previousProgress,
-                        next = nextProgress,
-                    ),
-                )
-            }
-            val previousRow = previous.spec as? RowNodeProps
-            val nextRow = next.spec as? RowNodeProps
-            if (previousRow != null && nextRow != null) {
-                return NodeBindingPlan.Patch(
-                    patch = RowNodePatch(
-                        previous = previousRow,
-                        next = nextRow,
-                    ),
-                )
-            }
-            val previousColumn = previous.spec as? ColumnNodeProps
-            val nextColumn = next.spec as? ColumnNodeProps
-            if (previousColumn != null && nextColumn != null) {
-                return NodeBindingPlan.Patch(
-                    patch = ColumnNodePatch(
-                        previous = previousColumn,
-                        next = nextColumn,
-                    ),
-                )
-            }
-            val previousBox = previous.spec as? BoxNodeProps
-            val nextBox = next.spec as? BoxNodeProps
-            if (previousBox != null && nextBox != null) {
-                return NodeBindingPlan.Patch(
-                    patch = BoxNodePatch(
-                        previous = previousBox,
-                        next = nextBox,
-                    ),
-                )
-            }
-            val previousImage = previous.spec as? ImageNodeProps
-            val nextImage = next.spec as? ImageNodeProps
-            if (previousImage != null && nextImage != null) {
-                return NodeBindingPlan.Patch(
-                    patch = ImageNodePatch(
-                        previous = previousImage,
-                        next = nextImage,
-                    ),
-                )
-            }
-            val previousIconButton = previous.spec as? IconButtonNodeProps
-            val nextIconButton = next.spec as? IconButtonNodeProps
-            if (previousIconButton != null && nextIconButton != null) {
-                return NodeBindingPlan.Patch(
-                    patch = IconButtonNodePatch(
-                        previous = previousIconButton,
-                        next = nextIconButton,
-                    ),
-                )
-            }
-            val previousDivider = previous.spec as? DividerNodeProps
-            val nextDivider = next.spec as? DividerNodeProps
-            if (previousDivider != null && nextDivider != null) {
-                return NodeBindingPlan.Patch(
-                    patch = DividerNodePatch(
-                        previous = previousDivider,
-                        next = nextDivider,
-                    ),
-                )
-            }
-            val previousScrollableColumn = previous.spec as? ScrollableColumnNodeProps
-            val nextScrollableColumn = next.spec as? ScrollableColumnNodeProps
-            if (previousScrollableColumn != null && nextScrollableColumn != null) {
-                return NodeBindingPlan.Patch(
-                    patch = ScrollableColumnNodePatch(
-                        previous = previousScrollableColumn,
-                        next = nextScrollableColumn,
-                    ),
-                )
-            }
-            val previousScrollableRow = previous.spec as? ScrollableRowNodeProps
-            val nextScrollableRow = next.spec as? ScrollableRowNodeProps
-            if (previousScrollableRow != null && nextScrollableRow != null) {
-                return NodeBindingPlan.Patch(
-                    patch = ScrollableRowNodePatch(
-                        previous = previousScrollableRow,
-                        next = nextScrollableRow,
-                    ),
-                )
-            }
-            val previousFlowRow = previous.spec as? FlowRowNodeProps
-            val nextFlowRow = next.spec as? FlowRowNodeProps
-            if (previousFlowRow != null && nextFlowRow != null) {
-                return NodeBindingPlan.Patch(
-                    patch = FlowRowNodePatch(
-                        previous = previousFlowRow,
-                        next = nextFlowRow,
-                    ),
-                )
-            }
-            val previousFlowColumn = previous.spec as? FlowColumnNodeProps
-            val nextFlowColumn = next.spec as? FlowColumnNodeProps
-            if (previousFlowColumn != null && nextFlowColumn != null) {
-                return NodeBindingPlan.Patch(
-                    patch = FlowColumnNodePatch(
-                        previous = previousFlowColumn,
-                        next = nextFlowColumn,
-                    ),
-                )
-            }
-            val previousNavigationBar = previous.spec as? NavigationBarNodeProps
-            val nextNavigationBar = next.spec as? NavigationBarNodeProps
-            if (previousNavigationBar != null && nextNavigationBar != null) {
-                return NodeBindingPlan.Patch(
-                    patch = NavigationBarNodePatch(
-                        previous = previousNavigationBar,
-                        next = nextNavigationBar,
-                    ),
-                )
-            }
-            val previousHorizontalPager = previous.spec as? HorizontalPagerNodeProps
-            val nextHorizontalPager = next.spec as? HorizontalPagerNodeProps
-            if (previousHorizontalPager != null && nextHorizontalPager != null) {
-                return NodeBindingPlan.Patch(
-                    patch = HorizontalPagerNodePatch(
-                        previous = previousHorizontalPager,
-                        next = nextHorizontalPager,
-                    ),
-                )
-            }
-            val previousTabRow = previous.spec as? TabRowNodeProps
-            val nextTabRow = next.spec as? TabRowNodeProps
-            if (previousTabRow != null && nextTabRow != null) {
-                return NodeBindingPlan.Patch(
-                    patch = TabRowNodePatch(
-                        previous = previousTabRow,
-                        next = nextTabRow,
-                    ),
-                )
-            }
-            val previousVerticalPager = previous.spec as? VerticalPagerNodeProps
-            val nextVerticalPager = next.spec as? VerticalPagerNodeProps
-            if (previousVerticalPager != null && nextVerticalPager != null) {
-                return NodeBindingPlan.Patch(
-                    patch = VerticalPagerNodePatch(
-                        previous = previousVerticalPager,
-                        next = nextVerticalPager,
-                    ),
-                )
-            }
-            val previousLazyVerticalGrid = previous.spec as? LazyVerticalGridNodeProps
-            val nextLazyVerticalGrid = next.spec as? LazyVerticalGridNodeProps
-            if (previousLazyVerticalGrid != null && nextLazyVerticalGrid != null) {
-                return NodeBindingPlan.Patch(
-                    patch = LazyVerticalGridNodePatch(
-                        previous = previousLazyVerticalGrid,
-                        next = nextLazyVerticalGrid,
-                    ),
-                )
-            }
-            val previousPullToRefresh = previous.spec as? PullToRefreshNodeProps
-            val nextPullToRefresh = next.spec as? PullToRefreshNodeProps
-            if (previousPullToRefresh != null && nextPullToRefresh != null) {
-                return NodeBindingPlan.Patch(
-                    patch = PullToRefreshNodePatch(
-                        previous = previousPullToRefresh,
-                        next = nextPullToRefresh,
-                    ),
-                )
+            val prevSpec = previous.spec
+            val nextSpec = next.spec
+            if (prevSpec != null && nextSpec != null) {
+                val factory = patchFactories[prevSpec::class]
+                if (factory != null) {
+                    return NodeBindingPlan.Patch(
+                        patch = factory(prevSpec, nextSpec),
+                        modifierChanged = modifierChanged,
+                    )
+                }
             }
             return NodeBindingPlan.Rebind
         }
-        if (previous.props != next.props) {
+        if (previous.props != next.props || modifierChanged) {
             return NodeBindingPlan.Rebind
         }
         return NodeBindingPlan.Skip

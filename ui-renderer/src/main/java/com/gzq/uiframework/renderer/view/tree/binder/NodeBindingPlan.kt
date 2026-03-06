@@ -34,6 +34,7 @@ internal sealed interface NodeBindingPlan {
 
     data class Patch(
         val patch: NodeViewPatch,
+        val modifierChanged: Boolean = false,
     ) : NodeBindingPlan
 }
 

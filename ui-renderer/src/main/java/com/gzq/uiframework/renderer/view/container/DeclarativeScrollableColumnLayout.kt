@@ -8,26 +8,20 @@ import android.widget.ScrollView
 
 internal class DeclarativeScrollableColumnLayout(
     context: Context,
-) : ViewGroup(context) {
-    private val scrollView = ScrollView(context)
+) : ScrollView(context) {
     internal val innerLayout = DeclarativeLinearLayout(context).apply {
         orientation = LinearLayout.VERTICAL
     }
 
     init {
-        scrollView.addView(
+        super.addView(
             innerLayout,
             LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT),
         )
-        scrollView.isFillViewport = true
-        super.addView(
-            scrollView,
-            -1,
-            LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT),
-        )
+        isFillViewport = true
     }
 
-    override fun addView(child: View?, index: Int, params: LayoutParams?) {
+    override fun addView(child: View?, index: Int, params: ViewGroup.LayoutParams?) {
         innerLayout.addView(child, index, params)
     }
 
@@ -48,13 +42,4 @@ internal class DeclarativeScrollableColumnLayout(
     override fun getChildAt(index: Int): View? = innerLayout.getChildAt(index)
 
     override fun indexOfChild(child: View?): Int = innerLayout.indexOfChild(child)
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        scrollView.measure(widthMeasureSpec, heightMeasureSpec)
-        setMeasuredDimension(scrollView.measuredWidth, scrollView.measuredHeight)
-    }
-
-    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        scrollView.layout(0, 0, r - l, b - t)
-    }
 }

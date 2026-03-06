@@ -10,14 +10,9 @@ import com.gzq.uiframework.renderer.layout.HorizontalAlignment
 import com.gzq.uiframework.renderer.layout.LayoutParamDefaultsResolver
 import com.gzq.uiframework.renderer.layout.ModifierParentDataValidator
 import com.gzq.uiframework.renderer.layout.VerticalAlignment
-import com.gzq.uiframework.renderer.modifier.BoxAlignModifierElement
-import com.gzq.uiframework.renderer.modifier.HeightModifierElement
-import com.gzq.uiframework.renderer.modifier.HorizontalAlignModifierElement
 import com.gzq.uiframework.renderer.modifier.MarginModifierElement
-import com.gzq.uiframework.renderer.modifier.SizeModifierElement
-import com.gzq.uiframework.renderer.modifier.VerticalAlignModifierElement
-import com.gzq.uiframework.renderer.modifier.WeightModifierElement
-import com.gzq.uiframework.renderer.modifier.WidthModifierElement
+import com.gzq.uiframework.renderer.modifier.ResolvedModifiers
+import com.gzq.uiframework.renderer.modifier.resolve
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
@@ -29,6 +24,7 @@ internal object ViewLayoutParamsFactory {
         node: VNode,
         warningTag: String,
         emittedModifierWarnings: MutableSet<String>,
+        resolved: ResolvedModifiers = node.modifier.resolve(),
     ): ViewGroup.LayoutParams {
         emitModifierWarnings(
             parent = parent,
@@ -36,16 +32,14 @@ internal object ViewLayoutParamsFactory {
             warningTag = warningTag,
             emittedModifierWarnings = emittedModifierWarnings,
         )
-        val boxAlign = node.modifier.elements.lastOrNull { it is BoxAlignModifierElement } as? BoxAlignModifierElement
-        val margin = node.modifier.elements.lastOrNull { it is MarginModifierElement } as? MarginModifierElement
-        val size = node.modifier.elements.lastOrNull { it is SizeModifierElement } as? SizeModifierElement
-        val widthModifier = node.modifier.elements.lastOrNull { it is WidthModifierElement } as? WidthModifierElement
-        val heightModifier = node.modifier.elements.lastOrNull { it is HeightModifierElement } as? HeightModifierElement
-        val weight = node.modifier.elements.lastOrNull { it is WeightModifierElement } as? WeightModifierElement
-        val horizontalAlign = node.modifier.elements
-            .lastOrNull { it is HorizontalAlignModifierElement } as? HorizontalAlignModifierElement
-        val verticalAlign = node.modifier.elements
-            .lastOrNull { it is VerticalAlignModifierElement } as? VerticalAlignModifierElement
+        val boxAlign = resolved.boxAlign
+        val margin = resolved.margin
+        val size = resolved.size
+        val widthModifier = resolved.width
+        val heightModifier = resolved.height
+        val weight = resolved.weight
+        val horizontalAlign = resolved.horizontalAlign
+        val verticalAlign = resolved.verticalAlign
         val defaultWidth = if (node.type == NodeType.Divider) {
             defaultDividerWidth(parent, node)
         } else {

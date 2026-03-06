@@ -11,23 +11,11 @@ import android.view.View
 import android.view.ViewOutlineProvider
 import android.widget.TextView
 import com.gzq.uiframework.renderer.R
-import com.gzq.uiframework.renderer.modifier.AlphaModifierElement
-import com.gzq.uiframework.renderer.modifier.BackgroundColorModifierElement
-import com.gzq.uiframework.renderer.modifier.BorderModifierElement
-import com.gzq.uiframework.renderer.modifier.ClickableModifierElement
-import com.gzq.uiframework.renderer.modifier.ClipModifierElement
-import com.gzq.uiframework.renderer.modifier.ContentDescriptionModifierElement
-import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
-import com.gzq.uiframework.renderer.modifier.ElevationModifierElement
-import com.gzq.uiframework.renderer.modifier.MinHeightModifierElement
-import com.gzq.uiframework.renderer.modifier.MinWidthModifierElement
 import com.gzq.uiframework.renderer.modifier.NativeViewElement
-import com.gzq.uiframework.renderer.modifier.OffsetModifierElement
 import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
-import com.gzq.uiframework.renderer.modifier.RippleColorModifierElement
+import com.gzq.uiframework.renderer.modifier.ResolvedModifiers
 import com.gzq.uiframework.renderer.modifier.Visibility
-import com.gzq.uiframework.renderer.modifier.VisibilityModifierElement
-import com.gzq.uiframework.renderer.modifier.ZIndexModifierElement
+import com.gzq.uiframework.renderer.modifier.resolve
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
@@ -42,11 +30,13 @@ internal object ViewModifierApplier {
         view: View,
         node: VNode,
         defaultRippleColor: Int,
+        resolved: ResolvedModifiers = node.modifier.resolve(),
     ) {
         applyModifier(
             view = view,
             node = node,
             defaultRippleColor = defaultRippleColor,
+            resolved = resolved,
         )
         NodeViewBinderRegistry.bind(view, node)
         applyNativeViewConfigs(view, node)
@@ -92,69 +82,41 @@ internal object ViewModifierApplier {
         )
     }
 
-    private fun applyModifier(
+    fun applyModifier(
         view: View,
         node: VNode,
         defaultRippleColor: Int,
+        resolved: ResolvedModifiers = node.modifier.resolve(),
     ) {
-        val alpha = node.modifier.elements
-            .lastOrNull { it is AlphaModifierElement } as? AlphaModifierElement
-        val backgroundColor = node.modifier.elements
-            .lastOrNull { it is BackgroundColorModifierElement } as? BackgroundColorModifierElement
-        val clickable = node.modifier.elements
-            .lastOrNull { it is ClickableModifierElement } as? ClickableModifierElement
-        val contentDescriptionElement = node.modifier.elements
-            .lastOrNull { it is ContentDescriptionModifierElement } as? ContentDescriptionModifierElement
-        val border = node.modifier.elements
-            .lastOrNull { it is BorderModifierElement } as? BorderModifierElement
-        val cornerRadius = node.modifier.elements
-            .lastOrNull { it is CornerRadiusModifierElement } as? CornerRadiusModifierElement
-        val clip = node.modifier.elements
-            .lastOrNull { it is ClipModifierElement } as? ClipModifierElement
-        val elevation = node.modifier.elements
-            .lastOrNull { it is ElevationModifierElement } as? ElevationModifierElement
-        val offset = node.modifier.elements
-            .lastOrNull { it is OffsetModifierElement } as? OffsetModifierElement
-        val padding = node.modifier.elements.lastOrNull { it is PaddingModifierElement } as? PaddingModifierElement
-        val minHeight = node.modifier.elements
-            .lastOrNull { it is MinHeightModifierElement } as? MinHeightModifierElement
-        val minWidth = node.modifier.elements
-            .lastOrNull { it is MinWidthModifierElement } as? MinWidthModifierElement
-        val rippleColor = node.modifier.elements
-            .lastOrNull { it is RippleColorModifierElement } as? RippleColorModifierElement
-        val visibility = node.modifier.elements
-            .lastOrNull { it is VisibilityModifierElement } as? VisibilityModifierElement
-        val zIndex = node.modifier.elements
-            .lastOrNull { it is ZIndexModifierElement } as? ZIndexModifierElement
-        val resolvedAlpha = alpha?.alpha ?: readNodeAlpha(node) ?: 1f
-        val resolvedBackgroundColor = backgroundColor?.color ?: readNodeBackgroundColor(node)
-        val resolvedBorderWidth = border?.width ?: readNodeBorderWidth(node) ?: 0
-        val resolvedBorderColor = border?.color ?: readNodeBorderColor(node) ?: Color.TRANSPARENT
-        val resolvedCornerRadius = cornerRadius?.radius ?: readNodeCornerRadius(node) ?: 0
-        val resolvedPadding = padding ?: readNodePadding(node)
-        val resolvedMinHeight = minHeight?.minHeight ?: readNodeMinHeight(node) ?: 0
-        val resolvedMinWidth = minWidth?.minWidth ?: 0
-        val resolvedRippleColor = rippleColor?.color ?: readNodeRippleColor(node) ?: defaultRippleColor
+        val resolvedAlpha = resolved.alpha?.alpha ?: readNodeAlpha(node) ?: 1f
+        val resolvedBackgroundColor = resolved.backgroundColor?.color ?: readNodeBackgroundColor(node)
+        val resolvedBorderWidth = resolved.border?.width ?: readNodeBorderWidth(node) ?: 0
+        val resolvedBorderColor = resolved.border?.color ?: readNodeBorderColor(node) ?: Color.TRANSPARENT
+        val resolvedCornerRadius = resolved.cornerRadius?.radius ?: readNodeCornerRadius(node) ?: 0
+        val resolvedPadding = resolved.padding ?: readNodePadding(node)
+        val resolvedMinHeight = resolved.minHeight?.minHeight ?: readNodeMinHeight(node) ?: 0
+        val resolvedMinWidth = resolved.minWidth?.minWidth ?: 0
+        val resolvedRippleColor = resolved.rippleColor?.color ?: readNodeRippleColor(node) ?: defaultRippleColor
         val textColor = readNodeTextColor(node)
         val textSizeSp = readNodeTextSize(node)
         val anchorId = readAnchorId(node)
         view.alpha = resolvedAlpha
         if (view is DeclarativeTextFieldLayout) {
             applyAnchorId(view, anchorId)
-            view.visibility = when (visibility?.visibility ?: Visibility.Visible) {
+            view.visibility = when (resolved.visibility?.visibility ?: Visibility.Visible) {
                 Visibility.Visible -> View.VISIBLE
                 Visibility.Invisible -> View.INVISIBLE
                 Visibility.Gone -> View.GONE
             }
-            view.translationX = offset?.x ?: 0f
-            view.translationY = offset?.y ?: 0f
-            view.z = zIndex?.zIndex ?: 0f
-            view.elevation = elevation?.elevation?.toFloat() ?: 0f
+            view.translationX = resolved.offset?.x ?: 0f
+            view.translationY = resolved.offset?.y ?: 0f
+            view.z = resolved.zIndex?.zIndex ?: 0f
+            view.elevation = resolved.elevation?.elevation?.toFloat() ?: 0f
             view.isClickable = false
             view.setOnClickListener(null)
             view.minimumHeight = 0
             view.minimumWidth = 0
-            view.contentDescription = contentDescriptionElement?.contentDescription
+            view.contentDescription = resolved.contentDescription?.contentDescription
             view.setPadding(0, 0, 0, 0)
             applyTextFieldModifier(
                 layout = view,
@@ -177,28 +139,28 @@ internal object ViewModifierApplier {
             borderColor = resolvedBorderColor,
             cornerRadius = resolvedCornerRadius,
             rippleColor = resolvedRippleColor,
-            clickable = clickable != null,
-            forceClip = clip?.clip ?: false,
+            clickable = resolved.clickable != null,
+            forceClip = resolved.clip?.clip ?: false,
         )
         applyAnchorId(view, anchorId)
-        view.visibility = when (visibility?.visibility ?: Visibility.Visible) {
+        view.visibility = when (resolved.visibility?.visibility ?: Visibility.Visible) {
             Visibility.Visible -> View.VISIBLE
             Visibility.Invisible -> View.INVISIBLE
             Visibility.Gone -> View.GONE
         }
-        view.translationX = offset?.x ?: 0f
-        view.translationY = offset?.y ?: 0f
-        view.z = zIndex?.zIndex ?: 0f
-        view.elevation = elevation?.elevation?.toFloat() ?: 0f
+        view.translationX = resolved.offset?.x ?: 0f
+        view.translationY = resolved.offset?.y ?: 0f
+        view.z = resolved.zIndex?.zIndex ?: 0f
+        view.elevation = resolved.elevation?.elevation?.toFloat() ?: 0f
         view.minimumHeight = resolvedMinHeight
         view.minimumWidth = resolvedMinWidth
-        view.contentDescription = contentDescriptionElement?.contentDescription
-        view.isClickable = clickable != null
+        view.contentDescription = resolved.contentDescription?.contentDescription
+        view.isClickable = resolved.clickable != null
         view.setOnClickListener(
-            if (clickable == null) {
+            if (resolved.clickable == null) {
                 null
             } else {
-                View.OnClickListener { clickable.onClick() }
+                View.OnClickListener { resolved.clickable!!.onClick() }
             },
         )
         if (resolvedPadding == null) {

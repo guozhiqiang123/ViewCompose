@@ -3,6 +3,9 @@ package com.gzq.uiframework.renderer.view.tree
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import com.gzq.uiframework.renderer.modifier.ResolvedModifiers
+import com.gzq.uiframework.renderer.modifier.layoutModifiersChanged
+import com.gzq.uiframework.renderer.modifier.resolve
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.reconcile.InsertPatch
@@ -67,10 +70,12 @@ internal object ViewTreePatchPipeline {
     ): PatchApplicationResult {
         return when (patch) {
             is InsertPatch -> {
+                val resolved = patch.nextVNode.modifier.resolve()
                 val mountedNode = mountNode(
                     context = container.context,
                     node = patch.nextVNode,
                     defaultRippleColor = defaultRippleColor,
+                    resolved = resolved,
                     renderChildren = renderChildren,
                 )
                 container.addView(
@@ -81,6 +86,7 @@ internal object ViewTreePatchPipeline {
                         node = patch.nextVNode,
                         warningTag = warningTag,
                         emittedModifierWarnings = emittedModifierWarnings,
+                        resolved = resolved,
                     ),
                 )
                 PatchApplicationResult(
@@ -91,26 +97,44 @@ internal object ViewTreePatchPipeline {
 
             is ReusePatch -> {
                 val mountedNode = patch.payload
+                val nextResolved = patch.nextVNode.modifier.resolve()
                 val bindingPlan = NodeBindingDiffer.plan(mountedNode.vnode, patch.nextVNode)
                 when (bindingPlan) {
                     NodeBindingPlan.Rebind -> bindView(
                         view = mountedNode.view,
                         node = patch.nextVNode,
                         defaultRippleColor = defaultRippleColor,
+                        resolved = nextResolved,
                     )
 
                     NodeBindingPlan.Skip -> Unit
-                    is NodeBindingPlan.Patch -> NodeViewBinderRegistry.applyPatch(
-                        view = mountedNode.view,
-                        patch = bindingPlan.patch,
+                    is NodeBindingPlan.Patch -> {
+                        if (bindingPlan.modifierChanged) {
+                            ViewModifierApplier.applyModifier(
+                                view = mountedNode.view,
+                                node = patch.nextVNode,
+                                defaultRippleColor = defaultRippleColor,
+                                resolved = nextResolved,
+                            )
+                        }
+                        NodeViewBinderRegistry.applyPatch(
+                            view = mountedNode.view,
+                            patch = bindingPlan.patch,
+                        )
+                    }
+                }
+                val previousResolved = mountedNode.vnode.modifier.resolve()
+                if (bindingPlan is NodeBindingPlan.Rebind ||
+                    layoutModifiersChanged(previousResolved, nextResolved)
+                ) {
+                    mountedNode.view.layoutParams = ViewLayoutParamsFactory.createLayoutParams(
+                        parent = container,
+                        node = patch.nextVNode,
+                        warningTag = warningTag,
+                        emittedModifierWarnings = emittedModifierWarnings,
+                        resolved = nextResolved,
                     )
                 }
-                mountedNode.view.layoutParams = ViewLayoutParamsFactory.createLayoutParams(
-                    parent = container,
-                    node = patch.nextVNode,
-                    warningTag = warningTag,
-                    emittedModifierWarnings = emittedModifierWarnings,
-                )
                 val childResult = reconcileChildren(
                     view = mountedNode.view,
                     previousChildren = mountedNode.children,
@@ -172,6 +196,7 @@ internal object ViewTreePatchPipeline {
         context: Context,
         node: VNode,
         defaultRippleColor: Int,
+        resolved: ResolvedModifiers,
         renderChildren: (ViewGroup, List<MountedNode>, List<VNode>) -> RenderTreeResult,
     ): MountedNode {
         val view = ViewNodeFactory.createView(
@@ -185,6 +210,7 @@ internal object ViewTreePatchPipeline {
             view = view,
             node = node,
             defaultRippleColor = defaultRippleColor,
+            resolved = resolved,
         )
         val children = if (view is ViewGroup) {
             renderChildren(
@@ -206,11 +232,13 @@ internal object ViewTreePatchPipeline {
         view: View,
         node: VNode,
         defaultRippleColor: Int,
+        resolved: ResolvedModifiers,
     ) {
         ViewModifierApplier.bindView(
             view = view,
             node = node,
             defaultRippleColor = defaultRippleColor,
+            resolved = resolved,
         )
     }
 
