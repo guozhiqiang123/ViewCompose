@@ -8,6 +8,7 @@ import com.gzq.uiframework.renderer.modifier.backgroundColor
 import com.gzq.uiframework.renderer.modifier.fillMaxSize
 import com.gzq.uiframework.renderer.modifier.fillMaxWidth
 import com.gzq.uiframework.renderer.modifier.padding
+import com.gzq.uiframework.renderer.modifier.systemBarsInsetsPadding
 import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.runtime.mutableStateOf
 import com.gzq.uiframework.widget.core.Column
@@ -58,6 +59,7 @@ internal fun UiTreeBuilder.DemoSubPageScaffold(
                     },
                     modifier = Modifier
                         .fillMaxSize()
+                        .systemBarsInsetsPadding()
                         .backgroundColor(Theme.colors.background),
                 ) {
                     Column(

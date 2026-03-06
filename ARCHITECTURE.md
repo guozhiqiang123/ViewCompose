@@ -195,6 +195,7 @@ widget/core/
 - `bridge/` 放 Android theme/environment 桥接
 - `bridge/` 还包含宿主接入扩展：`ComponentActivity.setUiContent`、`Fragment.createUiContentRoot/createUiContent`
 - `ComponentActivity.setUiContent` 不再向 Activity 暴露 `RenderSession`，session 由扩展内部绑定生命周期并在 `onDestroy` 自动 `dispose`
+- system bars inset 不再由宿主 API 参数控制，统一走组件侧 `Modifier.systemBarsInsetsPadding(...)`
 - `context/` 只放 local、theme、environment、content color、text style local、image loading 这类 ambient context。当前包含 `Theme.kt`、`ThemeTokens.kt`、`ThemeDefaults.kt`、`ThemeRebase.kt`、`ComponentStyles.kt`、`ContentColor.kt`、`TextStyleLocal.kt`、`Environment.kt`、`LocalValue.kt`、`ImageLoading.kt`
 - `defaults/content/` 放文本、divider 等内容控件默认值
 - `defaults/input/` 放 text field、toggle、slider 等输入控件默认值

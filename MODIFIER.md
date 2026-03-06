@@ -47,6 +47,7 @@
 
 - 布局尺寸：`width`、`height`、`size`、`minHeight`
 - 布局占位：`padding`、`margin`
+- 窗口 inset：`systemBarsInsetsPadding`（可按边选择 top/bottom/left/right）
 - 外观修饰：`backgroundColor`、`border`、`cornerRadius`、`alpha`
 - 可见性与层级：`visibility`、`offset`、`zIndex`
 - 通用交互：`clickable`
@@ -57,6 +58,11 @@
 - 对大多数节点都成立
 - 本质上是节点外层约束或外层外观
 - 不依赖某个具体控件类型
+
+`systemBarsInsetsPadding` 的定位：
+
+- 这是“组件侧”能力，不再绑在 `Activity` 宿主参数上
+- 适合沉浸式页面按组件精细控制 inset，而不是全局一刀切
 
 ### 4.2 Scoped Modifier
 

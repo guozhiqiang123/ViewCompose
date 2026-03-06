@@ -10,11 +10,14 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewOutlineProvider
 import android.widget.TextView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.gzq.uiframework.renderer.R
 import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
 import com.gzq.uiframework.renderer.modifier.NativeViewElement
 import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
 import com.gzq.uiframework.renderer.modifier.ResolvedModifiers
+import com.gzq.uiframework.renderer.modifier.SystemBarsInsetsPaddingModifierElement
 import com.gzq.uiframework.renderer.modifier.Visibility
 import com.gzq.uiframework.renderer.modifier.resolve
 import com.gzq.uiframework.renderer.node.TypedPropKeys
@@ -141,6 +144,7 @@ internal object ViewModifierApplier {
                 textColor = textColor,
                 textSizeSp = textSizeSp,
             )
+            applySystemBarsInsetsPadding(view, resolved.systemBarsInsetsPadding)
             return
         }
         val isClickable = resolved.clickable != null || readNodeClickable(node)
@@ -185,6 +189,7 @@ internal object ViewModifierApplier {
                 resolvedPadding.bottom,
             )
         }
+        applySystemBarsInsetsPadding(view, resolved.systemBarsInsetsPadding)
         if (view is TextView) {
             if (textColor != null) {
                 view.setTextColor(textColor)
@@ -494,4 +499,72 @@ internal object ViewModifierApplier {
             }
         }
     }
+
+    private fun applySystemBarsInsetsPadding(
+        view: View,
+        modifierElement: SystemBarsInsetsPaddingModifierElement?,
+    ) {
+        if (modifierElement == null) {
+            val state = view.getTag(R.id.ui_framework_system_bars_padding_state) as? SystemBarsPaddingState
+            if (state != null) {
+                view.setPadding(state.baseLeft, state.baseTop, state.baseRight, state.baseBottom)
+                view.setTag(R.id.ui_framework_system_bars_padding_state, null)
+            }
+            ViewCompat.setOnApplyWindowInsetsListener(view, null)
+            return
+        }
+
+        val state = (view.getTag(R.id.ui_framework_system_bars_padding_state) as? SystemBarsPaddingState)
+            ?: SystemBarsPaddingState().also {
+                view.setTag(R.id.ui_framework_system_bars_padding_state, it)
+            }
+        state.baseLeft = view.paddingLeft
+        state.baseTop = view.paddingTop
+        state.baseRight = view.paddingRight
+        state.baseBottom = view.paddingBottom
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { target, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            state.appliedLeft = if (modifierElement.left) systemBars.left else 0
+            state.appliedTop = if (modifierElement.top) systemBars.top else 0
+            state.appliedRight = if (modifierElement.right) systemBars.right else 0
+            state.appliedBottom = if (modifierElement.bottom) systemBars.bottom else 0
+            target.setPadding(
+                state.baseLeft + state.appliedLeft,
+                state.baseTop + state.appliedTop,
+                state.baseRight + state.appliedRight,
+                state.baseBottom + state.appliedBottom,
+            )
+            insets
+        }
+        view.requestApplyInsetsWhenAttached()
+    }
+
+    private fun View.requestApplyInsetsWhenAttached() {
+        if (isAttachedToWindow) {
+            requestApplyInsets()
+            return
+        }
+        addOnAttachStateChangeListener(
+            object : View.OnAttachStateChangeListener {
+                override fun onViewAttachedToWindow(view: View) {
+                    view.removeOnAttachStateChangeListener(this)
+                    view.requestApplyInsets()
+                }
+
+                override fun onViewDetachedFromWindow(view: View) = Unit
+            },
+        )
+    }
+
+    private data class SystemBarsPaddingState(
+        var baseLeft: Int = 0,
+        var baseTop: Int = 0,
+        var baseRight: Int = 0,
+        var baseBottom: Int = 0,
+        var appliedLeft: Int = 0,
+        var appliedTop: Int = 0,
+        var appliedRight: Int = 0,
+        var appliedBottom: Int = 0,
+    )
 }

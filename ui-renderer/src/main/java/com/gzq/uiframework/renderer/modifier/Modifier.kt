@@ -23,6 +23,13 @@ data class PaddingModifierElement(
     val bottom: Int,
 ) : ModifierElement
 
+data class SystemBarsInsetsPaddingModifierElement(
+    val left: Boolean,
+    val top: Boolean,
+    val right: Boolean,
+    val bottom: Boolean,
+) : ModifierElement
+
 data class MarginModifierElement(
     val left: Int,
     val top: Int,
@@ -166,6 +173,22 @@ fun Modifier.padding(
 ): Modifier {
     return then(
         PaddingModifierElement(
+            left = left,
+            top = top,
+            right = right,
+            bottom = bottom,
+        ),
+    )
+}
+
+fun Modifier.systemBarsInsetsPadding(
+    left: Boolean = true,
+    top: Boolean = true,
+    right: Boolean = true,
+    bottom: Boolean = true,
+): Modifier {
+    return then(
+        SystemBarsInsetsPaddingModifierElement(
             left = left,
             top = top,
             right = right,

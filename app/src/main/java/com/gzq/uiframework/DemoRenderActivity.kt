@@ -28,7 +28,6 @@ abstract class DemoRenderActivity : AppCompatActivity() {
         setUiContent(
             debug = true,
             debugTag = "UIFrameworkSample",
-            applySystemBarsInsetsPadding = true,
             overlayHostFactory = ::AndroidOverlayHost,
             onRenderResult = DemoRenderDiagnosticsStore::record,
         ) { root ->
