@@ -133,6 +133,32 @@ class DemoVisualUiTest {
     }
 
     @Test
+    fun feedbackPage_modalBottomSheet_showAndDismissFlow() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            FeedbackActivity::class.java,
+        ).putExtra(EXTRA_FEEDBACK_PAGE_INDEX, 1)
+        launchDemoActivity<FeedbackActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                activity.clickByTestTag(DemoTestTags.FEEDBACK_SHOW_BOTTOM_SHEET)
+            }
+            waitForUiIdle()
+            captureDeviceScreenshot("feedback-bottom-sheet-light")
+            scenario.onActivity { activity ->
+                val title = activity.requireTextViewByTestTag(DemoTestTags.FEEDBACK_BOTTOM_SHEET_TITLE)
+                assertViewFullyVisible(title)
+                activity.clickByTestTag(DemoTestTags.FEEDBACK_BOTTOM_SHEET_CLOSE)
+            }
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val lastEvent = activity.requireTextViewByTestTag(DemoTestTags.FEEDBACK_LAST_EVENT)
+                assertTrue(lastEvent.text.toString().contains("BottomSheet 关闭"))
+            }
+        }
+    }
+
+    @Test
     fun inputStress_controlsRemainVisibleAndReadable() {
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),

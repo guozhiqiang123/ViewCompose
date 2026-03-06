@@ -273,6 +273,7 @@ internal fun UiTreeBuilder.FeedbackPage(
             Text(
                 text = "底部弹窗",
                 style = UiTextStyle(fontSizeSp = 18.sp),
+                modifier = Modifier.testTag(DemoTestTags.FEEDBACK_BOTTOM_SHEET_TITLE),
             )
             Text(
                 text = "ModalBottomSheet 通过 overlay 路径渲染，支持手势下滑关闭。",
@@ -303,7 +304,9 @@ internal fun UiTreeBuilder.FeedbackPage(
                     bottomSheetVisibleState.value = false
                     lastEventState.value = "BottomSheet 关闭"
                 },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag(DemoTestTags.FEEDBACK_BOTTOM_SHEET_CLOSE),
             )
         }
     }
@@ -484,7 +487,9 @@ internal fun UiTreeBuilder.FeedbackPage(
                     text = "最后事件: ${lastEventState.value}",
                     style = UiTextStyle(fontSizeSp = 13.sp),
                     color = TextDefaults.secondaryColor(),
-                    modifier = Modifier.margin(bottom = 8.dp),
+                    modifier = Modifier
+                        .margin(bottom = 8.dp)
+                        .testTag(DemoTestTags.FEEDBACK_LAST_EVENT),
                 )
                 Button(
                     text = "显示 AlertDialog（标准）",
@@ -505,7 +510,9 @@ internal fun UiTreeBuilder.FeedbackPage(
                 Button(
                     text = "显示 ModalBottomSheet",
                     onClick = { bottomSheetVisibleState.value = true },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag(DemoTestTags.FEEDBACK_SHOW_BOTTOM_SHEET),
                 )
             }
 
