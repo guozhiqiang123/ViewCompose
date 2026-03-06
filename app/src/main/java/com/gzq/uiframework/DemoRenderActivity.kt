@@ -15,15 +15,9 @@ import com.gzq.uiframework.widget.core.renderInto
 abstract class DemoRenderActivity : AppCompatActivity() {
     private var renderSession: RenderSession? = null
 
-    protected open val showBackButton: Boolean = true
-
-    protected open val useBottomNav: Boolean = false
-
     protected open fun redirectTargetIntent(): Intent? = null
 
     protected abstract val demoTitle: String
-
-    protected abstract val demoSubtitle: String
 
     protected abstract fun buildDemoContent(
         root: ViewGroup,
@@ -51,15 +45,16 @@ abstract class DemoRenderActivity : AppCompatActivity() {
             overlayHost = AndroidOverlayHost(root),
             onRenderResult = DemoRenderDiagnosticsStore::record,
         ) {
-            DemoPageScaffold(
-                root = root,
-                title = demoTitle,
-                subtitle = demoSubtitle,
-                showBackButton = showBackButton,
-                useBottomNav = useBottomNav,
-            ) { builder ->
-                buildDemoContent(root, builder)
-            }
+            buildRootScaffold(root)
+        }
+    }
+
+    protected open fun UiTreeBuilder.buildRootScaffold(root: ViewGroup) {
+        DemoSubPageScaffold(
+            root = root,
+            title = demoTitle,
+        ) { builder ->
+            buildDemoContent(root, builder)
         }
     }
 

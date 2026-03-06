@@ -8,9 +8,6 @@ internal const val EXTRA_FEEDBACK_PAGE_INDEX = "feedback_page_index"
 class FeedbackActivity : DemoRenderActivity() {
     override val demoTitle: String = "Feedback"
 
-    override val demoSubtitle: String =
-        "Snackbar, Toast, Dialog, Popup, AlertDialog, DropdownMenu, Tooltip, ModalBottomSheet。"
-
     override fun buildDemoContent(
         root: ViewGroup,
         builder: UiTreeBuilder,

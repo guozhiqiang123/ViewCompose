@@ -8,9 +8,6 @@ internal const val EXTRA_COLLECTIONS_PAGE_INDEX = "collections_page_index"
 class CollectionsActivity : DemoRenderActivity() {
     override val demoTitle: String = "Collections"
 
-    override val demoSubtitle: String =
-        "LazyColumn, keyed reorder, item state, pager integration, and collection stress paths."
-
     override fun buildDemoContent(
         root: ViewGroup,
         builder: UiTreeBuilder,

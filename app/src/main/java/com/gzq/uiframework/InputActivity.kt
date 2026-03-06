@@ -8,9 +8,6 @@ internal const val EXTRA_INPUT_PAGE_INDEX = "input_page_index"
 class InputActivity : DemoRenderActivity() {
     override val demoTitle: String = "Input"
 
-    override val demoSubtitle: String =
-        "Text fields, selection controls, disabled states, and form-oriented stress scenarios."
-
     override fun buildDemoContent(
         root: ViewGroup,
         builder: UiTreeBuilder,

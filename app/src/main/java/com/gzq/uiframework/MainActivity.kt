@@ -5,14 +5,7 @@ import android.view.ViewGroup
 import com.gzq.uiframework.widget.core.UiTreeBuilder
 
 class MainActivity : DemoRenderActivity() {
-    override val showBackButton: Boolean = false
-
-    override val useBottomNav: Boolean = true
-
     override val demoTitle: String = "UIFramework Demo"
-
-    override val demoSubtitle: String =
-        "Module catalog aligned with Compose Tutorials categories and optimized for manual testing plus benchmark entry."
 
     override fun redirectTargetIntent(): Intent? {
         val moduleKey = intent?.getStringExtra(EXTRA_DEMO_MODULE_KEY)
@@ -24,10 +17,14 @@ class MainActivity : DemoRenderActivity() {
         }
     }
 
+    override fun UiTreeBuilder.buildRootScaffold(root: ViewGroup) {
+        DemoHomeScaffold(root = root)
+    }
+
     override fun buildDemoContent(
         root: ViewGroup,
         builder: UiTreeBuilder,
     ) {
-        builder.DemoCatalogPage(root)
+        // Not used — DemoHomeScaffold manages its own content.
     }
 }

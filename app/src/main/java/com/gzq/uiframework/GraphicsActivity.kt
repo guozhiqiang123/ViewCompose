@@ -6,9 +6,6 @@ import com.gzq.uiframework.widget.core.UiTreeBuilder
 class GraphicsActivity : DemoRenderActivity() {
     override val demoTitle: String = "Graphics"
 
-    override val demoSubtitle: String =
-        "Planned draw pipeline, canvas primitives, and custom graphics scenarios."
-
     override fun buildDemoContent(
         root: ViewGroup,
         builder: UiTreeBuilder,

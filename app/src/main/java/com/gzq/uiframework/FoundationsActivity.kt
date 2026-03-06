@@ -9,9 +9,6 @@ internal const val EXTRA_FOUNDATIONS_PAGE_INDEX = "foundations_page_index"
 class FoundationsActivity : DemoRenderActivity() {
     override val demoTitle: String = "Foundations"
 
-    override val demoSubtitle: String =
-        "Core visual primitives, theme scopes, component defaults, and media widgets."
-
     override fun buildDemoContent(
         root: ViewGroup,
         builder: UiTreeBuilder,

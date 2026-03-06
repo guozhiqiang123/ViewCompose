@@ -6,9 +6,6 @@ import com.gzq.uiframework.widget.core.UiTreeBuilder
 class GesturesActivity : DemoRenderActivity() {
     override val demoTitle: String = "Gestures"
 
-    override val demoSubtitle: String =
-        "Planned pointer input, drag, swipe, and nested gesture scenarios."
-
     override fun buildDemoContent(
         root: ViewGroup,
         builder: UiTreeBuilder,

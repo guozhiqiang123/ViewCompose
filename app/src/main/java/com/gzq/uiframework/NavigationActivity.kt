@@ -8,9 +8,6 @@ internal const val EXTRA_NAVIGATION_PAGE_INDEX = "navigation_page_index"
 class NavigationActivity : DemoRenderActivity() {
     override val demoTitle: String = "Navigation"
 
-    override val demoSubtitle: String =
-        "TopAppBar, BottomAppBar, NavigationBar, Scaffold 导航组件。"
-
     override fun buildDemoContent(
         root: ViewGroup,
         builder: UiTreeBuilder,

@@ -6,9 +6,6 @@ import com.gzq.uiframework.widget.core.UiTreeBuilder
 class AnimationActivity : DemoRenderActivity() {
     override val demoTitle: String = "Animation"
 
-    override val demoSubtitle: String =
-        "Planned state-driven motion, transitions, and list animation scenarios."
-
     override fun buildDemoContent(
         root: ViewGroup,
         builder: UiTreeBuilder,

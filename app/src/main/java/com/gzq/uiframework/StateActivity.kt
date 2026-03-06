@@ -8,9 +8,6 @@ internal const val EXTRA_STATE_PAGE_INDEX = "state_page_index"
 class StateActivity : DemoRenderActivity() {
     override val demoTitle: String = "State"
 
-    override val demoSubtitle: String =
-        "remember, derived state, effects, identity, and patch stress paths."
-
     override fun buildDemoContent(
         root: ViewGroup,
         builder: UiTreeBuilder,

@@ -8,9 +8,6 @@ internal const val EXTRA_MODIFIERS_PAGE_INDEX = "modifiers_page_index"
 class ModifiersActivity : DemoRenderActivity() {
     override val demoTitle: String = "Modifiers"
 
-    override val demoSubtitle: String =
-        "elevation, border, clip, alpha, rippleColor, cornerRadius, 尺寸约束, 无障碍, nativeView。"
-
     override fun buildDemoContent(
         root: ViewGroup,
         builder: UiTreeBuilder,

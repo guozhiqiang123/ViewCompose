@@ -10,9 +10,6 @@ import com.gzq.uiframework.widget.core.remember
 class DiagnosticsActivity : DemoRenderActivity() {
     override val demoTitle: String = "Diagnostics"
 
-    override val demoSubtitle: String =
-        "Renderer snapshots, warnings, depth counters, and layout pass instrumentation."
-
     override fun buildDemoContent(
         root: ViewGroup,
         builder: UiTreeBuilder,
