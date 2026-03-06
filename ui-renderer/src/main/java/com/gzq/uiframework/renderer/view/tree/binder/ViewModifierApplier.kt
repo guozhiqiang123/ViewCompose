@@ -320,7 +320,6 @@ internal object ViewModifierApplier {
             view.invalidateOutline()
             return
         }
-        view.clipToOutline = true
         if (cornerRadius != null && hasCorner) {
             if (cornerRadius.isUniform) {
                 val r = cornerRadius.topStart.toFloat()
@@ -342,7 +341,11 @@ internal object ViewModifierApplier {
                     }
                 }
             }
+        } else {
+            view.outlineProvider = ViewOutlineProvider.BACKGROUND
         }
+        // Apply rounded outline for shadow, but only clip content when clip() is explicitly requested.
+        view.clipToOutline = forceClip
         view.invalidateOutline()
     }
 

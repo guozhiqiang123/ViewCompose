@@ -21,6 +21,12 @@ internal class DeclarativeBoxLayout @JvmOverloads constructor(
             requestLayout()
         }
 
+    init {
+        // Keep elevation shadows and overflow visuals visible, similar to Compose container defaults.
+        clipChildren = false
+        clipToPadding = false
+    }
+
     override fun onMeasure(
         widthMeasureSpec: Int,
         heightMeasureSpec: Int,
