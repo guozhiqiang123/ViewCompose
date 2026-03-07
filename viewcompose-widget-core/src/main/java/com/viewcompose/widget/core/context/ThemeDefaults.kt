@@ -54,6 +54,14 @@ object UiControlSizeDefaults {
     }
 }
 
+object UiOverlayDefaults {
+    fun default(): UiOverlays {
+        return UiOverlays(
+            scrimOpacity = 0.32f,
+        )
+    }
+}
+
 object UiThemeDefaults {
     fun light(): UiThemeTokens {
         return UiThemeTokens(

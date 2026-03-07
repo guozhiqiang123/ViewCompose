@@ -38,6 +38,11 @@ data class UiThemeTokens(
     val typography: UiTypography,
     val shapes: UiShapes = UiShapeDefaults.default(),
     val controls: UiControlSizing = UiControlSizeDefaults.default(),
+    val overlays: UiOverlays = UiOverlayDefaults.default(),
+)
+
+data class UiOverlays(
+    val scrimOpacity: Float,
 )
 
 internal fun pressedOverlayColorFor(textPrimary: Int): Int {

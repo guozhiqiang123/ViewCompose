@@ -115,7 +115,7 @@ fun UiTreeBuilder.Dialog(
     dismissOnBackPress: Boolean = true,
     dismissOnClickOutside: Boolean = true,
     position: DialogPosition = DialogPosition.Center,
-    scrimOpacity: Float = 0.32f,
+    scrimOpacity: Float = Theme.overlays.scrimOpacity,
     onDismissRequest: (() -> Unit)? = null,
     content: UiTreeBuilder.() -> Unit,
 ) {

@@ -53,7 +53,9 @@ internal object ThemeTokenMapper {
                         ?: fallback.typography.label.fontSizeSp,
                 ),
             ),
-            shapes = UiShapeDefaults.default(),
+            shapes = fallback.shapes,
+            controls = fallback.controls,
+            overlays = fallback.overlays,
         )
     }
 }

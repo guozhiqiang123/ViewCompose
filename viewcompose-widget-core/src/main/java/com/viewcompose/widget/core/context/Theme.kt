@@ -19,6 +19,9 @@ object Theme {
 
     val controls: UiControlSizing
         get() = current.controls
+
+    val overlays: UiOverlays
+        get() = current.overlays
 }
 
 fun UiTreeBuilder.UiTheme(
@@ -39,6 +42,7 @@ fun UiTreeBuilder.UiThemeOverride(
     typography: UiTypography? = null,
     shapes: UiShapes? = null,
     controls: UiControlSizing? = null,
+    overlays: UiOverlays? = null,
     content: UiTreeBuilder.() -> Unit,
 ) {
     LocalContext.provide(
@@ -48,6 +52,7 @@ fun UiTreeBuilder.UiThemeOverride(
             typography = typography,
             shapes = shapes,
             controls = controls,
+            overlays = overlays,
         ),
     ) {
         content()
@@ -59,6 +64,7 @@ fun UiTreeBuilder.UiThemeOverride(
     typography: (UiTypography.() -> UiTypography)? = null,
     shapes: (UiShapes.() -> UiShapes)? = null,
     controls: (UiControlSizing.() -> UiControlSizing)? = null,
+    overlays: (UiOverlays.() -> UiOverlays)? = null,
     content: UiTreeBuilder.() -> Unit,
 ) {
     UiThemeOverride(
@@ -66,6 +72,7 @@ fun UiTreeBuilder.UiThemeOverride(
         typography = typography?.invoke(Theme.typography),
         shapes = shapes?.invoke(Theme.shapes),
         controls = controls?.invoke(Theme.controls),
+        overlays = overlays?.invoke(Theme.overlays),
         content = content,
     )
 }
