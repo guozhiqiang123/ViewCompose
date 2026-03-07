@@ -44,3 +44,4 @@
 | `REFACTOR_PLAN.md` | 已完成的阶段性执行计划 |
 | `AUDIT_REMEDIATION_PLAN_2026-03.md` | 已完成的审计整改执行计划 |
 | `REAUDIT_EXECUTION_PLAN_2026-03.md` | 已完成的 re-audit 闭环执行计划（F1/F2/F3/F5） |
+| `PERF_OPT_EXECUTION_PLAN_2026-03.md` | 已完成的性能优化执行计划（Diff/RecyclerView/subtree skip） |

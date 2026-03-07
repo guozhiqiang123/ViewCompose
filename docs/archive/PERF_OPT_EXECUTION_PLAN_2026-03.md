@@ -50,7 +50,7 @@ Out of scope for this execution:
 | 2026-03-07 | Step 4 | `864c094` | Tuned framework-managed RecyclerView defaults and synced architecture/performance docs. |
 | 2026-03-07 | Step 5 | `dad304a` | Added subtree skip plan/pipeline/stats path and synced roadmap/performance docs. |
 | 2026-03-07 | Step 6 (unit) | `db57903` | Added diff/payload unit assertions for lazy diff behavior. |
-| 2026-03-07 | Step 6 (instrumentation) | _pending_ | Extended collections stress refresh instrumentation coverage. |
+| 2026-03-07 | Step 6 (instrumentation) | `e9cd869` | Extended collections stress refresh instrumentation coverage. |
 
 ## 6. Blocker Log
 
