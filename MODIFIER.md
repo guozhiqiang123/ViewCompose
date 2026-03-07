@@ -11,9 +11,9 @@
 1. identity 入口统一为 `Modifier`（`Modifier.Empty` 已移除）
 2. 文本语义类历史 modifier（如 `textColor/textSize`）已退场
 3. `weight/align/FlexibleSpacer` 仅通过 `RowScope/ColumnScope/BoxScope` 暴露
-4. 系统栏/键盘 inset 适配走组件侧 `Modifier.systemBarsInsetsPadding(...)` 与 `Modifier.imeInsetsPadding(...)`
+4. 系统栏/键盘 inset 适配走组件侧 `Modifier.systemBarsInsetsPadding(...)` 与 `Modifier.imeInsetsPadding(...)`（若 Activity 使用 `adjustResize`，通常不再叠加 `imeInsetsPadding`，避免双重位移）
 5. 列表容器复用策略支持 `Modifier.lazyContainerReuse(sharePool, disableItemAnimator)`，默认不共享池
-6. 列表容器键盘跟随策略支持 `Modifier.lazyContainerFocusFollowKeyboard(enabled)`，默认关闭
+6. 列表容器键盘跟随策略支持 `Modifier.lazyContainerFocusFollowKeyboard(enabled)`，开启后仅在输入框被遮挡时上滚
 
 ## 3. 角色边界
 
