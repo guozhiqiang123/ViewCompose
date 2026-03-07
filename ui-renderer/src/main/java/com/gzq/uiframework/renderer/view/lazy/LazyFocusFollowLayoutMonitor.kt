@@ -2,6 +2,7 @@ package com.gzq.uiframework.renderer.view.lazy
 
 import android.graphics.Rect
 import android.view.View
+import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
 import com.gzq.uiframework.renderer.R
 
@@ -31,23 +32,24 @@ internal object LazyFocusFollowLayoutMonitor {
     }
 
     private fun ensureFocusedChildVisible(recyclerView: RecyclerView) {
-        val focused = recyclerView.findFocus() ?: return
+        val focused = recyclerView.findFocus() as? EditText ?: return
         if (focused === recyclerView) {
             return
         }
-        val rect = Rect()
-        focused.getDrawingRect(rect)
-        recyclerView.offsetDescendantRectToMyCoords(focused, rect)
-        val isVerticallyVisible = rect.top >= recyclerView.paddingTop &&
-            rect.bottom <= recyclerView.height - recyclerView.paddingBottom
-        val isHorizontallyVisible = rect.left >= recyclerView.paddingLeft &&
-            rect.right <= recyclerView.width - recyclerView.paddingRight
+        val localRect = Rect()
+        focused.getDrawingRect(localRect)
+        val visibleRect = Rect(localRect)
+        recyclerView.offsetDescendantRectToMyCoords(focused, visibleRect)
+        val isVerticallyVisible = visibleRect.top >= recyclerView.paddingTop &&
+            visibleRect.bottom <= recyclerView.height - recyclerView.paddingBottom
+        val isHorizontallyVisible = visibleRect.left >= recyclerView.paddingLeft &&
+            visibleRect.right <= recyclerView.width - recyclerView.paddingRight
         val needsVerticalScroll = recyclerView.layoutManager?.canScrollVertically() == true &&
             !isVerticallyVisible
         val needsHorizontalScroll = recyclerView.layoutManager?.canScrollHorizontally() == true &&
             !isHorizontallyVisible
         if (needsVerticalScroll || needsHorizontalScroll) {
-            recyclerView.requestChildRectangleOnScreen(focused, rect, true)
+            focused.requestRectangleOnScreen(localRect, false)
         }
     }
 }
