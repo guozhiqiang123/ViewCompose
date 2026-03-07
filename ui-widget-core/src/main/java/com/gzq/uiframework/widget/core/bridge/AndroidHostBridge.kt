@@ -52,7 +52,10 @@ fun Fragment.setUiContent(
         onRenderStats = onRenderStats,
         onRenderResult = onRenderResult,
     ) {
-        content(root)
+        withHostEnvironment(
+            root = root,
+            content = content,
+        )
     }
     FragmentRenderSessionRegistry.bind(
         fragment = this,
@@ -79,7 +82,10 @@ fun ComponentActivity.setUiContent(
         onRenderStats = onRenderStats,
         onRenderResult = onRenderResult,
     ) {
-        content(root)
+        withHostEnvironment(
+            root = root,
+            content = content,
+        )
     }
     ActivityRenderSessionRegistry.bind(
         activity = this,
@@ -109,7 +115,10 @@ fun Fragment.createUiContent(
         onRenderStats = onRenderStats,
         onRenderResult = onRenderResult,
     ) {
-        content(root)
+        withHostEnvironment(
+            root = root,
+            content = content,
+        )
     }
     return UiContentHost(
         root = root,
@@ -125,6 +134,15 @@ private fun buildUiContentRoot(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT,
         )
+    }
+}
+
+private fun UiTreeBuilder.withHostEnvironment(
+    root: ViewGroup,
+    content: UiTreeBuilder.(ViewGroup) -> Unit,
+) {
+    UiEnvironment(androidContext = root.context) {
+        content(root)
     }
 }
 
