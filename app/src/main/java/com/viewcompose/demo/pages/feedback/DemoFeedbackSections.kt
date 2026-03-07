@@ -258,10 +258,11 @@ internal fun UiTreeBuilder.RenderFeedbackSection(
                 anchorId = anchors.tooltipAnchorId,
                 modifier = Modifier.fillMaxWidth(),
             ) {
+                val tooltipVisible = state.tooltipVisibleState.value
                 Button(
-                    text = if (state.tooltipVisibleState.value) "隐藏 Tooltip" else "显示 Tooltip",
+                    text = if (tooltipVisible) "隐藏 Tooltip" else "显示 Tooltip",
                     variant = ButtonVariant.Tonal,
-                    onClick = { state.tooltipVisibleState.value = !state.tooltipVisibleState.value },
+                    onClick = { state.tooltipVisibleState.value = !tooltipVisible },
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
