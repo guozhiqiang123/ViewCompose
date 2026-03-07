@@ -23,9 +23,6 @@ internal class LazyLinearLayoutManager(
         if (!focusAutoScrollEnabled) {
             return false
         }
-        if (focusedChildVisible) {
-            return false
-        }
         return super.requestChildRectangleOnScreen(
             parent,
             child,
@@ -49,9 +46,6 @@ internal class LazyGridLayoutManager(
         focusedChildVisible: Boolean,
     ): Boolean {
         if (!focusAutoScrollEnabled) {
-            return false
-        }
-        if (focusedChildVisible) {
             return false
         }
         return super.requestChildRectangleOnScreen(
