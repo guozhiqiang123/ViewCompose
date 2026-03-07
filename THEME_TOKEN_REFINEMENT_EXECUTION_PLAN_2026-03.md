@@ -47,7 +47,8 @@
 | 2026-03-07 | Step 3 | `c2d78f3` | Add semantic color tokens and migrate internal usage to secondary-first path. |
 | 2026-03-07 | Step 4 | `e0e5f69` | Replace critical hardcoded colors with semantic `Theme.colors.error`. |
 | 2026-03-07 | Step 5 | `11dccd3` | Add tiered typography tokens and migrate core defaults to tier APIs. |
-| 2026-03-07 | Step 6 | pending | Introduce interactive corner radius and migrate core/demo usage. |
+| 2026-03-07 | Step 6 | `f7abeb0` | Introduce interactive corner radius and migrate core/demo usage. |
+| 2026-03-07 | Step 7a | pending | Add compatibility + semantic token unit coverage. |
 
 ## 6. Blocker Log
 
