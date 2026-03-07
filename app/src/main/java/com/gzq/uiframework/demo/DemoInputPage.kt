@@ -30,9 +30,11 @@ import com.gzq.uiframework.widget.core.ProvideCheckboxColors
 import com.gzq.uiframework.widget.core.ProvideRadioButtonColors
 import com.gzq.uiframework.widget.core.ProvideSliderColors
 import com.gzq.uiframework.widget.core.ProvideSwitchColors
+import com.gzq.uiframework.widget.core.PullToRefresh
 import com.gzq.uiframework.widget.core.RadioButton
 import com.gzq.uiframework.widget.core.Row
 import com.gzq.uiframework.widget.core.SearchBar
+import com.gzq.uiframework.widget.core.ScrollableColumn
 import com.gzq.uiframework.widget.core.Slider
 import com.gzq.uiframework.widget.core.SurfaceDefaults
 import com.gzq.uiframework.widget.core.Switch
@@ -46,6 +48,7 @@ import com.gzq.uiframework.widget.core.Theme
 import com.gzq.uiframework.widget.core.UiTextStyle
 import com.gzq.uiframework.widget.core.UiThemeOverride
 import com.gzq.uiframework.widget.core.UiTreeBuilder
+import com.gzq.uiframework.widget.core.VerticalPager
 import com.gzq.uiframework.widget.core.dp
 import com.gzq.uiframework.widget.core.remember
 import com.gzq.uiframework.widget.core.sp
@@ -68,6 +71,11 @@ internal fun UiTreeBuilder.InputPage(
     val stressErrorState = remember { mutableStateOf(true) }
     val searchQueryState = remember { mutableStateOf("") }
     val searchResultState = remember { mutableStateOf("") }
+    val scrollableSearchQueryState = remember { mutableStateOf("") }
+    val verticalPagerSearchQueryState = remember { mutableStateOf("") }
+    val pullRefreshSearchQueryState = remember { mutableStateOf("") }
+    val focusFollowVerticalPagerPageState = remember { mutableStateOf(0) }
+    val pullRefreshFocusRefreshingState = remember { mutableStateOf(false) }
     val summaryState = remember {
         derivedStateOf {
             "预览: ${nameState.value.ifBlank { "匿名" }} · " +
@@ -513,6 +521,147 @@ internal fun UiTreeBuilder.InputPage(
                     placeholder = "搜索不可用",
                     enabled = false,
                     modifier = Modifier.fillMaxWidth(),
+                )
+                Text(
+                    text = "ScrollableColumn + focusFollowKeyboard",
+                    style = UiTextStyle(fontSizeSp = 14.sp),
+                    modifier = Modifier.margin(top = 12.dp, bottom = 8.dp),
+                )
+                ScrollableColumn(
+                    spacing = 8.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(188.dp)
+                        .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                        .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                        .padding(12.dp)
+                        .focusFollowKeyboard()
+                        .margin(bottom = 12.dp),
+                ) {
+                    Text(
+                        text = "滚动容器内聚焦输入框时，焦点跟随策略应只影响当前垂直容器。",
+                        style = UiTextStyle(fontSizeSp = 13.sp),
+                        color = TextDefaults.secondaryColor(),
+                    )
+                    SearchBar(
+                        query = scrollableSearchQueryState.value,
+                        onQueryChange = { scrollableSearchQueryState.value = it },
+                        placeholder = "ScrollableColumn 内搜索…",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag(DemoTestTags.INPUT_FOCUS_SCROLLABLE_SEARCH),
+                    )
+                    (1..4).forEach { index ->
+                        Text(
+                            text = "滚动占位行 $index",
+                            style = UiTextStyle(fontSizeSp = 13.sp),
+                            color = TextDefaults.secondaryColor(),
+                        )
+                    }
+                }
+                Text(
+                    text = "VerticalPager + focusFollowKeyboard",
+                    style = UiTextStyle(fontSizeSp = 14.sp),
+                    modifier = Modifier.margin(bottom = 8.dp),
+                )
+                VerticalPager(
+                    currentPage = focusFollowVerticalPagerPageState.value,
+                    onPageChanged = { focusFollowVerticalPagerPageState.value = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(188.dp)
+                        .focusFollowKeyboard()
+                        .margin(bottom = 12.dp),
+                ) {
+                    Page(key = "focus-follow-vertical-pager-search", contentToken = "focus-follow-vertical-pager-search") {
+                        Column(
+                            spacing = 8.dp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                                .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                                .padding(12.dp),
+                        ) {
+                            Text(
+                                text = "第一页用于回归输入框焦点跟随。",
+                                style = UiTextStyle(fontSizeSp = 13.sp),
+                                color = TextDefaults.secondaryColor(),
+                            )
+                            SearchBar(
+                                query = verticalPagerSearchQueryState.value,
+                                onQueryChange = { verticalPagerSearchQueryState.value = it },
+                                placeholder = "VerticalPager 页内搜索…",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .testTag(DemoTestTags.INPUT_FOCUS_VERTICAL_PAGER_SEARCH),
+                            )
+                        }
+                    }
+                    Page(key = "focus-follow-vertical-pager-note", contentToken = "focus-follow-vertical-pager-note") {
+                        Column(
+                            spacing = 8.dp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                                .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                                .padding(12.dp),
+                        ) {
+                            Text(text = "第二页用于手动切换验证")
+                            Text(
+                                text = "切换页面后再聚焦输入框，应保持 page 内可见区域稳定。",
+                                style = UiTextStyle(fontSizeSp = 13.sp),
+                                color = TextDefaults.secondaryColor(),
+                            )
+                        }
+                    }
+                }
+                Text(
+                    text = "PullToRefresh 子容器 focus follow",
+                    style = UiTextStyle(fontSizeSp = 14.sp),
+                    modifier = Modifier.margin(bottom = 8.dp),
+                )
+                PullToRefresh(
+                    isRefreshing = pullRefreshFocusRefreshingState.value,
+                    onRefresh = { pullRefreshFocusRefreshingState.value = true },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(188.dp)
+                        .margin(bottom = 8.dp),
+                ) {
+                    ScrollableColumn(
+                        spacing = 8.dp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp)
+                            .focusFollowKeyboard(),
+                    ) {
+                        SearchBar(
+                            query = pullRefreshSearchQueryState.value,
+                            onQueryChange = { pullRefreshSearchQueryState.value = it },
+                            placeholder = "PullToRefresh 子容器搜索…",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag(DemoTestTags.INPUT_FOCUS_PULL_REFRESH_SEARCH),
+                        )
+                        Button(
+                            text = if (pullRefreshFocusRefreshingState.value) "停止刷新" else "模拟刷新",
+                            variant = ButtonVariant.Outlined,
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = {
+                                pullRefreshFocusRefreshingState.value = !pullRefreshFocusRefreshingState.value
+                            },
+                        )
+                        Text(
+                            text = "PullToRefresh 容器本身不处理 focus follow，行为由内部 ScrollableColumn 负责。",
+                            style = UiTextStyle(fontSizeSp = 13.sp),
+                            color = TextDefaults.secondaryColor(),
+                        )
+                    }
+                }
+                Text(
+                    text = "聚焦以上输入框后，外层列表锚点不应跳变到顶部。",
+                    style = UiTextStyle(fontSizeSp = 13.sp),
+                    color = TextDefaults.secondaryColor(),
                 )
             }
 

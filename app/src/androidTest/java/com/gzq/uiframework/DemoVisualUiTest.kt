@@ -1,6 +1,7 @@
 package com.gzq.uiframework
 
 import android.content.Intent
+import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assert.assertEquals
@@ -188,26 +189,58 @@ class DemoVisualUiTest {
             ApplicationProvider.getApplicationContext(),
             InputActivity::class.java,
         ).putExtra(EXTRA_INPUT_PAGE_INDEX, 3)
-        var beforeAnchor: RecyclerViewportAnchor? = null
         launchDemoActivity<InputActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
             waitForUiIdle()
-            scenario.onActivity { activity ->
-                beforeAnchor = activity.readFirstRecyclerAnchor()
-                activity.focusInputByTestTag(DemoTestTags.INPUT_SEARCH_PRIMARY)
-            }
+            assertFocusActionKeepsRecyclerAnchor(
+                scenario = scenario,
+                tag = DemoTestTags.INPUT_SEARCH_PRIMARY,
+                maxOffsetDelta = 8,
+            )
+        }
+    }
+
+    @Test
+    fun inputSearch_focusScrollableColumnSearch_doesNotAutoScrollList() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            InputActivity::class.java,
+        ).putExtra(EXTRA_INPUT_PAGE_INDEX, 3)
+        launchDemoActivity<InputActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
             waitForUiIdle()
-            scenario.onActivity { activity ->
-                val afterAnchor = activity.readFirstRecyclerAnchor()
-                assertNotNull(beforeAnchor)
-                assertNotNull(afterAnchor)
-                val before = beforeAnchor!!
-                val after = afterAnchor!!
-                assertEquals(before.position, after.position)
-                assertTrue(
-                    "Expected focus action to avoid noticeable auto-scroll, before=$before, after=$after",
-                    abs(before.offset - after.offset) <= 8,
-                )
-            }
+            assertFocusActionKeepsRecyclerAnchor(
+                scenario = scenario,
+                tag = DemoTestTags.INPUT_FOCUS_SCROLLABLE_SEARCH,
+            )
+        }
+    }
+
+    @Test
+    fun inputSearch_focusVerticalPagerSearch_doesNotAutoScrollList() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            InputActivity::class.java,
+        ).putExtra(EXTRA_INPUT_PAGE_INDEX, 3)
+        launchDemoActivity<InputActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            assertFocusActionKeepsRecyclerAnchor(
+                scenario = scenario,
+                tag = DemoTestTags.INPUT_FOCUS_VERTICAL_PAGER_SEARCH,
+            )
+        }
+    }
+
+    @Test
+    fun inputSearch_focusPullRefreshSearch_doesNotAutoScrollList() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            InputActivity::class.java,
+        ).putExtra(EXTRA_INPUT_PAGE_INDEX, 3)
+        launchDemoActivity<InputActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            assertFocusActionKeepsRecyclerAnchor(
+                scenario = scenario,
+                tag = DemoTestTags.INPUT_FOCUS_PULL_REFRESH_SEARCH,
+            )
         }
     }
 
@@ -524,5 +557,31 @@ class DemoVisualUiTest {
 
     private fun extractCount(text: String): Int {
         return "(\\d+)".toRegex().find(text)?.value?.toIntOrNull() ?: 0
+    }
+
+    private fun assertFocusActionKeepsRecyclerAnchor(
+        scenario: ActivityScenario<InputActivity>,
+        tag: String,
+        maxOffsetDelta: Int = 12,
+    ) {
+        var beforeAnchor: RecyclerViewportAnchor? = null
+        scenario.onActivity { activity ->
+            activity.requireViewByTestTagVisible(tag)
+            beforeAnchor = activity.readFirstRecyclerAnchor()
+            activity.focusInputByTestTag(tag)
+        }
+        waitForUiIdle()
+        scenario.onActivity { activity ->
+            val afterAnchor = activity.readFirstRecyclerAnchor()
+            assertNotNull(beforeAnchor)
+            assertNotNull(afterAnchor)
+            val before = beforeAnchor!!
+            val after = afterAnchor!!
+            assertEquals(before.position, after.position)
+            assertTrue(
+                "Expected focus action to avoid noticeable auto-scroll, before=$before, after=$after, tag=$tag",
+                abs(before.offset - after.offset) <= maxOffsetDelta,
+            )
+        }
     }
 }

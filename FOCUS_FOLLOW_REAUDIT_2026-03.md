@@ -58,7 +58,7 @@
 
 对应提交：`13a18db`
 
-### 2.4 容器覆盖面缺口（已部分补齐）
+### 2.4 容器覆盖面缺口（已收口）
 
 问题：
 
@@ -69,8 +69,10 @@
 
 1. `VerticalPager` 增加焦点跟随开关并接入  
 2. `ScrollableColumn` 新增监视器并接入
+3. demo 输入页补齐 `ScrollableColumn/VerticalPager/PullToRefresh` 三类焦点跟随锚点
+4. `DemoVisualUiTest` 补齐三类容器的独立 focus-follow 回归用例
 
-对应提交：`13a18db`、`38273ff`
+对应提交：`13a18db`、`38273ff`、`test: add focus-follow coverage for scrollable/pager/pull-refresh`
 
 ### 2.5 水平容器误用缺少诊断信号（已修复）
 
@@ -100,7 +102,9 @@
 | `ScrollableRow` | ⛔ 不执行 | 水平语义，不做键盘上顶 |
 | `PullToRefresh` | ➖ 依赖子容器 | 容器本身不处理，交给内部可滚动子树 |
 
-## 4. 仍可继续优化项
+## 4. 本轮收口结果
 
-1. 为 `VerticalPager` 与 `ScrollableColumn` 增加独立 instrumentation 回归用例  
-2. `PullToRefresh` 场景补充“子容器 focus-follow 行为”专项回归
+1. `VerticalPager` 与 `ScrollableColumn` 的独立 instrumentation 回归已补齐  
+2. 水平容器误用 `focusFollowKeyboard(true)` 已具备一次性 warning  
+3. `PullToRefresh` 的“子容器 focus-follow”专项回归已补齐  
+4. 本文档在本轮范围内无未完成项
