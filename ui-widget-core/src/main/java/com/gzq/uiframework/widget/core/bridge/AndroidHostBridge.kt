@@ -19,7 +19,7 @@ import java.util.WeakHashMap
 fun Fragment.setUiContent(
     debug: Boolean = false,
     debugTag: String = "UIFramework",
-    overlayHostFactory: (ViewGroup) -> OverlayHost = { OverlayHostDefaults.noOp },
+    overlayHostFactory: (ViewGroup) -> OverlayHost = { root -> OverlayHostDefaults.androidOrNoOp(root) },
     onRenderStats: ((RenderStats) -> Unit)? = null,
     onRenderResult: ((RenderTreeResult) -> Unit)? = null,
     content: UiTreeBuilder.(ViewGroup) -> Unit,
@@ -50,7 +50,7 @@ fun Fragment.setUiContent(
 fun ComponentActivity.setUiContent(
     debug: Boolean = false,
     debugTag: String = "UIFramework",
-    overlayHostFactory: (ViewGroup) -> OverlayHost = { OverlayHostDefaults.noOp },
+    overlayHostFactory: (ViewGroup) -> OverlayHost = { root -> OverlayHostDefaults.androidOrNoOp(root) },
     onRenderStats: ((RenderStats) -> Unit)? = null,
     onRenderResult: ((RenderTreeResult) -> Unit)? = null,
     content: UiTreeBuilder.(ViewGroup) -> Unit,
