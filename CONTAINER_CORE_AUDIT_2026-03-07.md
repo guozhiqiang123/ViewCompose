@@ -78,7 +78,7 @@
 - 问题：`FlowRow/FlowColumn` 未写入 `LayoutPassTracker`，容器级布局诊断存在盲区。
 - 影响：复杂流式布局场景下，无法在 render 统计中定位 measure/layout 热点来源。
 - 修复：在 `onMeasure/onLayout` 统一记录 `LayoutPassTracker.recordMeasure/recordLayout`。
-- 提交：本轮收口提交（见 git log）。
+- 提交：`ff2fb18`。
 
 ### F-09（已修复）NavigationBar/SegmentedControl 细粒度 patch 缺失
 
@@ -87,7 +87,7 @@
 - 修复：
   - `NavigationBar`：引入“结构变更/样式变更/内容变更/选中态变更”分层策略，仅更新受影响 index。
   - `SegmentedControl`：引入“样式全量更新 + 选中态局部更新”路径，纯选中切换仅更新前后两个分段。
-- 提交：本轮收口提交（见 git log）。
+- 提交：`232a42c`。
 
 ### F-10（已修复）TabRow/NavigationBar/SegmentedControl 缺少专项回归断言
 
@@ -95,7 +95,7 @@
 - 修复：
   - unit：补 `NodeBindingDiffer` 对 `NavigationBar/TabRow` 的 patch 断言。
   - instrumentation：补 `NavigationBar` 选中态摘要、`SegmentedControl` 状态摘要、`TabRow` 选中摘要 UI 回归。
-- 提交：本轮收口提交（见 git log）。
+- 提交：`8eaf43e`。
 
 ## 4. Redundant Nesting Review
 
