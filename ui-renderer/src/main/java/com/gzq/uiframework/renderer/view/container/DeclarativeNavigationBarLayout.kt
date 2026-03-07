@@ -16,6 +16,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.gzq.uiframework.renderer.node.NavigationBarItem
+import com.gzq.uiframework.renderer.view.dpToPx
 
 internal class DeclarativeNavigationBarLayout(
     context: Context,
@@ -32,7 +33,6 @@ internal class DeclarativeNavigationBarLayout(
     private var items: List<NavigationBarItem> = emptyList()
     private var selectedIndex: Int = -1
     private var onItemSelected: ((Int) -> Unit)? = null
-    private val density = context.resources.displayMetrics.density
     private val itemRefs = mutableListOf<ItemViewRefs>()
 
     init {
@@ -97,7 +97,7 @@ internal class DeclarativeNavigationBarLayout(
             orientation = VERTICAL
             gravity = Gravity.CENTER_HORIZONTAL
             layoutParams = LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f)
-            setPadding(0, dpToPx(12), 0, dpToPx(16))
+            setPadding(0, context.dpToPx(12), 0, context.dpToPx(16))
             isClickable = true
             isFocusable = true
             background = RippleDrawable(
@@ -116,8 +116,8 @@ internal class DeclarativeNavigationBarLayout(
         // Icon container (FrameLayout for overlaying indicator + icon + badge)
         val iconContainer = FrameLayout(context).apply {
             layoutParams = LinearLayout.LayoutParams(
-                dpToPx(INDICATOR_WIDTH),
-                dpToPx(INDICATOR_HEIGHT),
+                context.dpToPx(INDICATOR_WIDTH),
+                context.dpToPx(INDICATOR_HEIGHT),
             ).apply {
                 gravity = Gravity.CENTER_HORIZONTAL
             }
@@ -129,8 +129,8 @@ internal class DeclarativeNavigationBarLayout(
         }
         val indicator = View(context).apply {
             layoutParams = FrameLayout.LayoutParams(
-                dpToPx(INDICATOR_WIDTH),
-                dpToPx(INDICATOR_HEIGHT),
+                context.dpToPx(INDICATOR_WIDTH),
+                context.dpToPx(INDICATOR_HEIGHT),
             ).apply {
                 gravity = Gravity.CENTER
             }
@@ -141,8 +141,8 @@ internal class DeclarativeNavigationBarLayout(
         // Icon
         val iconView = ImageView(context).apply {
             layoutParams = FrameLayout.LayoutParams(
-                dpToPx(ICON_SIZE_DEFAULT),
-                dpToPx(ICON_SIZE_DEFAULT),
+                context.dpToPx(ICON_SIZE_DEFAULT),
+                context.dpToPx(ICON_SIZE_DEFAULT),
             ).apply {
                 gravity = Gravity.CENTER
             }
@@ -158,7 +158,7 @@ internal class DeclarativeNavigationBarLayout(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
             ).apply {
                 gravity = Gravity.TOP or Gravity.END
-                marginStart = dpToPx(INDICATOR_WIDTH / 2)
+                marginStart = context.dpToPx(INDICATOR_WIDTH / 2)
             }
             gravity = Gravity.CENTER
             setTypeface(typeface, Typeface.BOLD)
@@ -175,7 +175,7 @@ internal class DeclarativeNavigationBarLayout(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
             ).apply {
                 gravity = Gravity.CENTER_HORIZONTAL
-                topMargin = dpToPx(4)
+                topMargin = context.dpToPx(4)
             }
             this.gravity = Gravity.CENTER
             text = item.label
@@ -213,7 +213,7 @@ internal class DeclarativeNavigationBarLayout(
                 visibility = if (isSelected) View.VISIBLE else View.INVISIBLE
             }
             refs.indicatorDrawable.setColor(indicatorColor)
-            refs.indicatorDrawable.cornerRadius = dpToPx(INDICATOR_CORNER_RADIUS).toFloat()
+            refs.indicatorDrawable.cornerRadius = context.dpToPx(INDICATOR_CORNER_RADIUS).toFloat()
 
             // Update icon
             refs.iconView.apply {
@@ -243,7 +243,7 @@ internal class DeclarativeNavigationBarLayout(
                         // Dot badge
                         visibility = View.VISIBLE
                         text = ""
-                        val dotSize = dpToPx(DOT_BADGE_SIZE)
+                        val dotSize = context.dpToPx(DOT_BADGE_SIZE)
                         layoutParams = (layoutParams as FrameLayout.LayoutParams).apply {
                             width = dotSize
                             height = dotSize
@@ -259,8 +259,8 @@ internal class DeclarativeNavigationBarLayout(
                         text = if (item.badgeCount > 99) "99+" else item.badgeCount.toString()
                         setTextColor(badgeTextColor)
                         setTextSize(TypedValue.COMPLEX_UNIT_SP, BADGE_TEXT_SIZE_SP)
-                        val badgeHeight = dpToPx(BADGE_HEIGHT)
-                        val hPad = dpToPx(BADGE_HORIZONTAL_PADDING)
+                        val badgeHeight = context.dpToPx(BADGE_HEIGHT)
+                        val hPad = context.dpToPx(BADGE_HORIZONTAL_PADDING)
                         setPadding(hPad, 0, hPad, 0)
                         layoutParams = (layoutParams as FrameLayout.LayoutParams).apply {
                             width = ViewGroup.LayoutParams.WRAP_CONTENT
@@ -284,8 +284,6 @@ internal class DeclarativeNavigationBarLayout(
             }
         }
     }
-
-    private fun dpToPx(dp: Int): Int = (dp * density + 0.5f).toInt()
 
     companion object {
         private const val INDICATOR_WIDTH = 64

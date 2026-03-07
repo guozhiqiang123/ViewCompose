@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.gzq.uiframework.renderer.node.SegmentedControlItem
+import com.gzq.uiframework.renderer.view.dpToPx
 
 internal class DeclarativeSegmentedControlLayout(
     context: Context,
@@ -19,7 +20,7 @@ internal class DeclarativeSegmentedControlLayout(
     private var items: List<SegmentedControlItem> = emptyList()
     private var selectedIndex: Int = -1
     private var onSelectionChange: ((Int) -> Unit)? = null
-    private val indicatorInset = 2 * context.resources.displayMetrics.density
+    private val indicatorInset = context.dpToPx(2).toFloat()
     private val containerBackground = GradientDrawable().apply {
         shape = GradientDrawable.RECTANGLE
     }

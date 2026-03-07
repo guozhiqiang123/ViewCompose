@@ -23,6 +23,7 @@
 4. 延迟 session 容器的 keyed diff 已切到 `DiffUtil` 引擎（保留 key 缺失/重复 fallback）。
 5. framework 托管的 `RecyclerView` 容器默认不共享 `RecycledViewPool` 且保留系统 `itemAnimator`；可按需通过 `Modifier.lazyContainerReuse(...)` 对单个容器启用共享池与动画器策略。
 6. patch pipeline 已支持 subtree skip（`SkipSubtree`）并新增 `skippedSubtrees` 统计。
+7. renderer 内部尺寸换算统一走 `ui-renderer/view/DimensionUtils.kt`，避免容器层重复定义 `density/dpToPx` 带来的行为漂移。
 
 ### 2.2 当前结论
 

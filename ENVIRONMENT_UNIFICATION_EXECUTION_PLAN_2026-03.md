@@ -24,7 +24,7 @@
 - [x] Step 1: 新增执行计划文档并首提
 - [x] Step 2: 宿主入口默认注入 `UiEnvironment`
 - [x] Step 3: demo 去冗余并保留 1 个覆盖示例
-- [ ] Step 4: renderer 尺寸转换统一工具化
+- [x] Step 4: renderer 尺寸转换统一工具化
 - [ ] Step 5: 新增 renderer 环境约束防回归测试
 - [ ] Step 6: 架构与流程文档写入核心约束
 - [ ] Step 7: 收口归档并更新 archive 索引
@@ -34,6 +34,7 @@
 - `docs: add environment unification execution plan`
 - `feat: auto-provide UiEnvironment in host bridge entrypoints`
 - `refactor: remove redundant demo UiEnvironment wrappers and keep one override sample`
+- `refactor: unify renderer density conversion via shared dimension utilities`
 
 ## 6. Blockers
 
