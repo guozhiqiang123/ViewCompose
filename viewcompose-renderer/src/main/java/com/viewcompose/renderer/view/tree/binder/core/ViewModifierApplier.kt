@@ -131,6 +131,7 @@ internal object ViewModifierApplier {
         val textColor = readNodeTextColor(node)
         val textSizeSp = readNodeTextSize(node)
         val anchorId = readAnchorId(node)
+        val hasWindowInsetsPadding = resolved.systemBarsInsetsPadding != null || resolved.imeInsetsPadding != null
         view.alpha = resolvedAlpha
         if (view is DeclarativeTextFieldLayout) {
             applyAnchorId(view, anchorId)
@@ -151,7 +152,9 @@ internal object ViewModifierApplier {
             view.minimumHeight = 0
             view.minimumWidth = 0
             view.contentDescription = resolved.contentDescription?.contentDescription
-            view.setPadding(0, 0, 0, 0)
+            if (!hasWindowInsetsPadding) {
+                view.setPadding(0, 0, 0, 0)
+            }
             applyTextFieldModifier(
                 layout = view,
                 backgroundColor = resolvedBackgroundColor,
@@ -168,6 +171,11 @@ internal object ViewModifierApplier {
                 view = view,
                 systemBarsModifier = resolved.systemBarsInsetsPadding,
                 imeModifier = resolved.imeInsetsPadding,
+                basePadding = if (hasWindowInsetsPadding) {
+                    resolvedPadding
+                } else {
+                    null
+                },
             )
             return
         }
@@ -205,20 +213,27 @@ internal object ViewModifierApplier {
         view.isClickable = hasClickListener || keepIntrinsicInteraction
         view.isFocusable = hasClickListener || keepIntrinsicInteraction
         view.isFocusableInTouchMode = false
-        if (resolvedPadding == null) {
-            view.setPadding(0, 0, 0, 0)
-        } else {
-            view.setPadding(
-                resolvedPadding.left,
-                resolvedPadding.top,
-                resolvedPadding.right,
-                resolvedPadding.bottom,
-            )
+        if (!hasWindowInsetsPadding) {
+            if (resolvedPadding == null) {
+                view.setPadding(0, 0, 0, 0)
+            } else {
+                view.setPadding(
+                    resolvedPadding.left,
+                    resolvedPadding.top,
+                    resolvedPadding.right,
+                    resolvedPadding.bottom,
+                )
+            }
         }
         applyWindowInsetsPadding(
             view = view,
             systemBarsModifier = resolved.systemBarsInsetsPadding,
             imeModifier = resolved.imeInsetsPadding,
+            basePadding = if (hasWindowInsetsPadding) {
+                resolvedPadding
+            } else {
+                null
+            },
         )
         if (view is TextView) {
             if (textColor != null) {
@@ -653,6 +668,7 @@ internal object ViewModifierApplier {
         view: View,
         systemBarsModifier: SystemBarsInsetsPaddingModifierElement?,
         imeModifier: ImeInsetsPaddingModifierElement?,
+        basePadding: PaddingModifierElement?,
     ) {
         if (systemBarsModifier == null && imeModifier == null) {
             val state = view.getTag(R.id.ui_framework_system_bars_padding_state) as? WindowInsetsPaddingState
@@ -668,10 +684,17 @@ internal object ViewModifierApplier {
             ?: WindowInsetsPaddingState().also {
                 view.setTag(R.id.ui_framework_system_bars_padding_state, it)
             }
-        state.baseLeft = view.paddingLeft - state.appliedLeft
-        state.baseTop = view.paddingTop - state.appliedTop
-        state.baseRight = view.paddingRight - state.appliedRight
-        state.baseBottom = view.paddingBottom - state.appliedBottom
+        if (basePadding != null) {
+            state.baseLeft = basePadding.left
+            state.baseTop = basePadding.top
+            state.baseRight = basePadding.right
+            state.baseBottom = basePadding.bottom
+        } else {
+            state.baseLeft = view.paddingLeft - state.appliedLeft
+            state.baseTop = view.paddingTop - state.appliedTop
+            state.baseRight = view.paddingRight - state.appliedRight
+            state.baseBottom = view.paddingBottom - state.appliedBottom
+        }
 
         ViewCompat.setOnApplyWindowInsetsListener(view) { target, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
