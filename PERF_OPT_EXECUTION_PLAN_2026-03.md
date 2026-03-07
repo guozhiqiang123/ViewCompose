@@ -48,7 +48,8 @@ Out of scope for this execution:
 | 2026-03-07 | Step 2 | `14d34f5` | Switched lazy keyed diff engine to DiffUtil and updated performance doc. |
 | 2026-03-07 | Step 3 | `b976da2` | Added payload-aware lazy/pager update path and updated container checklist doc. |
 | 2026-03-07 | Step 4 | `864c094` | Tuned framework-managed RecyclerView defaults and synced architecture/performance docs. |
-| 2026-03-07 | Step 5 | _pending_ | Added subtree skip plan/pipeline/stats path and synced roadmap/performance docs. |
+| 2026-03-07 | Step 5 | `dad304a` | Added subtree skip plan/pipeline/stats path and synced roadmap/performance docs. |
+| 2026-03-07 | Step 6 (unit) | _pending_ | Added diff/payload unit assertions for lazy diff behavior. |
 
 ## 6. Blocker Log
 

@@ -6,6 +6,7 @@ import com.gzq.uiframework.renderer.node.LazyListItemSession
 import com.gzq.uiframework.renderer.node.LazyListItemSessionFactory
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class LazyListDiffTest {
@@ -93,6 +94,23 @@ class LazyListDiffTest {
 
         assertEquals(emptyList<LazyListUpdate>(), result.updates)
         assertSame(next, result.items.first())
+    }
+
+    @Test
+    fun `emits content token payload on change updates`() {
+        val result = LazyListDiff.calculate(
+            previous = listOf(item("A", contentToken = 1)),
+            next = listOf(item("A", contentToken = 2)),
+        )
+
+        assertEquals(1, result.updates.size)
+        val update = result.updates.first()
+        assertTrue(update is LazyListUpdate.Change)
+        val payload = (update as LazyListUpdate.Change).payload
+        assertTrue(payload is LazyListChangePayload.ContentTokenChanged)
+        payload as LazyListChangePayload.ContentTokenChanged
+        assertEquals(1, payload.previous)
+        assertEquals(2, payload.next)
     }
 
     private fun item(
