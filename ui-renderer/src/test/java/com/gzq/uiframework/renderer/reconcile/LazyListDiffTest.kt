@@ -18,8 +18,8 @@ class LazyListDiffTest {
 
         assertEquals(
             listOf(
-                LazyListUpdate.Move(2, 0),
-                LazyListUpdate.Move(2, 1),
+                LazyListUpdate.Move(1, 2),
+                LazyListUpdate.Move(0, 2),
             ),
             result.updates,
         )
@@ -35,8 +35,8 @@ class LazyListDiffTest {
 
         assertEquals(
             listOf(
+                LazyListUpdate.Insert(2, item("C")),
                 LazyListUpdate.Remove(0),
-                LazyListUpdate.Insert(1, item("C")),
             ),
             result.updates,
         )

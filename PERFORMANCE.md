@@ -20,6 +20,7 @@
 1. benchmark 模块已接入，具备稳定测试入口。
 2. renderer 已具备节点级“是否重绑”判断能力（`rebound/skipped` 统计）。
 3. diagnostics 已有 render/layout 基础指标可观测能力。
+4. 延迟 session 容器的 keyed diff 已切到 `DiffUtil` 引擎（保留 key 缺失/重复 fallback）。
 
 ### 2.2 当前结论
 
@@ -71,6 +72,7 @@
 
 状态：进行中（已有起步）  
 目标：扩大节点级 skip 更新覆盖，降低无效 rebind
+阶段备注（2026-03-07）：`Lazy/Pager` keyed diff 引擎已切换至 `DiffUtil`，subtree skip 仍待推进。
 
 ### Phase 3：诊断增强
 

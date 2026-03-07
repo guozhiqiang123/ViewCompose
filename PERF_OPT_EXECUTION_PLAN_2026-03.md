@@ -33,7 +33,7 @@ Out of scope for this execution:
 ## 4. Step Checklist
 
 - [x] Step 1: Add this execution plan doc and commit.
-- [ ] Step 2: Replace lazy keyed diff engine with DiffUtil-backed internal engine; sync `PERFORMANCE.md`.
+- [x] Step 2: Replace lazy keyed diff engine with DiffUtil-backed internal engine; sync `PERFORMANCE.md`.
 - [ ] Step 3: Add payload-aware lazy/pager update path; sync `SESSION_CONTAINER_CHECKLIST.md`.
 - [ ] Step 4: Apply framework-managed RecyclerView defaults tuning; sync `ARCHITECTURE.md` + `PERFORMANCE.md`.
 - [ ] Step 5: Add subtree skip plan/pipeline/stats path; sync `PERFORMANCE.md` + `ROADMAP.md`.
@@ -44,7 +44,8 @@ Out of scope for this execution:
 
 | Date | Step | Commit | Notes |
 | --- | --- | --- | --- |
-| 2026-03-07 | Step 1 | _pending_ | Added execution plan doc. |
+| 2026-03-07 | Step 1 | `bf0760d` | Added execution plan doc. |
+| 2026-03-07 | Step 2 | _pending_ | Switched lazy keyed diff engine to DiffUtil and updated performance doc. |
 
 ## 6. Blocker Log
 
