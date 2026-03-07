@@ -6,6 +6,7 @@ class ModalBottomSheetOverlaySpec(
     val skipPartiallyExpanded: Boolean = false,
     val scrimOpacity: Float = 0.32f,
     val navigationBarColor: Int? = null,
+    val topCornerRadius: Int? = null,
     val onDismissRequest: (() -> Unit)? = null,
 ) {
     override fun equals(other: Any?): Boolean {
@@ -19,7 +20,8 @@ class ModalBottomSheetOverlaySpec(
             dismissOnClickOutside == other.dismissOnClickOutside &&
             skipPartiallyExpanded == other.skipPartiallyExpanded &&
             scrimOpacity == other.scrimOpacity &&
-            navigationBarColor == other.navigationBarColor
+            navigationBarColor == other.navigationBarColor &&
+            topCornerRadius == other.topCornerRadius
     }
 
     override fun hashCode(): Int {
@@ -28,6 +30,7 @@ class ModalBottomSheetOverlaySpec(
         result = 31 * result + skipPartiallyExpanded.hashCode()
         result = 31 * result + scrimOpacity.hashCode()
         result = 31 * result + (navigationBarColor ?: 0)
+        result = 31 * result + (topCornerRadius ?: 0)
         return result
     }
 }

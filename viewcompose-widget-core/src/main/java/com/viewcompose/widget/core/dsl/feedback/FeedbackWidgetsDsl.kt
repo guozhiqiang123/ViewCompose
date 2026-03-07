@@ -183,6 +183,7 @@ fun UiTreeBuilder.ModalBottomSheet(
     skipPartiallyExpanded: Boolean = false,
     scrimOpacity: Float = ModalBottomSheetDefaults.scrimOpacity(),
     navigationBarColor: Int? = ModalBottomSheetDefaults.navigationBarColor(),
+    topCornerRadius: Int? = ModalBottomSheetDefaults.topCornerRadius(),
     onDismissRequest: (() -> Unit)? = null,
     content: UiTreeBuilder.() -> Unit,
 ) {
@@ -199,6 +200,7 @@ fun UiTreeBuilder.ModalBottomSheet(
                 skipPartiallyExpanded = skipPartiallyExpanded,
                 scrimOpacity = scrimOpacity,
                 navigationBarColor = navigationBarColor,
+                topCornerRadius = topCornerRadius,
                 onDismissRequest = onDismissRequest,
             ),
             contentToken = ModalBottomSheetOverlayContent(

@@ -250,6 +250,7 @@ internal fun UiTreeBuilder.DeclareFeedbackOverlays(
         visible = state.bottomSheetVisibleState.value,
         requestKey = "feedback_bottom_sheet",
         navigationBarColor = SurfaceDefaults.backgroundColor(),
+        topCornerRadius = SurfaceDefaults.cardCornerRadius(),
         onDismissRequest = {
             state.bottomSheetVisibleState.value = false
             state.lastEventState.value = "BottomSheet 关闭"

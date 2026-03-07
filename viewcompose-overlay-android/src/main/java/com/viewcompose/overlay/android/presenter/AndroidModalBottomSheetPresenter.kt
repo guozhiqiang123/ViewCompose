@@ -1,5 +1,8 @@
 package com.viewcompose.overlay.android.presenter
 
+import android.content.res.ColorStateList
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.view.View
 import android.view.ViewGroup
@@ -7,7 +10,9 @@ import android.view.Window
 import android.widget.FrameLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.viewcompose.widget.core.AndroidEnvironmentBridge
+import com.google.android.material.shape.CornerFamily
+import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.ShapeAppearanceModel
 import com.viewcompose.widget.core.ModalBottomSheetOverlayContent
 import com.viewcompose.widget.core.ModalBottomSheetOverlayHandle
 import com.viewcompose.widget.core.ModalBottomSheetOverlayPresenter
@@ -47,6 +52,7 @@ private class AndroidModalBottomSheetHandle(
         setContentView(dialogContainer)
     }
     private val defaultNavigationBarColor: Int? = dialog.window?.readNavigationBarColorCompat()
+    private var defaultSheetBackground: Drawable? = null
     private val surfaceSession: OverlaySurfaceSession = createOverlaySurfaceSession(
         container = dialogContainer,
         content = content.surface,
@@ -92,6 +98,7 @@ private class AndroidModalBottomSheetHandle(
         if (!dialog.isShowing) {
             dialog.show()
         }
+        applySheetCornerRadius(spec)
     }
 
     override fun dismiss() {
@@ -102,6 +109,33 @@ private class AndroidModalBottomSheetHandle(
             dialog.dismiss()
         }
         programmaticDismiss = false
+    }
+
+    private fun applySheetCornerRadius(spec: ModalBottomSheetOverlaySpec) {
+        val sheet = dialog.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet) ?: return
+        if (defaultSheetBackground == null) {
+            defaultSheetBackground = sheet.background?.constantState?.newDrawable()?.mutate()
+        }
+        val radius = spec.topCornerRadius
+        if (radius == null) {
+            sheet.background = defaultSheetBackground
+            return
+        }
+        val fillColorInt = when (val background = sheet.background) {
+            is MaterialShapeDrawable -> background.fillColor?.defaultColor
+            is ColorDrawable -> background.color
+            else -> null
+        } ?: ColorDrawable(0).color
+        val model = ShapeAppearanceModel.builder()
+            .setTopLeftCorner(CornerFamily.ROUNDED, radius.toFloat())
+            .setTopRightCorner(CornerFamily.ROUNDED, radius.toFloat())
+            .setBottomLeftCorner(CornerFamily.ROUNDED, 0f)
+            .setBottomRightCorner(CornerFamily.ROUNDED, 0f)
+            .build()
+        sheet.background = MaterialShapeDrawable(model).apply {
+            initializeElevationOverlay(sheet.context)
+            fillColor = ColorStateList.valueOf(fillColorInt)
+        }
     }
 }
 
