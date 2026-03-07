@@ -8,6 +8,7 @@ import com.viewcompose.renderer.modifier.padding
 import com.viewcompose.renderer.modifier.testTag
 import com.viewcompose.renderer.node.ImageSource
 import com.viewcompose.widget.core.AlertDialog
+import com.viewcompose.widget.core.Box
 import com.viewcompose.widget.core.Button
 import com.viewcompose.widget.core.ButtonVariant
 import com.viewcompose.widget.core.Column
@@ -17,6 +18,7 @@ import com.viewcompose.widget.core.Divider
 import com.viewcompose.widget.core.DropdownMenu
 import com.viewcompose.widget.core.DropdownMenuItem
 import com.viewcompose.widget.core.ModalBottomSheet
+import com.viewcompose.widget.core.ModalBottomSheetDefaults
 import com.viewcompose.widget.core.PlainTooltip
 import com.viewcompose.widget.core.Popup
 import com.viewcompose.widget.core.PopupAlignment
@@ -249,56 +251,62 @@ internal fun UiTreeBuilder.DeclareFeedbackOverlays(
     ModalBottomSheet(
         visible = state.bottomSheetVisibleState.value,
         requestKey = "feedback_bottom_sheet",
-        navigationBarColor = SurfaceDefaults.backgroundColor(),
         onDismissRequest = {
             state.bottomSheetVisibleState.value = false
             state.lastEventState.value = "BottomSheet 关闭"
         },
     ) {
-        Column(
-            spacing = 12.dp,
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .cornerRadius(top = SurfaceDefaults.cardCornerRadius())
+                .backgroundColor(ModalBottomSheetDefaults.containerColor())
         ) {
-            Text(
-                text = "底部弹窗",
-                style = UiTextStyle(fontSizeSp = 18.sp),
-                modifier = Modifier.testTag(DemoTestTags.FEEDBACK_BOTTOM_SHEET_TITLE),
-            )
-            Text(
-                text = "ModalBottomSheet 通过 overlay 路径渲染，支持手势下滑关闭。",
-                color = TextDefaults.secondaryColor(),
-            )
-            Divider()
-            Button(
-                text = "选项一：保存草稿",
-                onClick = {
-                    state.bottomSheetVisibleState.value = false
-                    state.lastEventState.value = "BottomSheet 保存草稿"
-                },
-                modifier = Modifier.fillMaxWidth(),
-            )
-            Button(
-                text = "选项二：丢弃更改",
-                variant = ButtonVariant.Outlined,
-                onClick = {
-                    state.bottomSheetVisibleState.value = false
-                    state.lastEventState.value = "BottomSheet 丢弃更改"
-                },
-                modifier = Modifier.fillMaxWidth(),
-            )
-            Button(
-                text = "关闭",
-                variant = ButtonVariant.Tonal,
-                onClick = {
-                    state.bottomSheetVisibleState.value = false
-                    state.lastEventState.value = "BottomSheet 关闭"
-                },
+            Column(
+                spacing = 12.dp,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .testTag(DemoTestTags.FEEDBACK_BOTTOM_SHEET_CLOSE),
-            )
+                    .padding(16.dp),
+            ) {
+                Text(
+                    text = "底部弹窗",
+                    style = UiTextStyle(fontSizeSp = 18.sp),
+                    modifier = Modifier.testTag(DemoTestTags.FEEDBACK_BOTTOM_SHEET_TITLE),
+                )
+                Text(
+                    text = "ModalBottomSheet 通过 overlay 路径渲染，支持手势下滑关闭。",
+                    color = TextDefaults.secondaryColor(),
+                )
+                Divider()
+                Button(
+                    text = "选项一：保存草稿",
+                    onClick = {
+                        state.bottomSheetVisibleState.value = false
+                        state.lastEventState.value = "BottomSheet 保存草稿"
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                Button(
+                    text = "选项二：丢弃更改",
+                    variant = ButtonVariant.Outlined,
+                    onClick = {
+                        state.bottomSheetVisibleState.value = false
+                        state.lastEventState.value = "BottomSheet 丢弃更改"
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                Button(
+                    text = "关闭",
+                    variant = ButtonVariant.Tonal,
+                    onClick = {
+                        state.bottomSheetVisibleState.value = false
+                        state.lastEventState.value = "BottomSheet 关闭"
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag(DemoTestTags.FEEDBACK_BOTTOM_SHEET_CLOSE),
+                )
+            }
         }
     }
 }
