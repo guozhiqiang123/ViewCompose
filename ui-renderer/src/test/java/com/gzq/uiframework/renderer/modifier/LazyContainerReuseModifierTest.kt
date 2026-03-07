@@ -19,10 +19,10 @@ class LazyContainerReuseModifierTest {
     }
 
     @Test
-    fun `lazyContainerFocusFollowKeyboard appends focus element`() {
-        val modifier = Modifier.lazyContainerFocusFollowKeyboard(enabled = true)
+    fun `focusFollowKeyboard appends focus element`() {
+        val modifier = Modifier.focusFollowKeyboard(enabled = true)
 
-        val element = modifier.elements.single() as LazyContainerFocusFollowKeyboardModifierElement
+        val element = modifier.elements.single() as FocusFollowKeyboardModifierElement
         assertTrue(element.enabled)
     }
 
@@ -60,8 +60,8 @@ class LazyContainerReuseModifierTest {
     @Test
     fun `lazyContainerFocusPolicy uses last element in chain`() {
         val policy = Modifier
-            .lazyContainerFocusFollowKeyboard(enabled = true)
-            .lazyContainerFocusFollowKeyboard(enabled = false)
+            .focusFollowKeyboard(enabled = true)
+            .focusFollowKeyboard(enabled = false)
             .lazyContainerFocusPolicy()
 
         assertEquals(
@@ -81,5 +81,15 @@ class LazyContainerReuseModifierTest {
 
         assertTrue(policy.sharePool)
         assertTrue(policy.disableItemAnimator)
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun `deprecated lazyContainerFocusFollowKeyboard delegates to focusFollowKeyboard`() {
+        val policy = Modifier
+            .lazyContainerFocusFollowKeyboard(enabled = true)
+            .lazyContainerFocusPolicy()
+
+        assertTrue(policy.enabled)
     }
 }

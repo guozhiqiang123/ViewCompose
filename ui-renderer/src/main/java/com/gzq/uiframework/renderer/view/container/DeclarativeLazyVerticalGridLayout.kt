@@ -85,7 +85,7 @@ internal class DeclarativeLazyVerticalGridLayout(
         )
     }
 
-    fun setFocusAutoScrollEnabled(enabled: Boolean) {
+    fun setFocusFollowKeyboardEnabled(enabled: Boolean) {
         LazyFocusFollowLayoutMonitor.apply(
             recyclerView = recyclerView,
             enabled = enabled,

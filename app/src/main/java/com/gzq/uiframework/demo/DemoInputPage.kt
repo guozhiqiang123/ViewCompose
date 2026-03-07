@@ -5,8 +5,8 @@ import com.gzq.uiframework.renderer.modifier.backgroundColor
 import com.gzq.uiframework.renderer.modifier.cornerRadius
 import com.gzq.uiframework.renderer.modifier.fillMaxSize
 import com.gzq.uiframework.renderer.modifier.fillMaxWidth
+import com.gzq.uiframework.renderer.modifier.focusFollowKeyboard
 import com.gzq.uiframework.renderer.modifier.height
-import com.gzq.uiframework.renderer.modifier.lazyContainerFocusFollowKeyboard
 import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.renderer.modifier.testTag
@@ -92,7 +92,7 @@ internal fun UiTreeBuilder.InputPage(
             .then(
                 if (selectedPageState.value == 3) {
                     Modifier
-                        .lazyContainerFocusFollowKeyboard()
+                        .focusFollowKeyboard()
                 } else {
                     Modifier
                 },

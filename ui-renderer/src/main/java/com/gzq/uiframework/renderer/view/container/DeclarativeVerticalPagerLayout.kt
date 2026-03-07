@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.reconcile.LazyListDiff
+import com.gzq.uiframework.renderer.view.lazy.LazyFocusFollowLayoutMonitor
 import com.gzq.uiframework.renderer.view.lazy.LazyHolderRegistry
 import com.gzq.uiframework.renderer.view.lazy.LazyItemSessionController
 import com.gzq.uiframework.renderer.view.lazy.PagerState
@@ -21,6 +22,7 @@ internal class DeclarativeVerticalPagerLayout(
     private var onPageChanged: ((Int) -> Unit)? = null
     private var pagerState: PagerState? = null
     private var suppressCallback: Boolean = false
+    private var focusFollowKeyboardEnabled: Boolean = false
     private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             pagerState?.currentPage = position
@@ -48,6 +50,7 @@ internal class DeclarativeVerticalPagerLayout(
         viewPager.adapter = adapter
         viewPager.registerOnPageChangeCallback(pageChangeCallback)
         applyRecyclerDefaults()
+        applyFocusFollowPolicy()
         addView(viewPager)
     }
 
@@ -82,6 +85,7 @@ internal class DeclarativeVerticalPagerLayout(
         pagerState?.viewPager = viewPager
         viewPager.offscreenPageLimit = offscreenPageLimit.coerceAtLeast(1)
         viewPager.isUserInputEnabled = userScrollEnabled
+        applyFocusFollowPolicy()
         adapter.submitPages(pages)
         val resolvedPage = if (pages.isEmpty()) {
             return
@@ -96,6 +100,7 @@ internal class DeclarativeVerticalPagerLayout(
     }
 
     fun dispose() {
+        applyFocusFollowPolicy(enabled = false)
         pagerState?.viewPager = null
         viewPager.unregisterOnPageChangeCallback(pageChangeCallback)
         adapter.disposeAll()
@@ -110,6 +115,20 @@ internal class DeclarativeVerticalPagerLayout(
                 recyclerView = recyclerView,
                 sharePool = sharePool,
                 disableItemAnimator = disableItemAnimator,
+            )
+        }
+    }
+
+    fun setFocusFollowKeyboardEnabled(enabled: Boolean) {
+        focusFollowKeyboardEnabled = enabled
+        applyFocusFollowPolicy()
+    }
+
+    private fun applyFocusFollowPolicy(enabled: Boolean = focusFollowKeyboardEnabled) {
+        resolvePagerRecyclerView()?.let { recyclerView ->
+            LazyFocusFollowLayoutMonitor.apply(
+                recyclerView = recyclerView,
+                enabled = enabled,
             )
         }
     }

@@ -146,7 +146,7 @@ data class LazyContainerReuseModifierElement(
     val disableItemAnimator: Boolean,
 ) : ModifierElement
 
-data class LazyContainerFocusFollowKeyboardModifierElement(
+data class FocusFollowKeyboardModifierElement(
     val enabled: Boolean,
 ) : ModifierElement
 
@@ -432,14 +432,24 @@ fun Modifier.lazyContainerReuse(
     )
 }
 
-fun Modifier.lazyContainerFocusFollowKeyboard(
+fun Modifier.focusFollowKeyboard(
     enabled: Boolean = true,
 ): Modifier {
     return then(
-        LazyContainerFocusFollowKeyboardModifierElement(
+        FocusFollowKeyboardModifierElement(
             enabled = enabled,
         ),
     )
+}
+
+@Deprecated(
+    message = "Use focusFollowKeyboard(...) for container-level keyboard follow semantics.",
+    replaceWith = ReplaceWith("focusFollowKeyboard(enabled = enabled)"),
+)
+fun Modifier.lazyContainerFocusFollowKeyboard(
+    enabled: Boolean = true,
+): Modifier {
+    return focusFollowKeyboard(enabled = enabled)
 }
 
 @Deprecated(
@@ -503,8 +513,8 @@ internal fun Modifier.lazyContainerReusePolicy(): LazyContainerReusePolicy {
 internal fun Modifier.lazyContainerFocusPolicy(): LazyContainerFocusPolicy {
     val element = elements
         .asReversed()
-        .firstOrNull { it is LazyContainerFocusFollowKeyboardModifierElement }
-        as? LazyContainerFocusFollowKeyboardModifierElement
+        .firstOrNull { it is FocusFollowKeyboardModifierElement }
+        as? FocusFollowKeyboardModifierElement
     if (element == null) {
         return LazyContainerFocusPolicy(
             enabled = false,

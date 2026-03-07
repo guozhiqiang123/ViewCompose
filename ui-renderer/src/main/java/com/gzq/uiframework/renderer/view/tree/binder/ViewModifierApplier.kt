@@ -558,11 +558,8 @@ internal object ViewModifierApplier {
                     sharePool = reusePolicy.sharePool,
                     disableItemAnimator = reusePolicy.disableItemAnimator,
                 )
-                val focusPolicy = node.modifier.lazyContainerFocusPolicy()
-                LazyFocusFollowLayoutMonitor.apply(
-                    recyclerView = recyclerView,
-                    enabled = focusPolicy.enabled,
-                )
+                // Keyboard follow targets vertical overflow; LazyRow keeps horizontal-only semantics.
+                LazyFocusFollowLayoutMonitor.apply(recyclerView, enabled = false)
             }
             NodeType.LazyVerticalGrid -> {
                 val reusePolicy = node.modifier.lazyContainerReusePolicy()
@@ -571,7 +568,7 @@ internal object ViewModifierApplier {
                     disableItemAnimator = reusePolicy.disableItemAnimator,
                 )
                 val focusPolicy = node.modifier.lazyContainerFocusPolicy()
-                (view as? DeclarativeLazyVerticalGridLayout)?.setFocusAutoScrollEnabled(focusPolicy.enabled)
+                (view as? DeclarativeLazyVerticalGridLayout)?.setFocusFollowKeyboardEnabled(focusPolicy.enabled)
             }
             NodeType.HorizontalPager -> {
                 val reusePolicy = node.modifier.lazyContainerReusePolicy()
@@ -586,6 +583,8 @@ internal object ViewModifierApplier {
                     sharePool = reusePolicy.sharePool,
                     disableItemAnimator = reusePolicy.disableItemAnimator,
                 )
+                val focusPolicy = node.modifier.lazyContainerFocusPolicy()
+                (view as? DeclarativeVerticalPagerLayout)?.setFocusFollowKeyboardEnabled(focusPolicy.enabled)
             }
             else -> Unit
         }
