@@ -13,6 +13,7 @@ import com.gzq.uiframework.renderer.reconcile.ReconcileResult
 import com.gzq.uiframework.renderer.reconcile.RemovePatch
 import com.gzq.uiframework.renderer.reconcile.RenderPatch
 import com.gzq.uiframework.renderer.reconcile.ReusePatch
+import com.gzq.uiframework.renderer.view.container.ChildHostViewGroup
 
 internal object ViewTreePatchPipeline {
     data class ExecutionResult(
@@ -33,11 +34,12 @@ internal object ViewTreePatchPipeline {
         emittedModifierWarnings: MutableSet<String>,
         renderChildren: (ViewGroup, List<MountedNode>, List<VNode>) -> RenderTreeResult,
     ): ExecutionResult {
+        val mountContainer = resolveChildHost(container)
         var stats = RenderStats()
         val nextMounted = mutableListOf<MountedNode>()
         reconcileResult.patches.forEach { patch ->
             val patchResult = applyPatch(
-                container = container,
+                container = mountContainer,
                 patch = patch,
                 defaultRippleColor = defaultRippleColor,
                 warningTag = warningTag,
@@ -49,7 +51,7 @@ internal object ViewTreePatchPipeline {
         }
         reconcileResult.removals.forEach { removal ->
             applyRemoval(
-                container = container,
+                container = mountContainer,
                 removal = removal,
             )
             stats = stats.withRemoval()
@@ -193,7 +195,7 @@ internal object ViewTreePatchPipeline {
             stats = RenderStats(),
         )
         return renderChildren(
-            viewGroup,
+            resolveChildHost(viewGroup),
             previousChildren,
             node.children,
         )
@@ -236,7 +238,7 @@ internal object ViewTreePatchPipeline {
         )
         val children = if (view is ViewGroup) {
             renderChildren(
-                view,
+                resolveChildHost(view),
                 emptyList(),
                 node.children,
             ).mountedNodes
@@ -283,5 +285,9 @@ internal object ViewTreePatchPipeline {
     private fun readViewFactory(node: VNode): ((Context) -> View)? {
         return (node.spec as? com.gzq.uiframework.renderer.node.spec.AndroidViewNodeProps)?.factory
             ?: node.props[TypedPropKeys.ViewFactory]
+    }
+
+    private fun resolveChildHost(container: ViewGroup): ViewGroup {
+        return (container as? ChildHostViewGroup)?.childHost ?: container
     }
 }
