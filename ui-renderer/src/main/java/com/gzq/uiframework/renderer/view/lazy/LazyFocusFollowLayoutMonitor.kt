@@ -5,8 +5,12 @@ import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.EditText
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.gzq.uiframework.renderer.R
+import kotlin.math.max
+import kotlin.math.min
 
 internal object LazyFocusFollowLayoutMonitor {
     private const val TAG = "UIFocusFollow"
@@ -180,18 +184,84 @@ internal object LazyFocusFollowLayoutMonitor {
         recyclerView: RecyclerView,
         fallback: Rect,
     ): Rect {
-        val globalVisibleRect = Rect()
-        if (!recyclerView.getGlobalVisibleRect(globalVisibleRect)) {
-            return fallback
-        }
         val location = IntArray(2)
         recyclerView.getLocationOnScreen(location)
-        return Rect(
-            (globalVisibleRect.left - location[0]).coerceAtLeast(fallback.left),
-            (globalVisibleRect.top - location[1]).coerceAtLeast(fallback.top),
-            (globalVisibleRect.right - location[0]).coerceAtMost(fallback.right),
-            (globalVisibleRect.bottom - location[1]).coerceAtMost(fallback.bottom),
+        var viewport = Rect(fallback)
+
+        val globalVisibleRect = Rect()
+        if (recyclerView.getGlobalVisibleRect(globalVisibleRect)) {
+            val globalViewport = Rect(
+                globalVisibleRect.left - location[0],
+                globalVisibleRect.top - location[1],
+                globalVisibleRect.right - location[0],
+                globalVisibleRect.bottom - location[1],
+            )
+            viewport = intersectViewport(
+                current = viewport,
+                candidate = globalViewport,
+                fallback = fallback,
+            )
+        }
+
+        val windowVisibleFrame = Rect()
+        recyclerView.getWindowVisibleDisplayFrame(windowVisibleFrame)
+        if (!windowVisibleFrame.isEmpty) {
+            val windowViewport = Rect(
+                windowVisibleFrame.left - location[0],
+                windowVisibleFrame.top - location[1],
+                windowVisibleFrame.right - location[0],
+                windowVisibleFrame.bottom - location[1],
+            )
+            viewport = intersectViewport(
+                current = viewport,
+                candidate = windowViewport,
+                fallback = fallback,
+            )
+        }
+
+        val rootInsets = ViewCompat.getRootWindowInsets(recyclerView)
+        if (rootInsets?.isVisible(WindowInsetsCompat.Type.ime()) == true) {
+            val imeBottomInset = rootInsets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            if (imeBottomInset > 0) {
+                val rootHeight = recyclerView.rootView?.height ?: 0
+                if (rootHeight > 0) {
+                    val imeTopInWindow = rootHeight - imeBottomInset
+                    val imeTopInRecycler = imeTopInWindow - location[1]
+                    val boundedImeTop = imeTopInRecycler.coerceIn(fallback.top, fallback.bottom)
+                    if (boundedImeTop < viewport.bottom) {
+                        viewport.bottom = boundedImeTop
+                    }
+                }
+            }
+        }
+
+        if (viewport.right <= viewport.left || viewport.bottom <= viewport.top) {
+            return fallback
+        }
+        return viewport
+    }
+
+    private fun intersectViewport(
+        current: Rect,
+        candidate: Rect,
+        fallback: Rect,
+    ): Rect {
+        val bounded = Rect(
+            candidate.left.coerceIn(fallback.left, fallback.right),
+            candidate.top.coerceIn(fallback.top, fallback.bottom),
+            candidate.right.coerceIn(fallback.left, fallback.right),
+            candidate.bottom.coerceIn(fallback.top, fallback.bottom),
         )
+        val intersected = Rect(
+            max(current.left, bounded.left),
+            max(current.top, bounded.top),
+            min(current.right, bounded.right),
+            min(current.bottom, bounded.bottom),
+        )
+        if (intersected.right <= intersected.left || intersected.bottom <= intersected.top) {
+            return current
+        }
+        return intersected
     }
 
     private inline fun debugLog(message: () -> String) {
