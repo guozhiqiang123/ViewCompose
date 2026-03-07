@@ -139,6 +139,10 @@ data class LazyContainerReuseModifierElement(
     val disableItemAnimator: Boolean,
 ) : ModifierElement
 
+data class LazyContainerFocusFollowKeyboardModifierElement(
+    val enabled: Boolean,
+) : ModifierElement
+
 class NativeViewElement(
     val stableKey: Any,
     val configure: (android.view.View) -> Unit,
@@ -405,6 +409,16 @@ fun Modifier.lazyContainerReuse(
     )
 }
 
+fun Modifier.lazyContainerFocusFollowKeyboard(
+    enabled: Boolean = true,
+): Modifier {
+    return then(
+        LazyContainerFocusFollowKeyboardModifierElement(
+            enabled = enabled,
+        ),
+    )
+}
+
 @Deprecated(
     message = "Use lazyContainerReuse(...) to avoid exposing platform-specific implementation details.",
     replaceWith = ReplaceWith("lazyContainerReuse(sharePool = sharePool, disableItemAnimator = disableItemAnimator)"),
@@ -443,6 +457,10 @@ internal data class LazyContainerReusePolicy(
     val disableItemAnimator: Boolean,
 )
 
+internal data class LazyContainerFocusPolicy(
+    val enabled: Boolean,
+)
+
 internal fun Modifier.lazyContainerReusePolicy(): LazyContainerReusePolicy {
     val element = elements
         .asReversed()
@@ -456,5 +474,20 @@ internal fun Modifier.lazyContainerReusePolicy(): LazyContainerReusePolicy {
     return LazyContainerReusePolicy(
         sharePool = element.sharePool,
         disableItemAnimator = element.disableItemAnimator,
+    )
+}
+
+internal fun Modifier.lazyContainerFocusPolicy(): LazyContainerFocusPolicy {
+    val element = elements
+        .asReversed()
+        .firstOrNull { it is LazyContainerFocusFollowKeyboardModifierElement }
+        as? LazyContainerFocusFollowKeyboardModifierElement
+    if (element == null) {
+        return LazyContainerFocusPolicy(
+            enabled = false,
+        )
+    }
+    return LazyContainerFocusPolicy(
+        enabled = element.enabled,
     )
 }

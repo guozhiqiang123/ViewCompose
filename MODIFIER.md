@@ -13,6 +13,7 @@
 3. `weight/align/FlexibleSpacer` 仅通过 `RowScope/ColumnScope/BoxScope` 暴露
 4. system bars 适配走组件侧 `Modifier.systemBarsInsetsPadding(...)`
 5. 列表容器复用策略支持 `Modifier.lazyContainerReuse(sharePool, disableItemAnimator)`，默认不共享池
+6. 列表容器键盘跟随策略支持 `Modifier.lazyContainerFocusFollowKeyboard(enabled)`，默认关闭
 
 ## 3. 角色边界
 
@@ -28,6 +29,7 @@
 6. 系统栏内边距：`systemBarsInsetsPadding`
 7. 逃生通道：`nativeView(key, configure)`
 8. 列表性能策略：`lazyContainerReuse(sharePool, disableItemAnimator)`
+9. 列表输入跟随策略：`lazyContainerFocusFollowKeyboard(enabled)`
 
 ### 3.2 Scoped Modifier（父容器相关 parent-data）
 

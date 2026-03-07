@@ -11,7 +11,7 @@ internal class LazyLinearLayoutManager(
     context: Context,
     orientation: Int = RecyclerView.VERTICAL,
     reverseLayout: Boolean = false,
-    private val focusAutoScrollEnabled: Boolean = false,
+    var focusAutoScrollEnabled: Boolean = false,
 ) : LinearLayoutManager(context, orientation, reverseLayout) {
     override fun requestChildRectangleOnScreen(
         parent: RecyclerView,
@@ -36,7 +36,7 @@ internal class LazyLinearLayoutManager(
 internal class LazyGridLayoutManager(
     context: Context,
     spanCount: Int,
-    private val focusAutoScrollEnabled: Boolean = false,
+    var focusAutoScrollEnabled: Boolean = false,
 ) : GridLayoutManager(context, spanCount) {
     override fun requestChildRectangleOnScreen(
         parent: RecyclerView,

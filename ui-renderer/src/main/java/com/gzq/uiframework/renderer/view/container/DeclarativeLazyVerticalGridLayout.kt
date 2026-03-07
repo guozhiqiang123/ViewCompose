@@ -18,6 +18,7 @@ internal class DeclarativeLazyVerticalGridLayout(
 ) : FrameLayout(context) {
     private val recyclerView = RecyclerView(context)
     private val adapter = LazyColumnAdapter(RecyclerView.VERTICAL)
+    private var focusAutoScrollEnabled: Boolean = false
 
     init {
         recyclerView.layoutParams = LayoutParams(
@@ -57,7 +58,13 @@ internal class DeclarativeLazyVerticalGridLayout(
     ) {
         val lm = recyclerView.layoutManager as? LazyGridLayoutManager
         if (lm == null || lm.spanCount != spanCount) {
-            recyclerView.layoutManager = LazyGridLayoutManager(context, spanCount)
+            recyclerView.layoutManager = LazyGridLayoutManager(
+                context = context,
+                spanCount = spanCount,
+                focusAutoScrollEnabled = focusAutoScrollEnabled,
+            )
+        } else if (lm.focusAutoScrollEnabled != focusAutoScrollEnabled) {
+            lm.focusAutoScrollEnabled = focusAutoScrollEnabled
         }
         updateSpacingDecoration(horizontalSpacing, verticalSpacing, spanCount)
         recyclerView.setPadding(contentPadding, contentPadding, contentPadding, contentPadding)
@@ -79,6 +86,12 @@ internal class DeclarativeLazyVerticalGridLayout(
             sharePool = sharePool,
             disableItemAnimator = disableItemAnimator,
         )
+    }
+
+    fun setFocusAutoScrollEnabled(enabled: Boolean) {
+        focusAutoScrollEnabled = enabled
+        val layoutManager = recyclerView.layoutManager as? LazyGridLayoutManager ?: return
+        layoutManager.focusAutoScrollEnabled = enabled
     }
 
     private fun updateSpacingDecoration(

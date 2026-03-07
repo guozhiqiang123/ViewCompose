@@ -20,6 +20,7 @@ import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
 import com.gzq.uiframework.renderer.modifier.ResolvedModifiers
 import com.gzq.uiframework.renderer.modifier.SystemBarsInsetsPaddingModifierElement
 import com.gzq.uiframework.renderer.modifier.Visibility
+import com.gzq.uiframework.renderer.modifier.lazyContainerFocusPolicy
 import com.gzq.uiframework.renderer.modifier.lazyContainerReusePolicy
 import com.gzq.uiframework.renderer.modifier.resolve
 import com.gzq.uiframework.renderer.node.NodeType
@@ -35,6 +36,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeLazyVerticalGridLa
 import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeVerticalPagerLayout
 import com.gzq.uiframework.renderer.view.lazy.FrameworkRecyclerViewDefaults
+import com.gzq.uiframework.renderer.view.lazy.LazyLinearLayoutManager
 
 internal object ViewModifierApplier {
     fun bindView(
@@ -524,40 +526,44 @@ internal object ViewModifierApplier {
         view: View,
         node: VNode,
     ) {
-        val policy = node.modifier.lazyContainerReusePolicy()
+        val reusePolicy = node.modifier.lazyContainerReusePolicy()
+        val focusPolicy = node.modifier.lazyContainerFocusPolicy()
         when (node.type) {
             NodeType.LazyColumn -> {
                 val recyclerView = view as? RecyclerView ?: return
                 FrameworkRecyclerViewDefaults.applyLazyColumnDefaults(
                     recyclerView = recyclerView,
-                    sharePool = policy.sharePool,
-                    disableItemAnimator = policy.disableItemAnimator,
+                    sharePool = reusePolicy.sharePool,
+                    disableItemAnimator = reusePolicy.disableItemAnimator,
                 )
+                (recyclerView.layoutManager as? LazyLinearLayoutManager)?.focusAutoScrollEnabled = focusPolicy.enabled
             }
             NodeType.LazyRow -> {
                 val recyclerView = view as? RecyclerView ?: return
                 FrameworkRecyclerViewDefaults.applyLazyRowDefaults(
                     recyclerView = recyclerView,
-                    sharePool = policy.sharePool,
-                    disableItemAnimator = policy.disableItemAnimator,
+                    sharePool = reusePolicy.sharePool,
+                    disableItemAnimator = reusePolicy.disableItemAnimator,
                 )
+                (recyclerView.layoutManager as? LazyLinearLayoutManager)?.focusAutoScrollEnabled = focusPolicy.enabled
             }
             NodeType.LazyVerticalGrid -> {
                 (view as? DeclarativeLazyVerticalGridLayout)?.applyRecyclerDefaults(
-                    sharePool = policy.sharePool,
-                    disableItemAnimator = policy.disableItemAnimator,
+                    sharePool = reusePolicy.sharePool,
+                    disableItemAnimator = reusePolicy.disableItemAnimator,
                 )
+                (view as? DeclarativeLazyVerticalGridLayout)?.setFocusAutoScrollEnabled(focusPolicy.enabled)
             }
             NodeType.HorizontalPager -> {
                 (view as? DeclarativeHorizontalPagerLayout)?.applyRecyclerDefaults(
-                    sharePool = policy.sharePool,
-                    disableItemAnimator = policy.disableItemAnimator,
+                    sharePool = reusePolicy.sharePool,
+                    disableItemAnimator = reusePolicy.disableItemAnimator,
                 )
             }
             NodeType.VerticalPager -> {
                 (view as? DeclarativeVerticalPagerLayout)?.applyRecyclerDefaults(
-                    sharePool = policy.sharePool,
-                    disableItemAnimator = policy.disableItemAnimator,
+                    sharePool = reusePolicy.sharePool,
+                    disableItemAnimator = reusePolicy.disableItemAnimator,
                 )
             }
             else -> Unit

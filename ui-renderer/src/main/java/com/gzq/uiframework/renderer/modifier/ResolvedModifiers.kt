@@ -60,6 +60,7 @@ internal fun Modifier.resolve(): ResolvedModifiers {
             is HorizontalAlignModifierElement -> result.horizontalAlign = element
             is VerticalAlignModifierElement -> result.verticalAlign = element
             is LazyContainerReuseModifierElement -> { /* handled by lazy container binders */ }
+            is LazyContainerFocusFollowKeyboardModifierElement -> { /* handled by lazy container binders */ }
             is NativeViewElement -> { /* handled separately in applyNativeViewConfigs */ }
         }
     }
