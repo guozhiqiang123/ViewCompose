@@ -173,6 +173,10 @@ internal fun UiTreeBuilder.DeclareFeedbackOverlays(
             state.alertDialogVisibleState.value = false
             state.lastEventState.value = "AlertDialog 取消"
         },
+        onDismissRequest = {
+            state.alertDialogVisibleState.value = false
+            state.lastEventState.value = "AlertDialog 外部关闭"
+        },
         requestKey = "feedback_alert_dialog",
     )
 
@@ -189,6 +193,10 @@ internal fun UiTreeBuilder.DeclareFeedbackOverlays(
         onDismiss = {
             state.alertDialogIconVisibleState.value = false
             state.lastEventState.value = "AlertDialog 带图标 取消"
+        },
+        onDismissRequest = {
+            state.alertDialogIconVisibleState.value = false
+            state.lastEventState.value = "AlertDialog 带图标 外部关闭"
         },
         icon = ImageSource.Resource(R.drawable.demo_media_icon),
         requestKey = "feedback_alert_dialog_icon",
