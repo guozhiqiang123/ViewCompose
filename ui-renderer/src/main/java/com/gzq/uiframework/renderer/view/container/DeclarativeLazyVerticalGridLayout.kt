@@ -9,6 +9,7 @@ import com.gzq.uiframework.renderer.R
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
 import com.gzq.uiframework.renderer.view.lazy.LazyGridSpacingDecoration
+import com.gzq.uiframework.renderer.view.lazy.FrameworkRecyclerViewDefaults
 import com.gzq.uiframework.renderer.view.lazy.LazyListState
 import com.gzq.uiframework.renderer.view.tree.LayoutPassTracker
 
@@ -24,6 +25,7 @@ internal class DeclarativeLazyVerticalGridLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,
         )
         recyclerView.adapter = adapter
+        FrameworkRecyclerViewDefaults.applyLazyGridDefaults(recyclerView)
         addView(recyclerView)
     }
 

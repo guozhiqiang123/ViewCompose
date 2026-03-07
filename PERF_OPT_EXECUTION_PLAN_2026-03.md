@@ -35,7 +35,7 @@ Out of scope for this execution:
 - [x] Step 1: Add this execution plan doc and commit.
 - [x] Step 2: Replace lazy keyed diff engine with DiffUtil-backed internal engine; sync `PERFORMANCE.md`.
 - [x] Step 3: Add payload-aware lazy/pager update path; sync `SESSION_CONTAINER_CHECKLIST.md`.
-- [ ] Step 4: Apply framework-managed RecyclerView defaults tuning; sync `ARCHITECTURE.md` + `PERFORMANCE.md`.
+- [x] Step 4: Apply framework-managed RecyclerView defaults tuning; sync `ARCHITECTURE.md` + `PERFORMANCE.md`.
 - [ ] Step 5: Add subtree skip plan/pipeline/stats path; sync `PERFORMANCE.md` + `ROADMAP.md`.
 - [ ] Step 6: Add/refresh tests (unit + instrumentation) and pass gates.
 - [ ] Step 7: Close, archive plan doc, and align final doc statuses.
@@ -46,7 +46,8 @@ Out of scope for this execution:
 | --- | --- | --- | --- |
 | 2026-03-07 | Step 1 | `bf0760d` | Added execution plan doc. |
 | 2026-03-07 | Step 2 | `14d34f5` | Switched lazy keyed diff engine to DiffUtil and updated performance doc. |
-| 2026-03-07 | Step 3 | _pending_ | Added payload-aware lazy/pager update path and updated container checklist doc. |
+| 2026-03-07 | Step 3 | `b976da2` | Added payload-aware lazy/pager update path and updated container checklist doc. |
+| 2026-03-07 | Step 4 | _pending_ | Tuned framework-managed RecyclerView defaults and synced architecture/performance docs. |
 
 ## 6. Blocker Log
 

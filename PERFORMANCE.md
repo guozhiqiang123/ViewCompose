@@ -21,6 +21,7 @@
 2. renderer 已具备节点级“是否重绑”判断能力（`rebound/skipped` 统计）。
 3. diagnostics 已有 render/layout 基础指标可观测能力。
 4. 延迟 session 容器的 keyed diff 已切到 `DiffUtil` 引擎（保留 key 缺失/重复 fallback）。
+5. framework 托管的 `RecyclerView` 容器默认关闭 `itemAnimator` 并按容器家族共享 `RecycledViewPool`。
 
 ### 2.2 当前结论
 

@@ -10,6 +10,7 @@ import com.gzq.uiframework.renderer.reconcile.LazyListDiff
 import com.gzq.uiframework.renderer.view.lazy.LazyHolderRegistry
 import com.gzq.uiframework.renderer.view.lazy.LazyItemSessionController
 import com.gzq.uiframework.renderer.view.lazy.PagerState
+import com.gzq.uiframework.renderer.view.lazy.FrameworkRecyclerViewDefaults
 import com.gzq.uiframework.renderer.view.tree.LayoutPassTracker
 
 internal class DeclarativeHorizontalPagerLayout(
@@ -45,6 +46,7 @@ internal class DeclarativeHorizontalPagerLayout(
         )
         viewPager.adapter = adapter
         viewPager.registerOnPageChangeCallback(pageChangeCallback)
+        resolvePagerRecyclerView()?.let(FrameworkRecyclerViewDefaults::applyPagerDefaults)
         addView(viewPager)
     }
 
@@ -96,6 +98,10 @@ internal class DeclarativeHorizontalPagerLayout(
         pagerState?.viewPager = null
         viewPager.unregisterOnPageChangeCallback(pageChangeCallback)
         adapter.disposeAll()
+    }
+
+    private fun resolvePagerRecyclerView(): RecyclerView? {
+        return viewPager.getChildAt(0) as? RecyclerView
     }
 }
 

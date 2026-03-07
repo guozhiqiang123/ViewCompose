@@ -31,6 +31,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeSegmentedControlLa
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeVerticalPagerLayout
+import com.gzq.uiframework.renderer.view.lazy.FrameworkRecyclerViewDefaults
 import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
 
 internal object ViewNodeFactory {
@@ -63,10 +64,12 @@ internal object ViewNodeFactory {
             NodeType.LazyColumn -> RecyclerView(context).apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = LazyColumnAdapter()
+                FrameworkRecyclerViewDefaults.applyLazyListDefaults(this)
             }
             NodeType.LazyRow -> RecyclerView(context).apply {
                 layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
                 adapter = LazyColumnAdapter(LinearLayoutManager.HORIZONTAL)
+                FrameworkRecyclerViewDefaults.applyLazyListDefaults(this)
             }
             NodeType.SegmentedControl -> DeclarativeSegmentedControlLayout(context)
             NodeType.ScrollableColumn -> DeclarativeScrollableColumnLayout(context)
