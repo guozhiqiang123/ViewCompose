@@ -33,6 +33,18 @@ internal class DeclarativeNavigationBarLayout(
     private var items: List<NavigationBarItem> = emptyList()
     private var selectedIndex: Int = -1
     private var onItemSelected: ((Int) -> Unit)? = null
+    private var styleInitialized: Boolean = false
+    private var containerColorState: Int = Color.TRANSPARENT
+    private var selectedIconColorState: Int = Color.TRANSPARENT
+    private var unselectedIconColorState: Int = Color.TRANSPARENT
+    private var selectedLabelColorState: Int = Color.TRANSPARENT
+    private var unselectedLabelColorState: Int = Color.TRANSPARENT
+    private var indicatorColorState: Int = Color.TRANSPARENT
+    private var rippleColorState: Int = Color.TRANSPARENT
+    private var iconSizeState: Int = 0
+    private var labelSizeSpState: Int = 0
+    private var badgeColorState: Int = Color.TRANSPARENT
+    private var badgeTextColorState: Int = Color.TRANSPARENT
     private val itemRefs = mutableListOf<ItemViewRefs>()
 
     init {
@@ -56,26 +68,95 @@ internal class DeclarativeNavigationBarLayout(
         badgeColor: Int,
         badgeTextColor: Int,
     ) {
+        val previousItems = this.items
+        val previousSelectedIndex = this.selectedIndex
         this.onItemSelected = onItemSelected
-        setBackgroundColor(containerColor)
-        val labelsChanged = this.items.map { it.label } != items.map { it.label }
-        val iconsChanged = this.items.map { it.icon.resId } != items.map { it.icon.resId }
-        if (labelsChanged || iconsChanged || childCount != items.size) {
+
+        val resolvedSelectedIndex = if (items.isEmpty()) {
+            -1
+        } else {
+            selectedIndex.coerceIn(0, items.lastIndex)
+        }
+        val labelsChanged = previousItems.map { it.label } != items.map { it.label }
+        val iconsChanged = previousItems.map { it.icon.resId } != items.map { it.icon.resId }
+        val rippleChanged = !styleInitialized || rippleColorState != rippleColor
+        val structureChanged = labelsChanged || iconsChanged || childCount != items.size || rippleChanged
+        if (structureChanged) {
             rebuild(items, rippleColor)
         }
+        val styleChanged = !styleInitialized ||
+            selectedIconColorState != selectedIconColor ||
+            unselectedIconColorState != unselectedIconColor ||
+            selectedLabelColorState != selectedLabelColor ||
+            unselectedLabelColorState != unselectedLabelColor ||
+            indicatorColorState != indicatorColor ||
+            iconSizeState != iconSize ||
+            labelSizeSpState != labelSizeSp ||
+            badgeColorState != badgeColor ||
+            badgeTextColorState != badgeTextColor
+        val selectionChanged = previousSelectedIndex != resolvedSelectedIndex
+        val contentChangedIndices = if (structureChanged) {
+            emptySet()
+        } else {
+            calculateChangedItemIndices(
+                previousItems = previousItems,
+                nextItems = items,
+            )
+        }
+        if (!styleInitialized || containerColorState != containerColor) {
+            setBackgroundColor(containerColor)
+        }
+
         this.items = items
-        this.selectedIndex = selectedIndex
-        updateChildren(
-            selectedIconColor = selectedIconColor,
-            unselectedIconColor = unselectedIconColor,
-            selectedLabelColor = selectedLabelColor,
-            unselectedLabelColor = unselectedLabelColor,
-            indicatorColor = indicatorColor,
-            iconSize = iconSize,
-            labelSizeSp = labelSizeSp,
-            badgeColor = badgeColor,
-            badgeTextColor = badgeTextColor,
-        )
+        this.selectedIndex = resolvedSelectedIndex
+
+        containerColorState = containerColor
+        selectedIconColorState = selectedIconColor
+        unselectedIconColorState = unselectedIconColor
+        selectedLabelColorState = selectedLabelColor
+        unselectedLabelColorState = unselectedLabelColor
+        indicatorColorState = indicatorColor
+        rippleColorState = rippleColor
+        iconSizeState = iconSize
+        labelSizeSpState = labelSizeSp
+        badgeColorState = badgeColor
+        badgeTextColorState = badgeTextColor
+        styleInitialized = true
+
+        when {
+            structureChanged || styleChanged -> updateChildren(
+                selectedIconColor = selectedIconColor,
+                unselectedIconColor = unselectedIconColor,
+                selectedLabelColor = selectedLabelColor,
+                unselectedLabelColor = unselectedLabelColor,
+                indicatorColor = indicatorColor,
+                iconSize = iconSize,
+                labelSizeSp = labelSizeSp,
+                badgeColor = badgeColor,
+                badgeTextColor = badgeTextColor,
+            )
+
+            selectionChanged || contentChangedIndices.isNotEmpty() -> {
+                val indices = linkedSetOf<Int>()
+                if (selectionChanged) {
+                    indices += previousSelectedIndex
+                    indices += resolvedSelectedIndex
+                }
+                indices += contentChangedIndices
+                updateChildrenAt(
+                    indices = indices,
+                    selectedIconColor = selectedIconColor,
+                    unselectedIconColor = unselectedIconColor,
+                    selectedLabelColor = selectedLabelColor,
+                    unselectedLabelColor = unselectedLabelColor,
+                    indicatorColor = indicatorColor,
+                    iconSize = iconSize,
+                    labelSizeSp = labelSizeSp,
+                    badgeColor = badgeColor,
+                    badgeTextColor = badgeTextColor,
+                )
+            }
+        }
     }
 
     private fun rebuild(items: List<NavigationBarItem>, rippleColor: Int) {
@@ -205,84 +286,161 @@ internal class DeclarativeNavigationBarLayout(
         badgeTextColor: Int,
     ) {
         for (index in 0 until itemRefs.size) {
-            val item = items.getOrNull(index) ?: continue
-            val isSelected = index == selectedIndex
-            val refs = itemRefs[index]
+            updateChildAt(
+                index = index,
+                selectedIconColor = selectedIconColor,
+                unselectedIconColor = unselectedIconColor,
+                selectedLabelColor = selectedLabelColor,
+                unselectedLabelColor = unselectedLabelColor,
+                indicatorColor = indicatorColor,
+                iconSize = iconSize,
+                labelSizeSp = labelSizeSp,
+                badgeColor = badgeColor,
+                badgeTextColor = badgeTextColor,
+            )
+        }
+    }
 
-            refs.indicator.apply {
-                visibility = if (isSelected) View.VISIBLE else View.INVISIBLE
+    private fun updateChildrenAt(
+        indices: Set<Int>,
+        selectedIconColor: Int,
+        unselectedIconColor: Int,
+        selectedLabelColor: Int,
+        unselectedLabelColor: Int,
+        indicatorColor: Int,
+        iconSize: Int,
+        labelSizeSp: Int,
+        badgeColor: Int,
+        badgeTextColor: Int,
+    ) {
+        indices.forEach { index ->
+            updateChildAt(
+                index = index,
+                selectedIconColor = selectedIconColor,
+                unselectedIconColor = unselectedIconColor,
+                selectedLabelColor = selectedLabelColor,
+                unselectedLabelColor = unselectedLabelColor,
+                indicatorColor = indicatorColor,
+                iconSize = iconSize,
+                labelSizeSp = labelSizeSp,
+                badgeColor = badgeColor,
+                badgeTextColor = badgeTextColor,
+            )
+        }
+    }
+
+    private fun updateChildAt(
+        index: Int,
+        selectedIconColor: Int,
+        unselectedIconColor: Int,
+        selectedLabelColor: Int,
+        unselectedLabelColor: Int,
+        indicatorColor: Int,
+        iconSize: Int,
+        labelSizeSp: Int,
+        badgeColor: Int,
+        badgeTextColor: Int,
+    ) {
+        if (index !in itemRefs.indices) {
+            return
+        }
+        val item = items.getOrNull(index) ?: return
+        val isSelected = index == selectedIndex
+        val refs = itemRefs[index]
+
+        refs.indicator.apply {
+            visibility = if (isSelected) View.VISIBLE else View.INVISIBLE
+        }
+        refs.indicatorDrawable.setColor(indicatorColor)
+        refs.indicatorDrawable.cornerRadius = context.dpToPx(INDICATOR_CORNER_RADIUS).toFloat()
+
+        refs.iconView.apply {
+            val iconRes = if (isSelected && item.selectedIcon != null) {
+                item.selectedIcon.resId
+            } else {
+                item.icon.resId
             }
-            refs.indicatorDrawable.setColor(indicatorColor)
-            refs.indicatorDrawable.cornerRadius = context.dpToPx(INDICATOR_CORNER_RADIUS).toFloat()
-
-            // Update icon
-            refs.iconView.apply {
-                val iconRes = if (isSelected && item.selectedIcon != null) {
-                    item.selectedIcon.resId
-                } else {
-                    item.icon.resId
-                }
-                setImageResource(iconRes)
-                imageTintList = ColorStateList.valueOf(
-                    if (isSelected) selectedIconColor else unselectedIconColor,
-                )
-                val size = iconSize.coerceAtLeast(1)
-                layoutParams = (layoutParams as FrameLayout.LayoutParams).apply {
+            setImageResource(iconRes)
+            imageTintList = ColorStateList.valueOf(
+                if (isSelected) selectedIconColor else unselectedIconColor,
+            )
+            val size = iconSize.coerceAtLeast(1)
+            val currentParams = layoutParams as FrameLayout.LayoutParams
+            if (currentParams.width != size || currentParams.height != size) {
+                layoutParams = currentParams.apply {
                     width = size
                     height = size
                 }
             }
+        }
 
-            // Update badge
-            refs.badgeView.apply {
-                when {
-                    item.badgeCount == null -> {
-                        visibility = View.GONE
-                    }
-                    item.badgeCount == 0 -> {
-                        // Dot badge
-                        visibility = View.VISIBLE
-                        text = ""
-                        val dotSize = context.dpToPx(DOT_BADGE_SIZE)
-                        layoutParams = (layoutParams as FrameLayout.LayoutParams).apply {
+        refs.badgeView.apply {
+            when {
+                item.badgeCount == null -> {
+                    visibility = View.GONE
+                }
+                item.badgeCount == 0 -> {
+                    visibility = View.VISIBLE
+                    text = ""
+                    val dotSize = context.dpToPx(DOT_BADGE_SIZE)
+                    val currentParams = layoutParams as FrameLayout.LayoutParams
+                    if (currentParams.width != dotSize || currentParams.height != dotSize) {
+                        layoutParams = currentParams.apply {
                             width = dotSize
                             height = dotSize
                         }
-                        background = GradientDrawable().apply {
-                            shape = GradientDrawable.OVAL
-                            setColor(badgeColor)
-                        }
                     }
-                    else -> {
-                        // Number badge
-                        visibility = View.VISIBLE
-                        text = if (item.badgeCount > 99) "99+" else item.badgeCount.toString()
-                        setTextColor(badgeTextColor)
-                        setTextSize(TypedValue.COMPLEX_UNIT_SP, BADGE_TEXT_SIZE_SP)
-                        val badgeHeight = context.dpToPx(BADGE_HEIGHT)
-                        val hPad = context.dpToPx(BADGE_HORIZONTAL_PADDING)
-                        setPadding(hPad, 0, hPad, 0)
-                        layoutParams = (layoutParams as FrameLayout.LayoutParams).apply {
+                    background = GradientDrawable().apply {
+                        shape = GradientDrawable.OVAL
+                        setColor(badgeColor)
+                    }
+                }
+                else -> {
+                    visibility = View.VISIBLE
+                    text = if (item.badgeCount > 99) "99+" else item.badgeCount.toString()
+                    setTextColor(badgeTextColor)
+                    setTextSize(TypedValue.COMPLEX_UNIT_SP, BADGE_TEXT_SIZE_SP)
+                    val badgeHeight = context.dpToPx(BADGE_HEIGHT)
+                    val hPad = context.dpToPx(BADGE_HORIZONTAL_PADDING)
+                    setPadding(hPad, 0, hPad, 0)
+                    val currentParams = layoutParams as FrameLayout.LayoutParams
+                    if (currentParams.width != ViewGroup.LayoutParams.WRAP_CONTENT || currentParams.height != badgeHeight) {
+                        layoutParams = currentParams.apply {
                             width = ViewGroup.LayoutParams.WRAP_CONTENT
                             height = badgeHeight
                         }
-                        minWidth = badgeHeight
-                        background = GradientDrawable().apply {
-                            shape = GradientDrawable.RECTANGLE
-                            setColor(badgeColor)
-                            cornerRadius = badgeHeight / 2f
-                        }
+                    }
+                    minWidth = badgeHeight
+                    background = GradientDrawable().apply {
+                        shape = GradientDrawable.RECTANGLE
+                        setColor(badgeColor)
+                        cornerRadius = badgeHeight / 2f
                     }
                 }
             }
+        }
 
-            // Update label
-            refs.labelView.apply {
-                text = item.label
-                setTextColor(if (isSelected) selectedLabelColor else unselectedLabelColor)
-                setTextSize(TypedValue.COMPLEX_UNIT_SP, labelSizeSp.toFloat())
+        refs.labelView.apply {
+            text = item.label
+            setTextColor(if (isSelected) selectedLabelColor else unselectedLabelColor)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, labelSizeSp.toFloat())
+        }
+    }
+
+    private fun calculateChangedItemIndices(
+        previousItems: List<NavigationBarItem>,
+        nextItems: List<NavigationBarItem>,
+    ): Set<Int> {
+        if (previousItems.size != nextItems.size) {
+            return nextItems.indices.toSet()
+        }
+        val indices = linkedSetOf<Int>()
+        for (index in nextItems.indices) {
+            if (previousItems[index] != nextItems[index]) {
+                indices += index
             }
         }
+        return indices
     }
 
     companion object {

@@ -20,6 +20,17 @@ internal class DeclarativeSegmentedControlLayout(
     private var items: List<SegmentedControlItem> = emptyList()
     private var selectedIndex: Int = -1
     private var onSelectionChange: ((Int) -> Unit)? = null
+    private var styleInitialized: Boolean = false
+    private var enabledState: Boolean = true
+    private var backgroundColorState: Int = Color.TRANSPARENT
+    private var indicatorColorState: Int = Color.TRANSPARENT
+    private var cornerRadiusState: Int = 0
+    private var textColorState: Int = Color.BLACK
+    private var selectedTextColorState: Int = Color.WHITE
+    private var rippleColorState: Int = Color.TRANSPARENT
+    private var textSizeSpState: Int = 14
+    private var paddingHorizontalState: Int = 0
+    private var paddingVerticalState: Int = 0
     private val indicatorInset = context.dpToPx(2).toFloat()
     private val containerBackground = GradientDrawable().apply {
         shape = GradientDrawable.RECTANGLE
@@ -48,24 +59,75 @@ internal class DeclarativeSegmentedControlLayout(
         paddingVertical: Int,
     ) {
         this.onSelectionChange = onSelectionChange
-        containerBackground.setColor(backgroundColor)
-        containerBackground.cornerRadius = cornerRadius.toFloat()
-        if (this.items.map { it.label } != items.map { it.label }) {
+        val labelsChanged = this.items.map { it.label } != items.map { it.label }
+        if (labelsChanged || childCount != items.size) {
             rebuild(items)
         }
+
+        val resolvedSelectedIndex = if (items.isEmpty()) {
+            -1
+        } else {
+            selectedIndex.coerceIn(0, items.lastIndex)
+        }
+        val previousSelectedIndex = this.selectedIndex
+        val selectedChanged = previousSelectedIndex != resolvedSelectedIndex
+        val styleChanged = !styleInitialized ||
+            enabledState != enabled ||
+            indicatorColorState != indicatorColor ||
+            cornerRadiusState != cornerRadius ||
+            textColorState != textColor ||
+            selectedTextColorState != selectedTextColor ||
+            rippleColorState != rippleColor ||
+            textSizeSpState != textSizeSp ||
+            paddingHorizontalState != paddingHorizontal ||
+            paddingVerticalState != paddingVertical
+
+        if (!styleInitialized || backgroundColorState != backgroundColor) {
+            containerBackground.setColor(backgroundColor)
+        }
+        if (!styleInitialized || cornerRadiusState != cornerRadius) {
+            containerBackground.cornerRadius = cornerRadius.toFloat()
+        }
+
         this.items = items
-        this.selectedIndex = selectedIndex
-        updateChildren(
-            enabled = enabled,
-            indicatorColor = indicatorColor,
-            cornerRadius = cornerRadius,
-            textColor = textColor,
-            selectedTextColor = selectedTextColor,
-            rippleColor = rippleColor,
-            textSizeSp = textSizeSp,
-            paddingHorizontal = paddingHorizontal,
-            paddingVertical = paddingVertical,
-        )
+        this.selectedIndex = resolvedSelectedIndex
+
+        enabledState = enabled
+        backgroundColorState = backgroundColor
+        indicatorColorState = indicatorColor
+        cornerRadiusState = cornerRadius
+        textColorState = textColor
+        selectedTextColorState = selectedTextColor
+        rippleColorState = rippleColor
+        textSizeSpState = textSizeSp
+        paddingHorizontalState = paddingHorizontal
+        paddingVerticalState = paddingVertical
+        styleInitialized = true
+
+        when {
+            labelsChanged || styleChanged -> updateChildren(
+                enabled = enabled,
+                indicatorColor = indicatorColor,
+                cornerRadius = cornerRadius,
+                textColor = textColor,
+                selectedTextColor = selectedTextColor,
+                rippleColor = rippleColor,
+                textSizeSp = textSizeSp,
+                paddingHorizontal = paddingHorizontal,
+                paddingVertical = paddingVertical,
+            )
+
+            selectedChanged -> updateSelectionOnly(
+                previousSelectedIndex = previousSelectedIndex,
+                nextSelectedIndex = resolvedSelectedIndex,
+                enabled = enabled,
+                indicatorColor = indicatorColor,
+                cornerRadius = cornerRadius,
+                textColor = textColor,
+                selectedTextColor = selectedTextColor,
+                rippleColor = rippleColor,
+            )
+        }
     }
 
     private fun rebuild(items: List<SegmentedControlItem>) {
@@ -126,6 +188,34 @@ internal class DeclarativeSegmentedControlLayout(
                 indicatorColor = indicatorColor,
                 rippleColor = rippleColor,
                 cornerRadius = (cornerRadius - indicatorInset).coerceAtLeast(0f),
+            )
+            child.isSelected = isSelected
+        }
+    }
+
+    private fun updateSelectionOnly(
+        previousSelectedIndex: Int,
+        nextSelectedIndex: Int,
+        enabled: Boolean,
+        indicatorColor: Int,
+        cornerRadius: Int,
+        textColor: Int,
+        selectedTextColor: Int,
+        rippleColor: Int,
+    ) {
+        val indices = linkedSetOf(previousSelectedIndex, nextSelectedIndex)
+        val cornerRadiusPx = (cornerRadius - indicatorInset).coerceAtLeast(0f)
+        indices.forEach { index ->
+            if (index !in 0 until childCount) return@forEach
+            val child = getChildAt(index) as? TextView ?: return@forEach
+            val isSelected = index == nextSelectedIndex
+            child.setTextColor(if (isSelected) selectedTextColor else textColor)
+            child.background = createSegmentBackground(
+                enabled = enabled,
+                selected = isSelected,
+                indicatorColor = indicatorColor,
+                rippleColor = rippleColor,
+                cornerRadius = cornerRadiusPx,
             )
             child.isSelected = isSelected
         }
