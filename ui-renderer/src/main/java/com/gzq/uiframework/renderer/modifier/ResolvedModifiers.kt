@@ -14,6 +14,7 @@ internal class ResolvedModifiers(
     @JvmField var offset: OffsetModifierElement? = null,
     @JvmField var padding: PaddingModifierElement? = null,
     @JvmField var systemBarsInsetsPadding: SystemBarsInsetsPaddingModifierElement? = null,
+    @JvmField var imeInsetsPadding: ImeInsetsPaddingModifierElement? = null,
     @JvmField var minHeight: MinHeightModifierElement? = null,
     @JvmField var minWidth: MinWidthModifierElement? = null,
     @JvmField var rippleColor: RippleColorModifierElement? = null,
@@ -46,6 +47,7 @@ internal fun Modifier.resolve(): ResolvedModifiers {
             is OffsetModifierElement -> result.offset = element
             is PaddingModifierElement -> result.padding = element
             is SystemBarsInsetsPaddingModifierElement -> result.systemBarsInsetsPadding = element
+            is ImeInsetsPaddingModifierElement -> result.imeInsetsPadding = element
             is MinHeightModifierElement -> result.minHeight = element
             is MinWidthModifierElement -> result.minWidth = element
             is RippleColorModifierElement -> result.rippleColor = element

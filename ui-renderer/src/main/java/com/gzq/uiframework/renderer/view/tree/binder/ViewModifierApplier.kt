@@ -15,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.gzq.uiframework.renderer.R
 import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
+import com.gzq.uiframework.renderer.modifier.ImeInsetsPaddingModifierElement
 import com.gzq.uiframework.renderer.modifier.NativeViewElement
 import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
 import com.gzq.uiframework.renderer.modifier.ResolvedModifiers
@@ -158,7 +159,11 @@ internal object ViewModifierApplier {
                 textColor = textColor,
                 textSizeSp = textSizeSp,
             )
-            applySystemBarsInsetsPadding(view, resolved.systemBarsInsetsPadding)
+            applyWindowInsetsPadding(
+                view = view,
+                systemBarsModifier = resolved.systemBarsInsetsPadding,
+                imeModifier = resolved.imeInsetsPadding,
+            )
             return
         }
         val isClickable = resolved.clickable != null || readNodeClickable(node)
@@ -205,7 +210,11 @@ internal object ViewModifierApplier {
                 resolvedPadding.bottom,
             )
         }
-        applySystemBarsInsetsPadding(view, resolved.systemBarsInsetsPadding)
+        applyWindowInsetsPadding(
+            view = view,
+            systemBarsModifier = resolved.systemBarsInsetsPadding,
+            imeModifier = resolved.imeInsetsPadding,
+        )
         if (view is TextView) {
             if (textColor != null) {
                 view.setTextColor(textColor)
@@ -578,12 +587,13 @@ internal object ViewModifierApplier {
         }
     }
 
-    private fun applySystemBarsInsetsPadding(
+    private fun applyWindowInsetsPadding(
         view: View,
-        modifierElement: SystemBarsInsetsPaddingModifierElement?,
+        systemBarsModifier: SystemBarsInsetsPaddingModifierElement?,
+        imeModifier: ImeInsetsPaddingModifierElement?,
     ) {
-        if (modifierElement == null) {
-            val state = view.getTag(R.id.ui_framework_system_bars_padding_state) as? SystemBarsPaddingState
+        if (systemBarsModifier == null && imeModifier == null) {
+            val state = view.getTag(R.id.ui_framework_system_bars_padding_state) as? WindowInsetsPaddingState
             if (state != null) {
                 view.setPadding(state.baseLeft, state.baseTop, state.baseRight, state.baseBottom)
                 view.setTag(R.id.ui_framework_system_bars_padding_state, null)
@@ -592,21 +602,30 @@ internal object ViewModifierApplier {
             return
         }
 
-        val state = (view.getTag(R.id.ui_framework_system_bars_padding_state) as? SystemBarsPaddingState)
-            ?: SystemBarsPaddingState().also {
+        val state = (view.getTag(R.id.ui_framework_system_bars_padding_state) as? WindowInsetsPaddingState)
+            ?: WindowInsetsPaddingState().also {
                 view.setTag(R.id.ui_framework_system_bars_padding_state, it)
             }
-        state.baseLeft = view.paddingLeft
-        state.baseTop = view.paddingTop
-        state.baseRight = view.paddingRight
-        state.baseBottom = view.paddingBottom
+        state.baseLeft = view.paddingLeft - state.appliedLeft
+        state.baseTop = view.paddingTop - state.appliedTop
+        state.baseRight = view.paddingRight - state.appliedRight
+        state.baseBottom = view.paddingBottom - state.appliedBottom
 
         ViewCompat.setOnApplyWindowInsetsListener(view) { target, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            state.appliedLeft = if (modifierElement.left) systemBars.left else 0
-            state.appliedTop = if (modifierElement.top) systemBars.top else 0
-            state.appliedRight = if (modifierElement.right) systemBars.right else 0
-            state.appliedBottom = if (modifierElement.bottom) systemBars.bottom else 0
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+            state.appliedLeft =
+                (if (systemBarsModifier?.left == true) systemBars.left else 0) +
+                (if (imeModifier?.left == true) ime.left else 0)
+            state.appliedTop =
+                (if (systemBarsModifier?.top == true) systemBars.top else 0) +
+                (if (imeModifier?.top == true) ime.top else 0)
+            state.appliedRight =
+                (if (systemBarsModifier?.right == true) systemBars.right else 0) +
+                (if (imeModifier?.right == true) ime.right else 0)
+            state.appliedBottom =
+                (if (systemBarsModifier?.bottom == true) systemBars.bottom else 0) +
+                (if (imeModifier?.bottom == true) ime.bottom else 0)
             target.setPadding(
                 state.baseLeft + state.appliedLeft,
                 state.baseTop + state.appliedTop,
@@ -635,7 +654,7 @@ internal object ViewModifierApplier {
         )
     }
 
-    private data class SystemBarsPaddingState(
+    private data class WindowInsetsPaddingState(
         var baseLeft: Int = 0,
         var baseTop: Int = 0,
         var baseRight: Int = 0,
