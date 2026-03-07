@@ -13,7 +13,7 @@ class LayoutParamDefaultsResolverTest {
             ViewGroup.LayoutParams.WRAP_CONTENT,
             LayoutParamDefaultsResolver.defaultWidth(
                 nodeType = NodeType.Surface,
-                parentIsLinearLayout = true,
+                useLinearLikeDefaults = true,
                 linearOrientation = LinearLayout.HORIZONTAL,
             ),
         )
@@ -21,7 +21,7 @@ class LayoutParamDefaultsResolverTest {
             ViewGroup.LayoutParams.WRAP_CONTENT,
             LayoutParamDefaultsResolver.defaultHeight(
                 nodeType = NodeType.Surface,
-                parentIsLinearLayout = true,
+                useLinearLikeDefaults = true,
                 linearOrientation = LinearLayout.HORIZONTAL,
             ),
         )
@@ -33,7 +33,7 @@ class LayoutParamDefaultsResolverTest {
             ViewGroup.LayoutParams.WRAP_CONTENT,
             LayoutParamDefaultsResolver.defaultWidth(
                 nodeType = NodeType.Surface,
-                parentIsLinearLayout = true,
+                useLinearLikeDefaults = true,
                 linearOrientation = LinearLayout.VERTICAL,
             ),
         )
@@ -41,7 +41,7 @@ class LayoutParamDefaultsResolverTest {
             ViewGroup.LayoutParams.WRAP_CONTENT,
             LayoutParamDefaultsResolver.defaultHeight(
                 nodeType = NodeType.Surface,
-                parentIsLinearLayout = true,
+                useLinearLikeDefaults = true,
                 linearOrientation = LinearLayout.VERTICAL,
             ),
         )
@@ -53,14 +53,54 @@ class LayoutParamDefaultsResolverTest {
             ViewGroup.LayoutParams.MATCH_PARENT,
             LayoutParamDefaultsResolver.defaultWidth(
                 nodeType = NodeType.Surface,
-                parentIsLinearLayout = false,
+                useLinearLikeDefaults = false,
             ),
         )
         assertEquals(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             LayoutParamDefaultsResolver.defaultHeight(
                 nodeType = NodeType.Surface,
-                parentIsLinearLayout = false,
+                useLinearLikeDefaults = false,
+            ),
+        )
+    }
+
+    @Test
+    fun `surface wraps content in flow row defaults`() {
+        assertEquals(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            LayoutParamDefaultsResolver.defaultWidth(
+                nodeType = NodeType.Surface,
+                useLinearLikeDefaults = true,
+                linearOrientation = LinearLayout.HORIZONTAL,
+            ),
+        )
+        assertEquals(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            LayoutParamDefaultsResolver.defaultHeight(
+                nodeType = NodeType.Surface,
+                useLinearLikeDefaults = true,
+                linearOrientation = LinearLayout.HORIZONTAL,
+            ),
+        )
+    }
+
+    @Test
+    fun `surface wraps content in flow column defaults`() {
+        assertEquals(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            LayoutParamDefaultsResolver.defaultWidth(
+                nodeType = NodeType.Surface,
+                useLinearLikeDefaults = true,
+                linearOrientation = LinearLayout.VERTICAL,
+            ),
+        )
+        assertEquals(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            LayoutParamDefaultsResolver.defaultHeight(
+                nodeType = NodeType.Surface,
+                useLinearLikeDefaults = true,
+                linearOrientation = LinearLayout.VERTICAL,
             ),
         )
     }

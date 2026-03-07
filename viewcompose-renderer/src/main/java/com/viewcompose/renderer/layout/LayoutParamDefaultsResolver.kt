@@ -7,10 +7,10 @@ import com.viewcompose.renderer.node.NodeType
 internal object LayoutParamDefaultsResolver {
     fun defaultWidth(
         nodeType: NodeType,
-        parentIsLinearLayout: Boolean,
+        useLinearLikeDefaults: Boolean,
         linearOrientation: Int? = null,
     ): Int {
-        if (parentIsLinearLayout) {
+        if (useLinearLikeDefaults) {
             return when (nodeType) {
                 NodeType.Spacer -> 0
                 NodeType.Divider -> if (linearOrientation == LinearLayout.VERTICAL) {
@@ -44,10 +44,10 @@ internal object LayoutParamDefaultsResolver {
 
     fun defaultHeight(
         nodeType: NodeType,
-        parentIsLinearLayout: Boolean,
+        useLinearLikeDefaults: Boolean,
         linearOrientation: Int? = null,
     ): Int {
-        if (parentIsLinearLayout) {
+        if (useLinearLikeDefaults) {
             return when (nodeType) {
                 NodeType.Spacer -> 0
                 NodeType.Divider -> if (linearOrientation == LinearLayout.HORIZONTAL) {

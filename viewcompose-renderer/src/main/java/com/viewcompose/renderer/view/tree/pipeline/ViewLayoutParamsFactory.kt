@@ -16,6 +16,8 @@ import com.viewcompose.renderer.modifier.resolve
 import com.viewcompose.renderer.node.NodeType
 import com.viewcompose.renderer.node.VNode
 import com.viewcompose.renderer.view.container.DeclarativeBoxLayout
+import com.viewcompose.renderer.view.container.DeclarativeFlowColumnLayout
+import com.viewcompose.renderer.view.container.DeclarativeFlowRowLayout
 import com.viewcompose.renderer.view.container.DeclarativeLinearLayout
 
 internal object ViewLayoutParamsFactory {
@@ -40,13 +42,22 @@ internal object ViewLayoutParamsFactory {
         val weight = resolved.weight
         val horizontalAlign = resolved.horizontalAlign
         val verticalAlign = resolved.verticalAlign
+        val useLinearLikeDefaults = parent is DeclarativeLinearLayout ||
+            parent is DeclarativeFlowRowLayout ||
+            parent is DeclarativeFlowColumnLayout
+        val linearLikeOrientation = when (parent) {
+            is DeclarativeLinearLayout -> parent.orientation
+            is DeclarativeFlowRowLayout -> LinearLayout.HORIZONTAL
+            is DeclarativeFlowColumnLayout -> LinearLayout.VERTICAL
+            else -> null
+        }
         val defaultWidth = if (node.type == NodeType.Divider) {
             defaultDividerWidth(parent, node)
         } else {
             LayoutParamDefaultsResolver.defaultWidth(
                 nodeType = node.type,
-                parentIsLinearLayout = parent is DeclarativeLinearLayout,
-                linearOrientation = (parent as? DeclarativeLinearLayout)?.orientation,
+                useLinearLikeDefaults = useLinearLikeDefaults,
+                linearOrientation = linearLikeOrientation,
             )
         }
         val defaultHeight = if (node.type == NodeType.Divider) {
@@ -54,8 +65,8 @@ internal object ViewLayoutParamsFactory {
         } else {
             LayoutParamDefaultsResolver.defaultHeight(
                 nodeType = node.type,
-                parentIsLinearLayout = parent is DeclarativeLinearLayout,
-                linearOrientation = (parent as? DeclarativeLinearLayout)?.orientation,
+                useLinearLikeDefaults = useLinearLikeDefaults,
+                linearOrientation = linearLikeOrientation,
             )
         }
         val width = widthModifier?.width ?: size?.width ?: defaultWidth
