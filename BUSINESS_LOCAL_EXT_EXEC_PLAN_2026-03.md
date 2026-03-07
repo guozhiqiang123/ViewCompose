@@ -30,7 +30,7 @@
 - [x] Step 3: 移除旧调用方式并全量迁移（`ProvideContentColor` / `ProvideTextStyle`）。
 - [x] Step 4: 补齐业务自定义 Local 的单测（默认值/嵌套/snapshot）。
 - [x] Step 5: 增加 demo 中业务 Local 示例（BizTokens 场景）。
-- [ ] Step 6: 更新 `THEMING.md`、`ARCHITECTURE.md`、`WORKFLOW.md`。
+- [x] Step 6: 更新 `THEMING.md`、`ARCHITECTURE.md`、`WORKFLOW.md`。
 - [ ] Step 7: 收口门禁、计划归档、archive 索引更新。
 
 ## 5. Commit Log
@@ -41,7 +41,8 @@
 | 2026-03-07 | Step 2 | `2cd7c80` | Add public Local APIs for business-defined tokens. |
 | 2026-03-07 | Step 3 | `1162f5a` | Remove legacy local provider APIs and migrate all call sites. |
 | 2026-03-07 | Step 4 | `ae27952` | Add business Local tests for default/nested/snapshot semantics. |
-| 2026-03-07 | Step 5 | pending | Add foundations demo section for business local tokens. |
+| 2026-03-07 | Step 5 | `31541aa` | Add foundations demo section for business local tokens. |
+| 2026-03-07 | Step 6 | pending | Codify business local extension rules in architecture/theming/workflow docs. |
 
 ## 6. Blocker Log
 

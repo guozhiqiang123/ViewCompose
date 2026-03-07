@@ -65,6 +65,7 @@
 1. 只覆盖必要字段
 2. 未覆盖字段回落到上层主题或默认值
 3. 覆盖逻辑通过 `LocalContext` 作用域传播
+4. 对外统一通过 `UiLocal/uiLocalOf/ProvideLocal(s)/UiLocals.current` 使用，避免专用包装 API 漂移
 
 适用场景：
 
@@ -76,6 +77,20 @@
 
 1. 把 override 做成“每个组件所有字段都能填”的全量配置
 2. 用 override 替代组件参数
+
+## 4.1 业务自定义 Local 扩展
+
+当业务侧 token 体系与框架默认主题不一致时，允许按下面方式扩展：
+
+1. 在业务模块通过 `uiLocalOf { ... }` 定义自有 token。
+2. 在局部子树通过 `ProvideLocal(...)` 或 `ProvideLocals(...)` 注入。
+3. 在组件内部通过 `UiLocals.current(...)` 读取。
+4. 新增 Local 能力时优先复用统一 API，不再新增专用 `ProvideXxx` 包装。
+
+边界约束：
+
+1. 业务 Local 只承载语义值，不承载 renderer 平台实现细节。
+2. Local 作用域恢复与 snapshot 传播语义必须保持（lazy/overlay 不回退）。
 
 ## 5. Android Bridge 边界
 
