@@ -13,7 +13,7 @@
 3. `weight/align/FlexibleSpacer` 仅通过 `RowScope/ColumnScope/BoxScope` 暴露
 4. 系统栏/键盘 inset 适配走组件侧 `Modifier.systemBarsInsetsPadding(...)` 与 `Modifier.imeInsetsPadding(...)`（若 Activity 使用 `adjustResize`，通常不再叠加 `imeInsetsPadding`，避免双重位移）
 5. 列表容器复用策略支持 `Modifier.lazyContainerReuse(sharePool, disableItemAnimator)`，默认不共享池
-6. 容器键盘跟随策略支持 `Modifier.focusFollowKeyboard(enabled)`（`Modifier.lazyContainerFocusFollowKeyboard` 已废弃），`enabled=true` 时由容器级 focus coordinator 统一执行最小滚动，避免 state 刷新与键盘跟随抢锚点
+6. 容器键盘跟随策略支持 `Modifier.focusFollowKeyboard(enabled)`，`enabled=true` 时由容器级 focus coordinator 统一执行最小滚动，避免 state 刷新与键盘跟随抢锚点
 7. `focusFollowKeyboard` 当前已覆盖 `LazyColumn`、`LazyVerticalGrid`、`VerticalPager`、`ScrollableColumn`；`LazyRow`、`HorizontalPager`、`ScrollableRow` 保持水平语义，不执行键盘上顶
 
 ## 3. 角色边界

@@ -12,25 +12,6 @@ import com.gzq.uiframework.renderer.view.tree.RenderStats
 import com.gzq.uiframework.renderer.view.tree.RenderTreeResult
 import java.util.WeakHashMap
 
-data class UiContentHost(
-    val root: ViewGroup,
-    val session: RenderSession,
-)
-
-fun ComponentActivity.createUiContentRoot(
-): FrameLayout {
-    return buildUiContentRoot(
-        context = this,
-    )
-}
-
-fun Fragment.createUiContentRoot(
-): FrameLayout {
-    return buildUiContentRoot(
-        context = requireContext(),
-    )
-}
-
 /**
  * Creates and returns a Fragment content root and binds the internal [RenderSession]
  * to the Fragment view lifecycle. Session disposal is handled automatically.
@@ -43,7 +24,9 @@ fun Fragment.setUiContent(
     onRenderResult: ((RenderTreeResult) -> Unit)? = null,
     content: UiTreeBuilder.(ViewGroup) -> Unit,
 ): ViewGroup {
-    val root = createUiContentRoot()
+    val root = buildUiContentRoot(
+        context = requireContext(),
+    )
     val session = renderInto(
         container = root,
         debug = debug,
@@ -72,7 +55,9 @@ fun ComponentActivity.setUiContent(
     onRenderResult: ((RenderTreeResult) -> Unit)? = null,
     content: UiTreeBuilder.(ViewGroup) -> Unit,
 ): ViewGroup {
-    val root = createUiContentRoot()
+    val root = buildUiContentRoot(
+        context = this,
+    )
     setContentView(root)
     val session = renderInto(
         container = root,
@@ -92,38 +77,6 @@ fun ComponentActivity.setUiContent(
         session = session,
     )
     return root
-}
-
-@Deprecated(
-    message = "Use Fragment.setUiContent(...) for official host API with internal lifecycle disposal. " +
-        "createUiContent(...) is kept as a low-level migration API.",
-)
-fun Fragment.createUiContent(
-    debug: Boolean = false,
-    debugTag: String = "UIFramework",
-    overlayHostFactory: (ViewGroup) -> OverlayHost = { OverlayHostDefaults.noOp },
-    onRenderStats: ((RenderStats) -> Unit)? = null,
-    onRenderResult: ((RenderTreeResult) -> Unit)? = null,
-    content: UiTreeBuilder.(ViewGroup) -> Unit,
-): UiContentHost {
-    val root = createUiContentRoot()
-    val session = renderInto(
-        container = root,
-        debug = debug,
-        debugTag = debugTag,
-        overlayHost = overlayHostFactory(root),
-        onRenderStats = onRenderStats,
-        onRenderResult = onRenderResult,
-    ) {
-        withHostEnvironment(
-            root = root,
-            content = content,
-        )
-    }
-    return UiContentHost(
-        root = root,
-        session = session,
-    )
 }
 
 private fun buildUiContentRoot(

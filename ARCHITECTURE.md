@@ -57,7 +57,7 @@
 
 ```mermaid
 flowchart TD
-    A["Business DSL"] --> B["ComponentActivity.setUiContent(...) / Fragment.createUiContent(...)"]
+    A["Business DSL"] --> B["ComponentActivity.setUiContent(...) / Fragment.setUiContent(...)"]
     B --> C["renderInto(container)"]
     C --> D["RenderSession"]
     D --> E["buildVNodeTree"]
@@ -93,8 +93,7 @@ flowchart TD
 
 1. `ComponentActivity.setUiContent(...)` 不暴露 `RenderSession` 给页面调用方，并由宿主自动管理 `dispose`。
 2. `Fragment.setUiContent(...)` 是官方入口：不暴露 `RenderSession`，并在 `viewLifecycleOwner` 销毁时自动 `dispose`。
-3. `Fragment.createUiContent(...) -> UiContentHost(root + session)` 为迁移型低层 API（已标记 deprecated），仅用于需要直接访问 session 的特殊场景。
-4. system bars insets 走组件侧 `Modifier.systemBarsInsetsPadding(...)`，不绑死 Activity 全局参数。
+3. system bars insets 走组件侧 `Modifier.systemBarsInsetsPadding(...)`，不绑死 Activity 全局参数。
 
 ### 4.4 延迟 session 容器边界
 
@@ -111,7 +110,7 @@ flowchart TD
 
 ### 4.5 Environment 边界
 
-1. 宿主入口（`ComponentActivity.setUiContent(...)`、`Fragment.setUiContent(...)`、`Fragment.createUiContent(...)`）默认自动注入 `UiEnvironment(androidContext = root.context)`。
+1. 宿主入口（`ComponentActivity.setUiContent(...)`、`Fragment.setUiContent(...)`）默认自动注入 `UiEnvironment(androidContext = root.context)`。
 2. 业务层允许在局部子树使用 `UiEnvironment(values = ...)` 做覆盖；默认注入不阻断局部覆写。
 3. `ui-renderer` 不依赖 `ui-widget-core/context/Environment`，只消费 renderer 已解析的 `NodeSpec` 与平台参数。
 4. `ui-renderer` 中的 dp/sp 尺寸换算统一走内部工具（`ui-renderer/view/DimensionUtils.kt`），容器类禁止私有 `density/dpToPx` 重复实现。
@@ -122,9 +121,8 @@ flowchart TD
 1. `ViewTreeRenderer` 仍是复杂度热点，新增能力优先拆辅助对象，不继续堆主类。
 2. 普通页面仍偏根级重跑，后续优化应聚焦“可跳过更新”与诊断能力。
 3. `ui-widget-core` 仍承担较多职责，演进时优先收边界，不盲目拆模块。
-4. `Fragment.createUiContent(...)` 仍暴露 `RenderSession`，存在 API 复杂度和生命周期误用风险。
-5. 延迟 session 容器的测试覆盖仍不均衡，`LazyVerticalGrid` 与 `VerticalPager` 缺少专项回归。
-6. `ui-widget-core` 中仍包含 `AndroidHostBridge/AndroidThemeBridge/AndroidEnvironmentBridge`，若后续目标扩展到跨平台，需要规划独立 host bridge 模块，避免 core 继续增重。
+4. 延迟 session 容器的测试覆盖仍不均衡，`LazyVerticalGrid` 与 `VerticalPager` 缺少专项回归。
+5. `ui-widget-core` 中仍包含 `AndroidHostBridge/AndroidThemeBridge/AndroidEnvironmentBridge`，若后续目标扩展到跨平台，需要规划独立 host bridge 模块，避免 core 继续增重。
 
 ## 6. 变更落地清单（必须执行）
 

@@ -442,30 +442,6 @@ fun Modifier.focusFollowKeyboard(
     )
 }
 
-@Deprecated(
-    message = "Use focusFollowKeyboard(...) for container-level keyboard follow semantics.",
-    replaceWith = ReplaceWith("focusFollowKeyboard(enabled = enabled)"),
-)
-fun Modifier.lazyContainerFocusFollowKeyboard(
-    enabled: Boolean = true,
-): Modifier {
-    return focusFollowKeyboard(enabled = enabled)
-}
-
-@Deprecated(
-    message = "Use lazyContainerReuse(...) to avoid exposing platform-specific implementation details.",
-    replaceWith = ReplaceWith("lazyContainerReuse(sharePool = sharePool, disableItemAnimator = disableItemAnimator)"),
-)
-fun Modifier.recyclerViewReuse(
-    sharePool: Boolean = false,
-    disableItemAnimator: Boolean = false,
-): Modifier {
-    return lazyContainerReuse(
-        sharePool = sharePool,
-        disableItemAnimator = disableItemAnimator,
-    )
-}
-
 fun Modifier.fillMaxWidth(): Modifier {
     return width(android.view.ViewGroup.LayoutParams.MATCH_PARENT)
 }

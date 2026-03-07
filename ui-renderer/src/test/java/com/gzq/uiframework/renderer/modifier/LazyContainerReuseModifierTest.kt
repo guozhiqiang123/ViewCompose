@@ -72,24 +72,4 @@ class LazyContainerReuseModifierTest {
         )
     }
 
-    @Test
-    @Suppress("DEPRECATION")
-    fun `deprecated recyclerViewReuse delegates to lazyContainerReuse`() {
-        val policy = Modifier
-            .recyclerViewReuse(sharePool = true, disableItemAnimator = true)
-            .lazyContainerReusePolicy()
-
-        assertTrue(policy.sharePool)
-        assertTrue(policy.disableItemAnimator)
-    }
-
-    @Test
-    @Suppress("DEPRECATION")
-    fun `deprecated lazyContainerFocusFollowKeyboard delegates to focusFollowKeyboard`() {
-        val policy = Modifier
-            .lazyContainerFocusFollowKeyboard(enabled = true)
-            .lazyContainerFocusPolicy()
-
-        assertTrue(policy.enabled)
-    }
 }
