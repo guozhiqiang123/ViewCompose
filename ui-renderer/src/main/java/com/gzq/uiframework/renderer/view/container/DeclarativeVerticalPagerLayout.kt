@@ -86,6 +86,9 @@ internal class DeclarativeVerticalPagerLayout(
         userScrollEnabled: Boolean,
     ) {
         this.onPageChanged = onPageChanged
+        if (this.pagerState !== pagerState) {
+            this.pagerState?.viewPager = null
+        }
         this.pagerState = pagerState
         pagerState?.viewPager = viewPager
         viewPager.offscreenPageLimit = offscreenPageLimit.coerceAtLeast(1)

@@ -19,6 +19,7 @@ internal class DeclarativeLazyVerticalGridLayout(
 ) : FrameLayout(context) {
     private val recyclerView = RecyclerView(context)
     private val adapter = LazyColumnAdapter(RecyclerView.VERTICAL)
+    private var listState: LazyListState? = null
 
     init {
         recyclerView.layoutParams = LayoutParams(
@@ -67,10 +68,16 @@ internal class DeclarativeLazyVerticalGridLayout(
         recyclerView.setPadding(contentPadding, contentPadding, contentPadding, contentPadding)
         recyclerView.clipToPadding = contentPadding == 0
         adapter.submitItems(items)
-        state?.recyclerView = recyclerView
+        if (listState !== state) {
+            listState?.recyclerView = null
+            listState = state
+        }
+        listState?.recyclerView = recyclerView
     }
 
     fun dispose() {
+        listState?.recyclerView = null
+        listState = null
         adapter.disposeAll()
     }
 
