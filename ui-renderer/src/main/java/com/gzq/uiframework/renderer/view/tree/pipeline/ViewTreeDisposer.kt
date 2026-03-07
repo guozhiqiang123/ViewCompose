@@ -17,7 +17,9 @@ internal object ViewTreeDisposer {
         (mountedNode.view as? DeclarativeTabRowLayout)?.dispose()
         (mountedNode.view as? DeclarativeLazyVerticalGridLayout)?.dispose()
         (mountedNode.view as? RecyclerView)?.let { recyclerView ->
-            (recyclerView.adapter as? LazyColumnAdapter)?.disposeAll()
+            if (mountedNode.view !is DeclarativeLazyVerticalGridLayout) {
+                (recyclerView.adapter as? LazyColumnAdapter)?.disposeAll()
+            }
             (mountedNode.vnode.spec as? LazyColumnNodeProps)?.state?.recyclerView = null
             (mountedNode.vnode.spec as? LazyRowNodeProps)?.state?.recyclerView = null
         }

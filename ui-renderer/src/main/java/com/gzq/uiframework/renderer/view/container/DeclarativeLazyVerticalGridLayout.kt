@@ -1,8 +1,6 @@
 package com.gzq.uiframework.renderer.view.container
 
 import android.content.Context
-import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.gzq.uiframework.renderer.R
 import com.gzq.uiframework.renderer.node.LazyListItem
@@ -16,19 +14,13 @@ import com.gzq.uiframework.renderer.view.tree.LayoutPassTracker
 
 internal class DeclarativeLazyVerticalGridLayout(
     context: Context,
-) : FrameLayout(context) {
-    private val recyclerView = RecyclerView(context)
-    private val adapter = LazyColumnAdapter(RecyclerView.VERTICAL)
+) : RecyclerView(context) {
+    private val gridAdapter = LazyColumnAdapter(RecyclerView.VERTICAL)
     private var listState: LazyListState? = null
 
     init {
-        recyclerView.layoutParams = LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT,
-        )
-        recyclerView.adapter = adapter
+        adapter = gridAdapter
         applyRecyclerDefaults()
-        addView(recyclerView)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -57,28 +49,28 @@ internal class DeclarativeLazyVerticalGridLayout(
         items: List<LazyListItem>,
         state: LazyListState?,
     ) {
-        val lm = recyclerView.layoutManager as? LazyGridLayoutManager
+        val lm = layoutManager as? LazyGridLayoutManager
         if (lm == null || lm.spanCount != spanCount) {
-            recyclerView.layoutManager = LazyGridLayoutManager(
+            layoutManager = LazyGridLayoutManager(
                 context = context,
                 spanCount = spanCount,
             )
         }
         updateSpacingDecoration(horizontalSpacing, verticalSpacing, spanCount)
-        recyclerView.setPadding(contentPadding, contentPadding, contentPadding, contentPadding)
-        recyclerView.clipToPadding = contentPadding == 0
-        adapter.submitItems(items)
+        setPadding(contentPadding, contentPadding, contentPadding, contentPadding)
+        clipToPadding = contentPadding == 0
+        gridAdapter.submitItems(items)
         if (listState !== state) {
             listState?.recyclerView = null
             listState = state
         }
-        listState?.recyclerView = recyclerView
+        listState?.recyclerView = this
     }
 
     fun dispose() {
         listState?.recyclerView = null
         listState = null
-        adapter.disposeAll()
+        gridAdapter.disposeAll()
     }
 
     fun applyRecyclerDefaults(
@@ -86,7 +78,7 @@ internal class DeclarativeLazyVerticalGridLayout(
         disableItemAnimator: Boolean = false,
     ) {
         FrameworkRecyclerViewDefaults.applyLazyGridDefaults(
-            recyclerView = recyclerView,
+            recyclerView = this,
             sharePool = sharePool,
             disableItemAnimator = disableItemAnimator,
         )
@@ -94,7 +86,7 @@ internal class DeclarativeLazyVerticalGridLayout(
 
     fun setFocusFollowKeyboardEnabled(enabled: Boolean) {
         LazyFocusFollowLayoutMonitor.apply(
-            recyclerView = recyclerView,
+            recyclerView = this,
             enabled = enabled,
         )
     }
@@ -104,15 +96,15 @@ internal class DeclarativeLazyVerticalGridLayout(
         verticalSpacing: Int,
         spanCount: Int,
     ) {
-        val existing = recyclerView.getTag(R.id.ui_framework_lazy_grid_spacing_decoration)
+        val existing = getTag(R.id.ui_framework_lazy_grid_spacing_decoration)
             as? LazyGridSpacingDecoration
         if (existing != null) {
             existing.update(horizontalSpacing, verticalSpacing, spanCount)
-            recyclerView.invalidateItemDecorations()
+            invalidateItemDecorations()
             return
         }
         val decoration = LazyGridSpacingDecoration(horizontalSpacing, verticalSpacing, spanCount)
-        recyclerView.setTag(R.id.ui_framework_lazy_grid_spacing_decoration, decoration)
-        recyclerView.addItemDecoration(decoration)
+        setTag(R.id.ui_framework_lazy_grid_spacing_decoration, decoration)
+        addItemDecoration(decoration)
     }
 }
