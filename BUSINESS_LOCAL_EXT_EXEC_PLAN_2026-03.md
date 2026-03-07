@@ -26,7 +26,7 @@
 ## 4. Checklist
 
 - [x] Step 1: 新增执行计划文档并首提。
-- [ ] Step 2: 新增公开 Local API（`uiLocalOf` / `UiLocals.current` / `ProvideLocal(s)`）。
+- [x] Step 2: 新增公开 Local API（`uiLocalOf` / `UiLocals.current` / `ProvideLocal(s)`）。
 - [ ] Step 3: 移除旧调用方式并全量迁移（`ProvideContentColor` / `ProvideTextStyle`）。
 - [ ] Step 4: 补齐业务自定义 Local 的单测（默认值/嵌套/snapshot）。
 - [ ] Step 5: 增加 demo 中业务 Local 示例（BizTokens 场景）。
@@ -37,7 +37,8 @@
 
 | Date | Step | Commit | Notes |
 | --- | --- | --- | --- |
-| 2026-03-07 | Step 1 | pending | Add execution plan doc. |
+| 2026-03-07 | Step 1 | `3ff5840` | Add execution plan doc. |
+| 2026-03-07 | Step 2 | pending | Add public Local APIs for business-defined tokens. |
 
 ## 6. Blocker Log
 
