@@ -46,6 +46,37 @@ class DemoVisualUiTest {
     }
 
     @Test
+    fun actionsElevatedCard_clickKeepsShadowZ() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            ActionsActivity::class.java,
+        ).putExtra(EXTRA_ACTIONS_PAGE_INDEX, 0)
+        launchDemoActivity<ActionsActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            var beforeElevation = 0f
+            var beforeZ = 0f
+            scenario.onActivity { activity ->
+                val elevatedCard = activity.requireViewByTestTagVisible(DemoTestTags.ACTIONS_ELEVATED_CARD)
+                beforeElevation = elevatedCard.elevation
+                beforeZ = elevatedCard.z
+                assertTrue("Expected elevated card elevation > 0 before click", beforeElevation > 0f)
+                assertTrue("Expected elevated card z > 0 before click", beforeZ > 0f)
+                activity.clickByTestTag(DemoTestTags.ACTIONS_ELEVATED_CARD)
+            }
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val elevatedCard = activity.requireViewByTestTagVisible(DemoTestTags.ACTIONS_ELEVATED_CARD)
+                val afterElevation = elevatedCard.elevation
+                val afterZ = elevatedCard.z
+                assertTrue("Expected elevated card elevation > 0 after click", afterElevation > 0f)
+                assertTrue("Expected elevated card z > 0 after click", afterZ > 0f)
+                assertTrue("Expected elevation to remain stable after click", abs(afterElevation - beforeElevation) <= 0.5f)
+                assertTrue("Expected z to remain stable after click", abs(afterZ - beforeZ) <= 0.5f)
+            }
+        }
+    }
+
+    @Test
     fun interopBenchmarkControls_andNativeMirror_areVisible() {
         launchDemoActivity(InteropActivity::class.java).use { scenario ->
             waitForUiIdle()

@@ -143,7 +143,8 @@ internal fun UiTreeBuilder.ActionsPage(
                     onClick = { cardClickState.value += 1 },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .margin(bottom = 12.dp),
+                        .margin(bottom = 12.dp)
+                        .testTag(DemoTestTags.ACTIONS_ELEVATED_CARD),
                 ) {
                     Column(
                         spacing = 4.dp,

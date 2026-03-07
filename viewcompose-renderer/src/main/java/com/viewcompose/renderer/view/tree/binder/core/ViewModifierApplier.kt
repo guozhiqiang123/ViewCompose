@@ -143,7 +143,7 @@ internal object ViewModifierApplier {
             }
             view.translationX = resolved.offset?.x ?: 0f
             view.translationY = resolved.offset?.y ?: 0f
-            view.z = resolved.zIndex?.zIndex ?: 0f
+            view.translationZ = resolved.zIndex?.zIndex ?: 0f
             view.elevation = resolved.elevation?.elevation?.toFloat() ?: 0f
             view.setOnClickListener(null)
             view.isClickable = false
@@ -199,7 +199,7 @@ internal object ViewModifierApplier {
         }
         view.translationX = resolved.offset?.x ?: 0f
         view.translationY = resolved.offset?.y ?: 0f
-        view.z = resolved.zIndex?.zIndex ?: 0f
+        view.translationZ = resolved.zIndex?.zIndex ?: 0f
         view.elevation = resolved.elevation?.elevation?.toFloat() ?: 0f
         view.minimumHeight = resolvedMinHeight
         view.minimumWidth = resolvedMinWidth
