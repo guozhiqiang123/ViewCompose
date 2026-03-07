@@ -1,7 +1,9 @@
 package com.viewcompose.overlay.android.presenter
 
+import android.os.Build
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.FrameLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -44,6 +46,7 @@ private class AndroidModalBottomSheetHandle(
     private val dialog = BottomSheetDialog(rootView.context).apply {
         setContentView(dialogContainer)
     }
+    private val defaultNavigationBarColor: Int? = dialog.window?.readNavigationBarColorCompat()
     private val surfaceSession: OverlaySurfaceSession = createOverlaySurfaceSession(
         container = dialogContainer,
         content = content.surface,
@@ -73,6 +76,13 @@ private class AndroidModalBottomSheetHandle(
         dialog.setCanceledOnTouchOutside(spec.dismissOnClickOutside)
         dialog.window?.apply {
             setDimAmount(spec.scrimOpacity.coerceIn(0f, 1f))
+            val color = spec.navigationBarColor ?: defaultNavigationBarColor
+            if (color != null) {
+                applyNavigationBarColorCompat(
+                    color = color,
+                    enforceContrast = spec.navigationBarColor == null,
+                )
+            }
         }
         if (spec.skipPartiallyExpanded) {
             dialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
@@ -92,5 +102,19 @@ private class AndroidModalBottomSheetHandle(
             dialog.dismiss()
         }
         programmaticDismiss = false
+    }
+}
+
+@Suppress("DEPRECATION")
+private fun Window.readNavigationBarColorCompat(): Int = navigationBarColor
+
+@Suppress("DEPRECATION")
+private fun Window.applyNavigationBarColorCompat(
+    color: Int,
+    enforceContrast: Boolean,
+) {
+    navigationBarColor = color
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        isNavigationBarContrastEnforced = enforceContrast
     }
 }
