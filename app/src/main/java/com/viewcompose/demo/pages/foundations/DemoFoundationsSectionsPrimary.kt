@@ -105,7 +105,7 @@ internal fun UiTreeBuilder.FoundationsThemeSection() {
             ),
         )
         Text(
-            text = "Shapes: card=${Theme.shapes.cardCornerRadius}px, control=${Theme.shapes.controlCornerRadius}px",
+            text = "Shapes: card=${Theme.shapes.cardCornerRadius}px, interactive=${Theme.shapes.interactiveCornerRadius}px",
             style = UiTextStyle(fontSizeSp = 13.sp),
             color = TextDefaults.secondaryColor(),
         )
@@ -149,7 +149,7 @@ internal fun UiTreeBuilder.FoundationsOverridesSection() {
         }
         UiThemeOverride(
             shapes = {
-                copy(cardCornerRadius = 32.dp, controlCornerRadius = 24.dp)
+                copy(cardCornerRadius = 32.dp, interactiveCornerRadius = 24.dp)
             },
         ) {
             Column(
@@ -162,7 +162,7 @@ internal fun UiTreeBuilder.FoundationsOverridesSection() {
             ) {
                 Text(text = "形状覆盖")
                 Text(
-                    text = "局部 card=${Theme.shapes.cardCornerRadius}px, control=${Theme.shapes.controlCornerRadius}px",
+                    text = "局部 card=${Theme.shapes.cardCornerRadius}px, interactive=${Theme.shapes.interactiveCornerRadius}px",
                     style = UiTextStyle(fontSizeSp = 13.sp),
                     color = TextDefaults.secondaryColor(),
                 )

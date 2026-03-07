@@ -113,7 +113,7 @@ object TextFieldDefaults {
         }
     }
 
-    fun cornerRadius(): Int = Theme.shapes.controlCornerRadius
+    fun cornerRadius(): Int = Theme.shapes.interactiveCornerRadius
 
     fun height(
         size: TextFieldSize = TextFieldSize.Medium,

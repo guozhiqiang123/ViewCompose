@@ -25,7 +25,7 @@ object SegmentedControlDefaults {
         }
     }
 
-    fun cornerRadius(): Int = Theme.shapes.controlCornerRadius
+    fun cornerRadius(): Int = Theme.shapes.interactiveCornerRadius
 
     fun textColor(enabled: Boolean = true): Int {
         val override = LocalContext.current(LocalSegmentedControlColors)

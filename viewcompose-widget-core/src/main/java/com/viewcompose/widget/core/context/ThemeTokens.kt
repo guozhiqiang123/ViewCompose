@@ -23,9 +23,15 @@ data class UiColors(
         get() = secondary
 }
 
+@Suppress("DEPRECATION")
 data class UiShapes(
     val cardCornerRadius: Int,
+    @Deprecated(
+        message = "Use interactiveCornerRadius instead.",
+        replaceWith = ReplaceWith("interactiveCornerRadius"),
+    )
     val controlCornerRadius: Int,
+    val interactiveCornerRadius: Int = controlCornerRadius,
 )
 
 data class UiTextStyle(

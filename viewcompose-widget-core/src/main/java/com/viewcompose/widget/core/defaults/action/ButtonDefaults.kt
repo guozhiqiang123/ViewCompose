@@ -108,7 +108,7 @@ object ButtonDefaults {
         }
     }
 
-    fun cornerRadius(): Int = Theme.shapes.controlCornerRadius
+    fun cornerRadius(): Int = Theme.shapes.interactiveCornerRadius
 
     fun height(
         size: ButtonSize = ButtonSize.Medium,

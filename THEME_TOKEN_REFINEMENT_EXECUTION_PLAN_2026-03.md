@@ -34,7 +34,7 @@
 - [x] Step 3: `UiColors` 语义色升级与 bridge/defaults/demo 同步。
 - [x] Step 4: 去除关键硬编码颜色并同步文档禁用清单。
 - [x] Step 5: `UiTypography` 分级语义扩展并迁移首批 defaults。
-- [ ] Step 6: `UiShapes` 引入 `interactiveCornerRadius` 兼容别名并更新 demo 文案。
+- [x] Step 6: `UiShapes` 引入 `interactiveCornerRadius` 兼容别名并更新 demo 文案。
 - [ ] Step 7: 测试补齐（兼容与语义覆盖 + 硬编码守卫）。
 - [ ] Step 8: 文档收口、计划归档与归档索引更新。
 
@@ -46,7 +46,8 @@
 | 2026-03-07 | Step 2 | `eae4da3` | Align theming baseline with overlays and migration policy. |
 | 2026-03-07 | Step 3 | `c2d78f3` | Add semantic color tokens and migrate internal usage to secondary-first path. |
 | 2026-03-07 | Step 4 | `e0e5f69` | Replace critical hardcoded colors with semantic `Theme.colors.error`. |
-| 2026-03-07 | Step 5 | pending | Add tiered typography tokens and migrate core defaults to tier APIs. |
+| 2026-03-07 | Step 5 | `11dccd3` | Add tiered typography tokens and migrate core defaults to tier APIs. |
+| 2026-03-07 | Step 6 | pending | Introduce interactive corner radius and migrate core/demo usage. |
 
 ## 6. Blocker Log
 
@@ -58,3 +59,4 @@
 当前记录：
 
 1. 2026-03-07：Step 3 里程碑 `qaFull` 触发 instrumentation 失败（`connectedDebugAndroidTest`，29 测 9 失败），已保留失败报告路径用于后续回归定位。
+2. 2026-03-07：Step 6 里程碑 `qaFull` 复现同一批 9 条 instrumentation 失败，报告路径同上。
