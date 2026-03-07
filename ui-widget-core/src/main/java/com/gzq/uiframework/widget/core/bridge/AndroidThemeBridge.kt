@@ -84,5 +84,7 @@ private fun Context.resolveTextAppearanceTextSizeSp(
     attrs.recycle()
     if (px <= 0) return null
 
-    return (px / resources.displayMetrics.scaledDensity).toInt()
+    val density = resources.displayMetrics.density
+    val fontScale = resources.configuration.fontScale.takeIf { it > 0f } ?: 1f
+    return (px / (density * fontScale)).toInt()
 }

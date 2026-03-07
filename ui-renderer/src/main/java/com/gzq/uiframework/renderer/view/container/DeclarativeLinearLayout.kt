@@ -236,7 +236,7 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
 
         override fun setColorFilter(colorFilter: ColorFilter?) = Unit
 
-        @Deprecated("Deprecated in Java")
+        @Suppress("OVERRIDE_DEPRECATION")
         override fun getOpacity(): Int = PixelFormat.TRANSPARENT
 
         override fun getIntrinsicWidth(): Int = width
