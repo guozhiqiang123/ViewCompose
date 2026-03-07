@@ -109,6 +109,14 @@ flowchart TD
 
 - [SESSION_CONTAINER_CHECKLIST.md](/Users/gzq/AndroidStudioProjects/UIFramework/SESSION_CONTAINER_CHECKLIST.md)
 
+### 4.5 Environment 边界
+
+1. 宿主入口（`ComponentActivity.setUiContent(...)`、`Fragment.setUiContent(...)`、`Fragment.createUiContent(...)`）默认自动注入 `UiEnvironment(androidContext = root.context)`。
+2. 业务层允许在局部子树使用 `UiEnvironment(values = ...)` 做覆盖；默认注入不阻断局部覆写。
+3. `ui-renderer` 不依赖 `ui-widget-core/context/Environment`，只消费 renderer 已解析的 `NodeSpec` 与平台参数。
+4. `ui-renderer` 中的 dp/sp 尺寸换算统一走内部工具（`ui-renderer/view/DimensionUtils.kt`），容器类禁止私有 `density/dpToPx` 重复实现。
+5. Android 平台环境提取入口固定为 `AndroidEnvironmentBridge`，新增 Android 环境字段时必须先扩展该桥接，再进入 `UiEnvironmentValues`。
+
 ## 5. 当前热点与风险
 
 1. `ViewTreeRenderer` 仍是复杂度热点，新增能力优先拆辅助对象，不继续堆主类。

@@ -107,6 +107,16 @@
 2. 如果发现“当前改动能跑，但文件落点明显不合理”，应优先纠正结构，而不是把技术债留到后面集中处理
 3. review 时，模块归属和目录归属属于必查项，不是可选项
 
+## 5.1 环境来源一致性
+
+新增映射或扩展框架能力时，环境来源必须遵守单一入口，不允许另起一套：
+
+1. 宿主侧环境语义统一来自 `ui-widget-core/context/Environment` 与 `UiEnvironment`。
+2. Android 环境提取统一通过 `AndroidEnvironmentBridge` 进入 `UiEnvironmentValues`。
+3. renderer 不新增环境语义通道；只允许使用 renderer 内部尺寸工具（`ui-renderer/view/DimensionUtils.kt`）做平台换算。
+4. 禁止在 renderer 容器类新增私有 `density` 缓存或 `dpToPx`/`spToPx` 辅助方法。
+5. 发现现存代码偏离以上约束时，必须在同一步改动里完成“代码修正 + 文档更新”。
+
 ## 6. 线程中断恢复原则
 
 如果聊天线程丢失、附件损坏或上下文中断，恢复顺序固定为：
