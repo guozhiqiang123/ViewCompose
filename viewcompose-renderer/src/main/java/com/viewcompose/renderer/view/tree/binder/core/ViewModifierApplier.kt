@@ -16,7 +16,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.viewcompose.renderer.R
 import com.viewcompose.renderer.modifier.CornerRadiusModifierElement
-import com.viewcompose.renderer.modifier.ElevationModifierElement
 import com.viewcompose.renderer.modifier.ImeInsetsPaddingModifierElement
 import com.viewcompose.renderer.modifier.NativeViewElement
 import com.viewcompose.renderer.modifier.PaddingModifierElement
@@ -145,7 +144,7 @@ internal object ViewModifierApplier {
             view.translationX = resolved.offset?.x ?: 0f
             view.translationY = resolved.offset?.y ?: 0f
             view.z = resolved.zIndex?.zIndex ?: 0f
-            applyResolvedElevation(view, resolved.elevation)
+            view.elevation = resolved.elevation?.elevation?.toFloat() ?: 0f
             view.setOnClickListener(null)
             view.isClickable = false
             view.isFocusable = false
@@ -201,7 +200,7 @@ internal object ViewModifierApplier {
         view.translationX = resolved.offset?.x ?: 0f
         view.translationY = resolved.offset?.y ?: 0f
         view.z = resolved.zIndex?.zIndex ?: 0f
-        applyResolvedElevation(view, resolved.elevation)
+        view.elevation = resolved.elevation?.elevation?.toFloat() ?: 0f
         view.minimumHeight = resolvedMinHeight
         view.minimumWidth = resolvedMinWidth
         view.contentDescription = resolved.contentDescription?.contentDescription
@@ -267,19 +266,6 @@ internal object ViewModifierApplier {
         anchorId: String?,
     ) {
         view.setTag(R.id.ui_framework_anchor_id, anchorId)
-    }
-
-    private fun applyResolvedElevation(
-        view: View,
-        elevation: ElevationModifierElement?,
-    ) {
-        if (elevation != null) {
-            // Keep declarative elevation deterministic; avoid platform state animator overriding it on press/focus.
-            view.stateListAnimator = null
-            view.elevation = elevation.elevation.toFloat()
-        } else {
-            view.elevation = 0f
-        }
     }
 
     private fun applyTestTag(
