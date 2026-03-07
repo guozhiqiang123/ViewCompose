@@ -30,7 +30,7 @@
 ## 4. Checklist
 
 - [x] Step 1: 新增执行计划文档并首提。
-- [ ] Step 2: 更新 `THEMING.md` 基线与兼容迁移策略。
+- [x] Step 2: 更新 `THEMING.md` 基线与兼容迁移策略。
 - [ ] Step 3: `UiColors` 语义色升级与 bridge/defaults/demo 同步。
 - [ ] Step 4: 去除关键硬编码颜色并同步文档禁用清单。
 - [ ] Step 5: `UiTypography` 分级语义扩展并迁移首批 defaults。
@@ -42,7 +42,8 @@
 
 | Date | Step | Commit | Notes |
 | --- | --- | --- | --- |
-| 2026-03-07 | Step 1 | pending | Add execution plan doc. |
+| 2026-03-07 | Step 1 | `4d4eab7` | Add execution plan doc. |
+| 2026-03-07 | Step 2 | pending | Align theming baseline with overlays and migration policy. |
 
 ## 6. Blocker Log
 
