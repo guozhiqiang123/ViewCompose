@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
+import com.gzq.uiframework.renderer.view.tree.LayoutPassTracker
 import kotlin.math.max
 
 internal class DeclarativeFlowColumnLayout @JvmOverloads constructor(
@@ -41,6 +42,7 @@ internal class DeclarativeFlowColumnLayout @JvmOverloads constructor(
         p is MarginLayoutParams
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val startNs = System.nanoTime()
         val heightMode = MeasureSpec.getMode(heightMeasureSpec)
         val availableHeight = if (heightMode == MeasureSpec.UNSPECIFIED) {
             Int.MAX_VALUE
@@ -101,9 +103,14 @@ internal class DeclarativeFlowColumnLayout @JvmOverloads constructor(
             resolveSize(totalWidth + paddingLeft + paddingRight, widthMeasureSpec),
             resolveSize(maxColumnHeight + paddingTop + paddingBottom, heightMeasureSpec),
         )
+        LayoutPassTracker.recordMeasure(
+            viewName = javaClass.simpleName,
+            durationNs = System.nanoTime() - startNs,
+        )
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+        val startNs = System.nanoTime()
         val availableHeight = b - t - paddingTop - paddingBottom
 
         var currentX = paddingLeft
@@ -149,5 +156,9 @@ internal class DeclarativeFlowColumnLayout @JvmOverloads constructor(
                 itemsInCurrentColumn = 0
             }
         }
+        LayoutPassTracker.recordLayout(
+            viewName = javaClass.simpleName,
+            durationNs = System.nanoTime() - startNs,
+        )
     }
 }

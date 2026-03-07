@@ -73,6 +73,13 @@
 - 修复：`onSizeChanged` 时执行非动画居中校正。
 - 提交：`5436393`。
 
+### F-08（已修复）FlowRow/FlowColumn 缺少布局统计接入
+
+- 问题：`FlowRow/FlowColumn` 未写入 `LayoutPassTracker`，容器级布局诊断存在盲区。
+- 影响：复杂流式布局场景下，无法在 render 统计中定位 measure/layout 热点来源。
+- 修复：在 `onMeasure/onLayout` 统一记录 `LayoutPassTracker.recordMeasure/recordLayout`。
+- 提交：本轮收口提交（见 git log）。
+
 ## 4. Redundant Nesting Review
 
 - `ScrollableColumn/ScrollableRow` 的内层 `DeclarativeLinearLayout` 为必要结构（`ScrollView` 单子节点约束 + child host 分发），不属于可删除冗余。
@@ -81,11 +88,9 @@
 
 ## 5. Current Gaps (Not Closed Yet)
 
-1. `FlowRow/FlowColumn` 尚未接入 `LayoutPassTracker` 统计，容器级布局诊断可观测性不足。
-2. `NavigationBar/SegmentedControl` 仍是“整容器 bind”策略，可继续评估细粒度 patch（收益取决于 item 数量与更新频率）。
-3. 容器级回归测试仍偏重 `Lazy/Pager`，`TabRow/NavigationBar/SegmentedControl` 缺少专项性能回归断言。
+1. `NavigationBar/SegmentedControl` 仍是“整容器 bind”策略，可继续评估细粒度 patch（收益取决于 item 数量与更新频率）。
+2. 容器级回归测试仍偏重 `Lazy/Pager`，`TabRow/NavigationBar/SegmentedControl` 缺少专项性能回归断言。
 
 ## 6. Validation
 
 - 每条修复提交后均执行 `./gradlew qaQuick`，当前均通过。
-
