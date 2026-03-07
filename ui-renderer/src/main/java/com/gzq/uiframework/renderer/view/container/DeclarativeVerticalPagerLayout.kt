@@ -25,7 +25,10 @@ internal class DeclarativeVerticalPagerLayout(
     private var focusFollowKeyboardEnabled: Boolean = false
     private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
-            pagerState?.currentPage = position
+            pagerState?.updateFromPager(
+                currentPage = position,
+                pageOffset = 0f,
+            )
             if (!suppressCallback) {
                 onPageChanged?.invoke(position)
             }
@@ -36,8 +39,10 @@ internal class DeclarativeVerticalPagerLayout(
             positionOffset: Float,
             positionOffsetPixels: Int,
         ) {
-            pagerState?.currentPage = position
-            pagerState?.pageOffset = positionOffset
+            pagerState?.updateFromPager(
+                currentPage = position,
+                pageOffset = positionOffset,
+            )
         }
     }
 
@@ -97,6 +102,10 @@ internal class DeclarativeVerticalPagerLayout(
             viewPager.setCurrentItem(resolvedPage, false)
             suppressCallback = false
         }
+        pagerState?.updateFromPager(
+            currentPage = viewPager.currentItem,
+            pageOffset = 0f,
+        )
     }
 
     fun dispose() {

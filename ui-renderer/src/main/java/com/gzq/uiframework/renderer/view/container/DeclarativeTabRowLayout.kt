@@ -25,7 +25,7 @@ internal class DeclarativeTabRowLayout(
     private var selectedIndex: Int = 0
     private var onTabSelected: ((Int) -> Unit)? = null
     private var pagerState: PagerState? = null
-    private var pagerStateObserver: Runnable? = null
+    private var pagerStateListener: ((Int, Float) -> Unit)? = null
 
     // indicator props
     private var indicatorColor: Int = 0
@@ -124,7 +124,9 @@ internal class DeclarativeTabRowLayout(
         this.selectedIndex = selectedIndex
 
         observePagerState(pagerState)
-        tabContainer.updateIndicatorPosition(selectedIndex, 0f)
+        if (this.pagerState == null) {
+            tabContainer.updateIndicatorPosition(selectedIndex, 0f)
+        }
         scrollToSelectedTab()
     }
 
@@ -193,21 +195,19 @@ internal class DeclarativeTabRowLayout(
 
     private fun observePagerState(newState: PagerState?) {
         if (this.pagerState === newState) return
-        pagerStateObserver?.let { removeCallbacks(it) }
-        pagerStateObserver = null
+        val existingListener = pagerStateListener
+        if (existingListener != null) {
+            this.pagerState?.removeOnPageSnapshotListener(existingListener)
+        }
+        pagerStateListener = null
         this.pagerState = newState
         if (newState != null) {
-            val observer = object : Runnable {
-                override fun run() {
-                    tabContainer.updateIndicatorPosition(
-                        newState.currentPage,
-                        newState.pageOffset,
-                    )
-                    postOnAnimation(this)
-                }
+            val listener: (Int, Float) -> Unit = { page, offset ->
+                tabContainer.updateIndicatorPosition(page, offset)
             }
-            pagerStateObserver = observer
-            postOnAnimation(observer)
+            pagerStateListener = listener
+            newState.addOnPageSnapshotListener(listener)
+            tabContainer.updateIndicatorPosition(newState.currentPage, newState.pageOffset)
         }
     }
 
@@ -218,8 +218,11 @@ internal class DeclarativeTabRowLayout(
     }
 
     fun dispose() {
-        pagerStateObserver?.let { removeCallbacks(it) }
-        pagerStateObserver = null
+        val listener = pagerStateListener
+        if (listener != null) {
+            pagerState?.removeOnPageSnapshotListener(listener)
+        }
+        pagerStateListener = null
         pagerState = null
         controllers.forEach { it.recycle() }
         controllers.clear()
