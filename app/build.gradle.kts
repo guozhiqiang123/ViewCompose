@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.gzq.uiframework"
+    namespace = "com.viewcompose"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.gzq.uiframework"
+        applicationId = "com.viewcompose"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.gzq.uiframework.image.coil"
+    namespace = "com.viewcompose.image.coil"
     compileSdk = 36
 
     defaultConfig {

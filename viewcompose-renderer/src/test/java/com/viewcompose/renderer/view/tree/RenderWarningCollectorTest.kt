@@ -1,0 +1,88 @@
+package com.viewcompose.renderer.view.tree
+
+import com.viewcompose.renderer.modifier.Modifier
+import com.viewcompose.renderer.node.NodeType
+import com.viewcompose.renderer.node.Props
+import com.viewcompose.renderer.node.VNode
+import org.junit.Assert.assertTrue
+import org.junit.Test
+
+class RenderWarningCollectorTest {
+    @Test
+    fun `warns about duplicate and repeated unkeyed siblings`() {
+        val warnings = RenderWarningCollector.collect(
+            nodes = listOf(
+                vnode(NodeType.Text),
+                vnode(NodeType.Text),
+                vnode(NodeType.Button, key = "cta"),
+                vnode(NodeType.Button, key = "cta"),
+            ),
+            structure = RenderStructureStats(
+                vnodeCount = 4,
+                mountedNodeCount = 4,
+                maxVNodeDepth = 2,
+                maxMountedDepth = 2,
+            ),
+            stats = RenderStats(),
+        )
+
+        assertTrue(warnings.any { it.contains("Repeated unkeyed siblings under root: Text x2") })
+        assertTrue(warnings.any { it.contains("Duplicate sibling keys under root: [cta]") })
+    }
+
+    @Test
+    fun `warns about deep tree and high rebind churn`() {
+        val warnings = RenderWarningCollector.collect(
+            nodes = listOf(vnode(NodeType.Column)),
+            structure = RenderStructureStats(
+                vnodeCount = 12,
+                mountedNodeCount = 12,
+                maxVNodeDepth = 9,
+                maxMountedDepth = 11,
+            ),
+            stats = RenderStats(
+                inserts = 1,
+                removals = 2,
+                reboundNodes = 9,
+                patchedNodes = 2,
+                skippedBindings = 1,
+            ),
+        )
+
+        assertTrue(warnings.any { it.contains("Deep mounted view tree detected") })
+        assertTrue(warnings.any { it.contains("High rebind churn detected") })
+    }
+
+    @Test
+    fun `warns about high structural churn`() {
+        val warnings = RenderWarningCollector.collect(
+            nodes = listOf(vnode(NodeType.Column)),
+            structure = RenderStructureStats(
+                vnodeCount = 5,
+                mountedNodeCount = 5,
+                maxVNodeDepth = 2,
+                maxMountedDepth = 2,
+            ),
+            stats = RenderStats(
+                inserts = 6,
+                removals = 4,
+            ),
+        )
+
+        assertTrue(warnings.any { it.contains("High structural churn detected") })
+    }
+
+    private fun vnode(
+        type: NodeType,
+        key: Any? = null,
+        children: List<VNode> = emptyList(),
+    ): VNode {
+        return VNode(
+            type = type,
+            key = key,
+            props = Props.Empty,
+            modifier = Modifier,
+            children = children,
+        )
+    }
+}

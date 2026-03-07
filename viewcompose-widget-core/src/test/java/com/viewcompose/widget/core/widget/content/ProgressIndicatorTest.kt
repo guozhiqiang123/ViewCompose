@@ -1,0 +1,133 @@
+package com.viewcompose.widget.core
+
+import com.viewcompose.renderer.modifier.HeightModifierElement
+import com.viewcompose.renderer.modifier.SizeModifierElement
+import com.viewcompose.renderer.modifier.WidthModifierElement
+import com.viewcompose.renderer.node.NodeType
+import com.viewcompose.renderer.node.spec.ProgressIndicatorNodeProps
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Test
+
+class ProgressIndicatorTest {
+    @Test
+    fun `linear progress indicator emits themed defaults`() {
+        val customTheme = UiThemeTokens(
+            colors = UiColors(
+                background = 1,
+                surface = 2,
+                surfaceVariant = 3,
+                primary = 4,
+                accent = 5,
+                divider = 6,
+                textPrimary = 7,
+                textSecondary = 8,
+            ),
+            typography = UiTypography(
+                title = UiTextStyle(fontSizeSp = 30),
+                body = UiTextStyle(fontSizeSp = 16),
+                label = UiTextStyle(fontSizeSp = 14),
+            ),
+        )
+
+        val tree = buildVNodeTree {
+            UiTheme(customTheme) {
+                LinearProgressIndicator(progress = 0.42f)
+            }
+        }
+
+        val node = tree.single()
+        val spec = node.spec as ProgressIndicatorNodeProps
+        val elements = node.modifier.readModifierElements()
+        val width = elements.last { it is WidthModifierElement } as WidthModifierElement
+        val height = elements.last { it is HeightModifierElement } as HeightModifierElement
+
+        assertEquals(NodeType.LinearProgressIndicator, node.type)
+        assertEquals(0.42f, spec.progress)
+        assertEquals(customTheme.colors.primary, spec.indicatorColor)
+        assertEquals(customTheme.colors.divider, spec.trackColor)
+        assertEquals(customTheme.controls.progressIndicator.linearTrackThickness, spec.trackThickness)
+        assertEquals(android.view.ViewGroup.LayoutParams.MATCH_PARENT, width.width)
+        assertEquals(customTheme.controls.progressIndicator.linearTrackThickness, height.height)
+        assertTrue(node.spec is ProgressIndicatorNodeProps)
+    }
+
+    @Test
+    fun `circular progress indicator emits themed defaults`() {
+        val customTheme = UiThemeTokens(
+            colors = UiColors(
+                background = 11,
+                surface = 12,
+                surfaceVariant = 13,
+                primary = 14,
+                accent = 15,
+                divider = 16,
+                textPrimary = 17,
+                textSecondary = 18,
+            ),
+            typography = UiTypography(
+                title = UiTextStyle(fontSizeSp = 28),
+                body = UiTextStyle(fontSizeSp = 16),
+                label = UiTextStyle(fontSizeSp = 13),
+            ),
+        )
+
+        val tree = buildVNodeTree {
+            UiTheme(customTheme) {
+                CircularProgressIndicator()
+            }
+        }
+
+        val node = tree.single()
+        val spec = node.spec as ProgressIndicatorNodeProps
+        val size = node.modifier.readModifierElements().last { it is SizeModifierElement } as SizeModifierElement
+
+        assertEquals(NodeType.CircularProgressIndicator, node.type)
+        assertEquals(null, spec.progress)
+        assertEquals(customTheme.colors.primary, spec.indicatorColor)
+        assertEquals(customTheme.colors.divider, spec.trackColor)
+        assertEquals(customTheme.controls.progressIndicator.circularTrackThickness, spec.trackThickness)
+        assertEquals(customTheme.controls.progressIndicator.circularSize, spec.indicatorSize)
+        assertEquals(customTheme.controls.progressIndicator.circularSize, size.width)
+        assertEquals(customTheme.controls.progressIndicator.circularSize, size.height)
+        assertTrue(node.spec is ProgressIndicatorNodeProps)
+    }
+
+    @Test
+    fun `progress indicator uses color overrides`() {
+        val baseTheme = UiThemeDefaults.light()
+
+        val tree = buildVNodeTree {
+            UiTheme(baseTheme) {
+                ProvideProgressIndicatorColors(
+                    ProgressIndicatorColorOverride(
+                        linearIndicator = 701,
+                        linearTrack = 702,
+                        circularIndicator = 703,
+                        circularTrack = 704,
+                    ),
+                ) {
+                    Column {
+                        LinearProgressIndicator(progress = 0.4f)
+                        CircularProgressIndicator(progress = 0.6f)
+                    }
+                }
+            }
+        }
+
+        val linearSpec = tree.single().children[0].spec as ProgressIndicatorNodeProps
+        val circularSpec = tree.single().children[1].spec as ProgressIndicatorNodeProps
+
+        assertEquals(701, linearSpec.indicatorColor)
+        assertEquals(702, linearSpec.trackColor)
+        assertEquals(703, circularSpec.indicatorColor)
+        assertEquals(704, circularSpec.trackColor)
+    }
+
+    private fun com.viewcompose.renderer.modifier.Modifier.readModifierElements(): List<Any?> {
+        val field = javaClass.getDeclaredField("elements")
+        field.isAccessible = true
+        @Suppress("UNCHECKED_CAST")
+        return field.get(this) as List<Any?>
+    }
+}

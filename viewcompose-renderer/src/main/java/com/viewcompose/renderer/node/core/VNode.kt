@@ -1,0 +1,13 @@
+package com.viewcompose.renderer.node
+
+import com.viewcompose.renderer.modifier.Modifier
+import com.viewcompose.renderer.node.spec.NodeSpec
+
+data class VNode(
+    val type: NodeType,
+    val key: Any? = null,
+    val props: Props = Props.Empty,
+    val spec: NodeSpec? = null,
+    val modifier: Modifier = Modifier,
+    val children: List<VNode> = emptyList(),
+)

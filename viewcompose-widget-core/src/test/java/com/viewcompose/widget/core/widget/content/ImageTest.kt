@@ -1,0 +1,107 @@
+package com.viewcompose.widget.core
+
+import com.viewcompose.renderer.modifier.SizeModifierElement
+import com.viewcompose.renderer.node.ImageContentScale
+import com.viewcompose.renderer.node.ImageSource
+import com.viewcompose.renderer.node.NodeType
+import com.viewcompose.renderer.node.RemoteImageLoader
+import com.viewcompose.renderer.node.RemoteImageRequest
+import com.viewcompose.renderer.node.spec.ImageNodeProps
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
+import org.junit.Test
+
+class ImageTest {
+    @Test
+    fun `image emits semantic props`() {
+        val tree = buildVNodeTree {
+            Image(
+                source = ImageSource.Resource(42),
+                contentDescription = "Demo image",
+                contentScale = ImageContentScale.Crop,
+            )
+        }
+
+        val node = tree.single()
+        val spec = node.spec as ImageNodeProps
+
+        assertEquals(NodeType.Image, node.type)
+        assertEquals(ImageSource.Resource(42), spec.source)
+        assertEquals("Demo image", spec.contentDescription)
+        assertEquals(ImageContentScale.Crop, spec.contentScale)
+        assertTrue(node.spec is ImageNodeProps)
+    }
+
+    @Test
+    fun `icon inherits local content color and default size`() {
+        val tree = buildVNodeTree {
+            ProvideContentColor(0xFF123456.toInt()) {
+                Icon(
+                    source = ImageSource.Resource(12),
+                    contentDescription = "Local icon",
+                )
+            }
+        }
+
+        val node = tree.single()
+        val spec = node.spec as ImageNodeProps
+        val size = node.modifier.readModifierElements().last { it is SizeModifierElement } as SizeModifierElement
+
+        assertEquals(NodeType.Image, node.type)
+        assertEquals(0xFF123456.toInt(), spec.tint)
+        assertEquals(ImageContentScale.Inside, spec.contentScale)
+        assertEquals(24.dp, size.width)
+        assertEquals(24.dp, size.height)
+    }
+
+    @Test
+    fun `remote image inherits scoped loader`() {
+        val loader = RemoteImageLoader { _, _ -> }
+        val tree = buildVNodeTree {
+            ProvideRemoteImageLoader(loader) {
+                Image(
+                    source = ImageSource.Remote("https://example.com/demo.png"),
+                    placeholder = ImageSource.Resource(10),
+                    error = ImageSource.Resource(11),
+                    fallback = ImageSource.Resource(12),
+                )
+            }
+        }
+
+        val node = tree.single()
+        val spec = node.spec as ImageNodeProps
+
+        assertEquals(ImageSource.Remote("https://example.com/demo.png"), spec.source)
+        assertNotNull(spec.remoteImageLoader)
+        assertEquals(ImageSource.Resource(10), spec.placeholder)
+        assertEquals(ImageSource.Resource(11), spec.error)
+        assertEquals(ImageSource.Resource(12), spec.fallback)
+    }
+
+    @Test
+    fun `remote image can emit nullable url for fallback handling`() {
+        val loader = RemoteImageLoader { _, _: RemoteImageRequest -> }
+        val tree = buildVNodeTree {
+            ProvideRemoteImageLoader(loader) {
+                Image(
+                    source = ImageSource.Remote(null),
+                    fallback = ImageSource.Resource(99),
+                )
+            }
+        }
+
+        val node = tree.single()
+        val spec = node.spec as ImageNodeProps
+
+        assertEquals(ImageSource.Remote(null), spec.source)
+        assertEquals(ImageSource.Resource(99), spec.fallback)
+    }
+
+    private fun com.viewcompose.renderer.modifier.Modifier.readModifierElements(): List<Any?> {
+        val field = javaClass.getDeclaredField("elements")
+        field.isAccessible = true
+        @Suppress("UNCHECKED_CAST")
+        return field.get(this) as List<Any?>
+    }
+}

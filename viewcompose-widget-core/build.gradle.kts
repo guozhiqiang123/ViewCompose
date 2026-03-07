@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.gzq.uiframework.widget.core"
+    namespace = "com.viewcompose.widget.core"
     compileSdk = 36
 
     defaultConfig {

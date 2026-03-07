@@ -1,0 +1,210 @@
+package com.viewcompose.widget.core
+
+import com.viewcompose.renderer.layout.BoxAlignment
+import com.viewcompose.renderer.layout.HorizontalAlignment
+import com.viewcompose.renderer.layout.MainAxisArrangement
+import com.viewcompose.renderer.layout.VerticalAlignment
+import com.viewcompose.renderer.modifier.Modifier
+import com.viewcompose.renderer.modifier.alpha
+import com.viewcompose.renderer.modifier.backgroundColor
+import com.viewcompose.renderer.modifier.clickable
+import com.viewcompose.renderer.modifier.clip
+import com.viewcompose.renderer.modifier.cornerRadius
+import com.viewcompose.renderer.modifier.elevation
+import com.viewcompose.renderer.modifier.fillMaxWidth
+import com.viewcompose.renderer.modifier.height
+import com.viewcompose.renderer.modifier.minWidth
+import com.viewcompose.renderer.modifier.padding
+import com.viewcompose.renderer.modifier.width
+import com.viewcompose.renderer.node.ImageSource
+
+fun UiTreeBuilder.AlertDialog(
+    visible: Boolean,
+    title: String,
+    text: String,
+    confirmButtonText: String,
+    onConfirm: () -> Unit,
+    dismissButtonText: String? = null,
+    onDismiss: (() -> Unit)? = null,
+    icon: ImageSource? = null,
+    requestKey: String = "alert_dialog",
+    dismissOnBackPress: Boolean = true,
+    dismissOnClickOutside: Boolean = true,
+    onDismissRequest: (() -> Unit)? = null,
+) {
+    Dialog(
+        visible = visible,
+        requestKey = requestKey,
+        dismissOnBackPress = dismissOnBackPress,
+        dismissOnClickOutside = dismissOnClickOutside,
+        onDismissRequest = onDismissRequest,
+    ) {
+        val radius = AlertDialogDefaults.cornerRadius()
+        Box(
+            modifier = Modifier
+                .minWidth(AlertDialogDefaults.minWidth())
+                .backgroundColor(AlertDialogDefaults.containerColor())
+                .cornerRadius(radius)
+                .clip()
+                .padding(AlertDialogDefaults.contentPadding()),
+        ) {
+            Column(
+                horizontalAlignment = HorizontalAlignment.Center,
+            ) {
+                if (icon != null) {
+                    Icon(
+                        source = icon,
+                        tint = AlertDialogDefaults.iconTint(),
+                        size = AlertDialogDefaults.iconSize(),
+                    )
+                    Spacer(modifier = Modifier.padding(bottom = AlertDialogDefaults.iconBottomSpacing()))
+                }
+                Text(
+                    text = title,
+                    style = AlertDialogDefaults.titleStyle(),
+                    color = AlertDialogDefaults.titleColor(),
+                )
+                Spacer(modifier = Modifier.padding(bottom = AlertDialogDefaults.titleToTextSpacing()))
+                Text(
+                    text = text,
+                    style = AlertDialogDefaults.textStyle(),
+                    color = AlertDialogDefaults.textColor(),
+                )
+                Spacer(modifier = Modifier.padding(bottom = AlertDialogDefaults.textToButtonsSpacing()))
+                Row(
+                    spacing = AlertDialogDefaults.buttonSpacing(),
+                    arrangement = MainAxisArrangement.End,
+                    modifier = Modifier.align(HorizontalAlignment.End),
+                ) {
+                    if (dismissButtonText != null && onDismiss != null) {
+                        TextButton(
+                            text = dismissButtonText,
+                            onClick = onDismiss,
+                        )
+                    }
+                    TextButton(
+                        text = confirmButtonText,
+                        onClick = onConfirm,
+                    )
+                }
+            }
+        }
+    }
+}
+
+fun UiTreeBuilder.PlainTooltip(
+    text: String,
+    visible: Boolean,
+    anchorId: String,
+    onDismissRequest: (() -> Unit)? = null,
+    requestKey: String = "tooltip",
+) {
+    Popup(
+        visible = visible,
+        anchorId = anchorId,
+        requestKey = requestKey,
+        alignment = PopupAlignment.BelowStart,
+        focusable = false,
+        onDismissRequest = onDismissRequest,
+    ) {
+        Box(
+            contentAlignment = BoxAlignment.Center,
+            modifier = Modifier
+                .backgroundColor(TooltipDefaults.containerColor())
+                .cornerRadius(TooltipDefaults.cornerRadius())
+                .clip()
+                .padding(
+                    horizontal = TooltipDefaults.horizontalPadding(),
+                    vertical = TooltipDefaults.verticalPadding(),
+                ),
+        ) {
+            Text(
+                text = text,
+                style = TooltipDefaults.textStyle(),
+                color = TooltipDefaults.contentColor(),
+            )
+        }
+    }
+}
+
+fun UiTreeBuilder.DropdownMenu(
+    expanded: Boolean,
+    anchorId: String,
+    onDismissRequest: () -> Unit,
+    alignment: PopupAlignment = PopupAlignment.BelowStart,
+    requestKey: String = "dropdown_menu",
+    modifier: Modifier = Modifier,
+    content: ColumnScope.() -> Unit,
+) {
+    Popup(
+        visible = expanded,
+        anchorId = anchorId,
+        requestKey = requestKey,
+        alignment = alignment,
+        dismissOnClickOutside = true,
+        onDismissRequest = onDismissRequest,
+    ) {
+        Box(
+            modifier = Modifier
+                .minWidth(DropdownMenuDefaults.minWidth())
+                .backgroundColor(DropdownMenuDefaults.containerColor())
+                .cornerRadius(DropdownMenuDefaults.cornerRadius())
+                .clip()
+                .elevation(DropdownMenuDefaults.elevation())
+                .then(modifier),
+        ) {
+            Column(
+                modifier = Modifier.padding(vertical = DropdownMenuDefaults.verticalPadding()),
+                content = content,
+            )
+        }
+    }
+}
+
+fun UiTreeBuilder.DropdownMenuItem(
+    text: String,
+    onClick: () -> Unit,
+    leadingIcon: ImageSource? = null,
+    trailingText: String? = null,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier,
+) {
+    val itemModifier = Modifier
+        .fillMaxWidth()
+        .height(DropdownMenuDefaults.itemHeight())
+        .padding(horizontal = DropdownMenuDefaults.itemHorizontalPadding())
+        .then(
+            if (enabled) {
+                Modifier.clickable(onClick)
+            } else {
+                Modifier.alpha(DropdownMenuDefaults.disabledAlpha())
+            },
+        )
+        .then(modifier)
+    Row(
+        verticalAlignment = VerticalAlignment.Center,
+        modifier = itemModifier,
+    ) {
+        if (leadingIcon != null) {
+            Icon(
+                source = leadingIcon,
+                tint = DropdownMenuDefaults.contentColor(),
+                size = DropdownMenuDefaults.iconSize(),
+            )
+            Spacer(modifier = Modifier.width(DropdownMenuDefaults.iconToTextSpacing()))
+        }
+        Text(
+            text = text,
+            style = DropdownMenuDefaults.textStyle(),
+            color = DropdownMenuDefaults.contentColor(),
+            modifier = Modifier.weight(1f),
+        )
+        if (trailingText != null) {
+            Text(
+                text = trailingText,
+                style = DropdownMenuDefaults.textStyle(),
+                color = DropdownMenuDefaults.trailingTextColor(),
+            )
+        }
+    }
+}

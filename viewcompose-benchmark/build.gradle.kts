@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.gzq.uiframework.benchmark"
+    namespace = "com.viewcompose.benchmark"
     compileSdk = 36
 
     defaultConfig {

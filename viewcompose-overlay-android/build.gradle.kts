@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.gzq.uiframework.overlay.android"
+    namespace = "com.viewcompose.overlay.android"
     compileSdk = 36
 
     defaultConfig {

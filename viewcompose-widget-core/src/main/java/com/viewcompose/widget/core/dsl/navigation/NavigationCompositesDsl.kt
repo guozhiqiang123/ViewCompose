@@ -1,0 +1,142 @@
+package com.viewcompose.widget.core
+
+import com.viewcompose.renderer.layout.VerticalAlignment
+import com.viewcompose.renderer.modifier.Modifier
+import com.viewcompose.renderer.modifier.backgroundColor
+import com.viewcompose.renderer.modifier.elevation
+import com.viewcompose.renderer.modifier.fillMaxWidth
+import com.viewcompose.renderer.modifier.height
+import com.viewcompose.renderer.modifier.padding
+import com.viewcompose.renderer.node.ImageSource
+import com.viewcompose.renderer.node.NavigationBarItem
+import com.viewcompose.renderer.node.NodeType
+import com.viewcompose.renderer.node.spec.NavigationBarNodeProps
+
+fun UiTreeBuilder.TopAppBar(
+    title: String,
+    navigationIcon: (UiTreeBuilder.() -> Unit)? = null,
+    actions: (RowScope.() -> Unit)? = null,
+    containerColor: Int = TopAppBarDefaults.containerColor(),
+    titleColor: Int = TopAppBarDefaults.titleColor(),
+    key: Any? = null,
+    modifier: Modifier = Modifier,
+) {
+    val semanticModifier = Modifier
+        .fillMaxWidth()
+        .height(TopAppBarDefaults.height())
+        .backgroundColor(containerColor)
+        .padding(horizontal = TopAppBarDefaults.horizontalPadding())
+        .then(modifier)
+    Row(
+        key = key,
+        verticalAlignment = VerticalAlignment.Center,
+        modifier = semanticModifier,
+    ) {
+        if (navigationIcon != null) {
+            navigationIcon()
+        }
+        Text(
+            text = title,
+            style = TopAppBarDefaults.titleStyle(),
+            color = titleColor,
+            maxLines = 1,
+            modifier = Modifier
+                .weight(1f)
+                .padding(left = TopAppBarDefaults.titleStartPadding()),
+        )
+        if (actions != null) {
+            Row(
+                verticalAlignment = VerticalAlignment.Center,
+            ) {
+                actions()
+            }
+        }
+    }
+}
+
+fun UiTreeBuilder.BottomAppBar(
+    containerColor: Int = BottomAppBarDefaults.containerColor(),
+    key: Any? = null,
+    modifier: Modifier = Modifier,
+    content: RowScope.() -> Unit,
+) {
+    val semanticModifier = Modifier
+        .fillMaxWidth()
+        .height(BottomAppBarDefaults.height())
+        .backgroundColor(containerColor)
+        .elevation(BottomAppBarDefaults.elevation())
+        .padding(horizontal = BottomAppBarDefaults.horizontalPadding())
+        .then(modifier)
+    Row(
+        key = key,
+        verticalAlignment = VerticalAlignment.Center,
+        modifier = semanticModifier,
+        content = content,
+    )
+}
+
+@UiDslMarker
+class NavigationBarScope internal constructor() {
+    private val items = mutableListOf<NavigationBarItem>()
+
+    fun Item(
+        label: String,
+        icon: ImageSource.Resource,
+        selectedIcon: ImageSource.Resource? = null,
+        badgeCount: Int? = null,
+    ) {
+        items += NavigationBarItem(
+            label = label,
+            icon = icon,
+            selectedIcon = selectedIcon,
+            badgeCount = badgeCount,
+        )
+    }
+
+    internal fun build(): List<NavigationBarItem> = items.toList()
+}
+
+fun UiTreeBuilder.NavigationBar(
+    selectedIndex: Int,
+    onItemSelected: (Int) -> Unit,
+    containerColor: Int = NavigationBarDefaults.containerColor(),
+    selectedIconColor: Int = NavigationBarDefaults.selectedIconColor(),
+    unselectedIconColor: Int = NavigationBarDefaults.unselectedIconColor(),
+    selectedLabelColor: Int = NavigationBarDefaults.selectedLabelColor(),
+    unselectedLabelColor: Int = NavigationBarDefaults.unselectedLabelColor(),
+    indicatorColor: Int = NavigationBarDefaults.indicatorColor(),
+    rippleColor: Int = NavigationBarDefaults.rippleColor(),
+    iconSize: Int = NavigationBarDefaults.iconSize(),
+    labelSizeSp: Int = NavigationBarDefaults.labelSizeSp(),
+    badgeColor: Int = NavigationBarDefaults.badgeColor(),
+    badgeTextColor: Int = NavigationBarDefaults.badgeTextColor(),
+    key: Any? = null,
+    modifier: Modifier = Modifier,
+    items: NavigationBarScope.() -> Unit,
+) {
+    val builtItems = NavigationBarScope().apply(items).build()
+    emit(
+        type = NodeType.NavigationBar,
+        key = key,
+        spec = NavigationBarNodeProps(
+            items = builtItems,
+            selectedIndex = selectedIndex,
+            onItemSelected = onItemSelected,
+            containerColor = containerColor,
+            selectedIconColor = selectedIconColor,
+            unselectedIconColor = unselectedIconColor,
+            selectedLabelColor = selectedLabelColor,
+            unselectedLabelColor = unselectedLabelColor,
+            indicatorColor = indicatorColor,
+            rippleColor = rippleColor,
+            iconSize = iconSize,
+            labelSizeSp = labelSizeSp,
+            badgeColor = badgeColor,
+            badgeTextColor = badgeTextColor,
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(NavigationBarDefaults.height())
+            .then(modifier),
+    )
+}

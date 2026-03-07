@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.gzq.uiframework.renderer"
+    namespace = "com.viewcompose.renderer"
     compileSdk = 36
 
     defaultConfig {

@@ -1,0 +1,143 @@
+package com.viewcompose.renderer.view.tree
+
+import android.widget.LinearLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.viewcompose.renderer.R
+import com.viewcompose.renderer.layout.MainAxisArrangement
+import com.viewcompose.renderer.node.VNode
+import com.viewcompose.renderer.view.container.DeclarativeBoxLayout
+import com.viewcompose.renderer.view.container.DeclarativeFlowColumnLayout
+import com.viewcompose.renderer.view.container.DeclarativeFlowRowLayout
+import com.viewcompose.renderer.view.container.DeclarativeLinearLayout
+import com.viewcompose.renderer.view.lazy.LazyListSpacingDecoration
+
+internal object ContainerViewBinder {
+    data class LinearSpec(
+        val spacing: Int,
+        val arrangement: MainAxisArrangement,
+        val gravity: Int,
+    )
+
+    data class BoxSpec(
+        val gravity: Int,
+    )
+
+    data class DividerSpec(
+        val color: Int,
+        val thickness: Int,
+    )
+
+    data class AndroidViewSpec(
+        val update: ((android.view.View) -> Unit)?,
+    )
+
+    data class FlowRowSpec(
+        val horizontalSpacing: Int,
+        val verticalSpacing: Int,
+        val maxItemsInEachRow: Int,
+    )
+
+    data class FlowColumnSpec(
+        val horizontalSpacing: Int,
+        val verticalSpacing: Int,
+        val maxItemsInEachColumn: Int,
+    )
+
+    fun bindRow(
+        view: DeclarativeLinearLayout,
+        spec: LinearSpec,
+    ) {
+        view.orientation = LinearLayout.HORIZONTAL
+        view.itemSpacing = spec.spacing
+        view.mainAxisArrangement = spec.arrangement
+        view.gravity = spec.gravity
+    }
+
+    fun bindColumn(
+        view: DeclarativeLinearLayout,
+        spec: LinearSpec,
+    ) {
+        view.orientation = LinearLayout.VERTICAL
+        view.itemSpacing = spec.spacing
+        view.mainAxisArrangement = spec.arrangement
+        view.gravity = spec.gravity
+    }
+
+    fun bindBox(
+        view: DeclarativeBoxLayout,
+        spec: BoxSpec,
+    ) {
+        view.contentGravity = spec.gravity
+    }
+
+    fun bindFlowRow(
+        view: DeclarativeFlowRowLayout,
+        spec: FlowRowSpec,
+    ) {
+        view.horizontalSpacing = spec.horizontalSpacing
+        view.verticalSpacing = spec.verticalSpacing
+        view.maxItemsInEachRow = spec.maxItemsInEachRow
+    }
+
+    fun bindFlowColumn(
+        view: DeclarativeFlowColumnLayout,
+        spec: FlowColumnSpec,
+    ) {
+        view.horizontalSpacing = spec.horizontalSpacing
+        view.verticalSpacing = spec.verticalSpacing
+        view.maxItemsInEachColumn = spec.maxItemsInEachColumn
+    }
+
+    fun readRowSpec(node: VNode): LinearSpec {
+        return ContainerViewSpecReader.readRowSpec(node)
+    }
+
+    fun readColumnSpec(node: VNode): LinearSpec {
+        return ContainerViewSpecReader.readColumnSpec(node)
+    }
+
+    fun readFlowRowSpec(node: VNode): FlowRowSpec {
+        return ContainerViewSpecReader.readFlowRowSpec(node)
+    }
+
+    fun readFlowColumnSpec(node: VNode): FlowColumnSpec {
+        return ContainerViewSpecReader.readFlowColumnSpec(node)
+    }
+
+    fun readBoxSpec(node: VNode): BoxSpec {
+        return ContainerViewSpecReader.readBoxSpec(node)
+    }
+
+    fun readDividerSpec(node: VNode): DividerSpec {
+        return ContainerViewSpecReader.readDividerSpec(node)
+    }
+
+    fun readAndroidViewSpec(node: VNode): AndroidViewSpec {
+        return ContainerViewSpecReader.readAndroidViewSpec(node)
+    }
+
+    internal fun applyLazyListPadding(
+        recyclerView: RecyclerView,
+        padding: Int,
+    ) {
+        recyclerView.setPadding(padding, padding, padding, padding)
+        recyclerView.clipToPadding = padding == 0
+    }
+
+    internal fun applyLazyListSpacing(
+        recyclerView: RecyclerView,
+        spacing: Int,
+        orientation: Int = LinearLayoutManager.VERTICAL,
+    ) {
+        val existing = recyclerView.getTag(R.id.ui_framework_lazy_spacing_decoration) as? LazyListSpacingDecoration
+        if (existing != null) {
+            existing.updateSpacing(spacing)
+            recyclerView.invalidateItemDecorations()
+            return
+        }
+        val decoration = LazyListSpacingDecoration(spacing, orientation)
+        recyclerView.setTag(R.id.ui_framework_lazy_spacing_decoration, decoration)
+        recyclerView.addItemDecoration(decoration)
+    }
+}

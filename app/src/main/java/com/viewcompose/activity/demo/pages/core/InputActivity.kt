@@ -1,0 +1,19 @@
+package com.viewcompose
+
+import android.view.ViewGroup
+import com.viewcompose.widget.core.UiTreeBuilder
+
+internal const val EXTRA_INPUT_PAGE_INDEX = "input_page_index"
+
+class InputActivity : DemoRenderActivity() {
+    override val demoTitle: String = "Input"
+
+    override fun buildDemoContent(
+        root: ViewGroup,
+        builder: UiTreeBuilder,
+    ) {
+        builder.InputPage(
+            initialPageIndex = intent?.getIntExtra(EXTRA_INPUT_PAGE_INDEX, 0) ?: 0,
+        )
+    }
+}

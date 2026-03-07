@@ -1,0 +1,164 @@
+package com.viewcompose.renderer.view.container
+
+import android.content.Context
+import android.util.AttributeSet
+import android.view.View
+import android.view.ViewGroup
+import com.viewcompose.renderer.view.tree.LayoutPassTracker
+import kotlin.math.max
+
+internal class DeclarativeFlowRowLayout @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+) : ViewGroup(context, attrs) {
+    var horizontalSpacing: Int = 0
+        set(value) {
+            field = value
+            requestLayout()
+        }
+
+    var verticalSpacing: Int = 0
+        set(value) {
+            field = value
+            requestLayout()
+        }
+
+    var maxItemsInEachRow: Int = Int.MAX_VALUE
+        set(value) {
+            field = value.coerceAtLeast(1)
+            requestLayout()
+        }
+
+    override fun generateDefaultLayoutParams(): LayoutParams =
+        MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+
+    override fun generateLayoutParams(attrs: AttributeSet?): LayoutParams =
+        MarginLayoutParams(context, attrs)
+
+    override fun generateLayoutParams(p: LayoutParams): LayoutParams =
+        MarginLayoutParams(p)
+
+    override fun checkLayoutParams(p: LayoutParams): Boolean =
+        p is MarginLayoutParams
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val startNs = System.nanoTime()
+        val widthMode = MeasureSpec.getMode(widthMeasureSpec)
+        val availableWidth = if (widthMode == MeasureSpec.UNSPECIFIED) {
+            Int.MAX_VALUE
+        } else {
+            (MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight).coerceAtLeast(0)
+        }
+
+        var currentRowWidth = 0
+        var currentRowHeight = 0
+        var totalHeight = 0
+        var maxRowWidth = 0
+        var itemsInCurrentRow = 0
+
+        for (i in 0 until childCount) {
+            val child = getChildAt(i)
+            if (child.visibility == GONE) continue
+
+            measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, totalHeight)
+
+            val params = child.layoutParams as MarginLayoutParams
+            val childWidth = child.measuredWidth + params.leftMargin + params.rightMargin
+            val childHeight = child.measuredHeight + params.topMargin + params.bottomMargin
+            val spacingNeeded = if (itemsInCurrentRow > 0) horizontalSpacing else 0
+
+            if (currentRowWidth + spacingNeeded + childWidth > availableWidth && itemsInCurrentRow > 0) {
+                maxRowWidth = max(maxRowWidth, currentRowWidth)
+                totalHeight += currentRowHeight + verticalSpacing
+                currentRowWidth = 0
+                currentRowHeight = 0
+                itemsInCurrentRow = 0
+            }
+
+            if (itemsInCurrentRow > 0) {
+                currentRowWidth += horizontalSpacing
+            }
+            currentRowWidth += childWidth
+            currentRowHeight = max(currentRowHeight, childHeight)
+            itemsInCurrentRow++
+
+            if (itemsInCurrentRow >= maxItemsInEachRow) {
+                maxRowWidth = max(maxRowWidth, currentRowWidth)
+                totalHeight += currentRowHeight + verticalSpacing
+                currentRowWidth = 0
+                currentRowHeight = 0
+                itemsInCurrentRow = 0
+            }
+        }
+
+        if (itemsInCurrentRow > 0) {
+            maxRowWidth = max(maxRowWidth, currentRowWidth)
+            totalHeight += currentRowHeight
+        } else if (totalHeight > 0) {
+            // The last row can close via maxItemsInEachRow and should not leave trailing spacing.
+            totalHeight = (totalHeight - verticalSpacing).coerceAtLeast(0)
+        }
+
+        setMeasuredDimension(
+            resolveSize(maxRowWidth + paddingLeft + paddingRight, widthMeasureSpec),
+            resolveSize(totalHeight + paddingTop + paddingBottom, heightMeasureSpec),
+        )
+        LayoutPassTracker.recordMeasure(
+            viewName = javaClass.simpleName,
+            durationNs = System.nanoTime() - startNs,
+        )
+    }
+
+    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+        val startNs = System.nanoTime()
+        val availableWidth = r - l - paddingLeft - paddingRight
+
+        var currentX = paddingLeft
+        var currentY = paddingTop
+        var currentRowHeight = 0
+        var itemsInCurrentRow = 0
+
+        for (i in 0 until childCount) {
+            val child = getChildAt(i)
+            if (child.visibility == GONE) continue
+
+            val params = child.layoutParams as MarginLayoutParams
+            val childWidth = child.measuredWidth + params.leftMargin + params.rightMargin
+            val childHeight = child.measuredHeight + params.topMargin + params.bottomMargin
+            val spacingNeeded = if (itemsInCurrentRow > 0) horizontalSpacing else 0
+
+            if (currentX - paddingLeft + spacingNeeded + childWidth > availableWidth && itemsInCurrentRow > 0) {
+                currentX = paddingLeft
+                currentY += currentRowHeight + verticalSpacing
+                currentRowHeight = 0
+                itemsInCurrentRow = 0
+            }
+
+            if (itemsInCurrentRow > 0) {
+                currentX += horizontalSpacing
+            }
+
+            child.layout(
+                currentX + params.leftMargin,
+                currentY + params.topMargin,
+                currentX + params.leftMargin + child.measuredWidth,
+                currentY + params.topMargin + child.measuredHeight,
+            )
+
+            currentX += childWidth
+            currentRowHeight = max(currentRowHeight, childHeight)
+            itemsInCurrentRow++
+
+            if (itemsInCurrentRow >= maxItemsInEachRow) {
+                currentX = paddingLeft
+                currentY += currentRowHeight + verticalSpacing
+                currentRowHeight = 0
+                itemsInCurrentRow = 0
+            }
+        }
+        LayoutPassTracker.recordLayout(
+            viewName = javaClass.simpleName,
+            durationNs = System.nanoTime() - startNs,
+        )
+    }
+}
