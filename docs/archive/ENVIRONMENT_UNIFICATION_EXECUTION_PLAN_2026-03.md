@@ -27,7 +27,7 @@
 - [x] Step 4: renderer 尺寸转换统一工具化
 - [x] Step 5: 新增 renderer 环境约束防回归测试
 - [x] Step 6: 架构与流程文档写入核心约束
-- [ ] Step 7: 收口归档并更新 archive 索引
+- [x] Step 7: 收口归档并更新 archive 索引
 
 ## 5. Commit Log
 
@@ -37,6 +37,7 @@
 - `refactor: unify renderer density conversion via shared dimension utilities`
 - `test: add renderer environment convention guard`
 - `docs: codify environment boundary and anti-drift workflow rules`
+- `docs: close and archive environment unification execution plan`
 
 ## 6. Blockers
 
