@@ -35,7 +35,7 @@
 - [x] Step 4: 去除关键硬编码颜色并同步文档禁用清单。
 - [x] Step 5: `UiTypography` 分级语义扩展并迁移首批 defaults。
 - [x] Step 6: `UiShapes` 引入 `interactiveCornerRadius` 兼容别名并更新 demo 文案。
-- [ ] Step 7: 测试补齐（兼容与语义覆盖 + 硬编码守卫）。
+- [x] Step 7: 测试补齐（兼容与语义覆盖 + 硬编码守卫）。
 - [ ] Step 8: 文档收口、计划归档与归档索引更新。
 
 ## 5. Commit Log
@@ -48,7 +48,8 @@
 | 2026-03-07 | Step 4 | `e0e5f69` | Replace critical hardcoded colors with semantic `Theme.colors.error`. |
 | 2026-03-07 | Step 5 | `11dccd3` | Add tiered typography tokens and migrate core defaults to tier APIs. |
 | 2026-03-07 | Step 6 | `f7abeb0` | Introduce interactive corner radius and migrate core/demo usage. |
-| 2026-03-07 | Step 7a | pending | Add compatibility + semantic token unit coverage. |
+| 2026-03-07 | Step 7a | `a96be2c` | Add compatibility + semantic token unit coverage. |
+| 2026-03-07 | Step 7b | pending | Add defaults hardcoded-color guard for theme semantics. |
 
 ## 6. Blocker Log
 
