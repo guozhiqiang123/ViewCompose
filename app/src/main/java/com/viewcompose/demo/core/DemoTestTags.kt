@@ -29,6 +29,7 @@ internal object DemoTestTags {
     const val FOUNDATIONS_BENCHMARK_RESET = "foundations_benchmark_reset"
     const val FOUNDATIONS_ACCENT_PRIMARY = "foundations_accent_primary"
     const val FOUNDATIONS_PRIMARY_TOKEN = "foundations_primary_token"
+    const val FOUNDATIONS_BIZ_TOKEN_CARD = "foundations_biz_token_card"
     const val FOUNDATIONS_REMOTE_IMAGE = "foundations_remote_image"
     const val FOUNDATIONS_FALLBACK_IMAGE = "foundations_fallback_image"
     const val FOUNDATIONS_PRIMARY_ICON_BUTTON = "foundations_primary_icon_button"

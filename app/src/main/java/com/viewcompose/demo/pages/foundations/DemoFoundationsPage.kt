@@ -40,6 +40,7 @@ internal fun UiTreeBuilder.OverviewPage(
                 onReset = { benchmarkState.value = false },
             )
             "theme" -> FoundationsThemeSection()
+            "business_locals" -> FoundationsBusinessLocalSection()
             "overrides" -> FoundationsOverridesSection()
             "progress" -> FoundationsProgressSection()
             "media" -> FoundationsMediaSection()
@@ -56,7 +57,7 @@ private fun foundationsPageItems(
 ): List<String> {
     return when (selectedPageIndex) {
         0 -> listOf("benchmark", "page", "page_filter", "intro", "jump", "surface", "verify")
-        1 -> listOf("overrides", "page", "page_filter", "theme", "verify")
+        1 -> listOf("overrides", "page", "page_filter", "theme", "business_locals", "verify")
         2 -> listOf("page", "page_filter", "progress", "media", "verify")
         else -> listOf("page", "page_filter", "typography", "verify")
     }

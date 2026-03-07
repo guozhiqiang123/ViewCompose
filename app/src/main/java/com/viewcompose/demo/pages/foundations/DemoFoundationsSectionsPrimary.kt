@@ -16,6 +16,7 @@ import com.viewcompose.widget.core.ButtonSize
 import com.viewcompose.widget.core.ButtonVariant
 import com.viewcompose.widget.core.Column
 import com.viewcompose.widget.core.ProvideButtonColors
+import com.viewcompose.widget.core.ProvideLocals
 import com.viewcompose.widget.core.ProvideSegmentedControlColors
 import com.viewcompose.widget.core.ProvideTextFieldColors
 import com.viewcompose.widget.core.Row
@@ -28,11 +29,28 @@ import com.viewcompose.widget.core.TextField
 import com.viewcompose.widget.core.TextFieldColorOverride
 import com.viewcompose.widget.core.TextFieldVariant
 import com.viewcompose.widget.core.Theme
+import com.viewcompose.widget.core.UiLocals
 import com.viewcompose.widget.core.UiTextStyle
 import com.viewcompose.widget.core.UiThemeOverride
 import com.viewcompose.widget.core.UiTreeBuilder
 import com.viewcompose.widget.core.dp
 import com.viewcompose.widget.core.sp
+import com.viewcompose.widget.core.provides
+import com.viewcompose.widget.core.uiLocalOf
+
+private data class DemoBizTokens(
+    val cardColor: Int,
+    val badgeLabel: String,
+)
+
+private val LocalDemoBizTokens = uiLocalOf {
+    DemoBizTokens(
+        cardColor = 0xFF355E3B.toInt(),
+        badgeLabel = "默认业务 token",
+    )
+}
+
+private val LocalDemoBizFeatureEnabled = uiLocalOf { false }
 
 internal fun UiTreeBuilder.FoundationsIntroSection() {
     ScenarioSection(
@@ -107,6 +125,85 @@ internal fun UiTreeBuilder.FoundationsThemeSection() {
         Text(
             text = "Shapes: card=${Theme.shapes.cardCornerRadius}px, interactive=${Theme.shapes.interactiveCornerRadius}px",
             style = UiTextStyle(fontSizeSp = 13.sp),
+            color = TextDefaults.secondaryColor(),
+        )
+    }
+}
+
+internal fun UiTreeBuilder.FoundationsBusinessLocalSection() {
+    ScenarioSection(
+        kind = ScenarioKind.Core,
+        title = "业务 Local 扩展示例",
+        subtitle = "业务侧可定义自己的 token，并在局部子树中覆盖，不依赖框架内置 token 结构。",
+    ) {
+        val baseTokens = UiLocals.current(LocalDemoBizTokens)
+        val baseEnabled = UiLocals.current(LocalDemoBizFeatureEnabled)
+        BusinessLocalPreviewCard(
+            label = "默认作用域",
+            tokens = baseTokens,
+            featureEnabled = baseEnabled,
+        )
+        ProvideLocals(
+            LocalDemoBizTokens provides DemoBizTokens(
+                cardColor = Theme.colors.secondary,
+                badgeLabel = "营销活动 token",
+            ),
+            LocalDemoBizFeatureEnabled provides true,
+        ) {
+            val overrideTokens = UiLocals.current(LocalDemoBizTokens)
+            val overrideEnabled = UiLocals.current(LocalDemoBizFeatureEnabled)
+            BusinessLocalPreviewCard(
+                label = "覆盖作用域",
+                tokens = overrideTokens,
+                featureEnabled = overrideEnabled,
+            )
+        }
+        val restoredTokens = UiLocals.current(LocalDemoBizTokens)
+        BusinessLocalPreviewCard(
+            label = "离开作用域后恢复",
+            tokens = restoredTokens,
+            featureEnabled = UiLocals.current(LocalDemoBizFeatureEnabled),
+        )
+    }
+}
+
+private fun UiTreeBuilder.BusinessLocalPreviewCard(
+    label: String,
+    tokens: DemoBizTokens,
+    featureEnabled: Boolean,
+) {
+    Column(
+        spacing = 6.dp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .backgroundColor(SurfaceDefaults.backgroundColor())
+            .cornerRadius(SurfaceDefaults.cardCornerRadius())
+            .padding(12.dp)
+            .testTag(DemoTestTags.FOUNDATIONS_BIZ_TOKEN_CARD),
+    ) {
+        Text(text = label)
+        Row(
+            spacing = 8.dp,
+            verticalAlignment = VerticalAlignment.Center,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Box(
+                modifier = Modifier
+                    .height(24.dp)
+                    .weight(1f)
+                    .backgroundColor(tokens.cardColor)
+                    .cornerRadius(Theme.shapes.interactiveCornerRadius),
+            ) {}
+            Text(
+                text = tokens.badgeLabel,
+                style = UiTextStyle(fontSizeSp = 13.sp),
+                color = TextDefaults.secondaryColor(),
+                modifier = Modifier.weight(2f),
+            )
+        }
+        Text(
+            text = if (featureEnabled) "featureFlag=true" else "featureFlag=false",
+            style = UiTextStyle(fontSizeSp = 12.sp),
             color = TextDefaults.secondaryColor(),
         )
     }
