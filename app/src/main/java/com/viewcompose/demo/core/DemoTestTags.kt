@@ -47,7 +47,6 @@ internal object DemoTestTags {
     const val INPUT_STRESS_PROTECTED_FIELD = "input_stress_protected_field"
 
     const val ACTIONS_CHIP_FILTER = "actions_chip_filter"
-    const val ACTIONS_ELEVATED_CARD = "actions_elevated_card"
 
     const val NAVIGATION_BAR_PRIMARY = "navigation_bar_primary"
     const val NAVIGATION_SCAFFOLD = "navigation_scaffold"

@@ -31,8 +31,8 @@ fun UiTreeBuilder.Card(
     val semanticModifier = Modifier
         .backgroundColor(bgColor)
         .cornerRadius(radius)
+        .clip()
         .let { m -> if (elev > 0) m.elevation(elev) else m }
-        .let { m -> if (elev <= 0) m.clip() else m }
         .let { m -> if (bw > 0) m.border(bw, bc) else m }
         .let { m ->
             if (enabled && onClick != null) {
