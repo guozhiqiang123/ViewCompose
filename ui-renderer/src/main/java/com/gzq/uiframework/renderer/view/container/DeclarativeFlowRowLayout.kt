@@ -24,7 +24,7 @@ internal class DeclarativeFlowRowLayout @JvmOverloads constructor(
 
     var maxItemsInEachRow: Int = Int.MAX_VALUE
         set(value) {
-            field = value
+            field = value.coerceAtLeast(1)
             requestLayout()
         }
 
@@ -41,7 +41,12 @@ internal class DeclarativeFlowRowLayout @JvmOverloads constructor(
         p is MarginLayoutParams
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val availableWidth = MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight
+        val widthMode = MeasureSpec.getMode(widthMeasureSpec)
+        val availableWidth = if (widthMode == MeasureSpec.UNSPECIFIED) {
+            Int.MAX_VALUE
+        } else {
+            (MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight).coerceAtLeast(0)
+        }
 
         var currentRowWidth = 0
         var currentRowHeight = 0
@@ -87,6 +92,9 @@ internal class DeclarativeFlowRowLayout @JvmOverloads constructor(
         if (itemsInCurrentRow > 0) {
             maxRowWidth = max(maxRowWidth, currentRowWidth)
             totalHeight += currentRowHeight
+        } else if (totalHeight > 0) {
+            // The last row can close via maxItemsInEachRow and should not leave trailing spacing.
+            totalHeight = (totalHeight - verticalSpacing).coerceAtLeast(0)
         }
 
         setMeasuredDimension(

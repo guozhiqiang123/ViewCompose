@@ -24,7 +24,7 @@ internal class DeclarativeFlowColumnLayout @JvmOverloads constructor(
 
     var maxItemsInEachColumn: Int = Int.MAX_VALUE
         set(value) {
-            field = value
+            field = value.coerceAtLeast(1)
             requestLayout()
         }
 
@@ -41,7 +41,12 @@ internal class DeclarativeFlowColumnLayout @JvmOverloads constructor(
         p is MarginLayoutParams
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val availableHeight = MeasureSpec.getSize(heightMeasureSpec) - paddingTop - paddingBottom
+        val heightMode = MeasureSpec.getMode(heightMeasureSpec)
+        val availableHeight = if (heightMode == MeasureSpec.UNSPECIFIED) {
+            Int.MAX_VALUE
+        } else {
+            (MeasureSpec.getSize(heightMeasureSpec) - paddingTop - paddingBottom).coerceAtLeast(0)
+        }
 
         var currentColumnHeight = 0
         var currentColumnWidth = 0
@@ -87,6 +92,9 @@ internal class DeclarativeFlowColumnLayout @JvmOverloads constructor(
         if (itemsInCurrentColumn > 0) {
             maxColumnHeight = max(maxColumnHeight, currentColumnHeight)
             totalWidth += currentColumnWidth
+        } else if (totalWidth > 0) {
+            // The last column can close via maxItemsInEachColumn and should not leave trailing spacing.
+            totalWidth = (totalWidth - horizontalSpacing).coerceAtLeast(0)
         }
 
         setMeasuredDimension(
