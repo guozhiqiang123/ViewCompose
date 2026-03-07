@@ -13,4 +13,5 @@
     <item name="ui_framework_focus_follow_layout_listener" type="id" />
     <item name="ui_framework_focus_follow_global_focus_listener" type="id" />
     <item name="ui_framework_focus_follow_global_layout_listener" type="id" />
+    <item name="ui_framework_focus_follow_enabled" type="id" />
 </resources>

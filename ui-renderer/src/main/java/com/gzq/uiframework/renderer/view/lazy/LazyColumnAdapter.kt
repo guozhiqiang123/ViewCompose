@@ -212,21 +212,19 @@ internal class LazyColumnAdapter(
             return
         }
         if (shouldDeferAnchorRestore(recyclerView, layoutManager)) {
-            Log.d(
-                FOCUS_TAG,
+            debugFocusLog {
                 "defer anchor restore rv=${recyclerView.hashCode()} " +
                     "anchorPos=${anchor.position} anchorOffset=${anchor.offset} " +
-                    "focused=${recyclerView.findFocus()?.javaClass?.simpleName}",
-            )
+                    "focused=${recyclerView.findFocus()?.javaClass?.simpleName}"
+            }
             return
         }
         val targetPosition = anchor.position.coerceIn(0, itemCount - 1)
         recyclerView.post {
-            Log.d(
-                FOCUS_TAG,
+            debugFocusLog {
                 "restore anchor rv=${recyclerView.hashCode()} " +
-                    "targetPos=$targetPosition anchorOffset=${anchor.offset}",
-            )
+                    "targetPos=$targetPosition anchorOffset=${anchor.offset}"
+            }
             layoutManager.scrollToPositionWithOffset(targetPosition, anchor.offset)
         }
     }
@@ -235,11 +233,20 @@ internal class LazyColumnAdapter(
         recyclerView: RecyclerView,
         layoutManager: LinearLayoutManager,
     ): Boolean {
-        val focusAwareLayoutManager = layoutManager as? LazyLinearLayoutManager ?: return false
-        if (!focusAwareLayoutManager.focusAutoScrollEnabled) {
+        if (!layoutManager.canScrollVertically()) {
+            return false
+        }
+        if (!LazyFocusFollowLayoutMonitor.isEnabled(recyclerView)) {
             return false
         }
         return recyclerView.findFocus() != null
+    }
+
+    private inline fun debugFocusLog(message: () -> String) {
+        if (!Log.isLoggable(FOCUS_TAG, Log.DEBUG)) {
+            return
+        }
+        Log.d(FOCUS_TAG, message())
     }
 }
 

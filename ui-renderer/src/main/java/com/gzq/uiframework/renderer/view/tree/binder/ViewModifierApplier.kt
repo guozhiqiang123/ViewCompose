@@ -6,7 +6,6 @@ import android.graphics.Outline
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewOutlineProvider
@@ -39,11 +38,8 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeVerticalPagerLayout
 import com.gzq.uiframework.renderer.view.lazy.LazyFocusFollowLayoutMonitor
 import com.gzq.uiframework.renderer.view.lazy.FrameworkRecyclerViewDefaults
-import com.gzq.uiframework.renderer.view.lazy.LazyLinearLayoutManager
 
 internal object ViewModifierApplier {
-    private const val FOCUS_TAG = "UIFocusFollow"
-
     fun bindView(
         view: View,
         node: VNode,
@@ -539,61 +535,53 @@ internal object ViewModifierApplier {
         view: View,
         node: VNode,
     ) {
-        val reusePolicy = node.modifier.lazyContainerReusePolicy()
-        val focusPolicy = node.modifier.lazyContainerFocusPolicy()
         when (node.type) {
             NodeType.LazyColumn -> {
                 val recyclerView = view as? RecyclerView ?: return
+                val reusePolicy = node.modifier.lazyContainerReusePolicy()
                 FrameworkRecyclerViewDefaults.applyLazyColumnDefaults(
                     recyclerView = recyclerView,
                     sharePool = reusePolicy.sharePool,
                     disableItemAnimator = reusePolicy.disableItemAnimator,
                 )
-                (recyclerView.layoutManager as? LazyLinearLayoutManager)?.focusAutoScrollEnabled = focusPolicy.enabled
+                val focusPolicy = node.modifier.lazyContainerFocusPolicy()
                 LazyFocusFollowLayoutMonitor.apply(
                     recyclerView = recyclerView,
                     enabled = focusPolicy.enabled,
                 )
-                Log.d(
-                    FOCUS_TAG,
-                    "apply lazyColumn focusPolicy=${focusPolicy.enabled} rv=${recyclerView.hashCode()}",
-                )
             }
             NodeType.LazyRow -> {
                 val recyclerView = view as? RecyclerView ?: return
+                val reusePolicy = node.modifier.lazyContainerReusePolicy()
                 FrameworkRecyclerViewDefaults.applyLazyRowDefaults(
                     recyclerView = recyclerView,
                     sharePool = reusePolicy.sharePool,
                     disableItemAnimator = reusePolicy.disableItemAnimator,
                 )
-                (recyclerView.layoutManager as? LazyLinearLayoutManager)?.focusAutoScrollEnabled = focusPolicy.enabled
+                val focusPolicy = node.modifier.lazyContainerFocusPolicy()
                 LazyFocusFollowLayoutMonitor.apply(
                     recyclerView = recyclerView,
                     enabled = focusPolicy.enabled,
                 )
-                Log.d(
-                    FOCUS_TAG,
-                    "apply lazyRow focusPolicy=${focusPolicy.enabled} rv=${recyclerView.hashCode()}",
-                )
             }
             NodeType.LazyVerticalGrid -> {
+                val reusePolicy = node.modifier.lazyContainerReusePolicy()
                 (view as? DeclarativeLazyVerticalGridLayout)?.applyRecyclerDefaults(
                     sharePool = reusePolicy.sharePool,
                     disableItemAnimator = reusePolicy.disableItemAnimator,
                 )
+                val focusPolicy = node.modifier.lazyContainerFocusPolicy()
                 (view as? DeclarativeLazyVerticalGridLayout)?.setFocusAutoScrollEnabled(focusPolicy.enabled)
-                Log.d(
-                    FOCUS_TAG,
-                    "apply lazyGrid focusPolicy=${focusPolicy.enabled} view=${view.hashCode()}",
-                )
             }
             NodeType.HorizontalPager -> {
+                val reusePolicy = node.modifier.lazyContainerReusePolicy()
                 (view as? DeclarativeHorizontalPagerLayout)?.applyRecyclerDefaults(
                     sharePool = reusePolicy.sharePool,
                     disableItemAnimator = reusePolicy.disableItemAnimator,
                 )
             }
             NodeType.VerticalPager -> {
+                val reusePolicy = node.modifier.lazyContainerReusePolicy()
                 (view as? DeclarativeVerticalPagerLayout)?.applyRecyclerDefaults(
                     sharePool = reusePolicy.sharePool,
                     disableItemAnimator = reusePolicy.disableItemAnimator,

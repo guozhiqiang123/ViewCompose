@@ -15,6 +15,10 @@ import kotlin.math.min
 internal object LazyFocusFollowLayoutMonitor {
     private const val TAG = "UIFocusFollow"
 
+    fun isEnabled(recyclerView: RecyclerView): Boolean {
+        return recyclerView.getTag(R.id.ui_framework_focus_follow_enabled) as? Boolean == true
+    }
+
     fun apply(
         recyclerView: RecyclerView,
         enabled: Boolean,
@@ -47,6 +51,7 @@ internal object LazyFocusFollowLayoutMonitor {
             debugLog {
                 "detach listeners rv=${recyclerView.hashCode()}"
             }
+            recyclerView.setTag(R.id.ui_framework_focus_follow_enabled, false)
             return
         }
         if (existingLayoutListener == null) {
@@ -77,6 +82,7 @@ internal object LazyFocusFollowLayoutMonitor {
                 "focus=${existingGlobalFocusListener != null} " +
                 "globalLayout=${existingGlobalLayoutListener != null}"
         }
+        recyclerView.setTag(R.id.ui_framework_focus_follow_enabled, true)
         ensureFocusedChildVisible(recyclerView, trigger = "apply")
     }
 
@@ -265,6 +271,9 @@ internal object LazyFocusFollowLayoutMonitor {
     }
 
     private inline fun debugLog(message: () -> String) {
+        if (!Log.isLoggable(TAG, Log.DEBUG)) {
+            return
+        }
         Log.d(TAG, message())
     }
 }
