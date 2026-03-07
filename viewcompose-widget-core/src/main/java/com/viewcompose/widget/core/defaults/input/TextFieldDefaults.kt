@@ -37,7 +37,7 @@ object TextFieldDefaults {
         isError: Boolean = false,
     ): Int {
         return when {
-            isError -> 0xFFB3261E.toInt()
+            isError -> Theme.colors.error
             enabled -> Theme.colors.textSecondary
             else -> Theme.colors.divider
         }
@@ -66,10 +66,10 @@ object TextFieldDefaults {
         return when {
             variant == TextFieldVariant.Outlined -> 0x00000000
             isError && variant == TextFieldVariant.Tonal ->
-                override?.tonalErrorContainer ?: 0xFFB3261E.toInt()
+                override?.tonalErrorContainer ?: Theme.colors.error
 
             isError ->
-                override?.filledErrorContainer ?: 0xFFB3261E.toInt()
+                override?.filledErrorContainer ?: Theme.colors.error
 
             variant == TextFieldVariant.Tonal && enabled ->
                 override?.tonalContainer ?: Theme.colors.surfaceVariant
@@ -93,7 +93,7 @@ object TextFieldDefaults {
         val override = LocalContext.current(LocalTextFieldColors)
         return when {
             isError ->
-                override?.outlinedErrorBorder ?: 0xFFB3261E.toInt()
+                override?.outlinedErrorBorder ?: Theme.colors.error
 
             variant == TextFieldVariant.Outlined && enabled ->
                 override?.outlinedBorder ?: Theme.colors.primary

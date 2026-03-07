@@ -32,7 +32,7 @@
 - [x] Step 1: 新增执行计划文档并首提。
 - [x] Step 2: 更新 `THEMING.md` 基线与兼容迁移策略。
 - [x] Step 3: `UiColors` 语义色升级与 bridge/defaults/demo 同步。
-- [ ] Step 4: 去除关键硬编码颜色并同步文档禁用清单。
+- [x] Step 4: 去除关键硬编码颜色并同步文档禁用清单。
 - [ ] Step 5: `UiTypography` 分级语义扩展并迁移首批 defaults。
 - [ ] Step 6: `UiShapes` 引入 `interactiveCornerRadius` 兼容别名并更新 demo 文案。
 - [ ] Step 7: 测试补齐（兼容与语义覆盖 + 硬编码守卫）。
@@ -44,7 +44,8 @@
 | --- | --- | --- | --- |
 | 2026-03-07 | Step 1 | `4d4eab7` | Add execution plan doc. |
 | 2026-03-07 | Step 2 | `eae4da3` | Align theming baseline with overlays and migration policy. |
-| 2026-03-07 | Step 3 | pending | Add semantic color tokens and migrate internal usage to secondary-first path. |
+| 2026-03-07 | Step 3 | `c2d78f3` | Add semantic color tokens and migrate internal usage to secondary-first path. |
+| 2026-03-07 | Step 4 | pending | Replace critical hardcoded colors with semantic `Theme.colors.error`. |
 
 ## 6. Blocker Log
 

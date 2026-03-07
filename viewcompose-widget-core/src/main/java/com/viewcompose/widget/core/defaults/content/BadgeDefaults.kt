@@ -1,9 +1,9 @@
 package com.viewcompose.widget.core
 
 object BadgeDefaults {
-    fun containerColor(): Int = 0xFFFF3B30.toInt()
+    fun containerColor(): Int = Theme.colors.error
 
-    fun contentColor(): Int = 0xFFFFFFFF.toInt()
+    fun contentColor(): Int = contentColorFor(Theme.colors.error)
 
     fun dotSize(): Int = 8.dp
 

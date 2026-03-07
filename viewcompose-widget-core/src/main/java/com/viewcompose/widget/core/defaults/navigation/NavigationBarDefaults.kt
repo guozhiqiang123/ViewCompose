@@ -21,7 +21,7 @@ object NavigationBarDefaults {
 
     fun labelSizeSp(): Int = 12
 
-    fun badgeColor(): Int = 0xFFFF3B30.toInt()
+    fun badgeColor(): Int = Theme.colors.error
 
-    fun badgeTextColor(): Int = 0xFFFFFFFF.toInt()
+    fun badgeTextColor(): Int = contentColorFor(Theme.colors.error)
 }
