@@ -20,10 +20,20 @@ import com.gzq.uiframework.renderer.node.NavigationBarItem
 internal class DeclarativeNavigationBarLayout(
     context: Context,
 ) : LinearLayout(context) {
+    private data class ItemViewRefs(
+        val root: LinearLayout,
+        val indicator: View,
+        val indicatorDrawable: GradientDrawable,
+        val iconView: ImageView,
+        val badgeView: TextView,
+        val labelView: TextView,
+    )
+
     private var items: List<NavigationBarItem> = emptyList()
     private var selectedIndex: Int = -1
     private var onItemSelected: ((Int) -> Unit)? = null
     private val density = context.resources.displayMetrics.density
+    private val itemRefs = mutableListOf<ItemViewRefs>()
 
     init {
         orientation = HORIZONTAL
@@ -69,13 +79,20 @@ internal class DeclarativeNavigationBarLayout(
     }
 
     private fun rebuild(items: List<NavigationBarItem>, rippleColor: Int) {
+        itemRefs.clear()
         removeAllViews()
         items.forEachIndexed { index, item ->
-            addView(createItemView(index, item, rippleColor))
+            val refs = createItemView(index, item, rippleColor)
+            itemRefs += refs
+            addView(refs.root)
         }
     }
 
-    private fun createItemView(index: Int, item: NavigationBarItem, rippleColor: Int): View {
+    private fun createItemView(
+        index: Int,
+        item: NavigationBarItem,
+        rippleColor: Int,
+    ): ItemViewRefs {
         val itemLayout = LinearLayout(context).apply {
             orientation = VERTICAL
             gravity = Gravity.CENTER_HORIZONTAL
@@ -107,6 +124,9 @@ internal class DeclarativeNavigationBarLayout(
         }
 
         // Pill indicator (behind icon)
+        val indicatorDrawable = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+        }
         val indicator = View(context).apply {
             layoutParams = FrameLayout.LayoutParams(
                 dpToPx(INDICATOR_WIDTH),
@@ -114,7 +134,7 @@ internal class DeclarativeNavigationBarLayout(
             ).apply {
                 gravity = Gravity.CENTER
             }
-            tag = TAG_INDICATOR
+            background = indicatorDrawable
         }
         iconContainer.addView(indicator)
 
@@ -128,7 +148,6 @@ internal class DeclarativeNavigationBarLayout(
             }
             scaleType = ImageView.ScaleType.FIT_CENTER
             setImageResource(item.icon.resId)
-            tag = TAG_ICON
         }
         iconContainer.addView(iconView)
 
@@ -144,7 +163,6 @@ internal class DeclarativeNavigationBarLayout(
             gravity = Gravity.CENTER
             setTypeface(typeface, Typeface.BOLD)
             includeFontPadding = false
-            tag = TAG_BADGE
         }
         iconContainer.addView(badgeView)
 
@@ -170,11 +188,17 @@ internal class DeclarativeNavigationBarLayout(
             this.gravity = Gravity.CENTER
             text = item.label
             maxLines = 1
-            tag = TAG_LABEL
         }
         itemLayout.addView(label)
 
-        return itemLayout
+        return ItemViewRefs(
+            root = itemLayout,
+            indicator = indicator,
+            indicatorDrawable = indicatorDrawable,
+            iconView = iconView,
+            badgeView = badgeView,
+            labelView = label,
+        )
     }
 
     private fun updateChildren(
@@ -188,29 +212,19 @@ internal class DeclarativeNavigationBarLayout(
         badgeColor: Int,
         badgeTextColor: Int,
     ) {
-        for (index in 0 until childCount) {
-            val itemLayout = getChildAt(index) as? LinearLayout ?: continue
+        for (index in 0 until itemRefs.size) {
             val item = items.getOrNull(index) ?: continue
             val isSelected = index == selectedIndex
+            val refs = itemRefs[index]
 
-            val iconContainer = itemLayout.getChildAt(0) as? FrameLayout ?: continue
-            val indicator = iconContainer.findViewWithTag<View>(TAG_INDICATOR)
-            val iconView = iconContainer.findViewWithTag<ImageView>(TAG_ICON)
-            val badgeView = iconContainer.findViewWithTag<TextView>(TAG_BADGE)
-            val label = itemLayout.findViewWithTag<TextView>(TAG_LABEL)
-
-            // Update indicator
-            indicator?.apply {
+            refs.indicator.apply {
                 visibility = if (isSelected) View.VISIBLE else View.INVISIBLE
-                background = GradientDrawable().apply {
-                    shape = GradientDrawable.RECTANGLE
-                    setColor(indicatorColor)
-                    cornerRadius = dpToPx(INDICATOR_CORNER_RADIUS).toFloat()
-                }
             }
+            refs.indicatorDrawable.setColor(indicatorColor)
+            refs.indicatorDrawable.cornerRadius = dpToPx(INDICATOR_CORNER_RADIUS).toFloat()
 
             // Update icon
-            iconView?.apply {
+            refs.iconView.apply {
                 val iconRes = if (isSelected && item.selectedIcon != null) {
                     item.selectedIcon.resId
                 } else {
@@ -228,7 +242,7 @@ internal class DeclarativeNavigationBarLayout(
             }
 
             // Update badge
-            badgeView?.apply {
+            refs.badgeView.apply {
                 when {
                     item.badgeCount == null -> {
                         visibility = View.GONE
@@ -271,7 +285,7 @@ internal class DeclarativeNavigationBarLayout(
             }
 
             // Update label
-            label?.apply {
+            refs.labelView.apply {
                 text = item.label
                 setTextColor(if (isSelected) selectedLabelColor else unselectedLabelColor)
                 setTextSize(TypedValue.COMPLEX_UNIT_SP, labelSizeSp.toFloat())
@@ -282,11 +296,6 @@ internal class DeclarativeNavigationBarLayout(
     private fun dpToPx(dp: Int): Int = (dp * density + 0.5f).toInt()
 
     companion object {
-        private const val TAG_INDICATOR = "nav_indicator"
-        private const val TAG_ICON = "nav_icon"
-        private const val TAG_BADGE = "nav_badge"
-        private const val TAG_LABEL = "nav_label"
-
         private const val INDICATOR_WIDTH = 64
         private const val INDICATOR_HEIGHT = 32
         private const val INDICATOR_CORNER_RADIUS = 16
