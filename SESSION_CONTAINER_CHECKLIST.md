@@ -30,6 +30,7 @@
 3. `localSnapshot`、主题、环境、父层闭包在 update 路径重新注入
 4. 创建路径和更新路径都能驱动 `RenderSession.render()`
 5. `dispose/recycle` 语义与 holder 生命周期对齐
+6. `Change` 更新优先走 payload 通道，避免无条件全量变更通知
 
 ## 4. 必测场景
 
@@ -63,6 +64,7 @@
 
 1. 暂无（本轮范围内容器已覆盖；新增容器继续按第 6 节流程接入）
 2. 门禁基线：`qaFull`（Pixel 4 XL API 33）20/20 通过
+3. 基线更新（2026-03-07）：`Lazy/Pager` 已统一走 DiffUtil + payload `Change` 路径，保留空 diff 刷新语义。
 
 ## 6. 新容器接入流程
 

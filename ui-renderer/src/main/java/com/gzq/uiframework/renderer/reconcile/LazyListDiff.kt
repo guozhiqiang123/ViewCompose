@@ -7,7 +7,6 @@ import com.gzq.uiframework.renderer.node.LazyListItem
 sealed interface LazyListUpdate {
     data class Insert(
         val index: Int,
-        val item: LazyListItem,
     ) : LazyListUpdate
 
     data class Remove(
@@ -21,15 +20,23 @@ sealed interface LazyListUpdate {
 
     data class Change(
         val index: Int,
-        val item: LazyListItem,
+        val payload: Any? = null,
     ) : LazyListUpdate
 
     data object ReloadAll : LazyListUpdate
 }
 
+sealed interface LazyListChangePayload {
+    data class ContentTokenChanged(
+        val previous: Any?,
+        val next: Any?,
+    ) : LazyListChangePayload
+}
+
 data class LazyListDiffResult(
     val updates: List<LazyListUpdate>,
     val items: List<LazyListItem>,
+    val diffResult: DiffUtil.DiffResult? = null,
 )
 
 object LazyListDiff {
@@ -41,11 +48,11 @@ object LazyListDiff {
             return LazyListDiffResult(
                 updates = listOf(LazyListUpdate.ReloadAll),
                 items = next,
+                diffResult = null,
             )
         }
 
         val updates = mutableListOf<LazyListUpdate>()
-        val working = previous.toMutableList()
         val diffResult = DiffUtil.calculateDiff(
             object : DiffUtil.Callback() {
                 override fun getOldListSize(): Int = previous.size
@@ -65,12 +72,22 @@ object LazyListDiff {
                 ): Boolean {
                     return previous[oldItemPosition] == next[newItemPosition]
                 }
+
+                override fun getChangePayload(
+                    oldItemPosition: Int,
+                    newItemPosition: Int,
+                ): Any {
+                    val oldItem = previous[oldItemPosition]
+                    val newItem = next[newItemPosition]
+                    return LazyListChangePayload.ContentTokenChanged(
+                        previous = oldItem.contentToken,
+                        next = newItem.contentToken,
+                    )
+                }
             },
         )
         diffResult.dispatchUpdatesTo(
             RecordingLazyListUpdateCallback(
-                working = working,
-                next = next,
                 updates = updates,
             ),
         )
@@ -79,6 +96,7 @@ object LazyListDiff {
             updates = updates,
             // Always use latest item instances to preserve refreshed closures/session updaters.
             items = next,
+            diffResult = diffResult,
         )
     }
 
@@ -92,8 +110,6 @@ object LazyListDiff {
 }
 
 private class RecordingLazyListUpdateCallback(
-    private val working: MutableList<LazyListItem>,
-    private val next: List<LazyListItem>,
     private val updates: MutableList<LazyListUpdate>,
 ) : ListUpdateCallback {
     override fun onInserted(
@@ -102,9 +118,7 @@ private class RecordingLazyListUpdateCallback(
     ) {
         repeat(count) { offset ->
             val index = position + offset
-            val item = next[index.coerceIn(0, next.lastIndex)]
-            working.add(index.coerceIn(0, working.size), item)
-            updates += LazyListUpdate.Insert(index, item)
+            updates += LazyListUpdate.Insert(index)
         }
     }
 
@@ -113,7 +127,6 @@ private class RecordingLazyListUpdateCallback(
         count: Int,
     ) {
         repeat(count) {
-            working.removeAt(position)
             updates += LazyListUpdate.Remove(position)
         }
     }
@@ -122,8 +135,6 @@ private class RecordingLazyListUpdateCallback(
         fromPosition: Int,
         toPosition: Int,
     ) {
-        val moved = working.removeAt(fromPosition)
-        working.add(toPosition, moved)
         updates += LazyListUpdate.Move(fromPosition, toPosition)
     }
 
@@ -134,10 +145,10 @@ private class RecordingLazyListUpdateCallback(
     ) {
         repeat(count) { offset ->
             val index = position + offset
-            val clampedIndex = index.coerceIn(0, next.lastIndex)
-            val item = next[clampedIndex]
-            working[index.coerceIn(0, working.lastIndex)] = item
-            updates += LazyListUpdate.Change(index, item)
+            updates += LazyListUpdate.Change(
+                index = index,
+                payload = payload,
+            )
         }
     }
 }

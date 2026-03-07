@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.reconcile.LazyListDiff
-import com.gzq.uiframework.renderer.reconcile.LazyListUpdate
 import com.gzq.uiframework.renderer.view.lazy.LazyHolderRegistry
 import com.gzq.uiframework.renderer.view.lazy.LazyItemSessionController
 import com.gzq.uiframework.renderer.view.lazy.PagerState
@@ -122,8 +121,23 @@ internal class VerticalPagerAdapter : RecyclerView.Adapter<VerticalPagerViewHold
     }
 
     override fun onBindViewHolder(holder: VerticalPagerViewHolder, position: Int) {
-        holderRegistry.onBound(holder)
-        holder.bind(pages[position])
+        bindHolder(
+            holder = holder,
+            position = position,
+            payload = null,
+        )
+    }
+
+    override fun onBindViewHolder(
+        holder: VerticalPagerViewHolder,
+        position: Int,
+        payloads: MutableList<Any>,
+    ) {
+        bindHolder(
+            holder = holder,
+            position = position,
+            payload = payloads.lastOrNull(),
+        )
     }
 
     override fun onViewAttachedToWindow(holder: VerticalPagerViewHolder) {
@@ -153,14 +167,10 @@ internal class VerticalPagerAdapter : RecyclerView.Adapter<VerticalPagerViewHold
             next = newPages,
         )
         this.pages = result.items
-        result.updates.forEach { update ->
-            when (update) {
-                is LazyListUpdate.Insert -> notifyItemInserted(update.index)
-                is LazyListUpdate.Remove -> notifyItemRemoved(update.index)
-                is LazyListUpdate.Move -> notifyItemMoved(update.fromIndex, update.toIndex)
-                is LazyListUpdate.Change -> notifyItemChanged(update.index)
-                LazyListUpdate.ReloadAll -> notifyDataSetChanged()
-            }
+        if (result.diffResult != null) {
+            result.diffResult.dispatchUpdatesTo(this)
+        } else {
+            notifyDataSetChanged()
         }
         if (result.updates.isEmpty()) {
             holderRegistry.forEachBound { holder ->
@@ -177,6 +187,18 @@ internal class VerticalPagerAdapter : RecyclerView.Adapter<VerticalPagerViewHold
         pages = emptyList()
         notifyDataSetChanged()
     }
+
+    private fun bindHolder(
+        holder: VerticalPagerViewHolder,
+        position: Int,
+        payload: Any?,
+    ) {
+        holderRegistry.onBound(holder)
+        holder.bind(
+            item = pages[position],
+            payload = payload,
+        )
+    }
 }
 
 internal class VerticalPagerViewHolder(
@@ -189,8 +211,14 @@ internal class VerticalPagerViewHolder(
         clearContainer = container::removeAllViews,
     )
 
-    fun bind(item: LazyListItem) {
-        controller.bind(item)
+    fun bind(
+        item: LazyListItem,
+        payload: Any? = null,
+    ) {
+        controller.bind(
+            item = item,
+            payload = payload,
+        )
     }
 
     fun recycle() {

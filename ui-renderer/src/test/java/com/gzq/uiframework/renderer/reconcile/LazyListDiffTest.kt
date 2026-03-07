@@ -35,7 +35,7 @@ class LazyListDiffTest {
 
         assertEquals(
             listOf(
-                LazyListUpdate.Insert(2, item("C")),
+                LazyListUpdate.Insert(2),
                 LazyListUpdate.Remove(0),
             ),
             result.updates,

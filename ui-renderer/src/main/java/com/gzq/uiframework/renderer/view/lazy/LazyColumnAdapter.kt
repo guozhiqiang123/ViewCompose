@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.reconcile.LazyListDiff
 import com.gzq.uiframework.renderer.reconcile.LazyListIdentityInspector
-import com.gzq.uiframework.renderer.reconcile.LazyListUpdate
 
 internal class LazyColumnAdapter(
     private val orientation: Int = LinearLayoutManager.VERTICAL,
@@ -48,8 +47,23 @@ internal class LazyColumnAdapter(
         holder: LazyColumnViewHolder,
         position: Int,
     ) {
-        holderRegistry.onBound(holder)
-        holder.bind(items[position])
+        bindHolder(
+            holder = holder,
+            position = position,
+            payload = null,
+        )
+    }
+
+    override fun onBindViewHolder(
+        holder: LazyColumnViewHolder,
+        position: Int,
+        payloads: MutableList<Any>,
+    ) {
+        bindHolder(
+            holder = holder,
+            position = position,
+            payload = payloads.lastOrNull(),
+        )
     }
 
     override fun onViewRecycled(holder: LazyColumnViewHolder) {
@@ -85,14 +99,10 @@ internal class LazyColumnAdapter(
             next = items,
         )
         this.items = result.items
-        result.updates.forEach { update ->
-            when (update) {
-                is LazyListUpdate.Insert -> notifyItemInserted(update.index)
-                is LazyListUpdate.Remove -> notifyItemRemoved(update.index)
-                is LazyListUpdate.Move -> notifyItemMoved(update.fromIndex, update.toIndex)
-                is LazyListUpdate.Change -> notifyItemChanged(update.index)
-                LazyListUpdate.ReloadAll -> notifyDataSetChanged()
-            }
+        if (result.diffResult != null) {
+            result.diffResult.dispatchUpdatesTo(this)
+        } else {
+            notifyDataSetChanged()
         }
         if (result.updates.isEmpty()) {
             holderRegistry.forEachBound { holder ->
@@ -122,6 +132,18 @@ internal class LazyColumnAdapter(
     fun disposeAll() {
         holderRegistry.disposeAll()
         items = emptyList()
+    }
+
+    private fun bindHolder(
+        holder: LazyColumnViewHolder,
+        position: Int,
+        payload: Any?,
+    ) {
+        holderRegistry.onBound(holder)
+        holder.bind(
+            item = items[position],
+            payload = payload,
+        )
     }
 }
 
@@ -170,8 +192,14 @@ internal class LazyColumnViewHolder(
         clearContainer = container::removeAllViews,
     )
 
-    fun bind(item: LazyListItem) {
-        controller.bind(item)
+    fun bind(
+        item: LazyListItem,
+        payload: Any? = null,
+    ) {
+        controller.bind(
+            item = item,
+            payload = payload,
+        )
     }
 
     fun recycle() {
