@@ -36,6 +36,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeHorizontalPagerLay
 import com.gzq.uiframework.renderer.view.container.DeclarativeLazyVerticalGridLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeVerticalPagerLayout
+import com.gzq.uiframework.renderer.view.lazy.LazyFocusFollowLayoutMonitor
 import com.gzq.uiframework.renderer.view.lazy.FrameworkRecyclerViewDefaults
 import com.gzq.uiframework.renderer.view.lazy.LazyLinearLayoutManager
 
@@ -546,6 +547,10 @@ internal object ViewModifierApplier {
                     disableItemAnimator = reusePolicy.disableItemAnimator,
                 )
                 (recyclerView.layoutManager as? LazyLinearLayoutManager)?.focusAutoScrollEnabled = focusPolicy.enabled
+                LazyFocusFollowLayoutMonitor.apply(
+                    recyclerView = recyclerView,
+                    enabled = focusPolicy.enabled,
+                )
             }
             NodeType.LazyRow -> {
                 val recyclerView = view as? RecyclerView ?: return
@@ -555,6 +560,10 @@ internal object ViewModifierApplier {
                     disableItemAnimator = reusePolicy.disableItemAnimator,
                 )
                 (recyclerView.layoutManager as? LazyLinearLayoutManager)?.focusAutoScrollEnabled = focusPolicy.enabled
+                LazyFocusFollowLayoutMonitor.apply(
+                    recyclerView = recyclerView,
+                    enabled = focusPolicy.enabled,
+                )
             }
             NodeType.LazyVerticalGrid -> {
                 (view as? DeclarativeLazyVerticalGridLayout)?.applyRecyclerDefaults(

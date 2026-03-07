@@ -207,10 +207,24 @@ internal class LazyColumnAdapter(
         if (anchor == null || itemCount == 0) {
             return
         }
+        if (shouldDeferAnchorRestore(recyclerView, layoutManager)) {
+            return
+        }
         val targetPosition = anchor.position.coerceIn(0, itemCount - 1)
         recyclerView.post {
             layoutManager.scrollToPositionWithOffset(targetPosition, anchor.offset)
         }
+    }
+
+    private fun shouldDeferAnchorRestore(
+        recyclerView: RecyclerView,
+        layoutManager: LinearLayoutManager,
+    ): Boolean {
+        val focusAwareLayoutManager = layoutManager as? LazyLinearLayoutManager ?: return false
+        if (!focusAwareLayoutManager.focusAutoScrollEnabled) {
+            return false
+        }
+        return recyclerView.findFocus() != null
     }
 }
 

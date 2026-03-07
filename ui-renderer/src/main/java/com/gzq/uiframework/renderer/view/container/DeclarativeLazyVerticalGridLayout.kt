@@ -9,6 +9,7 @@ import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
 import com.gzq.uiframework.renderer.view.lazy.LazyGridLayoutManager
 import com.gzq.uiframework.renderer.view.lazy.LazyGridSpacingDecoration
+import com.gzq.uiframework.renderer.view.lazy.LazyFocusFollowLayoutMonitor
 import com.gzq.uiframework.renderer.view.lazy.FrameworkRecyclerViewDefaults
 import com.gzq.uiframework.renderer.view.lazy.LazyListState
 import com.gzq.uiframework.renderer.view.tree.LayoutPassTracker
@@ -90,8 +91,11 @@ internal class DeclarativeLazyVerticalGridLayout(
 
     fun setFocusAutoScrollEnabled(enabled: Boolean) {
         focusAutoScrollEnabled = enabled
-        val layoutManager = recyclerView.layoutManager as? LazyGridLayoutManager ?: return
-        layoutManager.focusAutoScrollEnabled = enabled
+        (recyclerView.layoutManager as? LazyGridLayoutManager)?.focusAutoScrollEnabled = enabled
+        LazyFocusFollowLayoutMonitor.apply(
+            recyclerView = recyclerView,
+            enabled = enabled,
+        )
     }
 
     private fun updateSpacingDecoration(
