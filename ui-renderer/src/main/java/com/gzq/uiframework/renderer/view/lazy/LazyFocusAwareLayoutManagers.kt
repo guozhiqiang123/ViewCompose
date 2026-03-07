@@ -20,16 +20,9 @@ internal class LazyLinearLayoutManager(
         immediate: Boolean,
         focusedChildVisible: Boolean,
     ): Boolean {
-        if (!focusAutoScrollEnabled) {
-            return false
-        }
-        return super.requestChildRectangleOnScreen(
-            parent,
-            child,
-            rect,
-            immediate,
-            focusedChildVisible,
-        )
+        // Focus-follow is coordinated at the container layer to avoid
+        // competing scroll anchors during state-driven relayout.
+        return false
     }
 }
 
@@ -45,15 +38,8 @@ internal class LazyGridLayoutManager(
         immediate: Boolean,
         focusedChildVisible: Boolean,
     ): Boolean {
-        if (!focusAutoScrollEnabled) {
-            return false
-        }
-        return super.requestChildRectangleOnScreen(
-            parent,
-            child,
-            rect,
-            immediate,
-            focusedChildVisible,
-        )
+        // Focus-follow is coordinated at the container layer to avoid
+        // competing scroll anchors during state-driven relayout.
+        return false
     }
 }

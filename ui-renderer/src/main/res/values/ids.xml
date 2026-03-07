@@ -11,4 +11,5 @@
     <item name="ui_framework_system_bars_padding_state" type="id" />
     <item name="ui_framework_local_recycled_view_pool" type="id" />
     <item name="ui_framework_focus_follow_layout_listener" type="id" />
+    <item name="ui_framework_focus_follow_global_focus_listener" type="id" />
 </resources>
