@@ -20,11 +20,15 @@ internal class DeclarativeSegmentedControlLayout(
     private var selectedIndex: Int = -1
     private var onSelectionChange: ((Int) -> Unit)? = null
     private val indicatorInset = 2 * context.resources.displayMetrics.density
+    private val containerBackground = GradientDrawable().apply {
+        shape = GradientDrawable.RECTANGLE
+    }
 
     init {
         orientation = HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
         clipToPadding = false
+        background = containerBackground
     }
 
     fun bind(
@@ -43,11 +47,8 @@ internal class DeclarativeSegmentedControlLayout(
         paddingVertical: Int,
     ) {
         this.onSelectionChange = onSelectionChange
-        background = GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
-            setColor(backgroundColor)
-            this.cornerRadius = cornerRadius.toFloat()
-        }
+        containerBackground.setColor(backgroundColor)
+        containerBackground.cornerRadius = cornerRadius.toFloat()
         if (this.items.map { it.label } != items.map { it.label }) {
             rebuild(items)
         }
@@ -96,6 +97,7 @@ internal class DeclarativeSegmentedControlLayout(
         paddingHorizontal: Int,
         paddingVertical: Int,
     ) {
+        val insetPx = indicatorInset.toInt()
         for (index in 0 until childCount) {
             val child = getChildAt(index) as? TextView ?: continue
             val item = items.getOrNull(index) ?: continue
@@ -105,11 +107,17 @@ internal class DeclarativeSegmentedControlLayout(
             child.setTextColor(if (isSelected) selectedTextColor else textColor)
             child.textSize = textSizeSp.toFloat()
             child.setPadding(paddingHorizontal, paddingVertical, paddingHorizontal, paddingVertical)
-            child.layoutParams = (child.layoutParams as LayoutParams).apply {
-                leftMargin = indicatorInset.toInt()
-                topMargin = indicatorInset.toInt()
-                rightMargin = indicatorInset.toInt()
-                bottomMargin = indicatorInset.toInt()
+            val childParams = child.layoutParams as LayoutParams
+            if (childParams.leftMargin != insetPx ||
+                childParams.topMargin != insetPx ||
+                childParams.rightMargin != insetPx ||
+                childParams.bottomMargin != insetPx
+            ) {
+                childParams.leftMargin = insetPx
+                childParams.topMargin = insetPx
+                childParams.rightMargin = insetPx
+                childParams.bottomMargin = insetPx
+                child.layoutParams = childParams
             }
             child.background = createSegmentBackground(
                 enabled = enabled,
