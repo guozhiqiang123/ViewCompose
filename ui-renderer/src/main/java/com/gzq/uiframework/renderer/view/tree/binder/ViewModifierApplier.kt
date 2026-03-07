@@ -6,6 +6,7 @@ import android.graphics.Outline
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewOutlineProvider
@@ -41,6 +42,8 @@ import com.gzq.uiframework.renderer.view.lazy.FrameworkRecyclerViewDefaults
 import com.gzq.uiframework.renderer.view.lazy.LazyLinearLayoutManager
 
 internal object ViewModifierApplier {
+    private const val FOCUS_TAG = "UIFocusFollow"
+
     fun bindView(
         view: View,
         node: VNode,
@@ -551,6 +554,10 @@ internal object ViewModifierApplier {
                     recyclerView = recyclerView,
                     enabled = focusPolicy.enabled,
                 )
+                Log.d(
+                    FOCUS_TAG,
+                    "apply lazyColumn focusPolicy=${focusPolicy.enabled} rv=${recyclerView.hashCode()}",
+                )
             }
             NodeType.LazyRow -> {
                 val recyclerView = view as? RecyclerView ?: return
@@ -564,6 +571,10 @@ internal object ViewModifierApplier {
                     recyclerView = recyclerView,
                     enabled = focusPolicy.enabled,
                 )
+                Log.d(
+                    FOCUS_TAG,
+                    "apply lazyRow focusPolicy=${focusPolicy.enabled} rv=${recyclerView.hashCode()}",
+                )
             }
             NodeType.LazyVerticalGrid -> {
                 (view as? DeclarativeLazyVerticalGridLayout)?.applyRecyclerDefaults(
@@ -571,6 +582,10 @@ internal object ViewModifierApplier {
                     disableItemAnimator = reusePolicy.disableItemAnimator,
                 )
                 (view as? DeclarativeLazyVerticalGridLayout)?.setFocusAutoScrollEnabled(focusPolicy.enabled)
+                Log.d(
+                    FOCUS_TAG,
+                    "apply lazyGrid focusPolicy=${focusPolicy.enabled} view=${view.hashCode()}",
+                )
             }
             NodeType.HorizontalPager -> {
                 (view as? DeclarativeHorizontalPagerLayout)?.applyRecyclerDefaults(

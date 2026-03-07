@@ -13,6 +13,10 @@ import com.gzq.uiframework.renderer.reconcile.LazyListIdentityInspector
 internal class LazyColumnAdapter(
     private val orientation: Int = LinearLayoutManager.VERTICAL,
 ) : RecyclerView.Adapter<LazyColumnViewHolder>() {
+    private companion object {
+        private const val FOCUS_TAG = "UIFocusFollow"
+    }
+
     private data class ScrollAnchor(
         val position: Int,
         val offset: Int,
@@ -208,10 +212,21 @@ internal class LazyColumnAdapter(
             return
         }
         if (shouldDeferAnchorRestore(recyclerView, layoutManager)) {
+            Log.d(
+                FOCUS_TAG,
+                "defer anchor restore rv=${recyclerView.hashCode()} " +
+                    "anchorPos=${anchor.position} anchorOffset=${anchor.offset} " +
+                    "focused=${recyclerView.findFocus()?.javaClass?.simpleName}",
+            )
             return
         }
         val targetPosition = anchor.position.coerceIn(0, itemCount - 1)
         recyclerView.post {
+            Log.d(
+                FOCUS_TAG,
+                "restore anchor rv=${recyclerView.hashCode()} " +
+                    "targetPos=$targetPosition anchorOffset=${anchor.offset}",
+            )
             layoutManager.scrollToPositionWithOffset(targetPosition, anchor.offset)
         }
     }

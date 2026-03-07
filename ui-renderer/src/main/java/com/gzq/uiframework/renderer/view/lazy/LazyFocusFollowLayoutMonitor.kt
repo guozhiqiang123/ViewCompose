@@ -1,6 +1,7 @@
 package com.gzq.uiframework.renderer.view.lazy
 
 import android.graphics.Rect
+import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.EditText
@@ -8,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.gzq.uiframework.renderer.R
 
 internal object LazyFocusFollowLayoutMonitor {
+    private const val TAG = "UIFocusFollow"
+
     fun apply(
         recyclerView: RecyclerView,
         enabled: Boolean,
@@ -37,34 +40,46 @@ internal object LazyFocusFollowLayoutMonitor {
                 }
                 recyclerView.setTag(R.id.ui_framework_focus_follow_global_layout_listener, null)
             }
+            debugLog {
+                "detach listeners rv=${recyclerView.hashCode()}"
+            }
             return
         }
         if (existingLayoutListener == null) {
             val listener = View.OnLayoutChangeListener { view, _, _, _, _, _, _, _, _ ->
                 val target = view as? RecyclerView ?: return@OnLayoutChangeListener
-                ensureFocusedChildVisible(target)
+                ensureFocusedChildVisible(target, trigger = "layoutChange")
             }
             recyclerView.addOnLayoutChangeListener(listener)
             recyclerView.setTag(R.id.ui_framework_focus_follow_layout_listener, listener)
         }
         if (existingGlobalFocusListener == null) {
             val globalFocusListener = ViewTreeObserver.OnGlobalFocusChangeListener { _, _ ->
-                ensureFocusedChildVisible(recyclerView)
+                ensureFocusedChildVisible(recyclerView, trigger = "globalFocus")
             }
             recyclerView.viewTreeObserver.addOnGlobalFocusChangeListener(globalFocusListener)
             recyclerView.setTag(R.id.ui_framework_focus_follow_global_focus_listener, globalFocusListener)
         }
         if (existingGlobalLayoutListener == null) {
             val globalLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
-                ensureFocusedChildVisible(recyclerView)
+                ensureFocusedChildVisible(recyclerView, trigger = "globalLayout")
             }
             recyclerView.viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
             recyclerView.setTag(R.id.ui_framework_focus_follow_global_layout_listener, globalLayoutListener)
         }
-        ensureFocusedChildVisible(recyclerView)
+        debugLog {
+            "attach listeners rv=${recyclerView.hashCode()} " +
+                "layout=${existingLayoutListener != null} " +
+                "focus=${existingGlobalFocusListener != null} " +
+                "globalLayout=${existingGlobalLayoutListener != null}"
+        }
+        ensureFocusedChildVisible(recyclerView, trigger = "apply")
     }
 
-    private fun ensureFocusedChildVisible(recyclerView: RecyclerView) {
+    private fun ensureFocusedChildVisible(
+        recyclerView: RecyclerView,
+        trigger: String,
+    ) {
         val focused = recyclerView.findFocus() as? EditText ?: return
         if (focused === recyclerView) {
             return
@@ -92,13 +107,35 @@ internal object LazyFocusFollowLayoutMonitor {
                 else -> 0
             }
             if (dy > 0 && !recyclerView.canScrollVertically(1)) {
+                debugLog {
+                    "skip vertical scroll (end reached) trigger=$trigger rv=${recyclerView.hashCode()} " +
+                        "holderPos=${recyclerView.findContainingViewHolder(focused)?.bindingAdapterPosition} " +
+                        "focusedRect=${focusedRect.toShortString()} viewport=${viewport.toShortString()} dy=$dy"
+                }
                 return
             }
             if (dy < 0 && !recyclerView.canScrollVertically(-1)) {
+                debugLog {
+                    "skip vertical scroll (start reached) trigger=$trigger rv=${recyclerView.hashCode()} " +
+                        "holderPos=${recyclerView.findContainingViewHolder(focused)?.bindingAdapterPosition} " +
+                        "focusedRect=${focusedRect.toShortString()} viewport=${viewport.toShortString()} dy=$dy"
+                }
                 return
             }
             if (dy != 0) {
+                debugLog {
+                    "scroll vertical trigger=$trigger rv=${recyclerView.hashCode()} " +
+                        "holderPos=${recyclerView.findContainingViewHolder(focused)?.bindingAdapterPosition} " +
+                        "focusedRect=${focusedRect.toShortString()} viewport=${viewport.toShortString()} dy=$dy " +
+                        "bottomOverflow=$bottomOverflow topOverflow=$topOverflow"
+                }
                 recyclerView.scrollBy(0, dy)
+            } else {
+                debugLog {
+                    "no vertical scroll trigger=$trigger rv=${recyclerView.hashCode()} " +
+                        "holderPos=${recyclerView.findContainingViewHolder(focused)?.bindingAdapterPosition} " +
+                        "focusedRect=${focusedRect.toShortString()} viewport=${viewport.toShortString()}"
+                }
             }
             return
         }
@@ -111,13 +148,30 @@ internal object LazyFocusFollowLayoutMonitor {
                 else -> 0
             }
             if (dx > 0 && !recyclerView.canScrollHorizontally(1)) {
+                debugLog {
+                    "skip horizontal scroll (end reached) trigger=$trigger rv=${recyclerView.hashCode()} " +
+                        "focusedRect=${focusedRect.toShortString()} viewport=${viewport.toShortString()} dx=$dx"
+                }
                 return
             }
             if (dx < 0 && !recyclerView.canScrollHorizontally(-1)) {
+                debugLog {
+                    "skip horizontal scroll (start reached) trigger=$trigger rv=${recyclerView.hashCode()} " +
+                        "focusedRect=${focusedRect.toShortString()} viewport=${viewport.toShortString()} dx=$dx"
+                }
                 return
             }
             if (dx != 0) {
+                debugLog {
+                    "scroll horizontal trigger=$trigger rv=${recyclerView.hashCode()} " +
+                        "focusedRect=${focusedRect.toShortString()} viewport=${viewport.toShortString()} dx=$dx"
+                }
                 recyclerView.scrollBy(dx, 0)
+            } else {
+                debugLog {
+                    "no horizontal scroll trigger=$trigger rv=${recyclerView.hashCode()} " +
+                        "focusedRect=${focusedRect.toShortString()} viewport=${viewport.toShortString()}"
+                }
             }
         }
     }
@@ -138,5 +192,9 @@ internal object LazyFocusFollowLayoutMonitor {
             (globalVisibleRect.right - location[0]).coerceAtMost(fallback.right),
             (globalVisibleRect.bottom - location[1]).coerceAtMost(fallback.bottom),
         )
+    }
+
+    private inline fun debugLog(message: () -> String) {
+        Log.d(TAG, message())
     }
 }
