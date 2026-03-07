@@ -9,6 +9,7 @@ data class RenderStats(
     val reboundNodes: Int = 0,
     val patchedNodes: Int = 0,
     val skippedBindings: Int = 0,
+    val skippedSubtrees: Int = 0,
     val bindingsByType: Map<NodeType, NodeTypeBindingStats> = emptyMap(),
 ) {
     fun withInsert(): RenderStats = copy(inserts = inserts + 1)
@@ -21,13 +22,23 @@ data class RenderStats(
         val updated = when (result) {
             ReuseBindingResult.Rebound -> existing.copy(rebound = existing.rebound + 1)
             ReuseBindingResult.Patched -> existing.copy(patched = existing.patched + 1)
-            ReuseBindingResult.Skipped -> existing.copy(skipped = existing.skipped + 1)
+            ReuseBindingResult.Skipped,
+            ReuseBindingResult.SkippedSubtree,
+            -> existing.copy(skipped = existing.skipped + 1)
         }
         return copy(
             reuses = reuses + 1,
             reboundNodes = reboundNodes + if (result == ReuseBindingResult.Rebound) 1 else 0,
             patchedNodes = patchedNodes + if (result == ReuseBindingResult.Patched) 1 else 0,
-            skippedBindings = skippedBindings + if (result == ReuseBindingResult.Skipped) 1 else 0,
+            skippedBindings = skippedBindings + if (
+                result == ReuseBindingResult.Skipped ||
+                result == ReuseBindingResult.SkippedSubtree
+            ) {
+                1
+            } else {
+                0
+            },
+            skippedSubtrees = skippedSubtrees + if (result == ReuseBindingResult.SkippedSubtree) 1 else 0,
             bindingsByType = bindingsByType + (nodeType to updated),
         )
     }
@@ -42,6 +53,7 @@ data class RenderStats(
             reboundNodes = reboundNodes + other.reboundNodes,
             patchedNodes = patchedNodes + other.patchedNodes,
             skippedBindings = skippedBindings + other.skippedBindings,
+            skippedSubtrees = skippedSubtrees + other.skippedSubtrees,
             bindingsByType = mergeBindingsByType(bindingsByType, other.bindingsByType),
         )
     }
@@ -65,6 +77,7 @@ enum class ReuseBindingResult {
     Rebound,
     Patched,
     Skipped,
+    SkippedSubtree,
 }
 
 private fun mergeBindingsByType(

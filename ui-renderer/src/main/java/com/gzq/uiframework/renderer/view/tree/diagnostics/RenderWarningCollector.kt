@@ -84,7 +84,7 @@ internal object RenderWarningCollector {
     ): List<String> {
         val warnings = mutableListOf<String>()
         if (stats.reboundNodes >= LARGE_REBIND_WARNING_COUNT && stats.patchedNodes <= stats.reboundNodes / 2) {
-            warnings += "High rebind churn detected: rebound=${stats.reboundNodes}, patched=${stats.patchedNodes}, skipped=${stats.skippedBindings}."
+            warnings += "High rebind churn detected: rebound=${stats.reboundNodes}, patched=${stats.patchedNodes}, skipped=${stats.skippedBindings}, subtreeSkipped=${stats.skippedSubtrees}."
         }
         val structureChurn = stats.inserts + stats.removals
         if (structureChurn >= LARGE_STRUCTURE_CHURN_COUNT) {

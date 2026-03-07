@@ -75,7 +75,11 @@ internal object NodeBindingDiffer {
                 } else if (previous.props != next.props) {
                     NodeBindingPlan.Rebind
                 } else {
-                    NodeBindingPlan.Skip
+                    if (previous.children == next.children) {
+                        NodeBindingPlan.SkipSubtree
+                    } else {
+                        NodeBindingPlan.SkipSelfOnly
+                    }
                 }
             }
             val prevSpec = previous.spec
@@ -94,6 +98,10 @@ internal object NodeBindingDiffer {
         if (previous.props != next.props || modifierChanged) {
             return NodeBindingPlan.Rebind
         }
-        return NodeBindingPlan.Skip
+        return if (previous.children == next.children) {
+            NodeBindingPlan.SkipSubtree
+        } else {
+            NodeBindingPlan.SkipSelfOnly
+        }
     }
 }

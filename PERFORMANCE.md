@@ -22,6 +22,7 @@
 3. diagnostics 已有 render/layout 基础指标可观测能力。
 4. 延迟 session 容器的 keyed diff 已切到 `DiffUtil` 引擎（保留 key 缺失/重复 fallback）。
 5. framework 托管的 `RecyclerView` 容器默认关闭 `itemAnimator` 并按容器家族共享 `RecycledViewPool`。
+6. patch pipeline 已支持 subtree skip（`SkipSubtree`）并新增 `skippedSubtrees` 统计。
 
 ### 2.2 当前结论
 
@@ -73,7 +74,7 @@
 
 状态：进行中（已有起步）  
 目标：扩大节点级 skip 更新覆盖，降低无效 rebind
-阶段备注（2026-03-07）：`Lazy/Pager` keyed diff 引擎已切换至 `DiffUtil`，subtree skip 仍待推进。
+阶段备注（2026-03-07）：`Lazy/Pager` keyed diff 引擎已切换至 `DiffUtil`，并已新增 `SkipSubtree + skippedSubtrees` 路径与统计。
 
 ### Phase 3：诊断增强
 

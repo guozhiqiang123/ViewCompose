@@ -27,7 +27,9 @@ import com.gzq.uiframework.renderer.node.spec.ToggleNodeProps
 import com.gzq.uiframework.renderer.node.spec.VerticalPagerNodeProps
 
 internal sealed interface NodeBindingPlan {
-    data object Skip : NodeBindingPlan
+    data object SkipSelfOnly : NodeBindingPlan
+
+    data object SkipSubtree : NodeBindingPlan
 
     data object Rebind : NodeBindingPlan
 

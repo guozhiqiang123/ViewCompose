@@ -107,7 +107,9 @@ internal object ViewTreePatchPipeline {
                         resolved = nextResolved,
                     )
 
-                    NodeBindingPlan.Skip -> Unit
+                    NodeBindingPlan.SkipSelfOnly,
+                    NodeBindingPlan.SkipSubtree,
+                    -> Unit
                     is NodeBindingPlan.Patch -> {
                         if (bindingPlan.modifierChanged) {
                             ViewModifierApplier.applyModifier(
@@ -135,12 +137,16 @@ internal object ViewTreePatchPipeline {
                         resolved = nextResolved,
                     )
                 }
-                val childResult = reconcileChildren(
-                    view = mountedNode.view,
-                    previousChildren = mountedNode.children,
-                    node = patch.nextVNode,
-                    renderChildren = renderChildren,
-                )
+                val childResult = if (shouldReconcileChildren(bindingPlan)) {
+                    reconcileChildren(
+                        view = mountedNode.view,
+                        previousChildren = mountedNode.children,
+                        node = patch.nextVNode,
+                        renderChildren = renderChildren,
+                    )
+                } else {
+                    emptyChildResult(mountedNode.children)
+                }
                 mountedNode.children = childResult.mountedNodes
                 mountedNode.vnode = patch.nextVNode
                 moveViewToIndex(
@@ -153,7 +159,8 @@ internal object ViewTreePatchPipeline {
                     stats = childResult.stats.withReuse(
                         result = when (bindingPlan) {
                             NodeBindingPlan.Rebind -> ReuseBindingResult.Rebound
-                            NodeBindingPlan.Skip -> ReuseBindingResult.Skipped
+                            NodeBindingPlan.SkipSelfOnly -> ReuseBindingResult.Skipped
+                            NodeBindingPlan.SkipSubtree -> ReuseBindingResult.SkippedSubtree
                             is NodeBindingPlan.Patch -> ReuseBindingResult.Patched
                         },
                         nodeType = patch.nextVNode.type,
@@ -189,6 +196,21 @@ internal object ViewTreePatchPipeline {
             viewGroup,
             previousChildren,
             node.children,
+        )
+    }
+
+    internal fun shouldReconcileChildren(bindingPlan: NodeBindingPlan): Boolean {
+        return bindingPlan != NodeBindingPlan.SkipSubtree
+    }
+
+    private fun emptyChildResult(children: List<MountedNode>): RenderTreeResult {
+        return RenderTreeResult(
+            mountedNodes = children,
+            reconcileResult = ReconcileResult(
+                patches = emptyList(),
+                removals = emptyList(),
+            ),
+            stats = RenderStats(),
         )
     }
 

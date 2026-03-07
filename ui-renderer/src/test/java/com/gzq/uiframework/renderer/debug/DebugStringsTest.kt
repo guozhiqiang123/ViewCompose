@@ -82,6 +82,7 @@ class DebugStringsTest {
                 reboundNodes = 4,
                 patchedNodes = 5,
                 skippedBindings = 6,
+                skippedSubtrees = 2,
             ),
             structure = RenderStructureStats(
                 vnodeCount = 7,
@@ -96,7 +97,7 @@ class DebugStringsTest {
             """
             insert@0:Text
             --
-            inserts=1 reuses=2 removals=3 rebound=4 patched=5 skipped=6
+            inserts=1 reuses=2 removals=3 rebound=4 patched=5 skipped=6 subtreeSkipped=2
             vnodeCount=7 mountedCount=8 vnodeDepth=3 mountedDepth=4
             warning: Deep mounted view tree detected: depth=12 exceeds recommended limit 10.
             """.trimIndent(),

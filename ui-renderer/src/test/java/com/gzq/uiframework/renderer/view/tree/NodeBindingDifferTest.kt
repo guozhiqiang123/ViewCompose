@@ -33,7 +33,7 @@ import org.junit.Test
 
 class NodeBindingDifferTest {
     @Test
-    fun `ignores child changes when node self is unchanged`() {
+    fun `returns skip self only when child tree changes`() {
         val previous = textNode(
             children = listOf(
                 VNode(
@@ -65,7 +65,15 @@ class NodeBindingDifferTest {
             ),
         )
 
-        assertSame(NodeBindingPlan.Skip, NodeBindingDiffer.plan(previous, next))
+        assertSame(NodeBindingPlan.SkipSelfOnly, NodeBindingDiffer.plan(previous, next))
+    }
+
+    @Test
+    fun `returns subtree skip when self and children are unchanged`() {
+        val previous = textNode(text = "stable")
+        val next = textNode(text = "stable")
+
+        assertSame(NodeBindingPlan.SkipSubtree, NodeBindingDiffer.plan(previous, next))
     }
 
     @Test
