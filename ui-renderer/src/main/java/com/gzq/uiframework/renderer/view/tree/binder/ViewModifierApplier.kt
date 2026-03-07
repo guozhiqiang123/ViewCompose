@@ -187,10 +187,11 @@ internal object ViewModifierApplier {
         val clickListener = resolved.clickable?.let { clickableElement ->
             View.OnClickListener { clickableElement.onClick() }
         }
-        view.setOnClickListener(clickListener)
         val hasClickListener = clickListener != null
-        view.isClickable = hasClickListener
-        view.isFocusable = hasClickListener
+        val keepIntrinsicInteraction = shouldKeepIntrinsicInteraction(node.type)
+        view.setOnClickListener(clickListener)
+        view.isClickable = hasClickListener || keepIntrinsicInteraction
+        view.isFocusable = hasClickListener || keepIntrinsicInteraction
         view.isFocusableInTouchMode = false
         if (resolvedPadding == null) {
             view.setPadding(0, 0, 0, 0)
@@ -410,6 +411,13 @@ internal object ViewModifierApplier {
         if (textSizeSp != null) {
             layout.inputView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp.toFloat())
         }
+    }
+
+    private fun shouldKeepIntrinsicInteraction(type: NodeType): Boolean {
+        return type == NodeType.Checkbox ||
+            type == NodeType.Switch ||
+            type == NodeType.RadioButton ||
+            type == NodeType.Slider
     }
 
     private fun readNodeTextColor(node: VNode): Int? = when (val spec = node.spec) {

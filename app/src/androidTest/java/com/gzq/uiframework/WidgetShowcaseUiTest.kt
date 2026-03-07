@@ -36,6 +36,7 @@ class WidgetShowcaseUiTest {
                     checkbox is android.widget.CheckBox,
                 )
                 checkbox as android.widget.CheckBox
+                assertTrue("Expected Checkbox to stay clickable for touch interaction", checkbox.isClickable)
                 assertTrue("Expected initial checked=true for 选中状态", checkbox.isChecked)
                 checkbox.performClick()
             }
