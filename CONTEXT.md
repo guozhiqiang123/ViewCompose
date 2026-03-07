@@ -1,8 +1,8 @@
-# UIFramework Context
+# ViewCompose Context
 
 ## 1. 文档定位
 
-这是 `UIFramework` 的统一上下文入口。
+这是 `ViewCompose` 的统一上下文入口。
 
 目标是让人类和 AI 在最短路径内恢复真实项目状态，避免被历史快照文档干扰。
 

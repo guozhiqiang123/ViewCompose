@@ -8,7 +8,7 @@
 
 1. 文案显示不全、被裁剪、被省略
 2. 主题 token 映射错误，导致最终颜色不符合预期
-3. demo 页面结构调整后，关键 benchmark 入口跑偏
+3. demo 页面结构调整后，关键 viewcompose-benchmark 入口跑偏
 4. 组件在真实 Activity/View 树里的测量与视觉表现和预期不一致
 
 外挂组件专项规划见 [OVERLAY_COMPONENTS_ROADMAP.md](/Users/gzq/AndroidStudioProjects/UIFramework/OVERLAY_COMPONENTS_ROADMAP.md)。
@@ -25,7 +25,7 @@
 
 1. 关键按钮和文本是否可见
 2. 关键文本是否被 ellipsize 或裁剪
-3. benchmark anchor 是否仍在稳定位置
+3. viewcompose-benchmark anchor 是否仍在稳定位置
 
 ### 2.2 主题断言
 
@@ -52,15 +52,15 @@
 第一批 UI 测试优先覆盖高风险 demo 页面：
 
 1. `Foundations`
-   - benchmark 按钮是否被截断
+   - viewcompose-benchmark 按钮是否被截断
    - Light/Dark 标题颜色是否正确
 2. `Input`
-   - benchmark 按钮和输入框是否完整可见
+   - viewcompose-benchmark 按钮和输入框是否完整可见
    - 带图标按钮是否被截断
 3. `State`
-   - benchmark anchor 是否稳定
+   - viewcompose-benchmark anchor 是否稳定
 4. `Diagnostics`
-   - benchmark 刷新入口是否稳定
+   - viewcompose-benchmark 刷新入口是否稳定
 
 ### 3.1 延迟 session 容器专项
 
@@ -104,7 +104,7 @@
 1. 不引入重量级截图回归平台
 2. 不试图覆盖所有 demo 页面
 3. 不用截图像素比对替代结构断言
-4. 不把 benchmark 测试和 UI 正确性测试混在同一个用例里
+4. 不把 viewcompose-benchmark 测试和 UI 正确性测试混在同一个用例里
 
 ## 6. 后续扩展
 

@@ -1,4 +1,4 @@
-# UIFramework Unified Roadmap
+# ViewCompose Unified Roadmap
 
 ## 1. 文档定位
 
@@ -48,7 +48,7 @@
 ## 3. 统一设计原则
 
 1. 组件参数负责语义，`Modifier` 负责通用修饰，`Theme/Defaults` 负责默认值。
-2. 平台实现不回流到 DSL 模块：Android 宿主实现进入 `ui-overlay-android` 或 bridge 层。
+2. 平台实现不回流到 DSL 模块：Android 宿主实现进入 `viewcompose-overlay-android` 或 bridge 层。
 3. 新能力以“最小可验证步”推进：文档、实现、测试、demo 逐步落地并小步提交。
 4. 路线图文档必须和实现同步更新，禁止“代码已变、roadmap 未收口”。
 
@@ -63,7 +63,7 @@
 | Interop | `AndroidView` 可用 | 强化复杂原生 View 场景与主题/生命周期协同 |
 | Diagnostics | 基础 render/layout 诊断已落地 | locals/render tree/patch 可视化与告警可读性 |
 | UI Testing | 核心 instrumentation 路径已建立 | 扩展容器专项、overlay 宿主专项、主题断言覆盖 |
-| Performance | 已有 benchmark 基线，且 `DiffUtil + payload + subtree skip` 主路径已落地 | 继续扩大 skip 覆盖、增强诊断指标、推进发布态优化 |
+| Performance | 已有 viewcompose-benchmark 基线，且 `DiffUtil + payload + subtree skip` 主路径已落地 | 继续扩大 skip 覆盖、增强诊断指标、推进发布态优化 |
 
 ### 4.1 完成态字段定义（C/U/D/UI）
 
@@ -136,7 +136,7 @@
 交付：
 
 1. render/patch/layout 指标可视化增强
-2. benchmark 路线固定化并持续更新基线
+2. viewcompose-benchmark 路线固定化并持续更新基线
 3. 发布态优化项（baseline profile 等）推进
 
 完成标准：
@@ -160,7 +160,7 @@
 
 里程碑标记为 `Completed` 之前，必须满足：
 
-1. `:ui-renderer:compileDebugKotlin` 与 `:app:compileDebugKotlin` 通过
+1. `:viewcompose-renderer:compileDebugKotlin` 与 `:app:compileDebugKotlin` 通过
 2. `:app:connectedDebugAndroidTest` 全绿（或在 roadmap 中登记明确豁免范围与截止时间）
 
 ## 7. 非目标（当前阶段）

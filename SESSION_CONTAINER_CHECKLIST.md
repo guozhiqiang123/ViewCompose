@@ -49,9 +49,9 @@
 
 基础单测（通用机制）：
 
-1. [LazyListDiffTest.kt](/Users/gzq/AndroidStudioProjects/UIFramework/ui-renderer/src/test/java/com/gzq/uiframework/renderer/reconcile/LazyListDiffTest.kt)
-2. [LazyHolderRegistryTest.kt](/Users/gzq/AndroidStudioProjects/UIFramework/ui-renderer/src/test/java/com/gzq/uiframework/renderer/view/LazyHolderRegistryTest.kt)
-3. [LazyItemSessionControllerTest.kt](/Users/gzq/AndroidStudioProjects/UIFramework/ui-renderer/src/test/java/com/gzq/uiframework/renderer/view/LazyItemSessionControllerTest.kt)
+1. [LazyListDiffTest.kt](/Users/gzq/AndroidStudioProjects/UIFramework/viewcompose-renderer/src/test/java/com/viewcompose/renderer/reconcile/LazyListDiffTest.kt)
+2. [LazyHolderRegistryTest.kt](/Users/gzq/AndroidStudioProjects/UIFramework/viewcompose-renderer/src/test/java/com/viewcompose/renderer/view/LazyHolderRegistryTest.kt)
+3. [LazyItemSessionControllerTest.kt](/Users/gzq/AndroidStudioProjects/UIFramework/viewcompose-renderer/src/test/java/com/viewcompose/renderer/view/LazyItemSessionControllerTest.kt)
 
 当前已覆盖专项：
 

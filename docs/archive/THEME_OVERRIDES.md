@@ -1,8 +1,8 @@
-# UIFramework Theme Overrides
+# ViewCompose Theme Overrides
 
 ## 1. 文档定位
 
-本文档专门讨论 `UIFramework` 里的“局部主题复用与覆盖”。
+本文档专门讨论 `ViewCompose` 里的“局部主题复用与覆盖”。
 
 它回答 4 个问题：
 

@@ -1,4 +1,4 @@
-# UIFramework 架构与实现审查报告
+# ViewCompose 架构与实现审查报告
 
 > 审查日期：2026-03-03
 > 审查人：Claude Opus 4.6
@@ -15,7 +15,7 @@
 1. **文档不是装饰**：12 份根目录文档构成了一个完整的架构决策体系，从产品定义、模块职责、性能路线到测试策略全覆盖。更重要的是，文档里的"当前短板"和"不做什么"比"已经做了什么"写得更清楚——这说明决策是深思熟虑的
 2. **代码纪律极强**：全仓库 0 个 TODO、0 个 FIXME、0 个空 catch block、0 个 HACK 注释。仅 4 处 `@Suppress("UNCHECKED_CAST")`，全部有类型安全的上下文理由。这在实验性项目中非常罕见
 3. **v1 范围精准**：选择了"根级重建 + keyed 复用 + 列表项独立 session"这条明确路线，没有试图复制 Compose Runtime 的全部能力
-4. **基础设施完备**：benchmark 模块、真机基线数据、render 诊断面板、layout pass 追踪、51 个测试文件——不是"能跑就好"的水平
+4. **基础设施完备**：viewcompose-benchmark 模块、真机基线数据、render 诊断面板、layout pass 追踪、51 个测试文件——不是"能跑就好"的水平
 5. **架构边界自洽**：Modifier → Props → Theme → Defaults 的职责链清晰，Modifier Phase 4 已完成（`Modifier.Empty` 移除、文字样式 modifier 退场），scope modifier 也已铺到 Row/Column/Box
 
 **一句话：方向完全正确，v1 骨架扎实。问题不是"设计有误"，而是有几处具体实现需要修补，以及有一条高价值演进路线（NodeSpec 增量 patch）值得集中推进。**
@@ -28,7 +28,7 @@
 
 #### 问题 A：`ChildReconciler.findReusableIndex` 有 O(n²) 复杂度
 
-**文件：** `ui-renderer/.../reconcile/ChildReconciler.kt:69-76`
+**文件：** `viewcompose-renderer/.../reconcile/ChildReconciler.kt:69-76`
 
 ```kotlin
 if (node.key != null) {
@@ -68,7 +68,7 @@ fun <T> reconcile(previous: List<ReconcileNode<T>>, nodes: List<VNode>): Reconci
 
 #### 问题 B：`RenderSession.render()` 缺乏错误边界
 
-**文件：** `ui-widget-core/.../runtime/session/RenderSession.kt:34-75`
+**文件：** `viewcompose-widget-core/.../runtime/session/RenderSession.kt:34-75`
 
 当前 `render()` 方法没有任何 try-catch。如果 content lambda、`buildVNodeTree`、或 `ViewTreeRenderer.renderInto` 中任何一处抛出异常：
 
@@ -106,7 +106,7 @@ fun render() {
 
 #### 问题 C：`Theme.kt` 886 行——单文件过大且 `rebaseComponentStyles` 有结构性风险（✅ 已解决）
 
-**文件：** `ui-widget-core/.../context/Theme.kt`
+**文件：** `viewcompose-widget-core/.../context/Theme.kt`
 
 这是全仓库最大的源文件（886 行），内含：
 
@@ -142,7 +142,7 @@ context/
 
 #### 问题 D：`ViewTreeRenderer` 的 warning 集合无限增长 + 测试状态污染
 
-**文件：** `ui-renderer/.../view/tree/ViewTreeRenderer.kt:17-18`
+**文件：** `viewcompose-renderer/.../view/tree/ViewTreeRenderer.kt:17-18`
 
 ```kotlin
 private val emittedModifierWarnings = mutableSetOf<String>()
@@ -186,7 +186,7 @@ object ViewTreeRenderer {
 
 - PERFORMANCE.md Phase 2 记录"已完成第一步整节点 skip bind"
 - 所有第一方控件（除 Spacer）已经有 NodeSpec
-- `State -> Patch Stress` 已成为专门的 benchmark 场景
+- `State -> Patch Stress` 已成为专门的 viewcompose-benchmark 场景
 - 但 **字段级** `NodeSpecComparator` + `NodePatch` + `binder.applyPatch()` 还没有实现
 
 **为什么这是最高价值的性能优化：**
@@ -197,7 +197,7 @@ object ViewTreeRenderer {
 - `TextField value` 变化 → 只更新文字，跳过 hint/label/error 状态
 - 节点完全没变 → 直接跳过 binder，零开销
 
-**预期收益：** 在 `patchUpdates` benchmark 场景中，从"整节点 rebind"降为"字段级 patch"，P50 frameDurationCpuMs 应有可测量下降。
+**预期收益：** 在 `patchUpdates` viewcompose-benchmark 场景中，从"整节点 rebind"降为"字段级 patch"，P50 frameDurationCpuMs 应有可测量下降。
 
 ---
 
@@ -279,7 +279,7 @@ Compose 的做法是提供更轻量的 local：
 
 ### 3.2 PERFORMANCE.md 中 RenderSession 路径引用可能过时
 
-§4.3 引用了 `RenderSession.kt` 的路径为 `ui-widget-core/.../runtime/RenderSession.kt`，但实际文件已经在 `runtime/session/RenderSession.kt` 子目录中。建议统一更新。
+§4.3 引用了 `RenderSession.kt` 的路径为 `viewcompose-widget-core/.../runtime/RenderSession.kt`，但实际文件已经在 `runtime/session/RenderSession.kt` 子目录中。建议统一更新。
 
 ### 3.3 文档间"NodeSpec 下一步"描述不完全同步
 
@@ -301,11 +301,11 @@ Compose 的做法是提供更轻量的 local：
 
 ### 4.1 根级 session + keyed reuse 作为 v1 更新模型
 
-不应过早引入细粒度重组。当前模型的 latency 在 benchmark 中表现良好（frameDurationCpuMs P50 全部在 2.4~3.0ms），说明对中小页面完全够用。过早引入 scope 树或 slot table 会大幅增加复杂度，但收益在当前阶段不明显。
+不应过早引入细粒度重组。当前模型的 latency 在 viewcompose-benchmark 中表现良好（frameDurationCpuMs P50 全部在 2.4~3.0ms），说明对中小页面完全够用。过早引入 scope 树或 slot table 会大幅增加复杂度，但收益在当前阶段不明显。
 
 ### 4.2 不继续拆 Gradle 模块
 
-当前 6+1 个模块（ui-runtime, ui-renderer, ui-widget-core, ui-overlay-android, ui-image-coil, app + benchmark）的划分是合理的。模块内目录结构已经按职责整理到位。问题在"模块内边界"而不是"模块数量不够"。
+当前 6+1 个模块（viewcompose-runtime, viewcompose-renderer, viewcompose-widget-core, viewcompose-overlay-android, viewcompose-image-coil, app + viewcompose-benchmark）的划分是合理的。模块内目录结构已经按职责整理到位。问题在"模块内边界"而不是"模块数量不够"。
 
 ### 4.3 NodeSpec 渐进迁移路线
 
@@ -325,7 +325,7 @@ SESSION_CONTAINER_CHECKLIST.md 定义了 6 类必测场景，LazyColumn 和 TabP
 
 ### 4.7 Benchmark 基础设施已到位
 
-`:benchmark` 模块已有 13 个宏基准场景，在 Pixel 4 XL 上已跑出首轮基线数据。所有关键交互路径（冷启动、章节切换、主题切换、列表滚动、patch 压测）都已覆盖。后续 NodeSpec 增量 patch 可以直接用现有 benchmark 做前后对照。
+`:viewcompose-benchmark` 模块已有 13 个宏基准场景，在 Pixel 4 XL 上已跑出首轮基线数据。所有关键交互路径（冷启动、章节切换、主题切换、列表滚动、patch 压测）都已覆盖。后续 NodeSpec 增量 patch 可以直接用现有 viewcompose-benchmark 做前后对照。
 
 ---
 
@@ -347,7 +347,7 @@ SESSION_CONTAINER_CHECKLIST.md 定义了 6 类必测场景，LazyColumn 和 TabP
 | 5 | 设计 NodeSpecComparator 接口 | Sprint 1 完成 | 架构基础 |
 | 6 | 实现 Button、Text、TextField 的字段级 patch | #5 | 高频节点优化 |
 | 7 | binder 接入 applyPatch 路径 | #6 | 端到端生效 |
-| 8 | benchmark 对照：patchUpdates 前后 | #7 | 量化收益 |
+| 8 | viewcompose-benchmark 对照：patchUpdates 前后 | #7 | 量化收益 |
 
 ### Sprint 3：主题重构（约 1~2 周）
 
@@ -374,7 +374,7 @@ SESSION_CONTAINER_CHECKLIST.md 定义了 6 类必测场景，LazyColumn 和 TabP
 | 17 | 导航设计文档 | 框架被实际项目使用前 |
 | 18 | Baseline Profiles | 正式发布前 |
 | 19 | P2 控件（Chip, Dropdown, LazyRow 等） | Sprint 3 完成后 |
-| 20 | ConstraintLayout 容器 | benchmark 证实层级深度是瓶颈 |
+| 20 | ConstraintLayout 容器 | viewcompose-benchmark 证实层级深度是瓶颈 |
 | 21 | ChildReconciler / ViewTreeRenderer 改 class | 测试体系进一步要求 |
 
 ---
@@ -419,7 +419,7 @@ SESSION_CONTAINER_CHECKLIST.md 定义了 6 类必测场景，LazyColumn 和 TabP
 
 ## 8. 结论
 
-> **UIFramework 是一个架构方向正确、文档质量高、代码纪律极强的 Android View 声明式 UI 框架 v1。**
+> **ViewCompose 是一个架构方向正确、文档质量高、代码纪律极强的 Android View 声明式 UI 框架 v1。**
 >
 > 此前最紧迫的三件事已全部解决：
 > 1. ~~补 RenderSession 错误边界~~ → ✅ 已完成

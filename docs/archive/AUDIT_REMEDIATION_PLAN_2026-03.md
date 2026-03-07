@@ -19,7 +19,7 @@
 
 已核验事实：
 
-1. `:ui-renderer:compileDebugKotlin` 通过，审计里“TabRow 断裂编译”问题已不复现。
+1. `:viewcompose-renderer:compileDebugKotlin` 通过，审计里“TabRow 断裂编译”问题已不复现。
 2. `:app:connectedDebugAndroidTest` 已通过：16/16。
 3. 审计提到“Chip/SearchBar 等无 demo 使用”已过期：当前 demo 已存在调用。
 4. 审计提到的 overlay host 重复实现仍存在（Dialog/Popup/ModalBottomSheet 三套近似 commit/clear 逻辑）。
@@ -110,7 +110,7 @@
 
 完成标准：
 
-1. `app/src/main/java/com/gzq/uiframework` 不再平铺大量文件
+1. `app/src/main/java/com/viewcompose` 不再平铺大量文件
 2. 大文件拆分后可读性提升且无行为回归
 
 ## 5. 执行日志
@@ -133,14 +133,14 @@
 9. W2 进展：
    - 已新增 `Modifier.testTag`，渲染链路支持写入 view tag（`ui_framework_test_tag`）。
    - 已补文档 `MODIFIER.md` 中的能力归类。
-   - `:ui-renderer:testDebugUnitTest` 已通过。
+   - `:viewcompose-renderer:testDebugUnitTest` 已通过。
 10. 已完成 `DemoUiTestHelpers` tag-first 改造，新增 testTag 定位/点击/滚动可见性辅助能力。
 11. 已完成 `DemoVisualUiTest` 到 testTag 断言迁移，去除易变文案滚动依赖。
 12. 已跑通 `:app:connectedDebugAndroidTest`（15/15）。
 13. 已修复 `IconButtonTest` 默认变体断言漂移，`qaQuick` 通过。
 14. 已跑通 `qaFull`（含 connected UI 测试）。
 15. W3 进展：已新增 `AdditionalWidgetCoverageTest`，补齐 Chip/SearchBar/NavigationBar/Scaffold/LazyRow/FlowRow/Scrollable 最小单测闭环。
-16. `:ui-widget-core:testDebugUnitTest` 已通过。
+16. `:viewcompose-widget-core:testDebugUnitTest` 已通过。
 17. 已新增 `ComponentFamilySmokeUiTest`，覆盖 Actions/Input/Navigation/Collections/Layouts 关键组件族 smoke 锚点断言。
 18. 已跑通 `:app:connectedDebugAndroidTest`（16/16）。
 19. 已同步 `ROADMAP.md` 与 `PERFORMANCE.md` 的基线状态。

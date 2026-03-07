@@ -4,7 +4,7 @@
 
 - Plan source: `docs/archive/PROJECT_REAUDIT_2026-03-06.md`
 - Execution scope in this round: `F1/F2/F3/F5`
-- Out of scope in this round: `F4` (`ui-widget-core` / Android bridge module split)
+- Out of scope in this round: `F4` (`viewcompose-widget-core` / Android bridge module split)
 
 ## 2. Done Criteria
 

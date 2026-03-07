@@ -1,4 +1,4 @@
-# UIFramework 审计报告（2026-03-05）
+# ViewCompose 审计报告（2026-03-05）
 
 ## 0. 审计范围与方法
 
@@ -33,8 +33,8 @@
 
 ## 2.1 合理点
 
-1. 模块边界总体正确：`ui-runtime / ui-renderer / ui-widget-core / ui-overlay-android / app` 的职责划分清晰，且代码目录已基本按此落位（见 `ARCHITECTURE.md:64-257`）。
-2. Overlay 路线正确：将 Dialog/Popup 的平台实现下沉到 `ui-overlay-android`，声明契约留在 `ui-widget-core`，符合“平台实现不回流 DSL 模块”的规则（`ARCHITECTURE.md:250-253`，`OVERLAY_COMPONENTS_ROADMAP.md:92-155`）。
+1. 模块边界总体正确：`viewcompose-runtime / viewcompose-renderer / viewcompose-widget-core / viewcompose-overlay-android / app` 的职责划分清晰，且代码目录已基本按此落位（见 `ARCHITECTURE.md:64-257`）。
+2. Overlay 路线正确：将 Dialog/Popup 的平台实现下沉到 `viewcompose-overlay-android`，声明契约留在 `viewcompose-widget-core`，符合“平台实现不回流 DSL 模块”的规则（`ARCHITECTURE.md:250-253`，`OVERLAY_COMPONENTS_ROADMAP.md:92-155`）。
 3. Workflow 设计正确：小步提交、文档同步、线程丢失恢复顺序等规则可操作性高（`WORKFLOW.md:16-143`）。
 
 ## 2.2 规划层风险与缺口
@@ -74,8 +74,8 @@
 
 ## 4.1 P0（立即处理）
 
-1. `ui-renderer` 在**当前工作区（含未提交改动）**无法编译通过。
-   - 复现命令：`./gradlew :ui-renderer:compileDebugKotlin`
+1. `viewcompose-renderer` 在**当前工作区（含未提交改动）**无法编译通过。
+   - 复现命令：`./gradlew :viewcompose-renderer:compileDebugKotlin`
    - 结果：FAIL
    - 主要原因：遗留 `TabRow` 相关引用仍在 binder/patch/factory 中，但对应类型/实现已缺失（如 `TabRowNodeProps`、`DeclarativeTabRowLayout` 等）。
    - 关键文件：`ContainerViewBinder.kt`、`NodeBindingPlan.kt`、`NodeBindingDiffer.kt`、`NodeViewBinderRegistry.kt`、`ViewNodeFactory.kt`、`ContainerNodePatchApplier.kt`
@@ -91,7 +91,7 @@
 1. Overlay Host 存在重复实现。
    - `DialogOverlayHost` 与 `PopupOverlayHost` 的 commit/clear/activeEntries 逻辑高度重复（`DialogOverlayHost.kt`、`PopupOverlayHost.kt`），后续新增 overlay 类型时易复制粘贴。
 2. `app` demo 目录仍然平铺。
-   - `app/src/main/java/com/gzq/uiframework` 下大量页面文件平铺（约 30 个），与“按模块/目录分类新增代码”的长期目标不一致（`WORKFLOW.md:75-95`）。
+   - `app/src/main/java/com/viewcompose` 下大量页面文件平铺（约 30 个），与“按模块/目录分类新增代码”的长期目标不一致（`WORKFLOW.md:75-95`）。
 3. 多处大文件仍需继续拆分。
    - 例如 `ContainerViewBinder.kt`、`InputWidgetsDsl.kt`、`DemoFoundationsPage.kt`，认知负担较高，review 成本偏大。
 

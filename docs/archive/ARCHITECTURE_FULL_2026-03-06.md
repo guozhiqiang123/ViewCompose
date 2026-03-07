@@ -1,11 +1,11 @@
-# UIFramework Architecture
+# ViewCompose Architecture
 
 ## 1. 文档定位
 
-本文档定义 `UIFramework` 当前阶段的真实架构基线，用来回答 4 个问题：
+本文档定义 `ViewCompose` 当前阶段的真实架构基线，用来回答 4 个问题：
 
 1. 现在框架实际上是怎么工作的
-2. `ui-runtime`、`ui-renderer`、`ui-widget-core` 的职责是否清晰
+2. `viewcompose-runtime`、`viewcompose-renderer`、`viewcompose-widget-core` 的职责是否清晰
 3. 当前架构和 Compose 相比，稳定性、健壮性、可扩展性还缺什么
 4. 后续开发应该沿什么方向继续收敛，而不是再回到早期理想化蓝图
 
@@ -14,15 +14,15 @@
 当前状态：
 
 - 日期：2026-03-01
-- 仓库：`/Users/gzq/AndroidStudioProjects/UIFramework`
-- 当前模块：`:ui-runtime`、`:ui-renderer`、`:ui-widget-core`、`:ui-overlay-android`、`:ui-image-coil`、`:app`
+- 仓库：`/Users/gzq/AndroidStudioProjects/ViewCompose`
+- 当前模块：`:viewcompose-runtime`、`:viewcompose-renderer`、`:viewcompose-widget-core`、`:viewcompose-overlay-android`、`:viewcompose-image-coil`、`:app`
 - 技术基线：Kotlin + Android View System，`minSdk 24`，`compileSdk 36`
 
 ## 2. 当前总判断
 
 当前框架的方向是成立的，但必须把评价说准确：
 
-> `UIFramework` 现在是一个基于 Android View 的声明式渲染框架 v1，采用根级 `RenderSession` 驱动重建、虚拟树 keyed 复用、集中式 renderer、列表 item session、以及基于 local 的主题/环境上下文。
+> `ViewCompose` 现在是一个基于 Android View 的声明式渲染框架 v1，采用根级 `RenderSession` 驱动重建、虚拟树 keyed 复用、集中式 renderer、列表 item session、以及基于 local 的主题/环境上下文。
 
 这条路对当前阶段是合理的，因为：
 
@@ -35,7 +35,7 @@
 
 1. 更新粒度仍然偏粗，通用页面节点仍以“根级重跑 + keyed 复用”为主
 2. renderer 仍然过于集中，`ViewTreeRenderer` 是明显的大类
-3. 组合运行时还主要住在 `ui-widget-core`，`ui-runtime` 仍然过薄
+3. 组合运行时还主要住在 `viewcompose-widget-core`，`viewcompose-runtime` 仍然过薄
 4. `VNode + Props` 仍然偏动态，类型约束和错误发现能力弱于 Compose
 5. ~~`Props` 仍然存在于主链路里，尚未完全收缩为兼容/扩展层~~ → `Props` 已降级为兼容层，第一方控件主模型已迁移到 NodeSpec
 
@@ -65,11 +65,11 @@
 
 | 模块 | 当前职责 | 当前评价 |
 | --- | --- | --- |
-| `:ui-runtime` | 可观察状态、派生状态、读依赖观察 | 结构清晰，但范围偏窄 |
-| `:ui-renderer` | `VNode`、`Modifier`、patch/reconcile、Android View 挂载、自定义容器、lazy adapter | 当前技术核心，结构比过去清晰 |
-| `:ui-widget-core` | DSL、session、remember/effect、local/theme/environment、overlay 声明契约、widget 默认值 | 当前最混，但已整理目录 |
-| `:ui-overlay-android` | Android 宿主级 overlay presenter、Dialog/PopupWindow 等平台弹层接线 | 新增模块，用于承接不适合继续堆在 `ui-widget-core` 的平台实现 |
-| `:ui-image-coil` | 可选远程图片加载桥接 | 角色清晰，边界合理 |
+| `:viewcompose-runtime` | 可观察状态、派生状态、读依赖观察 | 结构清晰，但范围偏窄 |
+| `:viewcompose-renderer` | `VNode`、`Modifier`、patch/reconcile、Android View 挂载、自定义容器、lazy adapter | 当前技术核心，结构比过去清晰 |
+| `:viewcompose-widget-core` | DSL、session、remember/effect、local/theme/environment、overlay 声明契约、widget 默认值 | 当前最混，但已整理目录 |
+| `:viewcompose-overlay-android` | Android 宿主级 overlay presenter、Dialog/PopupWindow 等平台弹层接线 | 新增模块，用于承接不适合继续堆在 `viewcompose-widget-core` 的平台实现 |
+| `:viewcompose-image-coil` | 可选远程图片加载桥接 | 角色清晰，边界合理 |
 | `:app` | demo、人工测试、主题切换、回归入口 | 合理 |
 
 当前 overlay 相关补充判断：
@@ -82,7 +82,7 @@
 
 当前目录已经按职责重新整理。
 
-#### `ui-runtime`
+#### `viewcompose-runtime`
 
 ```text
 runtime/
@@ -101,7 +101,7 @@ runtime/
 - 这个结构是清晰的
 - 问题不在目录，而在模块范围太小
 
-#### `ui-renderer`
+#### `viewcompose-renderer`
 
 ```text
 renderer/
@@ -162,7 +162,7 @@ renderer/
 - renderer 的问题不再是“有没有目录”，而是“是否把不同语义层级继续堆在同一目录”
 - `ViewTreeRenderer` 仍然是单点复杂度中心，但 modifier、layout params、dispose、patch pipeline、binder/diagnostics 相关配套类已经开始拆到子目录，不应再回流
 
-#### `ui-widget-core`
+#### `viewcompose-widget-core`
 
 ```text
 widget/core/
@@ -219,10 +219,10 @@ widget/core/
 评价：
 
 - 这次整理后，目录层已经基本清楚
-- 但模块级职责仍偏重：`ui-widget-core` 现在同时承担 DSL、composition runtime、theme、defaults、overlay contracts
+- 但模块级职责仍偏重：`viewcompose-widget-core` 现在同时承担 DSL、composition runtime、theme、defaults、overlay contracts
 - 这是当前最需要在后续继续分层的地方
 
-#### `ui-overlay-android`
+#### `viewcompose-overlay-android`
 
 ```text
 overlay/android/
@@ -237,7 +237,7 @@ overlay/android/
 
 评价：
 
-- 这个模块只承接 Android 平台弹层实现，不再回流到 `ui-widget-core`
+- 这个模块只承接 Android 平台弹层实现，不再回流到 `viewcompose-widget-core`
 - 后续如果继续扩张，再按 `presenter/surface`、`presenter/feedback`、`positioning` 细分
 
 ## 4.3 模块与目录归属判断规则
@@ -250,7 +250,7 @@ overlay/android/
 
 当前固定规则：
 
-1. Android `View` / `Dialog` / `PopupWindow` / `Toast` 宿主代码，不进入 `ui-widget-core`
+1. Android `View` / `Dialog` / `PopupWindow` / `Toast` 宿主代码，不进入 `viewcompose-widget-core`
 2. ambient local 和主题上下文，不和 overlay/request DSL 混放
 3. renderer 的节点基础模型、媒体模型、输入模型、集合模型，不继续共用一个平铺目录
 4. `ViewTreeRenderer` 配套 binder/diagnostics/pipeline/patch，不继续堆在 `view/tree/` 根目录
@@ -291,7 +291,7 @@ flowchart TD
 
 基于当前源码目录和最近 overlay 改造，这一轮审查结论固定如下。
 
-### `ui-runtime`
+### `viewcompose-runtime`
 
 结论：
 
@@ -302,7 +302,7 @@ flowchart TD
 
 - 模块仍偏薄，暂时更像“状态观察内核”而不是完整组合 runtime
 
-### `ui-renderer`
+### `viewcompose-renderer`
 
 结论：
 
@@ -316,7 +316,7 @@ flowchart TD
 - `spec/` 已经按语义目录拆开，当前层次基本合理
 - 后续如果继续增长，重点会转到“哪些 spec 仍可进一步统一”而不是继续搬目录
 
-### `ui-widget-core`
+### `viewcompose-widget-core`
 
 结论：
 
@@ -334,7 +334,7 @@ flowchart TD
 - widget 声明层目录已经按控件族拆到子目录，当前层次是合理的
 - 后续真正需要继续收敛的重点会从“文件平铺”转到“共享 helper 是否继续抽象”
 
-### `ui-overlay-android`
+### `viewcompose-overlay-android`
 
 结论：
 
@@ -345,7 +345,7 @@ flowchart TD
 
 - 如果 overlay 能力继续增加，应优先拆 `presenter/surface`、`presenter/feedback`、`positioning`
 
-### `ui-image-coil`
+### `viewcompose-image-coil`
 
 结论：
 
@@ -434,9 +434,9 @@ flowchart TD
 
 这里是当前真正需要直说的问题。
 
-### 7.1 `ui-widget-core` 仍然承担过多职责
+### 7.1 `viewcompose-widget-core` 仍然承担过多职责
 
-当前 `ui-widget-core` 同时承担：
+当前 `viewcompose-widget-core` 同时承担：
 
 - DSL
 - composition/session runtime
@@ -450,7 +450,7 @@ flowchart TD
 结论：
 
 - 现在不必拆新模块
-- 但后续如果继续扩 runtime 和导航，必须考虑把 `runtime/` 和 `context/` 从 `ui-widget-core` 中提升出来
+- 但后续如果继续扩 runtime 和导航，必须考虑把 `runtime/` 和 `context/` 从 `viewcompose-widget-core` 中提升出来
 
 ### 7.2 `ViewTreeRenderer` 仍然过于集中
 
@@ -589,10 +589,10 @@ Compose 的优势在于：
 
 ### 7.6 package 分层已开始，但 public API 仍需克制演进
 
-这一轮整理不再只是“按文件夹归类”，`ui-runtime` 和 `ui-renderer/view` 的内部实现已经开始和目录同步做 package 分层：
+这一轮整理不再只是“按文件夹归类”，`viewcompose-runtime` 和 `viewcompose-renderer/view` 的内部实现已经开始和目录同步做 package 分层：
 
-- `ui-runtime` 已拆成 `runtime.state` 和 `runtime.observation`
-- `ui-renderer/view` 已拆成 `view.container`、`view.lazy`、`view.tree`
+- `viewcompose-runtime` 已拆成 `runtime.state` 和 `runtime.observation`
+- `viewcompose-renderer/view` 已拆成 `view.container`、`view.lazy`、`view.tree`
 
 这带来的直接收益是：
 
@@ -602,11 +602,11 @@ Compose 的优势在于：
 
 但这里仍然保留了一个刻意的边界：
 
-- `ui-widget-core` 作为当前 DSL 和默认值入口，public API package 还没有大规模拆散
+- `viewcompose-widget-core` 作为当前 DSL 和默认值入口，public API package 还没有大规模拆散
 
 这是当前更合理的取舍，因为：
 
-- app/demo 和未来外部调用方大量依赖 `com.gzq.uiframework.widget.core`
+- app/demo 和未来外部调用方大量依赖 `com.viewcompose.widget.core`
 - 过早把 public DSL 全量打散，会带来高迁移成本，但不会立即提升能力上限
 
 结论：
@@ -690,7 +690,7 @@ Compose 的优势在于：
 
 如果不遵守，则会很快退化成：
 
-- `ui-widget-core` 继续膨胀
+- `viewcompose-widget-core` 继续膨胀
 - `ViewTreeRenderer` 持续膨胀
 - `Props` map 越来越难维护
 
@@ -701,7 +701,7 @@ Compose 的优势在于：
 1. 保持当前 Gradle 模块数量，不继续拆大模块
 2. 优先在模块内继续收敛职责，而不是引入新抽象
 3. 继续控制 `Modifier / Prop / Theme` 边界
-4. 如果继续扩 runtime，优先考虑把 `ui-widget-core/runtime` 和 `ui-widget-core/context` 抽象成更明确的 composition 层
+4. 如果继续扩 runtime，优先考虑把 `viewcompose-widget-core/runtime` 和 `viewcompose-widget-core/context` 抽象成更明确的 composition 层
 5. 如果继续扩 renderer，优先把 `ViewTreeRenderer` 内部拆成 helper，而不是直接上 adapter registry
 6. 中长期再评估 typed props 和更细粒度更新模型
 
@@ -710,10 +710,10 @@ Compose 的优势在于：
 当前应以以下判断作为后续开发基线：
 
 - 当前目录结构已经按职责整理完成
-- 当前模块职责基本清楚，但 `ui-widget-core` 仍偏重
+- 当前模块职责基本清楚，但 `viewcompose-widget-core` 仍偏重
 - 当前架构适合继续做 v1/v1.5，不适合再做“理想化重构”
 - 当前最需要防止的不是“抽象不够多”，而是“边界再次变脏”
 
 一句话总结：
 
-> 当前 `UIFramework` 的架构已经从“能跑”进入“可维护的 v1”，但离 Compose 级成熟度还有明显距离；后续工作重点应是持续收边界、补类型约束、减单点复杂度，而不是盲目加层。
+> 当前 `ViewCompose` 的架构已经从“能跑”进入“可维护的 v1”，但离 Compose 级成熟度还有明显距离；后续工作重点应是持续收边界、补类型约束、减单点复杂度，而不是盲目加层。

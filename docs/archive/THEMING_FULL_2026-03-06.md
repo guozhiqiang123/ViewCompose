@@ -1,8 +1,8 @@
-# UIFramework Theming
+# ViewCompose Theming
 
 ## 1. 文档定位
 
-本文档定义 `UIFramework` 的主题系统目标、分层模型、与 Android View / Compose 的边界，以及后续重构方向。
+本文档定义 `ViewCompose` 的主题系统目标、分层模型、与 Android View / Compose 的边界，以及后续重构方向。
 
 这份文档是主题系统的编码标准，后续新增控件和主题扩展都应以此为准。
 

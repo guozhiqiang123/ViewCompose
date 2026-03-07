@@ -5,7 +5,7 @@
 本次重新审计覆盖：
 
 1. 根目录有效文档：`ARCHITECTURE/ROADMAP/MODIFIER/NODE_PROPS/THEMING/PERFORMANCE/SESSION_CONTAINER_CHECKLIST/WORKFLOW/CONTEXT`
-2. 框架模块：`ui-runtime/ui-renderer/ui-widget-core/ui-overlay-android/ui-image-coil`
+2. 框架模块：`viewcompose-runtime/viewcompose-renderer/viewcompose-widget-core/viewcompose-overlay-android/viewcompose-image-coil`
 3. 验证层：`app` demo 与 `app/src/androidTest`
 4. 模块配置：`settings.gradle.kts` 与各模块 `build.gradle.kts`
 
@@ -24,7 +24,7 @@
    - Overlay 基线补齐 `ModalBottomSheet`
    - UI 状态从“全绿”修正为“分项缺口可见”
 4. `ARCHITECTURE.md`：
-   - 模块列表补齐 `benchmark`
+   - 模块列表补齐 `viewcompose-benchmark`
    - 风险项补入 Fragment 生命周期暴露问题与延迟容器覆盖缺口
 
 ## 3. 当前发现（设计/实现偏差与改进空间）
@@ -33,8 +33,8 @@
 
 现状证据：
 
-1. [AndroidHostBridge.kt](/Users/gzq/AndroidStudioProjects/UIFramework/ui-widget-core/src/main/java/com/gzq/uiframework/widget/core/bridge/AndroidHostBridge.kt:60) 的 `Fragment.createUiContent(...)` 返回 `UiContentHost(root + session)`
-2. [AndroidHostBridge.kt](/Users/gzq/AndroidStudioProjects/UIFramework/ui-widget-core/src/main/java/com/gzq/uiframework/widget/core/bridge/AndroidHostBridge.kt:96) 仅对 `ComponentActivity` 做自动 `dispose` 绑定
+1. [AndroidHostBridge.kt](/Users/gzq/AndroidStudioProjects/UIFramework/viewcompose-widget-core/src/main/java/com/viewcompose/widget/core/bridge/AndroidHostBridge.kt:60) 的 `Fragment.createUiContent(...)` 返回 `UiContentHost(root + session)`
+2. [AndroidHostBridge.kt](/Users/gzq/AndroidStudioProjects/UIFramework/viewcompose-widget-core/src/main/java/com/viewcompose/widget/core/bridge/AndroidHostBridge.kt:96) 仅对 `ComponentActivity` 做自动 `dispose` 绑定
 
 影响：
 
@@ -50,8 +50,8 @@
 
 现状证据：
 
-1. 通用单测集中在 [LazyListDiffTest.kt](/Users/gzq/AndroidStudioProjects/UIFramework/ui-renderer/src/test/java/com/gzq/uiframework/renderer/reconcile/LazyListDiffTest.kt) 与 [LazyItemSessionControllerTest.kt](/Users/gzq/AndroidStudioProjects/UIFramework/ui-renderer/src/test/java/com/gzq/uiframework/renderer/view/LazyItemSessionControllerTest.kt)
-2. UI 侧主要覆盖 [DemoVisualUiTest.kt](/Users/gzq/AndroidStudioProjects/UIFramework/app/src/androidTest/java/com/gzq/uiframework/DemoVisualUiTest.kt:248) 的 collections stress 与 [DemoVisualUiTest.kt](/Users/gzq/AndroidStudioProjects/UIFramework/app/src/androidTest/java/com/gzq/uiframework/DemoVisualUiTest.kt:273) 的 tab content
+1. 通用单测集中在 [LazyListDiffTest.kt](/Users/gzq/AndroidStudioProjects/UIFramework/viewcompose-renderer/src/test/java/com/viewcompose/renderer/reconcile/LazyListDiffTest.kt) 与 [LazyItemSessionControllerTest.kt](/Users/gzq/AndroidStudioProjects/UIFramework/viewcompose-renderer/src/test/java/com/viewcompose/renderer/view/LazyItemSessionControllerTest.kt)
+2. UI 侧主要覆盖 [DemoVisualUiTest.kt](/Users/gzq/AndroidStudioProjects/UIFramework/app/src/androidTest/java/com/viewcompose/DemoVisualUiTest.kt:248) 的 collections stress 与 [DemoVisualUiTest.kt](/Users/gzq/AndroidStudioProjects/UIFramework/app/src/androidTest/java/com/viewcompose/DemoVisualUiTest.kt:273) 的 tab content
 3. `LazyVerticalGrid` 与 `VerticalPager` 缺容器级专门回归
 
 影响：
@@ -67,9 +67,9 @@
 
 现状证据：
 
-1. demo 已有 bottom sheet 场景：[DemoFeedbackPage.kt](/Users/gzq/AndroidStudioProjects/UIFramework/app/src/main/java/com/gzq/uiframework/demo/DemoFeedbackPage.kt:259)
-2. 当前 UI 用例仅触发 snackbar/toast/dialog/popup：[DemoVisualUiTest.kt](/Users/gzq/AndroidStudioProjects/UIFramework/app/src/androidTest/java/com/gzq/uiframework/DemoVisualUiTest.kt:97)
-3. bottom sheet 缺对应 testTag 常量：[DemoTestTags.kt](/Users/gzq/AndroidStudioProjects/UIFramework/app/src/main/java/com/gzq/uiframework/demo/DemoTestTags.kt:47)
+1. demo 已有 bottom sheet 场景：[DemoFeedbackPage.kt](/Users/gzq/AndroidStudioProjects/UIFramework/app/src/main/java/com/viewcompose/demo/DemoFeedbackPage.kt:259)
+2. 当前 UI 用例仅触发 snackbar/toast/dialog/popup：[DemoVisualUiTest.kt](/Users/gzq/AndroidStudioProjects/UIFramework/app/src/androidTest/java/com/viewcompose/DemoVisualUiTest.kt:97)
+3. bottom sheet 缺对应 testTag 常量：[DemoTestTags.kt](/Users/gzq/AndroidStudioProjects/UIFramework/app/src/main/java/com/viewcompose/demo/DemoTestTags.kt:47)
 
 影响：
 
@@ -80,13 +80,13 @@
 1. 增加 `FEEDBACK_SHOW_BOTTOM_SHEET/FEEDBACK_BOTTOM_SHEET_*` 测试锚点
 2. 在 `DemoVisualUiTest` 增加 show/dismiss/assert 路径
 
-### F4（中优先级）：`ui-widget-core` 与 Android bridge 仍耦合
+### F4（中优先级）：`viewcompose-widget-core` 与 Android bridge 仍耦合
 
 现状证据：
 
-1. [AndroidHostBridge.kt](/Users/gzq/AndroidStudioProjects/UIFramework/ui-widget-core/src/main/java/com/gzq/uiframework/widget/core/bridge/AndroidHostBridge.kt)
-2. [AndroidThemeBridge.kt](/Users/gzq/AndroidStudioProjects/UIFramework/ui-widget-core/src/main/java/com/gzq/uiframework/widget/core/bridge/AndroidThemeBridge.kt)
-3. [AndroidEnvironmentBridge.kt](/Users/gzq/AndroidStudioProjects/UIFramework/ui-widget-core/src/main/java/com/gzq/uiframework/widget/core/bridge/AndroidEnvironmentBridge.kt)
+1. [AndroidHostBridge.kt](/Users/gzq/AndroidStudioProjects/UIFramework/viewcompose-widget-core/src/main/java/com/viewcompose/widget/core/bridge/AndroidHostBridge.kt)
+2. [AndroidThemeBridge.kt](/Users/gzq/AndroidStudioProjects/UIFramework/viewcompose-widget-core/src/main/java/com/viewcompose/widget/core/bridge/AndroidThemeBridge.kt)
+3. [AndroidEnvironmentBridge.kt](/Users/gzq/AndroidStudioProjects/UIFramework/viewcompose-widget-core/src/main/java/com/viewcompose/widget/core/bridge/AndroidEnvironmentBridge.kt)
 
 影响：
 
@@ -102,9 +102,9 @@
 
 现状证据：
 
-1. [DemoWidgetShowcaseDetails.kt](/Users/gzq/AndroidStudioProjects/UIFramework/app/src/main/java/com/gzq/uiframework/demo/DemoWidgetShowcaseDetails.kt) 1310 行
-2. [DemoFeedbackPage.kt](/Users/gzq/AndroidStudioProjects/UIFramework/app/src/main/java/com/gzq/uiframework/demo/DemoFeedbackPage.kt) 579 行
-3. [DemoModifiersPage.kt](/Users/gzq/AndroidStudioProjects/UIFramework/app/src/main/java/com/gzq/uiframework/demo/DemoModifiersPage.kt) 607 行
+1. [DemoWidgetShowcaseDetails.kt](/Users/gzq/AndroidStudioProjects/UIFramework/app/src/main/java/com/viewcompose/demo/DemoWidgetShowcaseDetails.kt) 1310 行
+2. [DemoFeedbackPage.kt](/Users/gzq/AndroidStudioProjects/UIFramework/app/src/main/java/com/viewcompose/demo/DemoFeedbackPage.kt) 579 行
+3. [DemoModifiersPage.kt](/Users/gzq/AndroidStudioProjects/UIFramework/app/src/main/java/com/viewcompose/demo/DemoModifiersPage.kt) 607 行
 
 影响：
 
@@ -130,7 +130,7 @@ P1（随后）：
 
 P2（中期演进）：
 
-1. `ui-widget-core` bridge 拆分预研与迁移路径（F4）
+1. `viewcompose-widget-core` bridge 拆分预研与迁移路径（F4）
 
 ## 5. 结论
 

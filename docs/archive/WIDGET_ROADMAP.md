@@ -1,8 +1,8 @@
-# UIFramework Widget Roadmap
+# ViewCompose Widget Roadmap
 
 ## 1. 文档定位
 
-本文档定义 `UIFramework` 的控件体系规划。
+本文档定义 `ViewCompose` 的控件体系规划。
 
 目标不是把 Android 原生控件的所有 setter 一比一搬进 DSL，而是明确：
 

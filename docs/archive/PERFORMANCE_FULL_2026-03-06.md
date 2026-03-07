@@ -2,7 +2,7 @@
 
 ## 1. 目标
 
-本文档定义 `UIFramework` 在 View 体系下的性能优化主线。
+本文档定义 `ViewCompose` 在 View 体系下的性能优化主线。
 
 讨论范围包括：
 
@@ -117,8 +117,8 @@ Compose 官方文档也明确把这类模式视为不理想，因为它会多跑
 
 当前已完成 `Phase 1` 的起步骨架：
 
-1. 已新增 `:benchmark` 模块
-2. `app` 已新增 `benchmark` build type
+1. 已新增 `:viewcompose-benchmark` 模块
+2. `app` 已新增 `viewcompose-benchmark` build type
 3. 宿主 app 已声明 `profileable`
 4. 已落地首批宏基准场景：
    - 冷启动
@@ -129,33 +129,33 @@ Compose 官方文档也明确把这类模式视为不理想，因为它会多跑
 
 当前相关代码位置：
 
-1. [benchmark/build.gradle.kts](/Users/gzq/AndroidStudioProjects/UIFramework/benchmark/build.gradle.kts)
-2. [StartupBenchmark.kt](/Users/gzq/AndroidStudioProjects/UIFramework/benchmark/src/main/java/com/gzq/uiframework/benchmark/StartupBenchmark.kt)
-3. [DemoInteractionBenchmark.kt](/Users/gzq/AndroidStudioProjects/UIFramework/benchmark/src/main/java/com/gzq/uiframework/benchmark/DemoInteractionBenchmark.kt)
+1. [viewcompose-benchmark/build.gradle.kts](/Users/gzq/AndroidStudioProjects/UIFramework/viewcompose-benchmark/build.gradle.kts)
+2. [StartupBenchmark.kt](/Users/gzq/AndroidStudioProjects/UIFramework/viewcompose-benchmark/src/main/java/com/viewcompose/benchmark/StartupBenchmark.kt)
+3. [DemoInteractionBenchmark.kt](/Users/gzq/AndroidStudioProjects/UIFramework/viewcompose-benchmark/src/main/java/com/viewcompose/benchmark/DemoInteractionBenchmark.kt)
 
 当前本地已验证：
 
 ```bash
-./gradlew :benchmark:assembleBenchmark :app:assembleBenchmark
+./gradlew :viewcompose-benchmark:assembleBenchmark :app:assembleBenchmark
 ```
 
-### 模块级 benchmark 入口状态
+### 模块级 viewcompose-benchmark 入口状态
 
 多 Activity demo 现在已经具备稳定的“launcher extra -> 模块 Activity”转发入口，代码在：
 
-1. [MainActivity.kt](/Users/gzq/AndroidStudioProjects/UIFramework/app/src/main/java/com/gzq/uiframework/MainActivity.kt)
-2. [DemoCatalog.kt](/Users/gzq/AndroidStudioProjects/UIFramework/app/src/main/java/com/gzq/uiframework/DemoCatalog.kt)
-3. [DemoBenchmarkScope.kt](/Users/gzq/AndroidStudioProjects/UIFramework/benchmark/src/main/java/com/gzq/uiframework/benchmark/DemoBenchmarkScope.kt)
+1. [MainActivity.kt](/Users/gzq/AndroidStudioProjects/UIFramework/app/src/main/java/com/viewcompose/MainActivity.kt)
+2. [DemoCatalog.kt](/Users/gzq/AndroidStudioProjects/UIFramework/app/src/main/java/com/viewcompose/DemoCatalog.kt)
+3. [DemoBenchmarkScope.kt](/Users/gzq/AndroidStudioProjects/UIFramework/viewcompose-benchmark/src/main/java/com/viewcompose/benchmark/DemoBenchmarkScope.kt)
 
 这让宏基准后续可以不依赖目录页滚动去打开模块，而是通过 launcher Activity 安全转发到目标模块。
 
 当前判断：
 
 1. 路由基础设施已完成
-2. `Foundations / Layouts` 已补齐 benchmark-only stable anchors，并已纳入稳定基线
-3. 当前模块级 benchmark 统一走：
+2. `Foundations / Layouts` 已补齐 viewcompose-benchmark-only stable anchors，并已纳入稳定基线
+3. 当前模块级 viewcompose-benchmark 统一走：
    - `Launcher -> MainActivity(extra=module_key) -> Module Activity -> Benchmark Anchor`
-4. 后续新增模块 benchmark 时，不应再依赖目录页滚动或分段过滤器命中，而应优先补短文案、固定位置、可重置的 benchmark anchor
+4. 后续新增模块 viewcompose-benchmark 时，不应再依赖目录页滚动或分段过滤器命中，而应优先补短文案、固定位置、可重置的 viewcompose-benchmark anchor
 
 当前已稳定的模块级场景：
 
@@ -170,7 +170,7 @@ Compose 官方文档也明确把这类模式视为不理想，因为它会多跑
 后续在真机运行宏基准的主要命令：
 
 ```bash
-./gradlew :benchmark:connectedBenchmarkAndroidTest
+./gradlew :viewcompose-benchmark:connectedBenchmarkAndroidTest
 ```
 
 ### 第一轮真实设备基线
@@ -197,7 +197,7 @@ Compose 官方文档也明确把这类模式视为不理想，因为它会多跑
 6. `diagnosticsRefreshAfterPatch`
    - `frameDurationCpuMs` P50 `2.7ms`
    - `frameOverrunMs` P50 `-15.2ms`
-   - 场景对应 `State -> Patch Stress -> Open diagnostics renderer`，用于验证 patch 之后进入 diagnostics renderer 的人工测试链路和 benchmark 链路一致
+   - 场景对应 `State -> Patch Stress -> Open diagnostics renderer`，用于验证 patch 之后进入 diagnostics renderer 的人工测试链路和 viewcompose-benchmark 链路一致
 7. `foundationsBenchmarkAnchor`
    - `frameDurationCpuMs` P50 `2.6ms`
    - `frameOverrunMs` P50 `-14.4ms`
@@ -229,8 +229,8 @@ Compose 官方文档也明确把这类模式视为不理想，因为它会多跑
 
 相关产物位置：
 
-1. [benchmarkData.json](/Users/gzq/AndroidStudioProjects/UIFramework/benchmark/build/outputs/connected_android_test_additional_output/benchmark/connected/Pixel%204%20XL%20-%2013/com.gzq.uiframework.benchmark-benchmarkData.json)
-2. `additionaltestoutput.benchmark.message_*`
+1. [benchmarkData.json](/Users/gzq/AndroidStudioProjects/UIFramework/viewcompose-benchmark/build/outputs/connected_android_test_additional_output/viewcompose-benchmark/connected/Pixel%204%20XL%20-%2013/com.viewcompose.benchmark-benchmarkData.json)
+2. `additionaltestoutput.viewcompose-benchmark.message_*`
 3. `*.perfetto-trace`
 
 说明：
@@ -268,11 +268,11 @@ Compose 官方文档也明确把这类模式视为不理想，因为它会多跑
 
 **分析：**
 
-1. **冷启动改善显著**（-13.6%）：可能受益于 benchmark 导航重构减少了 warmup 开销，并非纯 patch 优化
+1. **冷启动改善显著**（-13.6%）：可能受益于 viewcompose-benchmark 导航重构减少了 warmup 开销，并非纯 patch 优化
 2. **交互场景普遍改善**：`chapterSwitch`（-18.5%）、`themeSwitch`（-11.5%）、`collectionsScroll`（-10.3%）收益明显，这些场景涉及大量节点重绑，字段级 patch 有效减少了 rebind 成本
 3. **patch 直接场景温和改善**：`patchUpdates`（-6.7%）和 `diagnosticsRefreshAfterPatch`（-7.4%）改善温和，符合预期 — 这些场景本身帧时间已很低（<3ms），绝对收益空间有限
 4. **模块 anchor 波动在噪声范围内**：±4-7% 的波动在 2-3ms 帧时间尺度下约为 0.1-0.2ms，属于设备测量噪声，不构成回归
-5. **所有 13 个场景全部通过**，benchmark 基础设施稳定性已验证
+5. **所有 13 个场景全部通过**，viewcompose-benchmark 基础设施稳定性已验证
 
 ## 4.1 需要两层基准
 
@@ -289,7 +289,7 @@ Compose 官方文档也明确把这类模式视为不理想，因为它会多跑
 
 推荐新增独立模块：
 
-- `:benchmark`
+- `:viewcompose-benchmark`
 
 首批场景：
 
@@ -311,7 +311,7 @@ Compose 官方文档也明确把这类模式视为不理想，因为它会多跑
 3. 慢帧 / 冻结帧占比
 4. 关键交互耗时
 
-### B. 算法级 benchmark
+### B. 算法级 viewcompose-benchmark
 
 这层用来回答：
 
@@ -343,7 +343,7 @@ Compose 官方文档也明确把这类模式视为不理想，因为它会多跑
 
 ## 4.3 需要补的配套工具
 
-除了 benchmark，本项目还应该逐步补：
+除了 viewcompose-benchmark，本项目还应该逐步补：
 
 1. `debug 渲染统计`
    - 单次 render 产生多少节点
@@ -358,10 +358,10 @@ Compose 官方文档也明确把这类模式视为不理想，因为它会多跑
 
 当前已落地的第一步：
 
-1. [ViewTreeRenderer.kt](/Users/gzq/AndroidStudioProjects/UIFramework/ui-renderer/src/main/java/com/gzq/uiframework/renderer/view/tree/ViewTreeRenderer.kt) 会输出单次 render 的 `insert/reuse/removal/rebound/skipped` 统计
+1. [ViewTreeRenderer.kt](/Users/gzq/AndroidStudioProjects/UIFramework/viewcompose-renderer/src/main/java/com/viewcompose/renderer/view/tree/ViewTreeRenderer.kt) 会输出单次 render 的 `insert/reuse/removal/rebound/skipped` 统计
 2. 这些统计现在已经扩展为 `insert/reuse/removal/rebound/patched/skipped`
-3. [RenderSession.kt](/Users/gzq/AndroidStudioProjects/UIFramework/ui-widget-core/src/main/java/com/gzq/uiframework/widget/core/runtime/RenderSession.kt) 的 debug 日志已包含这些统计
-4. [DebugStrings.kt](/Users/gzq/AndroidStudioProjects/UIFramework/ui-renderer/src/main/java/com/gzq/uiframework/renderer/debug/DebugStrings.kt) 已能格式化 render 统计摘要
+3. [RenderSession.kt](/Users/gzq/AndroidStudioProjects/UIFramework/viewcompose-widget-core/src/main/java/com/viewcompose/widget/core/runtime/RenderSession.kt) 的 debug 日志已包含这些统计
+4. [DebugStrings.kt](/Users/gzq/AndroidStudioProjects/UIFramework/viewcompose-renderer/src/main/java/com/viewcompose/renderer/debug/DebugStrings.kt) 已能格式化 render 统计摘要
 
 ## 5. 架构设计层面的性能约束
 
@@ -459,7 +459,7 @@ Compose 官方文档把状态读取分为：
 1. `AndroidView` 是 escape hatch
 2. 不对它承诺节点级 diff
 3. 它的 update 尽量是幂等的
-4. benchmark 场景要单独覆盖它
+4. viewcompose-benchmark 场景要单独覆盖它
 
 ## 6. 是否需要引入 ConstraintLayout
 
@@ -489,14 +489,14 @@ Android 官方 View 文档明确建议：
 1. 需要一套新的 DSL
 2. 需要新的约束语义、引用机制和 debug 模型
 3. 会明显抬高第一方布局系统复杂度
-4. 如果没有 benchmark 证明真实收益，容易过早复杂化
+4. 如果没有 viewcompose-benchmark 证明真实收益，容易过早复杂化
 
 ### 6.3 当前建议
 
 建议作为 `P2` 或实验性能力：
 
 1. 先不把它当默认布局基础
-2. 等 benchmark 明确证实某些复杂页面受限于层级深度，再引入
+2. 等 viewcompose-benchmark 明确证实某些复杂页面受限于层级深度，再引入
 3. 引入时以专用容器形式存在，而不是替换现有 `Row/Column/Box`
 
 推荐名字：
@@ -511,7 +511,7 @@ Android 官方 View 文档明确建议：
 1. 强化自定义线性/叠放容器
 2. 新增少量高价值专用容器
 3. 对过深树做 debug warning
-4. 基于 benchmark 找出真实痛点页面
+4. 基于 viewcompose-benchmark 找出真实痛点页面
 
 ## 7. Compose 是如何做的
 
@@ -592,7 +592,7 @@ Compose 会：
 1. 节点级 `skip / patch`
 2. phase-aware 状态失效模型
 3. compiler 辅助的稳定性分析
-4. 系统化 benchmark 模块
+4. 系统化 viewcompose-benchmark 模块
 5. View 深度 / rebind 次数 / patch 次数的标准诊断输出
 
 ## 8.2 当前已经具备的基础
@@ -628,7 +628,7 @@ Compose 会：
 
 ### Phase 1：建立测量能力
 
-1. 新增 `:benchmark`
+1. 新增 `:viewcompose-benchmark`
 2. 先覆盖 startup、scroll、tab switch、theme switch、typing、reorder
 3. 明确基线设备和基线指标
 
@@ -648,7 +648,7 @@ Compose 会：
 4. `Image` patch 采用混合策略：元数据字段（contentDescription, contentScale, tint）独立更新，源相关字段（source, placeholder, error, fallback, remoteImageLoader）组合比较后走 full bindImage
 5. `IconButton` patch 复用 Image patch 逻辑并额外比较 enabled 字段
 6. `LazyColumn` patch 已下沉为真正字段级：contentPadding/spacing/items 分别比较、独立更新
-7. `State -> Patch Stress` 已成为第一条专门压测 patch 路径的 demo/benchmark 场景，覆盖 Text、Button、TextField、SegmentedControl、TabPager、Row、Column、Box、Image
+7. `State -> Patch Stress` 已成为第一条专门压测 patch 路径的 demo/viewcompose-benchmark 场景，覆盖 Text、Button、TextField、SegmentedControl、TabPager、Row、Column、Box、Image
 8. `State -> Patch Stress -> Open diagnostics renderer` 已补成第二条对照场景，用来把 patch 压测和 diagnostics 面板串起来
 
 ### Phase 3：补诊断能力
@@ -675,7 +675,7 @@ Compose 会：
 
 1. Baseline Profiles
 2. Startup Profiles
-3. release build 对比 benchmark
+3. release build 对比 viewcompose-benchmark
 
 ## 11. 当前结论
 
@@ -686,10 +686,10 @@ Compose 会：
 
 而是：
 
-1. 先建立可重复的 benchmark
+1. 先建立可重复的 viewcompose-benchmark
 2. 先用 `NodeSpec` 做节点级 diff / skip
 3. 先通过容器和 API 约束控制 View 层级
-4. 再让 benchmark 决定是否需要更重的布局能力
+4. 再让 viewcompose-benchmark 决定是否需要更重的布局能力
 
 这条路线更符合当前框架成熟度，也更符合 View 体系的现实约束。
 

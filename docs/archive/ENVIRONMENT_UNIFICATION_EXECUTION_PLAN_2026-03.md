@@ -2,7 +2,7 @@
 
 ## 1. Baseline
 
-- 当前环境语义主入口：`ui-widget-core/context/Environment.kt` + `AndroidEnvironmentBridge`
+- 当前环境语义主入口：`viewcompose-widget-core/context/Environment.kt` + `AndroidEnvironmentBridge`
 - 当前问题：
   - 宿主入口未默认注入 `UiEnvironment`，demo 侧存在重复手动包裹
   - renderer 存在 2 处自行 density/dp 转换（`DeclarativeNavigationBarLayout`、`DeclarativeSegmentedControlLayout`）

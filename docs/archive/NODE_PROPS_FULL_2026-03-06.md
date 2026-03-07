@@ -2,7 +2,7 @@
 
 ## 1. 目标
 
-`typed props` 已经把 `UIFramework` 从“纯字符串 key + 动态 map”推进到了“带泛型 key 的动态 props”。
+`typed props` 已经把 `ViewCompose` 从“纯字符串 key + 动态 map”推进到了“带泛型 key 的动态 props”。
 
 这一步已经足够支撑当前 v1，但它还不是长期终态。
 
@@ -139,7 +139,7 @@ Compose 的本质是：
 - 编译器参与参数稳定性和重组判断
 - 默认值通过 `MaterialTheme` / `CompositionLocal` 动态解析
 
-`UIFramework` 还到不了这个层级，但 `NodeProps` 可以把当前结构从：
+`ViewCompose` 还到不了这个层级，但 `NodeProps` 可以把当前结构从：
 
 - `typed dynamic props`
 

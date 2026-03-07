@@ -2,7 +2,7 @@
 
 ## 1. 文档定位
 
-本文档定义 `UIFramework` 中“外挂组件 / overlay 组件”的专项规划。
+本文档定义 `ViewCompose` 中“外挂组件 / overlay 组件”的专项规划。
 
 这里的外挂组件指：
 
@@ -165,7 +165,7 @@ Dialog(
     dismissOnBackPress = true,
     dismissOnClickOutside = true,
 ) {
-    // regular UIFramework content
+    // regular ViewCompose content
 }
 ```
 
@@ -432,14 +432,14 @@ UI 测试重点：
    - anchored popup
    - dismiss and reposition
 4. `Verification`
-   - benchmark anchor
+   - viewcompose-benchmark anchor
    - checklist
 
 ## 11. Demo 与人工验证要求
 
 每个能力至少提供：
 
-1. 一个 benchmark anchor
+1. 一个 viewcompose-benchmark anchor
 2. 一个正常路径
 3. 一个 stress path
 4. 一段 verification notes

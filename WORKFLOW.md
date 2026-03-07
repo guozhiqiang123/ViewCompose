@@ -2,7 +2,7 @@
 
 ## 1. 文档定位
 
-本文档定义 `UIFramework` 当前开发协作流程。
+本文档定义 `ViewCompose` 当前开发协作流程。
 
 目的不是增加流程负担，而是解决两个真实问题：
 
@@ -97,7 +97,7 @@
 
 默认判断顺序：
 
-1. 先判断模块职责边界，例如 `ui-runtime`、`ui-renderer`、`ui-widget-core`、`app`
+1. 先判断模块职责边界，例如 `viewcompose-runtime`、`viewcompose-renderer`、`viewcompose-widget-core`、`app`
 2. 再判断目录职责边界，例如 `context/`、`dsl/`、`runtime/`、`view/`、`defaults/`
 3. 最后才决定具体文件名
 
@@ -120,9 +120,9 @@
 
 新增映射或扩展框架能力时，环境来源必须遵守单一入口，不允许另起一套：
 
-1. 宿主侧环境语义统一来自 `ui-widget-core/context/Environment` 与 `UiEnvironment`。
+1. 宿主侧环境语义统一来自 `viewcompose-widget-core/context/Environment` 与 `UiEnvironment`。
 2. Android 环境提取统一通过 `AndroidEnvironmentBridge` 进入 `UiEnvironmentValues`。
-3. renderer 不新增环境语义通道；只允许使用 renderer 内部尺寸工具（`ui-renderer/view/DimensionUtils.kt`）做平台换算。
+3. renderer 不新增环境语义通道；只允许使用 renderer 内部尺寸工具（`viewcompose-renderer/view/DimensionUtils.kt`）做平台换算。
 4. 禁止在 renderer 容器类新增私有 `density` 缓存或 `dpToPx`/`spToPx` 辅助方法。
 5. 发现现存代码偏离以上约束时，必须在同一步改动里完成“代码修正 + 文档更新”。
 

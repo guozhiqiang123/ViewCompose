@@ -83,7 +83,7 @@
 
 ## 6. Compose 对齐原则
 
-`UIFramework` 不复刻 Compose runtime/compiler，但在 API 分层上保持对齐：
+`ViewCompose` 不复刻 Compose runtime/compiler，但在 API 分层上保持对齐：
 
 1. `Modifier` = 通用修饰链
 2. parent-data = scope API

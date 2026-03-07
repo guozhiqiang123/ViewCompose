@@ -1086,8 +1086,8 @@ object IconDefaults {
 ### 6.1 审计方法
 
 1. **源码扫描**：逐一读取框架全部关键源文件
-   - 16 个 NodeSpec 文件（`ui-renderer/.../node/spec/`）
-   - 11 个 Defaults 文件（`ui-widget-core/.../defaults/`）
+   - 16 个 NodeSpec 文件（`viewcompose-renderer/.../node/spec/`）
+   - 11 个 Defaults 文件（`viewcompose-widget-core/.../defaults/`）
    - Modifier.kt（30 个扩展函数 + 23 个 ModifierElement 数据类）
    - 6 个 DSL 文件（35 个 DSL 函数）
 2. **原生 API 对照**：对照每个控件底层 Android View 类（通过 ViewNodeFactory 确认映射关系）的公开 setter 和 XML attr 属性
@@ -1112,14 +1112,14 @@ object IconDefaults {
 
 | 类别 | 路径 | 文件数 | 关键内容 |
 |------|------|--------|---------|
-| NodeSpec 定义 | `ui-renderer/src/main/java/.../node/spec/` | 16 | 每个控件的属性定义 |
-| Defaults 对象 | `ui-widget-core/src/main/java/.../defaults/` | 11 | 主题派生的默认值函数 |
-| Modifier 函数 | `ui-renderer/src/main/java/.../modifier/Modifier.kt` | 1 (27 函数) | 通用视觉/布局修饰器 |
-| DSL 函数 | `ui-widget-core/src/main/java/.../dsl/` | 6 (35 函数) | 用户面向的控件构建 API |
-| ViewNodeFactory | `ui-renderer/src/main/java/.../view/tree/binder/ViewNodeFactory.kt` | 1 | NodeType → Android View 映射 |
-| ViewBinders | `ui-renderer/src/main/java/.../view/tree/binder/` | ~10 | Spec → View 属性绑定逻辑 |
-| ThemeDefaults | `ui-widget-core/src/main/java/.../context/ThemeDefaults.kt` | 1 | 全局形状/尺寸/颜色默认值 |
-| LayoutScopes | `ui-widget-core/src/main/java/.../dsl/LayoutScopes.kt` | 1 | RowScope/ColumnScope/BoxScope 定义 |
+| NodeSpec 定义 | `viewcompose-renderer/src/main/java/.../node/spec/` | 16 | 每个控件的属性定义 |
+| Defaults 对象 | `viewcompose-widget-core/src/main/java/.../defaults/` | 11 | 主题派生的默认值函数 |
+| Modifier 函数 | `viewcompose-renderer/src/main/java/.../modifier/Modifier.kt` | 1 (27 函数) | 通用视觉/布局修饰器 |
+| DSL 函数 | `viewcompose-widget-core/src/main/java/.../dsl/` | 6 (35 函数) | 用户面向的控件构建 API |
+| ViewNodeFactory | `viewcompose-renderer/src/main/java/.../view/tree/binder/ViewNodeFactory.kt` | 1 | NodeType → Android View 映射 |
+| ViewBinders | `viewcompose-renderer/src/main/java/.../view/tree/binder/` | ~10 | Spec → View 属性绑定逻辑 |
+| ThemeDefaults | `viewcompose-widget-core/src/main/java/.../context/ThemeDefaults.kt` | 1 | 全局形状/尺寸/颜色默认值 |
+| LayoutScopes | `viewcompose-widget-core/src/main/java/.../dsl/LayoutScopes.kt` | 1 | RowScope/ColumnScope/BoxScope 定义 |
 
 ### 6.4 NodeSpec 字段数统计
 

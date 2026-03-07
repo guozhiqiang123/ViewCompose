@@ -9,8 +9,8 @@
   - Rename brand text to `ViewCompose`.
   - Update root docs and `docs/archive/*`.
 - Baseline scan (2026-03-07):
-  - `com.gzq.uiframework` references exist across source, tests, build scripts, and docs.
-  - Module IDs still `:ui-*` and `:benchmark`.
+  - `com.gzq.uiframework` references existed across source, tests, build scripts, and docs.
+  - Module IDs were `:ui-*` and `:benchmark`.
 
 ## Mapping
 - Module IDs:
@@ -37,7 +37,7 @@
 - [x] Step 3. Migrate namespaces, package declarations, imports, and directories.
 - [x] Step 4. Keep install package boundaries stable.
 - [x] Step 5. Update reflection contracts and brand naming.
-- [ ] Step 6. Sync docs including archive.
+- [x] Step 6. Sync docs including archive.
 - [ ] Step 7. Run final gates and archive this plan.
 
 ## Commit Log
@@ -45,7 +45,7 @@
 - Step 2: `9a1e293` (`refactor: rename gradle module ids to viewcompose-*`)
 - Step 3: `0cbf3bf` (`refactor: migrate package root to com.viewcompose across modules`)
 - Step 4: `3faf754` (`fix: keep applicationId stable while migrating source packages`)
-- Step 5: pending
+- Step 5: `d0d575f` (`refactor: update reflection contracts and brand naming to ViewCompose`)
 - Step 6: pending
 - Step 7: pending
 

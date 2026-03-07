@@ -2,11 +2,11 @@
 
 ## 1. Scope
 
-- 审计目录：`ui-renderer/src/main/java/com/gzq/uiframework/renderer/view/container`
+- 审计目录：`viewcompose-renderer/src/main/java/com/viewcompose/renderer/view/container`
 - 关联关键链路：
-  - `ui-renderer/src/main/java/com/gzq/uiframework/renderer/view/tree/pipeline/ViewTreePatchPipeline.kt`
-  - `ui-renderer/src/main/java/com/gzq/uiframework/renderer/view/tree/pipeline/ViewTreeDisposer.kt`
-  - `ui-renderer/src/main/java/com/gzq/uiframework/renderer/view/lazy/*`
+  - `viewcompose-renderer/src/main/java/com/viewcompose/renderer/view/tree/pipeline/ViewTreePatchPipeline.kt`
+  - `viewcompose-renderer/src/main/java/com/viewcompose/renderer/view/tree/pipeline/ViewTreeDisposer.kt`
+  - `viewcompose-renderer/src/main/java/com/viewcompose/renderer/view/lazy/*`
 
 ## 2. Audit Dimensions
 

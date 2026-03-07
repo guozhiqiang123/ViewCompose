@@ -1,4 +1,4 @@
-# UIFramework Performance
+# ViewCompose Performance
 
 ## 1. 文档定位
 
@@ -17,13 +17,13 @@
 
 ### 2.1 已建立能力
 
-1. benchmark 模块已接入，具备稳定测试入口。
+1. viewcompose-benchmark 模块已接入，具备稳定测试入口。
 2. renderer 已具备节点级“是否重绑”判断能力（`rebound/skipped` 统计）。
 3. diagnostics 已有 render/layout 基础指标可观测能力。
 4. 延迟 session 容器的 keyed diff 已切到 `DiffUtil` 引擎（保留 key 缺失/重复 fallback）。
 5. framework 托管的 `RecyclerView` 容器默认不共享 `RecycledViewPool` 且保留系统 `itemAnimator`；可按需通过 `Modifier.lazyContainerReuse(...)` 对单个容器启用共享池与动画器策略。
 6. patch pipeline 已支持 subtree skip（`SkipSubtree`）并新增 `skippedSubtrees` 统计。
-7. renderer 内部尺寸换算统一走 `ui-renderer/view/DimensionUtils.kt`，避免容器层重复定义 `density/dpToPx` 带来的行为漂移。
+7. renderer 内部尺寸换算统一走 `viewcompose-renderer/view/DimensionUtils.kt`，避免容器层重复定义 `density/dpToPx` 带来的行为漂移。
 
 ### 2.2 当前结论
 
@@ -45,7 +45,7 @@
 
 建议固定输出：
 
-1. benchmark 数据（同机型、同路径）
+1. viewcompose-benchmark 数据（同机型、同路径）
 2. render stats（含 rebound/skipped）
 3. layout pass 关键计数
 
@@ -69,7 +69,7 @@
 ### Phase 1：基线与可观测性
 
 状态：已完成基础落地  
-目标：benchmark 路径稳定、核心指标可读取
+目标：viewcompose-benchmark 路径稳定、核心指标可读取
 
 ### Phase 2：跳过更新能力
 

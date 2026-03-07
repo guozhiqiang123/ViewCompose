@@ -1,8 +1,8 @@
-# UIFramework Demo Roadmap
+# ViewCompose Demo Roadmap
 
 ## 1. 文档定位
 
-本文档定义 `UIFramework` 的 demo 规划。
+本文档定义 `ViewCompose` 的 demo 规划。
 
 目标不是再继续堆零散示例，而是把 demo 升级成两类资产：
 
@@ -28,7 +28,7 @@
 
 1. 虽然页面已经统一到 `Guide / Core / Visual / Stress / Benchmark` 模板，但部分章节仍然偏 sample 展示，而不是更强的 testbed。
 2. planned 模块虽然已经有独立 placeholder Activity，但还没有进入真实能力验证阶段，能力地图仍需持续补齐。
-3. benchmark 入口已经稳定到“目录页 -> 模块 Activity”，并且所有已实现模块都已有同等级的 benchmark-friendly scenario；后续新增模块也必须按同一标准补齐。
+3. viewcompose-benchmark 入口已经稳定到“目录页 -> 模块 Activity”，并且所有已实现模块都已有同等级的 viewcompose-benchmark-friendly scenario；后续新增模块也必须按同一标准补齐。
 4. demo 与 Compose 的能力差距虽然已经文档化，但场景覆盖还没完全对齐文档结构。
 5. Diagnostics 仍然更像调试面板，而不是完整 inspector。
 
@@ -309,7 +309,7 @@
 1. `MainActivity`
    - 作为目录页
    - 负责展示已实现模块与 planned 模块
-   - 作为 benchmark 的稳定启动入口
+   - 作为 viewcompose-benchmark 的稳定启动入口
 2. `ChapterActivity`
    - 每个已实现能力模块一个独立 Activity
    - 当前包括：
@@ -329,14 +329,14 @@
 
 - 顶层不再依赖单一 giant pager
 - 章内仍可继续使用 `SegmentedControl / TabPager / LazyColumn`
-- benchmark-friendly 页面应提供稳定的 `Benchmark Route` 提示
+- viewcompose-benchmark-friendly 页面应提供稳定的 `Benchmark Route` 提示
 - 未实现能力先在目录页保留 roadmap 卡片，不急着创建空 Activity
 
 这样做的原因：
 
 1. 不依赖框架内路由
 2. Activity 级入口更贴近 Android 真实宿主集成
-3. benchmark setup 可以固定为“目录页 -> 模块 Activity -> 模块页”
+3. viewcompose-benchmark setup 可以固定为“目录页 -> 模块 Activity -> 模块页”
 4. 每个能力模块都能独立演进，不会再把所有入口绑在同一页状态上
 
 ## 6. 每个页面的固定模板
@@ -375,7 +375,7 @@
 - 是否属于框架缺口
 - 是否只是 demo 缺口
 
-## 7. UIFramework 与 Compose 的当前差距
+## 7. ViewCompose 与 Compose 的当前差距
 
 这部分是后续优化方向的关键。
 
@@ -539,7 +539,7 @@
 如果按这份文档继续推进，建议顺序如下：
 
 1. 继续把现有模块页面按能力和压力场景细化，不再往单页里堆 section
-2. 保持 benchmark 全部走“目录页 -> 模块 Activity -> 模块页”的稳定路径
+2. 保持 viewcompose-benchmark 全部走“目录页 -> 模块 Activity -> 模块页”的稳定路径
 3. 为 `Gestures / Animation / Graphics / Navigation` 继续保留 roadmap 卡片，并在能力落地时再升为独立 Activity
 4. 后续新增 demo 一律按当前多 Activity 结构接入，不再回退到 giant pager
 
@@ -551,7 +551,7 @@
 2. 参考 Compose 教程仓库按能力模块分章是合理的
 3. 但在当前无路由前提下，`CatalogActivity + ChapterActivity` 比 giant pager 更适合 Android View 宿主
 4. `Interop` 和 `Diagnostics` 仍然是当前框架比直接照抄 Compose 更重要的两章
-5. `P1` 基础控件层已经闭环，下一阶段更适合转向 demo 体系化和 benchmark 友好的入口治理
+5. `P1` 基础控件层已经闭环，下一阶段更适合转向 demo 体系化和 viewcompose-benchmark 友好的入口治理
 
 ## 11. 当前推进状态
 
