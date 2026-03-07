@@ -59,7 +59,7 @@
 | Foundations / Input / Layout / State | 已形成 v1 主能力 | 聚焦边界态、表单/焦点态与复杂组合场景 |
 | Collections | `LazyColumn/LazyRow/LazyVerticalGrid` + 基础分页容器可用 | sticky headers、list state 抽象 |
 | Overlay | Dialog/Popup/ModalBottomSheet/Snackbar/Toast 主链路已打通 | Popup 锚点定位增强、反馈队列策略收口 |
-| Theming | 语义 token + override + defaults 路线稳定 | Android 动态色/shape 桥接与细节一致性 |
+| Theming | 已完成 token 收口升级（语义色、tier typography、interactive shape、defaults 语义守卫） | Android 动态色/shape 桥接与 token 生命周期治理 |
 | Interop | `AndroidView` 可用 | 强化复杂原生 View 场景与主题/生命周期协同 |
 | Diagnostics | 基础 render/layout 诊断已落地 | locals/render tree/patch 可视化与告警可读性 |
 | UI Testing | 核心 instrumentation 路径已建立 | 扩展容器专项、overlay 宿主专项、主题断言覆盖 |

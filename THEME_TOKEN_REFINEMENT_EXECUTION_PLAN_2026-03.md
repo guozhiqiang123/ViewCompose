@@ -49,7 +49,8 @@
 | 2026-03-07 | Step 5 | `11dccd3` | Add tiered typography tokens and migrate core defaults to tier APIs. |
 | 2026-03-07 | Step 6 | `f7abeb0` | Introduce interactive corner radius and migrate core/demo usage. |
 | 2026-03-07 | Step 7a | `a96be2c` | Add compatibility + semantic token unit coverage. |
-| 2026-03-07 | Step 7b | pending | Add defaults hardcoded-color guard for theme semantics. |
+| 2026-03-07 | Step 7b | `d5af92c` | Add defaults hardcoded-color guard for theme semantics. |
+| 2026-03-07 | Step 8a | pending | Align roadmap theming status with completed refinements. |
 
 ## 6. Blocker Log
 
