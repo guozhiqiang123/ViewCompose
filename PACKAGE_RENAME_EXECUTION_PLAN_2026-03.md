@@ -33,7 +33,7 @@
 
 ## Checklist
 - [x] Step 1. Add execution plan doc.
-- [ ] Step 2. Rename Gradle module IDs and dependency paths.
+- [x] Step 2. Rename Gradle module IDs and dependency paths.
 - [ ] Step 3. Migrate namespaces, package declarations, imports, and directories.
 - [ ] Step 4. Keep install package boundaries stable.
 - [ ] Step 5. Update reflection contracts and brand naming.
@@ -41,7 +41,7 @@
 - [ ] Step 7. Run final gates and archive this plan.
 
 ## Commit Log
-- Step 1: pending
+- Step 1: `a21be23` (`docs: add package rename execution plan for com.viewcompose`)
 - Step 2: pending
 - Step 3: pending
 - Step 4: pending

@@ -22,8 +22,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":ui-renderer"))
-    implementation(project(":ui-widget-core"))
+    implementation(project(":viewcompose-renderer"))
+    implementation(project(":viewcompose-widget-core"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

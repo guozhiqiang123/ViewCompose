@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.gzq.uiframework.widget.core"
+    namespace = "com.gzq.uiframework.renderer"
     compileSdk = 36
 
     defaultConfig {
@@ -22,10 +22,11 @@ android {
 }
 
 dependencies {
-    implementation(project(":ui-runtime"))
-    implementation(project(":ui-renderer"))
+    implementation(project(":viewcompose-runtime"))
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.viewpager2)
+    implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.material)
     testImplementation(libs.junit)
 }

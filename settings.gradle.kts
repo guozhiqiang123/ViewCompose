@@ -21,10 +21,10 @@ dependencyResolutionManagement {
 
 rootProject.name = "UIFramework"
 include(":app")
-include(":ui-runtime")
-include(":ui-renderer")
-include(":ui-widget-core")
-include(":ui-overlay-android")
-include(":ui-image-coil")
-include(":benchmark")
+include(":viewcompose-runtime")
+include(":viewcompose-renderer")
+include(":viewcompose-widget-core")
+include(":viewcompose-overlay-android")
+include(":viewcompose-image-coil")
+include(":viewcompose-benchmark")
  

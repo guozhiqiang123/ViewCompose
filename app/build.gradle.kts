@@ -42,11 +42,11 @@ android {
 }
 
 dependencies {
-    implementation(project(":ui-runtime"))
-    implementation(project(":ui-renderer"))
-    implementation(project(":ui-widget-core"))
-    implementation(project(":ui-overlay-android"))
-    implementation(project(":ui-image-coil"))
+    implementation(project(":viewcompose-runtime"))
+    implementation(project(":viewcompose-renderer"))
+    implementation(project(":viewcompose-widget-core"))
+    implementation(project(":viewcompose-overlay-android"))
+    implementation(project(":viewcompose-image-coil"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

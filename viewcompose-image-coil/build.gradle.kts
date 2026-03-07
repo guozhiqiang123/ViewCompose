@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.gzq.uiframework.renderer"
+    namespace = "com.gzq.uiframework.image.coil"
     compileSdk = 36
 
     defaultConfig {
@@ -22,11 +22,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":ui-runtime"))
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.recyclerview)
-    implementation(libs.androidx.viewpager2)
-    implementation(libs.androidx.swiperefreshlayout)
-    implementation(libs.material)
-    testImplementation(libs.junit)
+    implementation(project(":viewcompose-renderer"))
+    implementation(libs.coil.core)
+    implementation(libs.coil.network.okhttp)
 }

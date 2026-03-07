@@ -6,17 +6,17 @@ plugins {
 }
 
 val qaQuickTasks = listOf(
-    ":ui-runtime:compileDebugKotlin",
-    ":ui-renderer:compileDebugKotlin",
-    ":ui-widget-core:compileDebugKotlin",
-    ":ui-overlay-android:compileDebugKotlin",
-    ":ui-image-coil:compileDebugKotlin",
+    ":viewcompose-runtime:compileDebugKotlin",
+    ":viewcompose-renderer:compileDebugKotlin",
+    ":viewcompose-widget-core:compileDebugKotlin",
+    ":viewcompose-overlay-android:compileDebugKotlin",
+    ":viewcompose-image-coil:compileDebugKotlin",
     ":app:compileDebugKotlin",
-    ":ui-runtime:testDebugUnitTest",
-    ":ui-renderer:testDebugUnitTest",
-    ":ui-widget-core:testDebugUnitTest",
-    ":ui-overlay-android:testDebugUnitTest",
-    ":ui-image-coil:testDebugUnitTest",
+    ":viewcompose-runtime:testDebugUnitTest",
+    ":viewcompose-renderer:testDebugUnitTest",
+    ":viewcompose-widget-core:testDebugUnitTest",
+    ":viewcompose-overlay-android:testDebugUnitTest",
+    ":viewcompose-image-coil:testDebugUnitTest",
     ":app:testDebugUnitTest",
 )
 
