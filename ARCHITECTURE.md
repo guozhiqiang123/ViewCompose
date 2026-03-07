@@ -103,7 +103,7 @@ flowchart TD
 1. 结构稳定时的可见内容刷新路径
 2. 空 diff 刷新保障
 3. recycle/dispose 与生命周期一致性
-4. framework 托管的 `RecyclerView/ViewPager2` 容器默认保持“本地池 + 系统动画器”；可通过 `Modifier.recyclerViewReuse(...)` 对单个容器启用共享池和关闭 `itemAnimator`
+4. framework 托管的 `RecyclerView/ViewPager2` 容器默认保持“本地池 + 系统动画器”；可通过 `Modifier.lazyContainerReuse(...)` 对单个容器启用共享池和关闭 `itemAnimator`
 
 专项清单：
 

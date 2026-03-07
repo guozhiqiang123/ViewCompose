@@ -59,7 +59,7 @@ internal fun Modifier.resolve(): ResolvedModifiers {
             is WeightModifierElement -> result.weight = element
             is HorizontalAlignModifierElement -> result.horizontalAlign = element
             is VerticalAlignModifierElement -> result.verticalAlign = element
-            is RecyclerViewReuseModifierElement -> { /* handled by recycler container binders */ }
+            is LazyContainerReuseModifierElement -> { /* handled by lazy container binders */ }
             is NativeViewElement -> { /* handled separately in applyNativeViewConfigs */ }
         }
     }

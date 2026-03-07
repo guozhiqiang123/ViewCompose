@@ -20,7 +20,7 @@ import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
 import com.gzq.uiframework.renderer.modifier.ResolvedModifiers
 import com.gzq.uiframework.renderer.modifier.SystemBarsInsetsPaddingModifierElement
 import com.gzq.uiframework.renderer.modifier.Visibility
-import com.gzq.uiframework.renderer.modifier.recyclerViewReusePolicy
+import com.gzq.uiframework.renderer.modifier.lazyContainerReusePolicy
 import com.gzq.uiframework.renderer.modifier.resolve
 import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TypedPropKeys
@@ -516,7 +516,7 @@ internal object ViewModifierApplier {
         view: View,
         node: VNode,
     ) {
-        val policy = node.modifier.recyclerViewReusePolicy()
+        val policy = node.modifier.lazyContainerReusePolicy()
         when (node.type) {
             NodeType.LazyColumn -> {
                 val recyclerView = view as? RecyclerView ?: return

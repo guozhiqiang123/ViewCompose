@@ -12,7 +12,7 @@
 2. 文本语义类历史 modifier（如 `textColor/textSize`）已退场
 3. `weight/align/FlexibleSpacer` 仅通过 `RowScope/ColumnScope/BoxScope` 暴露
 4. system bars 适配走组件侧 `Modifier.systemBarsInsetsPadding(...)`
-5. 列表容器复用策略支持 `Modifier.recyclerViewReuse(sharePool, disableItemAnimator)`，默认不共享池
+5. 列表容器复用策略支持 `Modifier.lazyContainerReuse(sharePool, disableItemAnimator)`，默认不共享池
 
 ## 3. 角色边界
 
@@ -27,7 +27,7 @@
 5. 测试定位：`testTag`
 6. 系统栏内边距：`systemBarsInsetsPadding`
 7. 逃生通道：`nativeView(key, configure)`
-8. 列表性能策略：`recyclerViewReuse(sharePool, disableItemAnimator)`
+8. 列表性能策略：`lazyContainerReuse(sharePool, disableItemAnimator)`
 
 ### 3.2 Scoped Modifier（父容器相关 parent-data）
 

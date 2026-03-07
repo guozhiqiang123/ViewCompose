@@ -134,7 +134,7 @@ data class ZIndexModifierElement(
     val zIndex: Float,
 ) : ModifierElement
 
-data class RecyclerViewReuseModifierElement(
+data class LazyContainerReuseModifierElement(
     val sharePool: Boolean,
     val disableItemAnimator: Boolean,
 ) : ModifierElement
@@ -393,15 +393,29 @@ fun Modifier.zIndex(zIndex: Float): Modifier {
     )
 }
 
-fun Modifier.recyclerViewReuse(
+fun Modifier.lazyContainerReuse(
     sharePool: Boolean = false,
     disableItemAnimator: Boolean = false,
 ): Modifier {
     return then(
-        RecyclerViewReuseModifierElement(
+        LazyContainerReuseModifierElement(
             sharePool = sharePool,
             disableItemAnimator = disableItemAnimator,
         ),
+    )
+}
+
+@Deprecated(
+    message = "Use lazyContainerReuse(...) to avoid exposing platform-specific implementation details.",
+    replaceWith = ReplaceWith("lazyContainerReuse(sharePool = sharePool, disableItemAnimator = disableItemAnimator)"),
+)
+fun Modifier.recyclerViewReuse(
+    sharePool: Boolean = false,
+    disableItemAnimator: Boolean = false,
+): Modifier {
+    return lazyContainerReuse(
+        sharePool = sharePool,
+        disableItemAnimator = disableItemAnimator,
     )
 }
 
@@ -424,22 +438,22 @@ fun Modifier.nativeView(key: Any = Unit, configure: (android.view.View) -> Unit)
     return then(NativeViewElement(key, configure))
 }
 
-internal data class RecyclerViewReusePolicy(
+internal data class LazyContainerReusePolicy(
     val sharePool: Boolean,
     val disableItemAnimator: Boolean,
 )
 
-internal fun Modifier.recyclerViewReusePolicy(): RecyclerViewReusePolicy {
+internal fun Modifier.lazyContainerReusePolicy(): LazyContainerReusePolicy {
     val element = elements
         .asReversed()
-        .firstOrNull { it is RecyclerViewReuseModifierElement } as? RecyclerViewReuseModifierElement
+        .firstOrNull { it is LazyContainerReuseModifierElement } as? LazyContainerReuseModifierElement
     if (element == null) {
-        return RecyclerViewReusePolicy(
+        return LazyContainerReusePolicy(
             sharePool = false,
             disableItemAnimator = false,
         )
     }
-    return RecyclerViewReusePolicy(
+    return LazyContainerReusePolicy(
         sharePool = element.sharePool,
         disableItemAnimator = element.disableItemAnimator,
     )
