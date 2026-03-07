@@ -26,7 +26,7 @@ internal fun UiTreeBuilder.AboutPage() {
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
-                    text = "UIFramework",
+                    text = "ViewCompose",
                     style = UiTextStyle(fontSizeSp = 24.sp),
                     modifier = Modifier.margin(top = 16.dp, bottom = 4.dp),
                 )

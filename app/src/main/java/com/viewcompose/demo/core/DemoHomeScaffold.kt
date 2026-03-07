@@ -33,7 +33,7 @@ internal fun UiTreeBuilder.DemoHomeScaffold(
             val navIndex = remember { mutableStateOf(0) }
             val diagnosticsPageState = remember { mutableStateOf(0) }
             SideEffect {
-                activity?.title = "UIFramework · ${DemoThemeTokens.modeLabel(themeModeState.value, root.context)}"
+                activity?.title = "ViewCompose · ${DemoThemeTokens.modeLabel(themeModeState.value, root.context)}"
             }
             Scaffold(
                 bottomBar = {

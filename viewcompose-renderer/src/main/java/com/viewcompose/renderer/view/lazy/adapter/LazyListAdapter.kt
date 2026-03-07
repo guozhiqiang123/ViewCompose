@@ -150,7 +150,7 @@ internal class LazyListAdapter(
             return
         }
         lastIdentityWarning = warning
-        Log.w("UIFramework", warning)
+        Log.w("ViewCompose", warning)
     }
 
     fun disposeAll() {

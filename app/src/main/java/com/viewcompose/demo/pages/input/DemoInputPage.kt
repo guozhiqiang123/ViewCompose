@@ -58,7 +58,7 @@ internal fun UiTreeBuilder.InputPage(
 ) {
     val benchmarkExpandedState = remember { mutableStateOf(false) }
     val nameState = remember { mutableStateOf("GZQ") }
-    val emailState = remember { mutableStateOf("demo@uiframework.dev") }
+    val emailState = remember { mutableStateOf("demo@viewcompose.dev") }
     val passwordState = remember { mutableStateOf("") }
     val ageState = remember { mutableStateOf("3") }
     val bioState = remember { mutableStateOf("基于虚拟节点、键控 diff 和 Android View 互操作构建。") }
@@ -235,7 +235,7 @@ internal fun UiTreeBuilder.InputPage(
                         .margin(bottom = 12.dp),
                 )
                 EmailField(
-                    value = "disabled@uiframework.dev",
+                    value = "disabled@viewcompose.dev",
                     onValueChange = {},
                     hint = "禁用邮箱",
                     label = "只读联系人",
@@ -269,7 +269,7 @@ internal fun UiTreeBuilder.InputPage(
                     size = ButtonSize.Large,
                     onClick = {
                         nameState.value = "GZQ"
-                        emailState.value = "demo@uiframework.dev"
+                        emailState.value = "demo@viewcompose.dev"
                         passwordState.value = ""
                         ageState.value = "3"
                         bioState.value = "基于虚拟节点、键控 diff 和 Android View 互操作构建。"

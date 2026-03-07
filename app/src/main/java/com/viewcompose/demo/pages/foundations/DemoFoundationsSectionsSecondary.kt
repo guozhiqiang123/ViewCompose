@@ -103,7 +103,7 @@ internal fun UiTreeBuilder.FoundationsMediaSection() {
             }
         }
         Image(
-            source = ImageSource.Remote("https://picsum.photos/seed/uiframework-demo/640/360"),
+            source = ImageSource.Remote("https://picsum.photos/seed/viewcompose-demo/640/360"),
             contentDescription = "远程图片",
             contentScale = ImageContentScale.Crop,
             placeholder = ImageSource.Resource(R.drawable.demo_media_image),

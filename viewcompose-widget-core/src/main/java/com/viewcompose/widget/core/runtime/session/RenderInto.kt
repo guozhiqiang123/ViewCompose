@@ -7,7 +7,7 @@ import com.viewcompose.renderer.view.tree.RenderTreeResult
 fun renderInto(
     container: ViewGroup,
     debug: Boolean = false,
-    debugTag: String = "UIFramework",
+    debugTag: String = "ViewCompose",
     overlayHost: OverlayHost = OverlayHostDefaults.noOp,
     onRenderStats: ((RenderStats) -> Unit)? = null,
     onRenderResult: ((RenderTreeResult) -> Unit)? = null,

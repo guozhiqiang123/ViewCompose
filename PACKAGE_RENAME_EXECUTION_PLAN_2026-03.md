@@ -36,7 +36,7 @@
 - [x] Step 2. Rename Gradle module IDs and dependency paths.
 - [x] Step 3. Migrate namespaces, package declarations, imports, and directories.
 - [x] Step 4. Keep install package boundaries stable.
-- [ ] Step 5. Update reflection contracts and brand naming.
+- [x] Step 5. Update reflection contracts and brand naming.
 - [ ] Step 6. Sync docs including archive.
 - [ ] Step 7. Run final gates and archive this plan.
 
@@ -44,7 +44,7 @@
 - Step 1: `a21be23` (`docs: add package rename execution plan for com.viewcompose`)
 - Step 2: `9a1e293` (`refactor: rename gradle module ids to viewcompose-*`)
 - Step 3: `0cbf3bf` (`refactor: migrate package root to com.viewcompose across modules`)
-- Step 4: pending
+- Step 4: `3faf754` (`fix: keep applicationId stable while migrating source packages`)
 - Step 5: pending
 - Step 6: pending
 - Step 7: pending

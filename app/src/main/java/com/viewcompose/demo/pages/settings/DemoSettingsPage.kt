@@ -113,7 +113,7 @@ internal fun UiTreeBuilder.SettingsPage(
                     modifier = Modifier.fillMaxWidth(),
                 )
                 Text(
-                    text = "调试日志输出到 UIFrameworkSample tag",
+                    text = "调试日志输出到 ViewComposeSample tag",
                     style = UiTextStyle(fontSizeSp = 12.sp),
                     color = TextDefaults.secondaryColor(),
                     modifier = Modifier.margin(top = 4.dp),

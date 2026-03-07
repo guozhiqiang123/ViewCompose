@@ -34,7 +34,7 @@ interface OverlayHost {
 }
 
 object OverlayHostDefaults {
-    private const val TAG = "UIFramework"
+    private const val TAG = "ViewCompose"
     // Reflection contract: keep this class name synchronized with app unit test.
     private const val ANDROID_OVERLAY_HOST_CLASS_NAME =
         "com.viewcompose.overlay.android.host.AndroidOverlayHost"

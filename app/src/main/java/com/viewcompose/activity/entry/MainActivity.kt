@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import com.viewcompose.widget.core.UiTreeBuilder
 
 class MainActivity : DemoRenderActivity() {
-    override val demoTitle: String = "UIFramework Demo"
+    override val demoTitle: String = "ViewCompose Demo"
 
     override fun redirectTargetIntent(): Intent? {
         val moduleKey = intent?.getStringExtra(EXTRA_DEMO_MODULE_KEY)

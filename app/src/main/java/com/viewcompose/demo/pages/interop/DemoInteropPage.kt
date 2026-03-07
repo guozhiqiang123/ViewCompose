@@ -133,7 +133,7 @@ internal fun UiTreeBuilder.InteropPage() {
                 title = "主题桥接",
                 subtitle = "验证框架主题 locals 和 Android View 默认值可以共存。",
             ) {
-                Text(text = "当前章节将 AndroidView 保持在同一主题容器中，文本、间距和周围的 Surface 仍由 UIFramework token 驱动。")
+                Text(text = "当前章节将 AndroidView 保持在同一主题容器中，文本、间距和周围的 Surface 仍由 ViewCompose token 驱动。")
                 Text(
                     text = "后续应验证主题化原生控件、自定义 View 适配器和 Fragment host 容器。",
                     style = UiTextStyle(fontSizeSp = 13.sp),

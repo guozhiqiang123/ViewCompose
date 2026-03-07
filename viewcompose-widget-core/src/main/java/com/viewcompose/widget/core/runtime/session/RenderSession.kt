@@ -16,7 +16,7 @@ class RenderSession internal constructor(
     private val container: ViewGroup,
     private val content: UiTreeBuilder.() -> Unit,
     private val debug: Boolean = false,
-    private val debugTag: String = "UIFramework",
+    private val debugTag: String = "ViewCompose",
     private val overlayHost: OverlayHost = OverlayHostDefaults.noOp,
     private val onRenderStats: ((RenderStats) -> Unit)? = null,
     private val onRenderResult: ((RenderTreeResult) -> Unit)? = null,

@@ -19,7 +19,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "UIFramework"
+rootProject.name = "ViewCompose"
 include(":app")
 include(":viewcompose-runtime")
 include(":viewcompose-renderer")

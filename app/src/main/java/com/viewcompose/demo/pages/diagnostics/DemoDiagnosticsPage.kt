@@ -112,7 +112,7 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                 DiagnosticFactGroup(
                     title = "运行时数据",
                     facts = listOf(
-                        DiagnosticFact("调试日志", "已启用 (UIFrameworkSample)"),
+                        DiagnosticFact("调试日志", "已启用 (ViewComposeSample)"),
                         DiagnosticFact("可用模块", "${AVAILABLE_DEMO_MODULES.size}"),
                         DiagnosticFact("规划模块", "${PLANNED_DEMO_MODULES.size}"),
                         DiagnosticFact("区域设置", Environment.localeTags.firstOrNull() ?: "und"),
@@ -269,7 +269,7 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                         "点击重置布局计数器后进入 Layouts / Input / Foundations，再回来刷新，确认布局 Pass 计数器主要由自定义容器增长。",
                         "切到 Layouts 或 Collections 压力页后再回来，确认挂载深度和 VNode 深度会跟随复杂场景变化。",
                         "打开 Layouts / Collections 压力页，观察日志中 VNode tree 与 Reconcile 摘要是否稳定。",
-                        "切换章节并返回，确认 debug 日志仍持续输出到 UIFrameworkSample。",
+                        "切换章节并返回，确认 debug 日志仍持续输出到 ViewComposeSample。",
                         "遇到视觉 bug 时，先用这里的渲染模型判断问题更像 layout、list diff 还是 local 传播。",
                     ),
                 )

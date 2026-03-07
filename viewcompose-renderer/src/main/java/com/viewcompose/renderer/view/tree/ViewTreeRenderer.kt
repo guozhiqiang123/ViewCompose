@@ -14,7 +14,7 @@ import com.viewcompose.renderer.reconcile.ReconcileNode
 
 object ViewTreeRenderer {
     private const val DEFAULT_RIPPLE_COLOR: Int = 0x22000000
-    private const val WARNING_TAG: String = "UIFramework"
+    private const val WARNING_TAG: String = "ViewCompose"
     private const val MAX_WARNING_ENTRIES: Int = 200
     private val emittedModifierWarnings = mutableSetOf<String>()
     private val emittedStructureWarnings = mutableSetOf<String>()

@@ -27,7 +27,7 @@ abstract class DemoRenderActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setUiContent(
             debug = true,
-            debugTag = "UIFrameworkSample",
+            debugTag = "ViewComposeSample",
             overlayHostFactory = ::AndroidOverlayHost,
             onRenderResult = DemoRenderDiagnosticsStore::record,
         ) { root ->
