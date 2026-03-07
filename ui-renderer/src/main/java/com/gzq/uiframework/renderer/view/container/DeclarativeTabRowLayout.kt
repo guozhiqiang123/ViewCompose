@@ -72,6 +72,13 @@ internal class DeclarativeTabRowLayout(
         )
     }
 
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        if (w > 0 && oldw > 0 && w != oldw && tabContainer.childCount > 0) {
+            post { scrollToSelectedTab(animate = false) }
+        }
+    }
+
     fun bind(
         tabs: List<TabRowTab>,
         selectedIndex: Int,
@@ -134,7 +141,7 @@ internal class DeclarativeTabRowLayout(
             tabContainer.updateIndicatorPosition(this.selectedIndex, 0f)
         }
         if (selectedChanged || tabsRebuilt) {
-            scrollToSelectedTab()
+            scrollToSelectedTab(animate = true)
         }
     }
 
@@ -220,9 +227,11 @@ internal class DeclarativeTabRowLayout(
         }
     }
 
-    private fun scrollToSelectedTab() {
+    private fun scrollToSelectedTab(
+        animate: Boolean = true,
+    ) {
         if (width == 0) {
-            post { scrollToSelectedTab() }
+            post { scrollToSelectedTab(animate) }
             return
         }
         val child = tabContainer.getChildAt(selectedIndex) ?: return
@@ -231,7 +240,11 @@ internal class DeclarativeTabRowLayout(
         if (scrollX == resolvedTarget) {
             return
         }
-        smoothScrollTo(resolvedTarget, 0)
+        if (animate) {
+            smoothScrollTo(resolvedTarget, 0)
+        } else {
+            scrollTo(resolvedTarget, 0)
+        }
     }
 
     fun dispose() {
