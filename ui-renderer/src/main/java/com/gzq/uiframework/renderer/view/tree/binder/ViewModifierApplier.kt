@@ -34,9 +34,11 @@ import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 import com.gzq.uiframework.renderer.node.spec.ToggleNodeProps
 import com.gzq.uiframework.renderer.view.container.DeclarativeHorizontalPagerLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLazyVerticalGridLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeVerticalPagerLayout
 import com.gzq.uiframework.renderer.view.lazy.LazyFocusFollowLayoutMonitor
+import com.gzq.uiframework.renderer.view.lazy.ScrollableFocusFollowLayoutMonitor
 import com.gzq.uiframework.renderer.view.lazy.FrameworkRecyclerViewDefaults
 
 internal object ViewModifierApplier {
@@ -585,6 +587,15 @@ internal object ViewModifierApplier {
                 )
                 val focusPolicy = node.modifier.lazyContainerFocusPolicy()
                 (view as? DeclarativeVerticalPagerLayout)?.setFocusFollowKeyboardEnabled(focusPolicy.enabled)
+            }
+            NodeType.ScrollableColumn -> {
+                val focusPolicy = node.modifier.lazyContainerFocusPolicy()
+                (view as? DeclarativeScrollableColumnLayout)?.let { scrollView ->
+                    ScrollableFocusFollowLayoutMonitor.apply(
+                        scrollView = scrollView,
+                        enabled = focusPolicy.enabled,
+                    )
+                }
             }
             else -> Unit
         }
