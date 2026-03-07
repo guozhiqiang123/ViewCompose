@@ -56,9 +56,7 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
         bottom: Int,
     ) {
         val startNs = System.nanoTime()
-        val visibleChildren = (0 until childCount)
-            .map(::getChildAt)
-            .filter { child -> child.visibility != View.GONE }
+        val visibleChildren = collectVisibleChildren()
         if (visibleChildren.isEmpty()) {
             LayoutPassTracker.recordLayout(
                 viewName = javaClass.simpleName,
@@ -82,21 +80,25 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
     ) {
         val innerWidth = width - paddingLeft - paddingRight
         val innerHeight = height - paddingTop - paddingBottom
+        var hasWeightedChildren = false
+        val childSpecs = ArrayList<LinearChildSpec>(children.size)
+        children.forEach { child ->
+            val params = child.layoutParams as MarginLayoutParams
+            if (((child.layoutParams as? LayoutParams)?.weight ?: 0f) > 0f) {
+                hasWeightedChildren = true
+            }
+            childSpecs += LinearChildSpec(
+                size = child.measuredWidth,
+                leadingMargin = params.leftMargin,
+                trailingMargin = params.rightMargin,
+            )
+        }
         val placements = LinearPlacementCalculator.calculate(
             containerSize = innerWidth,
             arrangement = mainAxisArrangement,
             itemSpacing = itemSpacing,
-            hasWeightedChildren = children.any { child ->
-                ((child.layoutParams as? LayoutParams)?.weight ?: 0f) > 0f
-            },
-            children = children.map { child ->
-                val params = child.layoutParams as MarginLayoutParams
-                LinearChildSpec(
-                    size = child.measuredWidth,
-                    leadingMargin = params.leftMargin,
-                    trailingMargin = params.rightMargin,
-                )
-            },
+            hasWeightedChildren = hasWeightedChildren,
+            children = childSpecs,
         )
         children.forEachIndexed { index, child ->
             val params = child.layoutParams as MarginLayoutParams
@@ -117,21 +119,25 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
     ) {
         val innerWidth = width - paddingLeft - paddingRight
         val innerHeight = height - paddingTop - paddingBottom
+        var hasWeightedChildren = false
+        val childSpecs = ArrayList<LinearChildSpec>(children.size)
+        children.forEach { child ->
+            val params = child.layoutParams as MarginLayoutParams
+            if (((child.layoutParams as? LayoutParams)?.weight ?: 0f) > 0f) {
+                hasWeightedChildren = true
+            }
+            childSpecs += LinearChildSpec(
+                size = child.measuredHeight,
+                leadingMargin = params.topMargin,
+                trailingMargin = params.bottomMargin,
+            )
+        }
         val placements = LinearPlacementCalculator.calculate(
             containerSize = innerHeight,
             arrangement = mainAxisArrangement,
             itemSpacing = itemSpacing,
-            hasWeightedChildren = children.any { child ->
-                ((child.layoutParams as? LayoutParams)?.weight ?: 0f) > 0f
-            },
-            children = children.map { child ->
-                val params = child.layoutParams as MarginLayoutParams
-                LinearChildSpec(
-                    size = child.measuredHeight,
-                    leadingMargin = params.topMargin,
-                    trailingMargin = params.bottomMargin,
-                )
-            },
+            hasWeightedChildren = hasWeightedChildren,
+            children = childSpecs,
         )
         children.forEachIndexed { index, child ->
             val params = child.layoutParams as MarginLayoutParams
@@ -184,6 +190,20 @@ internal class DeclarativeLinearLayout @JvmOverloads constructor(
     private fun readChildGravity(params: MarginLayoutParams): Int? {
         val gravity = (params as? LayoutParams)?.gravity ?: UNSPECIFIED_CHILD_GRAVITY
         return gravity.takeUnless { it == UNSPECIFIED_CHILD_GRAVITY }
+    }
+
+    private fun collectVisibleChildren(): List<View> {
+        if (childCount == 0) {
+            return emptyList()
+        }
+        val result = ArrayList<View>(childCount)
+        for (index in 0 until childCount) {
+            val child = getChildAt(index)
+            if (child.visibility != View.GONE) {
+                result += child
+            }
+        }
+        return result
     }
 
     private fun updateSpacingDivider() {
