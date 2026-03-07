@@ -11,7 +11,9 @@ import android.graphics.drawable.RippleDrawable
 import android.view.View
 import android.view.ViewParent
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
@@ -26,6 +28,11 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import java.io.File
+
+internal data class RecyclerViewportAnchor(
+    val position: Int,
+    val offset: Int,
+)
 
 internal fun <A : Activity> launchDemoActivity(
     activityClass: Class<A>,
@@ -150,6 +157,30 @@ internal fun Activity.clickByTestTag(tag: String) {
     current!!.performClick()
 }
 
+internal fun Activity.focusInputByTestTag(tag: String) {
+    val host = requireViewByTestTagVisible(tag)
+    val input = findFirstEditText(host)
+    assertNotNull("Expected EditText descendant for testTag: $tag", input)
+    input!!.requestFocus()
+}
+
+internal fun Activity.readFirstRecyclerAnchor(): RecyclerViewportAnchor? {
+    val root = findViewById<ViewGroup>(android.R.id.content)
+    val recyclerView = findFirstRecyclerView(root) ?: return null
+    val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return null
+    val position = layoutManager.findFirstVisibleItemPosition()
+    if (position == RecyclerView.NO_POSITION) {
+        return null
+    }
+    val anchorView = layoutManager.findViewByPosition(position)
+    val offset = if (layoutManager.orientation == RecyclerView.HORIZONTAL) {
+        (anchorView?.left ?: recyclerView.paddingLeft) - recyclerView.paddingLeft
+    } else {
+        (anchorView?.top ?: recyclerView.paddingTop) - recyclerView.paddingTop
+    }
+    return RecyclerViewportAnchor(position = position, offset = offset)
+}
+
 internal fun Activity.clickTextView(text: String) {
     var current: View? = requireTextView(text)
     while (current != null && !current.isClickable) {
@@ -267,6 +298,21 @@ private fun findFirstRecyclerView(root: View): RecyclerView? {
     if (root is ViewGroup) {
         for (index in 0 until root.childCount) {
             val match = findFirstRecyclerView(root.getChildAt(index))
+            if (match != null) {
+                return match
+            }
+        }
+    }
+    return null
+}
+
+private fun findFirstEditText(root: View): EditText? {
+    if (root is EditText) {
+        return root
+    }
+    if (root is ViewGroup) {
+        for (index in 0 until root.childCount) {
+            val match = findFirstEditText(root.getChildAt(index))
             if (match != null) {
                 return match
             }

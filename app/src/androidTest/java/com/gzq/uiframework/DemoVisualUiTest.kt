@@ -4,9 +4,11 @@ import android.content.Intent
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlin.math.abs
 
 @RunWith(AndroidJUnit4::class)
 class DemoVisualUiTest {
@@ -176,6 +178,35 @@ class DemoVisualUiTest {
                 assertTextNotEllipsized(expanded)
                 assertTextNotEllipsized(readonly)
                 assertTextNotEllipsized(error)
+            }
+        }
+    }
+
+    @Test
+    fun inputSearch_focusSearchBar_doesNotAutoScrollList() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            InputActivity::class.java,
+        ).putExtra(EXTRA_INPUT_PAGE_INDEX, 3)
+        var beforeAnchor: RecyclerViewportAnchor? = null
+        launchDemoActivity<InputActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                beforeAnchor = activity.readFirstRecyclerAnchor()
+                activity.focusInputByTestTag(DemoTestTags.INPUT_SEARCH_PRIMARY)
+            }
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val afterAnchor = activity.readFirstRecyclerAnchor()
+                assertNotNull(beforeAnchor)
+                assertNotNull(afterAnchor)
+                val before = beforeAnchor!!
+                val after = afterAnchor!!
+                assertEquals(before.position, after.position)
+                assertTrue(
+                    "Expected focus action to avoid noticeable auto-scroll, before=$before, after=$after",
+                    abs(before.offset - after.offset) <= 8,
+                )
             }
         }
     }

@@ -32,6 +32,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeTabRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeVerticalPagerLayout
 import com.gzq.uiframework.renderer.view.lazy.FrameworkRecyclerViewDefaults
+import com.gzq.uiframework.renderer.view.lazy.LazyLinearLayoutManager
 import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
 
 internal object ViewNodeFactory {
@@ -62,12 +63,16 @@ internal object ViewNodeFactory {
             NodeType.Image -> ImageView(context)
             NodeType.AndroidView -> createAndroidView?.invoke(context) ?: View(context)
             NodeType.LazyColumn -> RecyclerView(context).apply {
-                layoutManager = LinearLayoutManager(context)
+                layoutManager = LazyLinearLayoutManager(context)
                 adapter = LazyColumnAdapter()
                 FrameworkRecyclerViewDefaults.applyLazyColumnDefaults(this)
             }
             NodeType.LazyRow -> RecyclerView(context).apply {
-                layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+                layoutManager = LazyLinearLayoutManager(
+                    context = context,
+                    orientation = LinearLayoutManager.HORIZONTAL,
+                    reverseLayout = false,
+                )
                 adapter = LazyColumnAdapter(LinearLayoutManager.HORIZONTAL)
                 FrameworkRecyclerViewDefaults.applyLazyRowDefaults(this)
             }

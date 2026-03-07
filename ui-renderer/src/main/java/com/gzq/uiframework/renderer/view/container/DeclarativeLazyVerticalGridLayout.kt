@@ -3,11 +3,11 @@ package com.gzq.uiframework.renderer.view.container
 import android.content.Context
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.gzq.uiframework.renderer.R
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
+import com.gzq.uiframework.renderer.view.lazy.LazyGridLayoutManager
 import com.gzq.uiframework.renderer.view.lazy.LazyGridSpacingDecoration
 import com.gzq.uiframework.renderer.view.lazy.FrameworkRecyclerViewDefaults
 import com.gzq.uiframework.renderer.view.lazy.LazyListState
@@ -55,9 +55,9 @@ internal class DeclarativeLazyVerticalGridLayout(
         items: List<LazyListItem>,
         state: LazyListState?,
     ) {
-        val lm = recyclerView.layoutManager as? GridLayoutManager
+        val lm = recyclerView.layoutManager as? LazyGridLayoutManager
         if (lm == null || lm.spanCount != spanCount) {
-            recyclerView.layoutManager = GridLayoutManager(context, spanCount)
+            recyclerView.layoutManager = LazyGridLayoutManager(context, spanCount)
         }
         updateSpacingDecoration(horizontalSpacing, verticalSpacing, spanCount)
         recyclerView.setPadding(contentPadding, contentPadding, contentPadding, contentPadding)
