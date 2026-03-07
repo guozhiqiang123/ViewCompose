@@ -289,7 +289,7 @@ internal fun UiTreeBuilder.ActionsPage(
                     text = "自定义颜色",
                     onClick = { fabClickState.value += 1 },
                     icon = ImageSource.Resource(R.drawable.demo_media_icon),
-                    containerColor = Theme.colors.accent,
+                    containerColor = Theme.colors.secondary,
                     contentColor = Theme.colors.background,
                 )
             }
@@ -476,7 +476,7 @@ internal fun UiTreeBuilder.ActionsPage(
                             badge = {
                                 Badge(
                                     count = 3,
-                                    containerColor = Theme.colors.accent,
+                                    containerColor = Theme.colors.secondary,
                                 )
                             },
                         ) {

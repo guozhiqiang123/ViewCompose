@@ -319,7 +319,7 @@ internal fun UiTreeBuilder.InputPage(
                 )
                 ProvideCheckboxColors(
                     InputControlColorOverride(
-                        control = Theme.colors.accent,
+                        control = Theme.colors.secondary,
                         controlDisabled = Theme.colors.divider,
                         label = Theme.colors.textPrimary,
                         labelDisabled = Theme.colors.textSecondary,
@@ -327,7 +327,7 @@ internal fun UiTreeBuilder.InputPage(
                 ) {
                 ProvideSwitchColors(
                     InputControlColorOverride(
-                        control = Theme.colors.accent,
+                        control = Theme.colors.secondary,
                         controlDisabled = Theme.colors.divider,
                         label = Theme.colors.textPrimary,
                         labelDisabled = Theme.colors.textSecondary,
@@ -335,7 +335,7 @@ internal fun UiTreeBuilder.InputPage(
                 ) {
                 ProvideRadioButtonColors(
                     InputControlColorOverride(
-                        control = Theme.colors.accent,
+                        control = Theme.colors.secondary,
                         controlDisabled = Theme.colors.divider,
                         label = Theme.colors.textPrimary,
                         labelDisabled = Theme.colors.textSecondary,
@@ -343,7 +343,7 @@ internal fun UiTreeBuilder.InputPage(
                 ) {
                 ProvideSliderColors(
                     InputControlColorOverride(
-                        control = Theme.colors.accent,
+                        control = Theme.colors.secondary,
                         controlDisabled = Theme.colors.divider,
                     ),
                 ) {

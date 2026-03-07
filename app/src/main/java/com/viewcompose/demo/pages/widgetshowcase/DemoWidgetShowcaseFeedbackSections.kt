@@ -96,7 +96,7 @@ internal fun UiTreeBuilder.ShowcaseLinearProgress() {
         DemoSection(title = "自定义颜色与粗细", subtitle = "indicatorColor / trackThickness") {
             LinearProgressIndicator(
                 progress = 0.6f,
-                indicatorColor = Theme.colors.accent,
+                indicatorColor = Theme.colors.secondary,
                 trackColor = Theme.colors.surfaceVariant,
             )
             LinearProgressIndicator(
@@ -141,7 +141,7 @@ internal fun UiTreeBuilder.ShowcaseCircularProgress() {
             ) {
                 CircularProgressIndicator(
                     progress = 0.7f,
-                    indicatorColor = Theme.colors.accent,
+                    indicatorColor = Theme.colors.secondary,
                 )
                 CircularProgressIndicator(
                     progress = 0.5f,
@@ -187,7 +187,7 @@ internal fun UiTreeBuilder.ShowcaseBadge() {
                     badge = {
                         Badge(
                             count = 5,
-                            containerColor = Theme.colors.accent,
+                            containerColor = Theme.colors.secondary,
                             contentColor = Theme.colors.surface,
                         )
                     },

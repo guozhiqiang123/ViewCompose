@@ -259,7 +259,7 @@ class DemoVisualUiTest {
                 assertTextNotEllipsized(accentButton)
                 assertViewBackgroundColor(
                     view = accentButton,
-                    expectedColor = DemoThemeTokens.light.colors.accent,
+                    expectedColor = DemoThemeTokens.light.colors.secondary,
                 )
             }
         }

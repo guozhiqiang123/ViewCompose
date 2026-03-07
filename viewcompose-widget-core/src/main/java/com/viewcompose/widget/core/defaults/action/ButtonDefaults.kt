@@ -28,7 +28,7 @@ object ButtonDefaults {
             }
 
             ButtonVariant.Secondary -> if (enabled) {
-                override?.secondaryContainer ?: Theme.colors.accent
+                override?.secondaryContainer ?: Theme.colors.secondary
             } else {
                 override?.secondaryDisabledContainer ?: Theme.colors.divider
             }
@@ -58,7 +58,7 @@ object ButtonDefaults {
             }
 
             ButtonVariant.Secondary -> if (enabled) {
-                override?.secondaryContent ?: contentColorFor(Theme.colors.accent)
+                override?.secondaryContent ?: contentColorFor(Theme.colors.secondary)
             } else {
                 override?.secondaryDisabledContent ?: Theme.colors.textSecondary
             }

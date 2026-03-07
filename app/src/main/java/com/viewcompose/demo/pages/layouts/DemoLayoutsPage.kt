@@ -148,7 +148,7 @@ internal fun UiTreeBuilder.LayoutPage(
                         text = "底部",
                         modifier = Modifier
                             .align(VerticalAlignment.Bottom)
-                            .backgroundColor(Theme.colors.accent)
+                            .backgroundColor(Theme.colors.secondary)
                             .padding(horizontal = 10.dp, vertical = 6.dp),
                     )
                 }
@@ -181,7 +181,7 @@ internal fun UiTreeBuilder.LayoutPage(
                             .align(BoxAlignment.BottomEnd)
                             .offset(x = (-8).dp.toFloat(), y = (-8).dp.toFloat())
                             .zIndex(1f)
-                            .backgroundColor(Theme.colors.accent)
+                            .backgroundColor(Theme.colors.secondary)
                             .padding(horizontal = 10.dp, vertical = 6.dp),
                     )
                 }

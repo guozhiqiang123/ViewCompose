@@ -34,7 +34,12 @@ internal object ThemeTokenMapper {
                 surfaceVariant = readColor(com.google.android.material.R.attr.colorSurfaceVariant)
                     ?: fallback.colors.surfaceVariant,
                 primary = readColor(androidx.appcompat.R.attr.colorPrimary) ?: fallback.colors.primary,
-                accent = readColor(com.google.android.material.R.attr.colorSecondary) ?: fallback.colors.accent,
+                secondary = readColor(com.google.android.material.R.attr.colorSecondary)
+                    ?: fallback.colors.secondary,
+                error = readColor(android.R.attr.colorError) ?: fallback.colors.error,
+                success = fallback.colors.success,
+                warning = fallback.colors.warning,
+                info = fallback.colors.info,
                 divider = readColor(com.google.android.material.R.attr.colorOutline) ?: fallback.colors.divider,
                 textPrimary = readColor(android.R.attr.textColorPrimary) ?: fallback.colors.textPrimary,
                 textSecondary = readColor(android.R.attr.textColorSecondary) ?: fallback.colors.textSecondary,

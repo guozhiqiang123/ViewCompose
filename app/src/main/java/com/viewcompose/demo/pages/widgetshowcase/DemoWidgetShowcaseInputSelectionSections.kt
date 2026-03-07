@@ -56,7 +56,7 @@ internal fun UiTreeBuilder.ShowcaseCheckbox() {
                 text = "自定义颜色",
                 checked = c.value,
                 onCheckedChange = { c.value = it },
-                checkedColor = Theme.colors.accent,
+                checkedColor = Theme.colors.secondary,
                 uncheckedColor = Theme.colors.textSecondary,
             )
         }
@@ -105,7 +105,7 @@ internal fun UiTreeBuilder.ShowcaseSwitch() {
                 text = "自定义颜色",
                 checked = c.value,
                 onCheckedChange = { c.value = it },
-                thumbColor = Theme.colors.accent,
+                thumbColor = Theme.colors.secondary,
                 trackColor = Theme.colors.surfaceVariant,
             )
         }
@@ -150,7 +150,7 @@ internal fun UiTreeBuilder.ShowcaseRadioButton() {
                 text = "自定义颜色",
                 checked = c.value,
                 onCheckedChange = { c.value = it },
-                checkedColor = Theme.colors.accent,
+                checkedColor = Theme.colors.secondary,
                 uncheckedColor = Theme.colors.textSecondary,
             )
         }
@@ -199,7 +199,7 @@ internal fun UiTreeBuilder.ShowcaseSlider() {
             Slider(
                 value = v.value,
                 onValueChange = { v.value = it },
-                thumbColor = Theme.colors.accent,
+                thumbColor = Theme.colors.secondary,
                 trackColor = Theme.colors.surfaceVariant,
                 modifier = Modifier.fillMaxWidth(),
             )

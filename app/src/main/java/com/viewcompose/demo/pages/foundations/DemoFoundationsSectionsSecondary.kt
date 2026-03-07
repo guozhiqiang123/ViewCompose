@@ -138,9 +138,9 @@ internal fun UiTreeBuilder.FoundationsMediaSection() {
             Surface(modifier = Modifier.padding(8.dp)) {
                 Icon(source = ImageSource.Resource(R.drawable.demo_media_icon), contentDescription = "前景图标")
             }
-            UiThemeOverride(colors = { copy(textPrimary = accent) }) {
+            UiThemeOverride(colors = { copy(textPrimary = secondary) }) {
                 Surface(variant = SurfaceVariant.Variant, modifier = Modifier.padding(8.dp)) {
-                    Icon(source = ImageSource.Resource(R.drawable.demo_media_icon), contentDescription = "Accent 图标")
+                    Icon(source = ImageSource.Resource(R.drawable.demo_media_icon), contentDescription = "Secondary 图标")
                 }
             }
             Text(

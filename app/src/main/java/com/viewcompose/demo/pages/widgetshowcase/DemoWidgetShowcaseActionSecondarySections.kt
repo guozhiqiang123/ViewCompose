@@ -134,7 +134,7 @@ internal fun UiTreeBuilder.ShowcaseFab() {
         DemoSection(title = "自定义颜色", subtitle = "containerColor / contentColor") {
             FloatingActionButton(
                 onClick = {},
-                containerColor = Theme.colors.accent,
+                containerColor = Theme.colors.secondary,
                 contentColor = Theme.colors.surface,
             ) {
                 Icon(source = ImageSource.Resource(R.drawable.demo_media_icon))

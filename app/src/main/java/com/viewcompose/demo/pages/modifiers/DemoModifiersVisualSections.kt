@@ -97,7 +97,7 @@ internal fun UiTreeBuilder.ModifierBorderClipSection() {
                 modifier = Modifier
                     .weight(1f)
                     .height(64.dp)
-                    .border(3.dp, Theme.colors.accent)
+                    .border(3.dp, Theme.colors.secondary)
                     .cornerRadius(24.dp),
             ) {
                 Text(text = "3dp 圆角")

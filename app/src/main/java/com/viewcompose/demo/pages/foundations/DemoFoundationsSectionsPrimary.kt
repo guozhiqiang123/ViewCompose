@@ -92,7 +92,7 @@ internal fun UiTreeBuilder.FoundationsThemeSection() {
                 ThemeSwatch("Bg", Theme.colors.background),
                 ThemeSwatch("Surface", Theme.colors.surface),
                 ThemeSwatch("Primary", Theme.colors.primary),
-                ThemeSwatch("Accent", Theme.colors.accent),
+                ThemeSwatch("Secondary", Theme.colors.secondary),
             ),
         )
         ThemeSwatchRow(
@@ -120,7 +120,7 @@ internal fun UiTreeBuilder.FoundationsOverridesSection() {
     ) {
         UiThemeOverride(
             colors = {
-                copy(primary = accent, surfaceVariant = primary)
+                copy(primary = secondary, surfaceVariant = primary)
             },
         ) {
             Column(
@@ -216,19 +216,19 @@ internal fun UiTreeBuilder.FoundationsOverridesSection() {
                 primaryContent = Theme.colors.background,
                 primaryDisabledContainer = Theme.colors.divider,
                 primaryDisabledContent = Theme.colors.textSecondary,
-                outlinedBorder = Theme.colors.accent,
+                outlinedBorder = Theme.colors.secondary,
                 outlinedDisabledBorder = Theme.colors.textSecondary,
             ),
         ) {
             ProvideTextFieldColors(
                 TextFieldColorOverride(
                     filledDisabledContainer = Theme.colors.surfaceVariant,
-                    outlinedErrorBorder = Theme.colors.accent,
+                    outlinedErrorBorder = Theme.colors.secondary,
                 ),
             ) {
                 ProvideSegmentedControlColors(
                     SegmentedControlColorOverride(
-                        indicator = Theme.colors.accent,
+                        indicator = Theme.colors.secondary,
                         indicatorDisabled = Theme.colors.divider,
                         selectedText = Theme.colors.background,
                         selectedTextDisabled = Theme.colors.textSecondary,

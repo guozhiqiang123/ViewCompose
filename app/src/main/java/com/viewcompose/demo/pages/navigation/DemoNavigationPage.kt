@@ -202,8 +202,8 @@ internal fun UiTreeBuilder.NavigationPage(
                     selectedIndex = navSelectedState.value,
                     onItemSelected = { navSelectedState.value = it },
                     containerColor = Theme.colors.surfaceVariant,
-                    selectedIconColor = Theme.colors.accent,
-                    selectedLabelColor = Theme.colors.accent,
+                    selectedIconColor = Theme.colors.secondary,
+                    selectedLabelColor = Theme.colors.secondary,
                     indicatorColor = Theme.colors.background,
                     modifier = Modifier.fillMaxWidth(),
                 ) {

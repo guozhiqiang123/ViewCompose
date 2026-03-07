@@ -41,7 +41,7 @@ internal fun UiTreeBuilder.ShowcaseText() {
         DemoSection(title = "颜色 (Color)", subtitle = "使用主题颜色和自定义颜色") {
             Text(text = "Primary Color", color = Theme.colors.primary)
             Text(text = "Secondary Color", color = TextDefaults.secondaryColor())
-            Text(text = "Accent Color", color = Theme.colors.accent)
+            Text(text = "Secondary Color", color = Theme.colors.secondary)
         }
 
         DemoSection(title = "对齐 (TextAlign)", subtitle = "Start / Center / End") {
@@ -119,7 +119,7 @@ internal fun UiTreeBuilder.ShowcaseImageIcon() {
                 )
                 Image(
                     source = ImageSource.Resource(R.drawable.demo_media_icon),
-                    tint = Theme.colors.accent,
+                    tint = Theme.colors.secondary,
                     modifier = Modifier.size(48.dp, 48.dp),
                 )
             }
@@ -148,7 +148,7 @@ internal fun UiTreeBuilder.ShowcaseImageIcon() {
                 )
                 Icon(
                     source = ImageSource.Resource(R.drawable.demo_media_icon),
-                    tint = Theme.colors.accent,
+                    tint = Theme.colors.secondary,
                 )
                 Icon(
                     source = ImageSource.Resource(R.drawable.demo_media_icon),
@@ -176,7 +176,7 @@ internal fun UiTreeBuilder.ShowcaseDivider() {
                 style = UiTextStyle(fontSizeSp = 13.sp),
                 modifier = Modifier.margin(top = 8.dp),
             )
-            Divider(color = Theme.colors.accent)
+            Divider(color = Theme.colors.secondary)
             Text(
                 text = "TextSecondary",
                 style = UiTextStyle(fontSizeSp = 13.sp),

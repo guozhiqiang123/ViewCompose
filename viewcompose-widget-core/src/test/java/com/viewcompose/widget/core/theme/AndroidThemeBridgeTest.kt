@@ -12,6 +12,7 @@ class AndroidThemeBridgeTest {
             com.google.android.material.R.attr.colorSurfaceVariant to 3,
             androidx.appcompat.R.attr.colorPrimary to 4,
             com.google.android.material.R.attr.colorSecondary to 5,
+            android.R.attr.colorError to 9,
             com.google.android.material.R.attr.colorOutline to 6,
             android.R.attr.textColorPrimary to 7,
             android.R.attr.textColorSecondary to 8,
@@ -23,7 +24,8 @@ class AndroidThemeBridgeTest {
         assertEquals(2, tokens.colors.surface)
         assertEquals(3, tokens.colors.surfaceVariant)
         assertEquals(4, tokens.colors.primary)
-        assertEquals(5, tokens.colors.accent)
+        assertEquals(5, tokens.colors.secondary)
+        assertEquals(9, tokens.colors.error)
         assertEquals(6, tokens.colors.divider)
         assertEquals(7, tokens.colors.textPrimary)
         assertEquals(8, tokens.colors.textSecondary)

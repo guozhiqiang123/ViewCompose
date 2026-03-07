@@ -31,7 +31,7 @@
 
 - [x] Step 1: 新增执行计划文档并首提。
 - [x] Step 2: 更新 `THEMING.md` 基线与兼容迁移策略。
-- [ ] Step 3: `UiColors` 语义色升级与 bridge/defaults/demo 同步。
+- [x] Step 3: `UiColors` 语义色升级与 bridge/defaults/demo 同步。
 - [ ] Step 4: 去除关键硬编码颜色并同步文档禁用清单。
 - [ ] Step 5: `UiTypography` 分级语义扩展并迁移首批 defaults。
 - [ ] Step 6: `UiShapes` 引入 `interactiveCornerRadius` 兼容别名并更新 demo 文案。
@@ -43,7 +43,8 @@
 | Date | Step | Commit | Notes |
 | --- | --- | --- | --- |
 | 2026-03-07 | Step 1 | `4d4eab7` | Add execution plan doc. |
-| 2026-03-07 | Step 2 | pending | Align theming baseline with overlays and migration policy. |
+| 2026-03-07 | Step 2 | `eae4da3` | Align theming baseline with overlays and migration policy. |
+| 2026-03-07 | Step 3 | pending | Add semantic color tokens and migrate internal usage to secondary-first path. |
 
 ## 6. Blocker Log
 
@@ -51,3 +52,7 @@
 
 1. 记录到 `THEME_TOKEN_BLOCKER_CONTEXT_2026-03.md`。
 2. 记录时间、已完成步骤、最新 commit、阻塞原因、恢复命令。
+
+当前记录：
+
+1. 2026-03-07：Step 3 里程碑 `qaFull` 触发 instrumentation 失败（`connectedDebugAndroidTest`，29 测 9 失败），已保留失败报告路径用于后续回归定位。

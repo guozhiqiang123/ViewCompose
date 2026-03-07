@@ -49,7 +49,7 @@ internal fun UiTreeBuilder.ModifierOffsetZIndexSection() {
                 contentAlignment = BoxAlignment.Center,
                 modifier = Modifier
                     .size(80.dp, 60.dp)
-                    .backgroundColor(Theme.colors.accent)
+                    .backgroundColor(Theme.colors.secondary)
                     .cornerRadius(8.dp)
                     .offset(x = 40.dp.toFloat(), y = 20.dp.toFloat())
                     .zIndex(2f),

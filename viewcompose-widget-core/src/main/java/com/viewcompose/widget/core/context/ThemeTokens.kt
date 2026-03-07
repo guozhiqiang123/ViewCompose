@@ -5,12 +5,23 @@ data class UiColors(
     val surface: Int,
     val surfaceVariant: Int,
     val primary: Int,
-    val accent: Int,
+    val secondary: Int,
+    val error: Int,
+    val success: Int,
+    val warning: Int,
+    val info: Int,
     val divider: Int,
     val textPrimary: Int,
     val textSecondary: Int,
     val ripple: Int = pressedOverlayColorFor(textPrimary),
-)
+) {
+    @Deprecated(
+        message = "Use secondary instead.",
+        replaceWith = ReplaceWith("secondary"),
+    )
+    val accent: Int
+        get() = secondary
+}
 
 data class UiShapes(
     val cardCornerRadius: Int,
