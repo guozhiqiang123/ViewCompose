@@ -5,6 +5,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -282,6 +283,37 @@ class DemoVisualUiTest {
                     view = tokenButton,
                     expectedColor = DemoThemeTokens.light.colors.textPrimary,
                 )
+            }
+        }
+    }
+
+    @Test
+    fun actionsElevatedCard_keepsElevationAfterClick() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            ActionsActivity::class.java,
+        ).putExtra(EXTRA_ACTIONS_PAGE_INDEX, 0)
+        launchDemoActivity<ActionsActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            var beforeElevation = 0f
+            scenario.onActivity { activity ->
+                val card = activity.requireViewByTestTagVisible(DemoTestTags.ACTIONS_ELEVATED_CARD)
+                beforeElevation = card.elevation
+                assertTrue("Expected elevated card initial elevation > 0", beforeElevation > 0f)
+                assertFalse("Expected elevated card not to force clip outline", card.clipToOutline)
+                activity.clickByTestTag(DemoTestTags.ACTIONS_ELEVATED_CARD)
+            }
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val card = activity.requireViewByTestTagVisible(DemoTestTags.ACTIONS_ELEVATED_CARD)
+                val afterElevation = card.elevation
+                assertEquals(
+                    "Expected elevated card elevation to stay stable after click",
+                    beforeElevation,
+                    afterElevation,
+                    0.01f,
+                )
+                assertFalse("Expected elevated card not to force clip outline after click", card.clipToOutline)
             }
         }
     }
