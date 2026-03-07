@@ -12,6 +12,10 @@ import com.gzq.uiframework.widget.core.SideEffect
 import com.gzq.uiframework.widget.core.Text
 import com.gzq.uiframework.widget.core.TextDefaults
 import com.gzq.uiframework.widget.core.Theme
+import com.gzq.uiframework.widget.core.UiDensity
+import com.gzq.uiframework.widget.core.UiEnvironment
+import com.gzq.uiframework.widget.core.UiEnvironmentValues
+import com.gzq.uiframework.widget.core.UiLayoutDirection
 import com.gzq.uiframework.widget.core.UiTextStyle
 import com.gzq.uiframework.widget.core.UiTreeBuilder
 import com.gzq.uiframework.widget.core.dp
@@ -128,6 +132,25 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                         DiagnosticFact("Card radius", "${Theme.shapes.cardCornerRadius}px"),
                     ),
                 )
+                UiEnvironment(
+                    values = UiEnvironmentValues(
+                        density = UiDensity(
+                            density = 1.25f,
+                            scaledDensity = 1.25f,
+                        ),
+                        localeTags = listOf("en-US"),
+                        layoutDirection = UiLayoutDirection.Ltr,
+                    ),
+                ) {
+                    DiagnosticFactGroup(
+                        title = "局部环境覆盖示例",
+                        facts = listOf(
+                            DiagnosticFact("示例 density", "${"%.2f".format(Locale.US, Environment.density.density)}x"),
+                            DiagnosticFact("示例 locale", Environment.localeTags.firstOrNull() ?: "und"),
+                            DiagnosticFact("示例 direction", Environment.layoutDirection.name),
+                        ),
+                    )
+                }
             }
 
             "renderer_actions" -> ScenarioSection(
