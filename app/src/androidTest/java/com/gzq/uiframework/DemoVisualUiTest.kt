@@ -294,6 +294,37 @@ class DemoVisualUiTest {
     }
 
     @Test
+    fun collectionsStress_rotateOrder_refreshesVisibleIdsAcrossToggles() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            CollectionsActivity::class.java,
+        ).putExtra(EXTRA_COLLECTIONS_PAGE_INDEX, 2)
+        launchDemoActivity<CollectionsActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val ids = activity.requireTextViewByTestTag(DemoTestTags.COLLECTIONS_STRESS_ACTIVE_IDS)
+                assertViewFullyVisible(ids)
+                assertTrue(ids.text.toString().contains("A -> B -> C -> D"))
+                activity.clickByTestTag(DemoTestTags.COLLECTIONS_STRESS_ROTATE)
+            }
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val ids = activity.requireTextViewByTestTag(DemoTestTags.COLLECTIONS_STRESS_ACTIVE_IDS)
+                assertViewFullyVisible(ids)
+                assertTrue(ids.text.toString().contains("C -> D -> A -> B"))
+                activity.clickByTestTag(DemoTestTags.COLLECTIONS_STRESS_ROTATE)
+            }
+            waitForUiIdle()
+            captureDeviceScreenshot("collections-stress-rotate-light")
+            scenario.onActivity { activity ->
+                val ids = activity.requireTextViewByTestTag(DemoTestTags.COLLECTIONS_STRESS_ACTIVE_IDS)
+                assertViewFullyVisible(ids)
+                assertTrue(ids.text.toString().contains("A -> B -> C -> D"))
+            }
+        }
+    }
+
+    @Test
     fun collectionsGrid_spanToggle_refreshesVisibleItemContent() {
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),

@@ -37,7 +37,7 @@ Out of scope for this execution:
 - [x] Step 3: Add payload-aware lazy/pager update path; sync `SESSION_CONTAINER_CHECKLIST.md`.
 - [x] Step 4: Apply framework-managed RecyclerView defaults tuning; sync `ARCHITECTURE.md` + `PERFORMANCE.md`.
 - [x] Step 5: Add subtree skip plan/pipeline/stats path; sync `PERFORMANCE.md` + `ROADMAP.md`.
-- [ ] Step 6: Add/refresh tests (unit + instrumentation) and pass gates.
+- [x] Step 6: Add/refresh tests (unit + instrumentation) and pass gates.
 - [ ] Step 7: Close, archive plan doc, and align final doc statuses.
 
 ## 5. Commit Log
@@ -49,7 +49,8 @@ Out of scope for this execution:
 | 2026-03-07 | Step 3 | `b976da2` | Added payload-aware lazy/pager update path and updated container checklist doc. |
 | 2026-03-07 | Step 4 | `864c094` | Tuned framework-managed RecyclerView defaults and synced architecture/performance docs. |
 | 2026-03-07 | Step 5 | `dad304a` | Added subtree skip plan/pipeline/stats path and synced roadmap/performance docs. |
-| 2026-03-07 | Step 6 (unit) | _pending_ | Added diff/payload unit assertions for lazy diff behavior. |
+| 2026-03-07 | Step 6 (unit) | `db57903` | Added diff/payload unit assertions for lazy diff behavior. |
+| 2026-03-07 | Step 6 (instrumentation) | _pending_ | Extended collections stress refresh instrumentation coverage. |
 
 ## 6. Blocker Log
 
