@@ -31,6 +31,7 @@
 4. 创建路径和更新路径都能驱动 `RenderSession.render()`
 5. `dispose/recycle` 语义与 holder 生命周期对齐
 6. `Change` 更新优先走 payload 通道，避免无条件全量变更通知
+7. key 不可用回退 `ReloadAll` 时，应尽量保持当前滚动锚点，避免交互后列表跳顶
 
 ## 4. 必测场景
 

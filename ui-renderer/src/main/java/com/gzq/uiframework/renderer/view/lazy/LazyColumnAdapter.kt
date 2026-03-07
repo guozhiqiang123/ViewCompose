@@ -13,11 +13,17 @@ import com.gzq.uiframework.renderer.reconcile.LazyListIdentityInspector
 internal class LazyColumnAdapter(
     private val orientation: Int = LinearLayoutManager.VERTICAL,
 ) : RecyclerView.Adapter<LazyColumnViewHolder>() {
+    private data class ScrollAnchor(
+        val position: Int,
+        val offset: Int,
+    )
+
     private var items: List<LazyListItem> = emptyList()
     private val holderRegistry = LazyHolderRegistry<LazyColumnViewHolder> { holder ->
         holder.recycle()
     }
     private var lastIdentityWarning: String? = null
+    private var attachedRecyclerView: RecyclerView? = null
 
     init {
         setHasStableIds(true)
@@ -75,6 +81,11 @@ internal class LazyColumnAdapter(
         holderRegistry.onAttached(holder)
     }
 
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        attachedRecyclerView = recyclerView
+    }
+
     override fun onViewDetachedFromWindow(holder: LazyColumnViewHolder) {
         super.onViewDetachedFromWindow(holder)
         holderRegistry.onDetached(holder)
@@ -82,6 +93,7 @@ internal class LazyColumnAdapter(
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         super.onDetachedFromRecyclerView(recyclerView)
+        attachedRecyclerView = null
         disposeAll()
     }
 
@@ -100,11 +112,17 @@ internal class LazyColumnAdapter(
             previous = this.items,
             next = items,
         )
+        val reloadAnchor = if (result.diffResult == null) {
+            captureScrollAnchor()
+        } else {
+            null
+        }
         this.items = result.items
         if (result.diffResult != null) {
             result.diffResult.dispatchUpdatesTo(this)
         } else {
             notifyDataSetChanged()
+            restoreScrollAnchor(reloadAnchor)
         }
         if (result.updates.isEmpty()) {
             holderRegistry.forEachBound { holder ->
@@ -165,6 +183,34 @@ internal class LazyColumnAdapter(
             return
         }
         holder.itemView.layoutParams = RecyclerView.LayoutParams(expectedWidth, expectedHeight)
+    }
+
+    private fun captureScrollAnchor(): ScrollAnchor? {
+        val recyclerView = attachedRecyclerView ?: return null
+        val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return null
+        val position = layoutManager.findFirstVisibleItemPosition()
+        if (position == RecyclerView.NO_POSITION) {
+            return null
+        }
+        val anchorView = layoutManager.findViewByPosition(position)
+        val offset = if (layoutManager.orientation == RecyclerView.HORIZONTAL) {
+            (anchorView?.left ?: recyclerView.paddingLeft) - recyclerView.paddingLeft
+        } else {
+            (anchorView?.top ?: recyclerView.paddingTop) - recyclerView.paddingTop
+        }
+        return ScrollAnchor(position, offset)
+    }
+
+    private fun restoreScrollAnchor(anchor: ScrollAnchor?) {
+        val recyclerView = attachedRecyclerView ?: return
+        val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return
+        if (anchor == null || itemCount == 0) {
+            return
+        }
+        val targetPosition = anchor.position.coerceIn(0, itemCount - 1)
+        recyclerView.post {
+            layoutManager.scrollToPositionWithOffset(targetPosition, anchor.offset)
+        }
     }
 }
 
