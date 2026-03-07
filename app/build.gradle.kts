@@ -8,7 +8,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.viewcompose"
+        applicationId = "com.gzq.uiframework"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

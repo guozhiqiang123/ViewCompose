@@ -22,6 +22,7 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
+import androidx.lifecycle.Lifecycle
 import com.viewcompose.renderer.R as RendererR
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -39,7 +40,9 @@ internal fun <A : Activity> launchDemoActivity(
     themeMode: DemoThemeMode = DemoThemeMode.Light,
 ): ActivityScenario<A> {
     DemoThemeSession.mode = themeMode
-    return ActivityScenario.launch(activityClass)
+    return ActivityScenario.launch(activityClass).also { scenario ->
+        scenario.moveToState(Lifecycle.State.RESUMED)
+    }
 }
 
 internal fun <A : Activity> launchDemoActivity(
@@ -47,7 +50,9 @@ internal fun <A : Activity> launchDemoActivity(
     themeMode: DemoThemeMode = DemoThemeMode.Light,
 ): ActivityScenario<A> {
     DemoThemeSession.mode = themeMode
-    return ActivityScenario.launch(intent)
+    return ActivityScenario.launch<A>(intent).also { scenario ->
+        scenario.moveToState(Lifecycle.State.RESUMED)
+    }
 }
 
 internal fun waitForUiIdle() {
