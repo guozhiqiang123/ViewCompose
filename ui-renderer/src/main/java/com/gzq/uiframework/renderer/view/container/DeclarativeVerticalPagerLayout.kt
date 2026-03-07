@@ -47,7 +47,7 @@ internal class DeclarativeVerticalPagerLayout(
         viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
         viewPager.adapter = adapter
         viewPager.registerOnPageChangeCallback(pageChangeCallback)
-        resolvePagerRecyclerView()?.let(FrameworkRecyclerViewDefaults::applyVerticalPagerDefaults)
+        applyRecyclerDefaults()
         addView(viewPager)
     }
 
@@ -99,6 +99,19 @@ internal class DeclarativeVerticalPagerLayout(
         pagerState?.viewPager = null
         viewPager.unregisterOnPageChangeCallback(pageChangeCallback)
         adapter.disposeAll()
+    }
+
+    fun applyRecyclerDefaults(
+        sharePool: Boolean = false,
+        disableItemAnimator: Boolean = false,
+    ) {
+        resolvePagerRecyclerView()?.let { recyclerView ->
+            FrameworkRecyclerViewDefaults.applyVerticalPagerDefaults(
+                recyclerView = recyclerView,
+                sharePool = sharePool,
+                disableItemAnimator = disableItemAnimator,
+            )
+        }
     }
 
     private fun resolvePagerRecyclerView(): RecyclerView? {

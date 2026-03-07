@@ -12,6 +12,7 @@ import android.view.ViewOutlineProvider
 import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.gzq.uiframework.renderer.R
 import com.gzq.uiframework.renderer.modifier.CornerRadiusModifierElement
 import com.gzq.uiframework.renderer.modifier.NativeViewElement
@@ -19,7 +20,9 @@ import com.gzq.uiframework.renderer.modifier.PaddingModifierElement
 import com.gzq.uiframework.renderer.modifier.ResolvedModifiers
 import com.gzq.uiframework.renderer.modifier.SystemBarsInsetsPaddingModifierElement
 import com.gzq.uiframework.renderer.modifier.Visibility
+import com.gzq.uiframework.renderer.modifier.recyclerViewReusePolicy
 import com.gzq.uiframework.renderer.modifier.resolve
+import com.gzq.uiframework.renderer.node.NodeType
 import com.gzq.uiframework.renderer.node.TypedPropKeys
 import com.gzq.uiframework.renderer.node.VNode
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
@@ -27,7 +30,11 @@ import com.gzq.uiframework.renderer.node.spec.IconButtonNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 import com.gzq.uiframework.renderer.node.spec.ToggleNodeProps
+import com.gzq.uiframework.renderer.view.container.DeclarativeHorizontalPagerLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeLazyVerticalGridLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
+import com.gzq.uiframework.renderer.view.container.DeclarativeVerticalPagerLayout
+import com.gzq.uiframework.renderer.view.lazy.FrameworkRecyclerViewDefaults
 
 internal object ViewModifierApplier {
     fun bindView(
@@ -97,6 +104,10 @@ internal object ViewModifierApplier {
         defaultRippleColor: Int,
         resolved: ResolvedModifiers = node.modifier.resolve(),
     ) {
+        applyRecyclerContainerDefaults(
+            view = view,
+            node = node,
+        )
         val resolvedAlpha = resolved.alpha?.alpha ?: readNodeAlpha(node) ?: 1f
         val resolvedBackgroundColor = resolved.backgroundColor?.color ?: readNodeBackgroundColor(node)
         val resolvedBorderWidth = resolved.border?.width ?: readNodeBorderWidth(node) ?: 0
@@ -499,6 +510,50 @@ internal object ViewModifierApplier {
 
     private fun readAnchorId(node: VNode): String? {
         return node.props[TypedPropKeys.AnchorId]
+    }
+
+    private fun applyRecyclerContainerDefaults(
+        view: View,
+        node: VNode,
+    ) {
+        val policy = node.modifier.recyclerViewReusePolicy()
+        when (node.type) {
+            NodeType.LazyColumn -> {
+                val recyclerView = view as? RecyclerView ?: return
+                FrameworkRecyclerViewDefaults.applyLazyColumnDefaults(
+                    recyclerView = recyclerView,
+                    sharePool = policy.sharePool,
+                    disableItemAnimator = policy.disableItemAnimator,
+                )
+            }
+            NodeType.LazyRow -> {
+                val recyclerView = view as? RecyclerView ?: return
+                FrameworkRecyclerViewDefaults.applyLazyRowDefaults(
+                    recyclerView = recyclerView,
+                    sharePool = policy.sharePool,
+                    disableItemAnimator = policy.disableItemAnimator,
+                )
+            }
+            NodeType.LazyVerticalGrid -> {
+                (view as? DeclarativeLazyVerticalGridLayout)?.applyRecyclerDefaults(
+                    sharePool = policy.sharePool,
+                    disableItemAnimator = policy.disableItemAnimator,
+                )
+            }
+            NodeType.HorizontalPager -> {
+                (view as? DeclarativeHorizontalPagerLayout)?.applyRecyclerDefaults(
+                    sharePool = policy.sharePool,
+                    disableItemAnimator = policy.disableItemAnimator,
+                )
+            }
+            NodeType.VerticalPager -> {
+                (view as? DeclarativeVerticalPagerLayout)?.applyRecyclerDefaults(
+                    sharePool = policy.sharePool,
+                    disableItemAnimator = policy.disableItemAnimator,
+                )
+            }
+            else -> Unit
+        }
     }
 
     private fun applyNativeViewConfigs(view: View, node: VNode) {

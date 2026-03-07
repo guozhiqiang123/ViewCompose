@@ -46,7 +46,7 @@ internal class DeclarativeHorizontalPagerLayout(
         )
         viewPager.adapter = adapter
         viewPager.registerOnPageChangeCallback(pageChangeCallback)
-        resolvePagerRecyclerView()?.let(FrameworkRecyclerViewDefaults::applyHorizontalPagerDefaults)
+        applyRecyclerDefaults()
         addView(viewPager)
     }
 
@@ -98,6 +98,19 @@ internal class DeclarativeHorizontalPagerLayout(
         pagerState?.viewPager = null
         viewPager.unregisterOnPageChangeCallback(pageChangeCallback)
         adapter.disposeAll()
+    }
+
+    fun applyRecyclerDefaults(
+        sharePool: Boolean = false,
+        disableItemAnimator: Boolean = false,
+    ) {
+        resolvePagerRecyclerView()?.let { recyclerView ->
+            FrameworkRecyclerViewDefaults.applyHorizontalPagerDefaults(
+                recyclerView = recyclerView,
+                sharePool = sharePool,
+                disableItemAnimator = disableItemAnimator,
+            )
+        }
     }
 
     private fun resolvePagerRecyclerView(): RecyclerView? {

@@ -21,7 +21,7 @@
 2. renderer 已具备节点级“是否重绑”判断能力（`rebound/skipped` 统计）。
 3. diagnostics 已有 render/layout 基础指标可观测能力。
 4. 延迟 session 容器的 keyed diff 已切到 `DiffUtil` 引擎（保留 key 缺失/重复 fallback）。
-5. framework 托管的 `RecyclerView` 容器默认关闭 `itemAnimator` 并按具体容器类型共享 `RecycledViewPool`（避免不兼容 holder/layoutParams 互串）。
+5. framework 托管的 `RecyclerView` 容器默认不共享 `RecycledViewPool` 且保留系统 `itemAnimator`；可按需通过 `Modifier.recyclerViewReuse(...)` 对单个容器启用共享池与动画器策略。
 6. patch pipeline 已支持 subtree skip（`SkipSubtree`）并新增 `skippedSubtrees` 统计。
 
 ### 2.2 当前结论

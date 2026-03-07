@@ -134,6 +134,11 @@ data class ZIndexModifierElement(
     val zIndex: Float,
 ) : ModifierElement
 
+data class RecyclerViewReuseModifierElement(
+    val sharePool: Boolean,
+    val disableItemAnimator: Boolean,
+) : ModifierElement
+
 class NativeViewElement(
     val stableKey: Any,
     val configure: (android.view.View) -> Unit,
@@ -388,6 +393,18 @@ fun Modifier.zIndex(zIndex: Float): Modifier {
     )
 }
 
+fun Modifier.recyclerViewReuse(
+    sharePool: Boolean = false,
+    disableItemAnimator: Boolean = false,
+): Modifier {
+    return then(
+        RecyclerViewReuseModifierElement(
+            sharePool = sharePool,
+            disableItemAnimator = disableItemAnimator,
+        ),
+    )
+}
+
 fun Modifier.fillMaxWidth(): Modifier {
     return width(android.view.ViewGroup.LayoutParams.MATCH_PARENT)
 }
@@ -405,4 +422,25 @@ fun Modifier.fillMaxSize(): Modifier {
 
 fun Modifier.nativeView(key: Any = Unit, configure: (android.view.View) -> Unit): Modifier {
     return then(NativeViewElement(key, configure))
+}
+
+internal data class RecyclerViewReusePolicy(
+    val sharePool: Boolean,
+    val disableItemAnimator: Boolean,
+)
+
+internal fun Modifier.recyclerViewReusePolicy(): RecyclerViewReusePolicy {
+    val element = elements
+        .asReversed()
+        .firstOrNull { it is RecyclerViewReuseModifierElement } as? RecyclerViewReuseModifierElement
+    if (element == null) {
+        return RecyclerViewReusePolicy(
+            sharePool = false,
+            disableItemAnimator = false,
+        )
+    }
+    return RecyclerViewReusePolicy(
+        sharePool = element.sharePool,
+        disableItemAnimator = element.disableItemAnimator,
+    )
 }

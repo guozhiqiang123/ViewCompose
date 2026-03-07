@@ -1,6 +1,8 @@
 package com.gzq.uiframework.renderer.view.lazy
 
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
+import com.gzq.uiframework.renderer.R
 
 internal object FrameworkRecyclerViewDefaults {
     private val lazyColumnPool = RecyclerView.RecycledViewPool()
@@ -9,28 +11,97 @@ internal object FrameworkRecyclerViewDefaults {
     private val horizontalPagerPool = RecyclerView.RecycledViewPool()
     private val verticalPagerPool = RecyclerView.RecycledViewPool()
 
-    fun applyLazyColumnDefaults(recyclerView: RecyclerView) {
-        recyclerView.itemAnimator = null
-        recyclerView.setRecycledViewPool(lazyColumnPool)
+    fun applyLazyColumnDefaults(
+        recyclerView: RecyclerView,
+        sharePool: Boolean = false,
+        disableItemAnimator: Boolean = false,
+    ) {
+        applyDefaults(
+            recyclerView = recyclerView,
+            sharedPool = lazyColumnPool,
+            sharePool = sharePool,
+            disableItemAnimator = disableItemAnimator,
+        )
     }
 
-    fun applyLazyRowDefaults(recyclerView: RecyclerView) {
-        recyclerView.itemAnimator = null
-        recyclerView.setRecycledViewPool(lazyRowPool)
+    fun applyLazyRowDefaults(
+        recyclerView: RecyclerView,
+        sharePool: Boolean = false,
+        disableItemAnimator: Boolean = false,
+    ) {
+        applyDefaults(
+            recyclerView = recyclerView,
+            sharedPool = lazyRowPool,
+            sharePool = sharePool,
+            disableItemAnimator = disableItemAnimator,
+        )
     }
 
-    fun applyLazyGridDefaults(recyclerView: RecyclerView) {
-        recyclerView.itemAnimator = null
-        recyclerView.setRecycledViewPool(lazyGridPool)
+    fun applyLazyGridDefaults(
+        recyclerView: RecyclerView,
+        sharePool: Boolean = false,
+        disableItemAnimator: Boolean = false,
+    ) {
+        applyDefaults(
+            recyclerView = recyclerView,
+            sharedPool = lazyGridPool,
+            sharePool = sharePool,
+            disableItemAnimator = disableItemAnimator,
+        )
     }
 
-    fun applyHorizontalPagerDefaults(recyclerView: RecyclerView) {
-        recyclerView.itemAnimator = null
-        recyclerView.setRecycledViewPool(horizontalPagerPool)
+    fun applyHorizontalPagerDefaults(
+        recyclerView: RecyclerView,
+        sharePool: Boolean = false,
+        disableItemAnimator: Boolean = false,
+    ) {
+        applyDefaults(
+            recyclerView = recyclerView,
+            sharedPool = horizontalPagerPool,
+            sharePool = sharePool,
+            disableItemAnimator = disableItemAnimator,
+        )
     }
 
-    fun applyVerticalPagerDefaults(recyclerView: RecyclerView) {
-        recyclerView.itemAnimator = null
-        recyclerView.setRecycledViewPool(verticalPagerPool)
+    fun applyVerticalPagerDefaults(
+        recyclerView: RecyclerView,
+        sharePool: Boolean = false,
+        disableItemAnimator: Boolean = false,
+    ) {
+        applyDefaults(
+            recyclerView = recyclerView,
+            sharedPool = verticalPagerPool,
+            sharePool = sharePool,
+            disableItemAnimator = disableItemAnimator,
+        )
+    }
+
+    private fun applyDefaults(
+        recyclerView: RecyclerView,
+        sharedPool: RecyclerView.RecycledViewPool,
+        sharePool: Boolean,
+        disableItemAnimator: Boolean,
+    ) {
+        if (disableItemAnimator) {
+            recyclerView.itemAnimator = null
+        } else if (recyclerView.itemAnimator == null) {
+            recyclerView.itemAnimator = DefaultItemAnimator()
+        }
+        if (sharePool) {
+            recyclerView.setRecycledViewPool(sharedPool)
+        } else {
+            recyclerView.setRecycledViewPool(resolveLocalPool(recyclerView))
+        }
+    }
+
+    private fun resolveLocalPool(recyclerView: RecyclerView): RecyclerView.RecycledViewPool {
+        val existing = recyclerView.getTag(R.id.ui_framework_local_recycled_view_pool)
+            as? RecyclerView.RecycledViewPool
+        if (existing != null) {
+            return existing
+        }
+        return RecyclerView.RecycledViewPool().also { local ->
+            recyclerView.setTag(R.id.ui_framework_local_recycled_view_pool, local)
+        }
     }
 }

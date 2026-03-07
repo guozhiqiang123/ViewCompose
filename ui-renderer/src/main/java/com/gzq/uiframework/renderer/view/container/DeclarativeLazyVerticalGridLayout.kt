@@ -25,7 +25,7 @@ internal class DeclarativeLazyVerticalGridLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,
         )
         recyclerView.adapter = adapter
-        FrameworkRecyclerViewDefaults.applyLazyGridDefaults(recyclerView)
+        applyRecyclerDefaults()
         addView(recyclerView)
     }
 
@@ -68,6 +68,17 @@ internal class DeclarativeLazyVerticalGridLayout(
 
     fun dispose() {
         adapter.disposeAll()
+    }
+
+    fun applyRecyclerDefaults(
+        sharePool: Boolean = false,
+        disableItemAnimator: Boolean = false,
+    ) {
+        FrameworkRecyclerViewDefaults.applyLazyGridDefaults(
+            recyclerView = recyclerView,
+            sharePool = sharePool,
+            disableItemAnimator = disableItemAnimator,
+        )
     }
 
     private fun updateSpacingDecoration(
