@@ -48,8 +48,8 @@
 
 1. `app/src/main/java/com/gzq/uiframework/activity/entry`
    - 根入口 Activity（如 `MainActivity`、渲染宿主入口）
-2. `app/src/main/java/com/gzq/uiframework/activity/demo/pages`
-   - demo 页面 Activity 路由入口
+2. `app/src/main/java/com/gzq/uiframework/activity/demo/pages/<domain>`
+   - demo 页面 Activity 路由入口，按页面域分层（`core/interaction/advanced/quality`）
 3. `app/src/main/java/com/gzq/uiframework/activity/demo/sandbox`
    - 非核心页面实验入口（动画/手势/图形等）
 4. `app/src/main/java/com/gzq/uiframework/demo/core`
