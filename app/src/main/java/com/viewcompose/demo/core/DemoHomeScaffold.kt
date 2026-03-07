@@ -6,6 +6,7 @@ import com.viewcompose.image.coil.CoilRemoteImageLoader
 import com.viewcompose.renderer.modifier.Modifier
 import com.viewcompose.renderer.modifier.backgroundColor
 import com.viewcompose.renderer.modifier.fillMaxSize
+import com.viewcompose.renderer.modifier.systemBarsInsetsPadding
 import com.viewcompose.renderer.node.ImageSource
 import com.viewcompose.runtime.mutableStateOf
 import com.viewcompose.widget.core.HorizontalPager
@@ -49,7 +50,8 @@ internal fun UiTreeBuilder.DemoHomeScaffold(
                 },
                 modifier = Modifier
                     .fillMaxSize()
-                    .backgroundColor(Theme.colors.background),
+                    .backgroundColor(Theme.colors.background)
+                    .systemBarsInsetsPadding(),
             ) {
                 HorizontalPager(
                     currentPage = navIndex.value,
