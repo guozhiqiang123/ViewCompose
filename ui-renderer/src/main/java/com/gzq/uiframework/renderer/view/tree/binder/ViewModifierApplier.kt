@@ -6,6 +6,7 @@ import android.graphics.Outline
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewOutlineProvider
@@ -42,6 +43,8 @@ import com.gzq.uiframework.renderer.view.lazy.ScrollableFocusFollowLayoutMonitor
 import com.gzq.uiframework.renderer.view.lazy.FrameworkRecyclerViewDefaults
 
 internal object ViewModifierApplier {
+    private const val FOCUS_FOLLOW_TAG = "UIFocusFollow"
+
     fun bindView(
         view: View,
         node: VNode,
@@ -560,6 +563,13 @@ internal object ViewModifierApplier {
                     sharePool = reusePolicy.sharePool,
                     disableItemAnimator = reusePolicy.disableItemAnimator,
                 )
+                val focusPolicy = node.modifier.lazyContainerFocusPolicy()
+                if (focusPolicy.enabled) {
+                    warnUnsupportedFocusFollowOnce(
+                        view = recyclerView,
+                        nodeType = node.type,
+                    )
+                }
                 // Keyboard follow targets vertical overflow; LazyRow keeps horizontal-only semantics.
                 LazyFocusFollowLayoutMonitor.apply(recyclerView, enabled = false)
             }
@@ -578,6 +588,13 @@ internal object ViewModifierApplier {
                     sharePool = reusePolicy.sharePool,
                     disableItemAnimator = reusePolicy.disableItemAnimator,
                 )
+                val focusPolicy = node.modifier.lazyContainerFocusPolicy()
+                if (focusPolicy.enabled) {
+                    warnUnsupportedFocusFollowOnce(
+                        view = view,
+                        nodeType = node.type,
+                    )
+                }
             }
             NodeType.VerticalPager -> {
                 val reusePolicy = node.modifier.lazyContainerReusePolicy()
@@ -597,8 +614,31 @@ internal object ViewModifierApplier {
                     )
                 }
             }
+            NodeType.ScrollableRow -> {
+                val focusPolicy = node.modifier.lazyContainerFocusPolicy()
+                if (focusPolicy.enabled) {
+                    warnUnsupportedFocusFollowOnce(
+                        view = view,
+                        nodeType = node.type,
+                    )
+                }
+            }
             else -> Unit
         }
+    }
+
+    private fun warnUnsupportedFocusFollowOnce(
+        view: View,
+        nodeType: NodeType,
+    ) {
+        if (view.getTag(R.id.ui_framework_focus_follow_warning_emitted) == true) {
+            return
+        }
+        view.setTag(R.id.ui_framework_focus_follow_warning_emitted, true)
+        Log.w(
+            FOCUS_FOLLOW_TAG,
+            "focusFollowKeyboard(enabled=true) is ignored for $nodeType because keyboard follow only targets vertical overflow containers.",
+        )
     }
 
     private fun applyNativeViewConfigs(view: View, node: VNode) {

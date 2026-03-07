@@ -72,6 +72,21 @@
 
 对应提交：`13a18db`、`38273ff`
 
+### 2.5 水平容器误用缺少诊断信号（已修复）
+
+问题：
+
+1. `LazyRow/HorizontalPager/ScrollableRow` 上误配 `focusFollowKeyboard(true)` 时静默忽略  
+2. 排查现场只能依赖代码阅读，缺少运行期提示
+
+处理：
+
+1. 在 `ViewModifierApplier` 对水平容器增加一次性 warning 输出  
+2. 新增 `ui_framework_focus_follow_warning_emitted` 视图 tag，保证每个实例只告警一次  
+3. 语义保持不变：水平容器仍不执行键盘上顶，仅补齐可诊断性
+
+对应提交：`feat: add one-shot warning for unsupported horizontal focus follow`
+
 ## 3. ViewNodeFactory 容器扩展矩阵（当前）
 
 | 容器 NodeType | 当前状态 | 说明 |
@@ -88,6 +103,4 @@
 ## 4. 仍可继续优化项
 
 1. 为 `VerticalPager` 与 `ScrollableColumn` 增加独立 instrumentation 回归用例  
-2. 当 `focusFollowKeyboard` 用在水平容器时输出一次性诊断 warning（避免误用静默）  
-3. `PullToRefresh` 场景补充“子容器 focus-follow 行为”专项回归
-
+2. `PullToRefresh` 场景补充“子容器 focus-follow 行为”专项回归
