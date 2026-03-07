@@ -14,24 +14,11 @@ data class UiColors(
     val textPrimary: Int,
     val textSecondary: Int,
     val ripple: Int = pressedOverlayColorFor(textPrimary),
-) {
-    @Deprecated(
-        message = "Use secondary instead.",
-        replaceWith = ReplaceWith("secondary"),
-    )
-    val accent: Int
-        get() = secondary
-}
+)
 
-@Suppress("DEPRECATION")
 data class UiShapes(
     val cardCornerRadius: Int,
-    @Deprecated(
-        message = "Use interactiveCornerRadius instead.",
-        replaceWith = ReplaceWith("interactiveCornerRadius"),
-    )
-    val controlCornerRadius: Int,
-    val interactiveCornerRadius: Int = controlCornerRadius,
+    val interactiveCornerRadius: Int,
 )
 
 data class UiTextStyle(

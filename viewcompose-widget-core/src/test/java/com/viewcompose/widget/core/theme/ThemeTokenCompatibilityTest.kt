@@ -5,40 +5,6 @@ import org.junit.Test
 
 class ThemeTokenCompatibilityTest {
     @Test
-    @Suppress("DEPRECATION")
-    fun `legacy token aliases remain compatible`() {
-        val colors = UiColors(
-            background = 1,
-            surface = 2,
-            surfaceVariant = 3,
-            primary = 4,
-            secondary = 5,
-            error = 6,
-            success = 7,
-            warning = 8,
-            info = 9,
-            divider = 10,
-            textPrimary = 11,
-            textSecondary = 12,
-        )
-        val shapes = UiShapes(
-            cardCornerRadius = 20,
-            controlCornerRadius = 14,
-        )
-        val typography = UiTypography(
-            title = UiTextStyle(fontSizeSp = 30),
-            body = UiTextStyle(fontSizeSp = 18),
-            label = UiTextStyle(fontSizeSp = 14),
-        )
-
-        assertEquals(colors.secondary, colors.accent)
-        assertEquals(shapes.interactiveCornerRadius, shapes.controlCornerRadius)
-        assertEquals(typography.title, typography.titleMedium)
-        assertEquals(typography.body, typography.bodyMedium)
-        assertEquals(typography.label, typography.labelMedium)
-    }
-
-    @Test
     fun `semantic tokens drive defaults and tiered typography`() {
         val customTheme = UiThemeTokens(
             colors = UiColors(
@@ -66,7 +32,6 @@ class ThemeTokenCompatibilityTest {
             ),
             shapes = UiShapes(
                 cardCornerRadius = 20,
-                controlCornerRadius = 10,
                 interactiveCornerRadius = 22,
             ),
         )
@@ -97,5 +62,18 @@ class ThemeTokenCompatibilityTest {
         assertEquals(customTheme.typography.bodyMedium.fontSizeSp, listHeadlineSize)
         assertEquals(customTheme.typography.titleMedium.fontSizeSp, topTitleSize)
         assertEquals(customTheme.shapes.interactiveCornerRadius, interactiveCornerRadius)
+    }
+
+    @Test
+    fun `tiered typography defaults map to base tokens when tiers are omitted`() {
+        val typography = UiTypography(
+            title = UiTextStyle(fontSizeSp = 30),
+            body = UiTextStyle(fontSizeSp = 18),
+            label = UiTextStyle(fontSizeSp = 14),
+        )
+
+        assertEquals(typography.title, typography.titleMedium)
+        assertEquals(typography.body, typography.bodyMedium)
+        assertEquals(typography.label, typography.labelMedium)
     }
 }
