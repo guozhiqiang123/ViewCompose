@@ -7,7 +7,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeHorizontalPagerLay
 import com.gzq.uiframework.renderer.view.container.DeclarativeLazyVerticalGridLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeTabRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeVerticalPagerLayout
-import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
+import com.gzq.uiframework.renderer.view.lazy.LazyListAdapter
 
 internal object ViewTreeDisposer {
     fun disposeMountedNode(mountedNode: MountedNode) {
@@ -18,7 +18,7 @@ internal object ViewTreeDisposer {
         (mountedNode.view as? DeclarativeLazyVerticalGridLayout)?.dispose()
         (mountedNode.view as? RecyclerView)?.let { recyclerView ->
             if (mountedNode.view !is DeclarativeLazyVerticalGridLayout) {
-                (recyclerView.adapter as? LazyColumnAdapter)?.disposeAll()
+                (recyclerView.adapter as? LazyListAdapter)?.disposeAll()
             }
             (mountedNode.vnode.spec as? LazyColumnNodeProps)?.state?.recyclerView = null
             (mountedNode.vnode.spec as? LazyRowNodeProps)?.state?.recyclerView = null

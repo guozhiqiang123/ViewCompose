@@ -35,7 +35,7 @@ import com.gzq.uiframework.renderer.view.tree.SegmentedControlNodePatch
 import com.gzq.uiframework.renderer.view.tree.TabRowNodePatch
 import com.gzq.uiframework.renderer.view.tree.ContainerViewSpecReader
 import com.gzq.uiframework.renderer.view.tree.VerticalPagerNodePatch
-import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
+import com.gzq.uiframework.renderer.view.lazy.LazyListAdapter
 
 internal object ContainerNodePatchApplier {
     fun applyRowPatch(
@@ -102,7 +102,7 @@ internal object ContainerNodePatchApplier {
             ContainerViewBinder.applyLazyListSpacing(view, next.spacing, LinearLayoutManager.VERTICAL)
         }
         if (previous.items != next.items) {
-            val adapter = view.adapter as? LazyColumnAdapter ?: LazyColumnAdapter().also {
+            val adapter = view.adapter as? LazyListAdapter ?: LazyListAdapter().also {
                 view.adapter = it
             }
             adapter.submitItems(next.items)
@@ -126,8 +126,8 @@ internal object ContainerNodePatchApplier {
             ContainerViewBinder.applyLazyListSpacing(view, next.spacing, LinearLayoutManager.HORIZONTAL)
         }
         if (previous.items != next.items) {
-            val adapter = view.adapter as? LazyColumnAdapter
-                ?: LazyColumnAdapter(LinearLayoutManager.HORIZONTAL).also {
+            val adapter = view.adapter as? LazyListAdapter
+                ?: LazyListAdapter(LinearLayoutManager.HORIZONTAL).also {
                     view.adapter = it
                 }
             adapter.submitItems(next.items)

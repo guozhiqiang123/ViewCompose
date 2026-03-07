@@ -10,9 +10,9 @@ import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.reconcile.LazyListDiff
 import com.gzq.uiframework.renderer.reconcile.LazyListIdentityInspector
 
-internal class LazyColumnAdapter(
+internal class LazyListAdapter(
     private val orientation: Int = LinearLayoutManager.VERTICAL,
-) : RecyclerView.Adapter<LazyColumnViewHolder>() {
+) : RecyclerView.Adapter<LazyListViewHolder>() {
     private companion object {
         private const val FOCUS_TAG = "UIFocusFollow"
     }
@@ -23,7 +23,7 @@ internal class LazyColumnAdapter(
     )
 
     private var items: List<LazyListItem> = emptyList()
-    private val holderRegistry = LazyHolderRegistry<LazyColumnViewHolder> { holder ->
+    private val holderRegistry = LazyHolderRegistry<LazyListViewHolder> { holder ->
         holder.recycle()
     }
     private var lastIdentityWarning: String? = null
@@ -36,7 +36,7 @@ internal class LazyColumnAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): LazyColumnViewHolder {
+    ): LazyListViewHolder {
         val container = FrameLayout(parent.context).apply {
             layoutParams = if (orientation == LinearLayoutManager.HORIZONTAL) {
                 RecyclerView.LayoutParams(
@@ -50,11 +50,11 @@ internal class LazyColumnAdapter(
                 )
             }
         }
-        return LazyColumnViewHolder(container)
+        return LazyListViewHolder(container)
     }
 
     override fun onBindViewHolder(
-        holder: LazyColumnViewHolder,
+        holder: LazyListViewHolder,
         position: Int,
     ) {
         bindHolder(
@@ -65,7 +65,7 @@ internal class LazyColumnAdapter(
     }
 
     override fun onBindViewHolder(
-        holder: LazyColumnViewHolder,
+        holder: LazyListViewHolder,
         position: Int,
         payloads: MutableList<Any>,
     ) {
@@ -76,11 +76,11 @@ internal class LazyColumnAdapter(
         )
     }
 
-    override fun onViewRecycled(holder: LazyColumnViewHolder) {
+    override fun onViewRecycled(holder: LazyListViewHolder) {
         holderRegistry.onRecycled(holder)
     }
 
-    override fun onViewAttachedToWindow(holder: LazyColumnViewHolder) {
+    override fun onViewAttachedToWindow(holder: LazyListViewHolder) {
         super.onViewAttachedToWindow(holder)
         holderRegistry.onAttached(holder)
     }
@@ -90,7 +90,7 @@ internal class LazyColumnAdapter(
         attachedRecyclerView = recyclerView
     }
 
-    override fun onViewDetachedFromWindow(holder: LazyColumnViewHolder) {
+    override fun onViewDetachedFromWindow(holder: LazyListViewHolder) {
         super.onViewDetachedFromWindow(holder)
         holderRegistry.onDetached(holder)
     }
@@ -159,7 +159,7 @@ internal class LazyColumnAdapter(
     }
 
     private fun bindHolder(
-        holder: LazyColumnViewHolder,
+        holder: LazyListViewHolder,
         position: Int,
         payload: Any?,
     ) {
@@ -171,7 +171,7 @@ internal class LazyColumnAdapter(
         )
     }
 
-    private fun ensureContainerLayoutParams(holder: LazyColumnViewHolder) {
+    private fun ensureContainerLayoutParams(holder: LazyListViewHolder) {
         val expectedWidth = if (orientation == LinearLayoutManager.HORIZONTAL) {
             ViewGroup.LayoutParams.WRAP_CONTENT
         } else {
@@ -250,7 +250,7 @@ internal class LazyColumnAdapter(
     }
 }
 
-internal class LazyItemSpacingDecoration(
+internal class LazyListSpacingDecoration(
     private var spacing: Int,
     private val orientation: Int = LinearLayoutManager.VERTICAL,
 ) : RecyclerView.ItemDecoration() {
@@ -285,7 +285,7 @@ internal class LazyItemSpacingDecoration(
     }
 }
 
-internal class LazyColumnViewHolder(
+internal class LazyListViewHolder(
     private val container: FrameLayout,
 ) : RecyclerView.ViewHolder(container) {
     private val controller = LazyItemSessionController(

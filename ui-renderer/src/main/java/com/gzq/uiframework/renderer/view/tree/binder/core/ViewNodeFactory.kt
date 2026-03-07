@@ -33,7 +33,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeTextFieldLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeVerticalPagerLayout
 import com.gzq.uiframework.renderer.view.lazy.FrameworkRecyclerViewDefaults
 import com.gzq.uiframework.renderer.view.lazy.LazyLinearLayoutManager
-import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
+import com.gzq.uiframework.renderer.view.lazy.LazyListAdapter
 
 internal object ViewNodeFactory {
     fun createView(
@@ -64,7 +64,7 @@ internal object ViewNodeFactory {
             NodeType.AndroidView -> createAndroidView?.invoke(context) ?: View(context)
             NodeType.LazyColumn -> RecyclerView(context).apply {
                 layoutManager = LazyLinearLayoutManager(context)
-                adapter = LazyColumnAdapter()
+                adapter = LazyListAdapter()
                 FrameworkRecyclerViewDefaults.applyLazyColumnDefaults(this)
             }
             NodeType.LazyRow -> RecyclerView(context).apply {
@@ -73,7 +73,7 @@ internal object ViewNodeFactory {
                     orientation = LinearLayoutManager.HORIZONTAL,
                     reverseLayout = false,
                 )
-                adapter = LazyColumnAdapter(LinearLayoutManager.HORIZONTAL)
+                adapter = LazyListAdapter(LinearLayoutManager.HORIZONTAL)
                 FrameworkRecyclerViewDefaults.applyLazyRowDefaults(this)
             }
             NodeType.SegmentedControl -> DeclarativeSegmentedControlLayout(context)

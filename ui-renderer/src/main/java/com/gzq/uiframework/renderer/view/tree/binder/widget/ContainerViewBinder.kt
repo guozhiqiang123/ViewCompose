@@ -10,7 +10,7 @@ import com.gzq.uiframework.renderer.view.container.DeclarativeBoxLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowColumnLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeFlowRowLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeLinearLayout
-import com.gzq.uiframework.renderer.view.lazy.LazyItemSpacingDecoration
+import com.gzq.uiframework.renderer.view.lazy.LazyListSpacingDecoration
 
 internal object ContainerViewBinder {
     data class LinearSpec(
@@ -130,13 +130,13 @@ internal object ContainerViewBinder {
         spacing: Int,
         orientation: Int = LinearLayoutManager.VERTICAL,
     ) {
-        val existing = recyclerView.getTag(R.id.ui_framework_lazy_spacing_decoration) as? LazyItemSpacingDecoration
+        val existing = recyclerView.getTag(R.id.ui_framework_lazy_spacing_decoration) as? LazyListSpacingDecoration
         if (existing != null) {
             existing.updateSpacing(spacing)
             recyclerView.invalidateItemDecorations()
             return
         }
-        val decoration = LazyItemSpacingDecoration(spacing, orientation)
+        val decoration = LazyListSpacingDecoration(spacing, orientation)
         recyclerView.setTag(R.id.ui_framework_lazy_spacing_decoration, decoration)
         recyclerView.addItemDecoration(decoration)
     }

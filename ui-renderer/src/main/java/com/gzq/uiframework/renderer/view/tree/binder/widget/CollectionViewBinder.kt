@@ -12,7 +12,7 @@ import com.gzq.uiframework.renderer.node.spec.LazyVerticalGridNodeProps
 import com.gzq.uiframework.renderer.node.spec.NavigationBarNodeProps
 import com.gzq.uiframework.renderer.view.container.DeclarativeLazyVerticalGridLayout
 import com.gzq.uiframework.renderer.view.container.DeclarativeNavigationBarLayout
-import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
+import com.gzq.uiframework.renderer.view.lazy.LazyListAdapter
 import com.gzq.uiframework.renderer.view.lazy.LazyListState
 
 internal object CollectionViewBinder {
@@ -53,7 +53,7 @@ internal object CollectionViewBinder {
         view: RecyclerView,
         spec: LazyColumnSpec,
     ) {
-        val adapter = view.adapter as? LazyColumnAdapter ?: LazyColumnAdapter().also {
+        val adapter = view.adapter as? LazyListAdapter ?: LazyListAdapter().also {
             view.adapter = it
         }
         ContainerViewBinder.applyLazyListPadding(view, spec.contentPadding)
@@ -66,8 +66,8 @@ internal object CollectionViewBinder {
         view: RecyclerView,
         spec: LazyColumnSpec,
     ) {
-        val adapter = view.adapter as? LazyColumnAdapter
-            ?: LazyColumnAdapter(LinearLayoutManager.HORIZONTAL).also {
+        val adapter = view.adapter as? LazyListAdapter
+            ?: LazyListAdapter(LinearLayoutManager.HORIZONTAL).also {
                 view.adapter = it
             }
         ContainerViewBinder.applyLazyListPadding(view, spec.contentPadding)

@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.recyclerview.widget.RecyclerView
 import com.gzq.uiframework.renderer.R
 import com.gzq.uiframework.renderer.node.LazyListItem
-import com.gzq.uiframework.renderer.view.lazy.LazyColumnAdapter
+import com.gzq.uiframework.renderer.view.lazy.LazyListAdapter
 import com.gzq.uiframework.renderer.view.lazy.LazyGridLayoutManager
 import com.gzq.uiframework.renderer.view.lazy.LazyGridSpacingDecoration
 import com.gzq.uiframework.renderer.view.lazy.LazyFocusFollowLayoutMonitor
@@ -15,7 +15,7 @@ import com.gzq.uiframework.renderer.view.tree.LayoutPassTracker
 internal class DeclarativeLazyVerticalGridLayout(
     context: Context,
 ) : RecyclerView(context) {
-    private val gridAdapter = LazyColumnAdapter(RecyclerView.VERTICAL)
+    private val gridAdapter = LazyListAdapter(RecyclerView.VERTICAL)
     private var listState: LazyListState? = null
 
     init {
