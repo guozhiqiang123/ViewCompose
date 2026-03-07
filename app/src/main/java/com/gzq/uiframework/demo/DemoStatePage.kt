@@ -280,6 +280,13 @@ internal fun UiTreeBuilder.StatePage(
                     onSelectionChange = { patchSegmentIndexState.value = it },
                     modifier = Modifier.margin(bottom = 12.dp),
                 )
+                Text(
+                    text = "Segment 索引: ${patchSegmentIndexState.value}",
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier
+                        .margin(bottom = 12.dp)
+                        .testTag(DemoTestTags.STATE_PATCH_SEGMENT_SUMMARY),
+                )
                 Row(
                     spacing = if (step % 2 == 0) 8.dp else 16.dp,
                     arrangement = if (step % 2 == 0) MainAxisArrangement.Start else MainAxisArrangement.SpaceEvenly,
@@ -318,6 +325,13 @@ internal fun UiTreeBuilder.StatePage(
                     modifier = Modifier.margin(bottom = 12.dp),
                 )
                 Column(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = "Tab 索引: ${patchTabIndexState.value}",
+                        color = TextDefaults.secondaryColor(),
+                        modifier = Modifier
+                            .margin(bottom = 8.dp)
+                            .testTag(DemoTestTags.STATE_PATCH_TAB_SUMMARY),
+                    )
                     TabRow(
                         selectedIndex = patchTabIndexState.value,
                         onTabSelected = { patchTabIndexState.value = it },

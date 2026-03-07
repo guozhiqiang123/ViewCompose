@@ -2,12 +2,17 @@ package com.gzq.uiframework.renderer.view.tree
 
 import com.gzq.uiframework.renderer.modifier.Modifier
 import com.gzq.uiframework.renderer.modifier.padding
+import com.gzq.uiframework.renderer.node.ImageSource
 import com.gzq.uiframework.renderer.node.LazyListItem
 import com.gzq.uiframework.renderer.node.LazyListItemSession
 import com.gzq.uiframework.renderer.node.LazyListItemSessionFactory
 import com.gzq.uiframework.renderer.node.NodeType
+import com.gzq.uiframework.renderer.node.NavigationBarItem
 import com.gzq.uiframework.renderer.node.Props
 import com.gzq.uiframework.renderer.node.VNode
+import com.gzq.uiframework.renderer.node.collection.TabIndicatorPosition
+import com.gzq.uiframework.renderer.node.collection.TabIndicatorWidthMode
+import com.gzq.uiframework.renderer.node.collection.TabRowTab
 import com.gzq.uiframework.renderer.node.spec.BoxNodeProps
 import com.gzq.uiframework.renderer.node.spec.ButtonNodeProps
 import com.gzq.uiframework.renderer.node.spec.ColumnNodeProps
@@ -19,10 +24,12 @@ import com.gzq.uiframework.renderer.node.spec.IconButtonNodeProps
 import com.gzq.uiframework.renderer.node.spec.ImageNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyColumnNodeProps
 import com.gzq.uiframework.renderer.node.spec.LazyVerticalGridNodeProps
+import com.gzq.uiframework.renderer.node.spec.NavigationBarNodeProps
 import com.gzq.uiframework.renderer.node.spec.ProgressIndicatorNodeProps
 import com.gzq.uiframework.renderer.node.spec.RowNodeProps
 import com.gzq.uiframework.renderer.node.spec.SegmentedControlNodeProps
 import com.gzq.uiframework.renderer.node.spec.SliderNodeProps
+import com.gzq.uiframework.renderer.node.spec.TabRowNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextNodeProps
 import com.gzq.uiframework.renderer.node.spec.TextFieldNodeProps
 import com.gzq.uiframework.renderer.node.spec.ToggleNodeProps
@@ -164,6 +171,28 @@ class NodeBindingDifferTest {
 
         assertTrue(plan is NodeBindingPlan.Patch)
         assertTrue((plan as NodeBindingPlan.Patch).patch is SegmentedControlNodePatch)
+    }
+
+    @Test
+    fun `patches navigation bar semantic updates`() {
+        val previous = navigationBarNode(selectedIndex = 0)
+        val next = navigationBarNode(selectedIndex = 1)
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is NavigationBarNodePatch)
+    }
+
+    @Test
+    fun `patches tab row semantic updates`() {
+        val previous = tabRowNode(selectedIndex = 0)
+        val next = tabRowNode(selectedIndex = 1)
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is TabRowNodePatch)
     }
 
     @Test
@@ -709,6 +738,73 @@ class NodeBindingDifferTest {
                 horizontalSpacing = 4,
                 verticalSpacing = verticalSpacing,
                 maxItemsInEachColumn = Int.MAX_VALUE,
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun navigationBarNode(
+        selectedIndex: Int = 0,
+    ): VNode {
+        return VNode(
+            type = NodeType.NavigationBar,
+            spec = NavigationBarNodeProps(
+                items = listOf(
+                    NavigationBarItem(
+                        label = "Home",
+                        icon = ImageSource.Resource(1),
+                    ),
+                    NavigationBarItem(
+                        label = "Search",
+                        icon = ImageSource.Resource(2),
+                        badgeCount = 1,
+                    ),
+                ),
+                selectedIndex = selectedIndex,
+                onItemSelected = null,
+                containerColor = 0xFFFFFFFF.toInt(),
+                selectedIconColor = 0xFF000000.toInt(),
+                unselectedIconColor = 0xFF666666.toInt(),
+                selectedLabelColor = 0xFF000000.toInt(),
+                unselectedLabelColor = 0xFF666666.toInt(),
+                indicatorColor = 0x22000000,
+                rippleColor = 0x11000000,
+                iconSize = 24,
+                labelSizeSp = 12,
+                badgeColor = 0xFFFF0000.toInt(),
+                badgeTextColor = 0xFFFFFFFF.toInt(),
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun tabRowNode(
+        selectedIndex: Int = 0,
+    ): VNode {
+        return VNode(
+            type = NodeType.TabRow,
+            spec = TabRowNodeProps(
+                tabs = listOf(
+                    TabRowTab(lazyItem("tab-1")),
+                    TabRowTab(lazyItem("tab-2")),
+                ),
+                selectedIndex = selectedIndex,
+                onTabSelected = null,
+                pagerState = null,
+                indicatorColor = 0xFF000000.toInt(),
+                indicatorHeight = 4,
+                indicatorCornerRadius = 2,
+                indicatorPosition = TabIndicatorPosition.Bottom,
+                indicatorWidthMode = TabIndicatorWidthMode.MatchItem,
+                indicatorFixedWidth = 0,
+                containerColor = 0xFFFFFFFF.toInt(),
+                scrollable = true,
+                equalWidth = false,
+                rippleColor = 0x11000000,
+                itemSpacing = 8,
+                itemPaddingHorizontal = 12,
+                itemPaddingVertical = 8,
+                minItemWidth = 64,
             ),
             modifier = Modifier,
         )

@@ -46,6 +46,7 @@ internal object DemoTestTags {
 
     const val NAVIGATION_BAR_PRIMARY = "navigation_bar_primary"
     const val NAVIGATION_SCAFFOLD = "navigation_scaffold"
+    const val NAVIGATION_SELECTED_SUMMARY = "navigation_selected_summary"
 
     const val FEEDBACK_LAST_EVENT = "feedback_last_event"
     const val FEEDBACK_SHOW_SNACKBAR = "feedback_show_snackbar"
@@ -64,6 +65,8 @@ internal object DemoTestTags {
     const val FEEDBACK_TOAST_COUNT = "feedback_toast_count"
 
     const val STATE_PATCH_ADVANCE = "state_patch_advance"
+    const val STATE_PATCH_SEGMENT_SUMMARY = "state_patch_segment_summary"
+    const val STATE_PATCH_TAB_SUMMARY = "state_patch_tab_summary"
     const val STATE_STABLE_SUMMARY = "state_stable_summary"
     const val STATE_VERTICAL_PAGER_SUMMARY = "state_vertical_pager_summary"
 }

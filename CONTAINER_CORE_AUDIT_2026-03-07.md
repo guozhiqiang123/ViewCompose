@@ -80,6 +80,23 @@
 - 修复：在 `onMeasure/onLayout` 统一记录 `LayoutPassTracker.recordMeasure/recordLayout`。
 - 提交：本轮收口提交（见 git log）。
 
+### F-09（已修复）NavigationBar/SegmentedControl 细粒度 patch 缺失
+
+- 问题：两类容器在 patch 路径上仍使用整容器 bind，轻量状态变更也会全量刷新。
+- 影响：高频切换场景下产生可避免的 View 更新与 drawable churn。
+- 修复：
+  - `NavigationBar`：引入“结构变更/样式变更/内容变更/选中态变更”分层策略，仅更新受影响 index。
+  - `SegmentedControl`：引入“样式全量更新 + 选中态局部更新”路径，纯选中切换仅更新前后两个分段。
+- 提交：本轮收口提交（见 git log）。
+
+### F-10（已修复）TabRow/NavigationBar/SegmentedControl 缺少专项回归断言
+
+- 问题：容器专项回归测试此前偏重 Lazy/Pager，导航与分段选择容器缺少独立断言。
+- 修复：
+  - unit：补 `NodeBindingDiffer` 对 `NavigationBar/TabRow` 的 patch 断言。
+  - instrumentation：补 `NavigationBar` 选中态摘要、`SegmentedControl` 状态摘要、`TabRow` 选中摘要 UI 回归。
+- 提交：本轮收口提交（见 git log）。
+
 ## 4. Redundant Nesting Review
 
 - `ScrollableColumn/ScrollableRow` 的内层 `DeclarativeLinearLayout` 为必要结构（`ScrollView` 单子节点约束 + child host 分发），不属于可删除冗余。
@@ -88,9 +105,9 @@
 
 ## 5. Current Gaps (Not Closed Yet)
 
-1. `NavigationBar/SegmentedControl` 仍是“整容器 bind”策略，可继续评估细粒度 patch（收益取决于 item 数量与更新频率）。
-2. 容器级回归测试仍偏重 `Lazy/Pager`，`TabRow/NavigationBar/SegmentedControl` 缺少专项性能回归断言。
+当前审计范围内未关闭项：无。
 
 ## 6. Validation
 
 - 每条修复提交后均执行 `./gradlew qaQuick`，当前均通过。
+- 本轮收口执行 `./gradlew qaFull`，`connectedDebugAndroidTest` 26/26 全绿。

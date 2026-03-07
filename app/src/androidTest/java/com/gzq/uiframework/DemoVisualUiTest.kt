@@ -380,6 +380,81 @@ class DemoVisualUiTest {
     }
 
     @Test
+    fun navigationBar_selectionChange_updatesSummary() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            NavigationActivity::class.java,
+        ).putExtra(EXTRA_NAVIGATION_PAGE_INDEX, 1)
+        launchDemoActivity<NavigationActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val summary = activity.requireTextViewByTestTag(DemoTestTags.NAVIGATION_SELECTED_SUMMARY)
+                assertViewFullyVisible(summary)
+                assertTrue(summary.text.toString().contains("0"))
+            }
+            clickDeviceText("搜索")
+            waitForUiIdle()
+            captureDeviceScreenshot("navigation-navbar-selection-light")
+            scenario.onActivity { activity ->
+                val summary = activity.requireTextViewByTestTag(DemoTestTags.NAVIGATION_SELECTED_SUMMARY)
+                assertViewFullyVisible(summary)
+                assertTrue(summary.text.toString().contains("1"))
+            }
+        }
+    }
+
+    @Test
+    fun statePatchStress_segmentedControlSummary_updatesAcrossAdvances() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            StateActivity::class.java,
+        ).putExtra(EXTRA_STATE_PAGE_INDEX, 2)
+        launchDemoActivity<StateActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val summary = activity.requireTextViewByTestTag(DemoTestTags.STATE_PATCH_SEGMENT_SUMMARY)
+                assertViewFullyVisible(summary)
+                assertTrue(summary.text.toString().contains("0"))
+                activity.clickByTestTag(DemoTestTags.STATE_PATCH_ADVANCE)
+                activity.clickByTestTag(DemoTestTags.STATE_PATCH_ADVANCE)
+            }
+            waitForUiIdle()
+            captureDeviceScreenshot("state-patch-segmented-step2-light")
+            scenario.onActivity { activity ->
+                val summary = activity.requireTextViewByTestTag(DemoTestTags.STATE_PATCH_SEGMENT_SUMMARY)
+                assertViewFullyVisible(summary)
+                assertTextNotEllipsized(summary)
+                assertTrue(summary.text.toString().contains("2"))
+            }
+        }
+    }
+
+    @Test
+    fun statePatchStress_tabRowSelection_updatesSummary() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            StateActivity::class.java,
+        ).putExtra(EXTRA_STATE_PAGE_INDEX, 2)
+        launchDemoActivity<StateActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val summary = activity.requireTextViewByTestTag(DemoTestTags.STATE_PATCH_TAB_SUMMARY)
+                assertViewFullyVisible(summary)
+                assertTrue(summary.text.toString().contains("0"))
+            }
+            clickDeviceText("详情")
+            waitForUiIdle()
+            captureDeviceScreenshot("state-patch-tab-selection-light")
+            scenario.onActivity { activity ->
+                val summary = activity.requireTextViewByTestTag(DemoTestTags.STATE_PATCH_TAB_SUMMARY)
+                assertViewFullyVisible(summary)
+                assertTextNotEllipsized(summary)
+                assertTrue(summary.text.toString().contains("1"))
+            }
+        }
+    }
+
+    @Test
     fun statePatchStress_refreshesStableTabContent() {
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),

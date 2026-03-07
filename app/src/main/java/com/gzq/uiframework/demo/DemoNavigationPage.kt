@@ -163,7 +163,9 @@ internal fun UiTreeBuilder.NavigationPage(
                     text = "当前选中: ${navSelectedState.value}",
                     style = UiTextStyle(fontSizeSp = 13.sp),
                     color = TextDefaults.secondaryColor(),
-                    modifier = Modifier.margin(bottom = 8.dp),
+                    modifier = Modifier
+                        .margin(bottom = 8.dp)
+                        .testTag(DemoTestTags.NAVIGATION_SELECTED_SUMMARY),
                 )
                 NavigationBar(
                     selectedIndex = navSelectedState.value,
