@@ -46,12 +46,29 @@
 
 `app` 模块采用“入口与演示分层”：
 
-1. `app/src/main/java/com/gzq/uiframework/activity`
-   - `Activity` 入口与路由组装
-2. `app/src/main/java/com/gzq/uiframework/demo`
-   - demo 页面、catalog、主题会话、测试锚点等演示逻辑
-3. `app/src/androidTest/java/com/gzq/uiframework`
+1. `app/src/main/java/com/gzq/uiframework/activity/entry`
+   - 根入口 Activity（如 `MainActivity`、渲染宿主入口）
+2. `app/src/main/java/com/gzq/uiframework/activity/demo/pages`
+   - demo 页面 Activity 路由入口
+3. `app/src/main/java/com/gzq/uiframework/activity/demo/sandbox`
+   - 非核心页面实验入口（动画/手势/图形等）
+4. `app/src/main/java/com/gzq/uiframework/demo/core`
+   - demo 全局骨架与共享能力（catalog、theme session、test tags、section helpers）
+5. `app/src/main/java/com/gzq/uiframework/demo/pages/<feature>`
+   - 按功能页归档的 demo 实现（foundations/layouts/input/feedback/...）
+6. `app/src/androidTest/java/com/gzq/uiframework`
    - demo/UI 回归测试
+
+### 2.4 `ui-renderer` 目录落位基线
+
+renderer 侧避免“单目录平铺”，按职责拆到二级目录：
+
+1. `ui-renderer/src/main/java/.../view/container/{core,layout,collection,navigation,input}`
+   - Android View 容器映射层，按控件族群分类
+2. `ui-renderer/src/main/java/.../view/tree/binder/core`
+   - 绑定流程核心（factory/differ/plan/registry/modifier）
+3. `ui-renderer/src/main/java/.../view/tree/binder/widget`
+   - 分控件 binder 实现（content/input/media/feedback/collection 等）
 
 ## 3. 核心调用链
 
