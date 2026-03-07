@@ -3,13 +3,20 @@ package com.gzq.uiframework.renderer.view.lazy
 import androidx.recyclerview.widget.RecyclerView
 
 internal object FrameworkRecyclerViewDefaults {
-    private val lazyListPool = RecyclerView.RecycledViewPool()
+    private val lazyColumnPool = RecyclerView.RecycledViewPool()
+    private val lazyRowPool = RecyclerView.RecycledViewPool()
     private val lazyGridPool = RecyclerView.RecycledViewPool()
-    private val pagerPool = RecyclerView.RecycledViewPool()
+    private val horizontalPagerPool = RecyclerView.RecycledViewPool()
+    private val verticalPagerPool = RecyclerView.RecycledViewPool()
 
-    fun applyLazyListDefaults(recyclerView: RecyclerView) {
+    fun applyLazyColumnDefaults(recyclerView: RecyclerView) {
         recyclerView.itemAnimator = null
-        recyclerView.setRecycledViewPool(lazyListPool)
+        recyclerView.setRecycledViewPool(lazyColumnPool)
+    }
+
+    fun applyLazyRowDefaults(recyclerView: RecyclerView) {
+        recyclerView.itemAnimator = null
+        recyclerView.setRecycledViewPool(lazyRowPool)
     }
 
     fun applyLazyGridDefaults(recyclerView: RecyclerView) {
@@ -17,8 +24,13 @@ internal object FrameworkRecyclerViewDefaults {
         recyclerView.setRecycledViewPool(lazyGridPool)
     }
 
-    fun applyPagerDefaults(recyclerView: RecyclerView) {
+    fun applyHorizontalPagerDefaults(recyclerView: RecyclerView) {
         recyclerView.itemAnimator = null
-        recyclerView.setRecycledViewPool(pagerPool)
+        recyclerView.setRecycledViewPool(horizontalPagerPool)
+    }
+
+    fun applyVerticalPagerDefaults(recyclerView: RecyclerView) {
+        recyclerView.itemAnimator = null
+        recyclerView.setRecycledViewPool(verticalPagerPool)
     }
 }

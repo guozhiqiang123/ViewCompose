@@ -47,7 +47,7 @@ internal class DeclarativeVerticalPagerLayout(
         viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
         viewPager.adapter = adapter
         viewPager.registerOnPageChangeCallback(pageChangeCallback)
-        resolvePagerRecyclerView()?.let(FrameworkRecyclerViewDefaults::applyPagerDefaults)
+        resolvePagerRecyclerView()?.let(FrameworkRecyclerViewDefaults::applyVerticalPagerDefaults)
         addView(viewPager)
     }
 

@@ -46,7 +46,7 @@ internal class DeclarativeHorizontalPagerLayout(
         )
         viewPager.adapter = adapter
         viewPager.registerOnPageChangeCallback(pageChangeCallback)
-        resolvePagerRecyclerView()?.let(FrameworkRecyclerViewDefaults::applyPagerDefaults)
+        resolvePagerRecyclerView()?.let(FrameworkRecyclerViewDefaults::applyHorizontalPagerDefaults)
         addView(viewPager)
     }
 

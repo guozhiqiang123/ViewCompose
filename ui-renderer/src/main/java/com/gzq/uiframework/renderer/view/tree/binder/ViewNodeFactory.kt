@@ -64,12 +64,12 @@ internal object ViewNodeFactory {
             NodeType.LazyColumn -> RecyclerView(context).apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = LazyColumnAdapter()
-                FrameworkRecyclerViewDefaults.applyLazyListDefaults(this)
+                FrameworkRecyclerViewDefaults.applyLazyColumnDefaults(this)
             }
             NodeType.LazyRow -> RecyclerView(context).apply {
                 layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
                 adapter = LazyColumnAdapter(LinearLayoutManager.HORIZONTAL)
-                FrameworkRecyclerViewDefaults.applyLazyListDefaults(this)
+                FrameworkRecyclerViewDefaults.applyLazyRowDefaults(this)
             }
             NodeType.SegmentedControl -> DeclarativeSegmentedControlLayout(context)
             NodeType.ScrollableColumn -> DeclarativeScrollableColumnLayout(context)

@@ -87,6 +87,8 @@ internal class LazyColumnAdapter(
 
     override fun getItemCount(): Int = items.size
 
+    override fun getItemViewType(position: Int): Int = orientation
+
     override fun getItemId(position: Int): Long {
         val key = items[position].key
         return key?.hashCode()?.toLong() ?: position.toLong()
@@ -139,11 +141,30 @@ internal class LazyColumnAdapter(
         position: Int,
         payload: Any?,
     ) {
+        ensureContainerLayoutParams(holder)
         holderRegistry.onBound(holder)
         holder.bind(
             item = items[position],
             payload = payload,
         )
+    }
+
+    private fun ensureContainerLayoutParams(holder: LazyColumnViewHolder) {
+        val expectedWidth = if (orientation == LinearLayoutManager.HORIZONTAL) {
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        } else {
+            ViewGroup.LayoutParams.MATCH_PARENT
+        }
+        val expectedHeight = if (orientation == LinearLayoutManager.HORIZONTAL) {
+            ViewGroup.LayoutParams.MATCH_PARENT
+        } else {
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        }
+        val current = holder.itemView.layoutParams as? RecyclerView.LayoutParams
+        if (current?.width == expectedWidth && current.height == expectedHeight) {
+            return
+        }
+        holder.itemView.layoutParams = RecyclerView.LayoutParams(expectedWidth, expectedHeight)
     }
 }
 

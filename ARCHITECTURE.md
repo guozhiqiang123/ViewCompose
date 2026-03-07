@@ -103,7 +103,7 @@ flowchart TD
 1. 结构稳定时的可见内容刷新路径
 2. 空 diff 刷新保障
 3. recycle/dispose 与生命周期一致性
-4. framework 托管的 `RecyclerView/ViewPager2` 容器默认应用统一调优（`itemAnimator` 关闭 + 按容器家族分池）
+4. framework 托管的 `RecyclerView/ViewPager2` 容器默认应用统一调优（`itemAnimator` 关闭 + 按具体容器类型分池，避免不兼容 holder 互串）
 
 专项清单：
 
