@@ -45,7 +45,8 @@
             android:exported="false" />
         <activity
             android:name=".InputActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".InteropActivity"
             android:exported="false" />

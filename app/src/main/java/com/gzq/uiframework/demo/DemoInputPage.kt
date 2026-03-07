@@ -6,6 +6,8 @@ import com.gzq.uiframework.renderer.modifier.cornerRadius
 import com.gzq.uiframework.renderer.modifier.fillMaxSize
 import com.gzq.uiframework.renderer.modifier.fillMaxWidth
 import com.gzq.uiframework.renderer.modifier.height
+import com.gzq.uiframework.renderer.modifier.imeInsetsPadding
+import com.gzq.uiframework.renderer.modifier.lazyContainerFocusFollowKeyboard
 import com.gzq.uiframework.renderer.modifier.margin
 import com.gzq.uiframework.renderer.modifier.padding
 import com.gzq.uiframework.renderer.modifier.testTag
@@ -86,7 +88,17 @@ internal fun UiTreeBuilder.InputPage(
     LazyColumn(
         items = pageItems,
         key = { it },
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .then(
+                if (selectedPageState.value == 3) {
+                    Modifier
+                        .lazyContainerFocusFollowKeyboard()
+                        .imeInsetsPadding()
+                } else {
+                    Modifier
+                },
+            ),
     ) { section ->
         when (section) {
             "page" -> ChapterPageOverviewSection(
