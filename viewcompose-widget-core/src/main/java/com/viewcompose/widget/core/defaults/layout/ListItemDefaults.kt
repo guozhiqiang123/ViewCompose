@@ -7,9 +7,9 @@ object ListItemDefaults {
 
     fun overlineColor(): Int = Theme.colors.textSecondary
 
-    fun headlineStyle(): UiTextStyle = Theme.typography.body
+    fun headlineStyle(): UiTextStyle = TextDefaults.bodyMediumStyle()
 
-    fun supportingStyle(): UiTextStyle = Theme.typography.label
+    fun supportingStyle(): UiTextStyle = TextDefaults.labelMediumStyle()
 
     fun overlineStyle(): UiTextStyle = UiTextStyle(
         fontSizeSp = 12.sp,

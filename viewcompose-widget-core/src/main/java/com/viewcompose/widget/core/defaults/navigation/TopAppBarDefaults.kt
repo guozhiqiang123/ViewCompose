@@ -5,7 +5,7 @@ object TopAppBarDefaults {
 
     fun titleColor(): Int = Theme.colors.textPrimary
 
-    fun titleStyle(): UiTextStyle = Theme.typography.title
+    fun titleStyle(): UiTextStyle = TextDefaults.titleMediumStyle()
 
     fun height(): Int = 64.dp
 

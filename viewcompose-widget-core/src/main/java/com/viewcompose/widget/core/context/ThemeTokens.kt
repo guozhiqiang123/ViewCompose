@@ -42,6 +42,15 @@ data class UiTypography(
     val title: UiTextStyle,
     val body: UiTextStyle,
     val label: UiTextStyle,
+    val titleLarge: UiTextStyle = title,
+    val titleMedium: UiTextStyle = title,
+    val titleSmall: UiTextStyle = title,
+    val bodyLarge: UiTextStyle = body,
+    val bodyMedium: UiTextStyle = body,
+    val bodySmall: UiTextStyle = body,
+    val labelLarge: UiTextStyle = label,
+    val labelMedium: UiTextStyle = label,
+    val labelSmall: UiTextStyle = label,
 )
 
 data class UiThemeTokens(

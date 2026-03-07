@@ -17,10 +17,9 @@ object TextFieldDefaults {
         size: TextFieldSize = TextFieldSize.Medium,
     ): UiTextStyle {
         return when (size) {
-            TextFieldSize.Compact -> Theme.typography.label
-            TextFieldSize.Medium,
-            TextFieldSize.Large,
-            -> TextDefaults.bodyStyle()
+            TextFieldSize.Compact -> TextDefaults.labelSmallStyle()
+            TextFieldSize.Medium -> TextDefaults.bodyMediumStyle()
+            TextFieldSize.Large -> TextDefaults.bodyLargeStyle()
         }
     }
 
@@ -53,9 +52,9 @@ object TextFieldDefaults {
         isError: Boolean = false,
     ): Int = hintColor(enabled = enabled, isError = isError)
 
-    fun labelTextStyle(): UiTextStyle = Theme.typography.label
+    fun labelTextStyle(): UiTextStyle = TextDefaults.labelMediumStyle()
 
-    fun supportingTextStyle(): UiTextStyle = Theme.typography.label
+    fun supportingTextStyle(): UiTextStyle = TextDefaults.labelMediumStyle()
 
     fun containerColor(
         variant: TextFieldVariant = TextFieldVariant.Filled,
