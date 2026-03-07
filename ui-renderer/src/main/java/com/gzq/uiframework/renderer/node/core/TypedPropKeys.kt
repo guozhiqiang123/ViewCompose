@@ -46,7 +46,6 @@ object TypedPropKeys {
     val SupportingTextColor = PropKey<Int>(PropKeys.SUPPORTING_TEXT_COLOR)
     val LabelTextSizeSp = PropKey<Int>(PropKeys.LABEL_TEXT_SIZE_SP)
     val SupportingTextSizeSp = PropKey<Int>(PropKeys.SUPPORTING_TEXT_SIZE_SP)
-    val IsError = PropKey<Boolean>(PropKeys.IS_ERROR)
 
     val SliderValue = PropKey<Int>(PropKeys.SLIDER_VALUE)
     val MinValue = PropKey<Int>(PropKeys.MIN_VALUE)
@@ -68,19 +67,6 @@ object TypedPropKeys {
     val LazyItems = PropKey<List<LazyListItem>>(PropKeys.LAZY_ITEMS)
     val LazyContentPadding = PropKey<Int>(PropKeys.LAZY_CONTENT_PADDING)
     val LazySpacing = PropKey<Int>(PropKeys.LAZY_SPACING)
-
-    val TabPages = PropKey<List<TabPage>>(PropKeys.TAB_PAGES)
-    val SelectedTabIndex = PropKey<Int>(PropKeys.SELECTED_TAB_INDEX)
-    val OnTabSelected = PropKey<(Int) -> Unit>(PropKeys.ON_TAB_SELECTED)
-    val TabBackgroundColor = PropKey<Int>(PropKeys.TAB_BACKGROUND_COLOR)
-    val TabIndicatorColor = PropKey<Int>(PropKeys.TAB_INDICATOR_COLOR)
-    val TabCornerRadius = PropKey<Int>(PropKeys.TAB_CORNER_RADIUS)
-    val TabIndicatorHeight = PropKey<Int>(PropKeys.TAB_INDICATOR_HEIGHT)
-    val TabContentPaddingHorizontal = PropKey<Int>(PropKeys.TAB_CONTENT_PADDING_HORIZONTAL)
-    val TabContentPaddingVertical = PropKey<Int>(PropKeys.TAB_CONTENT_PADDING_VERTICAL)
-    val TabSelectedTextColor = PropKey<Int>(PropKeys.TAB_SELECTED_TEXT_COLOR)
-    val TabUnselectedTextColor = PropKey<Int>(PropKeys.TAB_UNSELECTED_TEXT_COLOR)
-    val TabRippleColor = PropKey<Int>(PropKeys.TAB_RIPPLE_COLOR)
 
     val SegmentItems = PropKey<List<SegmentedControlItem>>(PropKeys.SEGMENT_ITEMS)
     val SegmentSelectedIndex = PropKey<Int>(PropKeys.SEGMENT_SELECTED_INDEX)
