@@ -35,6 +35,7 @@ interface OverlayHost {
 
 object OverlayHostDefaults {
     private const val TAG = "UIFramework"
+    // Reflection contract: keep this class name synchronized with app unit test.
     private const val ANDROID_OVERLAY_HOST_CLASS_NAME =
         "com.gzq.uiframework.overlay.android.host.AndroidOverlayHost"
     private val missingAndroidHostWarningLogged = AtomicBoolean(false)

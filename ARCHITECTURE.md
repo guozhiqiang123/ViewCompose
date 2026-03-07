@@ -113,7 +113,8 @@ flowchart TD
 1. `ComponentActivity.setUiContent(...)` 不暴露 `RenderSession` 给页面调用方，并由宿主自动管理 `dispose`。
 2. `Fragment.setUiContent(...)` 是官方入口：不暴露 `RenderSession`，并在 `viewLifecycleOwner` 销毁时自动 `dispose`。
 3. `setUiContent` 的默认 `overlayHostFactory` 优先尝试 `AndroidOverlayHost`（classpath 可用时）；不可用时回退 no-op 并输出提示，可由调用方显式覆盖。
-4. system bars insets 走组件侧 `Modifier.systemBarsInsetsPadding(...)`，不绑死 Activity 全局参数。
+4. 上述默认行为依赖反射契约类名 `com.gzq.uiframework.overlay.android.host.AndroidOverlayHost`；若 overlay 包路径调整，必须同步更新反射常量与契约测试。
+5. system bars insets 走组件侧 `Modifier.systemBarsInsetsPadding(...)`，不绑死 Activity 全局参数。
 
 ### 4.4 延迟 session 容器边界
 
