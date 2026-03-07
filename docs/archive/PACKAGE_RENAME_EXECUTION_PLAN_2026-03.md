@@ -38,7 +38,7 @@
 - [x] Step 4. Keep install package boundaries stable.
 - [x] Step 5. Update reflection contracts and brand naming.
 - [x] Step 6. Sync docs including archive.
-- [ ] Step 7. Run final gates and archive this plan.
+- [x] Step 7. Run final gates and archive this plan.
 
 ## Commit Log
 - Step 1: `a21be23` (`docs: add package rename execution plan for com.viewcompose`)
@@ -46,7 +46,7 @@
 - Step 3: `0cbf3bf` (`refactor: migrate package root to com.viewcompose across modules`)
 - Step 4: `3faf754` (`fix: keep applicationId stable while migrating source packages`)
 - Step 5: `d0d575f` (`refactor: update reflection contracts and brand naming to ViewCompose`)
-- Step 6: pending
+- Step 6: `a89e14c` (`docs: align all docs and archives with com.viewcompose migration`)
 - Step 7: pending
 
 ## Blocker Log
