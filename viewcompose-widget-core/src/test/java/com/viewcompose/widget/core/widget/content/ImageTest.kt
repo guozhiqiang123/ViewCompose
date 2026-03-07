@@ -36,7 +36,7 @@ class ImageTest {
     @Test
     fun `icon inherits local content color and default size`() {
         val tree = buildVNodeTree {
-            ProvideContentColor(0xFF123456.toInt()) {
+            ProvideLocal(LocalContentColor, 0xFF123456.toInt()) {
                 Icon(
                     source = ImageSource.Resource(12),
                     contentDescription = "Local icon",

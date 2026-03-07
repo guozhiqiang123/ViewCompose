@@ -91,18 +91,18 @@ object OverlayHostDefaults {
     }
 }
 
-internal val LocalOverlayHost = LocalValue { OverlayHostDefaults.noOp }
+internal val LocalOverlayHost = uiLocalOf { OverlayHostDefaults.noOp }
 
 object OverlayHostContext {
     val current: OverlayHost
-        get() = LocalContext.current(LocalOverlayHost)
+        get() = UiLocals.current(LocalOverlayHost)
 }
 
 fun UiTreeBuilder.ProvideOverlayHost(
     host: OverlayHost,
     content: UiTreeBuilder.() -> Unit,
 ) {
-    LocalContext.provide(LocalOverlayHost, host) {
+    ProvideLocal(LocalOverlayHost, host) {
         content()
     }
 }

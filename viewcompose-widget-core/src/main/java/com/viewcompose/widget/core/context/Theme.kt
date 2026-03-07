@@ -2,11 +2,11 @@ package com.viewcompose.widget.core
 
 import android.content.Context
 
-private val LocalTheme = LocalValue(UiThemeDefaults::light)
+private val LocalTheme = uiLocalOf(UiThemeDefaults::light)
 
 object Theme {
     val current: UiThemeTokens
-        get() = LocalContext.current(LocalTheme)
+        get() = UiLocals.current(LocalTheme)
 
     val colors: UiColors
         get() = current.colors
@@ -32,7 +32,7 @@ fun UiTreeBuilder.UiTheme(
     val resolvedTokens = tokens
         ?: androidContext?.let(AndroidThemeBridge::fromContext)
         ?: UiThemeDefaults.light()
-    LocalContext.provide(LocalTheme, resolvedTokens) {
+    ProvideLocal(local = LocalTheme, value = resolvedTokens) {
         content()
     }
 }
@@ -45,7 +45,7 @@ fun UiTreeBuilder.UiThemeOverride(
     overlays: UiOverlays? = null,
     content: UiTreeBuilder.() -> Unit,
 ) {
-    LocalContext.provide(
+    ProvideLocal(
         local = LocalTheme,
         value = Theme.current.override(
             colors = colors,

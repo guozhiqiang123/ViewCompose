@@ -39,7 +39,7 @@ class RenderSession internal constructor(
                 onInvalidated = ::scheduleRender,
             ) {
                 var builtTree: List<com.viewcompose.renderer.node.VNode> = emptyList()
-                LocalContext.provide(LocalOverlayHost, overlayHost) {
+                LocalContext.provide(LocalOverlayHost.holder, overlayHost) {
                     OverlayRequestContext.withStore(overlayRequestStore) {
                         SideEffectContext.withStore(sideEffectStore) {
                             EffectContext.withStore(effectStore) {

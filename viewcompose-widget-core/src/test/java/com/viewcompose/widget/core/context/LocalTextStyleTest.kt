@@ -8,7 +8,7 @@ class LocalTextStyleTest {
     @Test
     fun `text defaults to local text style`() {
         val tree = buildVNodeTree {
-            ProvideTextStyle(UiTextStyle(fontSizeSp = 42)) {
+            ProvideLocal(LocalTextStyle, UiTextStyle(fontSizeSp = 42)) {
                 Text("hello")
             }
         }
@@ -30,9 +30,9 @@ class LocalTextStyleTest {
     @Test
     fun `nested provide text style overrides outer`() {
         val tree = buildVNodeTree {
-            ProvideTextStyle(UiTextStyle(fontSizeSp = 20)) {
+            ProvideLocal(LocalTextStyle, UiTextStyle(fontSizeSp = 20)) {
                 Text("outer")
-                ProvideTextStyle(UiTextStyle(fontSizeSp = 12)) {
+                ProvideLocal(LocalTextStyle, UiTextStyle(fontSizeSp = 12)) {
                     Text("inner")
                 }
             }
@@ -48,7 +48,7 @@ class LocalTextStyleTest {
     @Test
     fun `explicit style parameter overrides local text style`() {
         val tree = buildVNodeTree {
-            ProvideTextStyle(UiTextStyle(fontSizeSp = 42)) {
+            ProvideLocal(LocalTextStyle, UiTextStyle(fontSizeSp = 42)) {
                 Text("hello", style = UiTextStyle(fontSizeSp = 10))
             }
         }
@@ -61,7 +61,7 @@ class LocalTextStyleTest {
     fun `TextStyle current reads provided value`() {
         var captured = 0
         buildVNodeTree {
-            ProvideTextStyle(UiTextStyle(fontSizeSp = 99)) {
+            ProvideLocal(LocalTextStyle, UiTextStyle(fontSizeSp = 99)) {
                 captured = TextStyle.current.fontSizeSp
                 Text("probe")
             }

@@ -33,7 +33,7 @@ class TextTest {
     @Test
     fun `text inherits content color from ProvideContentColor`() {
         val tree = buildVNodeTree {
-            ProvideContentColor(0xFFABCDEF.toInt()) {
+            ProvideLocal(LocalContentColor, 0xFFABCDEF.toInt()) {
                 Text("colored")
             }
         }

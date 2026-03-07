@@ -19,7 +19,7 @@ object ButtonDefaults {
         variant: ButtonVariant = ButtonVariant.Primary,
         enabled: Boolean = true,
     ): Int {
-        val override = LocalContext.current(LocalButtonColors)
+        val override = UiLocals.current(LocalButtonColors)
         return when (variant) {
             ButtonVariant.Primary -> if (enabled) {
                 override?.primaryContainer ?: Theme.colors.primary
@@ -49,7 +49,7 @@ object ButtonDefaults {
         variant: ButtonVariant = ButtonVariant.Primary,
         enabled: Boolean = true,
     ): Int {
-        val override = LocalContext.current(LocalButtonColors)
+        val override = UiLocals.current(LocalButtonColors)
         return when (variant) {
             ButtonVariant.Primary -> if (enabled) {
                 override?.primaryContent ?: contentColorFor(Theme.colors.primary)
@@ -87,7 +87,7 @@ object ButtonDefaults {
         variant: ButtonVariant = ButtonVariant.Primary,
         enabled: Boolean = true,
     ): Int {
-        val override = LocalContext.current(LocalButtonColors)
+        val override = UiLocals.current(LocalButtonColors)
         return when (variant) {
             ButtonVariant.Outlined -> if (enabled) {
                 override?.outlinedBorder ?: Theme.colors.divider

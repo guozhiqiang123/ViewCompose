@@ -4,7 +4,7 @@ object InputControlDefaults {
     fun labelStyle(): UiTextStyle = TextDefaults.bodyStyle()
 
     fun checkboxLabelColor(enabled: Boolean = true): Int {
-        val override = LocalContext.current(LocalCheckboxColors)
+        val override = UiLocals.current(LocalCheckboxColors)
         return if (enabled) {
             override?.label ?: Theme.colors.textPrimary
         } else {
@@ -13,7 +13,7 @@ object InputControlDefaults {
     }
 
     fun checkboxControlColor(enabled: Boolean = true): Int {
-        val override = LocalContext.current(LocalCheckboxColors)
+        val override = UiLocals.current(LocalCheckboxColors)
         return if (enabled) {
             override?.control ?: Theme.colors.primary
         } else {
@@ -22,7 +22,7 @@ object InputControlDefaults {
     }
 
     fun checkboxCheckedColor(enabled: Boolean = true): Int {
-        val override = LocalContext.current(LocalCheckboxColors)
+        val override = UiLocals.current(LocalCheckboxColors)
         return if (enabled) {
             override?.control ?: Theme.colors.primary
         } else {
@@ -31,7 +31,7 @@ object InputControlDefaults {
     }
 
     fun checkboxUncheckedColor(enabled: Boolean = true): Int {
-        val override = LocalContext.current(LocalCheckboxColors)
+        val override = UiLocals.current(LocalCheckboxColors)
         return if (enabled) {
             Theme.colors.surfaceVariant
         } else {
@@ -40,7 +40,7 @@ object InputControlDefaults {
     }
 
     fun switchLabelColor(enabled: Boolean = true): Int {
-        val override = LocalContext.current(LocalSwitchColors)
+        val override = UiLocals.current(LocalSwitchColors)
         return if (enabled) {
             override?.label ?: Theme.colors.textPrimary
         } else {
@@ -49,7 +49,7 @@ object InputControlDefaults {
     }
 
     fun switchControlColor(enabled: Boolean = true): Int {
-        val override = LocalContext.current(LocalSwitchColors)
+        val override = UiLocals.current(LocalSwitchColors)
         return if (enabled) {
             override?.control ?: Theme.colors.primary
         } else {
@@ -58,7 +58,7 @@ object InputControlDefaults {
     }
 
     fun switchThumbColor(checked: Boolean = true, enabled: Boolean = true): Int {
-        val override = LocalContext.current(LocalSwitchColors)
+        val override = UiLocals.current(LocalSwitchColors)
         return when {
             !enabled -> override?.controlDisabled ?: Theme.colors.divider
             checked -> override?.control ?: Theme.colors.primary
@@ -67,7 +67,7 @@ object InputControlDefaults {
     }
 
     fun switchTrackColor(checked: Boolean = true, enabled: Boolean = true): Int {
-        val override = LocalContext.current(LocalSwitchColors)
+        val override = UiLocals.current(LocalSwitchColors)
         return when {
             !enabled -> override?.controlDisabled ?: Theme.colors.divider
             checked -> {
@@ -79,7 +79,7 @@ object InputControlDefaults {
     }
 
     fun radioButtonLabelColor(enabled: Boolean = true): Int {
-        val override = LocalContext.current(LocalRadioButtonColors)
+        val override = UiLocals.current(LocalRadioButtonColors)
         return if (enabled) {
             override?.label ?: Theme.colors.textPrimary
         } else {
@@ -88,7 +88,7 @@ object InputControlDefaults {
     }
 
     fun radioButtonControlColor(enabled: Boolean = true): Int {
-        val override = LocalContext.current(LocalRadioButtonColors)
+        val override = UiLocals.current(LocalRadioButtonColors)
         return if (enabled) {
             override?.control ?: Theme.colors.primary
         } else {
@@ -97,7 +97,7 @@ object InputControlDefaults {
     }
 
     fun radioButtonCheckedColor(enabled: Boolean = true): Int {
-        val override = LocalContext.current(LocalRadioButtonColors)
+        val override = UiLocals.current(LocalRadioButtonColors)
         return if (enabled) {
             override?.control ?: Theme.colors.primary
         } else {
@@ -106,7 +106,7 @@ object InputControlDefaults {
     }
 
     fun radioButtonUncheckedColor(enabled: Boolean = true): Int {
-        val override = LocalContext.current(LocalRadioButtonColors)
+        val override = UiLocals.current(LocalRadioButtonColors)
         return if (enabled) {
             Theme.colors.surfaceVariant
         } else {
@@ -115,7 +115,7 @@ object InputControlDefaults {
     }
 
     fun sliderControlColor(enabled: Boolean = true): Int {
-        val override = LocalContext.current(LocalSliderColors)
+        val override = UiLocals.current(LocalSliderColors)
         return if (enabled) {
             override?.control ?: Theme.colors.primary
         } else {
@@ -124,7 +124,7 @@ object InputControlDefaults {
     }
 
     fun sliderThumbColor(enabled: Boolean = true): Int {
-        val override = LocalContext.current(LocalSliderColors)
+        val override = UiLocals.current(LocalSliderColors)
         return if (enabled) {
             override?.control ?: Theme.colors.primary
         } else {
@@ -133,7 +133,7 @@ object InputControlDefaults {
     }
 
     fun sliderTrackColor(enabled: Boolean = true): Int {
-        val override = LocalContext.current(LocalSliderColors)
+        val override = UiLocals.current(LocalSliderColors)
         return if (enabled) {
             val base = override?.control ?: Theme.colors.primary
             (base and 0x00FFFFFF) or 0x61000000

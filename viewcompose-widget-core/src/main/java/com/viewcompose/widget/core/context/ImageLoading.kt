@@ -2,18 +2,18 @@ package com.viewcompose.widget.core
 
 import com.viewcompose.renderer.node.RemoteImageLoader
 
-private val LocalRemoteImageLoader = LocalValue<RemoteImageLoader?> { null }
+private val LocalRemoteImageLoader = uiLocalOf<RemoteImageLoader?> { null }
 
 object ImageLoading {
     val current: RemoteImageLoader?
-        get() = LocalContext.current(LocalRemoteImageLoader)
+        get() = UiLocals.current(LocalRemoteImageLoader)
 }
 
 fun UiTreeBuilder.ProvideRemoteImageLoader(
     loader: RemoteImageLoader?,
     content: UiTreeBuilder.() -> Unit,
 ) {
-    LocalContext.provide(LocalRemoteImageLoader, loader) {
+    ProvideLocal(LocalRemoteImageLoader, loader) {
         content()
     }
 }

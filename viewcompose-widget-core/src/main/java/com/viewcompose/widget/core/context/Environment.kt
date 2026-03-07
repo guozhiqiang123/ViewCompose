@@ -36,17 +36,17 @@ object UiEnvironmentDefaults {
     }
 }
 
-private val LocalEnvironment = LocalValue(UiEnvironmentDefaults::values)
+private val LocalEnvironment = uiLocalOf(UiEnvironmentDefaults::values)
 
 object Environment {
     val density: UiDensity
-        get() = LocalContext.current(LocalEnvironment).density
+        get() = UiLocals.current(LocalEnvironment).density
 
     val localeTags: List<String>
-        get() = LocalContext.current(LocalEnvironment).localeTags
+        get() = UiLocals.current(LocalEnvironment).localeTags
 
     val layoutDirection: UiLayoutDirection
-        get() = LocalContext.current(LocalEnvironment).layoutDirection
+        get() = UiLocals.current(LocalEnvironment).layoutDirection
 }
 
 fun UiTreeBuilder.UiEnvironment(
@@ -57,7 +57,7 @@ fun UiTreeBuilder.UiEnvironment(
     val resolvedValues = values
         ?: androidContext?.let(AndroidEnvironmentBridge::fromContext)
         ?: UiEnvironmentDefaults.values()
-    LocalContext.provide(LocalEnvironment, resolvedValues) {
+    ProvideLocal(LocalEnvironment, resolvedValues) {
         content()
     }
 }

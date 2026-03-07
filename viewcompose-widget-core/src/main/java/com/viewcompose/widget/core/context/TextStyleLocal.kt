@@ -1,17 +1,8 @@
 package com.viewcompose.widget.core
 
-private val LocalTextStyle = LocalValue { Theme.typography.body }
+val LocalTextStyle = uiLocalOf { Theme.typography.body }
 
 object TextStyle {
     val current: UiTextStyle
-        get() = LocalContext.current(LocalTextStyle)
-}
-
-fun UiTreeBuilder.ProvideTextStyle(
-    style: UiTextStyle,
-    content: UiTreeBuilder.() -> Unit,
-) {
-    LocalContext.provide(LocalTextStyle, style) {
-        content()
-    }
+        get() = UiLocals.current(LocalTextStyle)
 }

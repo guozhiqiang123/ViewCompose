@@ -61,7 +61,7 @@ object TextFieldDefaults {
         enabled: Boolean = true,
         isError: Boolean = false,
     ): Int {
-        val override = LocalContext.current(LocalTextFieldColors)
+        val override = UiLocals.current(LocalTextFieldColors)
         return when {
             variant == TextFieldVariant.Outlined -> 0x00000000
             isError && variant == TextFieldVariant.Tonal ->
@@ -89,7 +89,7 @@ object TextFieldDefaults {
         enabled: Boolean = true,
         isError: Boolean = false,
     ): Int {
-        val override = LocalContext.current(LocalTextFieldColors)
+        val override = UiLocals.current(LocalTextFieldColors)
         return when {
             isError ->
                 override?.outlinedErrorBorder ?: Theme.colors.error

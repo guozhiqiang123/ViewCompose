@@ -42,7 +42,7 @@ fun UiTreeBuilder.Card(
             }
         }
         .then(modifier)
-    ProvideContentColor(CardDefaults.contentColor()) {
+    ProvideLocal(LocalContentColor, CardDefaults.contentColor()) {
         Box(
             key = key,
             modifier = semanticModifier,
@@ -159,7 +159,7 @@ fun UiTreeBuilder.Scaffold(
     modifier: Modifier = Modifier,
     content: BoxScope.() -> Unit,
 ) {
-    ProvideContentColor(contentColor) {
+    ProvideLocal(LocalContentColor, contentColor) {
         Column(
             key = key,
             modifier = Modifier

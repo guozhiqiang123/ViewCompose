@@ -8,7 +8,7 @@ enum class SegmentedControlSize {
 
 object SegmentedControlDefaults {
     fun backgroundColor(enabled: Boolean = true): Int {
-        val override = LocalContext.current(LocalSegmentedControlColors)
+        val override = UiLocals.current(LocalSegmentedControlColors)
         return if (enabled) {
             override?.background ?: Theme.colors.surfaceVariant
         } else {
@@ -17,7 +17,7 @@ object SegmentedControlDefaults {
     }
 
     fun indicatorColor(enabled: Boolean = true): Int {
-        val override = LocalContext.current(LocalSegmentedControlColors)
+        val override = UiLocals.current(LocalSegmentedControlColors)
         return if (enabled) {
             override?.indicator ?: Theme.colors.primary
         } else {
@@ -28,7 +28,7 @@ object SegmentedControlDefaults {
     fun cornerRadius(): Int = Theme.shapes.interactiveCornerRadius
 
     fun textColor(enabled: Boolean = true): Int {
-        val override = LocalContext.current(LocalSegmentedControlColors)
+        val override = UiLocals.current(LocalSegmentedControlColors)
         return if (enabled) {
             override?.text ?: Theme.colors.textSecondary
         } else {
@@ -37,7 +37,7 @@ object SegmentedControlDefaults {
     }
 
     fun selectedTextColor(enabled: Boolean = true): Int {
-        val override = LocalContext.current(LocalSegmentedControlColors)
+        val override = UiLocals.current(LocalSegmentedControlColors)
         return if (enabled) {
             override?.selectedText ?: contentColorFor(Theme.colors.primary)
         } else {

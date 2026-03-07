@@ -21,13 +21,13 @@ data class ButtonColorOverride(
     val outlinedDisabledBorder: Int? = null,
 )
 
-internal val LocalButtonColors = LocalValue<ButtonColorOverride?> { null }
+internal val LocalButtonColors = uiLocalOf<ButtonColorOverride?> { null }
 
 fun UiTreeBuilder.ProvideButtonColors(
     override: ButtonColorOverride,
     content: UiTreeBuilder.() -> Unit,
 ) {
-    LocalContext.provide(LocalButtonColors, override) { content() }
+    ProvideLocal(LocalButtonColors, override) { content() }
 }
 
 // --- TextField ---
@@ -44,13 +44,13 @@ data class TextFieldColorOverride(
     val outlinedErrorBorder: Int? = null,
 )
 
-internal val LocalTextFieldColors = LocalValue<TextFieldColorOverride?> { null }
+internal val LocalTextFieldColors = uiLocalOf<TextFieldColorOverride?> { null }
 
 fun UiTreeBuilder.ProvideTextFieldColors(
     override: TextFieldColorOverride,
     content: UiTreeBuilder.() -> Unit,
 ) {
-    LocalContext.provide(LocalTextFieldColors, override) { content() }
+    ProvideLocal(LocalTextFieldColors, override) { content() }
 }
 
 // --- SegmentedControl ---
@@ -66,13 +66,13 @@ data class SegmentedControlColorOverride(
     val selectedTextDisabled: Int? = null,
 )
 
-internal val LocalSegmentedControlColors = LocalValue<SegmentedControlColorOverride?> { null }
+internal val LocalSegmentedControlColors = uiLocalOf<SegmentedControlColorOverride?> { null }
 
 fun UiTreeBuilder.ProvideSegmentedControlColors(
     override: SegmentedControlColorOverride,
     content: UiTreeBuilder.() -> Unit,
 ) {
-    LocalContext.provide(LocalSegmentedControlColors, override) { content() }
+    ProvideLocal(LocalSegmentedControlColors, override) { content() }
 }
 
 // --- InputControl (checkbox, switch, radio, slider) ---
@@ -84,37 +84,37 @@ data class InputControlColorOverride(
     val controlDisabled: Int? = null,
 )
 
-internal val LocalCheckboxColors = LocalValue<InputControlColorOverride?> { null }
-internal val LocalSwitchColors = LocalValue<InputControlColorOverride?> { null }
-internal val LocalRadioButtonColors = LocalValue<InputControlColorOverride?> { null }
-internal val LocalSliderColors = LocalValue<InputControlColorOverride?> { null }
+internal val LocalCheckboxColors = uiLocalOf<InputControlColorOverride?> { null }
+internal val LocalSwitchColors = uiLocalOf<InputControlColorOverride?> { null }
+internal val LocalRadioButtonColors = uiLocalOf<InputControlColorOverride?> { null }
+internal val LocalSliderColors = uiLocalOf<InputControlColorOverride?> { null }
 
 fun UiTreeBuilder.ProvideCheckboxColors(
     override: InputControlColorOverride,
     content: UiTreeBuilder.() -> Unit,
 ) {
-    LocalContext.provide(LocalCheckboxColors, override) { content() }
+    ProvideLocal(LocalCheckboxColors, override) { content() }
 }
 
 fun UiTreeBuilder.ProvideSwitchColors(
     override: InputControlColorOverride,
     content: UiTreeBuilder.() -> Unit,
 ) {
-    LocalContext.provide(LocalSwitchColors, override) { content() }
+    ProvideLocal(LocalSwitchColors, override) { content() }
 }
 
 fun UiTreeBuilder.ProvideRadioButtonColors(
     override: InputControlColorOverride,
     content: UiTreeBuilder.() -> Unit,
 ) {
-    LocalContext.provide(LocalRadioButtonColors, override) { content() }
+    ProvideLocal(LocalRadioButtonColors, override) { content() }
 }
 
 fun UiTreeBuilder.ProvideSliderColors(
     override: InputControlColorOverride,
     content: UiTreeBuilder.() -> Unit,
 ) {
-    LocalContext.provide(LocalSliderColors, override) { content() }
+    ProvideLocal(LocalSliderColors, override) { content() }
 }
 
 // --- ProgressIndicator ---
@@ -126,11 +126,11 @@ data class ProgressIndicatorColorOverride(
     val circularTrack: Int? = null,
 )
 
-internal val LocalProgressIndicatorColors = LocalValue<ProgressIndicatorColorOverride?> { null }
+internal val LocalProgressIndicatorColors = uiLocalOf<ProgressIndicatorColorOverride?> { null }
 
 fun UiTreeBuilder.ProvideProgressIndicatorColors(
     override: ProgressIndicatorColorOverride,
     content: UiTreeBuilder.() -> Unit,
 ) {
-    LocalContext.provide(LocalProgressIndicatorColors, override) { content() }
+    ProvideLocal(LocalProgressIndicatorColors, override) { content() }
 }

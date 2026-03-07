@@ -76,7 +76,7 @@ fun UiTreeBuilder.Surface(
             },
         )
         .then(modifier)
-    ProvideContentColor(contentColor) {
+    ProvideLocal(LocalContentColor, contentColor) {
         emitResolved(
             type = NodeType.Surface,
             key = key,
