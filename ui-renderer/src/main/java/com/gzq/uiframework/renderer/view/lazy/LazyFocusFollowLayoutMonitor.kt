@@ -16,6 +16,8 @@ internal object LazyFocusFollowLayoutMonitor {
             as? View.OnLayoutChangeListener
         val existingGlobalFocusListener = recyclerView.getTag(R.id.ui_framework_focus_follow_global_focus_listener)
             as? ViewTreeObserver.OnGlobalFocusChangeListener
+        val existingGlobalLayoutListener = recyclerView.getTag(R.id.ui_framework_focus_follow_global_layout_listener)
+            as? ViewTreeObserver.OnGlobalLayoutListener
         if (!enabled) {
             if (existingLayoutListener != null) {
                 recyclerView.removeOnLayoutChangeListener(existingLayoutListener)
@@ -28,22 +30,37 @@ internal object LazyFocusFollowLayoutMonitor {
                 }
                 recyclerView.setTag(R.id.ui_framework_focus_follow_global_focus_listener, null)
             }
+            if (existingGlobalLayoutListener != null) {
+                val viewTreeObserver = recyclerView.viewTreeObserver
+                if (viewTreeObserver.isAlive) {
+                    viewTreeObserver.removeOnGlobalLayoutListener(existingGlobalLayoutListener)
+                }
+                recyclerView.setTag(R.id.ui_framework_focus_follow_global_layout_listener, null)
+            }
             return
         }
-        if (existingLayoutListener != null && existingGlobalFocusListener != null) {
-            return
+        if (existingLayoutListener == null) {
+            val listener = View.OnLayoutChangeListener { view, _, _, _, _, _, _, _, _ ->
+                val target = view as? RecyclerView ?: return@OnLayoutChangeListener
+                ensureFocusedChildVisible(target)
+            }
+            recyclerView.addOnLayoutChangeListener(listener)
+            recyclerView.setTag(R.id.ui_framework_focus_follow_layout_listener, listener)
         }
-        val listener = View.OnLayoutChangeListener { view, _, _, _, _, _, _, _, _ ->
-            val target = view as? RecyclerView ?: return@OnLayoutChangeListener
-            ensureFocusedChildVisible(target)
+        if (existingGlobalFocusListener == null) {
+            val globalFocusListener = ViewTreeObserver.OnGlobalFocusChangeListener { _, _ ->
+                ensureFocusedChildVisible(recyclerView)
+            }
+            recyclerView.viewTreeObserver.addOnGlobalFocusChangeListener(globalFocusListener)
+            recyclerView.setTag(R.id.ui_framework_focus_follow_global_focus_listener, globalFocusListener)
         }
-        val globalFocusListener = ViewTreeObserver.OnGlobalFocusChangeListener { _, _ ->
-            ensureFocusedChildVisible(recyclerView)
+        if (existingGlobalLayoutListener == null) {
+            val globalLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
+                ensureFocusedChildVisible(recyclerView)
+            }
+            recyclerView.viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
+            recyclerView.setTag(R.id.ui_framework_focus_follow_global_layout_listener, globalLayoutListener)
         }
-        recyclerView.addOnLayoutChangeListener(listener)
-        recyclerView.viewTreeObserver.addOnGlobalFocusChangeListener(globalFocusListener)
-        recyclerView.setTag(R.id.ui_framework_focus_follow_layout_listener, listener)
-        recyclerView.setTag(R.id.ui_framework_focus_follow_global_focus_listener, globalFocusListener)
         ensureFocusedChildVisible(recyclerView)
     }
 
@@ -57,9 +74,18 @@ internal object LazyFocusFollowLayoutMonitor {
             focused.getDrawingRect(rect)
             recyclerView.offsetDescendantRectToMyCoords(focused, rect)
         }
+        val viewport = resolveVisibleViewport(
+            recyclerView = recyclerView,
+            fallback = Rect(
+                recyclerView.paddingLeft,
+                recyclerView.paddingTop,
+                recyclerView.width - recyclerView.paddingRight,
+                recyclerView.height - recyclerView.paddingBottom,
+            ),
+        )
         if (layoutManager.canScrollVertically()) {
-            val bottomOverflow = focusedRect.bottom - (recyclerView.height - recyclerView.paddingBottom)
-            val topOverflow = focusedRect.top - recyclerView.paddingTop
+            val bottomOverflow = focusedRect.bottom - viewport.bottom
+            val topOverflow = focusedRect.top - viewport.top
             val dy = when {
                 bottomOverflow > 0 -> bottomOverflow
                 topOverflow < 0 -> topOverflow
@@ -77,8 +103,8 @@ internal object LazyFocusFollowLayoutMonitor {
             return
         }
         if (layoutManager.canScrollHorizontally()) {
-            val rightOverflow = focusedRect.right - (recyclerView.width - recyclerView.paddingRight)
-            val leftOverflow = focusedRect.left - recyclerView.paddingLeft
+            val rightOverflow = focusedRect.right - viewport.right
+            val leftOverflow = focusedRect.left - viewport.left
             val dx = when {
                 rightOverflow > 0 -> rightOverflow
                 leftOverflow < 0 -> leftOverflow
@@ -94,5 +120,23 @@ internal object LazyFocusFollowLayoutMonitor {
                 recyclerView.scrollBy(dx, 0)
             }
         }
+    }
+
+    private fun resolveVisibleViewport(
+        recyclerView: RecyclerView,
+        fallback: Rect,
+    ): Rect {
+        val globalVisibleRect = Rect()
+        if (!recyclerView.getGlobalVisibleRect(globalVisibleRect)) {
+            return fallback
+        }
+        val location = IntArray(2)
+        recyclerView.getLocationOnScreen(location)
+        return Rect(
+            (globalVisibleRect.left - location[0]).coerceAtLeast(fallback.left),
+            (globalVisibleRect.top - location[1]).coerceAtLeast(fallback.top),
+            (globalVisibleRect.right - location[0]).coerceAtMost(fallback.right),
+            (globalVisibleRect.bottom - location[1]).coerceAtMost(fallback.bottom),
+        )
     }
 }
