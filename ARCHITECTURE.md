@@ -69,6 +69,8 @@ renderer 侧避免“单目录平铺”，按职责拆到二级目录：
    - 绑定流程核心（factory/differ/plan/registry/modifier）
 3. `ui-renderer/src/main/java/.../view/tree/binder/widget`
    - 分控件 binder 实现（content/input/media/feedback/collection 等）
+4. `ui-renderer/src/main/java/.../view/lazy/{adapter,focus,layout,reuse,session,state}`
+   - 延迟容器子系统按能力拆分（适配器、焦点跟随、间距布局、复用策略、session、状态）
 
 ## 3. 核心调用链
 
