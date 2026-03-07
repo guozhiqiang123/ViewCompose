@@ -168,15 +168,6 @@ internal class DeclarativeNavigationBarLayout(
 
         itemLayout.addView(iconContainer)
 
-        // Spacer
-        val spacer = View(context).apply {
-            layoutParams = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                dpToPx(4),
-            )
-        }
-        itemLayout.addView(spacer)
-
         // Label
         val label = TextView(context).apply {
             layoutParams = LinearLayout.LayoutParams(
@@ -184,6 +175,7 @@ internal class DeclarativeNavigationBarLayout(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
             ).apply {
                 gravity = Gravity.CENTER_HORIZONTAL
+                topMargin = dpToPx(4)
             }
             this.gravity = Gravity.CENTER
             text = item.label
