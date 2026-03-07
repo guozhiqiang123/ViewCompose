@@ -46,3 +46,4 @@
 | `REAUDIT_EXECUTION_PLAN_2026-03.md` | 已完成的 re-audit 闭环执行计划（F1/F2/F3/F5） |
 | `PERF_OPT_EXECUTION_PLAN_2026-03.md` | 已完成的性能优化执行计划（Diff/RecyclerView/subtree skip） |
 | `ENVIRONMENT_UNIFICATION_EXECUTION_PLAN_2026-03.md` | 已完成的 Environment 一致性收口执行计划 |
+| `CONTAINER_CORE_AUDIT_2026-03-07.md` | 已完成的容器核心审计闭环记录（Flow/Navigation/Segmented/TabRow） |
