@@ -96,8 +96,8 @@ fun UiTreeBuilder.PlainTooltip(
     text: String,
     visible: Boolean,
     anchorId: String,
-    alignment: PopupAlignment = PopupAlignment.AboveStart,
-    dismissOnClickOutside: Boolean = false,
+    alignment: PopupAlignment = PopupAlignment.BelowStart,
+    dismissOnClickOutside: Boolean = true,
     onDismissRequest: (() -> Unit)? = null,
     requestKey: String = "tooltip",
 ) {
