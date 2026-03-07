@@ -49,3 +49,4 @@
 | `CONTAINER_CORE_AUDIT_2026-03-07.md` | 已完成的容器核心审计闭环记录（Flow/Navigation/Segmented/TabRow） |
 | `FOCUS_FOLLOW_REAUDIT_2026-03.md` | 已完成的输入框焦点随键盘跟随能力复审闭环记录 |
 | `PACKAGE_RENAME_EXECUTION_PLAN_2026-03.md` | 已完成的包名/模块名迁移执行计划（`com.gzq.uiframework` -> `com.viewcompose`） |
+| `THEME_TOKEN_REFINEMENT_EXECUTION_PLAN_2026-03.md` | 已完成的 Theme Token 收口与升级执行计划（P0/P1） |
