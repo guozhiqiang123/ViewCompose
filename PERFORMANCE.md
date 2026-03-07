@@ -31,7 +31,7 @@
    - 正确复用
    - 跳过不必要更新
    - 容器刷新语义稳定
-3. 基线更新（2026-03-06）：`qaQuick` 与 `qaFull` 均通过，`connectedDebugAndroidTest` 20/20 全绿；后续性能改动继续要求功能回归同轨验证。
+3. 基线更新（2026-03-07）：`qaQuick` 与 `qaFull` 均通过，`connectedDebugAndroidTest` 21/21 全绿；后续性能改动继续要求功能回归同轨验证。
 
 ## 3. 性能门禁指标
 
@@ -72,9 +72,9 @@
 
 ### Phase 2：跳过更新能力
 
-状态：进行中（已有起步）  
+状态：已完成（本轮闭环）  
 目标：扩大节点级 skip 更新覆盖，降低无效 rebind
-阶段备注（2026-03-07）：`Lazy/Pager` keyed diff 引擎已切换至 `DiffUtil`，并已新增 `SkipSubtree + skippedSubtrees` 路径与统计。
+阶段备注（2026-03-07）：`Lazy/Pager` keyed diff 引擎已切换至 `DiffUtil`，并已新增 `SkipSubtree + skippedSubtrees` 路径与统计；后续增量在 Phase 3/4 持续推进。
 
 ### Phase 3：诊断增强
 

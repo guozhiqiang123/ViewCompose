@@ -38,7 +38,7 @@ Out of scope for this execution:
 - [x] Step 4: Apply framework-managed RecyclerView defaults tuning; sync `ARCHITECTURE.md` + `PERFORMANCE.md`.
 - [x] Step 5: Add subtree skip plan/pipeline/stats path; sync `PERFORMANCE.md` + `ROADMAP.md`.
 - [x] Step 6: Add/refresh tests (unit + instrumentation) and pass gates.
-- [ ] Step 7: Close, archive plan doc, and align final doc statuses.
+- [x] Step 7: Close, archive plan doc, and align final doc statuses.
 
 ## 5. Commit Log
 
@@ -51,6 +51,7 @@ Out of scope for this execution:
 | 2026-03-07 | Step 5 | `dad304a` | Added subtree skip plan/pipeline/stats path and synced roadmap/performance docs. |
 | 2026-03-07 | Step 6 (unit) | `db57903` | Added diff/payload unit assertions for lazy diff behavior. |
 | 2026-03-07 | Step 6 (instrumentation) | `e9cd869` | Extended collections stress refresh instrumentation coverage. |
+| 2026-03-07 | Step 7 (archive) | `cac20e6` | Archived execution plan doc and updated archive index. |
 
 ## 6. Blocker Log
 

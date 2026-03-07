@@ -59,11 +59,12 @@
 4. `HorizontalPager`：`statePatchStress_horizontalPagerContentUpdatesAcrossAdvances`（UI）
 5. `VerticalPager`：`statePatchStress_verticalPagerContentUpdatesAcrossAdvances`（UI）
 6. `LazyVerticalGrid/HorizontalPager/VerticalPager`：`NodeBindingDifferTest` 容器 patch 单测（U）
+7. `LazyColumn`：`collectionsStress_rotateOrder_refreshesVisibleIdsAcrossToggles`（UI）
 
 当前缺口（需补专项回归）：
 
 1. 暂无（本轮范围内容器已覆盖；新增容器继续按第 6 节流程接入）
-2. 门禁基线：`qaFull`（Pixel 4 XL API 33）20/20 通过
+2. 门禁基线：`qaFull`（Pixel 4 XL API 33）21/21 通过
 3. 基线更新（2026-03-07）：`Lazy/Pager` 已统一走 DiffUtil + payload `Change` 路径，保留空 diff 刷新语义。
 
 ## 6. 新容器接入流程

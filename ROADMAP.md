@@ -34,14 +34,14 @@
 1. demo 已稳定在多 `Activity` 结构
 2. 已实现章节具备统一 scenario 模板
 3. instrumentation 已覆盖关键 smoke 回归路径，延迟 session 容器专项已覆盖 `LazyVerticalGrid`、`HorizontalPager`、`VerticalPager` 与 `ModalBottomSheet`
-4. 基线更新（2026-03-06）：已完成 tag-first UI 测试迁移并补关键组件族 smoke，`:app:connectedDebugAndroidTest` 20/20 全绿，`qaQuick` 与 `qaFull` 均可通过。
+4. 基线更新（2026-03-07）：已完成 tag-first UI 测试迁移并补关键组件族 smoke，`:app:connectedDebugAndroidTest` 21/21 全绿，`qaQuick` 与 `qaFull` 均可通过。
 
 ## 2.3 里程碑进度快照（2026-03-07）
 
 | Milestone | 状态 | 完成态字段（C/U/D/UI） | 说明 |
 | --- | --- | --- | --- |
 | A：Overlay 稳定性收口 | Completed | C:✅ U:✅ D:✅ UI:✅ | Overlay host 已统一 reconcile 模板，Dialog/Popup/ModalBottomSheet/反馈流均已回归 |
-| B：Collections 与容器扩展 | In Progress | C:✅ U:✅ D:✅ UI:✅ | 已补 `LazyVerticalGrid/HorizontalPager/VerticalPager` 专项回归（`qaFull` 20/20），下一步聚焦 sticky headers 与 list state 抽象 |
+| B：Collections 与容器扩展 | In Progress | C:✅ U:✅ D:✅ UI:✅ | 已补 `LazyVerticalGrid/HorizontalPager/VerticalPager` 专项回归，并新增 rotate-order 可见刷新断言（`qaFull` 21/21）；下一步聚焦 sticky headers 与 list state 抽象 |
 | C：Input 与表单态增强 | Next | C:✅ U:✅ D:✅ UI:⚠ | 已补 Input/Navigation smoke 基线；focus/IME/表单组合专项仍待系统化补齐 |
 | D：Diagnostics + Performance 联动 | In Progress | C:✅ U:✅ D:✅ UI:✅ | 已补 `DiffUtil + payload` 与 `SkipSubtree/skippedSubtrees` 主路径，下一步聚焦可视化与发布态优化 |
 
