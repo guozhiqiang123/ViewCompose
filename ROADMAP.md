@@ -35,7 +35,7 @@
 1. demo 已稳定在多 `Activity` 结构
 2. 已实现章节具备统一 scenario 模板
 3. instrumentation 已覆盖关键 smoke 回归路径，延迟 session 容器专项已覆盖 `LazyVerticalGrid`、`HorizontalPager`、`VerticalPager` 与 `ModalBottomSheet`
-4. 基线更新（2026-03-07）：已完成 tag-first UI 测试迁移并补关键组件族 smoke，`:app:connectedDebugAndroidTest` 21/21 全绿，`qaQuick` 与 `qaFull` 均可通过。
+4. 基线更新（2026-03-08）：tag-first UI 测试迁移与关键组件族 smoke 已完成；当前 `qaQuick` 可通过，`qaFull` 存在 1 条已知失败（`DemoVisualUiTest.inputSearch_focusSearchBar_doesNotAutoScrollList`，详见 `app/build/reports/androidTests/connected/debug/index.html`）。
 
 ## 2.3 里程碑进度快照（2026-03-08）
 

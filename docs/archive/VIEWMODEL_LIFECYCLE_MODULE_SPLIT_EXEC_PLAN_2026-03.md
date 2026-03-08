@@ -54,3 +54,4 @@
 - `2026-03-08` `qaFull` 失败：`DemoVisualUiTest.inputSearch_focusSearchBar_doesNotAutoScrollList`
   - 失败断言：列表 offset 从 `0` 变为 `-25`（`Expected focus action to avoid noticeable auto-scroll`）
   - 报告：`app/build/reports/androidTests/connected/debug/index.html`
+  - 复验结果：归档前再次执行 `qaFull`，同一用例仍失败，其余用例通过。
