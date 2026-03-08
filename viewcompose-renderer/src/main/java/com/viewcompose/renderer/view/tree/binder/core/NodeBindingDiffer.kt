@@ -64,6 +64,9 @@ internal object NodeBindingDiffer {
         previous: VNode,
         next: VNode,
     ): NodeBindingPlan {
+        if (previous === next) {
+            return NodeBindingPlan.SkipSubtree
+        }
         if (previous.type != next.type) {
             return NodeBindingPlan.Rebind
         }
