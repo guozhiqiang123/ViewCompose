@@ -7,12 +7,16 @@ plugins {
 
 val qaQuickTasks = listOf(
     ":viewcompose-runtime:compileDebugKotlin",
+    ":viewcompose-lifecycle:compileDebugKotlin",
+    ":viewcompose-viewmodel:compileDebugKotlin",
     ":viewcompose-renderer:compileDebugKotlin",
     ":viewcompose-widget-core:compileDebugKotlin",
     ":viewcompose-overlay-android:compileDebugKotlin",
     ":viewcompose-image-coil:compileDebugKotlin",
     ":app:compileDebugKotlin",
     ":viewcompose-runtime:testDebugUnitTest",
+    ":viewcompose-lifecycle:testDebugUnitTest",
+    ":viewcompose-viewmodel:testDebugUnitTest",
     ":viewcompose-renderer:testDebugUnitTest",
     ":viewcompose-widget-core:testDebugUnitTest",
     ":viewcompose-overlay-android:testDebugUnitTest",

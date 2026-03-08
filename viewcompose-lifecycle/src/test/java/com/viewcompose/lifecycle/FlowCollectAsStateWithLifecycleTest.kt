@@ -1,10 +1,8 @@
-package com.viewcompose.widget.core
+package com.viewcompose.lifecycle
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
-import com.viewcompose.lifecycle.ProvideLifecycleOwner
-import com.viewcompose.lifecycle.collectAsStateWithLifecycle
 import com.viewcompose.runtime.State
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +19,7 @@ import org.junit.Test
 class FlowCollectAsStateWithLifecycleTest {
     @Test
     fun `collectAsStateWithLifecycle starts and stops with lifecycle state`() = runBlocking {
-        val harness = LifecycleCollectHarness()
+        val harness = WidgetCoreRuntimeHarness()
         val owner = TestLifecycleOwner()
         val source = MutableStateFlow(10)
 
@@ -53,7 +51,7 @@ class FlowCollectAsStateWithLifecycleTest {
 
     @Test
     fun `collectAsStateWithLifecycle resolves lifecycle owner from local`() = runBlocking {
-        val harness = LifecycleCollectHarness()
+        val harness = WidgetCoreRuntimeHarness()
         val owner = TestLifecycleOwner()
         val source = MutableStateFlow(1)
         lateinit var state: State<Int>
@@ -88,7 +86,7 @@ class FlowCollectAsStateWithLifecycleTest {
 
     @Test
     fun `collectAsStateWithLifecycle cancels collector on dispose`() = runBlocking {
-        val harness = LifecycleCollectHarness()
+        val harness = WidgetCoreRuntimeHarness()
         val owner = TestLifecycleOwner()
         var canceled = 0
         val source = flow {
@@ -127,39 +125,6 @@ class FlowCollectAsStateWithLifecycleTest {
             while (!predicate(state.value)) {
                 delay(10)
             }
-        }
-    }
-
-    private class LifecycleCollectHarness {
-        private val rememberStore = RememberStore()
-        private val effectStore = EffectStore()
-
-        fun <T> render(
-            block: () -> State<T>,
-        ): State<T> {
-            lateinit var state: State<T>
-            EffectContext.withStore(effectStore) {
-                RememberContext.withStore(rememberStore) {
-                    state = block()
-                }
-            }
-            effectStore.commit()
-            return state
-        }
-
-        fun renderTree(
-            block: UiTreeBuilder.() -> Unit,
-        ) {
-            EffectContext.withStore(effectStore) {
-                RememberContext.withStore(rememberStore) {
-                    buildVNodeTree(block)
-                }
-            }
-            effectStore.commit()
-        }
-
-        fun dispose() {
-            effectStore.disposeAll()
         }
     }
 

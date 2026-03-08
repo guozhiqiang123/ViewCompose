@@ -1,6 +1,5 @@
-package com.viewcompose.widget.core
+package com.viewcompose.viewmodel
 
-import com.viewcompose.viewmodel.savedStateHandle
 import org.junit.Assert.assertTrue
 import org.junit.Test
 

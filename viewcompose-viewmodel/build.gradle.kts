@@ -23,7 +23,6 @@ android {
 
 dependencies {
     implementation(project(":viewcompose-widget-core"))
-    implementation(project(":viewcompose-lifecycle"))
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.savedstate)
     testImplementation(libs.junit)

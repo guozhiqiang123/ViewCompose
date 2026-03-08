@@ -1,6 +1,5 @@
-package com.viewcompose.widget.core
+package com.viewcompose.lifecycle
 
-import com.viewcompose.lifecycle.collectAsState
 import com.viewcompose.runtime.State
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +16,7 @@ import org.junit.Test
 class FlowCollectAsStateTest {
     @Test
     fun `stateFlow collectAsState uses current value and updates`() = runBlocking {
-        val harness = FlowCollectHarness()
+        val harness = WidgetCoreRuntimeHarness()
         val source = MutableStateFlow(1)
 
         val state = harness.render {
@@ -32,7 +31,7 @@ class FlowCollectAsStateTest {
 
     @Test
     fun `collectAsState keeps collector when flow identity is stable`() = runBlocking {
-        val harness = FlowCollectHarness()
+        val harness = WidgetCoreRuntimeHarness()
         var starts = 0
         val source = flow {
             starts += 1
@@ -60,7 +59,7 @@ class FlowCollectAsStateTest {
 
     @Test
     fun `collectAsState restarts collector when flow identity changes`() = runBlocking {
-        val harness = FlowCollectHarness()
+        val harness = WidgetCoreRuntimeHarness()
         var firstStarts = 0
         var secondStarts = 0
         val firstFlow = flow {
@@ -95,7 +94,7 @@ class FlowCollectAsStateTest {
 
     @Test
     fun `collectAsState cancels collector on dispose`() = runBlocking {
-        val harness = FlowCollectHarness()
+        val harness = WidgetCoreRuntimeHarness()
         var canceled = 0
         val source = flow {
             emit(1)
@@ -130,28 +129,6 @@ class FlowCollectAsStateTest {
             while (!predicate(state.value)) {
                 delay(10)
             }
-        }
-    }
-
-    private class FlowCollectHarness {
-        private val rememberStore = RememberStore()
-        private val effectStore = EffectStore()
-
-        fun <T> render(
-            block: () -> State<T>,
-        ): State<T> {
-            lateinit var state: State<T>
-            EffectContext.withStore(effectStore) {
-                RememberContext.withStore(rememberStore) {
-                    state = block()
-                }
-            }
-            effectStore.commit()
-            return state
-        }
-
-        fun dispose() {
-            effectStore.disposeAll()
         }
     }
 }

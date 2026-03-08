@@ -1,4 +1,4 @@
-package com.viewcompose.widget.core
+package com.viewcompose.viewmodel
 
 import androidx.lifecycle.HasDefaultViewModelProviderFactory
 import androidx.lifecycle.ViewModel
@@ -6,8 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.viewcompose.viewmodel.ProvideViewModelStoreOwner
-import com.viewcompose.viewmodel.viewModel
+import com.viewcompose.widget.core.buildVNodeTree
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotSame
 import org.junit.Assert.assertSame
@@ -16,26 +15,10 @@ import org.junit.Test
 
 class ViewModelCompositionTest {
     @Test
-    fun `viewModel reuses instance across renders when owner is stable`() {
+    fun `viewModel reuses instance when owner is stable`() {
         val owner = TestViewModelStoreOwner()
-        val rememberStore = RememberStore()
-        var first: TestViewModel? = null
-        var second: TestViewModel? = null
-
-        RememberContext.withStore(rememberStore) {
-            buildVNodeTree {
-                ProvideViewModelStoreOwner(owner) {
-                    first = viewModel()
-                }
-            }
-        }
-        RememberContext.withStore(rememberStore) {
-            buildVNodeTree {
-                ProvideViewModelStoreOwner(owner) {
-                    second = viewModel()
-                }
-            }
-        }
+        val first: TestViewModel = viewModel(owner = owner)
+        val second: TestViewModel = viewModel(owner = owner)
 
         assertSame(first, second)
         owner.viewModelStore.clear()
@@ -44,20 +27,31 @@ class ViewModelCompositionTest {
     @Test
     fun `viewModel returns different instances for different keys`() {
         val owner = TestViewModelStoreOwner()
-        val rememberStore = RememberStore()
-        var first: TestViewModel? = null
-        var second: TestViewModel? = null
+        val first: TestViewModel = viewModel(key = "first", owner = owner)
+        val second: TestViewModel = viewModel(key = "second", owner = owner)
 
-        RememberContext.withStore(rememberStore) {
-            buildVNodeTree {
-                ProvideViewModelStoreOwner(owner) {
-                    first = viewModel(key = "first")
-                    second = viewModel(key = "second")
-                }
+        assertNotSame(first, second)
+        owner.viewModelStore.clear()
+    }
+
+    @Test
+    fun `viewModel resolves owner from local provider`() {
+        val owner = TestViewModelStoreOwner()
+        lateinit var first: TestViewModel
+        lateinit var second: TestViewModel
+
+        buildVNodeTree {
+            ProvideViewModelStoreOwner(owner) {
+                first = viewModel()
+            }
+        }
+        buildVNodeTree {
+            ProvideViewModelStoreOwner(owner) {
+                second = viewModel()
             }
         }
 
-        assertNotSame(first, second)
+        assertSame(first, second)
         owner.viewModelStore.clear()
     }
 
@@ -72,9 +66,8 @@ class ViewModelCompositionTest {
     }
 
     @Test
-    fun `viewModel uses custom factory and keeps same instance across renders`() {
+    fun `viewModel uses custom factory and keeps same instance across calls`() {
         val owner = TestViewModelStoreOwner()
-        val rememberStore = RememberStore()
         var createCount = 0
         val factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
@@ -83,23 +76,15 @@ class ViewModelCompositionTest {
                 return FactoryBackedViewModel(createCount) as T
             }
         }
-        var first: FactoryBackedViewModel? = null
-        var second: FactoryBackedViewModel? = null
 
-        RememberContext.withStore(rememberStore) {
-            buildVNodeTree {
-                ProvideViewModelStoreOwner(owner) {
-                    first = viewModel(factory = factory)
-                }
-            }
-        }
-        RememberContext.withStore(rememberStore) {
-            buildVNodeTree {
-                ProvideViewModelStoreOwner(owner) {
-                    second = viewModel(factory = factory)
-                }
-            }
-        }
+        val first: FactoryBackedViewModel = viewModel(
+            owner = owner,
+            factory = factory,
+        )
+        val second: FactoryBackedViewModel = viewModel(
+            owner = owner,
+            factory = factory,
+        )
 
         assertSame(first, second)
         assertEquals(1, createCount)
@@ -109,24 +94,8 @@ class ViewModelCompositionTest {
     @Test
     fun `viewModel uses owner's default factory when override is absent`() {
         val owner = DefaultFactoryOwner()
-        val rememberStore = RememberStore()
-        var first: FactoryBackedViewModel? = null
-        var second: FactoryBackedViewModel? = null
-
-        RememberContext.withStore(rememberStore) {
-            buildVNodeTree {
-                ProvideViewModelStoreOwner(owner) {
-                    first = viewModel()
-                }
-            }
-        }
-        RememberContext.withStore(rememberStore) {
-            buildVNodeTree {
-                ProvideViewModelStoreOwner(owner) {
-                    second = viewModel()
-                }
-            }
-        }
+        val first: FactoryBackedViewModel = viewModel(owner = owner)
+        val second: FactoryBackedViewModel = viewModel(owner = owner)
 
         assertSame(first, second)
         assertEquals(1, owner.createCount)
@@ -136,7 +105,6 @@ class ViewModelCompositionTest {
     @Test
     fun `viewModel override factory has priority over owner default factory`() {
         val owner = DefaultFactoryOwner()
-        val rememberStore = RememberStore()
         var overrideCreateCount = 0
         val overrideFactory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
@@ -146,13 +114,10 @@ class ViewModelCompositionTest {
             }
         }
 
-        RememberContext.withStore(rememberStore) {
-            buildVNodeTree {
-                ProvideViewModelStoreOwner(owner) {
-                    viewModel<FactoryBackedViewModel>(factory = overrideFactory)
-                }
-            }
-        }
+        viewModel<FactoryBackedViewModel>(
+            owner = owner,
+            factory = overrideFactory,
+        )
 
         assertEquals(0, owner.createCount)
         assertEquals(1, overrideCreateCount)
