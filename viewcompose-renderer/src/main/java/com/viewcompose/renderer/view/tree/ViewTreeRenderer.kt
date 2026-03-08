@@ -21,10 +21,6 @@ object ViewTreeRenderer {
         emittedStructureWarnings.clear()
     }
 
-    init {
-        NodeViewBinderRegistry.initialize()
-    }
-
     fun disposeMounted(
         container: ViewGroup,
         mountedNodes: List<MountedNode>,
