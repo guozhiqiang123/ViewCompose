@@ -32,7 +32,7 @@
 ## 4. 实施 Checklist
 
 - [x] Step 1 新增执行计划文档并首提
-- [ ] Step 2 新增内部帧调度抽象（RenderFrameClock / AndroidChoreographerFrameClock / FrameAlignedRenderDispatcher）
+- [x] Step 2 新增内部帧调度抽象（RenderFrameClock / AndroidChoreographerFrameClock / FrameAlignedRenderDispatcher）
 - [ ] Step 3 RenderSession 硬切接入帧调度器
 - [ ] Step 4 统一影响面确认（overlay/lazy 语义保持）
 - [ ] Step 5 测试补齐（合帧/取消/跨线程/重入）
@@ -41,6 +41,7 @@
 ## 5. 提交记录
 
 - `DONE` docs: add frame-aligned render scheduler execution plan
+- `DONE` feat: add choreographer-backed frame scheduler for render sessions
 
 ## 6. 阻塞记录
 
