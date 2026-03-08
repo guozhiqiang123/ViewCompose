@@ -41,6 +41,19 @@ class DemoVisualUiTest {
                 assertViewFullyVisible(reset)
                 assertTextNotEllipsized(toggle)
                 assertTextNotEllipsized(reset)
+                activity.requireTextView("Benchmark 项 A")
+                activity.clickByTestTag(DemoTestTags.COLLECTIONS_BENCHMARK_TOGGLE)
+            }
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val rotatedItem = activity.requireTextView("Benchmark 项 C 展开")
+                assertViewFullyVisible(rotatedItem)
+                activity.clickByTestTag(DemoTestTags.COLLECTIONS_BENCHMARK_RESET)
+            }
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val resetItem = activity.requireTextView("Benchmark 项 A")
+                assertViewFullyVisible(resetItem)
             }
         }
     }

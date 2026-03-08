@@ -74,16 +74,6 @@ internal fun UiTreeBuilder.CollectionPage(
             },
         )
     }
-    val benchmarkItems = if (benchmarkRotateState.value) {
-        listOf("C", "A", "B")
-    } else {
-        listOf("A", "B", "C")
-    }.map { id ->
-        DemoListItem(
-            id = id,
-            title = if (benchmarkRotateState.value) "Benchmark 项 $id 展开" else "Benchmark 项 $id",
-        )
-    }
     val horizontalItems = (1..10).map { DemoListItem(id = "$it", title = "横向卡片 $it") }
     val gridItems = (1..12).map { DemoListItem(id = "$it", title = "网格项 $it") }
     val pullItems = (1..8).map { DemoListItem(id = "$it", title = "刷新列表项 $it · 刷新 ${refreshCountState.value} 次") }
@@ -121,6 +111,16 @@ internal fun UiTreeBuilder.CollectionPage(
                 title = "集合组件 Benchmark 锚点",
                 subtitle = "键控列表排序切换和网格 spanCount 切换的稳定路径。",
             ) {
+                val benchmarkItems = if (benchmarkRotateState.value) {
+                    listOf("C", "A", "B")
+                } else {
+                    listOf("A", "B", "C")
+                }.map { id ->
+                    DemoListItem(
+                        id = id,
+                        title = if (benchmarkRotateState.value) "Benchmark 项 $id 展开" else "Benchmark 项 $id",
+                    )
+                }
                 Text(
                     text = "稳定路径: launcher -> collections -> benchmark anchor",
                     style = UiTextStyle(fontSizeSp = 12.sp),
