@@ -13,9 +13,9 @@ import com.viewcompose.ui.modifier.height
 import com.viewcompose.ui.modifier.margin
 import com.viewcompose.ui.modifier.minHeight
 import com.viewcompose.ui.modifier.minWidth
-import com.viewcompose.ui.modifier.nativeView
 import com.viewcompose.ui.modifier.padding
 import com.viewcompose.ui.modifier.width
+import com.viewcompose.host.android.nativeView
 import com.viewcompose.widget.core.Box
 import com.viewcompose.widget.core.Button
 import com.viewcompose.widget.core.Column

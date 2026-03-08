@@ -7,8 +7,8 @@ import com.viewcompose.ui.modifier.fillMaxWidth
 import com.viewcompose.ui.modifier.margin
 import com.viewcompose.ui.modifier.padding
 import com.viewcompose.ui.modifier.testTag
+import com.viewcompose.host.android.AndroidView
 import com.viewcompose.runtime.mutableStateOf
-import com.viewcompose.widget.core.AndroidView
 import com.viewcompose.widget.core.Button
 import com.viewcompose.widget.core.LazyColumn
 import com.viewcompose.widget.core.Row

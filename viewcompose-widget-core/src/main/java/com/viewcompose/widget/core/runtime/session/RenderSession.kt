@@ -2,26 +2,20 @@ package com.viewcompose.widget.core
 
 import android.util.Log
 import android.view.ViewGroup
-import com.viewcompose.renderer.debug.debugSummary
-import com.viewcompose.renderer.debug.debugTree
-import com.viewcompose.renderer.view.tree.MountedNode
-import com.viewcompose.renderer.view.tree.RenderStats
-import com.viewcompose.renderer.view.tree.RenderTreeResult
-import com.viewcompose.renderer.view.tree.ViewTreeRenderer
 import com.viewcompose.runtime.composition.ComposerLite
 import java.util.concurrent.atomic.AtomicInteger
 
-class RenderSession internal constructor(
+class RenderSession(
     private val container: ViewGroup,
     private val content: UiTreeBuilder.() -> Unit,
     private val debug: Boolean = false,
     private val debugTag: String = "ViewCompose",
     private val overlayHost: OverlayHost = OverlayHostDefaults.noOp,
-    private val onRenderStats: ((RenderStats) -> Unit)? = null,
-    private val onRenderResult: ((RenderTreeResult) -> Unit)? = null,
+    private val onRenderStats: ((Any) -> Unit)? = null,
+    private val onRenderResult: ((Any) -> Unit)? = null,
 ) {
     private val overlaySessionId = OverlaySessionId("render-session-${nextOverlaySessionId.incrementAndGet()}")
-    private var mountedNodes: List<MountedNode> = emptyList()
+    private var mountedNodes: List<Any> = emptyList()
     private var disposed: Boolean = false
     private val overlayRequestStore = OverlayRequestStore()
     private val frameDispatcher = FrameAlignedRenderDispatcher(
@@ -52,24 +46,21 @@ class RenderSession internal constructor(
                     }
                 }
             }
-            val renderResult = ViewTreeRenderer.renderInto(
+            val frame = CoreRenderEngineProvider.engine.renderInto(
                 container = container,
-                previous = mountedNodes,
+                previousMountedNodes = mountedNodes,
                 nodes = tree,
-                onReconcile = { renderResult ->
-                    if (debug) {
-                        Log.d(debugTag, "VNode tree\n${tree.debugTree()}")
-                        Log.d(debugTag, "Reconcile\n${renderResult.debugSummary()}")
-                    }
-                },
             )
-            mountedNodes = renderResult.mountedNodes
+            mountedNodes = frame.mountedNodes
             overlayHost.commit(
                 sessionId = overlaySessionId,
                 requests = overlayRequestStore.currentRequests(),
             )
-            onRenderStats?.invoke(renderResult.stats)
-            onRenderResult?.invoke(renderResult)
+            if (debug && frame.renderResult == null) {
+                Log.d(debugTag, "Rendered ${tree.size} root nodes")
+            }
+            onRenderStats?.invoke(frame.renderStats ?: Unit)
+            onRenderResult?.invoke(frame.renderResult ?: Unit)
             composer.commitSideEffects()
         } catch (e: Exception) {
             Log.e(debugTag, "Render failed, keeping previous view tree", e)
@@ -80,7 +71,7 @@ class RenderSession internal constructor(
         if (disposed) return
         disposed = true
         frameDispatcher.dispose()
-        ViewTreeRenderer.disposeMounted(
+        CoreRenderEngineProvider.engine.disposeMounted(
             container = container,
             mountedNodes = mountedNodes,
         )
@@ -94,7 +85,7 @@ class RenderSession internal constructor(
         frameDispatcher.requestFrame()
     }
 
-    companion object {
-        private val nextOverlaySessionId = AtomicInteger(0)
+    private companion object {
+        val nextOverlaySessionId = AtomicInteger(0)
     }
 }

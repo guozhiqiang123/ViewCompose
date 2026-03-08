@@ -457,10 +457,6 @@ fun Modifier.fillMaxSize(): Modifier {
     )
 }
 
-fun Modifier.nativeView(key: Any = Unit, configure: (Any) -> Unit): Modifier {
-    return then(NativeViewElement(key, configure))
-}
-
 data class LazyContainerReusePolicy(
     val sharePool: Boolean,
     val disableItemAnimator: Boolean,

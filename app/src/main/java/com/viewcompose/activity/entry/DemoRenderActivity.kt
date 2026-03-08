@@ -5,9 +5,9 @@ import android.os.Bundle
 import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import com.viewcompose.host.android.setUiContent
 import com.viewcompose.overlay.android.host.AndroidOverlayHost
 import com.viewcompose.widget.core.UiTreeBuilder
-import com.viewcompose.widget.core.setUiContent
 
 abstract class DemoRenderActivity : AppCompatActivity() {
     protected open fun redirectTargetIntent(): Intent? = null

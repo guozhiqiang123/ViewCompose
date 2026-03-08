@@ -1,20 +1,14 @@
 package com.viewcompose.widget.core
-
-import android.content.Context
-import android.view.View
 import com.viewcompose.ui.layout.BoxAlignment
 import com.viewcompose.ui.layout.HorizontalAlignment
 import com.viewcompose.ui.layout.MainAxisArrangement
 import com.viewcompose.ui.layout.VerticalAlignment
 import com.viewcompose.ui.node.NodeType
-import com.viewcompose.ui.node.spec.AndroidViewNodeProps
 import com.viewcompose.ui.node.spec.BoxNodeProps
 import com.viewcompose.ui.node.spec.ColumnNodeProps
 import com.viewcompose.ui.node.spec.DividerNodeProps
 import com.viewcompose.ui.node.spec.RowNodeProps
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ContainerNodeSpecTest {
@@ -95,27 +89,4 @@ class ContainerNodeSpecTest {
         assertEquals(6.dp, spec.thickness)
     }
 
-    @Test
-    fun `android view emits android view node spec`() {
-        val factory: (Context) -> View = { context -> View(context) }
-        var updatedView: View? = null
-        val update: (View) -> Unit = { view ->
-            updatedView = view
-        }
-
-        val tree = buildVNodeTree {
-            AndroidView(
-                factory = factory,
-                update = update,
-            )
-        }
-
-        val node = tree.single()
-
-        assertEquals(NodeType.AndroidView, node.type)
-        val spec = node.spec as AndroidViewNodeProps
-        assertNotNull(spec.factory)
-        assertNotNull(spec.update)
-        assertTrue(updatedView == null)
-    }
 }

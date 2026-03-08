@@ -27,7 +27,7 @@ class NativeViewElementTest {
 
     @Test
     fun `nativeView extension appends NativeViewElement to modifier chain`() {
-        val modifier = Modifier.nativeView(key = "test") { }
+        val modifier = Modifier.then(NativeViewElement(stableKey = "test") { })
 
         assertTrue(modifier.elements.single() is NativeViewElement)
         assertEquals("test", (modifier.elements.single() as NativeViewElement).stableKey)
@@ -35,16 +35,16 @@ class NativeViewElementTest {
 
     @Test
     fun `modifier with same nativeView key equals another`() {
-        val m1 = Modifier.nativeView(key = "a") { }
-        val m2 = Modifier.nativeView(key = "a") { }
+        val m1 = Modifier.then(NativeViewElement(stableKey = "a") { })
+        val m2 = Modifier.then(NativeViewElement(stableKey = "a") { })
 
         assertEquals(m1.elements, m2.elements)
     }
 
     @Test
     fun `modifier with different nativeView key differs`() {
-        val m1 = Modifier.nativeView(key = "a") { }
-        val m2 = Modifier.nativeView(key = "b") { }
+        val m1 = Modifier.then(NativeViewElement(stableKey = "a") { })
+        val m2 = Modifier.then(NativeViewElement(stableKey = "b") { })
 
         assertNotEquals(m1.elements, m2.elements)
     }

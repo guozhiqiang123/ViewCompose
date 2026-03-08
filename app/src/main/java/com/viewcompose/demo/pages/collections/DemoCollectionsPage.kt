@@ -12,9 +12,9 @@ import com.viewcompose.ui.modifier.margin
 import com.viewcompose.ui.modifier.padding
 import com.viewcompose.ui.modifier.size
 import com.viewcompose.ui.modifier.testTag
+import com.viewcompose.host.android.AndroidView
 import com.viewcompose.ui.node.ImageSource
 import com.viewcompose.runtime.mutableStateOf
-import com.viewcompose.widget.core.AndroidView
 import com.viewcompose.widget.core.Box
 import com.viewcompose.widget.core.Button
 import com.viewcompose.widget.core.ButtonSize
