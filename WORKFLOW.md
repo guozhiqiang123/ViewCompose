@@ -171,6 +171,16 @@
 4. `emit` 参数变化（`spec/modifier`）必须可触发组级重组，禁止出现“参数变化但组被错误复用”。
 5. 相关改动至少补一条 runtime/widget-core 单测验证组复用与回退行为。
 
+## 5.7 状态快照一致性约束
+
+涉及 `MutableState`、`RuntimeObservation`、`ComposerLite` 的改动，必须遵守：
+
+1. `MutableState` 写入必须走 snapshot 事务（显式 `MutableSnapshot` 或 autocommit），禁止新增绕过事务的写路径。
+2. mutation 去抖与并发冲突语义统一通过 `SnapshotMutationPolicy` 实现，不允许在调用侧散落自定义判等逻辑。
+3. 并发冲突场景必须覆盖三类测试：无冲突、merge 成功、merge 失败。
+4. compose 一轮内的读取一致性必须有单测约束，防止“同一轮读值漂移”回归。
+5. 调整 snapshot 语义时，必须同步更新 [STATE_SNAPSHOT.md](/Users/gzq/AndroidStudioProjects/UIFramework/STATE_SNAPSHOT.md)。
+
 ## 6. 线程中断恢复原则
 
 如果聊天线程丢失、附件损坏或上下文中断，恢复顺序固定为：

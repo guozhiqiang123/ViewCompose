@@ -26,6 +26,7 @@
 7. 延迟 session 容器的 keyed diff 已切到 `DiffUtil` 引擎（保留 key 缺失/重复 fallback）。
 8. framework 托管的 `RecyclerView` 容器默认不共享 `RecycledViewPool` 且保留系统 `itemAnimator`；可按需通过 `Modifier.lazyContainerReuse(...)` 对单个容器启用共享池与动画器策略。
 9. renderer 内部尺寸换算统一走 `viewcompose-renderer/view/DimensionUtils.kt`，避免容器层重复定义 `density/dpToPx` 带来的行为漂移。
+10. runtime 状态系统已升级为 `SnapshotMutationPolicy + MVCC + MutableSnapshot` 事务模型；重组读取运行在一致性快照内。
 
 ### 2.2 当前结论
 
@@ -59,6 +60,7 @@
 4. `AndroidView` 视为性能隔离区，复杂逻辑优先在外部宿主层控制。
 5. 不为短期优化破坏模块边界和可维护性。
 6. 节点组开发必须保持 group key 稳定；若无法稳定，需显式接受“祖先回退重组 + 告警”成本。
+7. 状态并发写入必须通过 snapshot apply 语义验证，禁止在性能优化中绕过冲突合并与失败路径。
 
 ## 5. 反模式清单
 
@@ -118,3 +120,4 @@
 2. 容器专项清单：[SESSION_CONTAINER_CHECKLIST.md](/Users/gzq/AndroidStudioProjects/UIFramework/SESSION_CONTAINER_CHECKLIST.md)
 3. 统一路线图：[ROADMAP.md](/Users/gzq/AndroidStudioProjects/UIFramework/ROADMAP.md)
 4. 文档入口：[CONTEXT.md](/Users/gzq/AndroidStudioProjects/UIFramework/CONTEXT.md)
+5. 状态快照规范：[STATE_SNAPSHOT.md](/Users/gzq/AndroidStudioProjects/UIFramework/STATE_SNAPSHOT.md)

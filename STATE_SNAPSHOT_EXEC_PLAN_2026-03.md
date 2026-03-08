@@ -27,15 +27,18 @@
 ## 4. 实施 Checklist
 
 - [x] Step 1 新增执行计划文档并首提
-- [ ] Step 2 Runtime 状态内核重构（policy + MVCC）
-- [ ] Step 3 Snapshot 引擎与事务模型
-- [ ] Step 4 观察与重组链路接入
-- [ ] Step 5 单测补齐（runtime + composition）
-- [ ] Step 6 文档收口（ARCHITECTURE/PERFORMANCE/WORKFLOW + STATE_SNAPSHOT）
+- [x] Step 2 Runtime 状态内核重构（policy + MVCC）
+- [x] Step 3 Snapshot 引擎与事务模型
+- [x] Step 4 观察与重组链路接入
+- [x] Step 5 单测补齐（runtime + composition）
+- [x] Step 6 文档收口（ARCHITECTURE/PERFORMANCE/WORKFLOW + STATE_SNAPSHOT）
 
 ## 5. 提交记录
 
 - `DONE` docs: add state snapshot execution plan
+- `DONE` feat: add snapshot policy and mvcc transaction runtime
+- `DONE` refactor: integrate snapshot reads into composer and derived state
+- `DONE` docs: codify snapshot transaction boundaries and rules
 
 ## 6. 阻塞记录
 
