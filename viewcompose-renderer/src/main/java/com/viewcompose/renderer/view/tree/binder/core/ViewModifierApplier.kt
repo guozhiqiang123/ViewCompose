@@ -506,7 +506,6 @@ internal object ViewModifierApplier {
 
     private fun readNodeRippleColor(node: VNode): Int? = when (val spec = node.spec) {
         is ButtonNodeProps -> spec.rippleColor
-        is TextFieldNodeProps -> spec.rippleColor
         is IconButtonNodeProps -> spec.rippleColor
         is ToggleNodeProps -> spec.rippleColor
         is BoxNodeProps -> spec.rippleColor

@@ -89,8 +89,7 @@ internal object InputNodePatchApplier {
             previous.backgroundColor != next.backgroundColor ||
             previous.borderWidth != next.borderWidth ||
             previous.borderColor != next.borderColor ||
-            previous.cornerRadius != next.cornerRadius ||
-            previous.rippleColor != next.rippleColor
+            previous.cornerRadius != next.cornerRadius
         ) {
             ViewModifierApplier.applyStylePatch(
                 view = view,
@@ -98,7 +97,7 @@ internal object InputNodePatchApplier {
                 borderWidth = next.borderWidth,
                 borderColor = next.borderColor,
                 cornerRadius = next.cornerRadius,
-                rippleColor = next.rippleColor,
+                rippleColor = 0,
                 clickable = false,
             )
         }

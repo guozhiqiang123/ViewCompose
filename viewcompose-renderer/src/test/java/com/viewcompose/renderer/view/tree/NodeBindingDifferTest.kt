@@ -460,7 +460,6 @@ class NodeBindingDifferTest {
                 borderWidth = 0,
                 borderColor = 0,
                 cornerRadius = 8,
-                rippleColor = 0x33000000,
                 minHeight = 56,
                 paddingHorizontal = 16,
                 paddingVertical = 12,

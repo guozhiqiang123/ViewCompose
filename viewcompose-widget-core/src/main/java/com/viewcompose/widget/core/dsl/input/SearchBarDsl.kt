@@ -64,7 +64,6 @@ fun UiTreeBuilder.SearchBar(
             borderWidth = 0,
             borderColor = 0x00000000,
             cornerRadius = 0,
-            rippleColor = 0,
             minHeight = 0,
             paddingHorizontal = 0,
             paddingVertical = 0,

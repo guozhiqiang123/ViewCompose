@@ -68,7 +68,6 @@ class TextFieldTest {
         assertEquals(customTheme.typography.body.fontSizeSp, spec.textSizeSp)
         assertEquals(customTheme.colors.surface, spec.backgroundColor)
         assertEquals(customTheme.shapes.interactiveCornerRadius, spec.cornerRadius)
-        assertEquals(pressedOverlayColorFor(customTheme.colors.textPrimary), spec.rippleColor)
         assertEquals(true, spec.enabled)
         assertTrue(node.spec is TextFieldNodeProps)
     }

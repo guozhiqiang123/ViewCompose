@@ -27,7 +27,6 @@ data class TextFieldNodeProps(
     val borderWidth: Int,
     val borderColor: Int,
     val cornerRadius: Int,
-    val rippleColor: Int,
     val minHeight: Int,
     val paddingHorizontal: Int,
     val paddingVertical: Int,
