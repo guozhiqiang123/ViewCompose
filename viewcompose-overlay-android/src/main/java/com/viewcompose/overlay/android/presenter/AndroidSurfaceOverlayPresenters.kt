@@ -12,7 +12,7 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.PopupWindow
 import androidx.core.view.doOnLayout
-import com.viewcompose.renderer.R
+import com.viewcompose.ui.modifier.OVERLAY_ANCHOR_TAG_KEY
 import com.viewcompose.widget.core.AndroidEnvironmentBridge
 import com.viewcompose.widget.core.DialogOverlayContent
 import com.viewcompose.widget.core.DialogOverlayHandle
@@ -233,7 +233,7 @@ private class AndroidPopupOverlayHandle(
 }
 
 private fun View.findAnchorTarget(anchorId: String): View? {
-    if (getTag(R.id.ui_framework_anchor_id) == anchorId) {
+    if (getTag(OVERLAY_ANCHOR_TAG_KEY) == anchorId) {
         return this
     }
     val group = this as? ViewGroup ?: return null

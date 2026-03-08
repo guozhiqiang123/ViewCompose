@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.TextView
 import com.viewcompose.renderer.R
 import com.viewcompose.ui.modifier.NativeViewElement
+import com.viewcompose.ui.modifier.OVERLAY_ANCHOR_TAG_KEY
 import com.viewcompose.ui.modifier.Visibility
 import com.viewcompose.ui.node.NodeType
 import com.viewcompose.ui.node.VNode
@@ -92,7 +93,7 @@ internal object ModifierInteractionApplier {
         view: View,
         anchorId: String?,
     ) {
-        view.setTag(R.id.ui_framework_anchor_id, anchorId)
+        view.setTag(OVERLAY_ANCHOR_TAG_KEY, anchorId)
     }
 
     private fun applyTestTag(

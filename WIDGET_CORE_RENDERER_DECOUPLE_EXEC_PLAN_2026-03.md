@@ -32,7 +32,7 @@
 - [x] Step 3 抽取 UI 契约到 ui-contract
 - [x] Step 4 Android 专属 API 迁出到 host-android
 - [x] Step 5 renderer 适配 ui-contract
-- [ ] Step 6 overlay/image-coil 同步迁移
+- [x] Step 6 overlay/image-coil 同步迁移
 - [ ] Step 7 测试同步迁移与 guard
 - [ ] Step 8 文档收口与归档
 
@@ -43,6 +43,8 @@
 - `DONE` refactor: move node and modifier contracts into pure ui-contract module
 - `DONE` refactor: move android host runtime and interop APIs to host-android module
 - `DONE` refactor: adapt renderer to ui-contract abstractions
+- `DONE` refactor: migrate overlay-android off renderer resource dependency
+- `DONE` refactor: adapt coil integration to platform-neutral image loader contract
 
 ## 5. 阻塞记录
 

@@ -22,7 +22,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":viewcompose-renderer"))
+    implementation(project(":viewcompose-ui-contract"))
     implementation(project(":viewcompose-widget-core"))
     implementation(project(":viewcompose-host-android"))
     implementation(libs.androidx.core.ktx)
