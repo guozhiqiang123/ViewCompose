@@ -84,10 +84,47 @@ tasks.register("verifyModulePackageRoots") {
     }
 }
 
+tasks.register("verifyAndroidModuleNamespaces") {
+    group = "verification"
+    description = "Verify Android module namespace matches canonical package-root mapping."
+    doLast {
+        val namespaceRegex = Regex("""namespace\s*=\s*"([^"]+)"""")
+        val violations = mutableListOf<String>()
+
+        modulePackageRoots.forEach { (module, expectedNamespace) ->
+            if (module == "viewcompose-ui-contract") return@forEach
+            val buildFile = rootDir.resolve(module).resolve("build.gradle.kts")
+            if (!buildFile.exists()) {
+                violations += "$module -> missing build.gradle.kts"
+                return@forEach
+            }
+            val content = buildFile.readText()
+            val actualNamespace = namespaceRegex.find(content)?.groupValues?.getOrNull(1)
+            if (actualNamespace == null) {
+                violations += "$module -> missing namespace declaration"
+                return@forEach
+            }
+            if (actualNamespace != expectedNamespace) {
+                violations += "$module -> namespace '$actualNamespace' != expected '$expectedNamespace'"
+            }
+        }
+
+        if (violations.isNotEmpty()) {
+            error(
+                buildString {
+                    appendLine("Android namespace verification failed:")
+                    violations.sorted().forEach { appendLine("- $it") }
+                },
+            )
+        }
+    }
+}
+
 tasks.register("qaQuick") {
     group = "verification"
     description = "Run compile + unit-test quality gate for all core modules."
     dependsOn("verifyModulePackageRoots")
+    dependsOn("verifyAndroidModuleNamespaces")
     dependsOn(qaQuickTasks)
 }
 
