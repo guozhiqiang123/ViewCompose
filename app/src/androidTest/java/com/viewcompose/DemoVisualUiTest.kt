@@ -270,7 +270,7 @@ class DemoVisualUiTest {
             assertFocusActionKeepsRecyclerAnchor(
                 scenario = scenario,
                 tag = DemoTestTags.INPUT_SEARCH_PRIMARY,
-                maxOffsetDelta = 8,
+                maxOffsetDeltaDp = 8,
             )
         }
     }
@@ -666,12 +666,14 @@ class DemoVisualUiTest {
     private fun assertFocusActionKeepsRecyclerAnchor(
         scenario: ActivityScenario<InputActivity>,
         tag: String,
-        maxOffsetDelta: Int = 12,
+        maxOffsetDeltaDp: Int = 12,
     ) {
         var beforeAnchor: RecyclerViewportAnchor? = null
+        var maxOffsetDeltaPx = maxOffsetDeltaDp
         scenario.onActivity { activity ->
             activity.requireViewByTestTagVisible(tag)
             beforeAnchor = activity.readFirstRecyclerAnchor()
+            maxOffsetDeltaPx = (maxOffsetDeltaDp * activity.resources.displayMetrics.density).toInt()
             activity.focusInputByTestTag(tag)
         }
         waitForUiIdle()
@@ -684,7 +686,7 @@ class DemoVisualUiTest {
             assertEquals(before.position, after.position)
             assertTrue(
                 "Expected focus action to avoid noticeable auto-scroll, before=$before, after=$after, tag=$tag",
-                abs(before.offset - after.offset) <= maxOffsetDelta,
+                abs(before.offset - after.offset) <= maxOffsetDeltaPx,
             )
         }
     }
