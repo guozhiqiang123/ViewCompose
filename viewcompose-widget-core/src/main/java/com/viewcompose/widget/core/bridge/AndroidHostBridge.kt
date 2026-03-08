@@ -38,6 +38,7 @@ fun Fragment.setUiContent(
     ) {
         withHostEnvironment(
             root = root,
+            lifecycleOwner = this@setUiContent,
             viewModelStoreOwner = this@setUiContent,
             content = content,
         )
@@ -71,6 +72,7 @@ fun ComponentActivity.setUiContent(
     ) {
         withHostEnvironment(
             root = root,
+            lifecycleOwner = this@setUiContent,
             viewModelStoreOwner = this@setUiContent,
             content = content,
         )
@@ -95,12 +97,15 @@ private fun buildUiContentRoot(
 
 private fun UiTreeBuilder.withHostEnvironment(
     root: ViewGroup,
+    lifecycleOwner: LifecycleOwner,
     viewModelStoreOwner: ViewModelStoreOwner,
     content: UiTreeBuilder.(ViewGroup) -> Unit,
 ) {
-    ProvideViewModelStoreOwner(viewModelStoreOwner) {
-        UiEnvironment(androidContext = root.context) {
-            content(root)
+    ProvideLifecycleOwner(lifecycleOwner) {
+        ProvideViewModelStoreOwner(viewModelStoreOwner) {
+            UiEnvironment(androidContext = root.context) {
+                content(root)
+            }
         }
     }
 }
