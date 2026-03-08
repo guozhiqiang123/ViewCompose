@@ -27,6 +27,7 @@
 8. framework 托管的 `RecyclerView` 容器默认不共享 `RecycledViewPool` 且保留系统 `itemAnimator`；可按需通过 `Modifier.lazyContainerReuse(...)` 对单个容器启用共享池与动画器策略。
 9. renderer 内部尺寸换算统一走 `viewcompose-renderer/view/DimensionUtils.kt`，避免容器层重复定义 `density/dpToPx` 带来的行为漂移。
 10. runtime 状态系统已升级为 `SnapshotMutationPolicy + MVCC + MutableSnapshot` 事务模型；重组读取运行在一致性快照内。
+11. `RenderSession` 失效重绘调度已升级为 `Choreographer` 帧对齐合并；显式 `render()` 仍保持立即执行语义。
 
 ### 2.2 当前结论
 
@@ -61,6 +62,7 @@
 5. 不为短期优化破坏模块边界和可维护性。
 6. 节点组开发必须保持 group key 稳定；若无法稳定，需显式接受“祖先回退重组 + 告警”成本。
 7. 状态并发写入必须通过 snapshot apply 语义验证，禁止在性能优化中绕过冲突合并与失败路径。
+8. 禁止将重组调度回退到 `container.post`；帧对齐路径是默认实现边界。
 
 ## 5. 反模式清单
 

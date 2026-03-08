@@ -45,6 +45,7 @@
 - `DONE` refactor: route render invalidations through frame-aligned dispatcher
 - `DONE` refactor: preserve immediate render semantics for item and overlay sessions
 - `DONE` test: add frame-aligned scheduler coalescing and cancellation coverage
+- `DONE` docs: codify frame-aligned render scheduling boundary
 
 ## 6. 阻塞记录
 

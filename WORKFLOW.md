@@ -181,6 +181,16 @@
 4. compose 一轮内的读取一致性必须有单测约束，防止“同一轮读值漂移”回归。
 5. 调整 snapshot 语义时，必须同步更新 [STATE_SNAPSHOT.md](/Users/gzq/AndroidStudioProjects/UIFramework/STATE_SNAPSHOT.md)。
 
+## 5.8 帧对齐调度约束
+
+涉及 `RenderSession`、失效调度与测试等待机制的改动，必须遵守：
+
+1. 状态失效重绘统一走 `FrameAlignedRenderDispatcher` + `Choreographer`，禁止新增 `container.post` 主调度路径。
+2. `RenderSession.render()` 必须保持立即执行语义；若调整语义，必须先更新架构文档并补全回归用例。
+3. 调度器改动必须覆盖 4 类单测：同帧合并、取消、重入下一帧、跨线程请求去重。
+4. instrumentation 若依赖“UI 空闲后断言”，必须保证等待至少一个 frame，避免调度升级后误报。
+5. session `dispose()` 路径改动必须验证“销毁后无延迟渲染”。
+
 ## 6. 线程中断恢复原则
 
 如果聊天线程丢失、附件损坏或上下文中断，恢复顺序固定为：
