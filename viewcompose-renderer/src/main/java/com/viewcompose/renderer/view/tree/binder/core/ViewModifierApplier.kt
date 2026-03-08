@@ -132,31 +132,14 @@ internal object ViewModifierApplier {
         val textSizeSp = readNodeTextSize(node)
         val anchorId = readAnchorId(node)
         val hasWindowInsetsPadding = resolved.systemBarsInsetsPadding != null || resolved.imeInsetsPadding != null
+        val isTextFieldLayout = view is DeclarativeTextFieldLayout
+        val hostPadding = if (isTextFieldLayout) null else resolvedPadding
+        val hostMinHeight = if (isTextFieldLayout) 0 else resolvedMinHeight
+        val hostMinWidth = if (isTextFieldLayout) 0 else resolvedMinWidth
         view.alpha = resolvedAlpha
-        if (view is DeclarativeTextFieldLayout) {
-            applyAnchorId(view, anchorId)
-            applyTestTag(view, resolved.testTag?.tag)
-            view.visibility = when (resolved.visibility?.visibility ?: Visibility.Visible) {
-                Visibility.Visible -> View.VISIBLE
-                Visibility.Invisible -> View.INVISIBLE
-                Visibility.Gone -> View.GONE
-            }
-            view.translationX = resolved.offset?.x ?: 0f
-            view.translationY = resolved.offset?.y ?: 0f
-            view.translationZ = resolved.zIndex?.zIndex ?: 0f
-            view.elevation = resolved.elevation?.elevation?.toFloat() ?: 0f
-            view.setOnClickListener(null)
-            view.isClickable = false
-            view.isFocusable = false
-            view.isFocusableInTouchMode = false
-            view.minimumHeight = 0
-            view.minimumWidth = 0
-            view.contentDescription = resolved.contentDescription?.contentDescription
-            if (!hasWindowInsetsPadding) {
-                view.setPadding(0, 0, 0, 0)
-            }
+        if (isTextFieldLayout) {
             applyTextFieldModifier(
-                layout = view,
+                layout = view as DeclarativeTextFieldLayout,
                 backgroundColor = resolvedBackgroundColor,
                 borderWidth = resolvedBorderWidth,
                 borderColor = resolvedBorderColor,
@@ -167,29 +150,63 @@ internal object ViewModifierApplier {
                 textColor = textColor,
                 textSizeSp = textSizeSp,
             )
-            applyWindowInsetsPadding(
+        } else {
+            val isClickable = resolved.clickable != null || readNodeClickable(node)
+            applyBackgroundAndInteraction(
                 view = view,
-                systemBarsModifier = resolved.systemBarsInsetsPadding,
-                imeModifier = resolved.imeInsetsPadding,
-                basePadding = if (hasWindowInsetsPadding) {
-                    resolvedPadding
-                } else {
-                    null
-                },
+                backgroundColor = resolvedBackgroundColor,
+                borderWidth = resolvedBorderWidth,
+                borderColor = resolvedBorderColor,
+                cornerRadius = resolvedCornerRadius,
+                rippleColor = resolvedRippleColor,
+                clickable = isClickable,
+                forceClip = resolved.clip?.clip ?: false,
             )
-            return
         }
-        val isClickable = resolved.clickable != null || readNodeClickable(node)
-        applyBackgroundAndInteraction(
+        applyCommonHostProperties(
             view = view,
-            backgroundColor = resolvedBackgroundColor,
-            borderWidth = resolvedBorderWidth,
-            borderColor = resolvedBorderColor,
-            cornerRadius = resolvedCornerRadius,
-            rippleColor = resolvedRippleColor,
-            clickable = isClickable,
-            forceClip = resolved.clip?.clip ?: false,
+            resolved = resolved,
+            anchorId = anchorId,
+            minHeight = hostMinHeight,
+            minWidth = hostMinWidth,
         )
+        applyClickAndFocusState(
+            view = view,
+            node = node,
+            resolved = resolved,
+            forceDisable = isTextFieldLayout,
+        )
+        applyHostPaddingWhenNoInsets(
+            view = view,
+            hasWindowInsetsPadding = hasWindowInsetsPadding,
+            hostPadding = hostPadding,
+        )
+        applyWindowInsetsPadding(
+            view = view,
+            systemBarsModifier = resolved.systemBarsInsetsPadding,
+            imeModifier = resolved.imeInsetsPadding,
+            basePadding = if (hasWindowInsetsPadding) {
+                resolvedPadding
+            } else {
+                null
+            },
+        )
+        if (!isTextFieldLayout) {
+            applyTextAppearanceIfTextView(
+                view = view,
+                textColor = textColor,
+                textSizeSp = textSizeSp,
+            )
+        }
+    }
+
+    private fun applyCommonHostProperties(
+        view: View,
+        resolved: ResolvedModifiers,
+        anchorId: String?,
+        minHeight: Int,
+        minWidth: Int,
+    ) {
         applyAnchorId(view, anchorId)
         applyTestTag(view, resolved.testTag?.tag)
         view.visibility = when (resolved.visibility?.visibility ?: Visibility.Visible) {
@@ -201,9 +218,24 @@ internal object ViewModifierApplier {
         view.translationY = resolved.offset?.y ?: 0f
         view.translationZ = resolved.zIndex?.zIndex ?: 0f
         view.elevation = resolved.elevation?.elevation?.toFloat() ?: 0f
-        view.minimumHeight = resolvedMinHeight
-        view.minimumWidth = resolvedMinWidth
+        view.minimumHeight = minHeight
+        view.minimumWidth = minWidth
         view.contentDescription = resolved.contentDescription?.contentDescription
+    }
+
+    private fun applyClickAndFocusState(
+        view: View,
+        node: VNode,
+        resolved: ResolvedModifiers,
+        forceDisable: Boolean,
+    ) {
+        if (forceDisable) {
+            view.setOnClickListener(null)
+            view.isClickable = false
+            view.isFocusable = false
+            view.isFocusableInTouchMode = false
+            return
+        }
         val clickListener = resolved.clickable?.let { clickableElement ->
             View.OnClickListener { clickableElement.onClick() }
         }
@@ -213,35 +245,37 @@ internal object ViewModifierApplier {
         view.isClickable = hasClickListener || keepIntrinsicInteraction
         view.isFocusable = hasClickListener || keepIntrinsicInteraction
         view.isFocusableInTouchMode = false
-        if (!hasWindowInsetsPadding) {
-            if (resolvedPadding == null) {
-                view.setPadding(0, 0, 0, 0)
-            } else {
-                view.setPadding(
-                    resolvedPadding.left,
-                    resolvedPadding.top,
-                    resolvedPadding.right,
-                    resolvedPadding.bottom,
-                )
-            }
+    }
+
+    private fun applyHostPaddingWhenNoInsets(
+        view: View,
+        hasWindowInsetsPadding: Boolean,
+        hostPadding: PaddingModifierElement?,
+    ) {
+        if (hasWindowInsetsPadding) return
+        if (hostPadding == null) {
+            view.setPadding(0, 0, 0, 0)
+            return
         }
-        applyWindowInsetsPadding(
-            view = view,
-            systemBarsModifier = resolved.systemBarsInsetsPadding,
-            imeModifier = resolved.imeInsetsPadding,
-            basePadding = if (hasWindowInsetsPadding) {
-                resolvedPadding
-            } else {
-                null
-            },
+        view.setPadding(
+            hostPadding.left,
+            hostPadding.top,
+            hostPadding.right,
+            hostPadding.bottom,
         )
-        if (view is TextView) {
-            if (textColor != null) {
-                view.setTextColor(textColor)
-            }
-            if (textSizeSp != null) {
-                view.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp.toFloat())
-            }
+    }
+
+    private fun applyTextAppearanceIfTextView(
+        view: View,
+        textColor: Int?,
+        textSizeSp: Int?,
+    ) {
+        if (view !is TextView) return
+        if (textColor != null) {
+            view.setTextColor(textColor)
+        }
+        if (textSizeSp != null) {
+            view.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp.toFloat())
         }
     }
 
