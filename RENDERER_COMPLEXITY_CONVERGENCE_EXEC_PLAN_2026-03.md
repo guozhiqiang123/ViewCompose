@@ -40,7 +40,7 @@
 - [x] Step 2 拆分 ViewModifierApplier（样式/交互/insets/容器策略）
 - [x] Step 3 NodeViewBinderRegistry 单源 descriptor 自动化
 - [x] Step 4 NodeBindingDiffer 改为 descriptor 派生 patch factory
-- [ ] Step 5 补齐 guard tests 与关键回归
+- [x] Step 5 补齐 guard tests 与关键回归
 - [ ] Step 6 文档收口与归档
 
 ## 5. 提交记录
@@ -49,6 +49,7 @@
 - `DONE` refactor: split view modifier responsibilities into focused appliers
 - `DONE` refactor: automate binder registration with descriptor-driven registry
 - `DONE` refactor: drive node binding differ patch factories from binder descriptors
+- `DONE` test: add binder descriptor coverage and consistency guards
 
 ## 6. 阻塞记录
 
