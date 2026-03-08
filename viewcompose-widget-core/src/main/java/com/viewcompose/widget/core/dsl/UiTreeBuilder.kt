@@ -16,18 +16,50 @@ open class UiTreeBuilder {
         modifier: Modifier = Modifier,
         content: (UiTreeBuilder.() -> Unit)? = null,
     ) {
-        val nestedChildren = if (content == null) {
-            emptyList()
-        } else {
-            UiTreeBuilder().apply(content).build()
+        val composer = ComposerContext.currentComposer()
+        if (composer == null) {
+            val nestedChildren = if (content == null) {
+                emptyList()
+            } else {
+                UiTreeBuilder().apply(content).build()
+            }
+            emitResolved(
+                type = type,
+                key = key,
+                spec = spec,
+                modifier = modifier,
+                children = nestedChildren,
+            )
+            return
         }
-        emitResolved(
-            type = type,
-            key = key,
-            spec = spec,
-            modifier = modifier,
-            children = nestedChildren,
-        )
+        val parentSnapshot = LocalContext.snapshot()
+        val node = composer.runGroup(
+            signature = EmitGroupSignature(
+                type = type,
+                key = key,
+                hasContent = content != null,
+            ),
+        ) { scope ->
+            val restoreSnapshot = (scope.localSnapshotOrNull() as? LocalSnapshot) ?: parentSnapshot
+            var nextNode: VNode? = null
+            LocalContext.withSnapshot(restoreSnapshot) {
+                val nestedChildren = if (content == null) {
+                    emptyList()
+                } else {
+                    UiTreeBuilder().apply(content).build()
+                }
+                nextNode = VNode(
+                    type = type,
+                    key = key,
+                    spec = spec,
+                    modifier = modifier,
+                    children = nestedChildren,
+                )
+                scope.updateLocalSnapshot(LocalContext.snapshot())
+            }
+            checkNotNull(nextNode)
+        }
+        children += node
     }
 
     internal fun emitResolved(
@@ -47,6 +79,12 @@ open class UiTreeBuilder {
     }
 
     internal fun build(): List<VNode> = children.toList()
+
+    private data class EmitGroupSignature(
+        val type: NodeType,
+        val key: Any?,
+        val hasContent: Boolean,
+    )
 }
 
 fun buildVNodeTree(content: UiTreeBuilder.() -> Unit): List<VNode> {

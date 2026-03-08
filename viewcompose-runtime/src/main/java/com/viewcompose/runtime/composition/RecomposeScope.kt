@@ -74,6 +74,12 @@ class RecomposeScope internal constructor(
         }
     }
 
+    fun localSnapshotOrNull(): Any? = localSnapshot
+
+    fun updateLocalSnapshot(snapshot: Any?) {
+        localSnapshot = snapshot
+    }
+
     internal data class RememberSlot(
         var keys: List<Any?>,
         var value: Any?,
