@@ -138,7 +138,6 @@ internal object ViewModifierApplier {
             view = view,
             node = node,
             resolved = resolved,
-            forceDisable = false,
         )
         applyHostPaddingWhenNoInsets(
             view = view,
@@ -243,15 +242,7 @@ internal object ViewModifierApplier {
         view: View,
         node: VNode,
         resolved: ResolvedModifiers,
-        forceDisable: Boolean,
     ) {
-        if (forceDisable) {
-            view.setOnClickListener(null)
-            view.isClickable = false
-            view.isFocusable = false
-            view.isFocusableInTouchMode = false
-            return
-        }
         if (node.type == NodeType.TextField) {
             // EditText should keep its intrinsic focus/click semantics.
             view.setOnClickListener(null)
