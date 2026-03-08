@@ -43,8 +43,10 @@ android {
 
 dependencies {
     implementation(project(":viewcompose-runtime"))
+    implementation(project(":viewcompose-ui-contract"))
     implementation(project(":viewcompose-renderer"))
     implementation(project(":viewcompose-widget-core"))
+    implementation(project(":viewcompose-host-android"))
     implementation(project(":viewcompose-lifecycle"))
     implementation(project(":viewcompose-viewmodel"))
     implementation(project(":viewcompose-overlay-android"))

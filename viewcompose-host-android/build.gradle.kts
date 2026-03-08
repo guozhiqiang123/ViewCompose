@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.viewcompose.renderer"
+    namespace = "com.viewcompose.host.android"
     compileSdk = 36
 
     defaultConfig {
@@ -24,10 +24,9 @@ android {
 dependencies {
     implementation(project(":viewcompose-runtime"))
     implementation(project(":viewcompose-ui-contract"))
+    implementation(project(":viewcompose-widget-core"))
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.recyclerview)
-    implementation(libs.androidx.viewpager2)
-    implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.androidx.appcompat)
     implementation(libs.material)
     testImplementation(libs.junit)
 }

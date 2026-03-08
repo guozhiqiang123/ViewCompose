@@ -22,8 +22,10 @@ dependencyResolutionManagement {
 rootProject.name = "ViewCompose"
 include(":app")
 include(":viewcompose-runtime")
+include(":viewcompose-ui-contract")
 include(":viewcompose-renderer")
 include(":viewcompose-widget-core")
+include(":viewcompose-host-android")
 include(":viewcompose-overlay-android")
 include(":viewcompose-image-coil")
 include(":viewcompose-benchmark")

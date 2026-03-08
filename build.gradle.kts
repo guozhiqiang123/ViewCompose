@@ -3,10 +3,13 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.jvm) apply false
 }
 
 val qaQuickTasks = listOf(
     ":viewcompose-runtime:compileDebugKotlin",
+    ":viewcompose-ui-contract:compileKotlin",
+    ":viewcompose-host-android:compileDebugKotlin",
     ":viewcompose-lifecycle:compileDebugKotlin",
     ":viewcompose-viewmodel:compileDebugKotlin",
     ":viewcompose-renderer:compileDebugKotlin",
@@ -15,6 +18,8 @@ val qaQuickTasks = listOf(
     ":viewcompose-image-coil:compileDebugKotlin",
     ":app:compileDebugKotlin",
     ":viewcompose-runtime:testDebugUnitTest",
+    ":viewcompose-ui-contract:test",
+    ":viewcompose-host-android:testDebugUnitTest",
     ":viewcompose-lifecycle:testDebugUnitTest",
     ":viewcompose-viewmodel:testDebugUnitTest",
     ":viewcompose-renderer:testDebugUnitTest",
