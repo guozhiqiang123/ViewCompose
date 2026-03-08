@@ -103,6 +103,13 @@ fun DisposableEffect(
     vararg keys: Any?,
     effect: () -> (() -> Unit),
 ) {
+    ComposerContext.currentComposer()?.let { composer ->
+        composer.disposableEffect(
+            keys = keys.toList(),
+            effect = effect,
+        )
+        return
+    }
     val scopedKeys = GroupKeyContext.current() + keys.toList()
     EffectContext.currentStore()?.register(
         keys = scopedKeys,

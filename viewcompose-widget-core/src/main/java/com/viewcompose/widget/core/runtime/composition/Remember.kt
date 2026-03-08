@@ -69,6 +69,12 @@ fun <T> remember(
     vararg keys: Any?,
     calculation: () -> T,
 ): T {
+    ComposerContext.currentComposer()?.let { composer ->
+        return composer.remember(
+            keys = keys.toList(),
+            calculation = calculation,
+        )
+    }
     val store = RememberContext.currentStore() ?: return calculation()
     val scopedKeys = GroupKeyContext.current() + keys.toList()
     return store.remember(

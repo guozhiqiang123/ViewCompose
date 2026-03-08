@@ -47,5 +47,9 @@ internal object SideEffectContext {
 fun SideEffect(
     effect: () -> Unit,
 ) {
+    ComposerContext.currentComposer()?.let { composer ->
+        composer.sideEffect(effect)
+        return
+    }
     SideEffectContext.currentStore()?.register(effect)
 }

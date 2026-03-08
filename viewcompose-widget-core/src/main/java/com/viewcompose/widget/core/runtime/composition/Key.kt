@@ -23,6 +23,12 @@ fun <T> key(
     vararg keys: Any?,
     block: () -> T,
 ): T {
+    ComposerContext.currentComposer()?.let { composer ->
+        return composer.withKeys(
+            keys = keys.toList(),
+            block = block,
+        )
+    }
     return GroupKeyContext.withKeys(
         keys = keys.toList(),
         block = block,
