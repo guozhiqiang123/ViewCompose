@@ -37,7 +37,7 @@
 ## 4. 实施 Checklist
 
 - [x] Step 1 新增执行计划文档并首提
-- [ ] Step 2 拆分 ViewModifierApplier（样式/交互/insets/容器策略）
+- [x] Step 2 拆分 ViewModifierApplier（样式/交互/insets/容器策略）
 - [ ] Step 3 NodeViewBinderRegistry 单源 descriptor 自动化
 - [ ] Step 4 NodeBindingDiffer 改为 descriptor 派生 patch factory
 - [ ] Step 5 补齐 guard tests 与关键回归
@@ -46,6 +46,7 @@
 ## 5. 提交记录
 
 - `DONE` docs: add renderer complexity convergence execution plan
+- `DONE` refactor: split view modifier responsibilities into focused appliers
 
 ## 6. 阻塞记录
 
