@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.MutableCreationExtras
+import com.viewcompose.viewmodel.LocalViewModelStoreOwner
 import kotlin.reflect.KClass
 
 @MainThread

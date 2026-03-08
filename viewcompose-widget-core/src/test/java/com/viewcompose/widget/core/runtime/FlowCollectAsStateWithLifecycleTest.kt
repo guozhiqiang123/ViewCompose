@@ -3,6 +3,7 @@ package com.viewcompose.widget.core
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
+import com.viewcompose.lifecycle.ProvideLifecycleOwner
 import com.viewcompose.runtime.State
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers

@@ -9,8 +9,10 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelStoreOwner
+import com.viewcompose.lifecycle.ProvideLifecycleOwner
 import com.viewcompose.renderer.view.tree.RenderStats
 import com.viewcompose.renderer.view.tree.RenderTreeResult
+import com.viewcompose.viewmodel.ProvideViewModelStoreOwner
 import java.util.WeakHashMap
 
 /**

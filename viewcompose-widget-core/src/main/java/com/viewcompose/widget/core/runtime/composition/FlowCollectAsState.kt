@@ -3,6 +3,7 @@ package com.viewcompose.widget.core
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import com.viewcompose.lifecycle.LocalLifecycleOwner
 import com.viewcompose.runtime.State
 import com.viewcompose.runtime.mutableStateOf
 import kotlin.coroutines.CoroutineContext

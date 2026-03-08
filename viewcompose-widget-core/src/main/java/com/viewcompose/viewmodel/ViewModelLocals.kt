@@ -1,6 +1,10 @@
-package com.viewcompose.widget.core
+package com.viewcompose.viewmodel
 
 import androidx.lifecycle.ViewModelStoreOwner
+import com.viewcompose.widget.core.ProvideLocal
+import com.viewcompose.widget.core.UiLocals
+import com.viewcompose.widget.core.UiTreeBuilder
+import com.viewcompose.widget.core.uiLocalOf
 
 private val LocalViewModelStoreOwnerValue = uiLocalOf<ViewModelStoreOwner?> { null }
 
