@@ -5,12 +5,6 @@ import com.viewcompose.renderer.node.TextFieldType
 
 data class TextFieldNodeProps(
     val value: String,
-    val label: String,
-    val labelColor: Int,
-    val labelTextSizeSp: Int,
-    val supportingText: String,
-    val supportingTextColor: Int,
-    val supportingTextSizeSp: Int,
     val placeholder: String,
     val enabled: Boolean,
     val singleLine: Boolean,

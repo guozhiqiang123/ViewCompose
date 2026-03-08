@@ -184,12 +184,6 @@ private fun basicTextFieldSpec(
 ): TextFieldNodeProps {
     return TextFieldNodeProps(
         value = value,
-        label = "",
-        labelColor = 0,
-        labelTextSizeSp = 0,
-        supportingText = "",
-        supportingTextColor = 0,
-        supportingTextSizeSp = 0,
         placeholder = placeholder,
         enabled = enabled,
         singleLine = singleLine,

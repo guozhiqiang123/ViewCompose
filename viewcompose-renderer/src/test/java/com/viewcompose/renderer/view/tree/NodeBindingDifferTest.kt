@@ -438,12 +438,6 @@ class NodeBindingDifferTest {
             type = NodeType.TextField,
             spec = TextFieldNodeProps(
                 value = value,
-                label = "Label",
-                labelColor = 0xFF666666.toInt(),
-                labelTextSizeSp = 12,
-                supportingText = "Help",
-                supportingTextColor = 0xFF777777.toInt(),
-                supportingTextSizeSp = 12,
                 placeholder = "Hint",
                 enabled = true,
                 singleLine = true,
