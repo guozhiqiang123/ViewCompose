@@ -42,7 +42,7 @@ All of the following must be true:
 - [x] Step 4: remove renderer fallback props reads and normalize to spec-only.
 - [x] Step 5: move overlay anchor metadata application to resolved modifier path.
 - [x] Step 6: migrate tests + add regression guard.
-- [ ] Step 7: update docs, archive this plan, close statuses.
+- [x] Step 7: update docs, archive this plan, close statuses.
 
 ## 5. Commit Log
 
@@ -55,8 +55,8 @@ All of the following must be true:
 | 5 | `17755e0` | `refactor: move overlay anchor metadata from props to modifier` | presenter path unchanged |
 | 6a | `41d53ef` | `test: migrate unit tests to spec-only vnode model` | direct test migrations |
 | 6b | `c0f577b` | `test: add guardrails to prevent props regression` | static guard |
-| 7a | TBD | `docs: codify node-spec-only architecture boundary` | docs update |
-| 7b | TBD | `docs: close and archive node-spec-only migration plan` | archive + index |
+| 7a | `36cfc02` | `docs: codify node-spec-only architecture boundary` | docs update |
+| 7b | pending | `docs: close and archive node-spec-only migration plan` | archive + index |
 
 ## 6. Blocker Log
 

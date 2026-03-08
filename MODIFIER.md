@@ -2,7 +2,7 @@
 
 ## 1. 文档定位
 
-本文档定义 `Modifier`、组件 `Prop/NodeSpec`、`Theme/Defaults` 的当前边界。
+本文档定义 `Modifier`、组件 `NodeSpec`、`Theme/Defaults` 的当前边界。
 
 目标是保证新增能力时落点明确，避免语义混放。
 
@@ -43,7 +43,7 @@
 4. `ColumnScope.align`
 5. `BoxScope.align`
 
-### 3.3 Props / NodeSpec（组件语义）
+### 3.3 NodeSpec（组件语义）
 
 组件自身语义进入组件参数与 `NodeSpec`，例如：
 
@@ -56,7 +56,7 @@
 
 默认值链路固定为：
 
-`Theme -> Defaults -> NodeSpec/Props -> Renderer`
+`Theme -> Defaults -> NodeSpec -> Renderer`
 
 约束：
 

@@ -50,7 +50,7 @@
 
 标准链路必须保持：
 
-`Theme -> Defaults -> NodeSpec/Props -> Renderer`
+`Theme -> Defaults -> NodeSpec -> Renderer`
 
 约束：
 

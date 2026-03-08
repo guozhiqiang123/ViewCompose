@@ -27,8 +27,8 @@
 2. `ARCHITECTURE.md`：模块职责、调用链、架构约束
 3. `ROADMAP.md`：统一路线图（合并 widget/demo/overlay/ui testing）
 4. `THEMING.md`：主题系统与局部覆盖规则
-5. `MODIFIER.md`：Modifier/Props/Theme 边界
-6. `NODE_PROPS.md`：NodeSpec/typed props 演进路线
+5. `MODIFIER.md`：Modifier/NodeSpec/Theme 边界
+6. `NODE_PROPS.md`：NodeSpec-only 语义规范
 7. `PERFORMANCE.md`：性能基线与优化主线
 8. `SESSION_CONTAINER_CHECKLIST.md`：延迟 session 容器专项检查表
 
