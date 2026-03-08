@@ -1,4 +1,4 @@
-package com.viewcompose.widget.core
+package com.viewcompose.viewmodel
 
 import androidx.annotation.MainThread
 import androidx.lifecycle.SavedStateHandle

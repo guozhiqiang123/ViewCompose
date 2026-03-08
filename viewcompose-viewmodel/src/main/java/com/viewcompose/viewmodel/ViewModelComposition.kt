@@ -1,4 +1,4 @@
-package com.viewcompose.widget.core
+package com.viewcompose.viewmodel
 
 import androidx.annotation.MainThread
 import androidx.lifecycle.HasDefaultViewModelProviderFactory
@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.MutableCreationExtras
-import com.viewcompose.viewmodel.LocalViewModelStoreOwner
+import com.viewcompose.widget.core.remember
 import kotlin.reflect.KClass
 
 @MainThread

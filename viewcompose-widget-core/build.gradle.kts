@@ -28,5 +28,6 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     testImplementation(project(":viewcompose-lifecycle"))
+    testImplementation(project(":viewcompose-viewmodel"))
     testImplementation(libs.junit)
 }
