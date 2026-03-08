@@ -59,6 +59,38 @@ class DemoVisualUiTest {
     }
 
     @Test
+    fun collectionsList_labelToggle_refreshesVisibleItemLabels() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            CollectionsActivity::class.java,
+        ).putExtra(EXTRA_COLLECTIONS_PAGE_INDEX, 1)
+        launchDemoActivity<CollectionsActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val toggle = activity.requireTextViewByTestTag(DemoTestTags.COLLECTIONS_LABEL_TOGGLE)
+                val itemA = activity.requireTextViewByTestTag(DemoTestTags.COLLECTIONS_LIST_ITEM_A)
+                assertViewFullyVisible(toggle)
+                assertTrue(itemA.text.toString().contains("Lazy 项 A"))
+                activity.clickByTestTag(DemoTestTags.COLLECTIONS_LABEL_TOGGLE)
+            }
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val itemA = activity.requireTextViewByTestTag(DemoTestTags.COLLECTIONS_LIST_ITEM_A)
+                assertViewFullyVisible(itemA)
+                assertTrue(itemA.text.toString().contains("（替代）"))
+                activity.clickByTestTag(DemoTestTags.COLLECTIONS_LABEL_TOGGLE)
+            }
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val itemA = activity.requireTextViewByTestTag(DemoTestTags.COLLECTIONS_LIST_ITEM_A)
+                assertViewFullyVisible(itemA)
+                assertTrue(itemA.text.toString().contains("Lazy 项 A"))
+                assertTrue(!itemA.text.toString().contains("（替代）"))
+            }
+        }
+    }
+
+    @Test
     fun actionsElevatedCard_clickKeepsShadowZ() {
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),

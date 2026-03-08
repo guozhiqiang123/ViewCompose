@@ -79,8 +79,8 @@ internal fun UiTreeBuilder.CollectionPage(
     val pullItems = (1..8).map { DemoListItem(id = "$it", title = "刷新列表项 $it · 刷新 ${refreshCountState.value} 次") }
 
     val pageItems = when (selectedPageState.value) {
-        0 -> listOf("benchmark", "page", "page_filter", "controls", "verify")
-        1 -> listOf("page", "page_filter", "list", "verify")
+        0 -> listOf("benchmark", "page", "page_filter", "verify")
+        1 -> listOf("page", "page_filter", "controls", "list", "verify")
         2 -> listOf("page", "page_filter", "stress", "verify")
         3 -> listOf("page", "page_filter", "interop", "verify")
         4 -> listOf("page", "page_filter", "lazy_row", "verify")
@@ -195,6 +195,7 @@ internal fun UiTreeBuilder.CollectionPage(
                     )
                     Button(
                         text = if (alternateLabelsState.value) "主要标签" else "替代标签",
+                        modifier = Modifier.testTag(DemoTestTags.COLLECTIONS_LABEL_TOGGLE),
                         onClick = { alternateLabelsState.value = !alternateLabelsState.value },
                     )
                 }
@@ -221,7 +222,15 @@ internal fun UiTreeBuilder.CollectionPage(
                             .backgroundColor(SurfaceDefaults.backgroundColor())
                             .padding(12.dp),
                     ) {
-                        Text(text = item.title)
+                        val titleModifier = if (item.id == "A") {
+                            Modifier.testTag(DemoTestTags.COLLECTIONS_LIST_ITEM_A)
+                        } else {
+                            Modifier
+                        }
+                        Text(
+                            text = item.title,
+                            modifier = titleModifier,
+                        )
                         Button(
                             text = "项 ${item.id} 点击: ${itemCountState.value}",
                             onClick = { itemCountState.value = itemCountState.value + 1 },

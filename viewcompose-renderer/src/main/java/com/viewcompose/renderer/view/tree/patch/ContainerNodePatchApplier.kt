@@ -2,6 +2,7 @@ package com.viewcompose.renderer.view.tree.patch
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.viewcompose.renderer.node.LazyListItem
 import com.viewcompose.renderer.view.container.DeclarativeBoxLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowColumnLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowRowLayout
@@ -101,7 +102,7 @@ internal object ContainerNodePatchApplier {
         if (previous.spacing != next.spacing) {
             ContainerViewBinder.applyLazyListSpacing(view, next.spacing, LinearLayoutManager.VERTICAL)
         }
-        if (previous.items != next.items) {
+        if (previous.items != next.items || previous.items.hasSessionIdentityChange(next.items)) {
             val adapter = view.adapter as? LazyListAdapter ?: LazyListAdapter().also {
                 view.adapter = it
             }
@@ -125,7 +126,7 @@ internal object ContainerNodePatchApplier {
         if (previous.spacing != next.spacing) {
             ContainerViewBinder.applyLazyListSpacing(view, next.spacing, LinearLayoutManager.HORIZONTAL)
         }
-        if (previous.items != next.items) {
+        if (previous.items != next.items || previous.items.hasSessionIdentityChange(next.items)) {
             val adapter = view.adapter as? LazyListAdapter
                 ?: LazyListAdapter(LinearLayoutManager.HORIZONTAL).also {
                     view.adapter = it
@@ -354,5 +355,16 @@ internal object ContainerNodePatchApplier {
         if (previous.indicatorColor != next.indicatorColor) {
             view.setColorSchemeColors(next.indicatorColor)
         }
+    }
+
+    private fun List<LazyListItem>.hasSessionIdentityChange(next: List<LazyListItem>): Boolean {
+        if (size != next.size) return true
+        for (index in indices) {
+            val previous = this[index]
+            val current = next[index]
+            if (previous.sessionFactory !== current.sessionFactory) return true
+            if (previous.sessionUpdater !== current.sessionUpdater) return true
+        }
+        return false
     }
 }
