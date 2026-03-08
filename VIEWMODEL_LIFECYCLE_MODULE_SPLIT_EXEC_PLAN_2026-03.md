@@ -33,7 +33,7 @@
 - [x] Step 1 新增执行计划文档并首提
 - [x] Step 2 新增两个模块并接入构建拓扑
 - [x] Step 3 Local API 包名硬切并更新 host 注入
-- [ ] Step 4 迁移 Flow 收集 API 到 lifecycle 模块
+- [x] Step 4 迁移 Flow 收集 API 到 lifecycle 模块
 - [ ] Step 5 迁移 ViewModel API 到 viewmodel 模块
 - [ ] Step 6 demo 与消费方同步迁移
 - [ ] Step 7 文档收口与归档
@@ -43,6 +43,7 @@
 - `DONE` docs: add viewmodel/lifecycle module split execution plan
 - `DONE` build: add lifecycle and viewmodel integration modules
 - `DONE` refactor: hard-migrate lifecycle/viewmodel locals to new packages
+- `DONE` refactor: move flow state collection APIs into viewcompose-lifecycle
 
 ## 6. 阻塞记录
 

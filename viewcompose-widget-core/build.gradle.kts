@@ -24,9 +24,9 @@ android {
 dependencies {
     implementation(project(":viewcompose-runtime"))
     implementation(project(":viewcompose-renderer"))
-    implementation(libs.kotlinx.coroutines.core)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    testImplementation(project(":viewcompose-lifecycle"))
     testImplementation(libs.junit)
 }

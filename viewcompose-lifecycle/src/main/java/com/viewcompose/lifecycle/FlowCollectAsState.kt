@@ -1,11 +1,13 @@
-package com.viewcompose.widget.core
+package com.viewcompose.lifecycle
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import com.viewcompose.lifecycle.LocalLifecycleOwner
 import com.viewcompose.runtime.State
 import com.viewcompose.runtime.mutableStateOf
+import com.viewcompose.widget.core.DisposableEffect
+import com.viewcompose.widget.core.remember
+import com.viewcompose.widget.core.rememberUpdatedState
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineScope

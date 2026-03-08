@@ -1,5 +1,6 @@
 package com.viewcompose.widget.core
 
+import com.viewcompose.lifecycle.collectAsState
 import com.viewcompose.runtime.State
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
