@@ -27,4 +27,6 @@ include(":viewcompose-widget-core")
 include(":viewcompose-overlay-android")
 include(":viewcompose-image-coil")
 include(":viewcompose-benchmark")
+include(":viewcompose-lifecycle")
+include(":viewcompose-viewmodel")
  
