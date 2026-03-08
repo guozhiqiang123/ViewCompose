@@ -191,6 +191,15 @@
 4. instrumentation 若依赖“UI 空闲后断言”，必须保证等待至少一个 frame，避免调度升级后误报。
 5. session `dispose()` 路径改动必须验证“销毁后无延迟渲染”。
 
+## 5.9 Renderer 单源注册约束
+
+涉及 renderer binder/differ 的新增或重构，必须遵守：
+
+1. `NodeType -> binder`、`NodeViewPatch -> patch applier`、`NodeSpec -> patch factory` 只允许在 `NodeBinderDescriptors` 维护。
+2. 禁止在 `NodeViewBinderRegistry` 或 `NodeBindingDiffer` 新增并行手工映射表。
+3. 新增节点能力时必须先补 descriptor，再补对应 binder/patch 逻辑。
+4. 变更完成后必须跑 descriptor guard tests，确保覆盖与一致性无缺口。
+
 ## 6. 线程中断恢复原则
 
 如果聊天线程丢失、附件损坏或上下文中断，恢复顺序固定为：

@@ -70,6 +70,8 @@ renderer 侧避免“单目录平铺”，按职责拆到二级目录：
    - Android View 容器映射层，按控件族群分类
 2. `viewcompose-renderer/src/main/java/.../view/tree/binder/core`
    - 绑定流程核心（factory/differ/plan/registry/modifier）
+   - `NodeBinderDescriptors` 是 bind/patch/diff 元数据单源注册表（禁止并行映射）
+   - `ViewModifierApplier` 仅作 facade，具体职责拆到 `core/modifier` 子模块
 3. `viewcompose-renderer/src/main/java/.../view/tree/binder/widget`
    - 分控件 binder 实现（content/input/media/feedback/collection 等）
 4. `viewcompose-renderer/src/main/java/.../view/lazy/{adapter,focus,layout,reuse,session,state}`
@@ -172,6 +174,13 @@ flowchart TD
 3. 同一帧内多次 invalidation 只能触发一次 `RenderSession` 渲染提交。
 4. `dispose()` 必须取消未执行帧回调，禁止 session 销毁后延迟渲染。
 5. lazy item session 与 overlay surface session 继续复用 `RenderSession.render()` 的立即语义，避免首显空白。
+
+### 4.10 Renderer 绑定复杂度边界
+
+1. `NodeViewBinderRegistry` 与 `NodeBindingDiffer` 的 bind/patch/diff 映射必须从 `NodeBinderDescriptors` 单源派生，禁止新增并行手工 map。
+2. 新增 `NodeType` 或新增 `NodeViewPatch` 时，只允许修改 descriptor 源；不得同时改 registry/differ 的独立映射分支。
+3. `ViewModifierApplier` 仅负责编排，不承载具体细节实现；样式/交互/insets/容器策略必须分别落在 `core/modifier` 子职责对象。
+4. 任何绕过 descriptor 的快速修复都视为架构违规，必须在同一迭代回补为单源注册。
 
 ## 5. 当前热点与风险
 
