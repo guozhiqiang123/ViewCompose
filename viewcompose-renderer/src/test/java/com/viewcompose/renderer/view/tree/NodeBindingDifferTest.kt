@@ -207,6 +207,17 @@ class NodeBindingDifferTest {
     }
 
     @Test
+    fun `patches tab row when tab session closures refresh with stable tokens`() {
+        val previous = tabRowNodeWithSessionNonce(selectedIndex = 0, sessionNonce = "A")
+        val next = tabRowNodeWithSessionNonce(selectedIndex = 0, sessionNonce = "B")
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is TabRowNodePatch)
+    }
+
+    @Test
     fun `patches lazy column semantic updates`() {
         val previous = lazyColumnNode(spacing = 8)
         val next = lazyColumnNode(spacing = 16)
@@ -240,9 +251,31 @@ class NodeBindingDifferTest {
     }
 
     @Test
+    fun `patches horizontal pager when page session closures refresh with stable tokens`() {
+        val previous = horizontalPagerNodeWithSessionNonce(currentPage = 0, sessionNonce = "A")
+        val next = horizontalPagerNodeWithSessionNonce(currentPage = 0, sessionNonce = "B")
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is HorizontalPagerNodePatch)
+    }
+
+    @Test
     fun `patches vertical pager semantic updates`() {
         val previous = verticalPagerNode(currentPage = 0)
         val next = verticalPagerNode(currentPage = 1)
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is VerticalPagerNodePatch)
+    }
+
+    @Test
+    fun `patches vertical pager when page session closures refresh with stable tokens`() {
+        val previous = verticalPagerNodeWithSessionNonce(currentPage = 0, sessionNonce = "A")
+        val next = verticalPagerNodeWithSessionNonce(currentPage = 0, sessionNonce = "B")
 
         val plan = NodeBindingDiffer.plan(previous, next)
 
@@ -547,6 +580,27 @@ class NodeBindingDifferTest {
         )
     }
 
+    private fun horizontalPagerNodeWithSessionNonce(
+        currentPage: Int = 0,
+        sessionNonce: Any,
+    ): VNode {
+        return VNode(
+            type = NodeType.HorizontalPager,
+            spec = HorizontalPagerNodeProps(
+                pages = listOf(
+                    lazyItemWithSessionNonce("page-1", sessionNonce),
+                    lazyItemWithSessionNonce("page-2", sessionNonce),
+                ),
+                currentPage = currentPage,
+                onPageChanged = null,
+                offscreenPageLimit = 1,
+                pagerState = null,
+                userScrollEnabled = true,
+            ),
+            modifier = Modifier,
+        )
+    }
+
     private fun verticalPagerNode(
         currentPage: Int = 0,
     ): VNode {
@@ -556,6 +610,27 @@ class NodeBindingDifferTest {
                 pages = listOf(
                     lazyItem("v-page-1"),
                     lazyItem("v-page-2"),
+                ),
+                currentPage = currentPage,
+                onPageChanged = null,
+                offscreenPageLimit = 1,
+                pagerState = null,
+                userScrollEnabled = true,
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun verticalPagerNodeWithSessionNonce(
+        currentPage: Int = 0,
+        sessionNonce: Any,
+    ): VNode {
+        return VNode(
+            type = NodeType.VerticalPager,
+            spec = VerticalPagerNodeProps(
+                pages = listOf(
+                    lazyItemWithSessionNonce("v-page-1", sessionNonce),
+                    lazyItemWithSessionNonce("v-page-2", sessionNonce),
                 ),
                 currentPage = currentPage,
                 onPageChanged = null,
@@ -579,6 +654,27 @@ class NodeBindingDifferTest {
 
                     override fun dispose() = Unit
                 }
+            },
+        )
+    }
+
+    private fun lazyItemWithSessionNonce(
+        key: String,
+        sessionNonce: Any,
+    ): LazyListItem {
+        return LazyListItem(
+            key = key,
+            contentToken = key,
+            sessionFactory = LazyListItemSessionFactory {
+                sessionNonce.hashCode()
+                object : LazyListItemSession {
+                    override fun render() = Unit
+
+                    override fun dispose() = Unit
+                }
+            },
+            sessionUpdater = {
+                sessionNonce.hashCode()
             },
         )
     }
@@ -809,6 +905,39 @@ class NodeBindingDifferTest {
                 tabs = listOf(
                     TabRowTab(lazyItem("tab-1")),
                     TabRowTab(lazyItem("tab-2")),
+                ),
+                selectedIndex = selectedIndex,
+                onTabSelected = null,
+                pagerState = null,
+                indicatorColor = 0xFF000000.toInt(),
+                indicatorHeight = 4,
+                indicatorCornerRadius = 2,
+                indicatorPosition = TabIndicatorPosition.Bottom,
+                indicatorWidthMode = TabIndicatorWidthMode.MatchItem,
+                indicatorFixedWidth = 0,
+                containerColor = 0xFFFFFFFF.toInt(),
+                scrollable = true,
+                equalWidth = false,
+                rippleColor = 0x11000000,
+                itemSpacing = 8,
+                itemPaddingHorizontal = 12,
+                itemPaddingVertical = 8,
+                minItemWidth = 64,
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun tabRowNodeWithSessionNonce(
+        selectedIndex: Int = 0,
+        sessionNonce: Any,
+    ): VNode {
+        return VNode(
+            type = NodeType.TabRow,
+            spec = TabRowNodeProps(
+                tabs = listOf(
+                    TabRowTab(lazyItemWithSessionNonce("tab-1", sessionNonce)),
+                    TabRowTab(lazyItemWithSessionNonce("tab-2", sessionNonce)),
                 ),
                 selectedIndex = selectedIndex,
                 onTabSelected = null,

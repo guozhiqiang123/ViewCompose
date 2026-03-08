@@ -560,7 +560,8 @@ class DemoVisualUiTest {
                 val summary = activity.requireTextViewByTestTag(DemoTestTags.STATE_STABLE_SUMMARY)
                 assertViewFullyVisible(summary)
                 assertTextNotEllipsized(summary)
-                assertTrue(summary.text.toString().contains("1"))
+                val text = summary.text.toString()
+                assertTrue("expected stable summary to contain 1, actual=$text", text.contains("1"))
             }
         }
     }
@@ -583,7 +584,8 @@ class DemoVisualUiTest {
                 val summary = activity.requireTextViewByTestTag(DemoTestTags.STATE_STABLE_SUMMARY)
                 assertViewFullyVisible(summary)
                 assertTextNotEllipsized(summary)
-                assertTrue(summary.text.toString().contains("2"))
+                val text = summary.text.toString()
+                assertTrue("expected stable summary to contain 2, actual=$text", text.contains("2"))
             }
         }
     }
@@ -606,7 +608,8 @@ class DemoVisualUiTest {
                 val summary = activity.requireTextViewByTestTag(DemoTestTags.STATE_VERTICAL_PAGER_SUMMARY)
                 assertViewFullyVisible(summary)
                 assertTextNotEllipsized(summary)
-                assertTrue(summary.text.toString().contains("2"))
+                val text = summary.text.toString()
+                assertTrue("expected vertical pager summary to contain 2, actual=$text", text.contains("2"))
             }
         }
     }

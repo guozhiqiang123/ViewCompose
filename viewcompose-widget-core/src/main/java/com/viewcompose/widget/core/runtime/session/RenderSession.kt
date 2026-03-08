@@ -36,6 +36,11 @@ class RenderSession internal constructor(
         renderScheduled = false
         try {
             var tree: List<com.viewcompose.renderer.node.VNode> = emptyList()
+            if (!composer.hasPendingInvalidations()) {
+                // External render requests (e.g. lazy/pager sessionUpdater) must recompose root even
+                // without runtime state invalidation signals.
+                composer.requestRootRecompose()
+            }
             LocalContext.provide(LocalOverlayHost.holder, overlayHost) {
                 OverlayRequestContext.withStore(overlayRequestStore) {
                     ComposerContext.withComposer(composer) {

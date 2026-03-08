@@ -23,6 +23,10 @@ class ComposerLite(
 
     fun drainInvalidations(): List<RecomposeScope> = invalidationQueue.drainCompacted()
 
+    fun requestRootRecompose() {
+        slotTable.root.markDirty()
+    }
+
     fun <T> composeRoot(block: () -> T): T {
         if (composing) {
             error("Re-entrant composeRoot() is not supported.")
