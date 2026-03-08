@@ -55,3 +55,4 @@
 | `VIEWMODEL_LIFECYCLE_MODULE_SPLIT_EXEC_PLAN_2026-03.md` | 已完成的 ViewModel/Lifecycle 模块化拆分执行计划（双模块 + 新包名硬切） |
 | `FRAME_ALIGNED_SCHEDULER_EXEC_PLAN_2026-03.md` | 已完成的 RenderSession 帧对齐调度执行计划（Choreographer/frame-aligned scheduling） |
 | `RENDERER_COMPLEXITY_CONVERGENCE_EXEC_PLAN_2026-03.md` | 已完成的 renderer 复杂度收敛执行计划（ViewModifierApplier 分层 + binder/differ descriptor 单源化） |
+| `WIDGET_CORE_RENDERER_DECOUPLE_EXEC_PLAN_2026-03.md` | 已完成的 widget-core 与 renderer 依赖解耦执行计划（ui-contract + host-android 分层硬切） |
