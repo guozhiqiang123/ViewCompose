@@ -392,6 +392,7 @@ private class WidgetLazyListItemSession(
     )
 
     override fun render() {
+        // Lazy item session bind path must keep immediate render semantics.
         session.render()
     }
 

@@ -42,17 +42,22 @@ class OverlaySurfaceSession internal constructor(
     )
 
     init {
-        renderSession.render()
+        renderImmediately()
     }
 
     fun update(content: OverlaySurfaceContent) {
         currentContent = content
         overlayHostDelegate.delegate = content.overlayHost()
-        renderSession.render()
+        renderImmediately()
     }
 
     fun dispose() {
         renderSession.dispose()
+    }
+
+    private fun renderImmediately() {
+        // Overlay surface update should stay synchronous to avoid first-frame blank content.
+        renderSession.render()
     }
 }
 
