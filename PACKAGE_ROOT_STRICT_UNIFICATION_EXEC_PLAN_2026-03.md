@@ -41,7 +41,7 @@
 - [x] Step 1 新增执行计划文档并首提
 - [x] Step 2 固化模块到包根映射（构建侧单一真源）
 - [x] Step 3 迁移 Lifecycle/ViewModel Locals 到所属模块
-- [ ] Step 4 同步迁移相关测试并清理错误归属测试
+- [x] Step 4 同步迁移相关测试并清理错误归属测试
 - [ ] Step 5 增加 `verifyModulePackageRoots` 守卫并接入 `qaQuick`
 - [ ] Step 6 增加 namespace 一致性守卫
 - [ ] Step 7 文档收口与归档
@@ -51,6 +51,7 @@
 - `DONE` docs: add strict single-package-root migration execution plan
 - `DONE` build: define canonical module package root mapping
 - `DONE` refactor: relocate lifecycle/viewmodel locals to owning modules for strict package roots
+- `DONE` test: migrate lifecycle/viewmodel local tests to owning modules
 
 ## 7. 阻塞记录
 
