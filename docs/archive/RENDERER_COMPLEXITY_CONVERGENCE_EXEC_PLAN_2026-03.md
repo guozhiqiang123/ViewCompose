@@ -41,7 +41,7 @@
 - [x] Step 3 NodeViewBinderRegistry 单源 descriptor 自动化
 - [x] Step 4 NodeBindingDiffer 改为 descriptor 派生 patch factory
 - [x] Step 5 补齐 guard tests 与关键回归
-- [ ] Step 6 文档收口与归档
+- [x] Step 6 文档收口与归档
 
 ## 5. 提交记录
 
@@ -50,6 +50,8 @@
 - `DONE` refactor: automate binder registration with descriptor-driven registry
 - `DONE` refactor: drive node binding differ patch factories from binder descriptors
 - `DONE` test: add binder descriptor coverage and consistency guards
+- `DONE` docs: codify renderer binder and modifier complexity boundaries
+- `DONE` docs: close and archive renderer complexity convergence plan
 
 ## 6. 阻塞记录
 

@@ -54,3 +54,4 @@
 | `NODE_SPEC_ONLY_EXECUTION_PLAN_2026-03.md` | 已完成的 `VNode.props` 全量移除与 NodeSpec-only 迁移执行计划 |
 | `VIEWMODEL_LIFECYCLE_MODULE_SPLIT_EXEC_PLAN_2026-03.md` | 已完成的 ViewModel/Lifecycle 模块化拆分执行计划（双模块 + 新包名硬切） |
 | `FRAME_ALIGNED_SCHEDULER_EXEC_PLAN_2026-03.md` | 已完成的 RenderSession 帧对齐调度执行计划（Choreographer/frame-aligned scheduling） |
+| `RENDERER_COMPLEXITY_CONVERGENCE_EXEC_PLAN_2026-03.md` | 已完成的 renderer 复杂度收敛执行计划（ViewModifierApplier 分层 + binder/differ descriptor 单源化） |
