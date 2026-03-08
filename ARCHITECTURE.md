@@ -185,6 +185,13 @@ flowchart TD
 3. `ViewModifierApplier` 仅负责编排，不承载具体细节实现；样式/交互/insets/容器策略必须分别落在 `core/modifier` 子职责对象。
 4. 任何绕过 descriptor 的快速修复都视为架构违规，必须在同一迭代回补为单源注册。
 
+### 4.11 模块单包根边界
+
+1. 每个模块只允许一个包根前缀，且必须与模块职责对应（允许该前缀下的子包分层）。
+2. 约束范围覆盖 `src/main`、`src/test`、`src/androidTest`，测试源码不允许例外包根。
+3. Android 模块 `namespace` 必须与该模块包根一致（`viewcompose-ui-contract` 作为 Kotlin/JVM 模块例外）。
+4. lifecycle/viewmodel 的 Local 对外 API 包名固定为 `com.viewcompose.lifecycle` 与 `com.viewcompose.viewmodel`，并且源码归属必须落在对应模块，不得回流 `widget-core`。
+
 ## 5. 当前热点与风险
 
 1. `ViewTreeRenderer` 仍是复杂度热点，新增能力优先拆辅助对象，不继续堆主类。

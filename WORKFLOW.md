@@ -209,6 +209,15 @@
 3. Android 宿主入口 API（`setUiContent`、`renderInto`、`AndroidView/nativeView`）只放 `viewcompose-host-android`。
 4. 以上约束必须通过模块 guard tests 持续校验，禁止只靠 code review 口头约束。
 
+## 5.11 模块单包根约束
+
+涉及新增模块、包路径重构或文件迁移时，必须遵守：
+
+1. 每个模块仅允许一个包根前缀，覆盖 `src/main`、`src/test`、`src/androidTest`。
+2. Android 模块 `namespace` 必须与该模块包根一致（`viewcompose-ui-contract` 例外）。
+3. lifecycle/viewmodel 对外包名固定为 `com.viewcompose.lifecycle` 与 `com.viewcompose.viewmodel`，并且源码必须放在各自模块。
+4. `qaQuick` 中的 `verifyModulePackageRoots` 与 `verifyAndroidModuleNamespaces` 为硬门禁，任何违规不得豁免合并。
+
 ## 6. 线程中断恢复原则
 
 如果聊天线程丢失、附件损坏或上下文中断，恢复顺序固定为：

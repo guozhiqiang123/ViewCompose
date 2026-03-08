@@ -54,6 +54,7 @@
 - `DONE` test: migrate lifecycle/viewmodel local tests to owning modules
 - `DONE` test: add strict module package-root guard and wire into qaQuick
 - `DONE` build: add namespace-to-package-root consistency guard
+- `DONE` docs: codify strict single-package-root conventions
 
 ## 7. 阻塞记录
 
