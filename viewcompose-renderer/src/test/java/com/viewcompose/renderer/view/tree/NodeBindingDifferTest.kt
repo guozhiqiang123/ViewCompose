@@ -8,7 +8,6 @@ import com.viewcompose.renderer.node.LazyListItemSession
 import com.viewcompose.renderer.node.LazyListItemSessionFactory
 import com.viewcompose.renderer.node.NodeType
 import com.viewcompose.renderer.node.NavigationBarItem
-import com.viewcompose.renderer.node.Props
 import com.viewcompose.renderer.node.VNode
 import com.viewcompose.renderer.node.collection.TabIndicatorPosition
 import com.viewcompose.renderer.node.collection.TabIndicatorWidthMode
@@ -34,11 +33,16 @@ import com.viewcompose.renderer.node.spec.TextNodeProps
 import com.viewcompose.renderer.node.spec.TextFieldNodeProps
 import com.viewcompose.renderer.node.spec.ToggleNodeProps
 import com.viewcompose.renderer.node.spec.VerticalPagerNodeProps
+import com.viewcompose.renderer.node.spec.NodeSpec
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class NodeBindingDifferTest {
+    private data class UnknownNodeSpec(
+        val value: Int,
+    ) : NodeSpec
+
     @Test
     fun `returns skip self only when child tree changes`() {
         val previous = textNode(
@@ -103,15 +107,15 @@ class NodeBindingDifferTest {
     }
 
     @Test
-    fun `rebinds when props change for nodes without spec`() {
+    fun `rebinds when node spec changes but no patch factory exists`() {
         val previous = VNode(
             type = NodeType.Spacer,
-            props = Props.Empty,
+            spec = UnknownNodeSpec(value = 1),
             modifier = Modifier,
         )
         val next = VNode(
             type = NodeType.Spacer,
-            props = Props(mapOf("width" to 10)),
+            spec = UnknownNodeSpec(value = 2),
             modifier = Modifier,
         )
 

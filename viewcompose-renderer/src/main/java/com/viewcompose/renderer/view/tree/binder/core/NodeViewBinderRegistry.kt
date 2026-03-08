@@ -8,9 +8,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.TypedPropKeys
 import com.viewcompose.renderer.node.VNode
-import com.viewcompose.renderer.node.spec.ButtonNodeProps
 import com.viewcompose.renderer.view.container.DeclarativeBoxLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowColumnLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowRowLayout
@@ -91,10 +89,7 @@ internal object NodeViewBinderRegistry {
             NodeType.Button to { view, node ->
                 ContentViewBinder.bindButton(
                     view = view as android.widget.Button,
-                    spec = ContentViewBinder.readButtonSpec(
-                        node = node,
-                        contentColor = readNodeTextColor(node) ?: Color.BLACK,
-                    ),
+                    spec = ContentViewBinder.readButtonSpec(node),
                 )
             },
             NodeType.IconButton to { view, node ->
@@ -395,11 +390,5 @@ internal object NodeViewBinderRegistry {
             }
             else -> error("Unknown patch type: ${patch::class.simpleName}")
         }
-    }
-
-    private fun readNodeTextColor(node: VNode): Int? {
-        val spec = node.spec as? ButtonNodeProps
-        if (spec != null) return spec.textColor
-        return node.props[TypedPropKeys.TextColor]
     }
 }

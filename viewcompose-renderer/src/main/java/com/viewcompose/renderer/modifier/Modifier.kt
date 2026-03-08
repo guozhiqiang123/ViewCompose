@@ -116,6 +116,10 @@ data class TestTagModifierElement(
     val tag: String,
 ) : ModifierElement
 
+data class OverlayAnchorModifierElement(
+    val anchorId: String,
+) : ModifierElement
+
 data class WeightModifierElement(
     val weight: Float,
 ) : ModifierElement
@@ -399,6 +403,12 @@ fun Modifier.contentDescription(description: String?): Modifier {
 fun Modifier.testTag(tag: String): Modifier {
     return then(
         TestTagModifierElement(tag),
+    )
+}
+
+fun Modifier.overlayAnchor(anchorId: String): Modifier {
+    return then(
+        OverlayAnchorModifierElement(anchorId),
     )
 }
 

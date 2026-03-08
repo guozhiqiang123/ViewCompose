@@ -9,7 +9,7 @@ import com.viewcompose.renderer.node.RemoteImageLoader
 import com.viewcompose.renderer.node.RemoteImageRequest
 import com.viewcompose.renderer.node.VNode
 import com.viewcompose.renderer.node.ImageContentScale
-import com.viewcompose.renderer.node.TypedPropKeys
+import com.viewcompose.renderer.node.spec.ImageNodeProps
 import com.viewcompose.renderer.node.spec.IconButtonNodeProps
 import com.viewcompose.renderer.node.spec.ImageNodeSpec
 
@@ -65,29 +65,25 @@ internal object MediaViewBinder {
     }
 
     fun readImageSpec(node: VNode): ImageSpec {
-        val spec = node.spec as? ImageNodeSpec
-        if (spec != null) {
-            return ImageSpec(
-                contentDescription = spec.contentDescription,
-                scaleType = spec.contentScale.toScaleType(),
-                tint = spec.tint,
-                source = spec.source,
-                placeholder = spec.placeholder,
-                error = spec.error,
-                fallback = spec.fallback,
-                remoteImageLoader = spec.remoteImageLoader,
-            )
-        }
-        val scale = node.props[TypedPropKeys.ImageContentScale] ?: ImageContentScale.Fit
+        val spec = (node.spec as? ImageNodeSpec) ?: ImageNodeProps(
+            contentDescription = null,
+            contentScale = ImageContentScale.Fit,
+            tint = null,
+            source = null,
+            placeholder = null,
+            error = null,
+            fallback = null,
+            remoteImageLoader = null,
+        )
         return ImageSpec(
-            contentDescription = node.props[TypedPropKeys.ImageContentDescription],
-            scaleType = scale.toScaleType(),
-            tint = node.props[TypedPropKeys.ImageTint],
-            source = node.props[TypedPropKeys.ImageSource],
-            placeholder = node.props[TypedPropKeys.ImagePlaceholder],
-            error = node.props[TypedPropKeys.ImageError],
-            fallback = node.props[TypedPropKeys.ImageFallback],
-            remoteImageLoader = node.props[TypedPropKeys.ImageRemoteLoader],
+            contentDescription = spec.contentDescription,
+            scaleType = spec.contentScale.toScaleType(),
+            tint = spec.tint,
+            source = spec.source,
+            placeholder = spec.placeholder,
+            error = spec.error,
+            fallback = spec.fallback,
+            remoteImageLoader = spec.remoteImageLoader,
         )
     }
 
@@ -101,8 +97,7 @@ internal object MediaViewBinder {
     }
 
     fun readIconButtonEnabled(node: VNode): Boolean {
-        return (node.spec as? IconButtonNodeProps)?.enabled
-            ?: (node.props[TypedPropKeys.Enabled] ?: true)
+        return (node.spec as? IconButtonNodeProps)?.enabled ?: true
     }
 
     private fun bindPlaceholder(

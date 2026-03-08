@@ -1,10 +1,12 @@
 package com.viewcompose.widget.core
 
+import com.viewcompose.renderer.modifier.AlphaModifierElement
 import com.viewcompose.renderer.modifier.BackgroundColorModifierElement
+import com.viewcompose.renderer.modifier.CornerRadiusModifierElement
 import com.viewcompose.renderer.modifier.Modifier
+import com.viewcompose.renderer.modifier.RippleColorModifierElement
 import com.viewcompose.renderer.modifier.backgroundColor
 import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.TypedPropKeys
 import com.viewcompose.renderer.node.spec.BoxNodeProps
 import com.viewcompose.renderer.node.spec.ButtonNodeProps
 import com.viewcompose.renderer.node.spec.DividerNodeProps
@@ -573,12 +575,18 @@ class ThemeTest {
         }
 
         val surface = tree.single()
+        val elements = surface.modifier.readModifierElements()
+        val background = elements.last { it is BackgroundColorModifierElement } as BackgroundColorModifierElement
+        val cornerRadius = elements.last { it is CornerRadiusModifierElement } as CornerRadiusModifierElement
+        val ripple = elements.last { it is RippleColorModifierElement } as RippleColorModifierElement
+        val alpha = elements.last { it is AlphaModifierElement } as AlphaModifierElement
 
         assertEquals(NodeType.Surface, surface.type)
-        assertEquals(SurfaceDefaults.variantBackgroundColor(), surface.props[TypedPropKeys.StyleBackgroundColor])
-        assertEquals(SurfaceDefaults.cardCornerRadius(), surface.props[TypedPropKeys.StyleCornerRadius])
-        assertEquals(SurfaceDefaults.pressedColor(), surface.props[TypedPropKeys.StyleRippleColor])
-        assertEquals(SurfaceDefaults.disabledAlpha(), surface.props[TypedPropKeys.StyleAlpha])
+        assertEquals(SurfaceDefaults.variantBackgroundColor(), background.color)
+        assertEquals(SurfaceDefaults.cardCornerRadius(), cornerRadius.topStart)
+        assertEquals(SurfaceDefaults.cardCornerRadius(), cornerRadius.bottomStart)
+        assertEquals(SurfaceDefaults.pressedColor(), ripple.color)
+        assertEquals(SurfaceDefaults.disabledAlpha(), alpha.alpha)
         assertTrue(surface.spec is BoxNodeProps)
     }
 

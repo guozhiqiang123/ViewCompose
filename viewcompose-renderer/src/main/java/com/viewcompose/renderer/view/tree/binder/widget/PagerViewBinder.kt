@@ -2,7 +2,6 @@ package com.viewcompose.renderer.view.tree
 
 import com.viewcompose.renderer.node.LazyListItem
 import com.viewcompose.renderer.node.SegmentedControlItem
-import com.viewcompose.renderer.node.TypedPropKeys
 import com.viewcompose.renderer.node.VNode
 import com.viewcompose.renderer.node.collection.TabIndicatorPosition
 import com.viewcompose.renderer.node.collection.TabIndicatorWidthMode
@@ -148,38 +147,35 @@ internal object PagerViewBinder {
     }
 
     fun readSegmentedControlSpec(node: VNode, defaultRippleColor: Int): SegmentedControlSpec {
-        val spec = node.spec as? SegmentedControlNodeProps
-        if (spec != null) {
-            return SegmentedControlSpec(
-                items = spec.items,
-                selectedIndex = spec.selectedIndex,
-                onSelectionChange = spec.onSelectionChange,
-                enabled = spec.enabled,
-                backgroundColor = spec.backgroundColor,
-                indicatorColor = spec.indicatorColor,
-                cornerRadius = spec.cornerRadius,
-                textColor = spec.textColor,
-                selectedTextColor = spec.selectedTextColor,
-                rippleColor = spec.rippleColor,
-                textSizeSp = spec.textSizeSp,
-                paddingHorizontal = spec.paddingHorizontal,
-                paddingVertical = spec.paddingVertical,
-            )
-        }
+        val spec = node.spec as? SegmentedControlNodeProps ?: SegmentedControlNodeProps(
+            items = emptyList(),
+            selectedIndex = 0,
+            onSelectionChange = null,
+            enabled = true,
+            backgroundColor = android.graphics.Color.TRANSPARENT,
+            indicatorColor = android.graphics.Color.TRANSPARENT,
+            cornerRadius = 0,
+            textColor = android.graphics.Color.BLACK,
+            selectedTextColor = android.graphics.Color.WHITE,
+            rippleColor = defaultRippleColor,
+            textSizeSp = 14,
+            paddingHorizontal = 0,
+            paddingVertical = 0,
+        )
         return SegmentedControlSpec(
-            items = node.props[TypedPropKeys.SegmentItems] ?: emptyList(),
-            selectedIndex = node.props[TypedPropKeys.SegmentSelectedIndex] ?: 0,
-            onSelectionChange = node.props[TypedPropKeys.OnSegmentSelected],
-            enabled = node.props[TypedPropKeys.Enabled] ?: true,
-            backgroundColor = node.props[TypedPropKeys.SegmentBackgroundColor] ?: android.graphics.Color.TRANSPARENT,
-            indicatorColor = node.props[TypedPropKeys.SegmentIndicatorColor] ?: android.graphics.Color.TRANSPARENT,
-            cornerRadius = node.props[TypedPropKeys.SegmentCornerRadius] ?: 0,
-            textColor = node.props[TypedPropKeys.SegmentTextColor] ?: android.graphics.Color.BLACK,
-            selectedTextColor = node.props[TypedPropKeys.SegmentSelectedTextColor] ?: android.graphics.Color.WHITE,
-            rippleColor = node.props[TypedPropKeys.SegmentRippleColor] ?: defaultRippleColor,
-            textSizeSp = node.props[TypedPropKeys.SegmentTextSizeSp] ?: 14,
-            paddingHorizontal = node.props[TypedPropKeys.SegmentContentPaddingHorizontal] ?: 0,
-            paddingVertical = node.props[TypedPropKeys.SegmentContentPaddingVertical] ?: 0,
+            items = spec.items,
+            selectedIndex = spec.selectedIndex,
+            onSelectionChange = spec.onSelectionChange,
+            enabled = spec.enabled,
+            backgroundColor = spec.backgroundColor,
+            indicatorColor = spec.indicatorColor,
+            cornerRadius = spec.cornerRadius,
+            textColor = spec.textColor,
+            selectedTextColor = spec.selectedTextColor,
+            rippleColor = spec.rippleColor,
+            textSizeSp = spec.textSizeSp,
+            paddingHorizontal = spec.paddingHorizontal,
+            paddingVertical = spec.paddingVertical,
         )
     }
 

@@ -2,7 +2,6 @@ package com.viewcompose.widget.core
 
 import com.viewcompose.renderer.modifier.Modifier
 import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.Props
 import com.viewcompose.renderer.node.VNode
 import com.viewcompose.renderer.node.spec.NodeSpec
 
@@ -13,8 +12,7 @@ open class UiTreeBuilder {
     fun emit(
         type: NodeType,
         key: Any? = null,
-        props: Props = Props.Empty,
-        spec: NodeSpec? = null,
+        spec: NodeSpec,
         modifier: Modifier = Modifier,
         content: (UiTreeBuilder.() -> Unit)? = null,
     ) {
@@ -26,7 +24,6 @@ open class UiTreeBuilder {
         emitResolved(
             type = type,
             key = key,
-            props = props,
             spec = spec,
             modifier = modifier,
             children = nestedChildren,
@@ -36,15 +33,13 @@ open class UiTreeBuilder {
     internal fun emitResolved(
         type: NodeType,
         key: Any? = null,
-        props: Props = Props.Empty,
-        spec: NodeSpec? = null,
+        spec: NodeSpec,
         modifier: Modifier = Modifier,
         children: List<VNode> = emptyList(),
     ) {
         this.children += VNode(
             type = type,
             key = key,
-            props = props,
             spec = spec,
             modifier = modifier,
             children = children,

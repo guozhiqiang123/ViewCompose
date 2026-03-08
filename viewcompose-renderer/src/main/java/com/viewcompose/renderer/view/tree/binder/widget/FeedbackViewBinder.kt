@@ -5,7 +5,6 @@ import android.widget.ProgressBar
 import com.google.android.material.progressindicator.BaseProgressIndicator
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.progressindicator.LinearProgressIndicator
-import com.viewcompose.renderer.node.TypedPropKeys
 import com.viewcompose.renderer.node.VNode
 import com.viewcompose.renderer.node.spec.ProgressIndicatorNodeProps
 import kotlin.math.roundToInt
@@ -66,24 +65,21 @@ internal object FeedbackViewBinder {
     }
 
     fun readProgressSpec(node: VNode): ProgressSpec {
-        val spec = node.spec as? ProgressIndicatorNodeProps
-        if (spec != null) {
-            return ProgressSpec(
-                enabled = spec.enabled,
-                progress = spec.progress,
-                indicatorColor = spec.indicatorColor,
-                trackColor = spec.trackColor,
-                trackThickness = spec.trackThickness,
-                indicatorSize = spec.indicatorSize,
-            )
-        }
+        val spec = node.spec as? ProgressIndicatorNodeProps ?: ProgressIndicatorNodeProps(
+            enabled = true,
+            progress = null,
+            indicatorColor = 0xFF000000.toInt(),
+            trackColor = 0x33000000,
+            trackThickness = 4,
+            indicatorSize = 32,
+        )
         return ProgressSpec(
-            enabled = node.props[TypedPropKeys.Enabled] ?: true,
-            progress = node.props[TypedPropKeys.ProgressFraction],
-            indicatorColor = node.props[TypedPropKeys.ProgressIndicatorColor] ?: 0xFF000000.toInt(),
-            trackColor = node.props[TypedPropKeys.ProgressTrackColor] ?: 0x33000000,
-            trackThickness = node.props[TypedPropKeys.ProgressTrackThickness] ?: 4,
-            indicatorSize = node.props[TypedPropKeys.ProgressIndicatorSize] ?: 32,
+            enabled = spec.enabled,
+            progress = spec.progress,
+            indicatorColor = spec.indicatorColor,
+            trackColor = spec.trackColor,
+            trackThickness = spec.trackThickness,
+            indicatorSize = spec.indicatorSize,
         )
     }
 }

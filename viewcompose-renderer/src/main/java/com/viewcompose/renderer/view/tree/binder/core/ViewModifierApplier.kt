@@ -26,7 +26,6 @@ import com.viewcompose.renderer.modifier.lazyContainerFocusPolicy
 import com.viewcompose.renderer.modifier.lazyContainerReusePolicy
 import com.viewcompose.renderer.modifier.resolve
 import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.TypedPropKeys
 import com.viewcompose.renderer.node.VNode
 import com.viewcompose.renderer.node.spec.ButtonNodeProps
 import com.viewcompose.renderer.node.spec.IconButtonNodeProps
@@ -130,7 +129,7 @@ internal object ViewModifierApplier {
         val resolvedRippleColor = resolved.rippleColor?.color ?: readNodeRippleColor(node) ?: defaultRippleColor
         val textColor = readNodeTextColor(node)
         val textSizeSp = readNodeTextSize(node)
-        val anchorId = readAnchorId(node)
+        val anchorId = resolved.overlayAnchor?.anchorId
         val hasWindowInsetsPadding = resolved.systemBarsInsetsPadding != null || resolved.imeInsetsPadding != null
         val isTextFieldLayout = view is DeclarativeTextFieldLayout
         val hostPadding = if (isTextFieldLayout) null else resolvedPadding
@@ -490,7 +489,7 @@ internal object ViewModifierApplier {
         is TextNodeProps -> spec.textColor
         is TextFieldNodeProps -> spec.textColor
         is ToggleNodeProps -> spec.textColor
-        else -> node.props[TypedPropKeys.TextColor]
+        else -> null
     }
 
     private fun readNodeTextSize(node: VNode): Int? = when (val spec = node.spec) {
@@ -498,39 +497,37 @@ internal object ViewModifierApplier {
         is TextNodeProps -> spec.textSizeSp
         is TextFieldNodeProps -> spec.textSizeSp
         is ToggleNodeProps -> spec.textSizeSp
-        else -> node.props[TypedPropKeys.TextSizeSp]
+        else -> null
     }
 
-    private fun readNodeAlpha(node: VNode): Float? {
-        return node.props[TypedPropKeys.StyleAlpha]
-    }
+    private fun readNodeAlpha(node: VNode): Float? = null
 
     private fun readNodeBackgroundColor(node: VNode): Int? = when (val spec = node.spec) {
         is ButtonNodeProps -> spec.backgroundColor
         is TextFieldNodeProps -> spec.backgroundColor
         is IconButtonNodeProps -> spec.backgroundColor
-        else -> node.props[TypedPropKeys.StyleBackgroundColor]
+        else -> null
     }
 
     private fun readNodeBorderWidth(node: VNode): Int? = when (val spec = node.spec) {
         is ButtonNodeProps -> spec.borderWidth
         is TextFieldNodeProps -> spec.borderWidth
         is IconButtonNodeProps -> spec.borderWidth
-        else -> node.props[TypedPropKeys.StyleBorderWidth]
+        else -> null
     }
 
     private fun readNodeBorderColor(node: VNode): Int? = when (val spec = node.spec) {
         is ButtonNodeProps -> spec.borderColor
         is TextFieldNodeProps -> spec.borderColor
         is IconButtonNodeProps -> spec.borderColor
-        else -> node.props[TypedPropKeys.StyleBorderColor]
+        else -> null
     }
 
     private fun readNodeCornerRadius(node: VNode): Int? = when (val spec = node.spec) {
         is ButtonNodeProps -> spec.cornerRadius
         is TextFieldNodeProps -> spec.cornerRadius
         is IconButtonNodeProps -> spec.cornerRadius
-        else -> node.props[TypedPropKeys.StyleCornerRadius]
+        else -> null
     }
 
     private fun readNodeRippleColor(node: VNode): Int? = when (val spec = node.spec) {
@@ -538,7 +535,7 @@ internal object ViewModifierApplier {
         is TextFieldNodeProps -> spec.rippleColor
         is IconButtonNodeProps -> spec.rippleColor
         is ToggleNodeProps -> spec.rippleColor
-        else -> node.props[TypedPropKeys.StyleRippleColor]
+        else -> null
     }
 
     private fun readNodeClickable(node: VNode): Boolean = when (val spec = node.spec) {
@@ -550,7 +547,7 @@ internal object ViewModifierApplier {
     private fun readNodeMinHeight(node: VNode): Int? = when (val spec = node.spec) {
         is ButtonNodeProps -> spec.minHeight
         is TextFieldNodeProps -> spec.minHeight
-        else -> node.props[TypedPropKeys.StyleMinHeight]
+        else -> null
     }
 
     private fun readNodePadding(node: VNode): PaddingModifierElement? = when (val spec = node.spec) {
@@ -572,17 +569,7 @@ internal object ViewModifierApplier {
             right = spec.contentPadding,
             bottom = spec.contentPadding,
         )
-        else -> {
-            val left = node.props[TypedPropKeys.StylePaddingLeft] ?: return null
-            val top = node.props[TypedPropKeys.StylePaddingTop] ?: return null
-            val right = node.props[TypedPropKeys.StylePaddingRight] ?: return null
-            val bottom = node.props[TypedPropKeys.StylePaddingBottom] ?: return null
-            PaddingModifierElement(left = left, top = top, right = right, bottom = bottom)
-        }
-    }
-
-    private fun readAnchorId(node: VNode): String? {
-        return node.props[TypedPropKeys.AnchorId]
+        else -> null
     }
 
     private fun applyRecyclerContainerDefaults(

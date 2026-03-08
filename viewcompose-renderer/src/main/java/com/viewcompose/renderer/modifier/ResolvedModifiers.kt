@@ -7,6 +7,7 @@ internal class ResolvedModifiers(
     @JvmField var clickable: ClickableModifierElement? = null,
     @JvmField var contentDescription: ContentDescriptionModifierElement? = null,
     @JvmField var testTag: TestTagModifierElement? = null,
+    @JvmField var overlayAnchor: OverlayAnchorModifierElement? = null,
     @JvmField var border: BorderModifierElement? = null,
     @JvmField var cornerRadius: CornerRadiusModifierElement? = null,
     @JvmField var clip: ClipModifierElement? = null,
@@ -40,6 +41,7 @@ internal fun Modifier.resolve(): ResolvedModifiers {
             is ClickableModifierElement -> result.clickable = element
             is ContentDescriptionModifierElement -> result.contentDescription = element
             is TestTagModifierElement -> result.testTag = element
+            is OverlayAnchorModifierElement -> result.overlayAnchor = element
             is BorderModifierElement -> result.border = element
             is CornerRadiusModifierElement -> result.cornerRadius = element
             is ClipModifierElement -> result.clip = element

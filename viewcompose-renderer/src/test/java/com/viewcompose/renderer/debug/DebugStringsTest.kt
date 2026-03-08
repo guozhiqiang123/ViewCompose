@@ -2,8 +2,8 @@ package com.viewcompose.renderer.debug
 
 import com.viewcompose.renderer.modifier.Modifier
 import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.Props
 import com.viewcompose.renderer.node.VNode
+import com.viewcompose.renderer.node.spec.EmptyNodeSpec
 import com.viewcompose.renderer.reconcile.InsertPatch
 import com.viewcompose.renderer.reconcile.ReconcileResult
 import com.viewcompose.renderer.reconcile.RemovePatch
@@ -21,9 +21,10 @@ class DebugStringsTest {
         val tree = listOf(
             VNode(
                 type = NodeType.Column,
+                spec = EmptyNodeSpec,
                 children = listOf(
-                    VNode(type = NodeType.Text, key = "title"),
-                    VNode(type = NodeType.Button),
+                    VNode(type = NodeType.Text, key = "title", spec = EmptyNodeSpec),
+                    VNode(type = NodeType.Button, spec = EmptyNodeSpec),
                 ),
             ),
         )
@@ -108,7 +109,7 @@ class DebugStringsTest {
     private fun vnode(type: NodeType): VNode {
         return VNode(
             type = type,
-            props = Props.Empty,
+            spec = EmptyNodeSpec,
             modifier = Modifier,
         )
     }

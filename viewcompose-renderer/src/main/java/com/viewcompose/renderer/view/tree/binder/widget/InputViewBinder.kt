@@ -2,7 +2,10 @@ package com.viewcompose.renderer.view.tree
 
 import android.content.res.ColorStateList
 import android.text.Editable
+import android.text.InputFilter
+import android.text.InputType
 import android.text.TextWatcher
+import android.view.inputmethod.EditorInfo
 import android.widget.CheckBox
 import android.widget.CompoundButton
 import android.widget.EditText
@@ -12,15 +15,11 @@ import android.widget.Switch
 import com.viewcompose.renderer.R
 import com.viewcompose.renderer.node.TextFieldImeAction
 import com.viewcompose.renderer.node.TextFieldType
-import com.viewcompose.renderer.node.TypedPropKeys
 import com.viewcompose.renderer.node.VNode
 import com.viewcompose.renderer.node.spec.SliderNodeProps
 import com.viewcompose.renderer.node.spec.TextFieldNodeProps
 import com.viewcompose.renderer.node.spec.ToggleNodeProps
 import com.viewcompose.renderer.view.container.DeclarativeTextFieldLayout
-import android.text.InputFilter
-import android.text.InputType
-import android.view.inputmethod.EditorInfo
 
 internal object InputViewBinder {
     data class TextFieldSpec(
@@ -199,106 +198,103 @@ internal object InputViewBinder {
     }
 
     fun readTextFieldSpec(node: VNode): TextFieldSpec {
-        val spec = node.spec as? TextFieldNodeProps
-        if (spec != null) {
-            return TextFieldSpec(
-                value = spec.value,
-                label = spec.label,
-                labelColor = spec.labelColor,
-                labelTextSizeSp = spec.labelTextSizeSp,
-                supportingText = spec.supportingText,
-                supportingTextColor = spec.supportingTextColor,
-                supportingTextSizeSp = spec.supportingTextSizeSp,
-                placeholder = spec.placeholder,
-                enabled = spec.enabled,
-                singleLine = spec.singleLine,
-                minLines = spec.minLines,
-                maxLines = spec.maxLines,
-                inputType = resolveInputType(
-                    type = spec.keyboardType,
-                    singleLine = spec.singleLine,
-                ),
-                imeAction = spec.imeAction.toEditorAction(),
-                hintColor = spec.hintColor,
-                readOnly = spec.readOnly,
-                onValueChange = spec.onValueChange,
-                maxLength = spec.maxLength,
-                cursorColor = spec.cursorColor,
-            )
-        }
-        val hintColor = node.props[TypedPropKeys.HintTextColor] ?: 0xFF888888.toInt()
-        val singleLine = node.props[TypedPropKeys.SingleLine] ?: true
+        val spec = node.spec as? TextFieldNodeProps ?: TextFieldNodeProps(
+            value = "",
+            label = "",
+            labelColor = 0xFF888888.toInt(),
+            labelTextSizeSp = 12,
+            supportingText = "",
+            supportingTextColor = 0xFF888888.toInt(),
+            supportingTextSizeSp = 12,
+            placeholder = "",
+            enabled = true,
+            singleLine = true,
+            minLines = 1,
+            maxLines = Int.MAX_VALUE,
+            keyboardType = TextFieldType.Text,
+            imeAction = TextFieldImeAction.Default,
+            hintColor = 0xFF888888.toInt(),
+            readOnly = false,
+            onValueChange = null,
+            textColor = 0xFF000000.toInt(),
+            textSizeSp = 14,
+            backgroundColor = android.graphics.Color.TRANSPARENT,
+            borderWidth = 0,
+            borderColor = android.graphics.Color.TRANSPARENT,
+            cornerRadius = 0,
+            rippleColor = 0x22000000,
+            minHeight = 0,
+            paddingHorizontal = 0,
+            paddingVertical = 0,
+        )
         return TextFieldSpec(
-            value = node.props[TypedPropKeys.Value] ?: "",
-            label = node.props[TypedPropKeys.Label] ?: "",
-            labelColor = node.props[TypedPropKeys.LabelTextColor] ?: hintColor,
-            labelTextSizeSp = node.props[TypedPropKeys.LabelTextSizeSp] ?: 12,
-            supportingText = node.props[TypedPropKeys.SupportingText] ?: "",
-            supportingTextColor = node.props[TypedPropKeys.SupportingTextColor] ?: hintColor,
-            supportingTextSizeSp = node.props[TypedPropKeys.SupportingTextSizeSp] ?: 12,
-            placeholder = node.props[TypedPropKeys.Placeholder]
-                ?: (node.props[TypedPropKeys.Hint] ?: ""),
-            enabled = node.props[TypedPropKeys.Enabled] ?: true,
-            singleLine = singleLine,
-            minLines = node.props[TypedPropKeys.MinLines] ?: 1,
-            maxLines = node.props[TypedPropKeys.MaxLines] ?: Int.MAX_VALUE,
+            value = spec.value,
+            label = spec.label,
+            labelColor = spec.labelColor,
+            labelTextSizeSp = spec.labelTextSizeSp,
+            supportingText = spec.supportingText,
+            supportingTextColor = spec.supportingTextColor,
+            supportingTextSizeSp = spec.supportingTextSizeSp,
+            placeholder = spec.placeholder,
+            enabled = spec.enabled,
+            singleLine = spec.singleLine,
+            minLines = spec.minLines,
+            maxLines = spec.maxLines,
             inputType = resolveInputType(
-                type = node.props[TypedPropKeys.TextFieldType] ?: TextFieldType.Text,
-                singleLine = singleLine,
+                type = spec.keyboardType,
+                singleLine = spec.singleLine,
             ),
-            imeAction = (node.props[TypedPropKeys.ImeAction]
-                ?: TextFieldImeAction.Default).toEditorAction(),
-            hintColor = hintColor,
-            readOnly = node.props[TypedPropKeys.ReadOnly] ?: false,
-            onValueChange = node.props[TypedPropKeys.OnValueChange],
+            imeAction = spec.imeAction.toEditorAction(),
+            hintColor = spec.hintColor,
+            readOnly = spec.readOnly,
+            onValueChange = spec.onValueChange,
+            maxLength = spec.maxLength,
+            cursorColor = spec.cursorColor,
         )
     }
 
     fun readToggleSpec(node: VNode): ToggleSpec {
-        val spec = node.spec as? ToggleNodeProps
-        if (spec != null) {
-            return ToggleSpec(
-                text = spec.text,
-                enabled = spec.enabled,
-                checked = spec.checked,
-                controlColor = spec.controlColor,
-                thumbColor = spec.thumbColor,
-                trackColor = spec.trackColor,
-                checkedColor = spec.checkedColor,
-                uncheckedColor = spec.uncheckedColor,
-                onCheckedChange = spec.onCheckedChange,
-            )
-        }
+        val spec = node.spec as? ToggleNodeProps ?: ToggleNodeProps(
+            text = null,
+            enabled = true,
+            checked = false,
+            controlColor = 0xFF000000.toInt(),
+            onCheckedChange = null,
+            textColor = 0xFF000000.toInt(),
+            textSizeSp = 14,
+            rippleColor = 0x22000000,
+        )
         return ToggleSpec(
-            text = node.props[TypedPropKeys.Text],
-            enabled = node.props[TypedPropKeys.Enabled] ?: true,
-            checked = node.props[TypedPropKeys.Checked] ?: false,
-            controlColor = node.props[TypedPropKeys.ControlColor] ?: 0xFF000000.toInt(),
-            onCheckedChange = node.props[TypedPropKeys.OnCheckedChange],
+            text = spec.text,
+            enabled = spec.enabled,
+            checked = spec.checked,
+            controlColor = spec.controlColor,
+            thumbColor = spec.thumbColor,
+            trackColor = spec.trackColor,
+            checkedColor = spec.checkedColor,
+            uncheckedColor = spec.uncheckedColor,
+            onCheckedChange = spec.onCheckedChange,
         )
     }
 
     fun readSliderSpec(node: VNode): SliderSpec {
-        val spec = node.spec as? SliderNodeProps
-        if (spec != null) {
-            return SliderSpec(
-                min = spec.min,
-                max = spec.max,
-                value = spec.value,
-                enabled = spec.enabled,
-                thumbColor = spec.thumbColor,
-                trackColor = spec.trackColor,
-                onValueChange = spec.onValueChange,
-            )
-        }
+        val spec = node.spec as? SliderNodeProps ?: SliderNodeProps(
+            min = 0,
+            max = 100,
+            value = 0,
+            enabled = true,
+            thumbColor = 0xFF000000.toInt(),
+            trackColor = 0xFF000000.toInt(),
+            onValueChange = null,
+        )
         return SliderSpec(
-            min = node.props[TypedPropKeys.MinValue] ?: 0,
-            max = node.props[TypedPropKeys.MaxValue] ?: 100,
-            value = node.props[TypedPropKeys.SliderValue] ?: 0,
-            enabled = node.props[TypedPropKeys.Enabled] ?: true,
-            thumbColor = node.props[TypedPropKeys.ControlColor] ?: 0xFF000000.toInt(),
-            trackColor = node.props[TypedPropKeys.ControlColor] ?: 0xFF000000.toInt(),
-            onValueChange = node.props[TypedPropKeys.OnSliderValueChange],
+            min = spec.min,
+            max = spec.max,
+            value = spec.value,
+            enabled = spec.enabled,
+            thumbColor = spec.thumbColor,
+            trackColor = spec.trackColor,
+            onValueChange = spec.onValueChange,
         )
     }
 

@@ -3,8 +3,8 @@ package com.viewcompose.renderer.view.tree
 import android.view.View
 import com.viewcompose.renderer.modifier.Modifier
 import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.Props
 import com.viewcompose.renderer.node.VNode
+import com.viewcompose.renderer.node.spec.EmptyNodeSpec
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -14,25 +14,25 @@ class RenderStructureStatsTest {
         val vnodeTree = listOf(
             VNode(
                 type = NodeType.Column,
+                spec = EmptyNodeSpec,
                 modifier = Modifier,
-                props = Props.Empty,
                 children = listOf(
                     VNode(
                         type = NodeType.Row,
+                        spec = EmptyNodeSpec,
                         modifier = Modifier,
-                        props = Props.Empty,
                         children = listOf(
                             VNode(
                                 type = NodeType.Text,
+                                spec = EmptyNodeSpec,
                                 modifier = Modifier,
-                                props = Props.Empty,
                             ),
                         ),
                     ),
                     VNode(
                         type = NodeType.Button,
+                        spec = EmptyNodeSpec,
                         modifier = Modifier,
-                        props = Props.Empty,
                     ),
                 ),
             ),

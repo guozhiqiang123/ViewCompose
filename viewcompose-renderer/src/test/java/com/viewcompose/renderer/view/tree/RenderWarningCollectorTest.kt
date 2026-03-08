@@ -2,8 +2,8 @@ package com.viewcompose.renderer.view.tree
 
 import com.viewcompose.renderer.modifier.Modifier
 import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.Props
 import com.viewcompose.renderer.node.VNode
+import com.viewcompose.renderer.node.spec.EmptyNodeSpec
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -80,7 +80,7 @@ class RenderWarningCollectorTest {
         return VNode(
             type = type,
             key = key,
-            props = Props.Empty,
+            spec = EmptyNodeSpec,
             modifier = Modifier,
             children = children,
         )

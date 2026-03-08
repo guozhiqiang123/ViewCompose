@@ -5,13 +5,17 @@ import com.viewcompose.renderer.layout.HorizontalAlignment
 import com.viewcompose.renderer.layout.MainAxisArrangement
 import com.viewcompose.renderer.layout.VerticalAlignment
 import com.viewcompose.renderer.modifier.Modifier
+import com.viewcompose.renderer.modifier.alpha
+import com.viewcompose.renderer.modifier.backgroundColor
 import com.viewcompose.renderer.modifier.clickable
+import com.viewcompose.renderer.modifier.cornerRadius
+import com.viewcompose.renderer.modifier.overlayAnchor
+import com.viewcompose.renderer.modifier.rippleColor
 import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.TypedPropKeys
-import com.viewcompose.renderer.node.props
 import com.viewcompose.renderer.node.spec.BoxNodeProps
 import com.viewcompose.renderer.node.spec.ColumnNodeProps
 import com.viewcompose.renderer.node.spec.DividerNodeProps
+import com.viewcompose.renderer.node.spec.EmptyNodeSpec
 import com.viewcompose.renderer.node.spec.FlowColumnNodeProps
 import com.viewcompose.renderer.node.spec.FlowRowNodeProps
 import com.viewcompose.renderer.node.spec.PullToRefreshNodeProps
@@ -46,13 +50,10 @@ fun UiTreeBuilder.AnchorTarget(
     emitResolved(
         type = NodeType.Box,
         key = key,
-        props = props {
-            set(TypedPropKeys.AnchorId, anchorId)
-        },
         spec = BoxNodeProps(
             contentAlignment = contentAlignment,
         ),
-        modifier = modifier,
+        modifier = modifier.then(Modifier.overlayAnchor(anchorId)),
         children = BoxScope().apply(content).build(),
     )
 }
@@ -68,6 +69,16 @@ fun UiTreeBuilder.Surface(
     content: BoxScope.() -> Unit,
 ) {
     val semanticModifier = Modifier
+        .backgroundColor(SurfaceDefaults.backgroundColor(variant))
+        .cornerRadius(SurfaceDefaults.cardCornerRadius())
+        .rippleColor(SurfaceDefaults.pressedColor())
+        .then(
+            if (!enabled) {
+                Modifier.alpha(SurfaceDefaults.disabledAlpha())
+            } else {
+                Modifier
+            },
+        )
         .then(
             if (enabled && onClick != null) {
                 Modifier.clickable(onClick)
@@ -80,15 +91,6 @@ fun UiTreeBuilder.Surface(
         emitResolved(
             type = NodeType.Surface,
             key = key,
-            props = props {
-                set(TypedPropKeys.BoxAlignment, contentAlignment)
-                set(TypedPropKeys.StyleBackgroundColor, SurfaceDefaults.backgroundColor(variant))
-                set(TypedPropKeys.StyleCornerRadius, SurfaceDefaults.cardCornerRadius())
-                set(TypedPropKeys.StyleRippleColor, SurfaceDefaults.pressedColor())
-                if (!enabled) {
-                    set(TypedPropKeys.StyleAlpha, SurfaceDefaults.disabledAlpha())
-                }
-            },
             spec = BoxNodeProps(
                 contentAlignment = contentAlignment,
             ),
@@ -105,6 +107,7 @@ fun UiTreeBuilder.Spacer(
     emit(
         type = NodeType.Spacer,
         key = key,
+        spec = EmptyNodeSpec,
         modifier = modifier,
     )
 }

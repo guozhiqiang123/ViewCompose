@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import com.viewcompose.renderer.modifier.ResolvedModifiers
 import com.viewcompose.renderer.modifier.layoutModifiersChanged
 import com.viewcompose.renderer.modifier.resolve
-import com.viewcompose.renderer.node.TypedPropKeys
 import com.viewcompose.renderer.node.VNode
 import com.viewcompose.renderer.reconcile.InsertPatch
 import com.viewcompose.renderer.reconcile.ReconcileResult
@@ -284,7 +283,6 @@ internal object ViewTreePatchPipeline {
 
     private fun readViewFactory(node: VNode): ((Context) -> View)? {
         return (node.spec as? com.viewcompose.renderer.node.spec.AndroidViewNodeProps)?.factory
-            ?: node.props[TypedPropKeys.ViewFactory]
     }
 
     private fun resolveChildHost(container: ViewGroup): ViewGroup {

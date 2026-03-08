@@ -68,40 +68,29 @@ internal object NodeBindingDiffer {
             return NodeBindingPlan.Rebind
         }
         val modifierChanged = previous.modifier != next.modifier
-        if (previous.spec != null || next.spec != null) {
-            if (previous.spec == next.spec) {
-                return if (modifierChanged) {
-                    NodeBindingPlan.Rebind
-                } else if (previous.props != next.props) {
-                    NodeBindingPlan.Rebind
+        if (previous.spec == next.spec) {
+            return if (modifierChanged) {
+                NodeBindingPlan.Rebind
+            } else {
+                if (previous.children == next.children) {
+                    NodeBindingPlan.SkipSubtree
                 } else {
-                    if (previous.children == next.children) {
-                        NodeBindingPlan.SkipSubtree
-                    } else {
-                        NodeBindingPlan.SkipSelfOnly
-                    }
+                    NodeBindingPlan.SkipSelfOnly
                 }
             }
-            val prevSpec = previous.spec
-            val nextSpec = next.spec
-            if (prevSpec != null && nextSpec != null) {
-                val factory = patchFactories[prevSpec::class]
-                if (factory != null) {
-                    return NodeBindingPlan.Patch(
-                        patch = factory(prevSpec, nextSpec),
-                        modifierChanged = modifierChanged,
-                    )
-                }
-            }
+        }
+        val prevSpec = previous.spec
+        val nextSpec = next.spec
+        if (prevSpec::class != nextSpec::class) {
             return NodeBindingPlan.Rebind
         }
-        if (previous.props != next.props || modifierChanged) {
-            return NodeBindingPlan.Rebind
+        val factory = patchFactories[prevSpec::class]
+        if (factory != null) {
+            return NodeBindingPlan.Patch(
+                patch = factory(prevSpec, nextSpec),
+                modifierChanged = modifierChanged,
+            )
         }
-        return if (previous.children == next.children) {
-            NodeBindingPlan.SkipSubtree
-        } else {
-            NodeBindingPlan.SkipSelfOnly
-        }
+        return NodeBindingPlan.Rebind
     }
 }

@@ -121,8 +121,6 @@ object ViewTreeRenderer {
         return warnings
     }
 
-    private fun readViewFactory(node: VNode): ((Context) -> android.view.View)? {
-        return (node.spec as? com.viewcompose.renderer.node.spec.AndroidViewNodeProps)?.factory
-            ?: node.props[com.viewcompose.renderer.node.TypedPropKeys.ViewFactory]
-    }
+    private fun readViewFactory(node: VNode): ((Context) -> android.view.View)? =
+        (node.spec as? com.viewcompose.renderer.node.spec.AndroidViewNodeProps)?.factory
 }

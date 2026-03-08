@@ -12,8 +12,6 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.widget.TextViewCompat
 import com.viewcompose.renderer.node.ImageSource
-import com.viewcompose.renderer.node.PropKeys
-import com.viewcompose.renderer.node.TypedPropKeys
 import com.viewcompose.renderer.node.TextDecoration
 import com.viewcompose.renderer.node.TextOverflow
 import com.viewcompose.renderer.node.VNode
@@ -110,53 +108,58 @@ internal object ContentViewBinder {
     }
 
     fun readTextSpec(node: VNode): TextSpec {
-        val spec = node.spec as? TextNodeProps
-        if (spec != null) {
-            return TextSpec(
-                text = spec.text,
-                maxLines = spec.maxLines,
-                overflow = spec.overflow,
-                gravity = spec.textAlign.toTextGravity(),
-                fontWeight = spec.fontWeight,
-                fontFamily = spec.fontFamily,
-                letterSpacingEm = spec.letterSpacingEm,
-                lineHeightSp = spec.lineHeightSp,
-                includeFontPadding = spec.includeFontPadding,
-                textDecoration = spec.textDecoration,
-            )
-        }
+        val spec = node.spec as? TextNodeProps ?: TextNodeProps(
+            text = null,
+            maxLines = Int.MAX_VALUE,
+            overflow = TextOverflow.Clip,
+            textAlign = com.viewcompose.renderer.node.TextAlign.Start,
+            textColor = 0xFF000000.toInt(),
+            textSizeSp = 14,
+        )
         return TextSpec(
-            text = node.props[TypedPropKeys.Text],
-            maxLines = node.props[TypedPropKeys.TextMaxLines] ?: Int.MAX_VALUE,
-            overflow = node.props[TypedPropKeys.TextOverflow] ?: TextOverflow.Clip,
-            gravity = (node.props[TypedPropKeys.TextAlign]
-                ?: com.viewcompose.renderer.node.TextAlign.Start).toTextGravity(),
+            text = spec.text,
+            maxLines = spec.maxLines,
+            overflow = spec.overflow,
+            gravity = spec.textAlign.toTextGravity(),
+            fontWeight = spec.fontWeight,
+            fontFamily = spec.fontFamily,
+            letterSpacingEm = spec.letterSpacingEm,
+            lineHeightSp = spec.lineHeightSp,
+            includeFontPadding = spec.includeFontPadding,
+            textDecoration = spec.textDecoration,
         )
     }
 
-    fun readButtonSpec(node: VNode, contentColor: Int): ButtonSpec {
-        val spec = node.spec as? ButtonNodeProps
-        if (spec != null) {
-            return ButtonSpec(
-                text = spec.text,
-                enabled = spec.enabled,
-                iconSpacing = spec.iconSpacing,
-                leadingIcon = spec.leadingIcon,
-                trailingIcon = spec.trailingIcon,
-                iconTint = spec.iconTint,
-                iconSize = spec.iconSize,
-                onClick = spec.onClick,
-            )
-        }
+    fun readButtonSpec(node: VNode): ButtonSpec {
+        val spec = node.spec as? ButtonNodeProps ?: ButtonNodeProps(
+            text = "",
+            enabled = true,
+            onClick = null,
+            textColor = 0xFF000000.toInt(),
+            textSizeSp = 14,
+            backgroundColor = android.graphics.Color.TRANSPARENT,
+            borderWidth = 0,
+            borderColor = android.graphics.Color.TRANSPARENT,
+            cornerRadius = 0,
+            rippleColor = 0x22000000,
+            minHeight = 0,
+            paddingHorizontal = 0,
+            paddingVertical = 0,
+            leadingIcon = null,
+            trailingIcon = null,
+            iconTint = 0xFF000000.toInt(),
+            iconSize = 18,
+            iconSpacing = 8,
+        )
         return ButtonSpec(
-            text = node.props[TypedPropKeys.Text],
-            enabled = node.props[TypedPropKeys.Enabled] ?: true,
-            iconSpacing = node.props[TypedPropKeys.ButtonIconSpacing] ?: 8,
-            leadingIcon = node.props[TypedPropKeys.ButtonLeadingIcon],
-            trailingIcon = node.props[TypedPropKeys.ButtonTrailingIcon],
-            iconTint = contentColor,
-            iconSize = node.props[TypedPropKeys.ButtonIconSize] ?: 18,
-            onClick = node.props[TypedPropKeys.OnClick],
+            text = spec.text,
+            enabled = spec.enabled,
+            iconSpacing = spec.iconSpacing,
+            leadingIcon = spec.leadingIcon,
+            trailingIcon = spec.trailingIcon,
+            iconTint = spec.iconTint,
+            iconSize = spec.iconSize,
+            onClick = spec.onClick,
         )
     }
 

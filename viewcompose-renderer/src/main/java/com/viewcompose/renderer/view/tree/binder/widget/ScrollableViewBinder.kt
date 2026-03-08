@@ -1,6 +1,5 @@
 package com.viewcompose.renderer.view.tree
 
-import com.viewcompose.renderer.node.TypedPropKeys
 import com.viewcompose.renderer.node.VNode
 import com.viewcompose.renderer.node.spec.ScrollableColumnNodeProps
 import com.viewcompose.renderer.node.spec.ScrollableRowNodeProps
@@ -44,37 +43,29 @@ internal object ScrollableViewBinder {
 
     fun readScrollableColumnSpec(node: VNode): ContainerViewBinder.LinearSpec {
         val spec = node.spec as? ScrollableColumnNodeProps
-        if (spec != null) {
-            return ContainerViewBinder.LinearSpec(
-                spacing = spec.spacing,
-                arrangement = spec.arrangement,
-                gravity = with(ContainerViewSpecReader) { spec.horizontalAlignment.toGravity() },
+            ?: ScrollableColumnNodeProps(
+                spacing = 0,
+                arrangement = MainAxisArrangement.Start,
+                horizontalAlignment = HorizontalAlignment.Start,
             )
-        }
         return ContainerViewBinder.LinearSpec(
-            spacing = node.props[TypedPropKeys.LinearSpacing] ?: 0,
-            arrangement = node.props[TypedPropKeys.ColumnMainAxisArrangement] ?: MainAxisArrangement.Start,
-            gravity = with(ContainerViewSpecReader) {
-                (node.props[TypedPropKeys.ColumnHorizontalAlignment] ?: HorizontalAlignment.Start).toGravity()
-            },
+            spacing = spec.spacing,
+            arrangement = spec.arrangement,
+            gravity = with(ContainerViewSpecReader) { spec.horizontalAlignment.toGravity() },
         )
     }
 
     fun readScrollableRowSpec(node: VNode): ContainerViewBinder.LinearSpec {
         val spec = node.spec as? ScrollableRowNodeProps
-        if (spec != null) {
-            return ContainerViewBinder.LinearSpec(
-                spacing = spec.spacing,
-                arrangement = spec.arrangement,
-                gravity = with(ContainerViewSpecReader) { spec.verticalAlignment.toGravity() },
+            ?: ScrollableRowNodeProps(
+                spacing = 0,
+                arrangement = MainAxisArrangement.Start,
+                verticalAlignment = VerticalAlignment.Top,
             )
-        }
         return ContainerViewBinder.LinearSpec(
-            spacing = node.props[TypedPropKeys.LinearSpacing] ?: 0,
-            arrangement = node.props[TypedPropKeys.RowMainAxisArrangement] ?: MainAxisArrangement.Start,
-            gravity = with(ContainerViewSpecReader) {
-                (node.props[TypedPropKeys.RowVerticalAlignment] ?: VerticalAlignment.Top).toGravity()
-            },
+            spacing = spec.spacing,
+            arrangement = spec.arrangement,
+            gravity = with(ContainerViewSpecReader) { spec.verticalAlignment.toGravity() },
         )
     }
 

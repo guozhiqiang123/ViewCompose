@@ -2,8 +2,8 @@ package com.viewcompose.renderer.reconcile
 
 import com.viewcompose.renderer.modifier.Modifier
 import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.Props
 import com.viewcompose.renderer.node.VNode
+import com.viewcompose.renderer.node.spec.EmptyNodeSpec
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -62,7 +62,7 @@ class ChildReconcilerTest {
         return VNode(
             type = NodeType.Text,
             key = key,
-            props = Props.Empty,
+            spec = EmptyNodeSpec,
             modifier = Modifier,
         )
     }

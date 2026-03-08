@@ -7,6 +7,7 @@ import com.viewcompose.renderer.modifier.VerticalAlignModifierElement
 import com.viewcompose.renderer.modifier.WeightModifierElement
 import com.viewcompose.renderer.node.NodeType
 import com.viewcompose.renderer.node.VNode
+import com.viewcompose.renderer.node.spec.EmptyNodeSpec
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -18,6 +19,7 @@ class ModifierParentDataValidatorTest {
             parent = ParentDataHost.Row,
             node = VNode(
                 type = NodeType.Text,
+                spec = EmptyNodeSpec,
                 modifier = Modifier.then(WeightModifierElement(1f)),
             ),
         )
@@ -31,6 +33,7 @@ class ModifierParentDataValidatorTest {
             parent = ParentDataHost.Box,
             node = VNode(
                 type = NodeType.Text,
+                spec = EmptyNodeSpec,
                 modifier = Modifier.then(WeightModifierElement(1f)),
             ),
         )
@@ -44,6 +47,7 @@ class ModifierParentDataValidatorTest {
             parent = ParentDataHost.Row,
             node = VNode(
                 type = NodeType.Text,
+                spec = EmptyNodeSpec,
                 modifier = Modifier.then(BoxAlignModifierElement(BoxAlignment.Center)),
             ),
         )
@@ -57,6 +61,7 @@ class ModifierParentDataValidatorTest {
             parent = ParentDataHost.Row,
             node = VNode(
                 type = NodeType.Text,
+                spec = EmptyNodeSpec,
                 modifier = Modifier.then(VerticalAlignModifierElement(VerticalAlignment.Center)),
             ),
         )
@@ -64,6 +69,7 @@ class ModifierParentDataValidatorTest {
             parent = ParentDataHost.Column,
             node = VNode(
                 type = NodeType.Text,
+                spec = EmptyNodeSpec,
                 modifier = Modifier.then(HorizontalAlignModifierElement(HorizontalAlignment.Center)),
             ),
         )
@@ -71,6 +77,7 @@ class ModifierParentDataValidatorTest {
             parent = ParentDataHost.Column,
             node = VNode(
                 type = NodeType.Text,
+                spec = EmptyNodeSpec,
                 modifier = Modifier.then(VerticalAlignModifierElement(VerticalAlignment.Center)),
             ),
         )

@@ -5,7 +5,6 @@ import com.viewcompose.renderer.layout.BoxAlignment
 import com.viewcompose.renderer.layout.HorizontalAlignment
 import com.viewcompose.renderer.layout.MainAxisArrangement
 import com.viewcompose.renderer.layout.VerticalAlignment
-import com.viewcompose.renderer.node.TypedPropKeys
 import com.viewcompose.renderer.node.VNode
 import com.viewcompose.renderer.node.spec.AndroidViewNodeProps
 import com.viewcompose.renderer.node.spec.BoxNodeProps
@@ -18,33 +17,29 @@ import com.viewcompose.renderer.node.spec.RowNodeProps
 internal object ContainerViewSpecReader {
     fun readRowSpec(node: VNode): ContainerViewBinder.LinearSpec {
         val spec = node.spec as? RowNodeProps
-        if (spec != null) {
-            return ContainerViewBinder.LinearSpec(
-                spacing = spec.spacing,
-                arrangement = spec.arrangement,
-                gravity = spec.verticalAlignment.toGravity(),
+            ?: RowNodeProps(
+                spacing = 0,
+                arrangement = MainAxisArrangement.Start,
+                verticalAlignment = VerticalAlignment.Top,
             )
-        }
         return ContainerViewBinder.LinearSpec(
-            spacing = node.props[TypedPropKeys.LinearSpacing] ?: 0,
-            arrangement = node.props[TypedPropKeys.RowMainAxisArrangement] ?: MainAxisArrangement.Start,
-            gravity = (node.props[TypedPropKeys.RowVerticalAlignment] ?: VerticalAlignment.Top).toGravity(),
+            spacing = spec.spacing,
+            arrangement = spec.arrangement,
+            gravity = spec.verticalAlignment.toGravity(),
         )
     }
 
     fun readColumnSpec(node: VNode): ContainerViewBinder.LinearSpec {
         val spec = node.spec as? ColumnNodeProps
-        if (spec != null) {
-            return ContainerViewBinder.LinearSpec(
-                spacing = spec.spacing,
-                arrangement = spec.arrangement,
-                gravity = spec.horizontalAlignment.toGravity(),
+            ?: ColumnNodeProps(
+                spacing = 0,
+                arrangement = MainAxisArrangement.Start,
+                horizontalAlignment = HorizontalAlignment.Start,
             )
-        }
         return ContainerViewBinder.LinearSpec(
-            spacing = node.props[TypedPropKeys.LinearSpacing] ?: 0,
-            arrangement = node.props[TypedPropKeys.ColumnMainAxisArrangement] ?: MainAxisArrangement.Start,
-            gravity = (node.props[TypedPropKeys.ColumnHorizontalAlignment] ?: HorizontalAlignment.Start).toGravity(),
+            spacing = spec.spacing,
+            arrangement = spec.arrangement,
+            gravity = spec.horizontalAlignment.toGravity(),
         )
     }
 
@@ -78,37 +73,28 @@ internal object ContainerViewSpecReader {
 
     fun readBoxSpec(node: VNode): ContainerViewBinder.BoxSpec {
         val spec = node.spec as? BoxNodeProps
-        if (spec != null) {
-            return ContainerViewBinder.BoxSpec(
-                gravity = spec.contentAlignment.toGravity(),
-            )
-        }
+            ?: BoxNodeProps(contentAlignment = BoxAlignment.TopStart)
         return ContainerViewBinder.BoxSpec(
-            gravity = (node.props[TypedPropKeys.BoxAlignment] ?: BoxAlignment.TopStart).toGravity(),
+            gravity = spec.contentAlignment.toGravity(),
         )
     }
 
     fun readDividerSpec(node: VNode): ContainerViewBinder.DividerSpec {
         val spec = node.spec as? DividerNodeProps
-        if (spec != null) {
-            return ContainerViewBinder.DividerSpec(
-                color = spec.color,
-                thickness = spec.thickness,
+            ?: DividerNodeProps(
+                color = android.graphics.Color.BLACK,
+                thickness = 1,
             )
-        }
         return ContainerViewBinder.DividerSpec(
-            color = node.props[TypedPropKeys.DividerColor] ?: android.graphics.Color.BLACK,
-            thickness = node.props[TypedPropKeys.DividerThickness] ?: 1,
+            color = spec.color,
+            thickness = spec.thickness,
         )
     }
 
     fun readAndroidViewSpec(node: VNode): ContainerViewBinder.AndroidViewSpec {
         val spec = node.spec as? AndroidViewNodeProps
-        if (spec != null) {
-            return ContainerViewBinder.AndroidViewSpec(update = spec.update)
-        }
         return ContainerViewBinder.AndroidViewSpec(
-            update = node.props[TypedPropKeys.ViewUpdate],
+            update = spec?.update,
         )
     }
 

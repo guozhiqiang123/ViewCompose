@@ -4,7 +4,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.viewcompose.renderer.node.LazyListItem
 import com.viewcompose.renderer.node.NavigationBarItem
-import com.viewcompose.renderer.node.TypedPropKeys
 import com.viewcompose.renderer.node.VNode
 import com.viewcompose.renderer.node.spec.LazyColumnNodeProps
 import com.viewcompose.renderer.node.spec.LazyRowNodeProps
@@ -113,36 +112,32 @@ internal object CollectionViewBinder {
     }
 
     fun readLazyColumnSpec(node: VNode): LazyColumnSpec {
-        val spec = node.spec as? LazyColumnNodeProps
-        if (spec != null) {
-            return LazyColumnSpec(
-                contentPadding = spec.contentPadding,
-                spacing = spec.spacing,
-                items = spec.items,
-                state = spec.state,
-            )
-        }
+        val spec = node.spec as? LazyColumnNodeProps ?: LazyColumnNodeProps(
+            contentPadding = 0,
+            spacing = 0,
+            items = emptyList(),
+            state = null,
+        )
         return LazyColumnSpec(
-            contentPadding = node.props[TypedPropKeys.LazyContentPadding] ?: 0,
-            spacing = node.props[TypedPropKeys.LazySpacing] ?: 0,
-            items = node.props[TypedPropKeys.LazyItems] ?: emptyList(),
+            contentPadding = spec.contentPadding,
+            spacing = spec.spacing,
+            items = spec.items,
+            state = spec.state,
         )
     }
 
     fun readLazyRowSpec(node: VNode): LazyColumnSpec {
-        val spec = node.spec as? LazyRowNodeProps
-        if (spec != null) {
-            return LazyColumnSpec(
-                contentPadding = spec.contentPadding,
-                spacing = spec.spacing,
-                items = spec.items,
-                state = spec.state,
-            )
-        }
+        val spec = node.spec as? LazyRowNodeProps ?: LazyRowNodeProps(
+            contentPadding = 0,
+            spacing = 0,
+            items = emptyList(),
+            state = null,
+        )
         return LazyColumnSpec(
-            contentPadding = node.props[TypedPropKeys.LazyContentPadding] ?: 0,
-            spacing = node.props[TypedPropKeys.LazySpacing] ?: 0,
-            items = node.props[TypedPropKeys.LazyItems] ?: emptyList(),
+            contentPadding = spec.contentPadding,
+            spacing = spec.spacing,
+            items = spec.items,
+            state = spec.state,
         )
     }
 
