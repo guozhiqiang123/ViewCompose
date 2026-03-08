@@ -44,7 +44,7 @@
 - [x] Step 4 同步迁移相关测试并清理错误归属测试
 - [x] Step 5 增加 `verifyModulePackageRoots` 守卫并接入 `qaQuick`
 - [x] Step 6 增加 namespace 一致性守卫
-- [ ] Step 7 文档收口与归档
+- [x] Step 7 文档收口与归档
 
 ## 6. 提交记录
 
@@ -55,7 +55,9 @@
 - `DONE` test: add strict module package-root guard and wire into qaQuick
 - `DONE` build: add namespace-to-package-root consistency guard
 - `DONE` docs: codify strict single-package-root conventions
+- `DONE` docs: close and archive strict package-root migration plan
 
 ## 7. 阻塞记录
 
 - 2026-03-08: Step 3 尝试执行 `qaFull`，`connectedDebugAndroidTest` 因设备离线失败（No online devices found）。
+- 2026-03-08: 最终收口再次执行 `qaFull`，`connectedDebugAndroidTest` 仍因设备离线失败（No online devices found）。
