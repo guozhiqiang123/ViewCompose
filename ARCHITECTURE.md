@@ -40,7 +40,7 @@
 1. 主树更新模型：根级 render + keyed 复用
 2. 列表/分页等复用容器：独立 session 刷新路径
 3. overlay：声明契约与平台实现已分层
-4. typed props：第一方高频节点已收敛到 `NodeSpec`
+4. 节点语义已完成 `NodeSpec-only` 收口（无 `Props` 双轨）
 
 ### 2.3 `app` 目录落位基线
 
@@ -96,11 +96,12 @@ flowchart TD
 2. `viewcompose-widget-core` 只保留平台无关声明契约与 runtime 组合能力。
 3. demo 专用逻辑不回流到框架模块。
 
-### 4.2 `Modifier / Props / Theme` 边界
+### 4.2 `Modifier / NodeSpec / Theme` 边界
 
 1. `Modifier`：通用修饰与 scoped parent-data。
 2. 组件语义参数：走组件 DSL 参数 + `NodeSpec`。
 3. 主题默认值：走 `Theme -> Defaults`，不把主题直接做成通用 modifier。
+4. 禁止新增 `Props/TypedPropKeys/PropKeys/node.props` 动态语义路径。
 
 对应规范：
 
@@ -141,7 +142,7 @@ flowchart TD
 
 1. 业务侧自定义 token 必须通过统一 Local API：`uiLocalOf`、`UiLocals.current`、`ProvideLocal`、`ProvideLocals`。
 2. `viewcompose-widget-core` 内置 Local 也统一走上述 API，不再新增专用 `ProvideXxx` 调用范式。
-3. `viewcompose-renderer` 不新增 Local 语义入口；只消费 reconcile 后的 `NodeSpec/Props`。
+3. `viewcompose-renderer` 不新增 Local 语义入口；只消费 reconcile 后的 `NodeSpec`。
 4. Local 的 snapshot/restore 必须与延迟容器、overlay 场景一致传播，不允许能力回退。
 
 ## 5. 当前热点与风险

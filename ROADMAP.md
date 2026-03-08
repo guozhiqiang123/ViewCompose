@@ -21,7 +21,7 @@
 
 ### 2.1 框架层
 
-1. `NodeSpec` 已覆盖第一方高频控件（`Spacer` 仍属于轻量例外）
+1. 节点语义已完成 `NodeSpec-only` 收口（`VNode.spec` 非空必填，无 `Props` 双轨）
 2. `Modifier` 边界已收口到“通用修饰 + scoped parent-data”
 3. `Overlay` 已分层为：
    - session-bound surface：`Dialog`、`Popup`、`ModalBottomSheet`

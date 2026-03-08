@@ -143,6 +143,16 @@
 3. 变更 Local 机制时，必须同步补齐 snapshot/lazy/overlay 传播回归测试。
 4. 发现旧实现仍使用专用包装时，优先在同一轮改造中收口到统一 API，并同步更新文档。
 
+## 5.5 NodeSpec-Only 语义边界
+
+节点语义扩展必须遵守单轨模型：
+
+1. 新增语义字段只允许进入 `NodeSpec` 或 `Modifier`，禁止引入动态 `Props`。
+2. 禁止新增或回引 `Props/TypedPropKeys/PropKeys/node.props`。
+3. renderer binder 读取节点语义时，必须使用显式 spec 读取（不可静默 fallback 到默认 spec）。
+4. 若确需新增元数据（如锚点），必须通过 modifier 元素或明确的 spec 字段传递，不得用隐式 map 透传。
+5. 相关变更必须同步更新 [NODE_PROPS.md](/Users/gzq/AndroidStudioProjects/UIFramework/NODE_PROPS.md) 与对应守卫测试。
+
 ## 6. 线程中断恢复原则
 
 如果聊天线程丢失、附件损坏或上下文中断，恢复顺序固定为：

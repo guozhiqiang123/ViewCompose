@@ -54,7 +54,7 @@ All of the following must be true:
 | 4 | `93b4788` | `refactor: make renderer spec-only and remove props fallback paths` | binder + pipeline cleanup |
 | 5 | `17755e0` | `refactor: move overlay anchor metadata from props to modifier` | presenter path unchanged |
 | 6a | `41d53ef` | `test: migrate unit tests to spec-only vnode model` | direct test migrations |
-| 6b | pending | `test: add guardrails to prevent props regression` | static guard |
+| 6b | `c0f577b` | `test: add guardrails to prevent props regression` | static guard |
 | 7a | TBD | `docs: codify node-spec-only architecture boundary` | docs update |
 | 7b | TBD | `docs: close and archive node-spec-only migration plan` | archive + index |
 
