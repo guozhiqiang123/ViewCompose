@@ -28,6 +28,7 @@
    - host-driven feedback：`Snackbar`、`Toast`
 4. `Activity` 宿主接入已经提供 `setUiContent(...)`，并内部管理 `RenderSession` 生命周期
 5. `system bars insets` 已转为组件侧 `Modifier.systemBarsInsetsPadding(...)`
+6. 生命周期与 ViewModel 协作 API 已拆分为 `:viewcompose-lifecycle` 与 `:viewcompose-viewmodel`，并统一到新包 `com.viewcompose.lifecycle` / `com.viewcompose.viewmodel`
 
 ### 2.2 Demo 与验证层
 
@@ -36,7 +37,7 @@
 3. instrumentation 已覆盖关键 smoke 回归路径，延迟 session 容器专项已覆盖 `LazyVerticalGrid`、`HorizontalPager`、`VerticalPager` 与 `ModalBottomSheet`
 4. 基线更新（2026-03-07）：已完成 tag-first UI 测试迁移并补关键组件族 smoke，`:app:connectedDebugAndroidTest` 21/21 全绿，`qaQuick` 与 `qaFull` 均可通过。
 
-## 2.3 里程碑进度快照（2026-03-07）
+## 2.3 里程碑进度快照（2026-03-08）
 
 | Milestone | 状态 | 完成态字段（C/U/D/UI） | 说明 |
 | --- | --- | --- | --- |
@@ -57,6 +58,7 @@
 | 方向 | 当前状态 | 下一阶段重点 |
 | --- | --- | --- |
 | Foundations / Input / Layout / State | 已形成 v1 主能力 | 聚焦边界态、表单/焦点态与复杂组合场景 |
+| Lifecycle / ViewModel Integration | 模块拆分与 API 硬切已完成（`viewcompose-lifecycle` / `viewcompose-viewmodel`） | 继续补强生命周期边界态与 SavedState 复杂场景回归 |
 | Collections | `LazyColumn/LazyRow/LazyVerticalGrid` + 基础分页容器可用 | sticky headers、list state 抽象 |
 | Overlay | Dialog/Popup/ModalBottomSheet/Snackbar/Toast 主链路已打通 | Popup 锚点定位增强、反馈队列策略收口 |
 | Theming | 已完成 token 收口升级（语义色、tier typography、interactive shape、defaults 语义守卫） | Android 动态色/shape 桥接与 token 生命周期治理 |

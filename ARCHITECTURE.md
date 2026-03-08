@@ -19,15 +19,17 @@
 
 - 技术基线：Kotlin + Android View System
 - SDK：`minSdk 24`、`compileSdk 36`
-- 当前模块：`:viewcompose-runtime`、`:viewcompose-renderer`、`:viewcompose-widget-core`、`:viewcompose-overlay-android`、`:viewcompose-image-coil`、`:viewcompose-benchmark`、`:app`
+- 当前模块：`:viewcompose-runtime`、`:viewcompose-lifecycle`、`:viewcompose-viewmodel`、`:viewcompose-renderer`、`:viewcompose-widget-core`、`:viewcompose-overlay-android`、`:viewcompose-image-coil`、`:viewcompose-benchmark`、`:app`
 
 ### 2.1 模块职责
 
 | 模块 | 职责 | 约束 |
 | --- | --- | --- |
 | `viewcompose-runtime` | 状态与读依赖观察（`state/observation`） | 不承载 Android 视图实现 |
+| `viewcompose-lifecycle` | 生命周期感知的状态收集 API（`collectAsStateWithLifecycle`）与生命周期 Local 对外入口 | 不承载 Android 视图实现；不新增宿主注入逻辑 |
+| `viewcompose-viewmodel` | ViewModel/SavedStateHandle 协作 API（`viewModel`、`savedStateHandle`）与 ViewModel Local 对外入口 | 不承载 Android 视图实现；不新增宿主注入逻辑 |
 | `viewcompose-renderer` | `VNode/NodeSpec`、reconcile、View 挂载与 patch | 不承载业务 DSL |
-| `viewcompose-widget-core` | DSL、session、context/theme/defaults、overlay 声明契约 | 不放 Android 平台弹层实现 |
+| `viewcompose-widget-core` | DSL、session、context/theme/defaults、宿主桥接与 Local 注入入口、overlay 声明契约 | 不放 Android 平台弹层实现 |
 | `viewcompose-overlay-android` | Android overlay host/presenter（Dialog/Popup/ModalBottomSheet/Snackbar/Toast） | 只做平台实现 |
 | `viewcompose-image-coil` | 远程图片加载桥接 | 不回流核心渲染逻辑 |
 | `viewcompose-benchmark` | 宏基准入口与性能回归数据采集 | 不承载业务 demo 与框架语义逻辑 |
@@ -41,6 +43,7 @@
 2. 列表/分页等复用容器：独立 session 刷新路径
 3. overlay：声明契约与平台实现已分层
 4. 节点语义已完成 `NodeSpec-only` 收口（无 `Props` 双轨）
+5. 生命周期与 ViewModel 协作 API 已从 `widget-core` 拆分到独立模块，宿主自动注入能力保持不变
 
 ### 2.3 `app` 目录落位基线
 
@@ -144,6 +147,7 @@ flowchart TD
 2. `viewcompose-widget-core` 内置 Local 也统一走上述 API，不再新增专用 `ProvideXxx` 调用范式。
 3. `viewcompose-renderer` 不新增 Local 语义入口；只消费 reconcile 后的 `NodeSpec`。
 4. Local 的 snapshot/restore 必须与延迟容器、overlay 场景一致传播，不允许能力回退。
+5. 生命周期与 ViewModel 相关 Local 的对外包名固定为 `com.viewcompose.lifecycle` 与 `com.viewcompose.viewmodel`；默认注入仍由 `AndroidHostBridge` 完成。
 
 ## 5. 当前热点与风险
 
