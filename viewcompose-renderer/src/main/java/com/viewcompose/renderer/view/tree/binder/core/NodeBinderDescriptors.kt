@@ -81,7 +81,12 @@ internal object NodeBinderDescriptors {
     )
 
     fun patchAppliersByType(): Map<KClass<out NodeViewPatch>, PatchApplyBlock> = all
-        .mapNotNull { it.patch }
+        .uniquePatchDescriptorsBy(
+            keySelector = { it.patchClass },
+            duplicateMessage = {
+                "Conflicting patch applier descriptor for NodeViewPatch: ${it.simpleName}"
+            },
+        )
         .associateByUnique(
             keySelector = { it.patchClass },
             valueSelector = { it.apply },
@@ -89,7 +94,10 @@ internal object NodeBinderDescriptors {
         )
 
     fun patchFactoriesBySpec(): Map<KClass<out NodeSpec>, PatchFactory> = all
-        .mapNotNull { it.patch }
+        .uniquePatchDescriptorsBy(
+            keySelector = { it.specClass },
+            duplicateMessage = { "Conflicting patch factory descriptor for NodeSpec: ${it.simpleName}" },
+        )
         .associateByUnique(
             keySelector = { it.specClass },
             valueSelector = { it.factory },
@@ -108,6 +116,26 @@ internal object NodeBinderDescriptors {
             result[key] = valueSelector(item)
         }
         return result
+    }
+
+    private inline fun <K> List<NodeBinderDescriptor>.uniquePatchDescriptorsBy(
+        keySelector: (NodePatchDescriptor) -> K,
+        duplicateMessage: (K) -> String,
+    ): List<NodePatchDescriptor> {
+        val result = LinkedHashMap<K, NodePatchDescriptor>()
+        for (descriptor in this) {
+            val patch = descriptor.patch ?: continue
+            val key = keySelector(patch)
+            val existing = result[key]
+            if (existing == null) {
+                result[key] = patch
+                continue
+            }
+            require(existing === patch || (existing.specClass == patch.specClass && existing.patchClass == patch.patchClass)) {
+                duplicateMessage(key)
+            }
+        }
+        return result.values.toList()
     }
 
     private fun buildDescriptors(): List<NodeBinderDescriptor> {
