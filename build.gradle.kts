@@ -43,9 +43,51 @@ val qaQuickTasks = listOf(
     ":app:testDebugUnitTest",
 )
 
+tasks.register("verifyModulePackageRoots") {
+    group = "verification"
+    description = "Verify source package declarations follow module package-root prefixes."
+    doLast {
+        val packageRegex = Regex("^\\s*package\\s+([A-Za-z0-9_.]+)", RegexOption.MULTILINE)
+        val sourceSets = listOf("main", "test", "androidTest")
+        val violations = mutableListOf<String>()
+
+        modulePackageRoots.forEach { (module, expectedPrefix) ->
+            val srcDir = rootDir.resolve(module).resolve("src")
+            if (!srcDir.exists()) return@forEach
+            sourceSets.forEach sourceSetLoop@{ sourceSet ->
+                val sourceSetDir = srcDir.resolve(sourceSet)
+                if (!sourceSetDir.exists()) return@sourceSetLoop
+                sourceSetDir.walkTopDown()
+                    .filter { it.isFile && (it.extension == "kt" || it.extension == "java") }
+                    .forEach fileLoop@{ file ->
+                        val content = file.readText()
+                        val packageName = packageRegex.find(content)?.groupValues?.getOrNull(1)
+                        if (packageName == null) {
+                            violations += "${module}:${sourceSet}:${file.relativeTo(rootDir)} -> missing package declaration"
+                            return@fileLoop
+                        }
+                        if (!packageName.startsWith(expectedPrefix)) {
+                            violations += "${module}:${sourceSet}:${file.relativeTo(rootDir)} -> package '$packageName' not under '$expectedPrefix'"
+                        }
+                    }
+            }
+        }
+
+        if (violations.isNotEmpty()) {
+            error(
+                buildString {
+                    appendLine("Module package-root verification failed:")
+                    violations.sorted().forEach { appendLine("- $it") }
+                },
+            )
+        }
+    }
+}
+
 tasks.register("qaQuick") {
     group = "verification"
     description = "Run compile + unit-test quality gate for all core modules."
+    dependsOn("verifyModulePackageRoots")
     dependsOn(qaQuickTasks)
 }
 
