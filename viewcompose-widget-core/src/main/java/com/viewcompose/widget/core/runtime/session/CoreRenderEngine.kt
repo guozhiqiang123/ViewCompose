@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import com.viewcompose.ui.node.VNode
 
 /**
- * Android rendering engine contract loaded from host-android at runtime.
+ * Android rendering engine contract registered by host-android at runtime.
  * widget-core keeps this contract to avoid a direct renderer dependency.
  */
 interface CoreRenderEngine {
@@ -27,36 +27,40 @@ data class CoreRenderFrame(
     val renderResult: Any? = null,
 )
 
+fun installCoreRenderEngine(engine: CoreRenderEngine) {
+    CoreRenderEngineProvider.install(engine)
+}
+
 internal object CoreRenderEngineProvider {
     private const val TAG = "ViewCompose"
-    private const val ENGINE_CLASS_NAME = "com.viewcompose.host.android.runtime.AndroidCoreRenderEngine"
+    private val fallbackEngine = NoOpCoreRenderEngine
+    @Volatile
+    private var installedEngine: CoreRenderEngine? = null
+    @Volatile
     private var warnedMissingEngine: Boolean = false
 
-    val engine: CoreRenderEngine by lazy {
-        resolveEngine()
-    }
-
-    private fun resolveEngine(): CoreRenderEngine {
-        return try {
-            val clazz = Class.forName(ENGINE_CLASS_NAME)
-            val constructor = clazz.getDeclaredConstructor()
-            val instance = constructor.newInstance()
-            instance as CoreRenderEngine
-        } catch (throwable: Throwable) {
-            warnMissingEngine(throwable)
-            NoOpCoreRenderEngine
+    val engine: CoreRenderEngine
+        get() {
+            val current = installedEngine
+            if (current != null) {
+                return current
+            }
+            warnMissingEngineOnce()
+            return fallbackEngine
         }
+
+    fun install(engine: CoreRenderEngine) {
+        installedEngine = engine
     }
 
-    private fun warnMissingEngine(throwable: Throwable) {
+    private fun warnMissingEngineOnce() {
         if (warnedMissingEngine) {
             return
         }
         warnedMissingEngine = true
         Log.w(
             TAG,
-            "Host render engine not found on classpath, widget-core render sessions will no-op.",
-            throwable,
+            "Host render engine is not installed; widget-core render sessions will no-op.",
         )
     }
 

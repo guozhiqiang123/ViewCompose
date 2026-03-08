@@ -36,7 +36,8 @@
 
 1. `setUiContent(...)` 仍默认自动注入 `UiEnvironment`、`LifecycleOwner`、`ViewModelStoreOwner`。
 2. overlay 锚点标记不再依赖 renderer `R.id`，改为契约常量 `OVERLAY_ANCHOR_TAG_KEY`。
-3. guard test 已生效：
+3. core 渲染引擎改为接口注册装配（`installCoreRenderEngine`），不再依赖反射加载 host 引擎实现。
+4. guard test 已生效：
    - `widget-core` 主源码禁止 `com.viewcompose.renderer.*` import。
    - `ui-contract` 主源码禁止 `android.*` / `androidx.*` import。
 
