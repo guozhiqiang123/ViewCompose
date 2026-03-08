@@ -19,19 +19,21 @@
 
 - 技术基线：Kotlin + Android View System
 - SDK：`minSdk 24`、`compileSdk 36`
-- 当前模块：`:viewcompose-runtime`、`:viewcompose-lifecycle`、`:viewcompose-viewmodel`、`:viewcompose-renderer`、`:viewcompose-widget-core`、`:viewcompose-overlay-android`、`:viewcompose-image-coil`、`:viewcompose-benchmark`、`:app`
+- 当前模块：`:viewcompose-runtime`、`:viewcompose-ui-contract`、`:viewcompose-widget-core`、`:viewcompose-renderer`、`:viewcompose-host-android`、`:viewcompose-overlay-android`、`:viewcompose-image-coil`、`:viewcompose-lifecycle`、`:viewcompose-viewmodel`、`:viewcompose-benchmark`、`:app`
 
 ### 2.1 模块职责
 
 | 模块 | 职责 | 约束 |
 | --- | --- | --- |
 | `viewcompose-runtime` | 状态与读依赖观察（`state/observation`） | 不承载 Android 视图实现 |
+| `viewcompose-ui-contract` | 纯 Kotlin UI 契约层（`Modifier`、`VNode/NodeSpec`、layout 枚举、collection/state 协议） | 主源码禁止 `android.*` / `androidx.*` |
+| `viewcompose-widget-core` | DSL、Theme/Defaults、Local 与 overlay 声明契约 | 不依赖 `viewcompose-renderer`；不放 Android 宿主入口 API |
+| `viewcompose-renderer` | Android View 渲染实现（reconcile、binder、patch、container） | 只消费 `ui-contract`，不承载业务 DSL |
+| `viewcompose-host-android` | Android 宿主运行时与入口（`setUiContent/renderInto/RenderSession`、`AndroidView/nativeView`、宿主 Local 注入） | 只做平台执行与注入，不承载业务 DSL |
+| `viewcompose-overlay-android` | Android overlay host/presenter（Dialog/Popup/ModalBottomSheet/Snackbar/Toast） | 只做平台实现，不依赖 renderer 资源 |
+| `viewcompose-image-coil` | 远程图片加载桥接（`RemoteImageLoader` Android 实现） | 通过平台无关 target 契约接入，不回流核心渲染逻辑 |
 | `viewcompose-lifecycle` | 生命周期感知的状态收集 API（`collectAsStateWithLifecycle`）与生命周期 Local 对外入口 | 不承载 Android 视图实现；不新增宿主注入逻辑 |
 | `viewcompose-viewmodel` | ViewModel/SavedStateHandle 协作 API（`viewModel`、`savedStateHandle`）与 ViewModel Local 对外入口 | 不承载 Android 视图实现；不新增宿主注入逻辑 |
-| `viewcompose-renderer` | `VNode/NodeSpec`、reconcile、View 挂载与 patch | 不承载业务 DSL |
-| `viewcompose-widget-core` | DSL、session、context/theme/defaults、宿主桥接与 Local 注入入口、overlay 声明契约 | 不放 Android 平台弹层实现 |
-| `viewcompose-overlay-android` | Android overlay host/presenter（Dialog/Popup/ModalBottomSheet/Snackbar/Toast） | 只做平台实现 |
-| `viewcompose-image-coil` | 远程图片加载桥接 | 不回流核心渲染逻辑 |
 | `viewcompose-benchmark` | 宏基准入口与性能回归数据采集 | 不承载业务 demo 与框架语义逻辑 |
 | `app` | demo、manual verification、ui tests 入口 | 不承载框架核心实现 |
 
@@ -116,8 +118,8 @@ flowchart TD
 
 ### 4.3 宿主接入边界
 
-1. `ComponentActivity.setUiContent(...)` 不暴露 `RenderSession` 给页面调用方，并由宿主自动管理 `dispose`。
-2. `Fragment.setUiContent(...)` 是官方入口：不暴露 `RenderSession`，并在 `viewLifecycleOwner` 销毁时自动 `dispose`。
+1. `com.viewcompose.host.android.ComponentActivity.setUiContent(...)` 不暴露内部 `RenderSession` 给页面调用方，并由宿主自动管理 `dispose`。
+2. `com.viewcompose.host.android.Fragment.setUiContent(...)` 是官方入口：不暴露内部 `RenderSession`，并在 `viewLifecycleOwner` 销毁时自动 `dispose`。
 3. `setUiContent` 的默认 `overlayHostFactory` 优先尝试 `AndroidOverlayHost`（classpath 可用时）；不可用时回退 no-op 并输出提示，可由调用方显式覆盖。
 4. 上述默认行为依赖反射契约类名 `com.viewcompose.overlay.android.host.AndroidOverlayHost`；若 overlay 包路径调整，必须同步更新反射常量与契约测试。
 5. system bars insets 走组件侧 `Modifier.systemBarsInsetsPadding(...)`，不绑死 Activity 全局参数。
@@ -137,7 +139,7 @@ flowchart TD
 
 ### 4.5 Environment 边界
 
-1. 宿主入口（`ComponentActivity.setUiContent(...)`、`Fragment.setUiContent(...)`）默认自动注入 `UiEnvironment(androidContext = root.context)`。
+1. 宿主入口（`com.viewcompose.host.android.setUiContent(...)`）默认自动注入 `UiEnvironment(androidContext = root.context)`。
 2. 业务层允许在局部子树使用 `UiEnvironment(values = ...)` 做覆盖；默认注入不阻断局部覆写。
 3. `viewcompose-renderer` 不依赖 `viewcompose-widget-core/context/Environment`，只消费 renderer 已解析的 `NodeSpec` 与平台参数。
 4. `viewcompose-renderer` 中的 dp/sp 尺寸换算统一走内部工具（`viewcompose-renderer/view/DimensionUtils.kt`），容器类禁止私有 `density/dpToPx` 重复实现。
@@ -149,7 +151,7 @@ flowchart TD
 2. `viewcompose-widget-core` 内置 Local 也统一走上述 API，不再新增专用 `ProvideXxx` 调用范式。
 3. `viewcompose-renderer` 不新增 Local 语义入口；只消费 reconcile 后的 `NodeSpec`。
 4. Local 的 snapshot/restore 必须与延迟容器、overlay 场景一致传播，不允许能力回退。
-5. 生命周期与 ViewModel 相关 Local 的对外包名固定为 `com.viewcompose.lifecycle` 与 `com.viewcompose.viewmodel`；默认注入仍由 `AndroidHostBridge` 完成。
+5. 生命周期与 ViewModel 相关 Local 的对外包名固定为 `com.viewcompose.lifecycle` 与 `com.viewcompose.viewmodel`；默认注入由 `viewcompose-host-android` 的 `AndroidHostBridge` 完成。
 
 ### 4.7 SlotTable Lite 重组边界
 
@@ -186,9 +188,9 @@ flowchart TD
 
 1. `ViewTreeRenderer` 仍是复杂度热点，新增能力优先拆辅助对象，不继续堆主类。
 2. 当前是“节点组级重组 + 根级遍历调度”模型；后续优化重点是提升组键稳定性诊断与更细粒度跳过命中率。
-3. `viewcompose-widget-core` 仍承担较多职责，演进时优先收边界，不盲目拆模块。
+3. `viewcompose-widget-core` 已解除对 `renderer` 的直依赖；后续演进优先维持 `runtime/ui-contract/widget-core/renderer/host-android` 分层，不回流耦合。
 4. 延迟 session 容器专项回归已覆盖 `LazyVerticalGrid/HorizontalPager/VerticalPager`；后续重点转向 sticky headers 与复杂 list state 组合场景。
-5. `viewcompose-widget-core` 中仍包含 `AndroidHostBridge/AndroidThemeBridge/AndroidEnvironmentBridge`，若后续目标扩展到跨平台，需要规划独立 host bridge 模块，避免 core 继续增重。
+5. `AndroidHostBridge` 已迁至 `viewcompose-host-android`；若后续目标扩展到跨平台，下一步重点是进一步收口 `widget-core` 内 Android 专属 bridge（theme/environment）边界。
 
 ## 6. 变更落地清单（必须执行）
 

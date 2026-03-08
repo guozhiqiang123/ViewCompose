@@ -97,7 +97,7 @@
 
 默认判断顺序：
 
-1. 先判断模块职责边界，例如 `viewcompose-runtime`、`viewcompose-lifecycle`、`viewcompose-viewmodel`、`viewcompose-renderer`、`viewcompose-widget-core`、`app`
+1. 先判断模块职责边界，例如 `viewcompose-runtime`、`viewcompose-ui-contract`、`viewcompose-widget-core`、`viewcompose-renderer`、`viewcompose-host-android`、`viewcompose-lifecycle`、`viewcompose-viewmodel`、`app`
 2. 再判断目录职责边界，例如 `context/`、`dsl/`、`runtime/`、`view/`、`defaults/`
 3. 最后才决定具体文件名
 
@@ -132,7 +132,7 @@
 
 1. `collectAsState`/`collectAsStateWithLifecycle` 放在 `:viewcompose-lifecycle`（`com.viewcompose.lifecycle`）。
 2. `viewModel`/`savedStateHandle` 放在 `:viewcompose-viewmodel`（`com.viewcompose.viewmodel`）。
-3. 宿主默认 Local 注入仍由 `viewcompose-widget-core` 的 host bridge 负责，不在上述模块重复实现注入逻辑。
+3. 宿主默认 Local 注入由 `viewcompose-host-android` 的 host bridge 负责，不在上述模块重复实现注入逻辑。
 
 ## 5.3 反射契约约束
 
@@ -199,6 +199,15 @@
 2. 禁止在 `NodeViewBinderRegistry` 或 `NodeBindingDiffer` 新增并行手工映射表。
 3. 新增节点能力时必须先补 descriptor，再补对应 binder/patch 逻辑。
 4. 变更完成后必须跑 descriptor guard tests，确保覆盖与一致性无缺口。
+
+## 5.10 模块依赖边界约束
+
+完成 `widget-core` 与 `renderer` 解耦后，新增/重构代码必须遵守：
+
+1. `viewcompose-widget-core` 主源码禁止新增 `com.viewcompose.renderer.*` import。
+2. `viewcompose-ui-contract` 主源码禁止新增 `android.*` / `androidx.*` import。
+3. Android 宿主入口 API（`setUiContent`、`renderInto`、`AndroidView/nativeView`）只放 `viewcompose-host-android`。
+4. 以上约束必须通过模块 guard tests 持续校验，禁止只靠 code review 口头约束。
 
 ## 6. 线程中断恢复原则
 

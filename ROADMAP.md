@@ -26,10 +26,11 @@
 3. `Overlay` 已分层为：
    - session-bound surface：`Dialog`、`Popup`、`ModalBottomSheet`
    - host-driven feedback：`Snackbar`、`Toast`
-4. `Activity` 宿主接入已经提供 `setUiContent(...)`，并内部管理 `RenderSession` 生命周期
+4. Android 宿主入口已统一到 `:viewcompose-host-android`（`setUiContent/renderInto/RenderSession`），并内部管理 session 生命周期
 5. `system bars insets` 已转为组件侧 `Modifier.systemBarsInsetsPadding(...)`
 6. 生命周期与 ViewModel 协作 API 已拆分为 `:viewcompose-lifecycle` 与 `:viewcompose-viewmodel`，并统一到新包 `com.viewcompose.lifecycle` / `com.viewcompose.viewmodel`
 7. 重组模型已硬切到 `SlotTable Lite` 节点组级脏区重组（无旧全量重建开关）
+8. 依赖边界已收口为 `runtime + ui-contract + widget-core + renderer(android) + host-android`，`widget-core` 不再直依赖 `renderer`
 
 ### 2.2 Demo 与验证层
 
