@@ -35,7 +35,7 @@
 - [x] Step 3 Local API 包名硬切并更新 host 注入
 - [x] Step 4 迁移 Flow 收集 API 到 lifecycle 模块
 - [x] Step 5 迁移 ViewModel API 到 viewmodel 模块
-- [ ] Step 6 demo 与消费方同步迁移
+- [x] Step 6 demo 与消费方同步迁移
 - [ ] Step 7 文档收口与归档
 
 ## 5. 提交记录
@@ -45,6 +45,7 @@
 - `DONE` refactor: hard-migrate lifecycle/viewmodel locals to new packages
 - `DONE` refactor: move flow state collection APIs into viewcompose-lifecycle
 - `DONE` refactor: move viewmodel APIs into viewcompose-viewmodel
+- `DONE` demo: migrate imports and add lifecycle-viewmodel integration sample
 
 ## 6. 阻塞记录
 

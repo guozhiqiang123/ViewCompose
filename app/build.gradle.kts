@@ -45,6 +45,8 @@ dependencies {
     implementation(project(":viewcompose-runtime"))
     implementation(project(":viewcompose-renderer"))
     implementation(project(":viewcompose-widget-core"))
+    implementation(project(":viewcompose-lifecycle"))
+    implementation(project(":viewcompose-viewmodel"))
     implementation(project(":viewcompose-overlay-android"))
     implementation(project(":viewcompose-image-coil"))
 

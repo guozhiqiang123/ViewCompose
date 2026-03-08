@@ -74,4 +74,6 @@ internal object DemoTestTags {
     const val STATE_PATCH_TAB_SUMMARY = "state_patch_tab_summary"
     const val STATE_STABLE_SUMMARY = "state_stable_summary"
     const val STATE_VERTICAL_PAGER_SUMMARY = "state_vertical_pager_summary"
+    const val STATE_VM_COUNTER = "state_vm_counter"
+    const val STATE_VM_INCREMENT = "state_vm_increment"
 }

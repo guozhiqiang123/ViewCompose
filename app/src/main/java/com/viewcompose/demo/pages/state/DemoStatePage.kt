@@ -16,6 +16,7 @@ import com.viewcompose.renderer.layout.VerticalAlignment
 import com.viewcompose.renderer.node.ImageSource
 import com.viewcompose.runtime.derivedStateOf
 import com.viewcompose.runtime.mutableStateOf
+import com.viewcompose.lifecycle.collectAsStateWithLifecycle
 import com.viewcompose.widget.core.Box
 import com.viewcompose.widget.core.Button
 import com.viewcompose.widget.core.Column
@@ -37,6 +38,7 @@ import com.viewcompose.widget.core.key
 import com.viewcompose.widget.core.produceState
 import com.viewcompose.widget.core.remember
 import com.viewcompose.widget.core.sp
+import com.viewcompose.viewmodel.savedStateHandle
 
 internal fun UiTreeBuilder.StatePage(
     initialPageIndex: Int = 0,
@@ -69,8 +71,12 @@ internal fun UiTreeBuilder.StatePage(
         value = "最近更新: 已提交 ${clickCountState.value} 次点击"
         null
     }
+    val vmStateHandle = savedStateHandle(key = "state_page_vm_counter")
+    val vmCounterState = vmStateHandle
+        .getStateFlow("counter", 0)
+        .collectAsStateWithLifecycle()
     val pageItems = when (selectedPageState.value) {
-        0 -> listOf("benchmark", "page", "page_filter", "counter", "verify")
+        0 -> listOf("benchmark", "page", "page_filter", "counter", "viewmodel", "verify")
         1 -> listOf("page", "page_filter", "panel", "verify")
         2 -> listOf("page", "page_filter", "patch", "verify")
         else -> listOf("page", "page_filter", "verify")
@@ -170,6 +176,26 @@ internal fun UiTreeBuilder.StatePage(
                         },
                     )
                 }
+            }
+
+            "viewmodel" -> ScenarioSection(
+                kind = ScenarioKind.Core,
+                title = "ViewModel + StateFlow + collectAsStateWithLifecycle",
+                subtitle = "验证宿主默认注入 Local 后，无需手动 provide 即可完成 ViewModel 协作。",
+            ) {
+                Text(
+                    text = "ViewModel 计数: ${vmCounterState.value}",
+                    modifier = Modifier
+                        .margin(bottom = 8.dp)
+                        .testTag(DemoTestTags.STATE_VM_COUNTER),
+                )
+                Button(
+                    text = "ViewModel 计数 +1",
+                    onClick = {
+                        vmStateHandle["counter"] = vmCounterState.value + 1
+                    },
+                    modifier = Modifier.testTag(DemoTestTags.STATE_VM_INCREMENT),
+                )
             }
 
             "panel" -> ScenarioSection(

@@ -468,6 +468,31 @@ class DemoVisualUiTest {
     }
 
     @Test
+    fun statePage_viewModelCounter_updatesThroughLifecycleAwareCollection() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            StateActivity::class.java,
+        ).putExtra(EXTRA_STATE_PAGE_INDEX, 0)
+        launchDemoActivity<StateActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val summary = activity.requireTextViewByTestTag(DemoTestTags.STATE_VM_COUNTER)
+                assertViewFullyVisible(summary)
+                assertTrue(summary.text.toString().contains("0"))
+                activity.clickByTestTag(DemoTestTags.STATE_VM_INCREMENT)
+            }
+            waitForUiIdle()
+            captureDeviceScreenshot("state-viewmodel-counter-light")
+            scenario.onActivity { activity ->
+                val summary = activity.requireTextViewByTestTag(DemoTestTags.STATE_VM_COUNTER)
+                assertViewFullyVisible(summary)
+                assertTextNotEllipsized(summary)
+                assertTrue(summary.text.toString().contains("1"))
+            }
+        }
+    }
+
+    @Test
     fun statePatchStress_segmentedControlSummary_updatesAcrossAdvances() {
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),
