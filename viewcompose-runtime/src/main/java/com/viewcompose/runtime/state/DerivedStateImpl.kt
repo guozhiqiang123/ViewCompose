@@ -1,5 +1,6 @@
 package com.viewcompose.runtime.state
 
+import com.viewcompose.runtime.SnapshotRuntime
 import com.viewcompose.runtime.State
 import com.viewcompose.runtime.observation.ObservableState
 import com.viewcompose.runtime.observation.Observation
@@ -13,12 +14,15 @@ internal class DerivedStateImpl<T>(
     private var dependencyObservation: Observation? = null
     private var cachedValue: Any? = Uninitialized
     private var dirty: Boolean = true
+    private var lastReadToken: Long = Long.MIN_VALUE
 
     override val value: T
         get() {
             RuntimeObservation.recordRead(this)
-            if (dirty) {
+            val readToken = SnapshotRuntime.currentReadToken()
+            if (dirty || lastReadToken != readToken) {
                 recompute()
+                lastReadToken = readToken
             }
             @Suppress("UNCHECKED_CAST")
             return cachedValue as T
@@ -49,6 +53,7 @@ internal class DerivedStateImpl<T>(
             return
         }
         dirty = true
+        lastReadToken = Long.MIN_VALUE
         observers.toList().forEach { observer ->
             observer.invalidate()
         }

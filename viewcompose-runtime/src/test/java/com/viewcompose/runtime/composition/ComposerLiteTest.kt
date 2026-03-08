@@ -93,4 +93,23 @@ class ComposerLiteTest {
         assertEquals(2, leftRuns)
         assertEquals(1, rightRuns)
     }
+
+    @Test
+    fun `composeRoot reads remain consistent within one snapshot pass`() {
+        val state = mutableStateOf(0)
+        val composer = ComposerLite()
+        var firstRead = -1
+        var secondRead = -1
+
+        composer.composeRoot {
+            firstRead = state.value
+            state.value = 1
+            secondRead = state.value
+            Unit
+        }
+
+        assertEquals(0, firstRead)
+        assertEquals(0, secondRead)
+        assertEquals(1, state.value)
+    }
 }

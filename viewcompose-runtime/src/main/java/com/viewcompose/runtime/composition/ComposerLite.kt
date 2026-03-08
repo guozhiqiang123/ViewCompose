@@ -1,6 +1,7 @@
 package com.viewcompose.runtime.composition
 
 import com.viewcompose.runtime.observation.RuntimeObservation
+import com.viewcompose.runtime.Snapshot
 
 /**
  * SlotTable-lite composer for node-group incremental recomposition.
@@ -37,12 +38,16 @@ class ComposerLite(
         val root = slotTable.root
         val previous = currentScope
         currentScope = root
+        val snapshot = Snapshot.takeSnapshot()
         return try {
-            composeScope(
-                scope = root,
-                block = { block() },
-            )
+            snapshot.enter {
+                composeScope(
+                    scope = root,
+                    block = { block() },
+                )
+            }
         } finally {
+            snapshot.dispose()
             currentScope = previous
             composing = false
         }
