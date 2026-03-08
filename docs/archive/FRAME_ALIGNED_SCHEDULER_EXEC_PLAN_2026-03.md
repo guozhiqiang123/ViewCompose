@@ -36,7 +36,7 @@
 - [x] Step 3 RenderSession 硬切接入帧调度器
 - [x] Step 4 统一影响面确认（overlay/lazy 语义保持）
 - [x] Step 5 测试补齐（合帧/取消/跨线程/重入）
-- [ ] Step 6 文档收口与归档
+- [x] Step 6 文档收口与归档
 
 ## 5. 提交记录
 
@@ -46,6 +46,7 @@
 - `DONE` refactor: preserve immediate render semantics for item and overlay sessions
 - `DONE` test: add frame-aligned scheduler coalescing and cancellation coverage
 - `DONE` docs: codify frame-aligned render scheduling boundary
+- `DONE` docs: close and archive frame-aligned scheduler execution plan
 
 ## 6. 阻塞记录
 
