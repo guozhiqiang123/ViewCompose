@@ -56,7 +56,7 @@ All of the following must be true:
 | 6a | `41d53ef` | `test: migrate unit tests to spec-only vnode model` | direct test migrations |
 | 6b | `c0f577b` | `test: add guardrails to prevent props regression` | static guard |
 | 7a | `36cfc02` | `docs: codify node-spec-only architecture boundary` | docs update |
-| 7b | pending | `docs: close and archive node-spec-only migration plan` | archive + index |
+| 7b | `30aeffc` | `docs: close and archive node-spec-only migration plan` | archive + index |
 
 ## 6. Blocker Log
 
@@ -80,3 +80,8 @@ Use this format for blockers:
    - record blocker in this file
    - continue non-device steps
    - re-run blocked `qaFull` before closure
+
+Final `qaFull` status:
+
+1. `2026-03-08` 执行 `./gradlew qaFull` 时失败于 `:app:connectedDebugAndroidTest`，原因：`No online devices found`（设备处于 `OFFLINE`）。
+2. 阻塞上下文已记录到 [NODE_SPEC_ONLY_BLOCKER_CONTEXT_2026-03.md](/Users/gzq/AndroidStudioProjects/UIFramework/NODE_SPEC_ONLY_BLOCKER_CONTEXT_2026-03.md)。
