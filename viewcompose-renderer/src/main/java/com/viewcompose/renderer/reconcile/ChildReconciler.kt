@@ -1,6 +1,6 @@
 package com.viewcompose.renderer.reconcile
 
-import com.viewcompose.renderer.node.VNode
+import com.viewcompose.ui.node.VNode
 
 data class ReconcileResult<T>(
     val patches: List<RenderPatch<T>>,

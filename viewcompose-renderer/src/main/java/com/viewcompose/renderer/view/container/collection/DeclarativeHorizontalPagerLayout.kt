@@ -5,12 +5,14 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import com.viewcompose.renderer.node.LazyListItem
+import com.viewcompose.ui.node.LazyListItem
+import com.viewcompose.renderer.interop.AndroidRenderContainerHandle
 import com.viewcompose.renderer.reconcile.LazyListDiff
-import com.viewcompose.renderer.view.lazy.LazyHolderRegistry
-import com.viewcompose.renderer.view.lazy.LazyItemSessionController
-import com.viewcompose.renderer.view.lazy.PagerState
-import com.viewcompose.renderer.view.lazy.FrameworkRecyclerViewDefaults
+import com.viewcompose.renderer.view.lazy.session.LazyHolderRegistry
+import com.viewcompose.renderer.view.lazy.session.LazyItemSessionController
+import com.viewcompose.ui.state.PagerConnector
+import com.viewcompose.ui.state.PagerState
+import com.viewcompose.renderer.view.lazy.reuse.FrameworkRecyclerViewDefaults
 import com.viewcompose.renderer.view.tree.LayoutPassTracker
 
 internal class DeclarativeHorizontalPagerLayout(
@@ -83,10 +85,16 @@ internal class DeclarativeHorizontalPagerLayout(
     ) {
         this.onPageChanged = onPageChanged
         if (this.pagerState !== pagerState) {
-            this.pagerState?.viewPager = null
+            this.pagerState?.attach(null)
         }
         this.pagerState = pagerState
-        pagerState?.viewPager = viewPager
+        pagerState?.attach(
+            object : PagerConnector {
+                override fun scrollToPage(page: Int) {
+                    viewPager.setCurrentItem(page, true)
+                }
+            },
+        )
         viewPager.offscreenPageLimit = offscreenPageLimit.coerceAtLeast(1)
         viewPager.isUserInputEnabled = userScrollEnabled
         adapter.submitPages(pages)
@@ -107,7 +115,7 @@ internal class DeclarativeHorizontalPagerLayout(
     }
 
     fun dispose() {
-        pagerState?.viewPager = null
+        pagerState?.attach(null)
         viewPager.unregisterOnPageChangeCallback(pageChangeCallback)
         adapter.disposeAll()
     }
@@ -236,7 +244,7 @@ internal class HorizontalPagerViewHolder(
 ) : RecyclerView.ViewHolder(container) {
     private val controller = LazyItemSessionController(
         createSession = { item ->
-            item.sessionFactory.create(container)
+            item.sessionFactory.create(AndroidRenderContainerHandle(container))
         },
         clearContainer = container::removeAllViews,
     )

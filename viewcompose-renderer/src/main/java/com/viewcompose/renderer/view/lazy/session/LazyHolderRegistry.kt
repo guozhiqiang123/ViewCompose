@@ -1,4 +1,4 @@
-package com.viewcompose.renderer.view.lazy
+package com.viewcompose.renderer.view.lazy.session
 
 internal class LazyHolderRegistry<T : Any>(
     private val onDispose: (T) -> Unit,

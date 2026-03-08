@@ -1,6 +1,8 @@
 package com.viewcompose.renderer.layout
 
 import android.view.Gravity
+import com.viewcompose.ui.layout.HorizontalAlignment
+import com.viewcompose.ui.layout.VerticalAlignment
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

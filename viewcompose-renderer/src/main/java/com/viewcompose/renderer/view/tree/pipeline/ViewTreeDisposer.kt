@@ -1,14 +1,14 @@
 package com.viewcompose.renderer.view.tree
 
 import androidx.recyclerview.widget.RecyclerView
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.spec.LazyColumnNodeProps
-import com.viewcompose.renderer.node.spec.LazyRowNodeProps
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.spec.LazyColumnNodeProps
+import com.viewcompose.ui.node.spec.LazyRowNodeProps
 import com.viewcompose.renderer.view.container.DeclarativeHorizontalPagerLayout
 import com.viewcompose.renderer.view.container.DeclarativeLazyVerticalGridLayout
 import com.viewcompose.renderer.view.container.DeclarativeTabRowLayout
 import com.viewcompose.renderer.view.container.DeclarativeVerticalPagerLayout
-import com.viewcompose.renderer.view.lazy.LazyListAdapter
+import com.viewcompose.renderer.view.lazy.adapter.LazyListAdapter
 
 internal object ViewTreeDisposer {
     fun disposeMountedNode(mountedNode: MountedNode) {
@@ -22,8 +22,8 @@ internal object ViewTreeDisposer {
                 (recyclerView.adapter as? LazyListAdapter)?.disposeAll()
             }
             when (mountedNode.vnode.type) {
-                NodeType.LazyColumn -> mountedNode.vnode.requireSpec<LazyColumnNodeProps>().state?.recyclerView = null
-                NodeType.LazyRow -> mountedNode.vnode.requireSpec<LazyRowNodeProps>().state?.recyclerView = null
+                NodeType.LazyColumn -> mountedNode.vnode.requireSpec<LazyColumnNodeProps>().state?.attach(null)
+                NodeType.LazyRow -> mountedNode.vnode.requireSpec<LazyRowNodeProps>().state?.attach(null)
                 else -> Unit
             }
         }

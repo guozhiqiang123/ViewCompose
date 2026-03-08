@@ -1,19 +1,19 @@
 package com.viewcompose
 
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.Visibility
-import com.viewcompose.renderer.modifier.backgroundColor
-import com.viewcompose.renderer.modifier.fillMaxSize
-import com.viewcompose.renderer.modifier.fillMaxWidth
-import com.viewcompose.renderer.modifier.height
-import com.viewcompose.renderer.modifier.margin
-import com.viewcompose.renderer.modifier.padding
-import com.viewcompose.renderer.modifier.testTag
-import com.viewcompose.renderer.modifier.visibility
-import com.viewcompose.renderer.layout.BoxAlignment
-import com.viewcompose.renderer.layout.MainAxisArrangement
-import com.viewcompose.renderer.layout.VerticalAlignment
-import com.viewcompose.renderer.node.ImageSource
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.Visibility
+import com.viewcompose.ui.modifier.backgroundColor
+import com.viewcompose.ui.modifier.fillMaxSize
+import com.viewcompose.ui.modifier.fillMaxWidth
+import com.viewcompose.ui.modifier.height
+import com.viewcompose.ui.modifier.margin
+import com.viewcompose.ui.modifier.padding
+import com.viewcompose.ui.modifier.testTag
+import com.viewcompose.ui.modifier.visibility
+import com.viewcompose.ui.layout.BoxAlignment
+import com.viewcompose.ui.layout.MainAxisArrangement
+import com.viewcompose.ui.layout.VerticalAlignment
+import com.viewcompose.ui.node.ImageSource
 import com.viewcompose.runtime.derivedStateOf
 import com.viewcompose.runtime.mutableStateOf
 import com.viewcompose.lifecycle.collectAsStateWithLifecycle
@@ -160,7 +160,7 @@ internal fun UiTreeBuilder.StatePage(
                 )
                 Row(
                     spacing = 8.dp,
-                    verticalAlignment = com.viewcompose.renderer.layout.VerticalAlignment.Center,
+                    verticalAlignment = com.viewcompose.ui.layout.VerticalAlignment.Center,
                     modifier = Modifier.margin(top = 12.dp),
                 ) {
                     Button(

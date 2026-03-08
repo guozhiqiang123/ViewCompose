@@ -1,16 +1,16 @@
 package com.viewcompose.renderer.view.tree
 
 import android.graphics.Color
-import com.viewcompose.renderer.modifier.CornerRadiusModifierElement
-import com.viewcompose.renderer.modifier.PaddingModifierElement
+import com.viewcompose.ui.modifier.CornerRadiusModifierElement
+import com.viewcompose.ui.modifier.PaddingModifierElement
+import com.viewcompose.ui.node.VNode
+import com.viewcompose.ui.node.spec.BoxNodeProps
+import com.viewcompose.ui.node.spec.ButtonNodeProps
+import com.viewcompose.ui.node.spec.IconButtonNodeProps
+import com.viewcompose.ui.node.spec.TextFieldNodeProps
+import com.viewcompose.ui.node.spec.TextNodeProps
+import com.viewcompose.ui.node.spec.ToggleNodeProps
 import com.viewcompose.renderer.modifier.ResolvedModifiers
-import com.viewcompose.renderer.node.VNode
-import com.viewcompose.renderer.node.spec.BoxNodeProps
-import com.viewcompose.renderer.node.spec.ButtonNodeProps
-import com.viewcompose.renderer.node.spec.IconButtonNodeProps
-import com.viewcompose.renderer.node.spec.TextFieldNodeProps
-import com.viewcompose.renderer.node.spec.TextNodeProps
-import com.viewcompose.renderer.node.spec.ToggleNodeProps
 
 internal object ModifierNodeStyleResolver {
     fun resolveNodeStyle(

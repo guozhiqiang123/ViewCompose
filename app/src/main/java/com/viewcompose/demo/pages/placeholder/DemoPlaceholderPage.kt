@@ -1,7 +1,7 @@
 package com.viewcompose
 
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.fillMaxSize
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.fillMaxSize
 import com.viewcompose.widget.core.LazyColumn
 import com.viewcompose.widget.core.Text
 import com.viewcompose.widget.core.UiTreeBuilder

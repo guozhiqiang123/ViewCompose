@@ -1,17 +1,17 @@
 package com.viewcompose.renderer.view.tree
 
 import android.view.Gravity
-import com.viewcompose.renderer.layout.BoxAlignment
-import com.viewcompose.renderer.layout.HorizontalAlignment
-import com.viewcompose.renderer.layout.VerticalAlignment
-import com.viewcompose.renderer.node.VNode
-import com.viewcompose.renderer.node.spec.AndroidViewNodeProps
-import com.viewcompose.renderer.node.spec.BoxNodeProps
-import com.viewcompose.renderer.node.spec.ColumnNodeProps
-import com.viewcompose.renderer.node.spec.DividerNodeProps
-import com.viewcompose.renderer.node.spec.FlowColumnNodeProps
-import com.viewcompose.renderer.node.spec.FlowRowNodeProps
-import com.viewcompose.renderer.node.spec.RowNodeProps
+import com.viewcompose.ui.layout.BoxAlignment
+import com.viewcompose.ui.layout.HorizontalAlignment
+import com.viewcompose.ui.layout.VerticalAlignment
+import com.viewcompose.ui.node.VNode
+import com.viewcompose.ui.node.spec.AndroidViewNodeProps
+import com.viewcompose.ui.node.spec.BoxNodeProps
+import com.viewcompose.ui.node.spec.ColumnNodeProps
+import com.viewcompose.ui.node.spec.DividerNodeProps
+import com.viewcompose.ui.node.spec.FlowColumnNodeProps
+import com.viewcompose.ui.node.spec.FlowRowNodeProps
+import com.viewcompose.ui.node.spec.RowNodeProps
 
 internal object ContainerViewSpecReader {
     fun readRowSpec(node: VNode): ContainerViewBinder.LinearSpec {

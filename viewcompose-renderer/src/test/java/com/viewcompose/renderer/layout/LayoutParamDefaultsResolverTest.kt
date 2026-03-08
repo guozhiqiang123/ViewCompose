@@ -2,7 +2,7 @@ package com.viewcompose.renderer.layout
 
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import com.viewcompose.renderer.node.NodeType
+import com.viewcompose.ui.node.NodeType
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

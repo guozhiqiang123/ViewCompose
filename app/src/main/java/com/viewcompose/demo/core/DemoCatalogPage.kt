@@ -3,11 +3,11 @@ package com.viewcompose
 import android.content.Intent
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.fillMaxSize
-import com.viewcompose.renderer.modifier.fillMaxWidth
-import com.viewcompose.renderer.modifier.margin
-import com.viewcompose.renderer.modifier.padding
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.fillMaxSize
+import com.viewcompose.ui.modifier.fillMaxWidth
+import com.viewcompose.ui.modifier.margin
+import com.viewcompose.ui.modifier.padding
 import com.viewcompose.widget.core.Button
 import com.viewcompose.widget.core.ButtonVariant
 import com.viewcompose.widget.core.Column

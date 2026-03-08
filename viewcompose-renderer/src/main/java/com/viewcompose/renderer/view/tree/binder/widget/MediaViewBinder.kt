@@ -4,14 +4,15 @@ import android.content.res.ColorStateList
 import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
-import com.viewcompose.renderer.node.ImageSource
-import com.viewcompose.renderer.node.RemoteImageLoader
-import com.viewcompose.renderer.node.RemoteImageRequest
-import com.viewcompose.renderer.node.VNode
-import com.viewcompose.renderer.node.ImageContentScale
-import com.viewcompose.renderer.node.spec.ImageNodeProps
-import com.viewcompose.renderer.node.spec.IconButtonNodeProps
-import com.viewcompose.renderer.node.spec.ImageNodeSpec
+import com.viewcompose.ui.node.ImageSource
+import com.viewcompose.ui.node.RemoteImageLoader
+import com.viewcompose.ui.node.RemoteImageRequest
+import com.viewcompose.ui.node.VNode
+import com.viewcompose.ui.node.ImageContentScale
+import com.viewcompose.ui.node.spec.ImageNodeProps
+import com.viewcompose.ui.node.spec.IconButtonNodeProps
+import com.viewcompose.ui.node.spec.ImageNodeSpec
+import com.viewcompose.renderer.interop.AndroidRemoteImageTarget
 
 internal object MediaViewBinder {
     data class ImageSpec(
@@ -49,7 +50,7 @@ internal object MediaViewBinder {
                 }
                 bindPlaceholder(view, spec.placeholder)
                 spec.remoteImageLoader.load(
-                    imageView = view,
+                    target = AndroidRemoteImageTarget(view),
                     request = RemoteImageRequest(
                         url = normalizedUrl,
                         placeholderResId = spec.placeholder?.resId,

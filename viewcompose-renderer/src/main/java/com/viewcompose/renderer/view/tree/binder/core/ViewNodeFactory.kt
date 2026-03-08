@@ -16,8 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.progressindicator.LinearProgressIndicator
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.VNode
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.VNode
 import com.viewcompose.renderer.view.container.DeclarativeBoxLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowColumnLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowRowLayout
@@ -31,15 +31,15 @@ import com.viewcompose.renderer.view.container.DeclarativeScrollableRowLayout
 import com.viewcompose.renderer.view.container.DeclarativeSegmentedControlLayout
 import com.viewcompose.renderer.view.container.DeclarativeTabRowLayout
 import com.viewcompose.renderer.view.container.DeclarativeVerticalPagerLayout
-import com.viewcompose.renderer.view.lazy.FrameworkRecyclerViewDefaults
-import com.viewcompose.renderer.view.lazy.LazyLinearLayoutManager
-import com.viewcompose.renderer.view.lazy.LazyListAdapter
+import com.viewcompose.renderer.view.lazy.focus.LazyLinearLayoutManager
+import com.viewcompose.renderer.view.lazy.adapter.LazyListAdapter
+import com.viewcompose.renderer.view.lazy.reuse.FrameworkRecyclerViewDefaults
 
 internal object ViewNodeFactory {
     fun createView(
         context: Context,
         node: VNode,
-        createAndroidView: ((Context) -> View)?,
+        createAndroidView: ((Any) -> Any)?,
     ): View {
         return when (node.type) {
             NodeType.Text -> TextView(context)
@@ -63,7 +63,7 @@ internal object ViewNodeFactory {
             NodeType.Box, NodeType.Surface -> DeclarativeBoxLayout(context)
             NodeType.Spacer, NodeType.Divider -> View(context)
             NodeType.Image -> ImageView(context)
-            NodeType.AndroidView -> createAndroidView?.invoke(context) ?: View(context)
+            NodeType.AndroidView -> (createAndroidView?.invoke(context) as? View) ?: View(context)
             NodeType.LazyColumn -> RecyclerView(context).apply {
                 layoutManager = LazyLinearLayoutManager(context)
                 adapter = LazyListAdapter()

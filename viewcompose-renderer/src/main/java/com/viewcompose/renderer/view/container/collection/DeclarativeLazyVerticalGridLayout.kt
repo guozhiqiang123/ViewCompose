@@ -3,13 +3,14 @@ package com.viewcompose.renderer.view.container
 import android.content.Context
 import androidx.recyclerview.widget.RecyclerView
 import com.viewcompose.renderer.R
-import com.viewcompose.renderer.node.LazyListItem
-import com.viewcompose.renderer.view.lazy.LazyListAdapter
-import com.viewcompose.renderer.view.lazy.LazyGridLayoutManager
-import com.viewcompose.renderer.view.lazy.LazyGridSpacingDecoration
-import com.viewcompose.renderer.view.lazy.LazyFocusFollowLayoutMonitor
-import com.viewcompose.renderer.view.lazy.FrameworkRecyclerViewDefaults
-import com.viewcompose.renderer.view.lazy.LazyListState
+import com.viewcompose.ui.node.LazyListItem
+import com.viewcompose.renderer.view.lazy.adapter.LazyListAdapter
+import com.viewcompose.renderer.view.lazy.focus.LazyGridLayoutManager
+import com.viewcompose.renderer.view.lazy.layout.LazyGridSpacingDecoration
+import com.viewcompose.renderer.view.lazy.focus.LazyFocusFollowLayoutMonitor
+import com.viewcompose.renderer.view.lazy.reuse.FrameworkRecyclerViewDefaults
+import com.viewcompose.ui.state.LazyListConnector
+import com.viewcompose.ui.state.LazyListState
 import com.viewcompose.renderer.view.tree.LayoutPassTracker
 
 internal class DeclarativeLazyVerticalGridLayout(
@@ -61,14 +62,24 @@ internal class DeclarativeLazyVerticalGridLayout(
         clipToPadding = contentPadding == 0
         gridAdapter.submitItems(items)
         if (listState !== state) {
-            listState?.recyclerView = null
+            listState?.attach(null)
             listState = state
         }
-        listState?.recyclerView = this
+        listState?.attach(
+            object : LazyListConnector {
+                override fun scrollToPosition(index: Int, smooth: Boolean) {
+                    if (smooth) {
+                        smoothScrollToPosition(index)
+                    } else {
+                        scrollToPosition(index)
+                    }
+                }
+            },
+        )
     }
 
     fun dispose() {
-        listState?.recyclerView = null
+        listState?.attach(null)
         listState = null
         gridAdapter.disposeAll()
     }

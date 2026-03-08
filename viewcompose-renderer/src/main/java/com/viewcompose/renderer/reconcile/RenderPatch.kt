@@ -1,6 +1,6 @@
 package com.viewcompose.renderer.reconcile
 
-import com.viewcompose.renderer.node.VNode
+import com.viewcompose.ui.node.VNode
 
 data class ReconcileNode<T>(
     val vnode: VNode,

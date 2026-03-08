@@ -15,7 +15,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import com.viewcompose.renderer.node.NavigationBarItem
+import com.viewcompose.ui.node.NavigationBarItem
 import com.viewcompose.renderer.view.dpToPx
 
 internal class DeclarativeNavigationBarLayout(
@@ -355,8 +355,9 @@ internal class DeclarativeNavigationBarLayout(
         refs.indicatorDrawable.cornerRadius = context.dpToPx(INDICATOR_CORNER_RADIUS).toFloat()
 
         refs.iconView.apply {
-            val iconRes = if (isSelected && item.selectedIcon != null) {
-                item.selectedIcon.resId
+            val selectedIcon = item.selectedIcon
+            val iconRes = if (isSelected && selectedIcon != null) {
+                selectedIcon.resId
             } else {
                 item.icon.resId
             }
@@ -375,11 +376,12 @@ internal class DeclarativeNavigationBarLayout(
         }
 
         refs.badgeView.apply {
+            val badgeCount = item.badgeCount
             when {
-                item.badgeCount == null -> {
+                badgeCount == null -> {
                     visibility = View.GONE
                 }
-                item.badgeCount == 0 -> {
+                badgeCount == 0 -> {
                     visibility = View.VISIBLE
                     text = ""
                     val dotSize = context.dpToPx(DOT_BADGE_SIZE)
@@ -397,7 +399,7 @@ internal class DeclarativeNavigationBarLayout(
                 }
                 else -> {
                     visibility = View.VISIBLE
-                    text = if (item.badgeCount > 99) "99+" else item.badgeCount.toString()
+                    text = if (badgeCount > 99) "99+" else badgeCount.toString()
                     setTextColor(badgeTextColor)
                     setTextSize(TypedValue.COMPLEX_UNIT_SP, BADGE_TEXT_SIZE_SP)
                     val badgeHeight = context.dpToPx(BADGE_HEIGHT)

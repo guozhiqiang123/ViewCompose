@@ -1,12 +1,12 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.layout.HorizontalAlignment
-import com.viewcompose.renderer.layout.MainAxisArrangement
-import com.viewcompose.renderer.layout.VerticalAlignment
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.node.VNode
-import com.viewcompose.renderer.view.lazy.LazyListState
-import com.viewcompose.renderer.view.lazy.PagerState
+import com.viewcompose.ui.layout.HorizontalAlignment
+import com.viewcompose.ui.layout.MainAxisArrangement
+import com.viewcompose.ui.layout.VerticalAlignment
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.node.VNode
+import com.viewcompose.ui.state.LazyListState
+import com.viewcompose.ui.state.PagerState
 
 @UiDslMarker
 class ScrollableScope internal constructor() {

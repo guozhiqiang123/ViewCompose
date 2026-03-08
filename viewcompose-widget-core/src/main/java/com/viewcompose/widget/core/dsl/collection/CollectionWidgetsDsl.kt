@@ -1,22 +1,24 @@
 package com.viewcompose.widget.core
 
 import android.view.ViewGroup
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.node.LazyListItem
-import com.viewcompose.renderer.node.LazyListItemSession
-import com.viewcompose.renderer.node.LazyListItemSessionFactory
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.collection.TabIndicatorPosition
-import com.viewcompose.renderer.node.collection.TabIndicatorWidthMode
-import com.viewcompose.renderer.node.collection.TabRowTab
-import com.viewcompose.renderer.node.spec.HorizontalPagerNodeProps
-import com.viewcompose.renderer.node.spec.LazyColumnNodeProps
-import com.viewcompose.renderer.node.spec.LazyRowNodeProps
-import com.viewcompose.renderer.node.spec.LazyVerticalGridNodeProps
-import com.viewcompose.renderer.node.spec.TabRowNodeProps
-import com.viewcompose.renderer.node.spec.VerticalPagerNodeProps
-import com.viewcompose.renderer.view.lazy.LazyListState
-import com.viewcompose.renderer.view.lazy.PagerState
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.node.LazyListItem
+import com.viewcompose.ui.node.RenderContainerHandle
+import com.viewcompose.ui.node.LazyListItemSession
+import com.viewcompose.ui.node.LazyListItemSessionFactory
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.nativeContainer
+import com.viewcompose.ui.node.collection.TabIndicatorPosition
+import com.viewcompose.ui.node.collection.TabIndicatorWidthMode
+import com.viewcompose.ui.node.collection.TabRowTab
+import com.viewcompose.ui.node.spec.HorizontalPagerNodeProps
+import com.viewcompose.ui.node.spec.LazyColumnNodeProps
+import com.viewcompose.ui.node.spec.LazyRowNodeProps
+import com.viewcompose.ui.node.spec.LazyVerticalGridNodeProps
+import com.viewcompose.ui.node.spec.TabRowNodeProps
+import com.viewcompose.ui.node.spec.VerticalPagerNodeProps
+import com.viewcompose.ui.state.LazyListState
+import com.viewcompose.ui.state.PagerState
 
 fun <T> UiTreeBuilder.LazyColumn(
     items: List<T>,
@@ -376,14 +378,16 @@ internal data class TabRowTabEntry(
 )
 
 private class WidgetLazyListItemSession(
-    container: ViewGroup,
+    container: RenderContainerHandle,
     localSnapshot: LocalSnapshot,
     content: UiTreeBuilder.() -> Unit,
 ) : LazyListItemSession {
+    private val hostContainer = container.nativeContainer as? ViewGroup
+        ?: error("WidgetLazyListItemSession requires an Android ViewGroup container.")
     private var capturedLocals = localSnapshot
     private var renderContent = content
     private val session = RenderSession(
-        container = container,
+        container = hostContainer,
         content = {
             LocalContext.withSnapshot(capturedLocals) {
                 renderContent()

@@ -8,11 +8,11 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
 import android.widget.LinearLayout
+import com.viewcompose.ui.layout.MainAxisArrangement
 import com.viewcompose.renderer.layout.CrossAxisPlacementCalculator
 import com.viewcompose.renderer.layout.LinearCrossAxisAlignmentResolver
 import com.viewcompose.renderer.layout.LinearChildSpec
 import com.viewcompose.renderer.layout.LinearPlacementCalculator
-import com.viewcompose.renderer.layout.MainAxisArrangement
 import com.viewcompose.renderer.view.tree.LayoutPassTracker
 
 internal class DeclarativeLinearLayout @JvmOverloads constructor(

@@ -1,12 +1,12 @@
 package com.viewcompose
 
 import android.widget.TextView
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.fillMaxSize
-import com.viewcompose.renderer.modifier.fillMaxWidth
-import com.viewcompose.renderer.modifier.margin
-import com.viewcompose.renderer.modifier.padding
-import com.viewcompose.renderer.modifier.testTag
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.fillMaxSize
+import com.viewcompose.ui.modifier.fillMaxWidth
+import com.viewcompose.ui.modifier.margin
+import com.viewcompose.ui.modifier.padding
+import com.viewcompose.ui.modifier.testTag
 import com.viewcompose.runtime.mutableStateOf
 import com.viewcompose.widget.core.AndroidView
 import com.viewcompose.widget.core.Button

@@ -1,11 +1,11 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.fillMaxWidth
-import com.viewcompose.renderer.modifier.height
-import com.viewcompose.renderer.modifier.size
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.spec.ProgressIndicatorNodeProps
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.fillMaxWidth
+import com.viewcompose.ui.modifier.height
+import com.viewcompose.ui.modifier.size
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.spec.ProgressIndicatorNodeProps
 
 fun UiTreeBuilder.LinearProgressIndicator(
     progress: Float? = null,

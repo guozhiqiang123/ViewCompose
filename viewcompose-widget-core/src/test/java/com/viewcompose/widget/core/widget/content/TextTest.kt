@@ -1,9 +1,9 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.TextAlign
-import com.viewcompose.renderer.node.TextOverflow
-import com.viewcompose.renderer.node.spec.TextNodeProps
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.TextAlign
+import com.viewcompose.ui.node.TextOverflow
+import com.viewcompose.ui.node.spec.TextNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test

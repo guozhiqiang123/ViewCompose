@@ -1,7 +1,7 @@
-package com.viewcompose.renderer.view.lazy
+package com.viewcompose.renderer.view.lazy.session
 
-import com.viewcompose.renderer.node.LazyListItem
-import com.viewcompose.renderer.node.LazyListItemSession
+import com.viewcompose.ui.node.LazyListItem
+import com.viewcompose.ui.node.LazyListItemSession
 import com.viewcompose.renderer.reconcile.LazyListChangePayload
 
 internal class LazyItemSessionController(
@@ -19,10 +19,11 @@ internal class LazyItemSessionController(
         if (session == null || currentKey != item.key) {
             session?.dispose()
             clearContainer()
-            session = createSession(item)
+            val newSession = createSession(item)
+            session = newSession
             currentKey = item.key
             currentContentToken = item.contentToken
-            item.sessionUpdater?.invoke(session!!)
+            item.sessionUpdater?.invoke(newSession)
         } else if (payload is LazyListChangePayload.ContentTokenChanged) {
             applyContentTokenUpdate(item)
         } else if (currentContentToken == item.contentToken) {
@@ -46,7 +47,10 @@ internal class LazyItemSessionController(
     private fun applyContentTokenUpdate(item: LazyListItem) {
         val currentSession = session
         if (currentSession != null && item.sessionUpdater != null) {
-            item.sessionUpdater.invoke(currentSession)
+            val updater = item.sessionUpdater
+            if (updater != null) {
+                updater(currentSession)
+            }
             currentContentToken = item.contentToken
         } else {
             currentSession?.dispose()

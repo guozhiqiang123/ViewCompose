@@ -1,18 +1,18 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.backgroundColor
-import com.viewcompose.renderer.modifier.border
-import com.viewcompose.renderer.modifier.clip
-import com.viewcompose.renderer.modifier.clickable
-import com.viewcompose.renderer.modifier.cornerRadius
-import com.viewcompose.renderer.modifier.elevation
-import com.viewcompose.renderer.modifier.fillMaxSize
-import com.viewcompose.renderer.modifier.fillMaxWidth
-import com.viewcompose.renderer.modifier.minHeight
-import com.viewcompose.renderer.modifier.padding
-import com.viewcompose.renderer.layout.BoxAlignment
-import com.viewcompose.renderer.layout.VerticalAlignment
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.backgroundColor
+import com.viewcompose.ui.modifier.border
+import com.viewcompose.ui.modifier.clip
+import com.viewcompose.ui.modifier.clickable
+import com.viewcompose.ui.modifier.cornerRadius
+import com.viewcompose.ui.modifier.elevation
+import com.viewcompose.ui.modifier.fillMaxSize
+import com.viewcompose.ui.modifier.fillMaxWidth
+import com.viewcompose.ui.modifier.minHeight
+import com.viewcompose.ui.modifier.padding
+import com.viewcompose.ui.layout.BoxAlignment
+import com.viewcompose.ui.layout.VerticalAlignment
 
 fun UiTreeBuilder.Card(
     onClick: (() -> Unit)? = null,

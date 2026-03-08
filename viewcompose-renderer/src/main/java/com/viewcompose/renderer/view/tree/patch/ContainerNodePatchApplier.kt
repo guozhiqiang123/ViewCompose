@@ -2,7 +2,7 @@ package com.viewcompose.renderer.view.tree.patch
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.viewcompose.renderer.node.LazyListItem
+import com.viewcompose.ui.node.LazyListItem
 import com.viewcompose.renderer.view.container.DeclarativeBoxLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowColumnLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowRowLayout
@@ -36,7 +36,8 @@ import com.viewcompose.renderer.view.tree.SegmentedControlNodePatch
 import com.viewcompose.renderer.view.tree.TabRowNodePatch
 import com.viewcompose.renderer.view.tree.ContainerViewSpecReader
 import com.viewcompose.renderer.view.tree.VerticalPagerNodePatch
-import com.viewcompose.renderer.view.lazy.LazyListAdapter
+import com.viewcompose.ui.state.LazyListConnector
+import com.viewcompose.renderer.view.lazy.adapter.LazyListAdapter
 
 internal object ContainerNodePatchApplier {
     fun applyRowPatch(
@@ -109,8 +110,18 @@ internal object ContainerNodePatchApplier {
             adapter.submitItems(next.items)
         }
         if (previous.state !== next.state) {
-            previous.state?.recyclerView = null
-            next.state?.recyclerView = view
+            previous.state?.attach(null)
+            next.state?.attach(
+                object : LazyListConnector {
+                    override fun scrollToPosition(index: Int, smooth: Boolean) {
+                        if (smooth) {
+                            view.smoothScrollToPosition(index)
+                        } else {
+                            view.scrollToPosition(index)
+                        }
+                    }
+                },
+            )
         }
     }
 
@@ -134,8 +145,18 @@ internal object ContainerNodePatchApplier {
             adapter.submitItems(next.items)
         }
         if (previous.state !== next.state) {
-            previous.state?.recyclerView = null
-            next.state?.recyclerView = view
+            previous.state?.attach(null)
+            next.state?.attach(
+                object : LazyListConnector {
+                    override fun scrollToPosition(index: Int, smooth: Boolean) {
+                        if (smooth) {
+                            view.smoothScrollToPosition(index)
+                        } else {
+                            view.scrollToPosition(index)
+                        }
+                    }
+                },
+            )
         }
     }
 

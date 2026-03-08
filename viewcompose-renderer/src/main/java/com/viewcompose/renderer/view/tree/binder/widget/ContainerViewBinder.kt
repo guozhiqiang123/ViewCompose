@@ -4,13 +4,13 @@ import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.viewcompose.renderer.R
-import com.viewcompose.renderer.layout.MainAxisArrangement
-import com.viewcompose.renderer.node.VNode
+import com.viewcompose.ui.layout.MainAxisArrangement
+import com.viewcompose.ui.node.VNode
 import com.viewcompose.renderer.view.container.DeclarativeBoxLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowColumnLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowRowLayout
 import com.viewcompose.renderer.view.container.DeclarativeLinearLayout
-import com.viewcompose.renderer.view.lazy.LazyListSpacingDecoration
+import com.viewcompose.renderer.view.lazy.adapter.LazyListSpacingDecoration
 
 internal object ContainerViewBinder {
     data class LinearSpec(
@@ -29,7 +29,7 @@ internal object ContainerViewBinder {
     )
 
     data class AndroidViewSpec(
-        val update: ((android.view.View) -> Unit)?,
+        val update: ((Any) -> Unit)?,
     )
 
     data class FlowRowSpec(

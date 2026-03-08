@@ -1,10 +1,10 @@
 package com.viewcompose
 
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.fillMaxWidth
-import com.viewcompose.renderer.modifier.margin
-import com.viewcompose.renderer.modifier.overlayAnchor
-import com.viewcompose.renderer.modifier.testTag
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.fillMaxWidth
+import com.viewcompose.ui.modifier.margin
+import com.viewcompose.ui.modifier.overlayAnchor
+import com.viewcompose.ui.modifier.testTag
 import com.viewcompose.widget.core.Button
 import com.viewcompose.widget.core.ButtonVariant
 import com.viewcompose.widget.core.Column

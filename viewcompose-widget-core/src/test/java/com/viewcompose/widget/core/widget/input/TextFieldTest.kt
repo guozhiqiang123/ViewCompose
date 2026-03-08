@@ -1,11 +1,11 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.TextFieldImeAction
-import com.viewcompose.renderer.node.TextFieldType
-import com.viewcompose.renderer.node.VNode
-import com.viewcompose.renderer.node.spec.TextNodeProps
-import com.viewcompose.renderer.node.spec.TextFieldNodeProps
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.TextFieldImeAction
+import com.viewcompose.ui.node.TextFieldType
+import com.viewcompose.ui.node.VNode
+import com.viewcompose.ui.node.spec.TextNodeProps
+import com.viewcompose.ui.node.spec.TextFieldNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -156,7 +156,7 @@ class TextFieldTest {
         val elements = textFieldNode.modifier.readModifierElements()
         val spec = textFieldNode.spec as TextFieldNodeProps
 
-        assertFalse(elements.any { it is com.viewcompose.renderer.modifier.HeightModifierElement })
+        assertFalse(elements.any { it is com.viewcompose.ui.modifier.HeightModifierElement })
         assertEquals(TextFieldDefaults.height(TextFieldSize.Compact), spec.minHeight)
         assertEquals(Theme.typography.label.fontSizeSp, spec.textSizeSp)
     }
@@ -206,8 +206,8 @@ class TextFieldTest {
         assertEquals(209, errorSpec.borderColor)
     }
 
-    private fun com.viewcompose.renderer.modifier.Modifier.readModifierElements(): List<Any?> {
-        val field = com.viewcompose.renderer.modifier.Modifier::class.java.getDeclaredField("elements")
+    private fun com.viewcompose.ui.modifier.Modifier.readModifierElements(): List<Any?> {
+        val field = com.viewcompose.ui.modifier.Modifier::class.java.getDeclaredField("elements")
         field.isAccessible = true
         @Suppress("UNCHECKED_CAST")
         return field.get(this) as List<Any?>

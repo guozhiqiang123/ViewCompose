@@ -3,11 +3,11 @@ package com.viewcompose
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.viewcompose.image.coil.CoilRemoteImageLoader
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.backgroundColor
-import com.viewcompose.renderer.modifier.fillMaxSize
-import com.viewcompose.renderer.modifier.systemBarsInsetsPadding
-import com.viewcompose.renderer.node.ImageSource
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.backgroundColor
+import com.viewcompose.ui.modifier.fillMaxSize
+import com.viewcompose.ui.modifier.systemBarsInsetsPadding
+import com.viewcompose.ui.node.ImageSource
 import com.viewcompose.runtime.mutableStateOf
 import com.viewcompose.widget.core.HorizontalPager
 import com.viewcompose.widget.core.NavigationBar

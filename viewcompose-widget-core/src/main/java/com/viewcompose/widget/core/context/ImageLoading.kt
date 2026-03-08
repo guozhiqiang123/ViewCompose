@@ -1,6 +1,6 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.node.RemoteImageLoader
+import com.viewcompose.ui.node.RemoteImageLoader
 
 private val LocalRemoteImageLoader = uiLocalOf<RemoteImageLoader?> { null }
 

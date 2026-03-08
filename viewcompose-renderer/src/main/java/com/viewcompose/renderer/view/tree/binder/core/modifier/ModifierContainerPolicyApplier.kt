@@ -4,17 +4,17 @@ import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.viewcompose.renderer.R
-import com.viewcompose.renderer.modifier.focusFollowKeyboardPolicy
-import com.viewcompose.renderer.modifier.lazyContainerReusePolicy
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.VNode
+import com.viewcompose.ui.modifier.focusFollowKeyboardPolicy
+import com.viewcompose.ui.modifier.lazyContainerReusePolicy
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.VNode
 import com.viewcompose.renderer.view.container.DeclarativeHorizontalPagerLayout
 import com.viewcompose.renderer.view.container.DeclarativeLazyVerticalGridLayout
 import com.viewcompose.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.viewcompose.renderer.view.container.DeclarativeVerticalPagerLayout
-import com.viewcompose.renderer.view.lazy.FrameworkRecyclerViewDefaults
-import com.viewcompose.renderer.view.lazy.LazyFocusFollowLayoutMonitor
-import com.viewcompose.renderer.view.lazy.ScrollableFocusFollowLayoutMonitor
+import com.viewcompose.renderer.view.lazy.reuse.FrameworkRecyclerViewDefaults
+import com.viewcompose.renderer.view.lazy.focus.LazyFocusFollowLayoutMonitor
+import com.viewcompose.renderer.view.lazy.focus.ScrollableFocusFollowLayoutMonitor
 
 internal object ModifierContainerPolicyApplier {
     private const val FOCUS_FOLLOW_TAG = "UIFocusFollow"

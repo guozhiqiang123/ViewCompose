@@ -1,6 +1,6 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.node.spec.TextNodeProps
+import com.viewcompose.ui.node.spec.TextNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

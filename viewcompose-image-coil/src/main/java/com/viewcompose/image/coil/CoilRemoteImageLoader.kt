@@ -8,8 +8,10 @@ import coil3.request.error
 import coil3.request.fallback
 import coil3.request.placeholder
 import coil3.request.target
-import com.viewcompose.renderer.node.RemoteImageLoader
-import com.viewcompose.renderer.node.RemoteImageRequest
+import com.viewcompose.ui.node.RemoteImageLoader
+import com.viewcompose.ui.node.RemoteImageRequest
+import com.viewcompose.ui.node.RemoteImageTarget
+import com.viewcompose.ui.node.PlatformRemoteImageTarget
 
 class CoilRemoteImageLoader(
     private val imageLoader: ImageLoader,
@@ -19,9 +21,11 @@ class CoilRemoteImageLoader(
     )
 
     override fun load(
-        imageView: ImageView,
+        target: RemoteImageTarget,
         request: RemoteImageRequest,
     ) {
+        val imageView = (target as? PlatformRemoteImageTarget)?.target as? ImageView
+            ?: return
         imageLoader.enqueue(
             ImageRequest.Builder(imageView.context)
                 .data(request.url)

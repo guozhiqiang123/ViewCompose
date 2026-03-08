@@ -1,15 +1,15 @@
 package com.viewcompose
 
-import com.viewcompose.renderer.layout.VerticalAlignment
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.fillMaxWidth
-import com.viewcompose.renderer.modifier.margin
-import com.viewcompose.renderer.modifier.size
-import com.viewcompose.renderer.node.ImageContentScale
-import com.viewcompose.renderer.node.ImageSource
-import com.viewcompose.renderer.node.TextAlign
-import com.viewcompose.renderer.node.TextDecoration
-import com.viewcompose.renderer.node.TextOverflow
+import com.viewcompose.ui.layout.VerticalAlignment
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.fillMaxWidth
+import com.viewcompose.ui.modifier.margin
+import com.viewcompose.ui.modifier.size
+import com.viewcompose.ui.node.ImageContentScale
+import com.viewcompose.ui.node.ImageSource
+import com.viewcompose.ui.node.TextAlign
+import com.viewcompose.ui.node.TextDecoration
+import com.viewcompose.ui.node.TextOverflow
 import com.viewcompose.widget.core.Column
 import com.viewcompose.widget.core.Divider
 import com.viewcompose.widget.core.Icon

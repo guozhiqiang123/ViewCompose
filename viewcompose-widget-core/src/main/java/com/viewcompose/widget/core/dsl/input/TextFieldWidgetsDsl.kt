@@ -1,12 +1,12 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.fillMaxWidth
-import com.viewcompose.renderer.modifier.margin
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.TextFieldImeAction
-import com.viewcompose.renderer.node.TextFieldType
-import com.viewcompose.renderer.node.spec.TextFieldNodeProps
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.fillMaxWidth
+import com.viewcompose.ui.modifier.margin
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.TextFieldImeAction
+import com.viewcompose.ui.node.TextFieldType
+import com.viewcompose.ui.node.spec.TextFieldNodeProps
 
 fun UiTreeBuilder.BasicTextField(
     value: String,

@@ -1,6 +1,6 @@
 package com.viewcompose.renderer.view
 
-import com.viewcompose.renderer.view.lazy.LazyHolderRegistry
+import com.viewcompose.renderer.view.lazy.session.LazyHolderRegistry
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

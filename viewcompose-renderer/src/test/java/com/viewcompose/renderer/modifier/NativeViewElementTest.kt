@@ -1,5 +1,6 @@
 package com.viewcompose.renderer.modifier
 
+import com.viewcompose.ui.modifier.*
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue

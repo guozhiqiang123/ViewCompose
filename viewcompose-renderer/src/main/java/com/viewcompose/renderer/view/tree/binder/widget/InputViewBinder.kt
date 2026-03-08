@@ -13,12 +13,12 @@ import android.widget.RadioButton
 import android.widget.SeekBar
 import android.widget.Switch
 import com.viewcompose.renderer.R
-import com.viewcompose.renderer.node.TextFieldImeAction
-import com.viewcompose.renderer.node.TextFieldType
-import com.viewcompose.renderer.node.VNode
-import com.viewcompose.renderer.node.spec.SliderNodeProps
-import com.viewcompose.renderer.node.spec.TextFieldNodeProps
-import com.viewcompose.renderer.node.spec.ToggleNodeProps
+import com.viewcompose.ui.node.TextFieldImeAction
+import com.viewcompose.ui.node.TextFieldType
+import com.viewcompose.ui.node.VNode
+import com.viewcompose.ui.node.spec.SliderNodeProps
+import com.viewcompose.ui.node.spec.TextFieldNodeProps
+import com.viewcompose.ui.node.spec.ToggleNodeProps
 
 internal object InputViewBinder {
     data class TextFieldSpec(

@@ -1,5 +1,6 @@
 package com.viewcompose.renderer.layout
 
+import com.viewcompose.ui.layout.MainAxisArrangement
 import kotlin.math.max
 
 internal data class LinearChildSpec(

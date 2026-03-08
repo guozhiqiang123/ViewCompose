@@ -1,7 +1,7 @@
 package com.viewcompose.widget.core
 
 import android.view.ViewGroup
-import com.viewcompose.renderer.node.VNode
+import com.viewcompose.ui.node.VNode
 
 class OverlaySurfaceContent internal constructor(
     private val localSnapshot: LocalSnapshot,

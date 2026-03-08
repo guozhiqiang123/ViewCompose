@@ -1,12 +1,12 @@
 package com.viewcompose.renderer.view.tree
 
-import com.viewcompose.renderer.node.VNode
-import com.viewcompose.renderer.node.spec.ScrollableColumnNodeProps
-import com.viewcompose.renderer.node.spec.ScrollableRowNodeProps
-import com.viewcompose.renderer.node.spec.PullToRefreshNodeProps
-import com.viewcompose.renderer.layout.HorizontalAlignment
-import com.viewcompose.renderer.layout.MainAxisArrangement
-import com.viewcompose.renderer.layout.VerticalAlignment
+import com.viewcompose.ui.node.VNode
+import com.viewcompose.ui.node.spec.ScrollableColumnNodeProps
+import com.viewcompose.ui.node.spec.ScrollableRowNodeProps
+import com.viewcompose.ui.node.spec.PullToRefreshNodeProps
+import com.viewcompose.ui.layout.HorizontalAlignment
+import com.viewcompose.ui.layout.MainAxisArrangement
+import com.viewcompose.ui.layout.VerticalAlignment
 import com.viewcompose.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.viewcompose.renderer.view.container.DeclarativeScrollableRowLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout

@@ -1,6 +1,6 @@
 package com.viewcompose.renderer.view.tree
 
-import com.viewcompose.renderer.node.NodeType
+import com.viewcompose.ui.node.NodeType
 
 data class RenderStats(
     val inserts: Int = 0,

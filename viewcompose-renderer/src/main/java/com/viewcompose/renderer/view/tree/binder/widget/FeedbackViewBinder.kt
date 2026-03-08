@@ -5,8 +5,8 @@ import android.widget.ProgressBar
 import com.google.android.material.progressindicator.BaseProgressIndicator
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.progressindicator.LinearProgressIndicator
-import com.viewcompose.renderer.node.VNode
-import com.viewcompose.renderer.node.spec.ProgressIndicatorNodeProps
+import com.viewcompose.ui.node.VNode
+import com.viewcompose.ui.node.spec.ProgressIndicatorNodeProps
 import kotlin.math.roundToInt
 
 internal object FeedbackViewBinder {

@@ -1,4 +1,4 @@
-package com.viewcompose.renderer.view.lazy
+package com.viewcompose.renderer.view.lazy.reuse
 
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView

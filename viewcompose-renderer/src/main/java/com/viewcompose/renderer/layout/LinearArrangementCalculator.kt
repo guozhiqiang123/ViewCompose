@@ -1,5 +1,7 @@
 package com.viewcompose.renderer.layout
 
+import com.viewcompose.ui.layout.MainAxisArrangement
+
 internal object LinearArrangementCalculator {
     fun calculate(
         arrangement: MainAxisArrangement,

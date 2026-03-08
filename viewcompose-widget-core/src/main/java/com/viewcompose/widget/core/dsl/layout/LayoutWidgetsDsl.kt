@@ -1,25 +1,25 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.layout.BoxAlignment
-import com.viewcompose.renderer.layout.HorizontalAlignment
-import com.viewcompose.renderer.layout.MainAxisArrangement
-import com.viewcompose.renderer.layout.VerticalAlignment
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.alpha
-import com.viewcompose.renderer.modifier.backgroundColor
-import com.viewcompose.renderer.modifier.clickable
-import com.viewcompose.renderer.modifier.cornerRadius
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.spec.BoxNodeProps
-import com.viewcompose.renderer.node.spec.ColumnNodeProps
-import com.viewcompose.renderer.node.spec.DividerNodeProps
-import com.viewcompose.renderer.node.spec.EmptyNodeSpec
-import com.viewcompose.renderer.node.spec.FlowColumnNodeProps
-import com.viewcompose.renderer.node.spec.FlowRowNodeProps
-import com.viewcompose.renderer.node.spec.PullToRefreshNodeProps
-import com.viewcompose.renderer.node.spec.RowNodeProps
-import com.viewcompose.renderer.node.spec.ScrollableColumnNodeProps
-import com.viewcompose.renderer.node.spec.ScrollableRowNodeProps
+import com.viewcompose.ui.layout.BoxAlignment
+import com.viewcompose.ui.layout.HorizontalAlignment
+import com.viewcompose.ui.layout.MainAxisArrangement
+import com.viewcompose.ui.layout.VerticalAlignment
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.alpha
+import com.viewcompose.ui.modifier.backgroundColor
+import com.viewcompose.ui.modifier.clickable
+import com.viewcompose.ui.modifier.cornerRadius
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.spec.BoxNodeProps
+import com.viewcompose.ui.node.spec.ColumnNodeProps
+import com.viewcompose.ui.node.spec.DividerNodeProps
+import com.viewcompose.ui.node.spec.EmptyNodeSpec
+import com.viewcompose.ui.node.spec.FlowColumnNodeProps
+import com.viewcompose.ui.node.spec.FlowRowNodeProps
+import com.viewcompose.ui.node.spec.PullToRefreshNodeProps
+import com.viewcompose.ui.node.spec.RowNodeProps
+import com.viewcompose.ui.node.spec.ScrollableColumnNodeProps
+import com.viewcompose.ui.node.spec.ScrollableRowNodeProps
 
 fun UiTreeBuilder.Box(
     key: Any? = null,

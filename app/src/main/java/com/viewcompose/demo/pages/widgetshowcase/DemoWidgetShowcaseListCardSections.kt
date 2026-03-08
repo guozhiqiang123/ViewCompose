@@ -1,10 +1,10 @@
 package com.viewcompose
 
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.fillMaxWidth
-import com.viewcompose.renderer.modifier.margin
-import com.viewcompose.renderer.modifier.padding
-import com.viewcompose.renderer.node.ImageSource
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.fillMaxWidth
+import com.viewcompose.ui.modifier.margin
+import com.viewcompose.ui.modifier.padding
+import com.viewcompose.ui.node.ImageSource
 import com.viewcompose.runtime.mutableStateOf
 import com.viewcompose.widget.core.Card
 import com.viewcompose.widget.core.CardVariant

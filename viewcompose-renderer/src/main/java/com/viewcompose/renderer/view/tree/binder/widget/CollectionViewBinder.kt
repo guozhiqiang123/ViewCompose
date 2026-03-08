@@ -2,17 +2,18 @@ package com.viewcompose.renderer.view.tree
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.viewcompose.renderer.node.LazyListItem
-import com.viewcompose.renderer.node.NavigationBarItem
-import com.viewcompose.renderer.node.VNode
-import com.viewcompose.renderer.node.spec.LazyColumnNodeProps
-import com.viewcompose.renderer.node.spec.LazyRowNodeProps
-import com.viewcompose.renderer.node.spec.LazyVerticalGridNodeProps
-import com.viewcompose.renderer.node.spec.NavigationBarNodeProps
+import com.viewcompose.ui.node.LazyListItem
+import com.viewcompose.ui.node.NavigationBarItem
+import com.viewcompose.ui.node.VNode
+import com.viewcompose.ui.node.spec.LazyColumnNodeProps
+import com.viewcompose.ui.node.spec.LazyRowNodeProps
+import com.viewcompose.ui.node.spec.LazyVerticalGridNodeProps
+import com.viewcompose.ui.node.spec.NavigationBarNodeProps
 import com.viewcompose.renderer.view.container.DeclarativeLazyVerticalGridLayout
 import com.viewcompose.renderer.view.container.DeclarativeNavigationBarLayout
-import com.viewcompose.renderer.view.lazy.LazyListAdapter
-import com.viewcompose.renderer.view.lazy.LazyListState
+import com.viewcompose.ui.state.LazyListConnector
+import com.viewcompose.ui.state.LazyListState
+import com.viewcompose.renderer.view.lazy.adapter.LazyListAdapter
 
 internal object CollectionViewBinder {
     data class LazyColumnSpec(
@@ -58,7 +59,17 @@ internal object CollectionViewBinder {
         ContainerViewBinder.applyLazyListPadding(view, spec.contentPadding)
         ContainerViewBinder.applyLazyListSpacing(view, spec.spacing, LinearLayoutManager.VERTICAL)
         adapter.submitItems(spec.items)
-        spec.state?.recyclerView = view
+        spec.state?.attach(
+            object : LazyListConnector {
+                override fun scrollToPosition(index: Int, smooth: Boolean) {
+                    if (smooth) {
+                        view.smoothScrollToPosition(index)
+                    } else {
+                        view.scrollToPosition(index)
+                    }
+                }
+            },
+        )
     }
 
     fun bindLazyRow(
@@ -72,7 +83,17 @@ internal object CollectionViewBinder {
         ContainerViewBinder.applyLazyListPadding(view, spec.contentPadding)
         ContainerViewBinder.applyLazyListSpacing(view, spec.spacing, LinearLayoutManager.HORIZONTAL)
         adapter.submitItems(spec.items)
-        spec.state?.recyclerView = view
+        spec.state?.attach(
+            object : LazyListConnector {
+                override fun scrollToPosition(index: Int, smooth: Boolean) {
+                    if (smooth) {
+                        view.smoothScrollToPosition(index)
+                    } else {
+                        view.scrollToPosition(index)
+                    }
+                }
+            },
+        )
     }
 
     fun bindNavigationBar(

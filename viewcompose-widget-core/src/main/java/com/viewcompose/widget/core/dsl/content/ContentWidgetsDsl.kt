@@ -2,17 +2,18 @@ package com.viewcompose.widget.core
 
 import android.content.Context
 import android.view.View
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.size
-import com.viewcompose.renderer.node.ImageContentScale
-import com.viewcompose.renderer.node.ImageSource
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.TextAlign
-import com.viewcompose.renderer.node.TextDecoration
-import com.viewcompose.renderer.node.TextOverflow
-import com.viewcompose.renderer.node.spec.AndroidViewNodeProps
-import com.viewcompose.renderer.node.spec.ImageNodeProps
-import com.viewcompose.renderer.node.spec.TextNodeProps
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.size
+import com.viewcompose.ui.node.ImageContentScale
+import com.viewcompose.ui.node.ImageSource
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.TextAlign
+import com.viewcompose.ui.node.TextDecoration
+import com.viewcompose.ui.node.TextOverflow
+import com.viewcompose.ui.node.spec.AndroidViewNodeProps
+import com.viewcompose.ui.node.spec.ImageNodeProps
+import com.viewcompose.ui.node.spec.TextNodeProps
+import com.viewcompose.ui.node.spec.uiFontFamily
 
 fun UiTreeBuilder.Text(
     text: String,
@@ -36,7 +37,7 @@ fun UiTreeBuilder.Text(
             textColor = color,
             textSizeSp = style.fontSizeSp,
             fontWeight = style.fontWeight,
-            fontFamily = style.fontFamily,
+            fontFamily = uiFontFamily(style.fontFamily),
             letterSpacingEm = style.letterSpacingEm,
             lineHeightSp = style.lineHeightSp,
             includeFontPadding = style.includeFontPadding,
@@ -104,8 +105,12 @@ fun UiTreeBuilder.AndroidView(
         type = NodeType.AndroidView,
         key = key,
         spec = AndroidViewNodeProps(
-            factory = factory,
-            update = update,
+            factory = { context ->
+                factory(context as Context)
+            },
+            update = { view ->
+                update(view as View)
+            },
         ),
         modifier = modifier,
     )

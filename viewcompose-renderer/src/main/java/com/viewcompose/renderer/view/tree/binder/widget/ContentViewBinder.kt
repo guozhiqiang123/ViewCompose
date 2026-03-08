@@ -11,12 +11,14 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.widget.TextViewCompat
-import com.viewcompose.renderer.node.ImageSource
-import com.viewcompose.renderer.node.TextDecoration
-import com.viewcompose.renderer.node.TextOverflow
-import com.viewcompose.renderer.node.VNode
-import com.viewcompose.renderer.node.spec.ButtonNodeProps
-import com.viewcompose.renderer.node.spec.TextNodeProps
+import com.viewcompose.ui.node.ImageSource
+import com.viewcompose.ui.node.TextDecoration
+import com.viewcompose.ui.node.TextOverflow
+import com.viewcompose.ui.node.VNode
+import com.viewcompose.ui.node.spec.ButtonNodeProps
+import com.viewcompose.ui.node.spec.TextNodeProps
+import com.viewcompose.ui.node.spec.UiFontFamily
+import com.viewcompose.renderer.interop.toTypefaceOrNull
 
 internal object ContentViewBinder {
     data class TextSpec(
@@ -25,7 +27,7 @@ internal object ContentViewBinder {
         val overflow: TextOverflow,
         val gravity: Int,
         val fontWeight: Int? = null,
-        val fontFamily: Typeface? = null,
+        val fontFamily: UiFontFamily? = null,
         val letterSpacingEm: Float? = null,
         val lineHeightSp: Int? = null,
         val includeFontPadding: Boolean = false,
@@ -137,7 +139,7 @@ internal object ContentViewBinder {
         )
     }
 
-    internal fun toTextGravity(alignment: com.viewcompose.renderer.node.TextAlign): Int {
+    internal fun toTextGravity(alignment: com.viewcompose.ui.node.TextAlign): Int {
         return alignment.toTextGravity()
     }
 
@@ -155,11 +157,11 @@ internal object ContentViewBinder {
         )
     }
 
-    private fun com.viewcompose.renderer.node.TextAlign.toTextGravity(): Int {
+    private fun com.viewcompose.ui.node.TextAlign.toTextGravity(): Int {
         return when (this) {
-            com.viewcompose.renderer.node.TextAlign.Start -> Gravity.START or Gravity.CENTER_VERTICAL
-            com.viewcompose.renderer.node.TextAlign.Center -> Gravity.CENTER
-            com.viewcompose.renderer.node.TextAlign.End -> Gravity.END or Gravity.CENTER_VERTICAL
+            com.viewcompose.ui.node.TextAlign.Start -> Gravity.START or Gravity.CENTER_VERTICAL
+            com.viewcompose.ui.node.TextAlign.Center -> Gravity.CENTER
+            com.viewcompose.ui.node.TextAlign.End -> Gravity.END or Gravity.CENTER_VERTICAL
         }
     }
 
@@ -181,10 +183,10 @@ internal object ContentViewBinder {
     internal fun applyTypeface(
         view: TextView,
         fontWeight: Int?,
-        fontFamily: Typeface?,
+        fontFamily: UiFontFamily?,
     ) {
         if (fontWeight == null && fontFamily == null) return
-        val base = fontFamily ?: view.typeface ?: Typeface.DEFAULT
+        val base = fontFamily.toTypefaceOrNull() ?: view.typeface ?: Typeface.DEFAULT
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && fontWeight != null) {
             view.typeface = Typeface.create(base, fontWeight, false)
         } else {

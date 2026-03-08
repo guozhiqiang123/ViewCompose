@@ -11,7 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.viewcompose.renderer.node.SegmentedControlItem
+import com.viewcompose.ui.node.SegmentedControlItem
 import com.viewcompose.renderer.view.dpToPx
 
 internal class DeclarativeSegmentedControlLayout(

@@ -1,6 +1,6 @@
 package com.viewcompose.renderer.view.tree
 
-import com.viewcompose.renderer.node.VNode
+import com.viewcompose.ui.node.VNode
 
 internal object RenderWarningCollector {
     private const val DEEP_TREE_WARNING_DEPTH: Int = 10

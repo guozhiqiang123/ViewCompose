@@ -4,9 +4,9 @@ import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.viewcompose.renderer.R
-import com.viewcompose.renderer.modifier.ImeInsetsPaddingModifierElement
-import com.viewcompose.renderer.modifier.PaddingModifierElement
-import com.viewcompose.renderer.modifier.SystemBarsInsetsPaddingModifierElement
+import com.viewcompose.ui.modifier.ImeInsetsPaddingModifierElement
+import com.viewcompose.ui.modifier.PaddingModifierElement
+import com.viewcompose.ui.modifier.SystemBarsInsetsPaddingModifierElement
 
 internal object ModifierInsetsApplier {
     fun applyHostPaddingWhenNoInsets(

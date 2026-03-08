@@ -1,9 +1,9 @@
 package com.viewcompose.renderer.view
 
-import com.viewcompose.renderer.node.LazyListItem
-import com.viewcompose.renderer.node.LazyListItemSession
-import com.viewcompose.renderer.node.LazyListItemSessionFactory
-import com.viewcompose.renderer.view.lazy.LazyItemSessionController
+import com.viewcompose.ui.node.LazyListItem
+import com.viewcompose.ui.node.LazyListItemSession
+import com.viewcompose.ui.node.LazyListItemSessionFactory
+import com.viewcompose.renderer.view.lazy.session.LazyItemSessionController
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -163,7 +163,7 @@ class LazyItemSessionControllerTest {
         return LazyListItem(
             key = key,
             contentToken = contentToken,
-            sessionFactory = LazyListItemSessionFactory {
+            sessionFactory = LazyListItemSessionFactory { _ ->
                 error("sessionFactory should not be used in controller tests")
             },
             sessionUpdater = sessionUpdater,

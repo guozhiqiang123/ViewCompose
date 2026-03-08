@@ -1,16 +1,16 @@
 package com.viewcompose.renderer.view.tree
 
-import com.viewcompose.renderer.node.LazyListItem
-import com.viewcompose.renderer.node.collection.TabRowTab
-import com.viewcompose.renderer.node.VNode
-import com.viewcompose.renderer.node.spec.BoxNodeProps
-import com.viewcompose.renderer.node.spec.HorizontalPagerNodeProps
-import com.viewcompose.renderer.node.spec.LazyColumnNodeProps
-import com.viewcompose.renderer.node.spec.LazyRowNodeProps
-import com.viewcompose.renderer.node.spec.LazyVerticalGridNodeProps
-import com.viewcompose.renderer.node.spec.NodeSpec
-import com.viewcompose.renderer.node.spec.TabRowNodeProps
-import com.viewcompose.renderer.node.spec.VerticalPagerNodeProps
+import com.viewcompose.ui.node.LazyListItem
+import com.viewcompose.ui.node.collection.TabRowTab
+import com.viewcompose.ui.node.VNode
+import com.viewcompose.ui.node.spec.BoxNodeProps
+import com.viewcompose.ui.node.spec.HorizontalPagerNodeProps
+import com.viewcompose.ui.node.spec.LazyColumnNodeProps
+import com.viewcompose.ui.node.spec.LazyRowNodeProps
+import com.viewcompose.ui.node.spec.LazyVerticalGridNodeProps
+import com.viewcompose.ui.node.spec.NodeSpec
+import com.viewcompose.ui.node.spec.TabRowNodeProps
+import com.viewcompose.ui.node.spec.VerticalPagerNodeProps
 
 internal object NodeBindingDiffer {
     private val patchFactories by lazy { NodeBinderDescriptors.patchFactoriesBySpec() }

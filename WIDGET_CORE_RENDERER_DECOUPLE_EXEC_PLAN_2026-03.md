@@ -29,7 +29,7 @@
 
 - [x] Step 1 建立执行计划文档并首提
 - [x] Step 2 新增模块并改构建拓扑
-- [ ] Step 3 抽取 UI 契约到 ui-contract
+- [x] Step 3 抽取 UI 契约到 ui-contract
 - [ ] Step 4 Android 专属 API 迁出到 host-android
 - [ ] Step 5 renderer 适配 ui-contract
 - [ ] Step 6 overlay/image-coil 同步迁移
@@ -40,6 +40,7 @@
 
 - `DONE` docs: add widget-core renderer decouple execution plan
 - `DONE` build: add ui-contract and host-android modules and rewire dependencies
+- `DONE` refactor: move node and modifier contracts into pure ui-contract module
 
 ## 5. 阻塞记录
 

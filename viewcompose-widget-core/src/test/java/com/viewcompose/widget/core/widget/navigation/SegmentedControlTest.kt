@@ -1,9 +1,9 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.modifier.HeightModifierElement
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.SegmentedControlItem
-import com.viewcompose.renderer.node.spec.SegmentedControlNodeProps
+import com.viewcompose.ui.modifier.HeightModifierElement
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.SegmentedControlItem
+import com.viewcompose.ui.node.spec.SegmentedControlNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -111,7 +111,7 @@ class SegmentedControlTest {
         assertEquals(0x00000000, spec.rippleColor)
     }
 
-    private fun com.viewcompose.renderer.modifier.Modifier.readModifierElements(): List<Any?> {
+    private fun com.viewcompose.ui.modifier.Modifier.readModifierElements(): List<Any?> {
         val field = javaClass.getDeclaredField("elements")
         field.isAccessible = true
         @Suppress("UNCHECKED_CAST")

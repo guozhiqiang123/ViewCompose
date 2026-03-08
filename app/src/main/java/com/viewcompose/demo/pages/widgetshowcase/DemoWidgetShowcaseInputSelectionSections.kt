@@ -1,7 +1,7 @@
 package com.viewcompose
 
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.fillMaxWidth
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.fillMaxWidth
 import com.viewcompose.runtime.mutableStateOf
 import com.viewcompose.widget.core.Checkbox
 import com.viewcompose.widget.core.Column

@@ -1,17 +1,17 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.layout.VerticalAlignment
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.backgroundColor
-import com.viewcompose.renderer.modifier.clip
-import com.viewcompose.renderer.modifier.cornerRadius
-import com.viewcompose.renderer.modifier.elevation
-import com.viewcompose.renderer.modifier.fillMaxHeight
-import com.viewcompose.renderer.modifier.height
-import com.viewcompose.renderer.modifier.padding
-import com.viewcompose.renderer.node.ImageSource
-import com.viewcompose.renderer.node.TextFieldImeAction
-import com.viewcompose.renderer.node.TextFieldType
+import com.viewcompose.ui.layout.VerticalAlignment
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.backgroundColor
+import com.viewcompose.ui.modifier.clip
+import com.viewcompose.ui.modifier.cornerRadius
+import com.viewcompose.ui.modifier.elevation
+import com.viewcompose.ui.modifier.fillMaxHeight
+import com.viewcompose.ui.modifier.height
+import com.viewcompose.ui.modifier.padding
+import com.viewcompose.ui.node.ImageSource
+import com.viewcompose.ui.node.TextFieldImeAction
+import com.viewcompose.ui.node.TextFieldType
 
 fun UiTreeBuilder.SearchBar(
     query: String,

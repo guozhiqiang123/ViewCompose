@@ -1,16 +1,16 @@
 package com.viewcompose
 
-import com.viewcompose.renderer.layout.BoxAlignment
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.backgroundColor
-import com.viewcompose.renderer.modifier.cornerRadius
-import com.viewcompose.renderer.modifier.fillMaxWidth
-import com.viewcompose.renderer.modifier.height
-import com.viewcompose.renderer.modifier.margin
-import com.viewcompose.renderer.modifier.offset
-import com.viewcompose.renderer.modifier.padding
-import com.viewcompose.renderer.modifier.size
-import com.viewcompose.renderer.modifier.zIndex
+import com.viewcompose.ui.layout.BoxAlignment
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.backgroundColor
+import com.viewcompose.ui.modifier.cornerRadius
+import com.viewcompose.ui.modifier.fillMaxWidth
+import com.viewcompose.ui.modifier.height
+import com.viewcompose.ui.modifier.margin
+import com.viewcompose.ui.modifier.offset
+import com.viewcompose.ui.modifier.padding
+import com.viewcompose.ui.modifier.size
+import com.viewcompose.ui.modifier.zIndex
 import com.viewcompose.widget.core.Box
 import com.viewcompose.widget.core.SurfaceDefaults
 import com.viewcompose.widget.core.Text

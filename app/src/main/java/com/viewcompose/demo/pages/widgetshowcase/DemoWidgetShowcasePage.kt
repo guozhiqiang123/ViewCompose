@@ -1,9 +1,9 @@
 package com.viewcompose
 
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.fillMaxSize
-import com.viewcompose.renderer.modifier.margin
-import com.viewcompose.renderer.modifier.padding
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.fillMaxSize
+import com.viewcompose.ui.modifier.margin
+import com.viewcompose.ui.modifier.padding
 import com.viewcompose.runtime.mutableStateOf
 import com.viewcompose.widget.core.Button
 import com.viewcompose.widget.core.ButtonVariant

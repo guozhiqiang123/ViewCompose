@@ -1,13 +1,13 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.layout.BoxAlignment
-import com.viewcompose.renderer.layout.HorizontalAlignment
-import com.viewcompose.renderer.layout.VerticalAlignment
-import com.viewcompose.renderer.modifier.BoxAlignModifierElement
-import com.viewcompose.renderer.modifier.HorizontalAlignModifierElement
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.VerticalAlignModifierElement
-import com.viewcompose.renderer.modifier.WeightModifierElement
+import com.viewcompose.ui.layout.BoxAlignment
+import com.viewcompose.ui.layout.HorizontalAlignment
+import com.viewcompose.ui.layout.VerticalAlignment
+import com.viewcompose.ui.modifier.BoxAlignModifierElement
+import com.viewcompose.ui.modifier.HorizontalAlignModifierElement
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.VerticalAlignModifierElement
+import com.viewcompose.ui.modifier.WeightModifierElement
 
 @UiDslMarker
 open class LayoutScope internal constructor() : UiTreeBuilder()

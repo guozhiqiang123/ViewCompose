@@ -8,7 +8,7 @@ data class RenderStructureStats(
 ) {
     companion object {
         fun from(
-            nodes: List<com.viewcompose.renderer.node.VNode>,
+            nodes: List<com.viewcompose.ui.node.VNode>,
             mountedNodes: List<MountedNode>,
         ): RenderStructureStats {
             return RenderStructureStats(
@@ -21,11 +21,11 @@ data class RenderStructureStats(
     }
 }
 
-private fun com.viewcompose.renderer.node.VNode.deepNodeCount(): Int {
+private fun com.viewcompose.ui.node.VNode.deepNodeCount(): Int {
     return 1 + children.sumOf { it.deepNodeCount() }
 }
 
-private fun com.viewcompose.renderer.node.VNode.deepDepth(): Int {
+private fun com.viewcompose.ui.node.VNode.deepDepth(): Int {
     return 1 + (children.maxOfOrNull { it.deepDepth() } ?: 0)
 }
 

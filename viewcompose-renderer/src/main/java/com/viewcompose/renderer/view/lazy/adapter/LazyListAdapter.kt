@@ -1,4 +1,4 @@
-package com.viewcompose.renderer.view.lazy
+package com.viewcompose.renderer.view.lazy.adapter
 
 import android.util.Log
 import android.graphics.Rect
@@ -6,9 +6,13 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.viewcompose.renderer.node.LazyListItem
+import com.viewcompose.ui.node.LazyListItem
+import com.viewcompose.renderer.interop.AndroidRenderContainerHandle
 import com.viewcompose.renderer.reconcile.LazyListDiff
 import com.viewcompose.renderer.reconcile.LazyListIdentityInspector
+import com.viewcompose.renderer.view.lazy.focus.LazyFocusFollowLayoutMonitor
+import com.viewcompose.renderer.view.lazy.session.LazyHolderRegistry
+import com.viewcompose.renderer.view.lazy.session.LazyItemSessionController
 
 internal class LazyListAdapter(
     private val orientation: Int = LinearLayoutManager.VERTICAL,
@@ -290,7 +294,7 @@ internal class LazyListViewHolder(
 ) : RecyclerView.ViewHolder(container) {
     private val controller = LazyItemSessionController(
         createSession = { item ->
-            item.sessionFactory.create(container)
+            item.sessionFactory.create(AndroidRenderContainerHandle(container))
         },
         clearContainer = container::removeAllViews,
     )

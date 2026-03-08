@@ -2,16 +2,16 @@ package com.viewcompose.widget.core
 
 import android.content.Context
 import android.view.View
-import com.viewcompose.renderer.layout.BoxAlignment
-import com.viewcompose.renderer.layout.HorizontalAlignment
-import com.viewcompose.renderer.layout.MainAxisArrangement
-import com.viewcompose.renderer.layout.VerticalAlignment
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.spec.AndroidViewNodeProps
-import com.viewcompose.renderer.node.spec.BoxNodeProps
-import com.viewcompose.renderer.node.spec.ColumnNodeProps
-import com.viewcompose.renderer.node.spec.DividerNodeProps
-import com.viewcompose.renderer.node.spec.RowNodeProps
+import com.viewcompose.ui.layout.BoxAlignment
+import com.viewcompose.ui.layout.HorizontalAlignment
+import com.viewcompose.ui.layout.MainAxisArrangement
+import com.viewcompose.ui.layout.VerticalAlignment
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.spec.AndroidViewNodeProps
+import com.viewcompose.ui.node.spec.BoxNodeProps
+import com.viewcompose.ui.node.spec.ColumnNodeProps
+import com.viewcompose.ui.node.spec.DividerNodeProps
+import com.viewcompose.ui.node.spec.RowNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -98,7 +98,10 @@ class ContainerNodeSpecTest {
     @Test
     fun `android view emits android view node spec`() {
         val factory: (Context) -> View = { context -> View(context) }
-        val update: (View) -> Unit = {}
+        var updatedView: View? = null
+        val update: (View) -> Unit = { view ->
+            updatedView = view
+        }
 
         val tree = buildVNodeTree {
             AndroidView(
@@ -113,6 +116,6 @@ class ContainerNodeSpecTest {
         val spec = node.spec as AndroidViewNodeProps
         assertNotNull(spec.factory)
         assertNotNull(spec.update)
-        assertTrue(spec.update === update)
+        assertTrue(updatedView == null)
     }
 }

@@ -1,9 +1,9 @@
 package com.viewcompose.renderer.reconcile
 
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.node.LazyListItem
-import com.viewcompose.renderer.node.LazyListItemSession
-import com.viewcompose.renderer.node.LazyListItemSessionFactory
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.node.LazyListItem
+import com.viewcompose.ui.node.LazyListItemSession
+import com.viewcompose.ui.node.LazyListItemSessionFactory
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue

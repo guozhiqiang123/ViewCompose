@@ -1,9 +1,9 @@
 package com.viewcompose.renderer.view.tree
 
 import android.view.View
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.VNode
-import com.viewcompose.renderer.node.spec.NodeSpec
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.VNode
+import com.viewcompose.ui.node.spec.NodeSpec
 import kotlin.reflect.KClass
 
 internal object NodeViewBinderRegistry {

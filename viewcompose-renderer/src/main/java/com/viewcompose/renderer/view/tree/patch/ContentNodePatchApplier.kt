@@ -6,7 +6,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.core.widget.TextViewCompat
-import com.viewcompose.renderer.node.TextOverflow
+import com.viewcompose.ui.node.TextOverflow
 import com.viewcompose.renderer.view.tree.ButtonNodePatch
 import com.viewcompose.renderer.view.tree.ContentViewBinder
 import com.viewcompose.renderer.view.tree.DividerNodePatch

@@ -4,11 +4,11 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
 import com.viewcompose.renderer.R
-import com.viewcompose.renderer.modifier.NativeViewElement
+import com.viewcompose.ui.modifier.NativeViewElement
+import com.viewcompose.ui.modifier.Visibility
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.VNode
 import com.viewcompose.renderer.modifier.ResolvedModifiers
-import com.viewcompose.renderer.modifier.Visibility
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.VNode
 
 internal object ModifierInteractionApplier {
     fun applyCommonHostProperties(

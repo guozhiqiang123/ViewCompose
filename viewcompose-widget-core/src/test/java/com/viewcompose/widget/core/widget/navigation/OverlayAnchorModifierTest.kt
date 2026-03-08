@@ -1,9 +1,9 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.OverlayAnchorModifierElement
-import com.viewcompose.renderer.modifier.overlayAnchor
-import com.viewcompose.renderer.node.NodeType
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.OverlayAnchorModifierElement
+import com.viewcompose.ui.modifier.overlayAnchor
+import com.viewcompose.ui.node.NodeType
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -43,8 +43,8 @@ class OverlayAnchorModifierTest {
         assertEquals("expected_anchor", anchor.anchorId)
     }
 
-    private fun com.viewcompose.renderer.modifier.Modifier.readModifierElements(): List<Any?> {
-        val field = com.viewcompose.renderer.modifier.Modifier::class.java.getDeclaredField("elements")
+    private fun com.viewcompose.ui.modifier.Modifier.readModifierElements(): List<Any?> {
+        val field = com.viewcompose.ui.modifier.Modifier::class.java.getDeclaredField("elements")
         field.isAccessible = true
         @Suppress("UNCHECKED_CAST")
         return field.get(this) as List<Any?>

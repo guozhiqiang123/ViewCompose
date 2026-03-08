@@ -1,17 +1,17 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.node.LazyListItem
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.VNode
-import com.viewcompose.renderer.node.collection.TabRowTab
-import com.viewcompose.renderer.node.spec.HorizontalPagerNodeProps
-import com.viewcompose.renderer.node.spec.LazyColumnNodeProps
-import com.viewcompose.renderer.node.spec.LazyRowNodeProps
-import com.viewcompose.renderer.node.spec.LazyVerticalGridNodeProps
-import com.viewcompose.renderer.node.spec.NodeSpec
-import com.viewcompose.renderer.node.spec.TabRowNodeProps
-import com.viewcompose.renderer.node.spec.VerticalPagerNodeProps
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.node.LazyListItem
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.VNode
+import com.viewcompose.ui.node.collection.TabRowTab
+import com.viewcompose.ui.node.spec.HorizontalPagerNodeProps
+import com.viewcompose.ui.node.spec.LazyColumnNodeProps
+import com.viewcompose.ui.node.spec.LazyRowNodeProps
+import com.viewcompose.ui.node.spec.LazyVerticalGridNodeProps
+import com.viewcompose.ui.node.spec.NodeSpec
+import com.viewcompose.ui.node.spec.TabRowNodeProps
+import com.viewcompose.ui.node.spec.VerticalPagerNodeProps
 
 @UiDslMarker
 open class UiTreeBuilder {

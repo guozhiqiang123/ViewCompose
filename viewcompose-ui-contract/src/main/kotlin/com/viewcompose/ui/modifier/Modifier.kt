@@ -1,11 +1,11 @@
-package com.viewcompose.renderer.modifier
+package com.viewcompose.ui.modifier
 
-import com.viewcompose.renderer.layout.BoxAlignment
-import com.viewcompose.renderer.layout.HorizontalAlignment
-import com.viewcompose.renderer.layout.VerticalAlignment
+import com.viewcompose.ui.layout.BoxAlignment
+import com.viewcompose.ui.layout.HorizontalAlignment
+import com.viewcompose.ui.layout.VerticalAlignment
 
 open class Modifier private constructor(
-    internal val elements: List<ModifierElement>,
+    val elements: List<ModifierElement>,
 ) {
     fun then(element: ModifierElement): Modifier = Modifier(elements + element)
 
@@ -152,7 +152,7 @@ data class FocusFollowKeyboardModifierElement(
 
 class NativeViewElement(
     val stableKey: Any,
-    val configure: (android.view.View) -> Unit,
+    val configure: (Any) -> Unit,
 ) : ModifierElement {
     override fun equals(other: Any?): Boolean =
         other is NativeViewElement && stableKey == other.stableKey
@@ -443,34 +443,34 @@ fun Modifier.focusFollowKeyboard(
 }
 
 fun Modifier.fillMaxWidth(): Modifier {
-    return width(android.view.ViewGroup.LayoutParams.MATCH_PARENT)
+    return width(MATCH_PARENT)
 }
 
 fun Modifier.fillMaxHeight(): Modifier {
-    return height(android.view.ViewGroup.LayoutParams.MATCH_PARENT)
+    return height(MATCH_PARENT)
 }
 
 fun Modifier.fillMaxSize(): Modifier {
     return size(
-        width = android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-        height = android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+        width = MATCH_PARENT,
+        height = MATCH_PARENT,
     )
 }
 
-fun Modifier.nativeView(key: Any = Unit, configure: (android.view.View) -> Unit): Modifier {
+fun Modifier.nativeView(key: Any = Unit, configure: (Any) -> Unit): Modifier {
     return then(NativeViewElement(key, configure))
 }
 
-internal data class LazyContainerReusePolicy(
+data class LazyContainerReusePolicy(
     val sharePool: Boolean,
     val disableItemAnimator: Boolean,
 )
 
-internal data class FocusFollowKeyboardPolicy(
+data class FocusFollowKeyboardPolicy(
     val enabled: Boolean,
 )
 
-internal fun Modifier.lazyContainerReusePolicy(): LazyContainerReusePolicy {
+fun Modifier.lazyContainerReusePolicy(): LazyContainerReusePolicy {
     val element = elements
         .asReversed()
         .firstOrNull { it is LazyContainerReuseModifierElement } as? LazyContainerReuseModifierElement
@@ -486,7 +486,7 @@ internal fun Modifier.lazyContainerReusePolicy(): LazyContainerReusePolicy {
     )
 }
 
-internal fun Modifier.focusFollowKeyboardPolicy(): FocusFollowKeyboardPolicy {
+fun Modifier.focusFollowKeyboardPolicy(): FocusFollowKeyboardPolicy {
     val element = elements
         .asReversed()
         .firstOrNull { it is FocusFollowKeyboardModifierElement }
@@ -500,3 +500,5 @@ internal fun Modifier.focusFollowKeyboardPolicy(): FocusFollowKeyboardPolicy {
         enabled = element.enabled,
     )
 }
+
+private const val MATCH_PARENT: Int = -1

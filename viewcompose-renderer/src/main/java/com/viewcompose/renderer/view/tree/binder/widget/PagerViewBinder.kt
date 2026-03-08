@@ -1,19 +1,19 @@
 package com.viewcompose.renderer.view.tree
 
-import com.viewcompose.renderer.node.LazyListItem
-import com.viewcompose.renderer.node.SegmentedControlItem
-import com.viewcompose.renderer.node.VNode
-import com.viewcompose.renderer.node.collection.TabIndicatorPosition
-import com.viewcompose.renderer.node.collection.TabIndicatorWidthMode
-import com.viewcompose.renderer.node.spec.HorizontalPagerNodeProps
-import com.viewcompose.renderer.node.spec.SegmentedControlNodeProps
-import com.viewcompose.renderer.node.spec.TabRowNodeProps
-import com.viewcompose.renderer.node.spec.VerticalPagerNodeProps
+import com.viewcompose.ui.node.LazyListItem
+import com.viewcompose.ui.node.SegmentedControlItem
+import com.viewcompose.ui.node.VNode
+import com.viewcompose.ui.node.collection.TabIndicatorPosition
+import com.viewcompose.ui.node.collection.TabIndicatorWidthMode
+import com.viewcompose.ui.node.spec.HorizontalPagerNodeProps
+import com.viewcompose.ui.node.spec.SegmentedControlNodeProps
+import com.viewcompose.ui.node.spec.TabRowNodeProps
+import com.viewcompose.ui.node.spec.VerticalPagerNodeProps
 import com.viewcompose.renderer.view.container.DeclarativeHorizontalPagerLayout
 import com.viewcompose.renderer.view.container.DeclarativeSegmentedControlLayout
 import com.viewcompose.renderer.view.container.DeclarativeTabRowLayout
 import com.viewcompose.renderer.view.container.DeclarativeVerticalPagerLayout
-import com.viewcompose.renderer.view.lazy.PagerState
+import com.viewcompose.ui.state.PagerState
 
 internal object PagerViewBinder {
     data class SegmentedControlSpec(
@@ -51,7 +51,7 @@ internal object PagerViewBinder {
     )
 
     data class TabRowSpec(
-        val tabs: List<com.viewcompose.renderer.node.collection.TabRowTab>,
+        val tabs: List<com.viewcompose.ui.node.collection.TabRowTab>,
         val selectedIndex: Int,
         val onTabSelected: ((Int) -> Unit)?,
         val pagerState: PagerState?,

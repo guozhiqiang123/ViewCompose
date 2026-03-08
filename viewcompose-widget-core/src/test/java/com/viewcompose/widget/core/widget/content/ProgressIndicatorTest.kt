@@ -1,10 +1,10 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.modifier.HeightModifierElement
-import com.viewcompose.renderer.modifier.SizeModifierElement
-import com.viewcompose.renderer.modifier.WidthModifierElement
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.spec.ProgressIndicatorNodeProps
+import com.viewcompose.ui.modifier.HeightModifierElement
+import com.viewcompose.ui.modifier.SizeModifierElement
+import com.viewcompose.ui.modifier.WidthModifierElement
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.spec.ProgressIndicatorNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -132,7 +132,7 @@ class ProgressIndicatorTest {
         assertEquals(704, circularSpec.trackColor)
     }
 
-    private fun com.viewcompose.renderer.modifier.Modifier.readModifierElements(): List<Any?> {
+    private fun com.viewcompose.ui.modifier.Modifier.readModifierElements(): List<Any?> {
         val field = javaClass.getDeclaredField("elements")
         field.isAccessible = true
         @Suppress("UNCHECKED_CAST")

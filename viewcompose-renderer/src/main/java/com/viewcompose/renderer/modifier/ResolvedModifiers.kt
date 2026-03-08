@@ -1,5 +1,7 @@
 package com.viewcompose.renderer.modifier
 
+import com.viewcompose.ui.modifier.*
+
 internal class ResolvedModifiers(
     // ViewModifierApplier fields
     var alpha: AlphaModifierElement? = null,

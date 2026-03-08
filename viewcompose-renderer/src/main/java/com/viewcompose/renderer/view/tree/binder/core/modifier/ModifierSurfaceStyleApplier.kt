@@ -9,7 +9,7 @@ import android.graphics.drawable.RippleDrawable
 import android.view.View
 import android.view.ViewOutlineProvider
 import com.viewcompose.renderer.R
-import com.viewcompose.renderer.modifier.CornerRadiusModifierElement
+import com.viewcompose.ui.modifier.CornerRadiusModifierElement
 import com.viewcompose.renderer.modifier.ResolvedModifiers
 
 internal object ModifierSurfaceStyleApplier {

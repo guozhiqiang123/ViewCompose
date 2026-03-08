@@ -28,7 +28,7 @@ data class UiTextStyle(
     val letterSpacingEm: Float? = null,
     val lineHeightSp: Int? = null,
     val includeFontPadding: Boolean = false,
-    val textDecoration: com.viewcompose.renderer.node.TextDecoration? = null,
+    val textDecoration: com.viewcompose.ui.node.TextDecoration? = null,
 )
 
 data class UiTypography(

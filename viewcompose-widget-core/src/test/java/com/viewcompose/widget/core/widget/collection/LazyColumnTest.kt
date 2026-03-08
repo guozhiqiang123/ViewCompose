@@ -1,7 +1,7 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.spec.LazyColumnNodeProps
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.spec.LazyColumnNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test

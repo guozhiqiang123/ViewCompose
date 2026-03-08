@@ -1,15 +1,15 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.modifier.AlphaModifierElement
-import com.viewcompose.renderer.modifier.BackgroundColorModifierElement
-import com.viewcompose.renderer.modifier.CornerRadiusModifierElement
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.backgroundColor
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.spec.BoxNodeProps
-import com.viewcompose.renderer.node.spec.ButtonNodeProps
-import com.viewcompose.renderer.node.spec.DividerNodeProps
-import com.viewcompose.renderer.node.spec.TextNodeProps
+import com.viewcompose.ui.modifier.AlphaModifierElement
+import com.viewcompose.ui.modifier.BackgroundColorModifierElement
+import com.viewcompose.ui.modifier.CornerRadiusModifierElement
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.backgroundColor
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.spec.BoxNodeProps
+import com.viewcompose.ui.node.spec.ButtonNodeProps
+import com.viewcompose.ui.node.spec.DividerNodeProps
+import com.viewcompose.ui.node.spec.TextNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -799,8 +799,8 @@ class ThemeTest {
         assertEquals(0xFF333344.toInt(), errorField)
     }
 
-    private fun com.viewcompose.renderer.modifier.Modifier.readModifierElements(): List<Any?> {
-        val field = com.viewcompose.renderer.modifier.Modifier::class.java.getDeclaredField("elements")
+    private fun com.viewcompose.ui.modifier.Modifier.readModifierElements(): List<Any?> {
+        val field = com.viewcompose.ui.modifier.Modifier::class.java.getDeclaredField("elements")
         field.isAccessible = true
         @Suppress("UNCHECKED_CAST")
         return field.get(this) as List<Any?>

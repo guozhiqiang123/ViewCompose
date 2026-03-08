@@ -1,6 +1,6 @@
 package com.viewcompose.renderer.reconcile
 
-import com.viewcompose.renderer.node.LazyListItem
+import com.viewcompose.ui.node.LazyListItem
 
 data class LazyListIdentityAnalysis(
     val missingKeyIndexes: List<Int>,

@@ -1,4 +1,4 @@
-package com.viewcompose.renderer.view.lazy
+package com.viewcompose.renderer.view.lazy.focus
 
 import android.content.Context
 import android.graphics.Rect

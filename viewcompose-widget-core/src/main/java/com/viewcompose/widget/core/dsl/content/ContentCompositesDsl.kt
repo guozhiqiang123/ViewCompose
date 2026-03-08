@@ -1,14 +1,14 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.layout.BoxAlignment
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.backgroundColor
-import com.viewcompose.renderer.modifier.clip
-import com.viewcompose.renderer.modifier.cornerRadius
-import com.viewcompose.renderer.modifier.minWidth
-import com.viewcompose.renderer.modifier.height
-import com.viewcompose.renderer.modifier.padding
-import com.viewcompose.renderer.modifier.size
+import com.viewcompose.ui.layout.BoxAlignment
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.backgroundColor
+import com.viewcompose.ui.modifier.clip
+import com.viewcompose.ui.modifier.cornerRadius
+import com.viewcompose.ui.modifier.minWidth
+import com.viewcompose.ui.modifier.height
+import com.viewcompose.ui.modifier.padding
+import com.viewcompose.ui.modifier.size
 
 fun UiTreeBuilder.Badge(
     count: Int? = null,

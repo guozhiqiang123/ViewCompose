@@ -1,4 +1,4 @@
-package com.viewcompose.renderer.view.lazy
+package com.viewcompose.renderer.view.lazy.state
 
 import androidx.viewpager2.widget.ViewPager2
 

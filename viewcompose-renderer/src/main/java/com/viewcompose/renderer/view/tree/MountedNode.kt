@@ -1,7 +1,7 @@
 package com.viewcompose.renderer.view.tree
 
 import android.view.View
-import com.viewcompose.renderer.node.VNode
+import com.viewcompose.ui.node.VNode
 
 class MountedNode(
     var vnode: VNode,

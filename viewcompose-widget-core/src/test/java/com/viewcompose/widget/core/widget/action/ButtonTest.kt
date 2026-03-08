@@ -1,8 +1,8 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.node.ImageSource
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.spec.ButtonNodeProps
+import com.viewcompose.ui.node.ImageSource
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.spec.ButtonNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test

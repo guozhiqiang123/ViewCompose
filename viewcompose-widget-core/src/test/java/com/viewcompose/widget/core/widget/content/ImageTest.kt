@@ -1,12 +1,12 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.modifier.SizeModifierElement
-import com.viewcompose.renderer.node.ImageContentScale
-import com.viewcompose.renderer.node.ImageSource
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.RemoteImageLoader
-import com.viewcompose.renderer.node.RemoteImageRequest
-import com.viewcompose.renderer.node.spec.ImageNodeProps
+import com.viewcompose.ui.modifier.SizeModifierElement
+import com.viewcompose.ui.node.ImageContentScale
+import com.viewcompose.ui.node.ImageSource
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.RemoteImageLoader
+import com.viewcompose.ui.node.RemoteImageRequest
+import com.viewcompose.ui.node.spec.ImageNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -98,7 +98,7 @@ class ImageTest {
         assertEquals(ImageSource.Resource(99), spec.fallback)
     }
 
-    private fun com.viewcompose.renderer.modifier.Modifier.readModifierElements(): List<Any?> {
+    private fun com.viewcompose.ui.modifier.Modifier.readModifierElements(): List<Any?> {
         val field = javaClass.getDeclaredField("elements")
         field.isAccessible = true
         @Suppress("UNCHECKED_CAST")

@@ -37,7 +37,7 @@ class RenderSession internal constructor(
         if (disposed) return
         frameDispatcher.cancelPending()
         try {
-            var tree: List<com.viewcompose.renderer.node.VNode> = emptyList()
+            var tree: List<com.viewcompose.ui.node.VNode> = emptyList()
             if (!composer.hasPendingInvalidations()) {
                 // External render requests (e.g. lazy/pager sessionUpdater) must recompose root even
                 // without runtime state invalidation signals.

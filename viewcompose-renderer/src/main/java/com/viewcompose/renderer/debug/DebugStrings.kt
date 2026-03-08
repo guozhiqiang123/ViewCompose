@@ -1,6 +1,6 @@
 package com.viewcompose.renderer.debug
 
-import com.viewcompose.renderer.node.VNode
+import com.viewcompose.ui.node.VNode
 import com.viewcompose.renderer.reconcile.InsertPatch
 import com.viewcompose.renderer.reconcile.ReconcileResult
 import com.viewcompose.renderer.reconcile.RemovePatch

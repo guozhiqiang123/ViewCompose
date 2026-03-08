@@ -1,7 +1,7 @@
 package com.viewcompose.renderer.node.spec
 
 import com.viewcompose.renderer.node.LazyListItem
-import com.viewcompose.renderer.view.lazy.PagerState
+import com.viewcompose.ui.state.PagerState
 
 data class HorizontalPagerNodeProps(
     val pages: List<LazyListItem>,

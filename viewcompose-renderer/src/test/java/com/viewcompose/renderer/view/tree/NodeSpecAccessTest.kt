@@ -1,13 +1,13 @@
 package com.viewcompose.renderer.view.tree
 
-import com.viewcompose.renderer.layout.HorizontalAlignment
-import com.viewcompose.renderer.layout.MainAxisArrangement
-import com.viewcompose.renderer.layout.VerticalAlignment
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.VNode
-import com.viewcompose.renderer.node.spec.ColumnNodeProps
-import com.viewcompose.renderer.node.spec.HorizontalPagerNodeProps
-import com.viewcompose.renderer.node.spec.RowNodeProps
+import com.viewcompose.ui.layout.HorizontalAlignment
+import com.viewcompose.ui.layout.MainAxisArrangement
+import com.viewcompose.ui.layout.VerticalAlignment
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.VNode
+import com.viewcompose.ui.node.spec.ColumnNodeProps
+import com.viewcompose.ui.node.spec.HorizontalPagerNodeProps
+import com.viewcompose.ui.node.spec.RowNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue

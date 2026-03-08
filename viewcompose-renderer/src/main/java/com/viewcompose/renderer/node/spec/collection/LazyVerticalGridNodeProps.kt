@@ -1,7 +1,7 @@
 package com.viewcompose.renderer.node.spec
 
 import com.viewcompose.renderer.node.LazyListItem
-import com.viewcompose.renderer.view.lazy.LazyListState
+import com.viewcompose.ui.state.LazyListState
 
 data class LazyVerticalGridNodeProps(
     val spanCount: Int,

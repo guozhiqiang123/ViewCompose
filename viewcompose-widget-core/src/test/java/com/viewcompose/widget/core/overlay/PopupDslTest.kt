@@ -1,6 +1,6 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.node.VNode
+import com.viewcompose.ui.node.VNode
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

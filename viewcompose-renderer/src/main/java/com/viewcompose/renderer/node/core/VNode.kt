@@ -1,6 +1,6 @@
 package com.viewcompose.renderer.node
 
-import com.viewcompose.renderer.modifier.Modifier
+import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.renderer.node.spec.NodeSpec
 
 data class VNode(

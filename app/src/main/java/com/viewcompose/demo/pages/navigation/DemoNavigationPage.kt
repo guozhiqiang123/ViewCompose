@@ -1,16 +1,16 @@
 package com.viewcompose
 
-import com.viewcompose.renderer.layout.VerticalAlignment
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.backgroundColor
-import com.viewcompose.renderer.modifier.cornerRadius
-import com.viewcompose.renderer.modifier.fillMaxSize
-import com.viewcompose.renderer.modifier.fillMaxWidth
-import com.viewcompose.renderer.modifier.height
-import com.viewcompose.renderer.modifier.margin
-import com.viewcompose.renderer.modifier.padding
-import com.viewcompose.renderer.modifier.testTag
-import com.viewcompose.renderer.node.ImageSource
+import com.viewcompose.ui.layout.VerticalAlignment
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.backgroundColor
+import com.viewcompose.ui.modifier.cornerRadius
+import com.viewcompose.ui.modifier.fillMaxSize
+import com.viewcompose.ui.modifier.fillMaxWidth
+import com.viewcompose.ui.modifier.height
+import com.viewcompose.ui.modifier.margin
+import com.viewcompose.ui.modifier.padding
+import com.viewcompose.ui.modifier.testTag
+import com.viewcompose.ui.node.ImageSource
 import com.viewcompose.runtime.mutableStateOf
 import com.viewcompose.widget.core.Badge
 import com.viewcompose.widget.core.BadgedBox

@@ -2,7 +2,7 @@ package com.viewcompose.renderer.reconcile
 
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListUpdateCallback
-import com.viewcompose.renderer.node.LazyListItem
+import com.viewcompose.ui.node.LazyListItem
 
 sealed interface LazyListUpdate {
     data class Insert(

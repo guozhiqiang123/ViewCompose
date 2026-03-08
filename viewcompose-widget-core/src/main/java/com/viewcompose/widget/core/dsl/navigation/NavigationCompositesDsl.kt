@@ -1,16 +1,16 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.layout.VerticalAlignment
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.backgroundColor
-import com.viewcompose.renderer.modifier.elevation
-import com.viewcompose.renderer.modifier.fillMaxWidth
-import com.viewcompose.renderer.modifier.height
-import com.viewcompose.renderer.modifier.padding
-import com.viewcompose.renderer.node.ImageSource
-import com.viewcompose.renderer.node.NavigationBarItem
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.spec.NavigationBarNodeProps
+import com.viewcompose.ui.layout.VerticalAlignment
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.backgroundColor
+import com.viewcompose.ui.modifier.elevation
+import com.viewcompose.ui.modifier.fillMaxWidth
+import com.viewcompose.ui.modifier.height
+import com.viewcompose.ui.modifier.padding
+import com.viewcompose.ui.node.ImageSource
+import com.viewcompose.ui.node.NavigationBarItem
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.spec.NavigationBarNodeProps
 
 fun UiTreeBuilder.TopAppBar(
     title: String,

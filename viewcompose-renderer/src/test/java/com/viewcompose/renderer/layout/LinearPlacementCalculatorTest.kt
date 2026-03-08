@@ -1,5 +1,6 @@
 package com.viewcompose.renderer.layout
 
+import com.viewcompose.ui.layout.MainAxisArrangement
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

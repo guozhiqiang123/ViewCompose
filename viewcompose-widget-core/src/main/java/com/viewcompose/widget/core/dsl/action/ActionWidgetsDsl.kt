@@ -1,16 +1,16 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.clickable
-import com.viewcompose.renderer.modifier.height
-import com.viewcompose.renderer.modifier.size
-import com.viewcompose.renderer.node.ImageContentScale
-import com.viewcompose.renderer.node.ImageSource
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.SegmentedControlItem
-import com.viewcompose.renderer.node.spec.ButtonNodeProps
-import com.viewcompose.renderer.node.spec.IconButtonNodeProps
-import com.viewcompose.renderer.node.spec.SegmentedControlNodeProps
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.clickable
+import com.viewcompose.ui.modifier.height
+import com.viewcompose.ui.modifier.size
+import com.viewcompose.ui.node.ImageContentScale
+import com.viewcompose.ui.node.ImageSource
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.SegmentedControlItem
+import com.viewcompose.ui.node.spec.ButtonNodeProps
+import com.viewcompose.ui.node.spec.IconButtonNodeProps
+import com.viewcompose.ui.node.spec.SegmentedControlNodeProps
 
 fun UiTreeBuilder.Button(
     text: String,

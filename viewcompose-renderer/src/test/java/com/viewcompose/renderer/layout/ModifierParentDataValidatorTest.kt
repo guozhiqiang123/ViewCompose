@@ -1,13 +1,16 @@
 package com.viewcompose.renderer.layout
 
-import com.viewcompose.renderer.modifier.BoxAlignModifierElement
-import com.viewcompose.renderer.modifier.HorizontalAlignModifierElement
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.VerticalAlignModifierElement
-import com.viewcompose.renderer.modifier.WeightModifierElement
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.VNode
-import com.viewcompose.renderer.node.spec.EmptyNodeSpec
+import com.viewcompose.ui.modifier.BoxAlignModifierElement
+import com.viewcompose.ui.modifier.HorizontalAlignModifierElement
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.VerticalAlignModifierElement
+import com.viewcompose.ui.modifier.WeightModifierElement
+import com.viewcompose.ui.layout.BoxAlignment
+import com.viewcompose.ui.layout.HorizontalAlignment
+import com.viewcompose.ui.layout.VerticalAlignment
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.VNode
+import com.viewcompose.ui.node.spec.EmptyNodeSpec
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test

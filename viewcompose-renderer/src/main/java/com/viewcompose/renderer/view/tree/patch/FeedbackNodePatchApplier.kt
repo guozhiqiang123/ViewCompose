@@ -45,9 +45,10 @@ internal object FeedbackNodePatchApplier {
                 view.indicatorSize = next.indicatorSize
             }
         }
-        if (next.progress != null && (previous.progress != next.progress)) {
+        val nextProgress = next.progress
+        if (nextProgress != null && previous.progress != nextProgress) {
             view.max = 10_000
-            view.progress = (next.progress.coerceIn(0f, 1f) * 10_000f).roundToInt()
+            view.progress = (nextProgress.coerceIn(0f, 1f) * 10_000f).roundToInt()
         }
     }
 }

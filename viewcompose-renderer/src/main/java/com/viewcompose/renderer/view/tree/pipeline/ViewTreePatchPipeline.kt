@@ -3,12 +3,12 @@ package com.viewcompose.renderer.view.tree
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.VNode
+import com.viewcompose.ui.node.spec.AndroidViewNodeProps
 import com.viewcompose.renderer.modifier.ResolvedModifiers
 import com.viewcompose.renderer.modifier.layoutModifiersChanged
 import com.viewcompose.renderer.modifier.resolve
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.VNode
-import com.viewcompose.renderer.node.spec.AndroidViewNodeProps
 import com.viewcompose.renderer.reconcile.InsertPatch
 import com.viewcompose.renderer.reconcile.ReconcileResult
 import com.viewcompose.renderer.reconcile.RemovePatch

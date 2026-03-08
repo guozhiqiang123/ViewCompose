@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
-import com.viewcompose.renderer.node.VNode
+import com.viewcompose.ui.node.VNode
 import com.viewcompose.renderer.reconcile.ChildReconciler
 import com.viewcompose.renderer.reconcile.ReconcileNode
 

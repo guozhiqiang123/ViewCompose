@@ -2,11 +2,11 @@ package com.viewcompose.renderer.layout
 
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import com.viewcompose.renderer.modifier.BoxAlignModifierElement
-import com.viewcompose.renderer.modifier.HorizontalAlignModifierElement
-import com.viewcompose.renderer.modifier.VerticalAlignModifierElement
-import com.viewcompose.renderer.modifier.WeightModifierElement
-import com.viewcompose.renderer.node.VNode
+import com.viewcompose.ui.modifier.BoxAlignModifierElement
+import com.viewcompose.ui.modifier.HorizontalAlignModifierElement
+import com.viewcompose.ui.modifier.VerticalAlignModifierElement
+import com.viewcompose.ui.modifier.WeightModifierElement
+import com.viewcompose.ui.node.VNode
 import com.viewcompose.renderer.view.container.DeclarativeBoxLayout
 import com.viewcompose.renderer.view.container.DeclarativeLinearLayout
 

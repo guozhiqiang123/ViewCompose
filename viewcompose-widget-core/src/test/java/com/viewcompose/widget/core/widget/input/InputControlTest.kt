@@ -1,8 +1,8 @@
 package com.viewcompose.widget.core
 
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.spec.SliderNodeProps
-import com.viewcompose.renderer.node.spec.ToggleNodeProps
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.spec.SliderNodeProps
+import com.viewcompose.ui.node.spec.ToggleNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test

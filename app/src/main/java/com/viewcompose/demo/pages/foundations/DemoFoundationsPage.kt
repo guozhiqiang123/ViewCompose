@@ -1,8 +1,8 @@
 package com.viewcompose
 
 import androidx.appcompat.app.AppCompatActivity
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.fillMaxSize
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.fillMaxSize
 import com.viewcompose.runtime.mutableStateOf
 import com.viewcompose.widget.core.LazyColumn
 import com.viewcompose.widget.core.UiTreeBuilder

@@ -1,39 +1,39 @@
 package com.viewcompose.renderer.view.tree
 
-import com.viewcompose.renderer.modifier.Modifier
-import com.viewcompose.renderer.modifier.padding
-import com.viewcompose.renderer.node.ImageSource
-import com.viewcompose.renderer.node.LazyListItem
-import com.viewcompose.renderer.node.LazyListItemSession
-import com.viewcompose.renderer.node.LazyListItemSessionFactory
-import com.viewcompose.renderer.node.NodeType
-import com.viewcompose.renderer.node.NavigationBarItem
-import com.viewcompose.renderer.node.VNode
-import com.viewcompose.renderer.node.collection.TabIndicatorPosition
-import com.viewcompose.renderer.node.collection.TabIndicatorWidthMode
-import com.viewcompose.renderer.node.collection.TabRowTab
-import com.viewcompose.renderer.node.spec.BoxNodeProps
-import com.viewcompose.renderer.node.spec.ButtonNodeProps
-import com.viewcompose.renderer.node.spec.ColumnNodeProps
-import com.viewcompose.renderer.node.spec.DividerNodeProps
-import com.viewcompose.renderer.node.spec.FlowColumnNodeProps
-import com.viewcompose.renderer.node.spec.FlowRowNodeProps
-import com.viewcompose.renderer.node.spec.HorizontalPagerNodeProps
-import com.viewcompose.renderer.node.spec.IconButtonNodeProps
-import com.viewcompose.renderer.node.spec.ImageNodeProps
-import com.viewcompose.renderer.node.spec.LazyColumnNodeProps
-import com.viewcompose.renderer.node.spec.LazyVerticalGridNodeProps
-import com.viewcompose.renderer.node.spec.NavigationBarNodeProps
-import com.viewcompose.renderer.node.spec.ProgressIndicatorNodeProps
-import com.viewcompose.renderer.node.spec.RowNodeProps
-import com.viewcompose.renderer.node.spec.SegmentedControlNodeProps
-import com.viewcompose.renderer.node.spec.SliderNodeProps
-import com.viewcompose.renderer.node.spec.TabRowNodeProps
-import com.viewcompose.renderer.node.spec.TextNodeProps
-import com.viewcompose.renderer.node.spec.TextFieldNodeProps
-import com.viewcompose.renderer.node.spec.ToggleNodeProps
-import com.viewcompose.renderer.node.spec.VerticalPagerNodeProps
-import com.viewcompose.renderer.node.spec.NodeSpec
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.padding
+import com.viewcompose.ui.node.ImageSource
+import com.viewcompose.ui.node.LazyListItem
+import com.viewcompose.ui.node.LazyListItemSession
+import com.viewcompose.ui.node.LazyListItemSessionFactory
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.NavigationBarItem
+import com.viewcompose.ui.node.VNode
+import com.viewcompose.ui.node.collection.TabIndicatorPosition
+import com.viewcompose.ui.node.collection.TabIndicatorWidthMode
+import com.viewcompose.ui.node.collection.TabRowTab
+import com.viewcompose.ui.node.spec.BoxNodeProps
+import com.viewcompose.ui.node.spec.ButtonNodeProps
+import com.viewcompose.ui.node.spec.ColumnNodeProps
+import com.viewcompose.ui.node.spec.DividerNodeProps
+import com.viewcompose.ui.node.spec.FlowColumnNodeProps
+import com.viewcompose.ui.node.spec.FlowRowNodeProps
+import com.viewcompose.ui.node.spec.HorizontalPagerNodeProps
+import com.viewcompose.ui.node.spec.IconButtonNodeProps
+import com.viewcompose.ui.node.spec.ImageNodeProps
+import com.viewcompose.ui.node.spec.LazyColumnNodeProps
+import com.viewcompose.ui.node.spec.LazyVerticalGridNodeProps
+import com.viewcompose.ui.node.spec.NavigationBarNodeProps
+import com.viewcompose.ui.node.spec.ProgressIndicatorNodeProps
+import com.viewcompose.ui.node.spec.RowNodeProps
+import com.viewcompose.ui.node.spec.SegmentedControlNodeProps
+import com.viewcompose.ui.node.spec.SliderNodeProps
+import com.viewcompose.ui.node.spec.TabRowNodeProps
+import com.viewcompose.ui.node.spec.TextNodeProps
+import com.viewcompose.ui.node.spec.TextFieldNodeProps
+import com.viewcompose.ui.node.spec.ToggleNodeProps
+import com.viewcompose.ui.node.spec.VerticalPagerNodeProps
+import com.viewcompose.ui.node.spec.NodeSpec
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -52,8 +52,8 @@ class NodeBindingDifferTest {
                     spec = TextNodeProps(
                         text = "child-1",
                         maxLines = 1,
-                        overflow = com.viewcompose.renderer.node.TextOverflow.Clip,
-                        textAlign = com.viewcompose.renderer.node.TextAlign.Start,
+                        overflow = com.viewcompose.ui.node.TextOverflow.Clip,
+                        textAlign = com.viewcompose.ui.node.TextAlign.Start,
                         textColor = 0xFF000000.toInt(),
                         textSizeSp = 14,
                     ),
@@ -67,8 +67,8 @@ class NodeBindingDifferTest {
                     spec = TextNodeProps(
                         text = "child-2",
                         maxLines = 1,
-                        overflow = com.viewcompose.renderer.node.TextOverflow.Clip,
-                        textAlign = com.viewcompose.renderer.node.TextAlign.Start,
+                        overflow = com.viewcompose.ui.node.TextOverflow.Clip,
+                        textAlign = com.viewcompose.ui.node.TextAlign.Start,
                         textColor = 0xFF000000.toInt(),
                         textSizeSp = 14,
                     ),
@@ -351,8 +351,8 @@ class NodeBindingDifferTest {
 
     @Test
     fun `patches box semantic updates`() {
-        val previous = boxNode(contentAlignment = com.viewcompose.renderer.layout.BoxAlignment.TopStart)
-        val next = boxNode(contentAlignment = com.viewcompose.renderer.layout.BoxAlignment.Center)
+        val previous = boxNode(contentAlignment = com.viewcompose.ui.layout.BoxAlignment.TopStart)
+        val next = boxNode(contentAlignment = com.viewcompose.ui.layout.BoxAlignment.Center)
 
         val plan = NodeBindingDiffer.plan(previous, next)
 
@@ -363,11 +363,11 @@ class NodeBindingDifferTest {
     @Test
     fun `rebinds box when ripple changes`() {
         val previous = boxNode(
-            contentAlignment = com.viewcompose.renderer.layout.BoxAlignment.TopStart,
+            contentAlignment = com.viewcompose.ui.layout.BoxAlignment.TopStart,
             rippleColor = 0x11000000,
         )
         val next = boxNode(
-            contentAlignment = com.viewcompose.renderer.layout.BoxAlignment.TopStart,
+            contentAlignment = com.viewcompose.ui.layout.BoxAlignment.TopStart,
             rippleColor = 0x22000000,
         )
 
@@ -430,8 +430,8 @@ class NodeBindingDifferTest {
             spec = TextNodeProps(
                 text = text,
                 maxLines = 1,
-                overflow = com.viewcompose.renderer.node.TextOverflow.Clip,
-                textAlign = com.viewcompose.renderer.node.TextAlign.Start,
+                overflow = com.viewcompose.ui.node.TextOverflow.Clip,
+                textAlign = com.viewcompose.ui.node.TextAlign.Start,
                 textColor = 0xFF000000.toInt(),
                 textSizeSp = 14,
             ),
@@ -483,8 +483,8 @@ class NodeBindingDifferTest {
                 singleLine = true,
                 minLines = 1,
                 maxLines = 1,
-                keyboardType = com.viewcompose.renderer.node.TextFieldType.Text,
-                imeAction = com.viewcompose.renderer.node.TextFieldImeAction.Done,
+                keyboardType = com.viewcompose.ui.node.TextFieldType.Text,
+                imeAction = com.viewcompose.ui.node.TextFieldImeAction.Done,
                 hintColor = 0xFF888888.toInt(),
                 readOnly = false,
                 onValueChange = null,
@@ -753,8 +753,8 @@ class NodeBindingDifferTest {
             type = NodeType.Row,
             spec = RowNodeProps(
                 spacing = spacing,
-                arrangement = com.viewcompose.renderer.layout.MainAxisArrangement.Start,
-                verticalAlignment = com.viewcompose.renderer.layout.VerticalAlignment.Top,
+                arrangement = com.viewcompose.ui.layout.MainAxisArrangement.Start,
+                verticalAlignment = com.viewcompose.ui.layout.VerticalAlignment.Top,
             ),
             modifier = Modifier,
         )
@@ -767,15 +767,15 @@ class NodeBindingDifferTest {
             type = NodeType.Column,
             spec = ColumnNodeProps(
                 spacing = spacing,
-                arrangement = com.viewcompose.renderer.layout.MainAxisArrangement.Start,
-                horizontalAlignment = com.viewcompose.renderer.layout.HorizontalAlignment.Start,
+                arrangement = com.viewcompose.ui.layout.MainAxisArrangement.Start,
+                horizontalAlignment = com.viewcompose.ui.layout.HorizontalAlignment.Start,
             ),
             modifier = Modifier,
         )
     }
 
     private fun boxNode(
-        contentAlignment: com.viewcompose.renderer.layout.BoxAlignment = com.viewcompose.renderer.layout.BoxAlignment.TopStart,
+        contentAlignment: com.viewcompose.ui.layout.BoxAlignment = com.viewcompose.ui.layout.BoxAlignment.TopStart,
         rippleColor: Int? = null,
     ): VNode {
         return VNode(
@@ -795,7 +795,7 @@ class NodeBindingDifferTest {
             type = NodeType.Image,
             spec = ImageNodeProps(
                 contentDescription = null,
-                contentScale = com.viewcompose.renderer.node.ImageContentScale.Fit,
+                contentScale = com.viewcompose.ui.node.ImageContentScale.Fit,
                 tint = tint,
                 source = null,
                 placeholder = null,
@@ -814,7 +814,7 @@ class NodeBindingDifferTest {
             type = NodeType.IconButton,
             spec = IconButtonNodeProps(
                 contentDescription = null,
-                contentScale = com.viewcompose.renderer.node.ImageContentScale.Fit,
+                contentScale = com.viewcompose.ui.node.ImageContentScale.Fit,
                 tint = null,
                 source = null,
                 placeholder = null,
