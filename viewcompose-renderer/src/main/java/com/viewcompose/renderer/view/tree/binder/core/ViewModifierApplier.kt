@@ -115,57 +115,28 @@ internal object ViewModifierApplier {
             view = view,
             node = node,
         )
-        val resolvedAlpha = resolved.alpha?.alpha ?: readNodeAlpha(node) ?: 1f
-        val resolvedBackgroundColor = resolved.backgroundColor?.color ?: readNodeBackgroundColor(node)
-        val resolvedBorderWidth = resolved.border?.width ?: readNodeBorderWidth(node) ?: 0
-        val resolvedBorderColor = resolved.border?.color ?: readNodeBorderColor(node) ?: Color.TRANSPARENT
-        val resolvedCornerRadius = resolved.cornerRadius
-            ?: readNodeCornerRadius(node)?.let {
-                CornerRadiusModifierElement(it, it, it, it)
-            }
-        val resolvedPadding = resolved.padding ?: readNodePadding(node)
-        val resolvedMinHeight = resolved.minHeight?.minHeight ?: readNodeMinHeight(node) ?: 0
-        val resolvedMinWidth = resolved.minWidth?.minWidth ?: 0
-        val resolvedRippleColor = resolved.rippleColor?.color ?: readNodeRippleColor(node) ?: defaultRippleColor
-        val textColor = readNodeTextColor(node)
-        val textSizeSp = readNodeTextSize(node)
-        val hasWindowInsetsPadding = resolved.systemBarsInsetsPadding != null || resolved.imeInsetsPadding != null
         val isTextFieldLayout = view is DeclarativeTextFieldLayout
-        val hostPadding = if (isTextFieldLayout) null else resolvedPadding
-        val hostMinHeight = if (isTextFieldLayout) 0 else resolvedMinHeight
-        val hostMinWidth = if (isTextFieldLayout) 0 else resolvedMinWidth
-        view.alpha = resolvedAlpha
-        if (isTextFieldLayout) {
-            applyTextFieldModifier(
-                layout = view as DeclarativeTextFieldLayout,
-                backgroundColor = resolvedBackgroundColor,
-                borderWidth = resolvedBorderWidth,
-                borderColor = resolvedBorderColor,
-                cornerRadius = resolvedCornerRadius,
-                rippleColor = resolvedRippleColor,
-                padding = resolvedPadding,
-                minHeight = resolvedMinHeight,
-                textColor = textColor,
-                textSizeSp = textSizeSp,
-            )
-        } else {
-            val isClickable = resolved.clickable != null || readNodeClickable(node)
-            applyBackgroundAndInteraction(
-                view = view,
-                backgroundColor = resolvedBackgroundColor,
-                borderWidth = resolvedBorderWidth,
-                borderColor = resolvedBorderColor,
-                cornerRadius = resolvedCornerRadius,
-                rippleColor = resolvedRippleColor,
-                clickable = isClickable,
-                forceClip = resolved.clip?.clip ?: false,
-            )
-        }
+        val nodeStyle = resolveNodeStyle(
+            node = node,
+            resolved = resolved,
+            defaultRippleColor = defaultRippleColor,
+        )
+        val hostStyle = resolveHostStyle(
+            resolved = resolved,
+            nodeStyle = nodeStyle,
+            isTextFieldLayout = isTextFieldLayout,
+        )
+        applySurfaceStyle(
+            view = view,
+            resolved = resolved,
+            nodeStyle = nodeStyle,
+            isTextFieldLayout = isTextFieldLayout,
+        )
         applyCommonHostProperties(
             view = view,
             resolved = resolved,
-            minHeight = hostMinHeight,
-            minWidth = hostMinWidth,
+            minHeight = hostStyle.minHeight,
+            minWidth = hostStyle.minWidth,
         )
         applyClickAndFocusState(
             view = view,
@@ -175,15 +146,15 @@ internal object ViewModifierApplier {
         )
         applyHostPaddingWhenNoInsets(
             view = view,
-            hasWindowInsetsPadding = hasWindowInsetsPadding,
-            hostPadding = hostPadding,
+            hasWindowInsetsPadding = hostStyle.hasWindowInsetsPadding,
+            hostPadding = hostStyle.padding,
         )
         applyWindowInsetsPadding(
             view = view,
             systemBarsModifier = resolved.systemBarsInsetsPadding,
             imeModifier = resolved.imeInsetsPadding,
-            basePadding = if (hasWindowInsetsPadding) {
-                resolvedPadding
+            basePadding = if (hostStyle.hasWindowInsetsPadding) {
+                nodeStyle.padding
             } else {
                 null
             },
@@ -191,10 +162,80 @@ internal object ViewModifierApplier {
         if (!isTextFieldLayout) {
             applyTextAppearanceIfTextView(
                 view = view,
-                textColor = textColor,
-                textSizeSp = textSizeSp,
+                textColor = nodeStyle.textColor,
+                textSizeSp = nodeStyle.textSizeSp,
             )
         }
+    }
+
+    private fun resolveNodeStyle(
+        node: VNode,
+        resolved: ResolvedModifiers,
+        defaultRippleColor: Int,
+    ): NodeStyle {
+        return NodeStyle(
+            backgroundColor = resolved.backgroundColor?.color ?: readNodeBackgroundColor(node),
+            borderWidth = resolved.border?.width ?: readNodeBorderWidth(node) ?: 0,
+            borderColor = resolved.border?.color ?: readNodeBorderColor(node) ?: Color.TRANSPARENT,
+            cornerRadius = resolved.cornerRadius
+                ?: readNodeCornerRadius(node)?.let {
+                    CornerRadiusModifierElement(it, it, it, it)
+                },
+            padding = resolved.padding ?: readNodePadding(node),
+            minHeight = resolved.minHeight?.minHeight ?: readNodeMinHeight(node) ?: 0,
+            minWidth = resolved.minWidth?.minWidth ?: 0,
+            rippleColor = resolved.rippleColor?.color ?: readNodeRippleColor(node) ?: defaultRippleColor,
+            textColor = readNodeTextColor(node),
+            textSizeSp = readNodeTextSize(node),
+            clickable = resolved.clickable != null || readNodeClickable(node),
+        )
+    }
+
+    private fun resolveHostStyle(
+        resolved: ResolvedModifiers,
+        nodeStyle: NodeStyle,
+        isTextFieldLayout: Boolean,
+    ): HostStyle {
+        val hasWindowInsetsPadding = resolved.systemBarsInsetsPadding != null || resolved.imeInsetsPadding != null
+        return HostStyle(
+            hasWindowInsetsPadding = hasWindowInsetsPadding,
+            padding = if (isTextFieldLayout) null else nodeStyle.padding,
+            minHeight = if (isTextFieldLayout) 0 else nodeStyle.minHeight,
+            minWidth = if (isTextFieldLayout) 0 else nodeStyle.minWidth,
+        )
+    }
+
+    private fun applySurfaceStyle(
+        view: View,
+        resolved: ResolvedModifiers,
+        nodeStyle: NodeStyle,
+        isTextFieldLayout: Boolean,
+    ) {
+        if (isTextFieldLayout) {
+            applyTextFieldModifier(
+                layout = view as DeclarativeTextFieldLayout,
+                backgroundColor = nodeStyle.backgroundColor,
+                borderWidth = nodeStyle.borderWidth,
+                borderColor = nodeStyle.borderColor,
+                cornerRadius = nodeStyle.cornerRadius,
+                rippleColor = nodeStyle.rippleColor,
+                padding = nodeStyle.padding,
+                minHeight = nodeStyle.minHeight,
+                textColor = nodeStyle.textColor,
+                textSizeSp = nodeStyle.textSizeSp,
+            )
+            return
+        }
+        applyBackgroundAndInteraction(
+            view = view,
+            backgroundColor = nodeStyle.backgroundColor,
+            borderWidth = nodeStyle.borderWidth,
+            borderColor = nodeStyle.borderColor,
+            cornerRadius = nodeStyle.cornerRadius,
+            rippleColor = nodeStyle.rippleColor,
+            clickable = nodeStyle.clickable,
+            forceClip = resolved.clip?.clip ?: false,
+        )
     }
 
     private fun applyCommonHostProperties(
@@ -206,6 +247,7 @@ internal object ViewModifierApplier {
         // Anchor metadata is sourced only from resolved modifier elements.
         applyAnchorId(view, resolved.overlayAnchor?.anchorId)
         applyTestTag(view, resolved.testTag?.tag)
+        view.alpha = resolved.alpha?.alpha ?: 1f
         view.visibility = when (resolved.visibility?.visibility ?: Visibility.Visible) {
             Visibility.Visible -> View.VISIBLE
             Visibility.Invisible -> View.INVISIBLE
@@ -498,8 +540,6 @@ internal object ViewModifierApplier {
         else -> null
     }
 
-    private fun readNodeAlpha(node: VNode): Float? = null
-
     private fun readNodeBackgroundColor(node: VNode): Int? = when (val spec = node.spec) {
         is ButtonNodeProps -> spec.backgroundColor
         is TextFieldNodeProps -> spec.backgroundColor
@@ -767,5 +807,26 @@ internal object ViewModifierApplier {
         var appliedTop: Int = 0,
         var appliedRight: Int = 0,
         var appliedBottom: Int = 0,
+    )
+
+    private data class NodeStyle(
+        val backgroundColor: Int?,
+        val borderWidth: Int,
+        val borderColor: Int,
+        val cornerRadius: CornerRadiusModifierElement?,
+        val padding: PaddingModifierElement?,
+        val minHeight: Int,
+        val minWidth: Int,
+        val rippleColor: Int,
+        val textColor: Int?,
+        val textSizeSp: Int?,
+        val clickable: Boolean,
+    )
+
+    private data class HostStyle(
+        val hasWindowInsetsPadding: Boolean,
+        val padding: PaddingModifierElement?,
+        val minHeight: Int,
+        val minWidth: Int,
     )
 }
