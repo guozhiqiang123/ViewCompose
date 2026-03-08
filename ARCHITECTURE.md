@@ -39,7 +39,7 @@
 
 当前架构是可维护的 View-based 声明式 v1：
 
-1. 主树更新模型：根级 render + keyed 复用
+1. 主树更新模型：`SlotTable Lite` 节点组脏区重组 + 根树引用复用
 2. 列表/分页等复用容器：独立 session 刷新路径
 3. overlay：声明契约与平台实现已分层
 4. 节点语义已完成 `NodeSpec-only` 收口（无 `Props` 双轨）
@@ -82,12 +82,12 @@ flowchart TD
     A["Business DSL"] --> B["ComponentActivity.setUiContent(...) / Fragment.setUiContent(...)"]
     B --> C["renderInto(container)"]
     C --> D["RenderSession"]
-    D --> E["buildVNodeTree"]
-    E --> F["RuntimeObservation.observeReads"]
+    D --> E["ComposerLite.composeRoot / runGroup"]
+    E --> F["buildVNodeTree (group cached reuse)"]
     F --> G["ChildReconciler"]
     G --> H["ViewTreeRenderer"]
     H --> I["Android View Tree"]
-    D --> J["Remember / Effect / Local Stores"]
+    D --> J["SlotTable / RecomposeScope / InvalidationQueue"]
     D --> K["OverlayHost.commit(...)"]
 ```
 
@@ -149,12 +149,20 @@ flowchart TD
 4. Local 的 snapshot/restore 必须与延迟容器、overlay 场景一致传播，不允许能力回退。
 5. 生命周期与 ViewModel 相关 Local 的对外包名固定为 `com.viewcompose.lifecycle` 与 `com.viewcompose.viewmodel`；默认注入仍由 `AndroidHostBridge` 完成。
 
+### 4.7 SlotTable Lite 重组边界
+
+1. `ComposerLite` 是唯一组合内核，`RenderSession` 仅负责“首帧 compose + 后续增量 recompose”的调度，不再走 session 级全树读依赖观察。
+2. 组边界由 `UiTreeBuilder.emit(...)` 建立；未脏组直接复用上次 `VNode` 引用，dirty 组才重建。
+3. 组级失效来源固定为两类：状态读依赖失效、`emit` 输入（`spec/modifier`）变化；两者都进入 `InvalidationQueue` 去重合并。
+4. 结构漂移（同层 group key/顺序不一致）必须回退到最近稳定祖先子树重组，并只打印一次告警，禁止 silent corruption。
+5. `LocalContext` 必须按组 snapshot/restore，保证局部重组下 Local 读取一致。
+
 ## 5. 当前热点与风险
 
 1. `ViewTreeRenderer` 仍是复杂度热点，新增能力优先拆辅助对象，不继续堆主类。
-2. 普通页面仍偏根级重跑，后续优化应聚焦“可跳过更新”与诊断能力。
+2. 当前是“节点组级重组 + 根级遍历调度”模型；后续优化重点是提升组键稳定性诊断与更细粒度跳过命中率。
 3. `viewcompose-widget-core` 仍承担较多职责，演进时优先收边界，不盲目拆模块。
-4. 延迟 session 容器的测试覆盖仍不均衡，`LazyVerticalGrid` 与 `VerticalPager` 缺少专项回归。
+4. 延迟 session 容器专项回归已覆盖 `LazyVerticalGrid/HorizontalPager/VerticalPager`；后续重点转向 sticky headers 与复杂 list state 组合场景。
 5. `viewcompose-widget-core` 中仍包含 `AndroidHostBridge/AndroidThemeBridge/AndroidEnvironmentBridge`，若后续目标扩展到跨平台，需要规划独立 host bridge 模块，避免 core 继续增重。
 
 ## 6. 变更落地清单（必须执行）

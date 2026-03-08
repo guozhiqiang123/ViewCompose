@@ -20,19 +20,21 @@
 1. viewcompose-benchmark 模块已接入，具备稳定测试入口。
 2. renderer 已具备节点级“是否重绑”判断能力（`rebound/skipped` 统计）。
 3. diagnostics 已有 render/layout 基础指标可观测能力。
-4. 延迟 session 容器的 keyed diff 已切到 `DiffUtil` 引擎（保留 key 缺失/重复 fallback）。
-5. framework 托管的 `RecyclerView` 容器默认不共享 `RecycledViewPool` 且保留系统 `itemAnimator`；可按需通过 `Modifier.lazyContainerReuse(...)` 对单个容器启用共享池与动画器策略。
-6. patch pipeline 已支持 subtree skip（`SkipSubtree`）并新增 `skippedSubtrees` 统计。
-7. renderer 内部尺寸换算统一走 `viewcompose-renderer/view/DimensionUtils.kt`，避免容器层重复定义 `density/dpToPx` 带来的行为漂移。
+4. runtime 已切到 `SlotTable Lite`：`RenderSession` 采用“首帧 compose + 节点组级增量 recompose”，未脏组复用 `VNode` 引用。
+5. 组级失效队列支持祖先合并去重（`InvalidationQueue`），并对 `emit(spec/modifier)` 输入变化做脏标记，避免参数变化漏更新。
+6. patch pipeline 已支持 subtree skip（`SkipSubtree`）并新增 `skippedSubtrees` 统计；`previousVNode === nextVNode` 命中同引用快路径。
+7. 延迟 session 容器的 keyed diff 已切到 `DiffUtil` 引擎（保留 key 缺失/重复 fallback）。
+8. framework 托管的 `RecyclerView` 容器默认不共享 `RecycledViewPool` 且保留系统 `itemAnimator`；可按需通过 `Modifier.lazyContainerReuse(...)` 对单个容器启用共享池与动画器策略。
+9. renderer 内部尺寸换算统一走 `viewcompose-renderer/view/DimensionUtils.kt`，避免容器层重复定义 `density/dpToPx` 带来的行为漂移。
 
 ### 2.2 当前结论
 
 1. 当前阶段优先级不是“追求极限 FPS”，而是先控制回归风险和错误用法。
 2. 最关键收益来自：
    - 正确复用
-   - 跳过不必要更新
+   - 组级脏区重组 + 跳过不必要更新
    - 容器刷新语义稳定
-3. 基线更新（2026-03-07）：`qaQuick` 与 `qaFull` 均通过，`connectedDebugAndroidTest` 21/21 全绿；后续性能改动继续要求功能回归同轨验证。
+3. 基线更新（2026-03-08）：`SlotTable Lite` + 子树级重组已接入主链路，`qaQuick` 通过；`qaFull` 结果按当前设备门禁状态在 roadmap 持续登记。
 
 ## 3. 性能门禁指标
 
@@ -56,6 +58,7 @@
 3. 复用型容器必须有“结构稳定仍刷新可见内容”路径。
 4. `AndroidView` 视为性能隔离区，复杂逻辑优先在外部宿主层控制。
 5. 不为短期优化破坏模块边界和可维护性。
+6. 节点组开发必须保持 group key 稳定；若无法稳定，需显式接受“祖先回退重组 + 告警”成本。
 
 ## 5. 反模式清单
 

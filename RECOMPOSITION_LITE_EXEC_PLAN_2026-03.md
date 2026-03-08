@@ -37,7 +37,7 @@
 - [x] Step 5 RenderSession 硬切为初次 compose + 增量 recompose
 - [x] Step 6 renderer 增加 vnode 同引用 fast-path
 - [x] Step 7 测试补齐与门禁
-- [ ] Step 8 文档收口
+- [x] Step 8 文档收口
 
 ## 5. 提交记录
 
@@ -48,7 +48,13 @@
 - `DONE` refactor: hard-cut render session to incremental subtree recomposition
 - `DONE` perf: add vnode identity fast-path in reconcile pipeline
 - `DONE` test: add composition kernel and subtree-recompose coverage
+- `DONE` fix: refresh session-backed closures during incremental recomposition
+- `DONE` fix: avoid stale stress item snapshots in collections demo
+- `DONE` docs: align architecture/performance roadmap for recomposition-lite
 
 ## 6. 阻塞记录
 
-- 暂无
+- `2026-03-08` `qaFull` 剩余 1 条 instrumentation 失败：`DemoVisualUiTest.inputSearch_focusSearchBar_doesNotAutoScrollList`
+  - 现象：焦点后 recycler 锚点偏移 `-25px`（阈值 `12px`），断言失败。
+  - 已验证：`qaQuick` 通过；`collectionsStress_*` 与 `statePatch*` 相关回归均已通过。
+  - 处理：在 `ROADMAP.md` 保留该项 UI 风险状态，后续以输入焦点/IME 策略专项处理。

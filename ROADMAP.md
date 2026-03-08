@@ -29,6 +29,7 @@
 4. `Activity` 宿主接入已经提供 `setUiContent(...)`，并内部管理 `RenderSession` 生命周期
 5. `system bars insets` 已转为组件侧 `Modifier.systemBarsInsetsPadding(...)`
 6. 生命周期与 ViewModel 协作 API 已拆分为 `:viewcompose-lifecycle` 与 `:viewcompose-viewmodel`，并统一到新包 `com.viewcompose.lifecycle` / `com.viewcompose.viewmodel`
+7. 重组模型已硬切到 `SlotTable Lite` 节点组级脏区重组（无旧全量重建开关）
 
 ### 2.2 Demo 与验证层
 
@@ -44,7 +45,7 @@
 | A：Overlay 稳定性收口 | Completed | C:✅ U:✅ D:✅ UI:✅ | Overlay host 已统一 reconcile 模板，Dialog/Popup/ModalBottomSheet/反馈流均已回归 |
 | B：Collections 与容器扩展 | In Progress | C:✅ U:✅ D:✅ UI:✅ | 已补 `LazyVerticalGrid/HorizontalPager/VerticalPager` 专项回归，并新增 rotate-order 可见刷新断言（`qaFull` 21/21）；下一步聚焦 sticky headers 与 list state 抽象 |
 | C：Input 与表单态增强 | Next | C:✅ U:✅ D:✅ UI:⚠ | 已补 Input/Navigation smoke 基线；focus/IME/表单组合专项仍待系统化补齐 |
-| D：Diagnostics + Performance 联动 | In Progress | C:✅ U:✅ D:✅ UI:✅ | 已补 `DiffUtil + payload` 与 `SkipSubtree/skippedSubtrees` 主路径，下一步聚焦可视化与发布态优化 |
+| D：Diagnostics + Performance 联动 | In Progress | C:✅ U:✅ D:✅ UI:✅ | 已补 `DiffUtil + payload`、`SlotTable Lite` 子树重组与 `SkipSubtree/skippedSubtrees` 主路径，下一步聚焦可视化与发布态优化 |
 
 ## 3. 统一设计原则
 
@@ -65,7 +66,7 @@
 | Interop | `AndroidView` 可用 | 强化复杂原生 View 场景与主题/生命周期协同 |
 | Diagnostics | 基础 render/layout 诊断已落地 | locals/render tree/patch 可视化与告警可读性 |
 | UI Testing | 核心 instrumentation 路径已建立 | 扩展容器专项、overlay 宿主专项、主题断言覆盖 |
-| Performance | 已有 viewcompose-benchmark 基线，且 `DiffUtil + payload + subtree skip` 主路径已落地 | 继续扩大 skip 覆盖、增强诊断指标、推进发布态优化 |
+| Performance | 已有 viewcompose-benchmark 基线，且 `DiffUtil + payload + SlotTable Lite + subtree skip` 主路径已落地 | 继续扩大 skip 覆盖、增强诊断指标、推进发布态优化 |
 
 ### 4.1 完成态字段定义（C/U/D/UI）
 
