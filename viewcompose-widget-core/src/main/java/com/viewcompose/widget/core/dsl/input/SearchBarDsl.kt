@@ -6,6 +6,7 @@ import com.viewcompose.renderer.modifier.backgroundColor
 import com.viewcompose.renderer.modifier.clip
 import com.viewcompose.renderer.modifier.cornerRadius
 import com.viewcompose.renderer.modifier.elevation
+import com.viewcompose.renderer.modifier.fillMaxHeight
 import com.viewcompose.renderer.modifier.height
 import com.viewcompose.renderer.modifier.padding
 import com.viewcompose.renderer.node.ImageSource
@@ -67,7 +68,7 @@ fun UiTreeBuilder.SearchBar(
             minHeight = 0,
             paddingHorizontal = 0,
             paddingVertical = 0,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f).fillMaxHeight(),
         )
         if (trailingIcon != null) {
             trailingIcon()
