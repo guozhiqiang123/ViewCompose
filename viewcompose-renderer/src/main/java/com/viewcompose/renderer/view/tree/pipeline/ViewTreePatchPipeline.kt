@@ -6,7 +6,9 @@ import android.view.ViewGroup
 import com.viewcompose.renderer.modifier.ResolvedModifiers
 import com.viewcompose.renderer.modifier.layoutModifiersChanged
 import com.viewcompose.renderer.modifier.resolve
+import com.viewcompose.renderer.node.NodeType
 import com.viewcompose.renderer.node.VNode
+import com.viewcompose.renderer.node.spec.AndroidViewNodeProps
 import com.viewcompose.renderer.reconcile.InsertPatch
 import com.viewcompose.renderer.reconcile.ReconcileResult
 import com.viewcompose.renderer.reconcile.RemovePatch
@@ -225,7 +227,10 @@ internal object ViewTreePatchPipeline {
         val view = ViewNodeFactory.createView(
             context = context,
             node = node,
-            createAndroidView = readViewFactory(node),
+            createAndroidView = when (node.type) {
+                NodeType.AndroidView -> node.requireSpec<AndroidViewNodeProps>().factory
+                else -> null
+            },
         )
         ViewModifierApplier.cacheOriginalBackground(view)
         ViewModifierApplier.cacheOriginalForeground(view)
@@ -279,10 +284,6 @@ internal object ViewTreePatchPipeline {
             view,
             targetIndex.coerceAtMost(container.childCount),
         )
-    }
-
-    private fun readViewFactory(node: VNode): ((Context) -> View)? {
-        return (node.spec as? com.viewcompose.renderer.node.spec.AndroidViewNodeProps)?.factory
     }
 
     private fun resolveChildHost(container: ViewGroup): ViewGroup {

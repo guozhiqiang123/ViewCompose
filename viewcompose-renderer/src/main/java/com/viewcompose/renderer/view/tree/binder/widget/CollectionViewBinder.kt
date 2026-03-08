@@ -112,12 +112,7 @@ internal object CollectionViewBinder {
     }
 
     fun readLazyColumnSpec(node: VNode): LazyColumnSpec {
-        val spec = node.spec as? LazyColumnNodeProps ?: LazyColumnNodeProps(
-            contentPadding = 0,
-            spacing = 0,
-            items = emptyList(),
-            state = null,
-        )
+        val spec = node.requireSpec<LazyColumnNodeProps>()
         return LazyColumnSpec(
             contentPadding = spec.contentPadding,
             spacing = spec.spacing,
@@ -127,12 +122,7 @@ internal object CollectionViewBinder {
     }
 
     fun readLazyRowSpec(node: VNode): LazyColumnSpec {
-        val spec = node.spec as? LazyRowNodeProps ?: LazyRowNodeProps(
-            contentPadding = 0,
-            spacing = 0,
-            items = emptyList(),
-            state = null,
-        )
+        val spec = node.requireSpec<LazyRowNodeProps>()
         return LazyColumnSpec(
             contentPadding = spec.contentPadding,
             spacing = spec.spacing,
@@ -142,23 +132,7 @@ internal object CollectionViewBinder {
     }
 
     fun readNavigationBarSpec(node: VNode): NavigationBarSpec {
-        val spec = node.spec as? NavigationBarNodeProps
-            ?: return NavigationBarSpec(
-                items = emptyList(),
-                selectedIndex = 0,
-                onItemSelected = null,
-                containerColor = 0,
-                selectedIconColor = 0,
-                unselectedIconColor = 0,
-                selectedLabelColor = 0,
-                unselectedLabelColor = 0,
-                indicatorColor = 0,
-                rippleColor = 0,
-                iconSize = 0,
-                labelSizeSp = 12,
-                badgeColor = 0,
-                badgeTextColor = 0,
-            )
+        val spec = node.requireSpec<NavigationBarNodeProps>()
         return NavigationBarSpec(
             items = spec.items,
             selectedIndex = spec.selectedIndex,
@@ -178,15 +152,7 @@ internal object CollectionViewBinder {
     }
 
     fun readLazyVerticalGridSpec(node: VNode): LazyVerticalGridSpec {
-        val spec = node.spec as? LazyVerticalGridNodeProps
-            ?: return LazyVerticalGridSpec(
-                spanCount = 2,
-                contentPadding = 0,
-                horizontalSpacing = 0,
-                verticalSpacing = 0,
-                items = emptyList(),
-                state = null,
-            )
+        val spec = node.requireSpec<LazyVerticalGridNodeProps>()
         return LazyVerticalGridSpec(
             spanCount = spec.spanCount,
             contentPadding = spec.contentPadding,

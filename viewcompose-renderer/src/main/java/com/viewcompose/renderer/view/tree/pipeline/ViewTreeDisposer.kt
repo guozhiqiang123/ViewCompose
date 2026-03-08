@@ -1,6 +1,7 @@
 package com.viewcompose.renderer.view.tree
 
 import androidx.recyclerview.widget.RecyclerView
+import com.viewcompose.renderer.node.NodeType
 import com.viewcompose.renderer.node.spec.LazyColumnNodeProps
 import com.viewcompose.renderer.node.spec.LazyRowNodeProps
 import com.viewcompose.renderer.view.container.DeclarativeHorizontalPagerLayout
@@ -20,8 +21,11 @@ internal object ViewTreeDisposer {
             if (mountedNode.view !is DeclarativeLazyVerticalGridLayout) {
                 (recyclerView.adapter as? LazyListAdapter)?.disposeAll()
             }
-            (mountedNode.vnode.spec as? LazyColumnNodeProps)?.state?.recyclerView = null
-            (mountedNode.vnode.spec as? LazyRowNodeProps)?.state?.recyclerView = null
+            when (mountedNode.vnode.type) {
+                NodeType.LazyColumn -> mountedNode.vnode.requireSpec<LazyColumnNodeProps>().state?.recyclerView = null
+                NodeType.LazyRow -> mountedNode.vnode.requireSpec<LazyRowNodeProps>().state?.recyclerView = null
+                else -> Unit
+            }
         }
         mountedNode.children = emptyList()
     }

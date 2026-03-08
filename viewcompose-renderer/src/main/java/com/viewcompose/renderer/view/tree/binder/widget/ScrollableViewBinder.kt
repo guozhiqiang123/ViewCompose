@@ -42,12 +42,7 @@ internal object ScrollableViewBinder {
     }
 
     fun readScrollableColumnSpec(node: VNode): ContainerViewBinder.LinearSpec {
-        val spec = node.spec as? ScrollableColumnNodeProps
-            ?: ScrollableColumnNodeProps(
-                spacing = 0,
-                arrangement = MainAxisArrangement.Start,
-                horizontalAlignment = HorizontalAlignment.Start,
-            )
+        val spec = node.requireSpec<ScrollableColumnNodeProps>()
         return ContainerViewBinder.LinearSpec(
             spacing = spec.spacing,
             arrangement = spec.arrangement,
@@ -56,12 +51,7 @@ internal object ScrollableViewBinder {
     }
 
     fun readScrollableRowSpec(node: VNode): ContainerViewBinder.LinearSpec {
-        val spec = node.spec as? ScrollableRowNodeProps
-            ?: ScrollableRowNodeProps(
-                spacing = 0,
-                arrangement = MainAxisArrangement.Start,
-                verticalAlignment = VerticalAlignment.Top,
-            )
+        val spec = node.requireSpec<ScrollableRowNodeProps>()
         return ContainerViewBinder.LinearSpec(
             spacing = spec.spacing,
             arrangement = spec.arrangement,
@@ -70,12 +60,7 @@ internal object ScrollableViewBinder {
     }
 
     fun readPullToRefreshSpec(node: VNode): PullToRefreshSpec {
-        val spec = node.spec as? PullToRefreshNodeProps
-            ?: return PullToRefreshSpec(
-                isRefreshing = false,
-                onRefresh = null,
-                indicatorColor = 0,
-            )
+        val spec = node.requireSpec<PullToRefreshNodeProps>()
         return PullToRefreshSpec(
             isRefreshing = spec.isRefreshing,
             onRefresh = spec.onRefresh,

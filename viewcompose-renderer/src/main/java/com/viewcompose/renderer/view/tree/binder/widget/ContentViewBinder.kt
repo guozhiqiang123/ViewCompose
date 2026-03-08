@@ -108,14 +108,7 @@ internal object ContentViewBinder {
     }
 
     fun readTextSpec(node: VNode): TextSpec {
-        val spec = node.spec as? TextNodeProps ?: TextNodeProps(
-            text = null,
-            maxLines = Int.MAX_VALUE,
-            overflow = TextOverflow.Clip,
-            textAlign = com.viewcompose.renderer.node.TextAlign.Start,
-            textColor = 0xFF000000.toInt(),
-            textSizeSp = 14,
-        )
+        val spec = node.requireSpec<TextNodeProps>()
         return TextSpec(
             text = spec.text,
             maxLines = spec.maxLines,
@@ -131,26 +124,7 @@ internal object ContentViewBinder {
     }
 
     fun readButtonSpec(node: VNode): ButtonSpec {
-        val spec = node.spec as? ButtonNodeProps ?: ButtonNodeProps(
-            text = "",
-            enabled = true,
-            onClick = null,
-            textColor = 0xFF000000.toInt(),
-            textSizeSp = 14,
-            backgroundColor = android.graphics.Color.TRANSPARENT,
-            borderWidth = 0,
-            borderColor = android.graphics.Color.TRANSPARENT,
-            cornerRadius = 0,
-            rippleColor = 0x22000000,
-            minHeight = 0,
-            paddingHorizontal = 0,
-            paddingVertical = 0,
-            leadingIcon = null,
-            trailingIcon = null,
-            iconTint = 0xFF000000.toInt(),
-            iconSize = 18,
-            iconSpacing = 8,
-        )
+        val spec = node.requireSpec<ButtonNodeProps>()
         return ButtonSpec(
             text = spec.text,
             enabled = spec.enabled,

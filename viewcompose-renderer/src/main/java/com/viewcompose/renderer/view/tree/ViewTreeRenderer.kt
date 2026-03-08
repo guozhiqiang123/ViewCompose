@@ -1,13 +1,9 @@
 package com.viewcompose.renderer.view.tree
 
 import android.content.Context
-import android.text.TextUtils
 import android.util.Log
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
-import com.viewcompose.renderer.layout.MainAxisArrangement
-import com.viewcompose.renderer.modifier.PaddingModifierElement
-import com.viewcompose.renderer.node.NodeType
 import com.viewcompose.renderer.node.VNode
 import com.viewcompose.renderer.reconcile.ChildReconciler
 import com.viewcompose.renderer.reconcile.ReconcileNode
@@ -26,9 +22,7 @@ object ViewTreeRenderer {
     }
 
     init {
-        NodeViewBinderRegistry.initialize(
-            defaultRippleColor = DEFAULT_RIPPLE_COLOR,
-        )
+        NodeViewBinderRegistry.initialize()
     }
 
     fun disposeMounted(
@@ -121,6 +115,4 @@ object ViewTreeRenderer {
         return warnings
     }
 
-    private fun readViewFactory(node: VNode): ((Context) -> android.view.View)? =
-        (node.spec as? com.viewcompose.renderer.node.spec.AndroidViewNodeProps)?.factory
 }

@@ -65,14 +65,7 @@ internal object FeedbackViewBinder {
     }
 
     fun readProgressSpec(node: VNode): ProgressSpec {
-        val spec = node.spec as? ProgressIndicatorNodeProps ?: ProgressIndicatorNodeProps(
-            enabled = true,
-            progress = null,
-            indicatorColor = 0xFF000000.toInt(),
-            trackColor = 0x33000000,
-            trackThickness = 4,
-            indicatorSize = 32,
-        )
+        val spec = node.requireSpec<ProgressIndicatorNodeProps>()
         return ProgressSpec(
             enabled = spec.enabled,
             progress = spec.progress,

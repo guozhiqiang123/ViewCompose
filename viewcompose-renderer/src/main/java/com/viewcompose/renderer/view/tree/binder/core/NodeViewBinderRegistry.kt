@@ -31,9 +31,7 @@ import com.viewcompose.renderer.view.tree.patch.MediaNodePatchApplier
 internal object NodeViewBinderRegistry {
     private lateinit var binders: Map<NodeType, (View, VNode) -> Unit>
 
-    fun initialize(
-        defaultRippleColor: Int,
-    ) {
+    fun initialize() {
         if (::binders.isInitialized) {
             return
         }
@@ -157,10 +155,7 @@ internal object NodeViewBinderRegistry {
             NodeType.SegmentedControl to { view, node ->
                 PagerViewBinder.bindSegmentedControl(
                     view = view as DeclarativeSegmentedControlLayout,
-                    spec = PagerViewBinder.readSegmentedControlSpec(
-                        node = node,
-                        defaultRippleColor = defaultRippleColor,
-                    ),
+                    spec = PagerViewBinder.readSegmentedControlSpec(node),
                 )
             },
             NodeType.ScrollableColumn to { view, node ->

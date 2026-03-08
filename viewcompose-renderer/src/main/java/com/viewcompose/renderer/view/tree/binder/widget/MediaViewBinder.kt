@@ -65,16 +65,7 @@ internal object MediaViewBinder {
     }
 
     fun readImageSpec(node: VNode): ImageSpec {
-        val spec = (node.spec as? ImageNodeSpec) ?: ImageNodeProps(
-            contentDescription = null,
-            contentScale = ImageContentScale.Fit,
-            tint = null,
-            source = null,
-            placeholder = null,
-            error = null,
-            fallback = null,
-            remoteImageLoader = null,
-        )
+        val spec = node.requireSpec<ImageNodeSpec>()
         return ImageSpec(
             contentDescription = spec.contentDescription,
             scaleType = spec.contentScale.toScaleType(),
@@ -97,7 +88,7 @@ internal object MediaViewBinder {
     }
 
     fun readIconButtonEnabled(node: VNode): Boolean {
-        return (node.spec as? IconButtonNodeProps)?.enabled ?: true
+        return node.requireSpec<IconButtonNodeProps>().enabled
     }
 
     private fun bindPlaceholder(

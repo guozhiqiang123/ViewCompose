@@ -198,35 +198,7 @@ internal object InputViewBinder {
     }
 
     fun readTextFieldSpec(node: VNode): TextFieldSpec {
-        val spec = node.spec as? TextFieldNodeProps ?: TextFieldNodeProps(
-            value = "",
-            label = "",
-            labelColor = 0xFF888888.toInt(),
-            labelTextSizeSp = 12,
-            supportingText = "",
-            supportingTextColor = 0xFF888888.toInt(),
-            supportingTextSizeSp = 12,
-            placeholder = "",
-            enabled = true,
-            singleLine = true,
-            minLines = 1,
-            maxLines = Int.MAX_VALUE,
-            keyboardType = TextFieldType.Text,
-            imeAction = TextFieldImeAction.Default,
-            hintColor = 0xFF888888.toInt(),
-            readOnly = false,
-            onValueChange = null,
-            textColor = 0xFF000000.toInt(),
-            textSizeSp = 14,
-            backgroundColor = android.graphics.Color.TRANSPARENT,
-            borderWidth = 0,
-            borderColor = android.graphics.Color.TRANSPARENT,
-            cornerRadius = 0,
-            rippleColor = 0x22000000,
-            minHeight = 0,
-            paddingHorizontal = 0,
-            paddingVertical = 0,
-        )
+        val spec = node.requireSpec<TextFieldNodeProps>()
         return TextFieldSpec(
             value = spec.value,
             label = spec.label,
@@ -254,16 +226,7 @@ internal object InputViewBinder {
     }
 
     fun readToggleSpec(node: VNode): ToggleSpec {
-        val spec = node.spec as? ToggleNodeProps ?: ToggleNodeProps(
-            text = null,
-            enabled = true,
-            checked = false,
-            controlColor = 0xFF000000.toInt(),
-            onCheckedChange = null,
-            textColor = 0xFF000000.toInt(),
-            textSizeSp = 14,
-            rippleColor = 0x22000000,
-        )
+        val spec = node.requireSpec<ToggleNodeProps>()
         return ToggleSpec(
             text = spec.text,
             enabled = spec.enabled,
@@ -278,15 +241,7 @@ internal object InputViewBinder {
     }
 
     fun readSliderSpec(node: VNode): SliderSpec {
-        val spec = node.spec as? SliderNodeProps ?: SliderNodeProps(
-            min = 0,
-            max = 100,
-            value = 0,
-            enabled = true,
-            thumbColor = 0xFF000000.toInt(),
-            trackColor = 0xFF000000.toInt(),
-            onValueChange = null,
-        )
+        val spec = node.requireSpec<SliderNodeProps>()
         return SliderSpec(
             min = spec.min,
             max = spec.max,

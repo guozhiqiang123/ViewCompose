@@ -146,22 +146,8 @@ internal object PagerViewBinder {
         )
     }
 
-    fun readSegmentedControlSpec(node: VNode, defaultRippleColor: Int): SegmentedControlSpec {
-        val spec = node.spec as? SegmentedControlNodeProps ?: SegmentedControlNodeProps(
-            items = emptyList(),
-            selectedIndex = 0,
-            onSelectionChange = null,
-            enabled = true,
-            backgroundColor = android.graphics.Color.TRANSPARENT,
-            indicatorColor = android.graphics.Color.TRANSPARENT,
-            cornerRadius = 0,
-            textColor = android.graphics.Color.BLACK,
-            selectedTextColor = android.graphics.Color.WHITE,
-            rippleColor = defaultRippleColor,
-            textSizeSp = 14,
-            paddingHorizontal = 0,
-            paddingVertical = 0,
-        )
+    fun readSegmentedControlSpec(node: VNode): SegmentedControlSpec {
+        val spec = node.requireSpec<SegmentedControlNodeProps>()
         return SegmentedControlSpec(
             items = spec.items,
             selectedIndex = spec.selectedIndex,
@@ -180,15 +166,7 @@ internal object PagerViewBinder {
     }
 
     fun readHorizontalPagerSpec(node: VNode): HorizontalPagerSpec {
-        val spec = node.spec as? HorizontalPagerNodeProps
-            ?: return HorizontalPagerSpec(
-                pages = emptyList(),
-                currentPage = 0,
-                onPageChanged = null,
-                offscreenPageLimit = 1,
-                pagerState = null,
-                userScrollEnabled = true,
-            )
+        val spec = node.requireSpec<HorizontalPagerNodeProps>()
         return HorizontalPagerSpec(
             pages = spec.pages,
             currentPage = spec.currentPage,
@@ -200,27 +178,7 @@ internal object PagerViewBinder {
     }
 
     fun readTabRowSpec(node: VNode): TabRowSpec {
-        val spec = node.spec as? TabRowNodeProps
-            ?: return TabRowSpec(
-                tabs = emptyList(),
-                selectedIndex = 0,
-                onTabSelected = null,
-                pagerState = null,
-                indicatorColor = 0,
-                indicatorHeight = 0,
-                indicatorCornerRadius = 0,
-                indicatorPosition = TabIndicatorPosition.Bottom,
-                indicatorWidthMode = TabIndicatorWidthMode.MatchItem,
-                indicatorFixedWidth = 0,
-                containerColor = 0,
-                scrollable = false,
-                equalWidth = true,
-                rippleColor = 0,
-                itemSpacing = 0,
-                itemPaddingHorizontal = 0,
-                itemPaddingVertical = 0,
-                minItemWidth = 0,
-            )
+        val spec = node.requireSpec<TabRowNodeProps>()
         return TabRowSpec(
             tabs = spec.tabs,
             selectedIndex = spec.selectedIndex,
@@ -244,15 +202,7 @@ internal object PagerViewBinder {
     }
 
     fun readVerticalPagerSpec(node: VNode): VerticalPagerSpec {
-        val spec = node.spec as? VerticalPagerNodeProps
-            ?: return VerticalPagerSpec(
-                pages = emptyList(),
-                currentPage = 0,
-                onPageChanged = null,
-                offscreenPageLimit = 1,
-                pagerState = null,
-                userScrollEnabled = true,
-            )
+        val spec = node.requireSpec<VerticalPagerNodeProps>()
         return VerticalPagerSpec(
             pages = spec.pages,
             currentPage = spec.currentPage,
