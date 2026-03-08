@@ -11,6 +11,7 @@ class ComposerLite(
     private val slotTable: SlotTable = SlotTable(),
     private val invalidationQueue: InvalidationQueue = InvalidationQueue(),
     private val warningLogger: ((String) -> Unit)? = null,
+    private val onInvalidated: (() -> Unit)? = null,
 ) {
     private val keyStack = mutableListOf<Any?>()
     private val warningKeys = HashSet<String>()
@@ -190,6 +191,7 @@ class ComposerLite(
                 if (scope.disposed) return@observeReads
                 scope.markDirtyWithAncestors()
                 invalidationQueue.enqueue(scope)
+                onInvalidated?.invoke()
             },
         ) {
             block()

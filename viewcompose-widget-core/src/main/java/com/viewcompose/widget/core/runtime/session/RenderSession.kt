@@ -8,8 +8,7 @@ import com.viewcompose.renderer.view.tree.MountedNode
 import com.viewcompose.renderer.view.tree.RenderStats
 import com.viewcompose.renderer.view.tree.RenderTreeResult
 import com.viewcompose.renderer.view.tree.ViewTreeRenderer
-import com.viewcompose.runtime.observation.Observation
-import com.viewcompose.runtime.observation.RuntimeObservation
+import com.viewcompose.runtime.composition.ComposerLite
 import java.util.concurrent.atomic.AtomicInteger
 
 class RenderSession internal constructor(
@@ -23,36 +22,29 @@ class RenderSession internal constructor(
 ) {
     private val overlaySessionId = OverlaySessionId("render-session-${nextOverlaySessionId.incrementAndGet()}")
     private var mountedNodes: List<MountedNode> = emptyList()
-    private var observation: Observation? = null
+    private var disposed: Boolean = false
     private var renderScheduled: Boolean = false
     private val renderRunnable = Runnable { render() }
-    private val rememberStore = RememberStore()
-    private val effectStore = EffectStore()
-    private val sideEffectStore = SideEffectStore()
     private val overlayRequestStore = OverlayRequestStore()
+    private val composer = ComposerLite(
+        warningLogger = { message -> Log.w(debugTag, message) },
+        onInvalidated = ::scheduleRender,
+    )
 
     fun render() {
+        if (disposed) return
         renderScheduled = false
-        observation?.dispose()
         try {
-            val (tree, nextObservation) = RuntimeObservation.observeReads(
-                onInvalidated = ::scheduleRender,
-            ) {
-                var builtTree: List<com.viewcompose.renderer.node.VNode> = emptyList()
-                LocalContext.provide(LocalOverlayHost.holder, overlayHost) {
-                    OverlayRequestContext.withStore(overlayRequestStore) {
-                        SideEffectContext.withStore(sideEffectStore) {
-                            EffectContext.withStore(effectStore) {
-                                RememberContext.withStore(rememberStore) {
-                                    builtTree = buildVNodeTree(content)
-                                }
-                            }
+            var tree: List<com.viewcompose.renderer.node.VNode> = emptyList()
+            LocalContext.provide(LocalOverlayHost.holder, overlayHost) {
+                OverlayRequestContext.withStore(overlayRequestStore) {
+                    ComposerContext.withComposer(composer) {
+                        tree = composer.composeRoot {
+                            buildVNodeTree(content)
                         }
                     }
                 }
-                builtTree
             }
-            observation = nextObservation
             val renderResult = ViewTreeRenderer.renderInto(
                 container = container,
                 previous = mountedNodes,
@@ -71,16 +63,15 @@ class RenderSession internal constructor(
             )
             onRenderStats?.invoke(renderResult.stats)
             onRenderResult?.invoke(renderResult)
-            effectStore.commit()
-            sideEffectStore.commit()
+            composer.commitSideEffects()
         } catch (e: Exception) {
             Log.e(debugTag, "Render failed, keeping previous view tree", e)
         }
     }
 
     fun dispose() {
-        observation?.dispose()
-        observation = null
+        if (disposed) return
+        disposed = true
         container.removeCallbacks(renderRunnable)
         ViewTreeRenderer.disposeMounted(
             container = container,
@@ -88,12 +79,12 @@ class RenderSession internal constructor(
         )
         mountedNodes = emptyList()
         overlayHost.clear(overlaySessionId)
-        effectStore.disposeAll()
-        sideEffectStore.disposeAll()
+        composer.dispose()
         renderScheduled = false
     }
 
     private fun scheduleRender() {
+        if (disposed) return
         if (renderScheduled) {
             return
         }

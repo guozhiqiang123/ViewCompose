@@ -34,7 +34,7 @@
 - [x] Step 2 runtime 引入 Composition Kernel（SlotTable Lite）
 - [x] Step 3 widget-core 运行时 API 迁移到 Composer 驱动
 - [x] Step 4 UiTreeBuilder 接入节点组重组语义
-- [ ] Step 5 RenderSession 硬切为初次 compose + 增量 recompose
+- [x] Step 5 RenderSession 硬切为初次 compose + 增量 recompose
 - [ ] Step 6 renderer 增加 vnode 同引用 fast-path
 - [ ] Step 7 测试补齐与门禁
 - [ ] Step 8 文档收口
@@ -45,6 +45,7 @@
 - `DONE` feat: add runtime composition kernel with slot table lite
 - `DONE` refactor: migrate remember/effect/key to composer-backed runtime
 - `DONE` refactor: add node-group compose semantics in UiTreeBuilder emit path
+- `DONE` refactor: hard-cut render session to incremental subtree recomposition
 
 ## 6. 阻塞记录
 
