@@ -18,7 +18,6 @@ internal class ResolvedModifiers(
     var imeInsetsPadding: ImeInsetsPaddingModifierElement? = null,
     var minHeight: MinHeightModifierElement? = null,
     var minWidth: MinWidthModifierElement? = null,
-    var rippleColor: RippleColorModifierElement? = null,
     var visibility: VisibilityModifierElement? = null,
     var zIndex: ZIndexModifierElement? = null,
     // ViewLayoutParamsFactory fields
@@ -52,7 +51,6 @@ internal fun Modifier.resolve(): ResolvedModifiers {
             is ImeInsetsPaddingModifierElement -> result.imeInsetsPadding = element
             is MinHeightModifierElement -> result.minHeight = element
             is MinWidthModifierElement -> result.minWidth = element
-            is RippleColorModifierElement -> result.rippleColor = element
             is VisibilityModifierElement -> result.visibility = element
             is ZIndexModifierElement -> result.zIndex = element
             is BoxAlignModifierElement -> result.boxAlign = element

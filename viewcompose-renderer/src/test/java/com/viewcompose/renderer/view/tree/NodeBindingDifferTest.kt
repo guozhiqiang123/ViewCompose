@@ -321,6 +321,22 @@ class NodeBindingDifferTest {
     }
 
     @Test
+    fun `rebinds box when ripple changes`() {
+        val previous = boxNode(
+            contentAlignment = com.viewcompose.renderer.layout.BoxAlignment.TopStart,
+            rippleColor = 0x11000000,
+        )
+        val next = boxNode(
+            contentAlignment = com.viewcompose.renderer.layout.BoxAlignment.TopStart,
+            rippleColor = 0x22000000,
+        )
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertSame(NodeBindingPlan.Rebind, plan)
+    }
+
+    @Test
     fun `patches image semantic updates`() {
         val previous = imageNode(tint = 0xFF000000.toInt())
         val next = imageNode(tint = 0xFFFF0000.toInt())
@@ -664,11 +680,13 @@ class NodeBindingDifferTest {
 
     private fun boxNode(
         contentAlignment: com.viewcompose.renderer.layout.BoxAlignment = com.viewcompose.renderer.layout.BoxAlignment.TopStart,
+        rippleColor: Int? = null,
     ): VNode {
         return VNode(
             type = NodeType.Box,
             spec = BoxNodeProps(
                 contentAlignment = contentAlignment,
+                rippleColor = rippleColor,
             ),
             modifier = Modifier,
         )

@@ -9,7 +9,6 @@ import com.viewcompose.renderer.modifier.alpha
 import com.viewcompose.renderer.modifier.backgroundColor
 import com.viewcompose.renderer.modifier.clickable
 import com.viewcompose.renderer.modifier.cornerRadius
-import com.viewcompose.renderer.modifier.rippleColor
 import com.viewcompose.renderer.node.NodeType
 import com.viewcompose.renderer.node.spec.BoxNodeProps
 import com.viewcompose.renderer.node.spec.ColumnNodeProps
@@ -25,6 +24,7 @@ import com.viewcompose.renderer.node.spec.ScrollableRowNodeProps
 fun UiTreeBuilder.Box(
     key: Any? = null,
     contentAlignment: BoxAlignment = BoxAlignment.TopStart,
+    rippleColor: Int? = null,
     modifier: Modifier = Modifier,
     content: BoxScope.() -> Unit,
 ) {
@@ -33,6 +33,7 @@ fun UiTreeBuilder.Box(
         key = key,
         spec = BoxNodeProps(
             contentAlignment = contentAlignment,
+            rippleColor = rippleColor,
         ),
         modifier = modifier,
         children = BoxScope().apply(content).build(),
@@ -52,7 +53,6 @@ fun UiTreeBuilder.Surface(
     val semanticModifier = Modifier
         .backgroundColor(SurfaceDefaults.backgroundColor(variant))
         .cornerRadius(SurfaceDefaults.cardCornerRadius())
-        .rippleColor(SurfaceDefaults.pressedColor())
         .then(
             if (!enabled) {
                 Modifier.alpha(SurfaceDefaults.disabledAlpha())
@@ -74,6 +74,7 @@ fun UiTreeBuilder.Surface(
             key = key,
             spec = BoxNodeProps(
                 contentAlignment = contentAlignment,
+                rippleColor = SurfaceDefaults.pressedColor(),
             ),
             modifier = semanticModifier,
             children = BoxScope().apply(content).build(),
@@ -115,6 +116,7 @@ fun UiTreeBuilder.Row(
     spacing: Int = 0,
     arrangement: MainAxisArrangement = MainAxisArrangement.Start,
     verticalAlignment: VerticalAlignment = VerticalAlignment.Top,
+    rippleColor: Int? = null,
     modifier: Modifier = Modifier,
     content: RowScope.() -> Unit,
 ) {
@@ -125,6 +127,7 @@ fun UiTreeBuilder.Row(
             spacing = spacing,
             arrangement = arrangement,
             verticalAlignment = verticalAlignment,
+            rippleColor = rippleColor,
         ),
         modifier = modifier,
         children = RowScope().apply(content).build(),
@@ -136,6 +139,7 @@ fun UiTreeBuilder.Column(
     spacing: Int = 0,
     arrangement: MainAxisArrangement = MainAxisArrangement.Start,
     horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Start,
+    rippleColor: Int? = null,
     modifier: Modifier = Modifier,
     content: ColumnScope.() -> Unit,
 ) {
@@ -146,6 +150,7 @@ fun UiTreeBuilder.Column(
             spacing = spacing,
             arrangement = arrangement,
             horizontalAlignment = horizontalAlignment,
+            rippleColor = rippleColor,
         ),
         modifier = modifier,
         children = ColumnScope().apply(content).build(),

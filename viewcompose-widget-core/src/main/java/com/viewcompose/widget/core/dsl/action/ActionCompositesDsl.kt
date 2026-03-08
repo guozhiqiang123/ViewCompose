@@ -12,7 +12,6 @@ import com.viewcompose.renderer.modifier.cornerRadius
 import com.viewcompose.renderer.modifier.elevation
 import com.viewcompose.renderer.modifier.height
 import com.viewcompose.renderer.modifier.padding
-import com.viewcompose.renderer.modifier.rippleColor
 import com.viewcompose.renderer.modifier.size
 import com.viewcompose.renderer.node.ImageSource
 
@@ -33,13 +32,13 @@ fun UiTreeBuilder.FloatingActionButton(
         .cornerRadius(radius)
         .elevation(FabDefaults.elevation())
         .clip()
-        .rippleColor(FabDefaults.pressedColor())
         .clickable(onClick)
         .then(modifier)
     ProvideLocal(LocalContentColor, contentColor) {
         Box(
             key = key,
             contentAlignment = BoxAlignment.Center,
+            rippleColor = FabDefaults.pressedColor(),
             modifier = semanticModifier,
         ) {
             content()
@@ -63,7 +62,6 @@ fun UiTreeBuilder.ExtendedFloatingActionButton(
         .cornerRadius(radius)
         .elevation(FabDefaults.elevation())
         .clip()
-        .rippleColor(FabDefaults.pressedColor())
         .clickable(onClick)
         .padding(horizontal = FabDefaults.extendedHorizontalPadding())
         .then(modifier)
@@ -72,6 +70,7 @@ fun UiTreeBuilder.ExtendedFloatingActionButton(
             key = key,
             spacing = if (icon != null) FabDefaults.extendedIconSpacing() else 0,
             verticalAlignment = VerticalAlignment.Center,
+            rippleColor = FabDefaults.pressedColor(),
             modifier = semanticModifier,
         ) {
             if (icon != null) {
@@ -124,7 +123,7 @@ fun UiTreeBuilder.Chip(
         .clip()
         .let { m ->
             if (enabled) {
-                m.rippleColor(ChipDefaults.pressedColor()).clickable(onClick)
+                m.clickable(onClick)
             } else {
                 m.alpha(0.38f)
             }
@@ -136,6 +135,7 @@ fun UiTreeBuilder.Chip(
             key = key,
             spacing = ChipDefaults.iconSpacing(),
             verticalAlignment = VerticalAlignment.Center,
+            rippleColor = if (enabled) ChipDefaults.pressedColor() else null,
             modifier = semanticModifier,
         ) {
             if (leadingIcon != null) {

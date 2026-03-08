@@ -84,6 +84,14 @@ internal object NodeBindingDiffer {
         if (prevSpec::class != nextSpec::class) {
             return NodeBindingPlan.Rebind
         }
+        if (
+            (prevSpec is BoxNodeProps && nextSpec is BoxNodeProps && prevSpec.rippleColor != nextSpec.rippleColor) ||
+            (prevSpec is RowNodeProps && nextSpec is RowNodeProps && prevSpec.rippleColor != nextSpec.rippleColor) ||
+            (prevSpec is ColumnNodeProps && nextSpec is ColumnNodeProps && prevSpec.rippleColor != nextSpec.rippleColor)
+        ) {
+            // Container ripple is resolved from NodeSpec, so this change must re-run modifier/style binding.
+            return NodeBindingPlan.Rebind
+        }
         val factory = patchFactories[prevSpec::class]
         if (factory != null) {
             return NodeBindingPlan.Patch(

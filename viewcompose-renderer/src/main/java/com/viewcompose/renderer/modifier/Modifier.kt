@@ -71,10 +71,6 @@ data class ElevationModifierElement(
     val elevation: Int,
 ) : ModifierElement
 
-data class RippleColorModifierElement(
-    val color: Int,
-) : ModifierElement
-
 data class SizeModifierElement(
     val width: Int,
     val height: Int,
@@ -296,12 +292,6 @@ fun Modifier.clip(): Modifier {
 fun Modifier.elevation(elevation: Int): Modifier {
     return then(
         ElevationModifierElement(elevation),
-    )
-}
-
-fun Modifier.rippleColor(color: Int): Modifier {
-    return then(
-        RippleColorModifierElement(color),
     )
 }
 

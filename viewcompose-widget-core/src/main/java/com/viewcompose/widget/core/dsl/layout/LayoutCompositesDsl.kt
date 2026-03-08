@@ -11,7 +11,6 @@ import com.viewcompose.renderer.modifier.fillMaxSize
 import com.viewcompose.renderer.modifier.fillMaxWidth
 import com.viewcompose.renderer.modifier.minHeight
 import com.viewcompose.renderer.modifier.padding
-import com.viewcompose.renderer.modifier.rippleColor
 import com.viewcompose.renderer.layout.BoxAlignment
 import com.viewcompose.renderer.layout.VerticalAlignment
 
@@ -36,7 +35,7 @@ fun UiTreeBuilder.Card(
         .let { m -> if (bw > 0) m.border(bw, bc) else m }
         .let { m ->
             if (enabled && onClick != null) {
-                m.rippleColor(CardDefaults.pressedColor()).clickable(onClick)
+                m.clickable(onClick)
             } else {
                 m
             }
@@ -45,6 +44,7 @@ fun UiTreeBuilder.Card(
     ProvideLocal(LocalContentColor, CardDefaults.contentColor()) {
         Box(
             key = key,
+            rippleColor = if (enabled && onClick != null) CardDefaults.pressedColor() else null,
             modifier = semanticModifier,
             content = content,
         )

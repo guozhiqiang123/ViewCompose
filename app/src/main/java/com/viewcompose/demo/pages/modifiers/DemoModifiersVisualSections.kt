@@ -13,7 +13,6 @@ import com.viewcompose.renderer.modifier.height
 import com.viewcompose.renderer.modifier.margin
 import com.viewcompose.renderer.modifier.offset
 import com.viewcompose.renderer.modifier.padding
-import com.viewcompose.renderer.modifier.rippleColor
 import com.viewcompose.renderer.modifier.size
 import com.viewcompose.renderer.modifier.zIndex
 import com.viewcompose.widget.core.Box
@@ -177,23 +176,23 @@ internal fun UiTreeBuilder.ModifierAlphaRippleSection() {
             Button(
                 text = "红色波纹",
                 onClick = {},
+                rippleColor = 0xFFFF0000.toInt(),
                 modifier = Modifier
-                    .weight(1f)
-                    .rippleColor(0xFFFF0000.toInt()),
+                    .weight(1f),
             )
             Button(
                 text = "绿色波纹",
                 onClick = {},
+                rippleColor = 0xFF00FF00.toInt(),
                 modifier = Modifier
-                    .weight(1f)
-                    .rippleColor(0xFF00FF00.toInt()),
+                    .weight(1f),
             )
             Button(
                 text = "蓝色波纹",
                 onClick = {},
+                rippleColor = 0xFF0000FF.toInt(),
                 modifier = Modifier
-                    .weight(1f)
-                    .rippleColor(0xFF0000FF.toInt()),
+                    .weight(1f),
             )
         }
     }
