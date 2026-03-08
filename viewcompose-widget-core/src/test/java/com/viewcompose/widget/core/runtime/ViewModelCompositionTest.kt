@@ -1,9 +1,11 @@
 package com.viewcompose.widget.core
 
+import androidx.lifecycle.HasDefaultViewModelProviderFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.CreationExtras
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotSame
 import org.junit.Assert.assertSame
@@ -102,6 +104,59 @@ class ViewModelCompositionTest {
         owner.viewModelStore.clear()
     }
 
+    @Test
+    fun `viewModel uses owner's default factory when override is absent`() {
+        val owner = DefaultFactoryOwner()
+        val rememberStore = RememberStore()
+        var first: FactoryBackedViewModel? = null
+        var second: FactoryBackedViewModel? = null
+
+        RememberContext.withStore(rememberStore) {
+            buildVNodeTree {
+                ProvideViewModelStoreOwner(owner) {
+                    first = viewModel()
+                }
+            }
+        }
+        RememberContext.withStore(rememberStore) {
+            buildVNodeTree {
+                ProvideViewModelStoreOwner(owner) {
+                    second = viewModel()
+                }
+            }
+        }
+
+        assertSame(first, second)
+        assertEquals(1, owner.createCount)
+        owner.viewModelStore.clear()
+    }
+
+    @Test
+    fun `viewModel override factory has priority over owner default factory`() {
+        val owner = DefaultFactoryOwner()
+        val rememberStore = RememberStore()
+        var overrideCreateCount = 0
+        val overrideFactory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                overrideCreateCount += 1
+                return FactoryBackedViewModel(100 + overrideCreateCount) as T
+            }
+        }
+
+        RememberContext.withStore(rememberStore) {
+            buildVNodeTree {
+                ProvideViewModelStoreOwner(owner) {
+                    viewModel<FactoryBackedViewModel>(factory = overrideFactory)
+                }
+            }
+        }
+
+        assertEquals(0, owner.createCount)
+        assertEquals(1, overrideCreateCount)
+        owner.viewModelStore.clear()
+    }
+
     class TestViewModel : ViewModel()
 
     class FactoryBackedViewModel(
@@ -110,5 +165,22 @@ class ViewModelCompositionTest {
 
     class TestViewModelStoreOwner : ViewModelStoreOwner {
         override val viewModelStore: ViewModelStore = ViewModelStore()
+    }
+
+    class DefaultFactoryOwner : ViewModelStoreOwner, HasDefaultViewModelProviderFactory {
+        override val viewModelStore: ViewModelStore = ViewModelStore()
+        var createCount: Int = 0
+
+        override val defaultViewModelProviderFactory: ViewModelProvider.Factory
+            get() = object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    createCount += 1
+                    return FactoryBackedViewModel(createCount) as T
+                }
+            }
+
+        override val defaultViewModelCreationExtras: CreationExtras
+            get() = CreationExtras.Empty
     }
 }
