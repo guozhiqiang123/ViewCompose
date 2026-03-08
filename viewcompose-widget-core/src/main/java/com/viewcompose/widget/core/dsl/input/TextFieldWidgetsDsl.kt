@@ -1,10 +1,72 @@
 package com.viewcompose.widget.core
 
 import com.viewcompose.renderer.modifier.Modifier
+import com.viewcompose.renderer.modifier.fillMaxWidth
+import com.viewcompose.renderer.modifier.margin
 import com.viewcompose.renderer.node.NodeType
 import com.viewcompose.renderer.node.TextFieldImeAction
 import com.viewcompose.renderer.node.TextFieldType
 import com.viewcompose.renderer.node.spec.TextFieldNodeProps
+
+fun UiTreeBuilder.BasicTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    hint: String = "",
+    placeholder: String = hint,
+    enabled: Boolean = true,
+    singleLine: Boolean = true,
+    keyboardType: TextFieldType = TextFieldType.Text,
+    readOnly: Boolean = false,
+    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
+    minLines: Int = if (singleLine) 1 else 1,
+    maxLength: Int? = null,
+    imeAction: TextFieldImeAction = TextFieldImeAction.Default,
+    cursorColor: Int = TextFieldDefaults.cursorColor(),
+    textColor: Int = TextFieldDefaults.textColor(enabled),
+    textStyle: UiTextStyle = TextFieldDefaults.textStyle(),
+    hintColor: Int = TextFieldDefaults.hintColor(enabled = enabled),
+    backgroundColor: Int = 0x00000000,
+    borderWidth: Int = 0,
+    borderColor: Int = 0x00000000,
+    cornerRadius: Int = 0,
+    rippleColor: Int = 0,
+    minHeight: Int = 0,
+    paddingHorizontal: Int = 0,
+    paddingVertical: Int = 0,
+    key: Any? = null,
+    modifier: Modifier = Modifier,
+) {
+    emit(
+        type = NodeType.TextField,
+        key = key,
+        spec = basicTextFieldSpec(
+            value = value,
+            onValueChange = onValueChange,
+            placeholder = placeholder.ifEmpty { hint },
+            enabled = enabled,
+            singleLine = singleLine,
+            minLines = minLines,
+            maxLines = maxLines,
+            keyboardType = keyboardType,
+            imeAction = imeAction,
+            hintColor = hintColor,
+            readOnly = readOnly,
+            textColor = textColor,
+            textSizeSp = textStyle.fontSizeSp,
+            backgroundColor = backgroundColor,
+            borderWidth = borderWidth,
+            borderColor = borderColor,
+            cornerRadius = cornerRadius,
+            rippleColor = rippleColor,
+            minHeight = minHeight,
+            paddingHorizontal = paddingHorizontal,
+            paddingVertical = paddingVertical,
+            maxLength = maxLength,
+            cursorColor = cursorColor,
+        ),
+        modifier = modifier,
+    )
+}
 
 fun UiTreeBuilder.TextField(
     value: String,
@@ -41,29 +103,33 @@ fun UiTreeBuilder.TextField(
         enabled = enabled,
         isError = isError,
     )
-    emit(
-        type = NodeType.TextField,
+    Column(
         key = key,
-        spec = TextFieldNodeProps(
+        modifier = modifier,
+    ) {
+        if (label.isNotBlank()) {
+            Text(
+                text = label,
+                style = TextFieldDefaults.labelTextStyle(),
+                color = labelColor,
+                modifier = Modifier.margin(bottom = 4.dp),
+            )
+        }
+        BasicTextField(
             value = value,
-            label = label,
-            labelColor = labelColor,
-            labelTextSizeSp = TextFieldDefaults.labelTextStyle().fontSizeSp,
-            supportingText = supportingText,
-            supportingTextColor = supportingTextColor,
-            supportingTextSizeSp = TextFieldDefaults.supportingTextStyle().fontSizeSp,
+            onValueChange = onValueChange,
+            hint = hint,
             placeholder = placeholder.ifEmpty { hint },
             enabled = enabled,
             singleLine = singleLine,
-            minLines = minLines,
             maxLines = maxLines,
+            minLines = minLines,
             keyboardType = keyboardType,
             imeAction = imeAction,
             hintColor = hintColor,
             readOnly = readOnly,
-            onValueChange = onValueChange,
-            textColor = TextFieldDefaults.textColor(enabled),
-            textSizeSp = style.fontSizeSp,
+            textColor = TextFieldDefaults.textColor(enabled = enabled),
+            textStyle = style,
             backgroundColor = TextFieldDefaults.containerColor(
                 variant = variant,
                 enabled = enabled,
@@ -82,8 +148,74 @@ fun UiTreeBuilder.TextField(
             paddingVertical = TextFieldDefaults.verticalPadding(size),
             maxLength = maxLength,
             cursorColor = cursorColor,
-        ),
-        modifier = modifier,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        if (supportingText.isNotBlank()) {
+            Text(
+                text = supportingText,
+                style = TextFieldDefaults.supportingTextStyle(),
+                color = supportingTextColor,
+                modifier = Modifier.margin(top = 4.dp),
+            )
+        }
+    }
+}
+
+private fun basicTextFieldSpec(
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String,
+    enabled: Boolean,
+    singleLine: Boolean,
+    minLines: Int,
+    maxLines: Int,
+    keyboardType: TextFieldType,
+    imeAction: TextFieldImeAction,
+    hintColor: Int,
+    readOnly: Boolean,
+    textColor: Int,
+    textSizeSp: Int,
+    backgroundColor: Int,
+    borderWidth: Int,
+    borderColor: Int,
+    cornerRadius: Int,
+    rippleColor: Int,
+    minHeight: Int,
+    paddingHorizontal: Int,
+    paddingVertical: Int,
+    maxLength: Int?,
+    cursorColor: Int,
+): TextFieldNodeProps {
+    return TextFieldNodeProps(
+        value = value,
+        label = "",
+        labelColor = 0,
+        labelTextSizeSp = 0,
+        supportingText = "",
+        supportingTextColor = 0,
+        supportingTextSizeSp = 0,
+        placeholder = placeholder,
+        enabled = enabled,
+        singleLine = singleLine,
+        minLines = minLines,
+        maxLines = maxLines,
+        keyboardType = keyboardType,
+        imeAction = imeAction,
+        hintColor = hintColor,
+        readOnly = readOnly,
+        onValueChange = onValueChange,
+        textColor = textColor,
+        textSizeSp = textSizeSp,
+        backgroundColor = backgroundColor,
+        borderWidth = borderWidth,
+        borderColor = borderColor,
+        cornerRadius = cornerRadius,
+        rippleColor = rippleColor,
+        minHeight = minHeight,
+        paddingHorizontal = paddingHorizontal,
+        paddingVertical = paddingVertical,
+        maxLength = maxLength,
+        cursorColor = cursorColor,
     )
 }
 

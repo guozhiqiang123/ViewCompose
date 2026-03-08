@@ -35,7 +35,6 @@ import com.viewcompose.renderer.node.spec.ToggleNodeProps
 import com.viewcompose.renderer.view.container.DeclarativeHorizontalPagerLayout
 import com.viewcompose.renderer.view.container.DeclarativeLazyVerticalGridLayout
 import com.viewcompose.renderer.view.container.DeclarativeScrollableColumnLayout
-import com.viewcompose.renderer.view.container.DeclarativeTextFieldLayout
 import com.viewcompose.renderer.view.container.DeclarativeVerticalPagerLayout
 import com.viewcompose.renderer.view.lazy.LazyFocusFollowLayoutMonitor
 import com.viewcompose.renderer.view.lazy.ScrollableFocusFollowLayoutMonitor
@@ -115,7 +114,6 @@ internal object ViewModifierApplier {
             view = view,
             node = node,
         )
-        val isTextFieldLayout = view is DeclarativeTextFieldLayout
         val nodeStyle = resolveNodeStyle(
             node = node,
             resolved = resolved,
@@ -124,13 +122,11 @@ internal object ViewModifierApplier {
         val hostStyle = resolveHostStyle(
             resolved = resolved,
             nodeStyle = nodeStyle,
-            isTextFieldLayout = isTextFieldLayout,
         )
         applySurfaceStyle(
             view = view,
             resolved = resolved,
             nodeStyle = nodeStyle,
-            isTextFieldLayout = isTextFieldLayout,
         )
         applyCommonHostProperties(
             view = view,
@@ -142,7 +138,7 @@ internal object ViewModifierApplier {
             view = view,
             node = node,
             resolved = resolved,
-            forceDisable = isTextFieldLayout,
+            forceDisable = false,
         )
         applyHostPaddingWhenNoInsets(
             view = view,
@@ -159,13 +155,11 @@ internal object ViewModifierApplier {
                 null
             },
         )
-        if (!isTextFieldLayout) {
-            applyTextAppearanceIfTextView(
-                view = view,
-                textColor = nodeStyle.textColor,
-                textSizeSp = nodeStyle.textSizeSp,
-            )
-        }
+        applyTextAppearanceIfTextView(
+            view = view,
+            textColor = nodeStyle.textColor,
+            textSizeSp = nodeStyle.textSizeSp,
+        )
     }
 
     private fun resolveNodeStyle(
@@ -194,14 +188,13 @@ internal object ViewModifierApplier {
     private fun resolveHostStyle(
         resolved: ResolvedModifiers,
         nodeStyle: NodeStyle,
-        isTextFieldLayout: Boolean,
     ): HostStyle {
         val hasWindowInsetsPadding = resolved.systemBarsInsetsPadding != null || resolved.imeInsetsPadding != null
         return HostStyle(
             hasWindowInsetsPadding = hasWindowInsetsPadding,
-            padding = if (isTextFieldLayout) null else nodeStyle.padding,
-            minHeight = if (isTextFieldLayout) 0 else nodeStyle.minHeight,
-            minWidth = if (isTextFieldLayout) 0 else nodeStyle.minWidth,
+            padding = nodeStyle.padding,
+            minHeight = nodeStyle.minHeight,
+            minWidth = nodeStyle.minWidth,
         )
     }
 
@@ -209,23 +202,7 @@ internal object ViewModifierApplier {
         view: View,
         resolved: ResolvedModifiers,
         nodeStyle: NodeStyle,
-        isTextFieldLayout: Boolean,
     ) {
-        if (isTextFieldLayout) {
-            applyTextFieldModifier(
-                layout = view as DeclarativeTextFieldLayout,
-                backgroundColor = nodeStyle.backgroundColor,
-                borderWidth = nodeStyle.borderWidth,
-                borderColor = nodeStyle.borderColor,
-                cornerRadius = nodeStyle.cornerRadius,
-                rippleColor = nodeStyle.rippleColor,
-                padding = nodeStyle.padding,
-                minHeight = nodeStyle.minHeight,
-                textColor = nodeStyle.textColor,
-                textSizeSp = nodeStyle.textSizeSp,
-            )
-            return
-        }
         applyBackgroundAndInteraction(
             view = view,
             backgroundColor = nodeStyle.backgroundColor,
@@ -273,6 +250,11 @@ internal object ViewModifierApplier {
             view.isClickable = false
             view.isFocusable = false
             view.isFocusableInTouchMode = false
+            return
+        }
+        if (node.type == NodeType.TextField) {
+            // EditText should keep its intrinsic focus/click semantics.
+            view.setOnClickListener(null)
             return
         }
         val clickListener = resolved.clickable?.let { clickableElement ->
@@ -477,44 +459,6 @@ internal object ViewModifierApplier {
         // Apply rounded outline for shadow, but only clip content when clip() is explicitly requested.
         view.clipToOutline = forceClip
         view.invalidateOutline()
-    }
-
-    private fun applyTextFieldModifier(
-        layout: DeclarativeTextFieldLayout,
-        backgroundColor: Int?,
-        borderWidth: Int,
-        borderColor: Int,
-        cornerRadius: CornerRadiusModifierElement?,
-        rippleColor: Int,
-        padding: PaddingModifierElement?,
-        minHeight: Int,
-        textColor: Int?,
-        textSizeSp: Int?,
-    ) {
-        applyBackgroundAndInteraction(
-            view = layout.fieldContainer,
-            backgroundColor = backgroundColor,
-            borderWidth = borderWidth,
-            borderColor = borderColor,
-            cornerRadius = cornerRadius,
-            rippleColor = rippleColor,
-            clickable = false,
-        )
-        if (padding == null) {
-            layout.fieldContainer.setPadding(0, 0, 0, 0)
-        } else {
-            layout.fieldContainer.setPadding(
-                padding.left,
-                padding.top,
-                padding.right,
-                padding.bottom,
-            )
-        }
-        layout.fieldContainer.minimumHeight = minHeight
-        textColor?.let(layout.inputView::setTextColor)
-        if (textSizeSp != null) {
-            layout.inputView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp.toFloat())
-        }
     }
 
     private fun shouldKeepIntrinsicInteraction(type: NodeType): Boolean {

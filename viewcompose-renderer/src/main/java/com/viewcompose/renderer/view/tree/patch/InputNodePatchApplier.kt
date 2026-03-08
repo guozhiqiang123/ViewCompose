@@ -3,10 +3,10 @@ package com.viewcompose.renderer.view.tree.patch
 import android.content.res.ColorStateList
 import android.util.TypedValue
 import android.widget.CompoundButton
+import android.widget.EditText
 import android.widget.SeekBar
 import android.widget.Switch
 import com.viewcompose.renderer.R
-import com.viewcompose.renderer.view.container.DeclarativeTextFieldLayout
 import com.viewcompose.renderer.view.tree.InputViewBinder
 import com.viewcompose.renderer.view.tree.SliderNodePatch
 import com.viewcompose.renderer.view.tree.TextFieldNodePatch
@@ -15,98 +15,75 @@ import com.viewcompose.renderer.view.tree.ViewModifierApplier
 
 internal object InputNodePatchApplier {
     fun applyTextFieldPatch(
-        view: DeclarativeTextFieldLayout,
+        view: EditText,
         patch: TextFieldNodePatch,
     ) {
-        val input = view.inputView
         val previous = patch.previous
         val next = patch.next
-        if (previous.value != next.value && input.text?.toString() != next.value) {
-            input.setText(next.value)
-            input.setSelection(next.value.length)
-        }
-        if (
-            previous.label != next.label ||
-            previous.labelColor != next.labelColor ||
-            previous.labelTextSizeSp != next.labelTextSizeSp
-        ) {
-            view.setLabel(
-                text = next.label,
-                color = next.labelColor,
-                textSizeSp = next.labelTextSizeSp,
-            )
-        }
-        if (
-            previous.supportingText != next.supportingText ||
-            previous.supportingTextColor != next.supportingTextColor ||
-            previous.supportingTextSizeSp != next.supportingTextSizeSp
-        ) {
-            view.setSupportingText(
-                text = next.supportingText,
-                color = next.supportingTextColor,
-                textSizeSp = next.supportingTextSizeSp,
-            )
+        if (previous.value != next.value && view.text?.toString() != next.value) {
+            view.setText(next.value)
+            view.setSelection(next.value.length)
         }
         if (previous.placeholder != next.placeholder) {
-            input.hint = next.placeholder
+            view.hint = next.placeholder
         }
         if (previous.enabled != next.enabled) {
-            input.isEnabled = next.enabled
+            view.isEnabled = next.enabled
         }
         if (previous.singleLine != next.singleLine) {
-            input.isSingleLine = next.singleLine
+            view.isSingleLine = next.singleLine
         }
         if (
             previous.singleLine != next.singleLine ||
             previous.minLines != next.minLines
         ) {
-            input.minLines = if (next.singleLine) 1 else next.minLines
+            view.minLines = if (next.singleLine) 1 else next.minLines
         }
         if (
             previous.singleLine != next.singleLine ||
             previous.maxLines != next.maxLines
         ) {
-            input.maxLines = if (next.singleLine) 1 else next.maxLines
+            view.maxLines = if (next.singleLine) 1 else next.maxLines
         }
         if (
             previous.keyboardType != next.keyboardType ||
             previous.singleLine != next.singleLine
         ) {
-            input.inputType = InputViewBinder.resolveInputType(
+            view.inputType = InputViewBinder.resolveInputType(
                 type = next.keyboardType,
                 singleLine = next.singleLine,
             )
         }
         if (previous.imeAction != next.imeAction) {
-            input.imeOptions = InputViewBinder.toEditorAction(next.imeAction)
+            view.imeOptions = InputViewBinder.toEditorAction(next.imeAction)
         }
         if (previous.hintColor != next.hintColor) {
-            input.setHintTextColor(next.hintColor)
+            view.setHintTextColor(next.hintColor)
         }
         if (previous.cursorColor != next.cursorColor && next.cursorColor != 0) {
-            input.highlightColor = next.cursorColor
+            view.highlightColor = next.cursorColor
         }
         if (previous.readOnly != next.readOnly) {
-            InputViewBinder.applyReadOnly(input, next.readOnly)
+            InputViewBinder.applyReadOnly(view, next.readOnly)
         }
         if (previous.maxLength != next.maxLength) {
-            InputViewBinder.applyMaxLength(input, next.maxLength)
+            InputViewBinder.applyMaxLength(view, next.maxLength)
         }
         if (
             previous.value != next.value ||
             previous.onValueChange != next.onValueChange
         ) {
             InputViewBinder.bindTextWatcher(
-                view = input,
+                view = view,
                 currentValue = next.value,
                 onValueChange = next.onValueChange,
             )
         }
         if (previous.textColor != next.textColor) {
-            input.setTextColor(next.textColor)
+            view.setTextColor(next.textColor)
         }
         if (previous.textSizeSp != next.textSizeSp) {
-            input.setTextSize(TypedValue.COMPLEX_UNIT_SP, next.textSizeSp.toFloat())
+            view.setTextSize(TypedValue.COMPLEX_UNIT_SP, next.textSizeSp.toFloat())
         }
         if (
             previous.backgroundColor != next.backgroundColor ||
@@ -116,7 +93,7 @@ internal object InputNodePatchApplier {
             previous.rippleColor != next.rippleColor
         ) {
             ViewModifierApplier.applyStylePatch(
-                view = view.fieldContainer,
+                view = view,
                 backgroundColor = next.backgroundColor,
                 borderWidth = next.borderWidth,
                 borderColor = next.borderColor,
@@ -126,13 +103,13 @@ internal object InputNodePatchApplier {
             )
         }
         if (previous.minHeight != next.minHeight) {
-            view.fieldContainer.minimumHeight = next.minHeight
+            view.minimumHeight = next.minHeight
         }
         if (
             previous.paddingHorizontal != next.paddingHorizontal ||
             previous.paddingVertical != next.paddingVertical
         ) {
-            view.fieldContainer.setPadding(
+            view.setPadding(
                 next.paddingHorizontal,
                 next.paddingVertical,
                 next.paddingHorizontal,

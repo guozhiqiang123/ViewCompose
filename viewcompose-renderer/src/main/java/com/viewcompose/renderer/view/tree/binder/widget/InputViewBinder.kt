@@ -19,17 +19,10 @@ import com.viewcompose.renderer.node.VNode
 import com.viewcompose.renderer.node.spec.SliderNodeProps
 import com.viewcompose.renderer.node.spec.TextFieldNodeProps
 import com.viewcompose.renderer.node.spec.ToggleNodeProps
-import com.viewcompose.renderer.view.container.DeclarativeTextFieldLayout
 
 internal object InputViewBinder {
     data class TextFieldSpec(
         val value: String,
-        val label: String,
-        val labelColor: Int,
-        val labelTextSizeSp: Int,
-        val supportingText: String,
-        val supportingTextColor: Int,
-        val supportingTextSizeSp: Int,
         val placeholder: String,
         val enabled: Boolean,
         val singleLine: Boolean,
@@ -67,39 +60,28 @@ internal object InputViewBinder {
     )
 
     fun bindTextField(
-        view: DeclarativeTextFieldLayout,
+        view: EditText,
         spec: TextFieldSpec,
     ) {
-        val input = view.inputView
-        if (input.text?.toString() != spec.value) {
-            input.setText(spec.value)
-            input.setSelection(spec.value.length)
+        if (view.text?.toString() != spec.value) {
+            view.setText(spec.value)
+            view.setSelection(spec.value.length)
         }
-        view.setLabel(
-            text = spec.label,
-            color = spec.labelColor,
-            textSizeSp = spec.labelTextSizeSp,
-        )
-        view.setSupportingText(
-            text = spec.supportingText,
-            color = spec.supportingTextColor,
-            textSizeSp = spec.supportingTextSizeSp,
-        )
-        input.hint = spec.placeholder
-        input.isEnabled = spec.enabled
-        input.isSingleLine = spec.singleLine
-        input.minLines = if (spec.singleLine) 1 else spec.minLines
-        input.maxLines = if (spec.singleLine) 1 else spec.maxLines
-        input.inputType = spec.inputType
-        input.imeOptions = spec.imeAction
-        input.setHintTextColor(spec.hintColor)
+        view.hint = spec.placeholder
+        view.isEnabled = spec.enabled
+        view.isSingleLine = spec.singleLine
+        view.minLines = if (spec.singleLine) 1 else spec.minLines
+        view.maxLines = if (spec.singleLine) 1 else spec.maxLines
+        view.inputType = spec.inputType
+        view.imeOptions = spec.imeAction
+        view.setHintTextColor(spec.hintColor)
         if (spec.cursorColor != 0) {
-            input.highlightColor = spec.cursorColor
+            view.highlightColor = spec.cursorColor
         }
-        applyMaxLength(input, spec.maxLength)
-        applyReadOnly(input, spec.readOnly)
+        applyMaxLength(view, spec.maxLength)
+        applyReadOnly(view, spec.readOnly)
         bindTextWatcher(
-            view = input,
+            view = view,
             currentValue = spec.value,
             onValueChange = spec.onValueChange,
         )
@@ -201,12 +183,6 @@ internal object InputViewBinder {
         val spec = node.requireSpec<TextFieldNodeProps>()
         return TextFieldSpec(
             value = spec.value,
-            label = spec.label,
-            labelColor = spec.labelColor,
-            labelTextSizeSp = spec.labelTextSizeSp,
-            supportingText = spec.supportingText,
-            supportingTextColor = spec.supportingTextColor,
-            supportingTextSizeSp = spec.supportingTextSizeSp,
             placeholder = spec.placeholder,
             enabled = spec.enabled,
             singleLine = spec.singleLine,

@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -29,7 +30,6 @@ import com.viewcompose.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.viewcompose.renderer.view.container.DeclarativeScrollableRowLayout
 import com.viewcompose.renderer.view.container.DeclarativeSegmentedControlLayout
 import com.viewcompose.renderer.view.container.DeclarativeTabRowLayout
-import com.viewcompose.renderer.view.container.DeclarativeTextFieldLayout
 import com.viewcompose.renderer.view.container.DeclarativeVerticalPagerLayout
 import com.viewcompose.renderer.view.lazy.FrameworkRecyclerViewDefaults
 import com.viewcompose.renderer.view.lazy.LazyLinearLayoutManager
@@ -43,7 +43,9 @@ internal object ViewNodeFactory {
     ): View {
         return when (node.type) {
             NodeType.Text -> TextView(context)
-            NodeType.TextField -> DeclarativeTextFieldLayout(context)
+            NodeType.TextField -> EditText(context).apply {
+                background = null
+            }
             NodeType.Checkbox -> CheckBox(context)
             NodeType.Switch -> Switch(context)
             NodeType.RadioButton -> RadioButton(context)

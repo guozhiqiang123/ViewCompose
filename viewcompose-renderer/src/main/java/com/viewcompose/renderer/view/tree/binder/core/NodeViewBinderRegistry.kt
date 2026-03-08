@@ -2,6 +2,7 @@ package com.viewcompose.renderer.view.tree
 
 import android.graphics.Color
 import android.view.View
+import android.widget.EditText
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -20,7 +21,6 @@ import com.viewcompose.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.viewcompose.renderer.view.container.DeclarativeScrollableRowLayout
 import com.viewcompose.renderer.view.container.DeclarativeSegmentedControlLayout
 import com.viewcompose.renderer.view.container.DeclarativeTabRowLayout
-import com.viewcompose.renderer.view.container.DeclarativeTextFieldLayout
 import com.viewcompose.renderer.view.container.DeclarativeVerticalPagerLayout
 import com.viewcompose.renderer.view.tree.patch.ContainerNodePatchApplier
 import com.viewcompose.renderer.view.tree.patch.ContentNodePatchApplier
@@ -44,7 +44,7 @@ internal object NodeViewBinderRegistry {
             },
             NodeType.TextField to { view, node ->
                 InputViewBinder.bindTextField(
-                    view = view as DeclarativeTextFieldLayout,
+                    view = view as EditText,
                     spec = InputViewBinder.readTextFieldSpec(node),
                 )
             },
@@ -277,7 +277,7 @@ internal object NodeViewBinderRegistry {
             }
             is TextFieldNodePatch -> {
                 InputNodePatchApplier.applyTextFieldPatch(
-                    view = view as DeclarativeTextFieldLayout,
+                    view = view as EditText,
                     patch = patch,
                 )
             }

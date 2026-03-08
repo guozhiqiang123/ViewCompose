@@ -3,6 +3,8 @@ package com.viewcompose.widget.core
 import com.viewcompose.renderer.node.NodeType
 import com.viewcompose.renderer.node.TextFieldImeAction
 import com.viewcompose.renderer.node.TextFieldType
+import com.viewcompose.renderer.node.VNode
+import com.viewcompose.renderer.node.spec.TextNodeProps
 import com.viewcompose.renderer.node.spec.TextFieldNodeProps
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -47,14 +49,16 @@ class TextFieldTest {
             }
         }
 
-        val node = tree.single()
+        val root = tree.single()
+        val node = findFirstTextFieldNode(tree)
         val spec = node.spec as TextFieldNodeProps
 
+        assertEquals(NodeType.Column, root.type)
         assertEquals(NodeType.TextField, node.type)
         assertEquals("hello", spec.value)
         assertEquals("Type here", spec.placeholder)
-        assertEquals("Display name", spec.label)
-        assertEquals("Shown in profile", spec.supportingText)
+        assertTrue(collectTextNodes(root).any { it.text == "Display name" })
+        assertTrue(collectTextNodes(root).any { it.text == "Shown in profile" })
         assertEquals(true, spec.singleLine)
         assertEquals(TextFieldType.Text, spec.keyboardType)
         assertEquals(3, spec.maxLines)
@@ -81,13 +85,13 @@ class TextFieldTest {
             )
         }
 
-        val node = tree.single()
+        val node = findFirstTextFieldNode(tree)
         val spec = node.spec as TextFieldNodeProps
 
         assertEquals(NodeType.TextField, node.type)
         assertEquals(TextFieldType.Password, spec.keyboardType)
-        assertEquals("Password", spec.label)
-        assertEquals("At least 8 characters", spec.supportingText)
+        assertTrue(collectTextNodes(tree.single()).any { it.text == "Password" })
+        assertTrue(collectTextNodes(tree.single()).any { it.text == "At least 8 characters" })
         assertTrue(spec.singleLine)
     }
 
@@ -106,7 +110,7 @@ class TextFieldTest {
             )
         }
 
-        val node = tree.single()
+        val node = findFirstTextFieldNode(tree)
         val spec = node.spec as TextFieldNodeProps
 
         assertEquals(false, spec.singleLine)
@@ -114,8 +118,8 @@ class TextFieldTest {
         assertEquals(4, spec.minLines)
         assertEquals(6, spec.maxLines)
         assertEquals(TextFieldImeAction.Done, spec.imeAction)
-        assertEquals("Bio", spec.label)
-        assertEquals("Visible to collaborators", spec.supportingText)
+        assertTrue(collectTextNodes(tree.single()).any { it.text == "Bio" })
+        assertTrue(collectTextNodes(tree.single()).any { it.text == "Visible to collaborators" })
     }
 
     @Test
@@ -130,7 +134,7 @@ class TextFieldTest {
             }
         }
 
-        val spec = tree.single().spec as TextFieldNodeProps
+        val spec = findFirstTextFieldNode(tree).spec as TextFieldNodeProps
 
         assertEquals(0x00000000, spec.backgroundColor)
         assertEquals(Theme.colors.primary, spec.borderColor)
@@ -149,8 +153,9 @@ class TextFieldTest {
             }
         }
 
-        val elements = tree.single().modifier.readModifierElements()
-        val spec = tree.single().spec as TextFieldNodeProps
+        val textFieldNode = findFirstTextFieldNode(tree)
+        val elements = textFieldNode.modifier.readModifierElements()
+        val spec = textFieldNode.spec as TextFieldNodeProps
 
         assertFalse(elements.any { it is com.viewcompose.renderer.modifier.HeightModifierElement })
         assertEquals(TextFieldDefaults.height(TextFieldSize.Compact), spec.minHeight)
@@ -195,8 +200,8 @@ class TextFieldTest {
             }
         }
 
-        val disabledSpec = disabledTree.single().spec as TextFieldNodeProps
-        val errorSpec = errorTree.single().spec as TextFieldNodeProps
+        val disabledSpec = findFirstTextFieldNode(disabledTree).spec as TextFieldNodeProps
+        val errorSpec = findFirstTextFieldNode(errorTree).spec as TextFieldNodeProps
 
         assertEquals(202, disabledSpec.backgroundColor)
         assertEquals(209, errorSpec.borderColor)
@@ -207,5 +212,34 @@ class TextFieldTest {
         field.isAccessible = true
         @Suppress("UNCHECKED_CAST")
         return field.get(this) as List<Any?>
+    }
+
+    private fun findFirstTextFieldNode(tree: List<VNode>): VNode {
+        fun visit(node: VNode): VNode? {
+            if (node.type == NodeType.TextField) return node
+            node.children.forEach { child ->
+                val match = visit(child)
+                if (match != null) return match
+            }
+            return null
+        }
+        tree.forEach { node ->
+            val match = visit(node)
+            if (match != null) return match
+        }
+        error("No TextField node found")
+    }
+
+    private fun collectTextNodes(node: VNode): List<TextNodeProps> {
+        val result = mutableListOf<TextNodeProps>()
+        fun visit(current: VNode) {
+            val spec = current.spec
+            if (spec is TextNodeProps) {
+                result += spec
+            }
+            current.children.forEach(::visit)
+        }
+        visit(node)
+        return result
     }
 }
