@@ -7,8 +7,10 @@ import java.util.concurrent.atomic.AtomicBoolean
 internal class FrameAlignedRenderDispatcher(
     private val frameClock: RenderFrameClock,
     private val onFrameRender: () -> Unit,
-    private val mainHandler: Handler = Handler(Looper.getMainLooper()),
     private val isMainThread: () -> Boolean = { Looper.myLooper() == Looper.getMainLooper() },
+    private val postToMain: (Runnable) -> Unit = { runnable ->
+        Handler(Looper.getMainLooper()).post(runnable)
+    },
 ) {
     private val disposed = AtomicBoolean(false)
     private val frameRequested = AtomicBoolean(false)
@@ -42,7 +44,7 @@ internal class FrameAlignedRenderDispatcher(
         if (isMainThread()) {
             requestOnMain.run()
         } else {
-            mainHandler.post(requestOnMain)
+            postToMain(requestOnMain)
         }
     }
 
@@ -51,7 +53,7 @@ internal class FrameAlignedRenderDispatcher(
         if (isMainThread()) {
             cancelOnMain.run()
         } else {
-            mainHandler.post(cancelOnMain)
+            postToMain(cancelOnMain)
         }
     }
 

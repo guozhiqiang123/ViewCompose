@@ -35,7 +35,7 @@
 - [x] Step 2 新增内部帧调度抽象（RenderFrameClock / AndroidChoreographerFrameClock / FrameAlignedRenderDispatcher）
 - [x] Step 3 RenderSession 硬切接入帧调度器
 - [x] Step 4 统一影响面确认（overlay/lazy 语义保持）
-- [ ] Step 5 测试补齐（合帧/取消/跨线程/重入）
+- [x] Step 5 测试补齐（合帧/取消/跨线程/重入）
 - [ ] Step 6 文档收口与归档
 
 ## 5. 提交记录
@@ -44,6 +44,7 @@
 - `DONE` feat: add choreographer-backed frame scheduler for render sessions
 - `DONE` refactor: route render invalidations through frame-aligned dispatcher
 - `DONE` refactor: preserve immediate render semantics for item and overlay sessions
+- `DONE` test: add frame-aligned scheduler coalescing and cancellation coverage
 
 ## 6. 阻塞记录
 

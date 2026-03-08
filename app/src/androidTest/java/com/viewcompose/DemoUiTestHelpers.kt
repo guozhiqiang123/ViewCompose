@@ -8,6 +8,7 @@ import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.InsetDrawable
 import android.graphics.drawable.LayerDrawable
 import android.graphics.drawable.RippleDrawable
+import android.view.Choreographer
 import android.view.View
 import android.view.ViewParent
 import android.view.ViewGroup
@@ -29,6 +30,8 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import java.io.File
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 internal data class RecyclerViewportAnchor(
     val position: Int,
@@ -56,7 +59,17 @@ internal fun <A : Activity> launchDemoActivity(
 }
 
 internal fun waitForUiIdle() {
-    InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+    val instrumentation = InstrumentationRegistry.getInstrumentation()
+    instrumentation.waitForIdleSync()
+
+    val frameLatch = CountDownLatch(1)
+    instrumentation.runOnMainSync {
+        Choreographer.getInstance().postFrameCallback {
+            frameLatch.countDown()
+        }
+    }
+    frameLatch.await(2, TimeUnit.SECONDS)
+    instrumentation.waitForIdleSync()
 }
 
 internal fun captureDeviceScreenshot(name: String) {
