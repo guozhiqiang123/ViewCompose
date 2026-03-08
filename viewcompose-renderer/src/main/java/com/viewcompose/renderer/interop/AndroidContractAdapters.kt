@@ -14,6 +14,14 @@ internal data class AndroidRemoteImageTarget(
     override val target: Any,
 ) : PlatformRemoteImageTarget
 
+internal fun Any.asRenderContainerHandle(): PlatformRenderContainerHandle {
+    return AndroidRenderContainerHandle(this)
+}
+
+internal fun Any.asRemoteImageTarget(): PlatformRemoteImageTarget {
+    return AndroidRemoteImageTarget(this)
+}
+
 internal fun UiFontFamily?.toTypefaceOrNull(): Typeface? {
     return (this as? PlatformUiFontFamily)?.font as? Typeface
 }

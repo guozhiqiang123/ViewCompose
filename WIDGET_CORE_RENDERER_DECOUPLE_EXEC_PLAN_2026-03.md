@@ -31,7 +31,7 @@
 - [x] Step 2 新增模块并改构建拓扑
 - [x] Step 3 抽取 UI 契约到 ui-contract
 - [x] Step 4 Android 专属 API 迁出到 host-android
-- [ ] Step 5 renderer 适配 ui-contract
+- [x] Step 5 renderer 适配 ui-contract
 - [ ] Step 6 overlay/image-coil 同步迁移
 - [ ] Step 7 测试同步迁移与 guard
 - [ ] Step 8 文档收口与归档
@@ -42,6 +42,7 @@
 - `DONE` build: add ui-contract and host-android modules and rewire dependencies
 - `DONE` refactor: move node and modifier contracts into pure ui-contract module
 - `DONE` refactor: move android host runtime and interop APIs to host-android module
+- `DONE` refactor: adapt renderer to ui-contract abstractions
 
 ## 5. 阻塞记录
 

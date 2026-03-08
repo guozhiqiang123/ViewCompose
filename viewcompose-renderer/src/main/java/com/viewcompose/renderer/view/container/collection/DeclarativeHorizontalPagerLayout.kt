@@ -6,7 +6,7 @@ import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.viewcompose.ui.node.LazyListItem
-import com.viewcompose.renderer.interop.AndroidRenderContainerHandle
+import com.viewcompose.renderer.interop.asRenderContainerHandle
 import com.viewcompose.renderer.reconcile.LazyListDiff
 import com.viewcompose.renderer.view.lazy.session.LazyHolderRegistry
 import com.viewcompose.renderer.view.lazy.session.LazyItemSessionController
@@ -244,7 +244,7 @@ internal class HorizontalPagerViewHolder(
 ) : RecyclerView.ViewHolder(container) {
     private val controller = LazyItemSessionController(
         createSession = { item ->
-            item.sessionFactory.create(AndroidRenderContainerHandle(container))
+            item.sessionFactory.create(container.asRenderContainerHandle())
         },
         clearContainer = container::removeAllViews,
     )

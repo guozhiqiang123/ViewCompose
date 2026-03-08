@@ -12,7 +12,7 @@ import com.viewcompose.ui.node.ImageContentScale
 import com.viewcompose.ui.node.spec.ImageNodeProps
 import com.viewcompose.ui.node.spec.IconButtonNodeProps
 import com.viewcompose.ui.node.spec.ImageNodeSpec
-import com.viewcompose.renderer.interop.AndroidRemoteImageTarget
+import com.viewcompose.renderer.interop.asRemoteImageTarget
 
 internal object MediaViewBinder {
     data class ImageSpec(
@@ -50,7 +50,7 @@ internal object MediaViewBinder {
                 }
                 bindPlaceholder(view, spec.placeholder)
                 spec.remoteImageLoader.load(
-                    target = AndroidRemoteImageTarget(view),
+                    target = view.asRemoteImageTarget(),
                     request = RemoteImageRequest(
                         url = normalizedUrl,
                         placeholderResId = spec.placeholder?.resId,

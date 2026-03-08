@@ -12,7 +12,7 @@ import android.widget.HorizontalScrollView
 import com.viewcompose.ui.node.collection.TabIndicatorPosition
 import com.viewcompose.ui.node.collection.TabIndicatorWidthMode
 import com.viewcompose.ui.node.collection.TabRowTab
-import com.viewcompose.renderer.interop.AndroidRenderContainerHandle
+import com.viewcompose.renderer.interop.asRenderContainerHandle
 import com.viewcompose.renderer.view.lazy.session.LazyItemSessionController
 import com.viewcompose.ui.state.PagerState
 import com.viewcompose.renderer.view.tree.LayoutPassTracker
@@ -200,7 +200,7 @@ internal class DeclarativeTabRowLayout(
 
             val controller = LazyItemSessionController(
                 createSession = { item ->
-                    item.sessionFactory.create(AndroidRenderContainerHandle(itemContainer))
+                    item.sessionFactory.create(itemContainer.asRenderContainerHandle())
                 },
                 clearContainer = itemContainer::removeAllViews,
             )

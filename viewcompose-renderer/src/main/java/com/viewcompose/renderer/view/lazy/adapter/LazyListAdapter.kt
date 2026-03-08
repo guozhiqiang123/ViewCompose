@@ -7,7 +7,7 @@ import android.widget.FrameLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.viewcompose.ui.node.LazyListItem
-import com.viewcompose.renderer.interop.AndroidRenderContainerHandle
+import com.viewcompose.renderer.interop.asRenderContainerHandle
 import com.viewcompose.renderer.reconcile.LazyListDiff
 import com.viewcompose.renderer.reconcile.LazyListIdentityInspector
 import com.viewcompose.renderer.view.lazy.focus.LazyFocusFollowLayoutMonitor
@@ -292,9 +292,9 @@ internal class LazyListSpacingDecoration(
 internal class LazyListViewHolder(
     private val container: FrameLayout,
 ) : RecyclerView.ViewHolder(container) {
-    private val controller = LazyItemSessionController(
+private val controller = LazyItemSessionController(
         createSession = { item ->
-            item.sessionFactory.create(AndroidRenderContainerHandle(container))
+            item.sessionFactory.create(container.asRenderContainerHandle())
         },
         clearContainer = container::removeAllViews,
     )
