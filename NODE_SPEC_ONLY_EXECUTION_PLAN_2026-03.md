@@ -41,7 +41,7 @@ All of the following must be true:
 - [x] Step 3: migrate DSL (`Spacer`, `Surface`, `AnchorTarget`) to spec/modifier-only.
 - [x] Step 4: remove renderer fallback props reads and normalize to spec-only.
 - [x] Step 5: move overlay anchor metadata application to resolved modifier path.
-- [ ] Step 6: migrate tests + add regression guard.
+- [x] Step 6: migrate tests + add regression guard.
 - [ ] Step 7: update docs, archive this plan, close statuses.
 
 ## 5. Commit Log
@@ -53,8 +53,8 @@ All of the following must be true:
 | 3 | `d4adb2f` | `refactor: migrate layout DSL from props to spec and modifier metadata` | includes anchor modifier API |
 | 4 | `93b4788` | `refactor: make renderer spec-only and remove props fallback paths` | binder + pipeline cleanup |
 | 5 | `17755e0` | `refactor: move overlay anchor metadata from props to modifier` | presenter path unchanged |
-| 6a | TBD | `test: migrate unit tests to spec-only vnode model` | direct test migrations |
-| 6b | TBD | `test: add guardrails to prevent props regression` | static guard |
+| 6a | `41d53ef` | `test: migrate unit tests to spec-only vnode model` | direct test migrations |
+| 6b | pending | `test: add guardrails to prevent props regression` | static guard |
 | 7a | TBD | `docs: codify node-spec-only architecture boundary` | docs update |
 | 7b | TBD | `docs: close and archive node-spec-only migration plan` | archive + index |
 
