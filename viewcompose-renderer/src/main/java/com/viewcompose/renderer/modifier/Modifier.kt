@@ -476,7 +476,7 @@ internal data class LazyContainerReusePolicy(
     val disableItemAnimator: Boolean,
 )
 
-internal data class LazyContainerFocusPolicy(
+internal data class FocusFollowKeyboardPolicy(
     val enabled: Boolean,
 )
 
@@ -496,17 +496,17 @@ internal fun Modifier.lazyContainerReusePolicy(): LazyContainerReusePolicy {
     )
 }
 
-internal fun Modifier.lazyContainerFocusPolicy(): LazyContainerFocusPolicy {
+internal fun Modifier.focusFollowKeyboardPolicy(): FocusFollowKeyboardPolicy {
     val element = elements
         .asReversed()
         .firstOrNull { it is FocusFollowKeyboardModifierElement }
         as? FocusFollowKeyboardModifierElement
     if (element == null) {
-        return LazyContainerFocusPolicy(
+        return FocusFollowKeyboardPolicy(
             enabled = false,
         )
     }
-    return LazyContainerFocusPolicy(
+    return FocusFollowKeyboardPolicy(
         enabled = element.enabled,
     )
 }

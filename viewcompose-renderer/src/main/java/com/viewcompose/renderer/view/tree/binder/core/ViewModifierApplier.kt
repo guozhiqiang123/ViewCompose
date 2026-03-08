@@ -22,7 +22,7 @@ import com.viewcompose.renderer.modifier.PaddingModifierElement
 import com.viewcompose.renderer.modifier.ResolvedModifiers
 import com.viewcompose.renderer.modifier.SystemBarsInsetsPaddingModifierElement
 import com.viewcompose.renderer.modifier.Visibility
-import com.viewcompose.renderer.modifier.lazyContainerFocusPolicy
+import com.viewcompose.renderer.modifier.focusFollowKeyboardPolicy
 import com.viewcompose.renderer.modifier.lazyContainerReusePolicy
 import com.viewcompose.renderer.modifier.resolve
 import com.viewcompose.renderer.node.NodeType
@@ -567,7 +567,7 @@ internal object ViewModifierApplier {
                     sharePool = reusePolicy.sharePool,
                     disableItemAnimator = reusePolicy.disableItemAnimator,
                 )
-                val focusPolicy = node.modifier.lazyContainerFocusPolicy()
+                val focusPolicy = node.modifier.focusFollowKeyboardPolicy()
                 LazyFocusFollowLayoutMonitor.apply(
                     recyclerView = recyclerView,
                     enabled = focusPolicy.enabled,
@@ -581,7 +581,7 @@ internal object ViewModifierApplier {
                     sharePool = reusePolicy.sharePool,
                     disableItemAnimator = reusePolicy.disableItemAnimator,
                 )
-                val focusPolicy = node.modifier.lazyContainerFocusPolicy()
+                val focusPolicy = node.modifier.focusFollowKeyboardPolicy()
                 if (focusPolicy.enabled) {
                     warnUnsupportedFocusFollowOnce(
                         view = recyclerView,
@@ -597,7 +597,7 @@ internal object ViewModifierApplier {
                     sharePool = reusePolicy.sharePool,
                     disableItemAnimator = reusePolicy.disableItemAnimator,
                 )
-                val focusPolicy = node.modifier.lazyContainerFocusPolicy()
+                val focusPolicy = node.modifier.focusFollowKeyboardPolicy()
                 (view as? DeclarativeLazyVerticalGridLayout)?.setFocusFollowKeyboardEnabled(focusPolicy.enabled)
             }
             NodeType.HorizontalPager -> {
@@ -606,7 +606,7 @@ internal object ViewModifierApplier {
                     sharePool = reusePolicy.sharePool,
                     disableItemAnimator = reusePolicy.disableItemAnimator,
                 )
-                val focusPolicy = node.modifier.lazyContainerFocusPolicy()
+                val focusPolicy = node.modifier.focusFollowKeyboardPolicy()
                 if (focusPolicy.enabled) {
                     warnUnsupportedFocusFollowOnce(
                         view = view,
@@ -620,11 +620,11 @@ internal object ViewModifierApplier {
                     sharePool = reusePolicy.sharePool,
                     disableItemAnimator = reusePolicy.disableItemAnimator,
                 )
-                val focusPolicy = node.modifier.lazyContainerFocusPolicy()
+                val focusPolicy = node.modifier.focusFollowKeyboardPolicy()
                 (view as? DeclarativeVerticalPagerLayout)?.setFocusFollowKeyboardEnabled(focusPolicy.enabled)
             }
             NodeType.ScrollableColumn -> {
-                val focusPolicy = node.modifier.lazyContainerFocusPolicy()
+                val focusPolicy = node.modifier.focusFollowKeyboardPolicy()
                 (view as? DeclarativeScrollableColumnLayout)?.let { scrollView ->
                     ScrollableFocusFollowLayoutMonitor.apply(
                         scrollView = scrollView,
@@ -633,7 +633,7 @@ internal object ViewModifierApplier {
                 }
             }
             NodeType.ScrollableRow -> {
-                val focusPolicy = node.modifier.lazyContainerFocusPolicy()
+                val focusPolicy = node.modifier.focusFollowKeyboardPolicy()
                 if (focusPolicy.enabled) {
                     warnUnsupportedFocusFollowOnce(
                         view = view,

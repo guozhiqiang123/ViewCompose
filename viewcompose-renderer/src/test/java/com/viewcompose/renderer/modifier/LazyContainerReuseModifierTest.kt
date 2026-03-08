@@ -35,8 +35,8 @@ class LazyContainerReuseModifierTest {
     }
 
     @Test
-    fun `lazyContainerFocusPolicy defaults to disabled`() {
-        val policy = Modifier.lazyContainerFocusPolicy()
+    fun `focusFollowKeyboardPolicy defaults to disabled`() {
+        val policy = Modifier.focusFollowKeyboardPolicy()
 
         assertFalse(policy.enabled)
     }
@@ -58,14 +58,14 @@ class LazyContainerReuseModifierTest {
     }
 
     @Test
-    fun `lazyContainerFocusPolicy uses last element in chain`() {
+    fun `focusFollowKeyboardPolicy uses last element in chain`() {
         val policy = Modifier
             .focusFollowKeyboard(enabled = true)
             .focusFollowKeyboard(enabled = false)
-            .lazyContainerFocusPolicy()
+            .focusFollowKeyboardPolicy()
 
         assertEquals(
-            LazyContainerFocusPolicy(
+            FocusFollowKeyboardPolicy(
                 enabled = false,
             ),
             policy,
