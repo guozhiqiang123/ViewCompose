@@ -3,8 +3,8 @@ package com.viewcompose
 import com.viewcompose.renderer.modifier.Modifier
 import com.viewcompose.renderer.modifier.fillMaxWidth
 import com.viewcompose.renderer.modifier.margin
+import com.viewcompose.renderer.modifier.overlayAnchor
 import com.viewcompose.renderer.modifier.testTag
-import com.viewcompose.widget.core.AnchorTarget
 import com.viewcompose.widget.core.Button
 import com.viewcompose.widget.core.ButtonVariant
 import com.viewcompose.widget.core.Column
@@ -133,23 +133,19 @@ internal fun UiTreeBuilder.RenderFeedbackSection(
                     .fillMaxWidth()
                     .margin(top = 8.dp),
             ) {
-                AnchorTarget(
-                    anchorId = anchors.popupAnchorId,
-                    modifier = Modifier.weight(1f),
-                ) {
-                    Button(
-                        text = "显示 Popup",
-                        variant = ButtonVariant.Tonal,
-                        onClick = {
-                            state.popupCountState.value += 1
-                            state.popupVisibleState.value = true
-                            state.lastEventState.value = "Popup 请求 ${state.popupCountState.value}"
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .testTag(DemoTestTags.FEEDBACK_SHOW_POPUP),
-                    )
-                }
+                Button(
+                    text = "显示 Popup",
+                    variant = ButtonVariant.Tonal,
+                    onClick = {
+                        state.popupCountState.value += 1
+                        state.popupVisibleState.value = true
+                        state.lastEventState.value = "Popup 请求 ${state.popupCountState.value}"
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .overlayAnchor(anchors.popupAnchorId)
+                        .testTag(DemoTestTags.FEEDBACK_SHOW_POPUP),
+                )
                 Button(
                     text = "重置",
                     variant = ButtonVariant.Outlined,
@@ -237,16 +233,13 @@ internal fun UiTreeBuilder.RenderFeedbackSection(
                 color = TextDefaults.secondaryColor(),
                 modifier = Modifier.margin(bottom = 8.dp),
             )
-            AnchorTarget(
-                anchorId = anchors.menuAnchorId,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Button(
-                    text = "打开菜单",
-                    onClick = { state.menuExpandedState.value = true },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
+            Button(
+                text = "打开菜单",
+                onClick = { state.menuExpandedState.value = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .overlayAnchor(anchors.menuAnchorId),
+            )
             Text(
                 text = "菜单包含 4 个选项：编辑（带图标）、复制、分享（带快捷键）、删除（禁用）",
                 style = UiTextStyle(fontSizeSp = 13.sp),
@@ -254,17 +247,14 @@ internal fun UiTreeBuilder.RenderFeedbackSection(
                 modifier = Modifier.margin(top = 8.dp, bottom = 16.dp),
             )
             Divider(modifier = Modifier.margin(bottom = 12.dp))
-            AnchorTarget(
-                anchorId = anchors.tooltipAnchorId,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Button(
-                    text = if (state.tooltipVisibleState.value) "隐藏 Tooltip" else "显示 Tooltip",
-                    variant = ButtonVariant.Tonal,
-                    onClick = { state.tooltipVisibleState.value = !state.tooltipVisibleState.value },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
+            Button(
+                text = if (state.tooltipVisibleState.value) "隐藏 Tooltip" else "显示 Tooltip",
+                variant = ButtonVariant.Tonal,
+                onClick = { state.tooltipVisibleState.value = !state.tooltipVisibleState.value },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .overlayAnchor(anchors.tooltipAnchorId),
+            )
             Text(
                 text = "PlainTooltip 锚定在上方按钮，显示纯文字提示。",
                 style = UiTextStyle(fontSizeSp = 13.sp),

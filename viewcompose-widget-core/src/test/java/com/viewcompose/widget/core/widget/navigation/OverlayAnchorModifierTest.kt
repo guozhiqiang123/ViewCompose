@@ -7,11 +7,11 @@ import com.viewcompose.renderer.node.NodeType
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class AnchorTargetTest {
+class OverlayAnchorModifierTest {
     @Test
-    fun `anchor target emits box node with anchor id`() {
+    fun `box with overlay anchor emits anchor metadata`() {
         val nodes = buildVNodeTree {
-            AnchorTarget(anchorId = "feedback_popup_anchor") {
+            Box(modifier = Modifier.overlayAnchor("feedback_popup_anchor")) {
                 Text(text = "Anchor content")
             }
         }
@@ -25,11 +25,12 @@ class AnchorTargetTest {
     }
 
     @Test
-    fun `anchor target parameter overrides existing overlay anchor modifier`() {
+    fun `last overlay anchor modifier wins`() {
         val nodes = buildVNodeTree {
-            AnchorTarget(
-                anchorId = "expected_anchor",
-                modifier = Modifier.overlayAnchor("stale_anchor"),
+            Box(
+                modifier = Modifier
+                    .overlayAnchor("stale_anchor")
+                    .overlayAnchor("expected_anchor"),
             ) {
                 Text(text = "Anchor content")
             }

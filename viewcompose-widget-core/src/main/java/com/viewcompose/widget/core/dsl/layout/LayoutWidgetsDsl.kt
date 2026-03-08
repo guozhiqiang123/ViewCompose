@@ -9,7 +9,6 @@ import com.viewcompose.renderer.modifier.alpha
 import com.viewcompose.renderer.modifier.backgroundColor
 import com.viewcompose.renderer.modifier.clickable
 import com.viewcompose.renderer.modifier.cornerRadius
-import com.viewcompose.renderer.modifier.overlayAnchor
 import com.viewcompose.renderer.modifier.rippleColor
 import com.viewcompose.renderer.node.NodeType
 import com.viewcompose.renderer.node.spec.BoxNodeProps
@@ -36,26 +35,6 @@ fun UiTreeBuilder.Box(
             contentAlignment = contentAlignment,
         ),
         modifier = modifier,
-        children = BoxScope().apply(content).build(),
-    )
-}
-
-fun UiTreeBuilder.AnchorTarget(
-    anchorId: String,
-    key: Any? = null,
-    contentAlignment: BoxAlignment = BoxAlignment.TopStart,
-    modifier: Modifier = Modifier,
-    content: BoxScope.() -> Unit,
-) {
-    // Anchor id parameter has highest priority when modifier chain already contains anchor metadata.
-    val anchoredModifier = modifier.then(Modifier.overlayAnchor(anchorId))
-    emitResolved(
-        type = NodeType.Box,
-        key = key,
-        spec = BoxNodeProps(
-            contentAlignment = contentAlignment,
-        ),
-        modifier = anchoredModifier,
         children = BoxScope().apply(content).build(),
     )
 }
