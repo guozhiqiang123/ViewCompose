@@ -88,6 +88,13 @@ class NodeBindingDifferTest {
     }
 
     @Test
+    fun `returns subtree skip when vnode instance is reused`() {
+        val node = textNode(text = "stable")
+
+        assertSame(NodeBindingPlan.SkipSubtree, NodeBindingDiffer.plan(node, node))
+    }
+
+    @Test
     fun `patches when node spec changes`() {
         val previous = textNode(text = "before")
         val next = textNode(text = "after")

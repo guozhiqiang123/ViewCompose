@@ -46,6 +46,7 @@ class ComposerLite(
 
     fun <T> runGroup(
         signature: Any,
+        inputs: List<Any?> = emptyList(),
         block: (RecomposeScope) -> T,
     ): T {
         val parent = currentScope
@@ -76,6 +77,10 @@ class ComposerLite(
                     parent = parent,
                 ).also(parent.children::add)
             }
+        }
+        if (scope.latestInputs != inputs) {
+            scope.latestInputs = inputs
+            scope.markDirty()
         }
         val previous = currentScope
         currentScope = scope

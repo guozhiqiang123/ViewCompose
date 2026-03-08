@@ -19,6 +19,7 @@ class RecomposeScope internal constructor(
     internal var composed: Boolean = false
     internal var disposed: Boolean = false
     internal var localSnapshot: Any? = null
+    internal var latestInputs: List<Any?> = emptyList()
     internal var childCursor: Int = 0
     internal var rememberCursor: Int = 0
     internal var effectCursor: Int = 0
@@ -59,6 +60,7 @@ class RecomposeScope internal constructor(
         dirty = true
         composed = false
         localSnapshot = null
+        latestInputs = emptyList()
     }
 
     internal fun markDirty() {

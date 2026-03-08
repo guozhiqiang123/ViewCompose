@@ -36,7 +36,7 @@
 - [x] Step 4 UiTreeBuilder 接入节点组重组语义
 - [x] Step 5 RenderSession 硬切为初次 compose + 增量 recompose
 - [x] Step 6 renderer 增加 vnode 同引用 fast-path
-- [ ] Step 7 测试补齐与门禁
+- [x] Step 7 测试补齐与门禁
 - [ ] Step 8 文档收口
 
 ## 5. 提交记录
@@ -47,6 +47,7 @@
 - `DONE` refactor: add node-group compose semantics in UiTreeBuilder emit path
 - `DONE` refactor: hard-cut render session to incremental subtree recomposition
 - `DONE` perf: add vnode identity fast-path in reconcile pipeline
+- `DONE` test: add composition kernel and subtree-recompose coverage
 
 ## 6. 阻塞记录
 

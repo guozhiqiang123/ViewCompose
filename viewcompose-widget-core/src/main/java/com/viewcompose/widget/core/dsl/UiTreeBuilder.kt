@@ -39,6 +39,7 @@ open class UiTreeBuilder {
                 key = key,
                 hasContent = content != null,
             ),
+            inputs = listOf(spec, modifier),
         ) { scope ->
             val restoreSnapshot = (scope.localSnapshotOrNull() as? LocalSnapshot) ?: parentSnapshot
             var nextNode: VNode? = null
