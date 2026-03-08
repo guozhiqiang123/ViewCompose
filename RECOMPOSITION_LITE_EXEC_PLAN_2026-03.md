@@ -31,7 +31,7 @@
 ## 4. 实施 Checklist
 
 - [x] Step 1 新增执行计划文档并首提
-- [ ] Step 2 runtime 引入 Composition Kernel（SlotTable Lite）
+- [x] Step 2 runtime 引入 Composition Kernel（SlotTable Lite）
 - [ ] Step 3 widget-core 运行时 API 迁移到 Composer 驱动
 - [ ] Step 4 UiTreeBuilder 接入节点组重组语义
 - [ ] Step 5 RenderSession 硬切为初次 compose + 增量 recompose
@@ -42,6 +42,7 @@
 ## 5. 提交记录
 
 - `DONE` docs: add recomposition-lite execution plan
+- `DONE` feat: add runtime composition kernel with slot table lite
 
 ## 6. 阻塞记录
 
