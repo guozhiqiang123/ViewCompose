@@ -39,7 +39,7 @@
 ## 5. 实施 Checklist
 
 - [x] Step 1 新增执行计划文档并首提
-- [ ] Step 2 固化模块到包根映射（构建侧单一真源）
+- [x] Step 2 固化模块到包根映射（构建侧单一真源）
 - [ ] Step 3 迁移 Lifecycle/ViewModel Locals 到所属模块
 - [ ] Step 4 同步迁移相关测试并清理错误归属测试
 - [ ] Step 5 增加 `verifyModulePackageRoots` 守卫并接入 `qaQuick`
@@ -49,6 +49,7 @@
 ## 6. 提交记录
 
 - `DONE` docs: add strict single-package-root migration execution plan
+- `DONE` build: define canonical module package root mapping
 
 ## 7. 阻塞记录
 

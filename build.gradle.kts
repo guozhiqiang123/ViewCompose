@@ -6,6 +6,20 @@ plugins {
     alias(libs.plugins.kotlin.jvm) apply false
 }
 
+val modulePackageRoots = mapOf(
+    "app" to "com.viewcompose",
+    "viewcompose-runtime" to "com.viewcompose.runtime",
+    "viewcompose-ui-contract" to "com.viewcompose.ui",
+    "viewcompose-renderer" to "com.viewcompose.renderer",
+    "viewcompose-widget-core" to "com.viewcompose.widget.core",
+    "viewcompose-host-android" to "com.viewcompose.host.android",
+    "viewcompose-overlay-android" to "com.viewcompose.overlay.android",
+    "viewcompose-image-coil" to "com.viewcompose.image.coil",
+    "viewcompose-benchmark" to "com.viewcompose.benchmark",
+    "viewcompose-lifecycle" to "com.viewcompose.lifecycle",
+    "viewcompose-viewmodel" to "com.viewcompose.viewmodel",
+)
+
 val qaQuickTasks = listOf(
     ":viewcompose-runtime:compileDebugKotlin",
     ":viewcompose-ui-contract:compileKotlin",
