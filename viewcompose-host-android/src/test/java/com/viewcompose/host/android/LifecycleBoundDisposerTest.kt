@@ -1,4 +1,4 @@
-package com.viewcompose.widget.core
+package com.viewcompose.host.android
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
