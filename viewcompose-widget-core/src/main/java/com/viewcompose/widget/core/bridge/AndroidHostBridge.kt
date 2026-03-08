@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelStoreOwner
 import com.viewcompose.renderer.view.tree.RenderStats
 import com.viewcompose.renderer.view.tree.RenderTreeResult
 import java.util.WeakHashMap
@@ -37,6 +38,7 @@ fun Fragment.setUiContent(
     ) {
         withHostEnvironment(
             root = root,
+            viewModelStoreOwner = this@setUiContent,
             content = content,
         )
     }
@@ -69,6 +71,7 @@ fun ComponentActivity.setUiContent(
     ) {
         withHostEnvironment(
             root = root,
+            viewModelStoreOwner = this@setUiContent,
             content = content,
         )
     }
@@ -92,10 +95,13 @@ private fun buildUiContentRoot(
 
 private fun UiTreeBuilder.withHostEnvironment(
     root: ViewGroup,
+    viewModelStoreOwner: ViewModelStoreOwner,
     content: UiTreeBuilder.(ViewGroup) -> Unit,
 ) {
-    UiEnvironment(androidContext = root.context) {
-        content(root)
+    ProvideViewModelStoreOwner(viewModelStoreOwner) {
+        UiEnvironment(androidContext = root.context) {
+            content(root)
+        }
     }
 }
 
