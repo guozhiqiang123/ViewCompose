@@ -111,7 +111,7 @@ internal object ViewModifierApplier {
         defaultRippleColor: Int,
         resolved: ResolvedModifiers = node.modifier.resolve(),
     ) {
-        applyRecyclerContainerDefaults(
+        applyScrollableContainerPolicies(
             view = view,
             node = node,
         )
@@ -610,7 +610,7 @@ internal object ViewModifierApplier {
         else -> null
     }
 
-    private fun applyRecyclerContainerDefaults(
+    private fun applyScrollableContainerPolicies(
         view: View,
         node: VNode,
     ) {
