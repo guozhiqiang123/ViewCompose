@@ -29,9 +29,7 @@ import com.viewcompose.renderer.node.NodeType
 import com.viewcompose.renderer.node.VNode
 import com.viewcompose.renderer.node.spec.ButtonNodeProps
 import com.viewcompose.renderer.node.spec.BoxNodeProps
-import com.viewcompose.renderer.node.spec.ColumnNodeProps
 import com.viewcompose.renderer.node.spec.IconButtonNodeProps
-import com.viewcompose.renderer.node.spec.RowNodeProps
 import com.viewcompose.renderer.node.spec.TextFieldNodeProps
 import com.viewcompose.renderer.node.spec.TextNodeProps
 import com.viewcompose.renderer.node.spec.ToggleNodeProps
@@ -512,8 +510,6 @@ internal object ViewModifierApplier {
         is IconButtonNodeProps -> spec.rippleColor
         is ToggleNodeProps -> spec.rippleColor
         is BoxNodeProps -> spec.rippleColor
-        is RowNodeProps -> spec.rippleColor
-        is ColumnNodeProps -> spec.rippleColor
         else -> null
     }
 

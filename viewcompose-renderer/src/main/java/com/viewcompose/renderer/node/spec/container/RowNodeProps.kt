@@ -7,5 +7,4 @@ data class RowNodeProps(
     val spacing: Int,
     val arrangement: MainAxisArrangement,
     val verticalAlignment: VerticalAlignment,
-    val rippleColor: Int? = null,
 ) : NodeSpec

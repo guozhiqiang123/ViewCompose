@@ -116,7 +116,6 @@ fun UiTreeBuilder.Row(
     spacing: Int = 0,
     arrangement: MainAxisArrangement = MainAxisArrangement.Start,
     verticalAlignment: VerticalAlignment = VerticalAlignment.Top,
-    rippleColor: Int? = null,
     modifier: Modifier = Modifier,
     content: RowScope.() -> Unit,
 ) {
@@ -127,7 +126,6 @@ fun UiTreeBuilder.Row(
             spacing = spacing,
             arrangement = arrangement,
             verticalAlignment = verticalAlignment,
-            rippleColor = rippleColor,
         ),
         modifier = modifier,
         children = RowScope().apply(content).build(),
@@ -139,7 +137,6 @@ fun UiTreeBuilder.Column(
     spacing: Int = 0,
     arrangement: MainAxisArrangement = MainAxisArrangement.Start,
     horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Start,
-    rippleColor: Int? = null,
     modifier: Modifier = Modifier,
     content: ColumnScope.() -> Unit,
 ) {
@@ -150,7 +147,6 @@ fun UiTreeBuilder.Column(
             spacing = spacing,
             arrangement = arrangement,
             horizontalAlignment = horizontalAlignment,
-            rippleColor = rippleColor,
         ),
         modifier = modifier,
         children = ColumnScope().apply(content).build(),

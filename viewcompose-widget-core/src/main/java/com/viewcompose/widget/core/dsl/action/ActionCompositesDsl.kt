@@ -70,7 +70,6 @@ fun UiTreeBuilder.ExtendedFloatingActionButton(
             key = key,
             spacing = if (icon != null) FabDefaults.extendedIconSpacing() else 0,
             verticalAlignment = VerticalAlignment.Center,
-            rippleColor = FabDefaults.pressedColor(),
             modifier = semanticModifier,
         ) {
             if (icon != null) {
@@ -135,7 +134,6 @@ fun UiTreeBuilder.Chip(
             key = key,
             spacing = ChipDefaults.iconSpacing(),
             verticalAlignment = VerticalAlignment.Center,
-            rippleColor = if (enabled) ChipDefaults.pressedColor() else null,
             modifier = semanticModifier,
         ) {
             if (leadingIcon != null) {
