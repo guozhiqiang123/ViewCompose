@@ -74,24 +74,6 @@ internal fun UiTreeBuilder.CollectionPage(
             },
         )
     }
-    val stressItems = buildList {
-        val baseIds = if (stressRotateState.value) {
-            listOf("C", "D", "A", "B")
-        } else {
-            listOf("A", "B", "C", "D")
-        }
-        if (stressEdgeItemState.value) {
-            add(DemoListItem(id = "X", title = "插入项 X"))
-        }
-        baseIds.forEach { id ->
-            add(
-                DemoListItem(
-                    id = id,
-                    title = if (alternateLabelsState.value) "压力项 $id（替代）" else "压力项 $id",
-                ),
-            )
-        }
-    }
     val benchmarkItems = if (benchmarkRotateState.value) {
         listOf("C", "A", "B")
     } else {
@@ -253,6 +235,24 @@ internal fun UiTreeBuilder.CollectionPage(
                 title = "Lazy 压力测试",
                 subtitle = "排序、插入、标签变更和受限高度集中在一个可重复的测试路径中。",
             ) {
+                val stressItems = buildList {
+                    val baseIds = if (stressRotateState.value) {
+                        listOf("C", "D", "A", "B")
+                    } else {
+                        listOf("A", "B", "C", "D")
+                    }
+                    if (stressEdgeItemState.value) {
+                        add(DemoListItem(id = "X", title = "插入项 X"))
+                    }
+                    baseIds.forEach { id ->
+                        add(
+                            DemoListItem(
+                                id = id,
+                                title = if (alternateLabelsState.value) "压力项 $id（替代）" else "压力项 $id",
+                            ),
+                        )
+                    }
+                }
                 BenchmarkRouteCallout(
                     route = "Catalog -> Collections -> 压力页",
                     stableTargets = listOf("Linear Order / Rotate Order", "Insert X / Remove X"),
