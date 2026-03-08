@@ -129,7 +129,6 @@ internal object ViewModifierApplier {
         val resolvedRippleColor = resolved.rippleColor?.color ?: readNodeRippleColor(node) ?: defaultRippleColor
         val textColor = readNodeTextColor(node)
         val textSizeSp = readNodeTextSize(node)
-        val anchorId = resolved.overlayAnchor?.anchorId
         val hasWindowInsetsPadding = resolved.systemBarsInsetsPadding != null || resolved.imeInsetsPadding != null
         val isTextFieldLayout = view is DeclarativeTextFieldLayout
         val hostPadding = if (isTextFieldLayout) null else resolvedPadding
@@ -165,7 +164,6 @@ internal object ViewModifierApplier {
         applyCommonHostProperties(
             view = view,
             resolved = resolved,
-            anchorId = anchorId,
             minHeight = hostMinHeight,
             minWidth = hostMinWidth,
         )
@@ -202,11 +200,11 @@ internal object ViewModifierApplier {
     private fun applyCommonHostProperties(
         view: View,
         resolved: ResolvedModifiers,
-        anchorId: String?,
         minHeight: Int,
         minWidth: Int,
     ) {
-        applyAnchorId(view, anchorId)
+        // Anchor metadata is sourced only from resolved modifier elements.
+        applyAnchorId(view, resolved.overlayAnchor?.anchorId)
         applyTestTag(view, resolved.testTag?.tag)
         view.visibility = when (resolved.visibility?.visibility ?: Visibility.Visible) {
             Visibility.Visible -> View.VISIBLE
