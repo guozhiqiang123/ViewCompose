@@ -47,13 +47,15 @@ fun UiTreeBuilder.AnchorTarget(
     modifier: Modifier = Modifier,
     content: BoxScope.() -> Unit,
 ) {
+    // Anchor id parameter has highest priority when modifier chain already contains anchor metadata.
+    val anchoredModifier = modifier.then(Modifier.overlayAnchor(anchorId))
     emitResolved(
         type = NodeType.Box,
         key = key,
         spec = BoxNodeProps(
             contentAlignment = contentAlignment,
         ),
-        modifier = modifier.then(Modifier.overlayAnchor(anchorId)),
+        modifier = anchoredModifier,
         children = BoxScope().apply(content).build(),
     )
 }
