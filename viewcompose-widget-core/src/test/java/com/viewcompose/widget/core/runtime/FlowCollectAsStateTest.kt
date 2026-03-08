@@ -1,0 +1,156 @@
+package com.viewcompose.widget.core
+
+import com.viewcompose.runtime.State
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertSame
+import org.junit.Test
+
+class FlowCollectAsStateTest {
+    @Test
+    fun `stateFlow collectAsState uses current value and updates`() = runBlocking {
+        val harness = FlowCollectHarness()
+        val source = MutableStateFlow(1)
+
+        val state = harness.render {
+            source.collectAsState(context = Dispatchers.Unconfined)
+        }
+        assertEquals(1, state.value)
+
+        source.value = 2
+        awaitValue(state) { it == 2 }
+        harness.dispose()
+    }
+
+    @Test
+    fun `collectAsState keeps collector when flow identity is stable`() = runBlocking {
+        val harness = FlowCollectHarness()
+        var starts = 0
+        val source = flow {
+            starts += 1
+            emit(5)
+            awaitCancellation()
+        }
+
+        val first = harness.render {
+            source.collectAsState(
+                initial = 0,
+                context = Dispatchers.Unconfined,
+            )
+        }
+        val second = harness.render {
+            source.collectAsState(
+                initial = 99,
+                context = Dispatchers.Unconfined,
+            )
+        }
+
+        assertSame(first, second)
+        assertEquals(1, starts)
+        harness.dispose()
+    }
+
+    @Test
+    fun `collectAsState restarts collector when flow identity changes`() = runBlocking {
+        val harness = FlowCollectHarness()
+        var firstStarts = 0
+        var secondStarts = 0
+        val firstFlow = flow {
+            firstStarts += 1
+            emit(1)
+            awaitCancellation()
+        }
+        val secondFlow = flow {
+            secondStarts += 1
+            emit(2)
+            awaitCancellation()
+        }
+
+        harness.render {
+            firstFlow.collectAsState(
+                initial = 0,
+                context = Dispatchers.Unconfined,
+            )
+        }
+        val state = harness.render {
+            secondFlow.collectAsState(
+                initial = 0,
+                context = Dispatchers.Unconfined,
+            )
+        }
+
+        assertEquals(1, firstStarts)
+        assertEquals(1, secondStarts)
+        awaitValue(state) { it == 2 }
+        harness.dispose()
+    }
+
+    @Test
+    fun `collectAsState cancels collector on dispose`() = runBlocking {
+        val harness = FlowCollectHarness()
+        var canceled = 0
+        val source = flow {
+            emit(1)
+            try {
+                awaitCancellation()
+            } finally {
+                canceled += 1
+            }
+        }
+
+        harness.render {
+            source.collectAsState(
+                initial = 0,
+                context = Dispatchers.Unconfined,
+            )
+        }
+        harness.dispose()
+
+        withTimeout(1.seconds) {
+            while (canceled == 0) {
+                delay(10)
+            }
+        }
+        assertEquals(1, canceled)
+    }
+
+    private suspend fun <T> awaitValue(
+        state: State<T>,
+        predicate: (T) -> Boolean,
+    ) {
+        withTimeout(1.seconds) {
+            while (!predicate(state.value)) {
+                delay(10)
+            }
+        }
+    }
+
+    private class FlowCollectHarness {
+        private val rememberStore = RememberStore()
+        private val effectStore = EffectStore()
+
+        fun <T> render(
+            block: () -> State<T>,
+        ): State<T> {
+            lateinit var state: State<T>
+            EffectContext.withStore(effectStore) {
+                RememberContext.withStore(rememberStore) {
+                    state = block()
+                }
+            }
+            effectStore.commit()
+            return state
+        }
+
+        fun dispose() {
+            effectStore.disposeAll()
+        }
+    }
+}
