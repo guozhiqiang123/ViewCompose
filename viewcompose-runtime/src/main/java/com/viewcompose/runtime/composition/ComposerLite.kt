@@ -139,6 +139,11 @@ class ComposerLite(
         if (existing != null && existing.keys == scopedKeys) {
             return
         }
+        // 当前实现：effect 在组合阶段执行（非 apply 阶段），因此与 Compose 的 RememberObserver
+        // 时序不同；调用侧若依赖“最新快照已提交”语义，需要显式规避同帧读取陷阱。
+        // Current behavior: effect runs during composition (not apply phase), which differs from
+        // Compose RememberObserver timing. Callers needing "latest snapshot already applied" semantics
+        // must avoid same-frame read traps explicitly.
         existing?.onDispose?.invoke()
         val onDispose = effect()
         val slot = RecomposeScope.DisposableEffectSlot(

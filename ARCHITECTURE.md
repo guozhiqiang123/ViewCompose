@@ -177,6 +177,9 @@ flowchart TD
 3. 并发 `MutableSnapshot.apply()` 冲突处理固定为：先判等、再 merge、merge 失败即失败返回。
 4. `ComposerLite` 每轮 compose 必须运行在一致性读快照中，保证同一轮读取不漂移。
 5. `DerivedState` 缓存失效必须感知 snapshot 读版本，禁止仅靠全局 dirty 布尔。
+6. `rememberUpdatedState` 只保证“重组后可见”，不保证“同一组合阶段 effect 立即读取到最新值”。
+7. 当前 runtime 的 `DisposableEffect` 执行时机在组合阶段（非 apply 阶段）；涉及动画/协程启动路径时，若要求读取最新目标值，优先直接使用当前参数，或改为提交后时机执行。
+8. 若后续将 effect 时序升级到 Compose `RememberObserver` apply 语义，必须同步回归 `animate*AsState`、`AnimatedVisibility`、`collectAsState`、`produceState`。
 
 ### 4.9 Render 调度边界
 

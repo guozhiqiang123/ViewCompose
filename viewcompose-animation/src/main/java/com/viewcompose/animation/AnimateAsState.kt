@@ -25,6 +25,9 @@ fun <T> animateValueAsState(
     DisposableEffect(targetValue, animationSpec, converter, frameClock, animationCoroutineContext) {
         val scope = CoroutineScope(SupervisorJob() + animationCoroutineContext)
         val job = scope.launch(start = CoroutineStart.UNDISPATCHED) {
+            // 直接使用当前参数值启动动画，避免通过 rememberUpdatedState 在同帧 effect 读取旧快照。
+            // Use current parameters directly to avoid same-frame stale snapshot reads when using
+            // rememberUpdatedState under composition-phase DisposableEffect timing.
             runAnimation(
                 frameClock = frameClock,
                 startValue = state.value,
