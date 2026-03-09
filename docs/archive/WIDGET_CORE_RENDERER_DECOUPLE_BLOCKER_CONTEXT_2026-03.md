@@ -40,3 +40,8 @@
 ```bash
 ./gradlew qaFull
 ```
+
+## 7. 解除记录
+
+- `2026-03-09`: 阻塞已解除。
+- 验证结果：`./gradlew qaFull` 在在线设备上通过（connected instrumentation 通过）。
