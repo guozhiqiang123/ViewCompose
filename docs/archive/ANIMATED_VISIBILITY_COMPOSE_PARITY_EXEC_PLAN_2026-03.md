@@ -24,7 +24,7 @@
 - [x] Step 4 新增 `AnimatedVisibilityHost` 节点与 renderer 容器实现。
 - [x] Step 5 `AnimatedVisibility` DSL 改为发射专用节点并完成语义切换。
 - [x] Step 6 Demo 与回归用例补齐（显隐、占位缩放、无闪烁）。
-- [ ] Step 7 文档收口并归档执行计划。
+- [x] Step 7 文档收口并归档执行计划。
 
 ## 4. 提交记录
 
@@ -34,8 +34,11 @@
 4. `d5f1bd7` feat: add animated visibility host node with layout-participating size animation
 5. `3eaa9ec` refactor: route animated visibility dsl through animated host node
 6. `aacb593` test: add animated visibility compose-parity regression coverage
+7. `0aace59` docs: codify animated visibility compose-parity architecture boundary
 
 ## 5. 阻塞记录
 
 1. `2026-03-09 18:58:57 CST`：`qaFull` 执行到 `:app:connectedDebugAndroidTest` 失败，原因是设备离线（`No online devices found` / `Device is OFFLINE`）。  
    当前按 `qaQuick` 继续推进，待设备恢复后补跑 `qaFull` 收口。
+2. `2026-03-09 19:07:36 CST`：收口阶段再次执行 `qaFull` 仍失败（`No online devices found` / `Device is OFFLINE`）。  
+   本次按既有规则完成文档归档，待设备恢复后补跑 `qaFull` 并在后续记录关闭阻塞。
