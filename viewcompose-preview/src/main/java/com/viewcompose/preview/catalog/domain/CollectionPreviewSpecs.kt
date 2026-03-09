@@ -1,0 +1,111 @@
+package com.viewcompose.preview.catalog.domain
+
+import com.viewcompose.preview.catalog.model.PreviewDomain
+import com.viewcompose.preview.catalog.model.PreviewSpec
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.fillMaxWidth
+import com.viewcompose.ui.modifier.height
+import com.viewcompose.ui.modifier.margin
+import com.viewcompose.ui.modifier.padding
+import com.viewcompose.widget.core.Column
+import com.viewcompose.widget.core.HorizontalPager
+import com.viewcompose.widget.core.LazyColumn
+import com.viewcompose.widget.core.LazyVerticalGrid
+import com.viewcompose.widget.core.Surface
+import com.viewcompose.widget.core.SurfaceVariant
+import com.viewcompose.widget.core.TabRow
+import com.viewcompose.widget.core.Text
+import com.viewcompose.widget.core.VerticalPager
+import com.viewcompose.widget.core.dp
+
+internal object CollectionPreviewSpecs {
+    val all: List<PreviewSpec> = listOf(
+        PreviewSpec(
+            id = "collection-lazy-column",
+            title = "LazyColumn",
+            domain = PreviewDomain.Collection,
+            content = {
+                LazyColumn(
+                    items = (1..8).toList(),
+                    spacing = 8.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .margin(horizontal = 12.dp, vertical = 8.dp),
+                ) { index ->
+                    Surface(
+                        variant = SurfaceVariant.Variant,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                    ) {
+                        Text(text = "List Item $index")
+                    }
+                }
+            },
+        ),
+        PreviewSpec(
+            id = "collection-grid-pagers-tabs",
+            title = "Grid + Pager + TabRow",
+            domain = PreviewDomain.Collection,
+            content = {
+                Column(
+                    spacing = 10.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .margin(horizontal = 12.dp, vertical = 8.dp),
+                ) {
+                    LazyVerticalGrid(
+                        items = (1..6).toList(),
+                        spanCount = 3,
+                        horizontalSpacing = 8.dp,
+                        verticalSpacing = 8.dp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(140.dp),
+                    ) { index ->
+                        Surface(
+                            variant = SurfaceVariant.Variant,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(40.dp),
+                        ) {
+                            Text(text = "G$index")
+                        }
+                    }
+                    HorizontalPager(
+                        currentPage = 0,
+                        onPageChanged = {},
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(90.dp),
+                    ) {
+                        Page(key = "page-1") { Text(text = "Horizontal Page 1") }
+                        Page(key = "page-2") { Text(text = "Horizontal Page 2") }
+                    }
+                    VerticalPager(
+                        currentPage = 0,
+                        onPageChanged = {},
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(90.dp),
+                    ) {
+                        Page(key = "v-page-1") { Text(text = "Vertical Page 1") }
+                        Page(key = "v-page-2") { Text(text = "Vertical Page 2") }
+                    }
+                    TabRow(
+                        selectedIndex = 0,
+                        onTabSelected = {},
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Tab(key = "tab-1") { selected ->
+                            Text(text = if (selected) "Tab A*" else "Tab A")
+                        }
+                        Tab(key = "tab-2") { selected ->
+                            Text(text = if (selected) "Tab B*" else "Tab B")
+                        }
+                    }
+                }
+            },
+        ),
+    )
+}
