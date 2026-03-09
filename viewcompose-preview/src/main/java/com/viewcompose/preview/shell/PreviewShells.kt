@@ -3,8 +3,9 @@ package com.viewcompose.preview.shell
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.viewcompose.preview.host.PreviewThemeMode
-import com.viewcompose.preview.host.ViewComposePreviewHost
+import com.viewcompose.preview.ViewComposePreview
+import com.viewcompose.preview.ViewComposePreviewOptions
+import com.viewcompose.preview.ViewComposePreviewTheme
 import com.viewcompose.ui.modifier.Modifier as UiModifier
 import com.viewcompose.ui.modifier.fillMaxSize
 import com.viewcompose.ui.modifier.padding
@@ -17,12 +18,12 @@ import com.viewcompose.widget.core.sp
 
 @Composable
 internal fun ViewComposePreviewSurface(
-    themeMode: PreviewThemeMode,
+    themeMode: ViewComposePreviewTheme,
     content: UiTreeBuilder.() -> Unit,
 ) {
-    ViewComposePreviewHost(
-        themeMode = themeMode,
+    ViewComposePreview(
         modifier = androidx.compose.ui.Modifier,
+        options = ViewComposePreviewOptions(theme = themeMode),
         content = content,
     )
 }
@@ -56,7 +57,7 @@ private fun UiTreeBuilder.previewBootstrapContent() {
 )
 @Composable
 private fun ViewComposePhoneLightPreview() {
-    ViewComposePreviewSurface(themeMode = PreviewThemeMode.Light) {
+    ViewComposePreviewSurface(themeMode = ViewComposePreviewTheme.Light) {
         previewBootstrapContent()
     }
 }
@@ -72,7 +73,7 @@ private fun ViewComposePhoneLightPreview() {
 )
 @Composable
 private fun ViewComposePhoneDarkPreview() {
-    ViewComposePreviewSurface(themeMode = PreviewThemeMode.Dark) {
+    ViewComposePreviewSurface(themeMode = ViewComposePreviewTheme.Dark) {
         previewBootstrapContent()
     }
 }
@@ -88,7 +89,7 @@ private fun ViewComposePhoneDarkPreview() {
 )
 @Composable
 private fun ViewComposeTabletLightPreview() {
-    ViewComposePreviewSurface(themeMode = PreviewThemeMode.Light) {
+    ViewComposePreviewSurface(themeMode = ViewComposePreviewTheme.Light) {
         previewBootstrapContent()
     }
 }
@@ -104,7 +105,7 @@ private fun ViewComposeTabletLightPreview() {
 )
 @Composable
 private fun ViewComposeTabletDarkPreview() {
-    ViewComposePreviewSurface(themeMode = PreviewThemeMode.Dark) {
+    ViewComposePreviewSurface(themeMode = ViewComposePreviewTheme.Dark) {
         previewBootstrapContent()
     }
 }

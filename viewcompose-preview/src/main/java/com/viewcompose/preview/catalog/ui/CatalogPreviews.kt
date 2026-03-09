@@ -3,6 +3,7 @@ package com.viewcompose.preview.catalog.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import com.viewcompose.preview.ViewComposePreviewTheme
 import com.viewcompose.preview.catalog.PreviewCatalog
 import com.viewcompose.preview.catalog.model.PreviewSpecRef
 import com.viewcompose.preview.catalog.provider.CollectionPreviewSpecProvider
@@ -12,7 +13,6 @@ import com.viewcompose.preview.catalog.provider.FeedbackPreviewSpecProvider
 import com.viewcompose.preview.catalog.provider.InputPreviewSpecProvider
 import com.viewcompose.preview.catalog.provider.ModifierPreviewSpecProvider
 import com.viewcompose.preview.catalog.provider.NavigationPreviewSpecProvider
-import com.viewcompose.preview.host.PreviewThemeMode
 import com.viewcompose.preview.shell.ViewComposePreviewSurface
 import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.modifier.fillMaxSize
@@ -117,7 +117,7 @@ private fun ModifierCatalogPreview(
 @Composable
 internal fun PreviewCatalogSpecScreen(
     specId: String,
-    themeMode: PreviewThemeMode = PreviewThemeMode.Light,
+    themeMode: ViewComposePreviewTheme = ViewComposePreviewTheme.Light,
 ) {
     val spec = PreviewCatalog.require(specId)
     ViewComposePreviewSurface(themeMode = themeMode) {

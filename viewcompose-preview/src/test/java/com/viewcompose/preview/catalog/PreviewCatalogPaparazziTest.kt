@@ -3,8 +3,8 @@ package com.viewcompose.preview.catalog
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import app.cash.paparazzi.detectEnvironment
+import com.viewcompose.preview.ViewComposePreviewTheme
 import com.viewcompose.preview.catalog.ui.PreviewCatalogSpecScreen
-import com.viewcompose.preview.host.PreviewThemeMode
 import org.junit.rules.RuleChain
 import org.junit.Rule
 import org.junit.Test
@@ -57,7 +57,7 @@ class PreviewCatalogPaparazziTest {
                 paparazziRule.snapshot(name = spec.id) {
                     PreviewCatalogSpecScreen(
                         specId = spec.id,
-                        themeMode = PreviewThemeMode.Light,
+                        themeMode = ViewComposePreviewTheme.Light,
                     )
                 }
             }.getOrElse { error ->

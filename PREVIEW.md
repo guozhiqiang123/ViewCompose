@@ -5,6 +5,48 @@
 - Android Studio Compose Preview：通过 `ViewComposePreviewHost` 桥接渲染 ViewCompose DSL。
 - Paparazzi 快照回归：消费同一份 `PreviewCatalog`，避免 Preview 与截图测试双维护。
 
+## 业务侧接入（推荐）
+
+真实预览应放在业务模块中编写，直接调用 `:viewcompose-preview` 提供的公开 API：
+
+- `com.viewcompose.preview.ViewComposePreview`
+- `com.viewcompose.preview.ViewComposePreviewOptions`
+- `com.viewcompose.preview.ViewComposePreviewTheme`
+
+业务模块（不是 `:viewcompose-preview`）需要自行启用 Compose：
+
+```kotlin
+plugins {
+    alias(libs.plugins.android.library) // or android.application
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+}
+
+android {
+    buildFeatures {
+        compose = true
+    }
+}
+
+dependencies {
+    implementation(project(":viewcompose-preview"))
+}
+```
+
+业务预览示例：
+
+```kotlin
+@Preview(name = "Biz Light", showBackground = true, widthDp = 411, heightDp = 891)
+@Composable
+private fun BizLightPreview() {
+    ViewComposePreview(
+        options = ViewComposePreviewOptions(theme = ViewComposePreviewTheme.Light),
+    ) {
+        // 这里写你的业务 DSL
+    }
+}
+```
+
 ## Studio Preview
 
 1. 在 Android Studio 打开 `viewcompose-preview` 模块中的以下入口：

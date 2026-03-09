@@ -40,12 +40,12 @@ configurations.configureEach {
 
 dependencies {
     implementation(project(":viewcompose-ui-contract"))
-    implementation(project(":viewcompose-widget-core"))
+    api(project(":viewcompose-widget-core"))
     implementation(project(":viewcompose-host-android"))
 
-    implementation(libs.androidx.compose.runtime)
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.tooling.preview)
+    api(libs.androidx.compose.runtime)
+    api(libs.androidx.compose.ui)
+    api(libs.androidx.compose.ui.tooling.preview)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     testImplementation(libs.junit)
