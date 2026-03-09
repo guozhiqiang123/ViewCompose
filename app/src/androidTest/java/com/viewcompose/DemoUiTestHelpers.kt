@@ -182,40 +182,6 @@ internal fun Activity.focusInputByTestTag(tag: String) {
     input!!.requestFocus()
 }
 
-internal fun Activity.swipeByTestTag(
-    tag: String,
-    startXRatio: Float = 0.2f,
-    endXRatio: Float = 0.8f,
-    startYRatio: Float = 0.5f,
-    endYRatio: Float = 0.5f,
-    steps: Int = 20,
-) {
-    val host = requireViewByTestTagVisible(tag)
-    val rect = Rect()
-    val visible = host.getGlobalVisibleRect(rect)
-    assertTrue("Expected visible rect for swipe target: $tag", visible)
-    val startX = rect.left + (rect.width() * startXRatio).toInt()
-    val endX = rect.left + (rect.width() * endXRatio).toInt()
-    val startY = rect.top + (rect.height() * startYRatio).toInt()
-    val endY = rect.top + (rect.height() * endYRatio).toInt()
-    UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        .swipe(startX, startY, endX, endY, steps)
-    waitForUiIdle()
-}
-
-internal fun Activity.tapByTestTag(tag: String) {
-    val host = requireViewByTestTagVisible(tag)
-    val rect = Rect()
-    val visible = host.getGlobalVisibleRect(rect)
-    assertTrue("Expected visible rect for tap target: $tag", visible)
-    val centerX = rect.centerX()
-    val centerY = rect.centerY()
-    val clicked = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        .click(centerX, centerY)
-    assertTrue("Expected to tap testTag target: $tag", clicked)
-    waitForUiIdle()
-}
-
 internal fun Activity.readFirstRecyclerAnchor(): RecyclerViewportAnchor? {
     val root = findViewById<ViewGroup>(android.R.id.content)
     val recyclerView = findFirstRecyclerView(root) ?: return null
