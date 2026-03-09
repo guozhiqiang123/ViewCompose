@@ -48,6 +48,10 @@ data class BackgroundColorModifierElement(
     val color: Int,
 ) : ModifierElement
 
+data class BackgroundDrawableResModifierElement(
+    val resId: Int,
+) : ModifierElement
+
 data class BorderModifierElement(
     val width: Int,
     val color: Int,
@@ -236,6 +240,12 @@ fun Modifier.imeInsetsPadding(
 fun Modifier.backgroundColor(color: Int): Modifier {
     return then(
         BackgroundColorModifierElement(color),
+    )
+}
+
+fun Modifier.backgroundDrawableRes(resId: Int): Modifier {
+    return then(
+        BackgroundDrawableResModifierElement(resId),
     )
 }
 
