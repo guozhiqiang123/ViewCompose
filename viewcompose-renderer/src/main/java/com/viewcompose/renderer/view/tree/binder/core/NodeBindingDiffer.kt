@@ -29,24 +29,16 @@ internal object NodeBindingDiffer {
         val prevSpec = previous.spec
         val nextSpec = next.spec
         val sessionContentChanged = hasSessionBackedContentChange(prevSpec, nextSpec)
-        val patchFactory = patchFactories[prevSpec::class]
         if (prevSpec == nextSpec && !sessionContentChanged) {
-            if (!modifierChanged) {
-                return if (previous.children == next.children) {
+            return if (modifierChanged) {
+                NodeBindingPlan.Rebind
+            } else {
+                if (previous.children == next.children) {
                     NodeBindingPlan.SkipSubtree
                 } else {
                     NodeBindingPlan.SkipSelfOnly
                 }
             }
-            // Modifier-only updates should stay on patch path when the node has a patch factory.
-            // Rebind on every frame causes avoidable binder re-execution and animation flicker.
-            if (patchFactory != null) {
-                return NodeBindingPlan.Patch(
-                    patch = patchFactory(prevSpec, nextSpec),
-                    modifierChanged = true,
-                )
-            }
-            return NodeBindingPlan.Rebind
         }
         if (prevSpec::class != nextSpec::class) {
             return NodeBindingPlan.Rebind
@@ -59,9 +51,10 @@ internal object NodeBindingDiffer {
             // Container ripple is resolved from NodeSpec, so this change must re-run modifier/style binding.
             return NodeBindingPlan.Rebind
         }
-        if (patchFactory != null) {
+        val factory = patchFactories[prevSpec::class]
+        if (factory != null) {
             return NodeBindingPlan.Patch(
-                patch = patchFactory(prevSpec, nextSpec),
+                patch = factory(prevSpec, nextSpec),
                 modifierChanged = modifierChanged,
             )
         }
