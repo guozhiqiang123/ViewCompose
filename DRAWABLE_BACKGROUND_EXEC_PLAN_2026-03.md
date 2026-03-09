@@ -30,8 +30,8 @@
 - [x] Step 1 `ui-contract` 新增 modifier element + DSL API + contract test
 - [x] Step 2 renderer `ResolvedModifiers/NodeStyle` 打通
 - [x] Step 3 `ModifierSurfaceStyleApplier` 增加 drawable 分支与优先级
-- [ ] Step 4 demo 用例 + `MODIFIER.md` 文档同步
-- [ ] Step 5 instrumentation 回归补充（drawable 可见与状态切换稳定）
+- [x] Step 4 文档同步：`MODIFIER.md` 新增 API、优先级与组合语义
+- [ ] Step 5 demo 用例 + instrumentation 回归补充（drawable 可见与状态切换稳定）
 - [ ] Step 6 收口：`qaQuick` + `qaFull`，同步本文档状态
 
 ## 4. 提交记录
@@ -43,4 +43,3 @@
 ## 5. 阻塞记录
 
 当前无阻塞。
-
