@@ -38,7 +38,7 @@
 - [x] Step C 落地 `PreviewSpec/PreviewCatalog` 分域化覆盖
 - [x] Step D 接入 Paparazzi 与 `qaPreview`
 - [x] Step E 增加 preview guard tests（唯一性/覆盖/依赖边界）
-- [ ] Step F 文档收口与归档
+- [x] Step F 文档收口与归档
 
 ## 5. 提交记录
 
@@ -48,9 +48,16 @@
 - `DONE` test: add paparazzi snapshot coverage backed by preview catalog
 - `DONE` build: add qaPreview task for preview snapshot verification
 - `DONE` test: add preview catalog guardrails for uniqueness and coverage
-- `TODO` docs: codify preview module boundaries and workflow requirements
-- `TODO` docs: close and archive preview execution plan
+- `DONE` docs: codify preview module boundaries and workflow requirements
+- `DONE` docs: close and archive preview execution plan
 
 ## 6. 阻塞记录
 
-暂无。
+2026-03-09 门禁结果：
+
+1. `qaQuick` 通过。
+2. `qaPreview` 通过。
+3. `qaFull` 在设备 `Pixel 4 XL - 13` 执行 32 条 instrumentation，其中 3 条失败，失败类型一致为 `ActivityScenario` 未进入 `RESUMED`（`last lifecycle transition = STOPPED`）；失败用例：
+   - `ComponentFamilySmokeUiTest.keyComponentFamilies_haveVisibleSmokeAnchors`
+   - `DemoVisualUiTest.collectionsStress_toggleUpdatesVisibleControls`
+   - `DemoVisualUiTest.inputSearch_focusScrollableColumnSearch_doesNotAutoScrollList`
