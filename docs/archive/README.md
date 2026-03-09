@@ -68,3 +68,4 @@
 | `MIGRATION_UI_CONTRACT_HOST_ANDROID_2026-03.md` | `ui-contract + host-android` 分层迁移说明，内容已成为历史迁移记录 |
 | `PREVIEW_EXECUTION_PLAN_2026-03.md` | 已完成的开发预览执行计划（Compose Preview bridge + PreviewCatalog + Paparazzi + `qaPreview`） |
 | `DRAWABLE_BACKGROUND_EXEC_PLAN_2026-03.md` | 已完成的 drawable 背景 API 执行计划（`Modifier.backgroundDrawableRes` + renderer/demo/test/documentation 收口） |
+| `DRAWABLE_BACKGROUND_CLIP_POLICY_EXEC_PLAN_2026-03.md` | 已完成的 drawable 背景圆角自动裁剪策略调整执行计划（`backgroundDrawableRes + cornerRadius` 自动裁剪） |
