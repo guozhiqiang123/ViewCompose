@@ -75,7 +75,7 @@ internal object ModifierSurfaceStyleApplier {
             cornerRadius = nodeStyle.cornerRadius,
             rippleColor = nodeStyle.rippleColor,
             clickable = nodeStyle.clickable,
-            forceClip = resolved.clip?.clip ?: false,
+            forceClip = resolved.graphicsLayer?.clip ?: (resolved.clip?.clip ?: false),
         )
     }
 

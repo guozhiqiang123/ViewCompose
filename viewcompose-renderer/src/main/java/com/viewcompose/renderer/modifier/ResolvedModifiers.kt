@@ -23,6 +23,7 @@ internal class ResolvedModifiers(
     var minWidth: MinWidthModifierElement? = null,
     var visibility: VisibilityModifierElement? = null,
     var zIndex: ZIndexModifierElement? = null,
+    var graphicsLayer: GraphicsLayerModifierElement? = null,
     // ViewLayoutParamsFactory fields
     var boxAlign: BoxAlignModifierElement? = null,
     var margin: MarginModifierElement? = null,
@@ -57,6 +58,7 @@ internal fun Modifier.resolve(): ResolvedModifiers {
             is MinWidthModifierElement -> result.minWidth = element
             is VisibilityModifierElement -> result.visibility = element
             is ZIndexModifierElement -> result.zIndex = element
+            is GraphicsLayerModifierElement -> result.graphicsLayer = element
             is BoxAlignModifierElement -> result.boxAlign = element
             is MarginModifierElement -> result.margin = element
             is SizeModifierElement -> result.size = element

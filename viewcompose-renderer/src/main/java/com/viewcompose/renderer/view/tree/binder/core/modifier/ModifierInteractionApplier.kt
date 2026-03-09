@@ -18,19 +18,29 @@ internal object ModifierInteractionApplier {
         minHeight: Int,
         minWidth: Int,
     ) {
+        val layer = resolved.graphicsLayer
         // Anchor metadata is sourced only from resolved modifier elements.
         applyAnchorId(view, resolved.overlayAnchor?.anchorId)
         applyTestTag(view, resolved.testTag?.tag)
-        view.alpha = resolved.alpha?.alpha ?: 1f
+        view.alpha = layer?.alpha ?: resolved.alpha?.alpha ?: 1f
         view.visibility = when (resolved.visibility?.visibility ?: Visibility.Visible) {
             Visibility.Visible -> View.VISIBLE
             Visibility.Invisible -> View.INVISIBLE
             Visibility.Gone -> View.GONE
         }
-        view.translationX = resolved.offset?.x ?: 0f
-        view.translationY = resolved.offset?.y ?: 0f
+        view.translationX = layer?.translationX ?: resolved.offset?.x ?: 0f
+        view.translationY = layer?.translationY ?: resolved.offset?.y ?: 0f
         view.translationZ = resolved.zIndex?.zIndex ?: 0f
         view.elevation = resolved.elevation?.elevation?.toFloat() ?: 0f
+        view.scaleX = layer?.scaleX ?: 1f
+        view.scaleY = layer?.scaleY ?: 1f
+        view.rotation = layer?.rotationZ ?: 0f
+        view.rotationX = layer?.rotationX ?: 0f
+        view.rotationY = layer?.rotationY ?: 0f
+        layer?.transformOrigin?.let { origin ->
+            view.pivotX = view.width * origin.pivotFractionX
+            view.pivotY = view.height * origin.pivotFractionY
+        }
         view.minimumHeight = minHeight
         view.minimumWidth = minWidth
         view.contentDescription = resolved.contentDescription?.contentDescription
