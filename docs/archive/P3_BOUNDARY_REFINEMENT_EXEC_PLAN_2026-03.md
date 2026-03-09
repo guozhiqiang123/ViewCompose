@@ -31,7 +31,7 @@
 - [x] Step 4 modifier 运行策略提取下沉到 renderer（硬切）
 - [x] Step 5 policy 测试迁移到 renderer
 - [x] Step 6 文档边界收口（ARCHITECTURE/WORKFLOW）
-- [ ] Step 7 最终门禁、归档与索引更新
+- [x] Step 7 最终门禁、归档与索引更新
 
 ## 5. 提交记录
 
@@ -42,6 +42,7 @@
 - `DONE` refactor: move modifier runtime policy extraction out of ui-contract
 - `DONE` test: migrate modifier policy tests to renderer policy resolver
 - `DONE` docs: codify descriptor modularization and modifier contract boundaries
+- `DONE` docs: close and archive p3 boundary refinement plan
 
 ## 6. 阻塞记录
 
