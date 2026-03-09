@@ -28,7 +28,7 @@
 - [x] Step 2 渲染会话执行实现迁移到 host-android
 - [x] Step 3 从 Collection DSL 抽离平台会话实现
 - [x] Step 4 host 回调类型硬切为 renderer-agnostic 诊断类型
-- [ ] Step 5 overlay 默认装配改为 ServiceLoader 契约
+- [x] Step 5 overlay 默认装配改为 ServiceLoader 契约
 - [ ] Step 6 边界守卫与回归补齐
 - [ ] Step 7 文档收口与归档
 
@@ -38,6 +38,7 @@
 - `DONE` refactor: move android render session execution behind host-installed session runtime
 - `DONE` refactor: extract lazy item session implementation out of collection dsl
 - `DONE` refactor: hard-cut host render callbacks to renderer-agnostic diagnostics types
+- `DONE` refactor: replace overlay reflection contract with service-provider host factory
 
 ## 6. 阻塞记录
 

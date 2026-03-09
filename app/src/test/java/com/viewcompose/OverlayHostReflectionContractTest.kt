@@ -1,18 +1,23 @@
 package com.viewcompose
 
-import android.view.View
-import com.viewcompose.widget.core.OverlayHost
-import org.junit.Assert.assertNotNull
+import com.viewcompose.widget.core.OverlayHostFactoryProvider
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.util.ServiceLoader
 
 class OverlayHostReflectionContractTest {
     @Test
-    fun androidOverlayHost_classAndConstructor_matchReflectionContract() {
-        val className = "com.viewcompose.overlay.android.host.AndroidOverlayHost"
-        val clazz = Class.forName(className)
-        assertTrue(OverlayHost::class.java.isAssignableFrom(clazz))
-        val constructor = clazz.getConstructor(View::class.java)
-        assertNotNull(constructor)
+    fun androidOverlayHostProvider_isDiscoverableViaServiceLoader() {
+        val providers = ServiceLoader.load(
+            OverlayHostFactoryProvider::class.java,
+            OverlayHostFactoryProvider::class.java.classLoader,
+        ).toList()
+
+        assertTrue(
+            "Missing Android overlay host service provider.",
+            providers.any { provider ->
+                provider::class.java.name == "com.viewcompose.overlay.android.host.AndroidOverlayHostFactoryProvider"
+            },
+        )
     }
 }

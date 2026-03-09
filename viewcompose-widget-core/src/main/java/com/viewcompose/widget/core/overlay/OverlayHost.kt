@@ -2,8 +2,8 @@ package com.viewcompose.widget.core
 
 import android.util.Log
 import android.view.View
-import java.lang.reflect.Constructor
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.ServiceLoader
 
 data class OverlaySessionId(
     val value: String,
@@ -33,15 +33,16 @@ interface OverlayHost {
     fun clear(sessionId: OverlaySessionId)
 }
 
+fun interface OverlayHostFactoryProvider {
+    fun create(rootView: View): OverlayHost
+}
+
 object OverlayHostDefaults {
     private const val TAG = "ViewCompose"
-    // Reflection contract: keep this class name synchronized with app unit test.
-    private const val ANDROID_OVERLAY_HOST_CLASS_NAME =
-        "com.viewcompose.overlay.android.host.AndroidOverlayHost"
     private val missingAndroidHostWarningLogged = AtomicBoolean(false)
 
-    private val androidOverlayHostConstructor: Constructor<out OverlayHost>? by lazy {
-        resolveAndroidOverlayHostConstructor()
+    private val androidOverlayHostProvider: OverlayHostFactoryProvider? by lazy {
+        resolveAndroidOverlayHostProvider()
     }
 
     val noOp: OverlayHost = object : OverlayHost {
@@ -54,28 +55,30 @@ object OverlayHostDefaults {
     }
 
     fun androidOrNoOp(rootView: View): OverlayHost {
-        val constructor = androidOverlayHostConstructor
-        if (constructor == null) {
+        val provider = androidOverlayHostProvider
+        if (provider == null) {
             warnMissingAndroidOverlayHostOnce()
             return noOp
         }
         return runCatching {
-            constructor.newInstance(rootView)
+            provider.create(rootView)
         }.getOrElse {
             Log.w(
                 TAG,
-                "Failed to create AndroidOverlayHost via reflection. Falling back to no-op host.",
+                "Failed to create Android overlay host via service provider. Falling back to no-op host.",
                 it,
             )
             noOp
         }
     }
 
-    private fun resolveAndroidOverlayHostConstructor(): Constructor<out OverlayHost>? {
+    private fun resolveAndroidOverlayHostProvider(): OverlayHostFactoryProvider? {
         return runCatching {
-            val clazz = Class.forName(ANDROID_OVERLAY_HOST_CLASS_NAME)
-                .asSubclass(OverlayHost::class.java)
-            clazz.getConstructor(View::class.java)
+            val providers = ServiceLoader.load(
+                OverlayHostFactoryProvider::class.java,
+                OverlayHostFactoryProvider::class.java.classLoader,
+            ).iterator()
+            if (providers.hasNext()) providers.next() else null
         }.getOrNull()
     }
 
@@ -85,8 +88,8 @@ object OverlayHostDefaults {
         }
         Log.i(
             TAG,
-            "AndroidOverlayHost not found on classpath; falling back to no-op overlay host. " +
-                "Overlay widgets (Dialog/Popup/Snackbar/Toast/BottomSheet) require ui-overlay-android.",
+            "Android overlay host provider not found; falling back to no-op overlay host. " +
+                "Overlay widgets (Dialog/Popup/Snackbar/Toast/BottomSheet) require ui-overlay-android service registration.",
         )
     }
 }
