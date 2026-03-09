@@ -69,3 +69,4 @@
 | `PREVIEW_EXECUTION_PLAN_2026-03.md` | 已完成的开发预览执行计划（Compose Preview bridge + PreviewCatalog + Paparazzi + `qaPreview`） |
 | `DRAWABLE_BACKGROUND_EXEC_PLAN_2026-03.md` | 已完成的 drawable 背景 API 执行计划（`Modifier.backgroundDrawableRes` + renderer/demo/test/documentation 收口） |
 | `DRAWABLE_BACKGROUND_CLIP_POLICY_EXEC_PLAN_2026-03.md` | 已完成的 drawable 背景圆角自动裁剪策略调整执行计划（`backgroundDrawableRes + cornerRadius` 自动裁剪） |
+| `ANIMATION_GESTURE_EXEC_PLAN_2026-03.md` | 已完成的动画与手势执行计划（animation/gesture 模块、graphicsLayer、手势分发、demo+preview+snapshot 收口） |

@@ -35,8 +35,8 @@
 - [x] Step 8：容器 motion 策略（lazy/pager）
 - [x] Step 9：ui-contract + gesture 模块落地 pointer/gesture API
 - [x] Step 10：renderer 手势分发内核
-- [ ] Step 11：demo/preview/snapshot 覆盖
-- [ ] Step 12：文档收口与归档
+- [x] Step 11：demo/preview/snapshot 覆盖
+- [x] Step 12：文档收口与归档
 
 ## 5. 提交记录
 
@@ -49,7 +49,11 @@
 7. `ebacd65` feat: add android animation interop bridge for transition and motionlayout scenarios
 8. `6407ca0` feat: add opt-in item motion support for lazy and pager containers
 9. `801a6f1` feat: add pointer input contracts and high-level gesture apis
-10. （本次提交）refactor: add renderer gesture dispatcher with consumption and nested conflict policy
+10. `cf3fdf3` refactor: add renderer gesture dispatcher with consumption and nested conflict policy
+11. `5f5c9a8` demo: replace animation and gesture placeholders with executable showcase scenarios
+12. `d54d710` test: add preview and snapshot coverage for animation and gesture catalogs
+13. `7cc99ca` test: stabilize gesture instrumentation scenario for qaFull
+14. `5a160b1` docs: codify animation-gesture architecture boundaries and workflow guardrails
 
 ## 6. 阻塞记录
 
