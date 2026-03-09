@@ -7,6 +7,7 @@ import com.viewcompose.ui.modifier.fillMaxWidth
 import com.viewcompose.ui.modifier.height
 import com.viewcompose.ui.modifier.margin
 import com.viewcompose.ui.modifier.padding
+import com.viewcompose.runtime.mutableStateOf
 import com.viewcompose.widget.core.Column
 import com.viewcompose.widget.core.HorizontalPager
 import com.viewcompose.widget.core.LazyColumn
@@ -17,6 +18,7 @@ import com.viewcompose.widget.core.TabRow
 import com.viewcompose.widget.core.Text
 import com.viewcompose.widget.core.VerticalPager
 import com.viewcompose.widget.core.dp
+import com.viewcompose.widget.core.remember
 
 internal object CollectionPreviewSpecs {
     val all: List<PreviewSpec> = listOf(
@@ -48,6 +50,9 @@ internal object CollectionPreviewSpecs {
             title = "Grid + Pager + TabRow",
             domain = PreviewDomain.Collection,
             content = {
+                val horizontalPageState = remember { mutableStateOf(0) }
+                val verticalPageState = remember { mutableStateOf(0) }
+                val tabIndexState = remember { mutableStateOf(0) }
                 Column(
                     spacing = 10.dp,
                     modifier = Modifier
@@ -73,8 +78,8 @@ internal object CollectionPreviewSpecs {
                         }
                     }
                     HorizontalPager(
-                        currentPage = 0,
-                        onPageChanged = {},
+                        currentPage = horizontalPageState.value,
+                        onPageChanged = { horizontalPageState.value = it },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(90.dp),
@@ -83,8 +88,8 @@ internal object CollectionPreviewSpecs {
                         Page(key = "page-2") { Text(text = "Horizontal Page 2") }
                     }
                     VerticalPager(
-                        currentPage = 0,
-                        onPageChanged = {},
+                        currentPage = verticalPageState.value,
+                        onPageChanged = { verticalPageState.value = it },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(90.dp),
@@ -93,8 +98,8 @@ internal object CollectionPreviewSpecs {
                         Page(key = "v-page-2") { Text(text = "Vertical Page 2") }
                     }
                     TabRow(
-                        selectedIndex = 0,
-                        onTabSelected = {},
+                        selectedIndex = tabIndexState.value,
+                        onTabSelected = { tabIndexState.value = it },
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Tab(key = "tab-1") { selected ->

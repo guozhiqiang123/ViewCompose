@@ -5,6 +5,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.viewcompose.preview.ViewComposePreview
 import com.viewcompose.preview.ViewComposePreviewOptions
 import com.viewcompose.preview.ViewComposePreviewTheme
+import com.viewcompose.preview.ViewComposePreviewWithRoot
 
 @Preview(
     name = "Demo Preview Chapter Light",
@@ -20,7 +21,7 @@ private fun DemoPreviewChapterLightPreview() {
             theme = ViewComposePreviewTheme.Light,
             debugTag = "DemoPreviewChapterLight",
         ),
-    ) { _ ->
+    ) {
         PreviewPage(initialPageIndex = 0)
     }
 }
@@ -39,7 +40,7 @@ private fun DemoPreviewChapterDarkPreview() {
             theme = ViewComposePreviewTheme.Dark,
             debugTag = "DemoPreviewChapterDark",
         ),
-    ) { _ ->
+    ) {
         PreviewPage(initialPageIndex = 1)
     }
 }
@@ -54,7 +55,7 @@ private fun DemoPreviewChapterDarkPreview() {
 )
 @Composable
 private fun DemoPreviewCatalogPageDarkPreview() {
-    ViewComposePreview(
+    ViewComposePreviewWithRoot(
         options = ViewComposePreviewOptions(
             theme = ViewComposePreviewTheme.Dark,
             debugTag = "DemoPreviewChapterDark",

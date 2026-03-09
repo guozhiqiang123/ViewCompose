@@ -10,6 +10,7 @@
 真实预览应放在业务模块中编写，直接调用 `:viewcompose-preview` 提供的公开 API：
 
 - `com.viewcompose.preview.ViewComposePreview`
+- `com.viewcompose.preview.ViewComposePreviewWithRoot`（当页面构建依赖 root `ViewGroup` 时使用）
 - `com.viewcompose.preview.ViewComposePreviewOptions`
 - `com.viewcompose.preview.ViewComposePreviewTheme`
 
@@ -43,6 +44,16 @@ private fun BizLightPreview() {
         options = ViewComposePreviewOptions(theme = ViewComposePreviewTheme.Light),
     ) {
         // 这里写你的业务 DSL
+    }
+}
+
+@Preview(name = "Biz Root-Aware", showBackground = true, widthDp = 411, heightDp = 891)
+@Composable
+private fun BizRootAwarePreview() {
+    ViewComposePreviewWithRoot(
+        options = ViewComposePreviewOptions(theme = ViewComposePreviewTheme.Dark),
+    ) { root ->
+        // 页面 DSL 依赖 root 场景
     }
 }
 ```

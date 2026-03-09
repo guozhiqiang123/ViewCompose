@@ -5,12 +5,14 @@ import com.viewcompose.preview.catalog.model.PreviewSpec
 import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.modifier.fillMaxWidth
 import com.viewcompose.ui.modifier.margin
+import com.viewcompose.runtime.mutableStateOf
 import com.viewcompose.widget.core.BottomAppBar
 import com.viewcompose.widget.core.IconButton
 import com.viewcompose.widget.core.NavigationBar
 import com.viewcompose.widget.core.Text
 import com.viewcompose.widget.core.TopAppBar
 import com.viewcompose.widget.core.dp
+import com.viewcompose.widget.core.remember
 import com.viewcompose.ui.node.ImageSource
 
 internal object NavigationPreviewSpecs {
@@ -20,6 +22,7 @@ internal object NavigationPreviewSpecs {
             title = "Top/Bottom App Bar + NavigationBar",
             domain = PreviewDomain.Navigation,
             content = {
+                val selectedNavState = remember { mutableStateOf(1) }
                 TopAppBar(
                     title = "组件预览",
                     navigationIcon = {
@@ -38,8 +41,8 @@ internal object NavigationPreviewSpecs {
                     },
                 )
                 NavigationBar(
-                    selectedIndex = 1,
-                    onItemSelected = {},
+                    selectedIndex = selectedNavState.value,
+                    onItemSelected = { selectedNavState.value = it },
                     modifier = Modifier
                         .fillMaxWidth()
                         .margin(vertical = 8.dp),

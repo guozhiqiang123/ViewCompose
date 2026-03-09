@@ -22,6 +22,23 @@ data class ViewComposePreviewOptions(
 fun ViewComposePreview(
     modifier: Modifier = Modifier,
     options: ViewComposePreviewOptions = ViewComposePreviewOptions(),
+    content: UiTreeBuilder.() -> Unit,
+) {
+    ViewComposePreviewHost(
+        modifier = modifier,
+        themeMode = options.theme.toHostThemeMode(),
+        debug = options.debug,
+        debugTag = options.debugTag,
+        content = { _ ->
+            content.invoke(this)
+        },
+    )
+}
+
+@Composable
+fun ViewComposePreviewWithRoot(
+    modifier: Modifier = Modifier,
+    options: ViewComposePreviewOptions = ViewComposePreviewOptions(),
     content: UiTreeBuilder.(ViewGroup) -> Unit,
 ) {
     ViewComposePreviewHost(
