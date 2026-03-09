@@ -175,6 +175,13 @@ data class LazyContainerReuseModifierElement(
     val disableItemAnimator: Boolean,
 ) : ModifierElement
 
+data class LazyContainerMotionModifierElement(
+    val animateInsert: Boolean,
+    val animateRemove: Boolean,
+    val animateMove: Boolean,
+    val animateChange: Boolean,
+) : ModifierElement
+
 data class FocusFollowKeyboardModifierElement(
     val enabled: Boolean,
 ) : ModifierElement
@@ -491,6 +498,22 @@ fun Modifier.lazyContainerReuse(
         LazyContainerReuseModifierElement(
             sharePool = sharePool,
             disableItemAnimator = disableItemAnimator,
+        ),
+    )
+}
+
+fun Modifier.lazyContainerMotion(
+    animateInsert: Boolean = true,
+    animateRemove: Boolean = true,
+    animateMove: Boolean = true,
+    animateChange: Boolean = true,
+): Modifier {
+    return then(
+        LazyContainerMotionModifierElement(
+            animateInsert = animateInsert,
+            animateRemove = animateRemove,
+            animateMove = animateMove,
+            animateChange = animateChange,
         ),
     )
 }

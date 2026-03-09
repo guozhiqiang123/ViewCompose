@@ -25,10 +25,15 @@ internal object ModifierContainerPolicyApplier {
             NodeType.LazyColumn -> {
                 val recyclerView = view as? RecyclerView ?: return
                 val reusePolicy = node.modifier.lazyContainerReusePolicy()
+                val motionPolicy = node.modifier.lazyContainerMotionPolicy()
                 FrameworkRecyclerViewDefaults.applyLazyColumnDefaults(
                     recyclerView = recyclerView,
                     sharePool = reusePolicy.sharePool,
                     disableItemAnimator = reusePolicy.disableItemAnimator,
+                    animateInsert = motionPolicy.animateInsert,
+                    animateRemove = motionPolicy.animateRemove,
+                    animateMove = motionPolicy.animateMove,
+                    animateChange = motionPolicy.animateChange,
                 )
                 val focusPolicy = node.modifier.focusFollowKeyboardPolicy()
                 LazyFocusFollowLayoutMonitor.apply(
@@ -40,10 +45,15 @@ internal object ModifierContainerPolicyApplier {
             NodeType.LazyRow -> {
                 val recyclerView = view as? RecyclerView ?: return
                 val reusePolicy = node.modifier.lazyContainerReusePolicy()
+                val motionPolicy = node.modifier.lazyContainerMotionPolicy()
                 FrameworkRecyclerViewDefaults.applyLazyRowDefaults(
                     recyclerView = recyclerView,
                     sharePool = reusePolicy.sharePool,
                     disableItemAnimator = reusePolicy.disableItemAnimator,
+                    animateInsert = motionPolicy.animateInsert,
+                    animateRemove = motionPolicy.animateRemove,
+                    animateMove = motionPolicy.animateMove,
+                    animateChange = motionPolicy.animateChange,
                 )
                 val focusPolicy = node.modifier.focusFollowKeyboardPolicy()
                 if (focusPolicy.enabled) {
@@ -58,9 +68,14 @@ internal object ModifierContainerPolicyApplier {
 
             NodeType.LazyVerticalGrid -> {
                 val reusePolicy = node.modifier.lazyContainerReusePolicy()
+                val motionPolicy = node.modifier.lazyContainerMotionPolicy()
                 (view as? DeclarativeLazyVerticalGridLayout)?.applyRecyclerDefaults(
                     sharePool = reusePolicy.sharePool,
                     disableItemAnimator = reusePolicy.disableItemAnimator,
+                    animateInsert = motionPolicy.animateInsert,
+                    animateRemove = motionPolicy.animateRemove,
+                    animateMove = motionPolicy.animateMove,
+                    animateChange = motionPolicy.animateChange,
                 )
                 val focusPolicy = node.modifier.focusFollowKeyboardPolicy()
                 (view as? DeclarativeLazyVerticalGridLayout)?.setFocusFollowKeyboardEnabled(focusPolicy.enabled)
@@ -68,9 +83,14 @@ internal object ModifierContainerPolicyApplier {
 
             NodeType.HorizontalPager -> {
                 val reusePolicy = node.modifier.lazyContainerReusePolicy()
+                val motionPolicy = node.modifier.lazyContainerMotionPolicy()
                 (view as? DeclarativeHorizontalPagerLayout)?.applyRecyclerDefaults(
                     sharePool = reusePolicy.sharePool,
                     disableItemAnimator = reusePolicy.disableItemAnimator,
+                    animateInsert = motionPolicy.animateInsert,
+                    animateRemove = motionPolicy.animateRemove,
+                    animateMove = motionPolicy.animateMove,
+                    animateChange = motionPolicy.animateChange,
                 )
                 val focusPolicy = node.modifier.focusFollowKeyboardPolicy()
                 if (focusPolicy.enabled) {
@@ -83,9 +103,14 @@ internal object ModifierContainerPolicyApplier {
 
             NodeType.VerticalPager -> {
                 val reusePolicy = node.modifier.lazyContainerReusePolicy()
+                val motionPolicy = node.modifier.lazyContainerMotionPolicy()
                 (view as? DeclarativeVerticalPagerLayout)?.applyRecyclerDefaults(
                     sharePool = reusePolicy.sharePool,
                     disableItemAnimator = reusePolicy.disableItemAnimator,
+                    animateInsert = motionPolicy.animateInsert,
+                    animateRemove = motionPolicy.animateRemove,
+                    animateMove = motionPolicy.animateMove,
+                    animateChange = motionPolicy.animateChange,
                 )
                 val focusPolicy = node.modifier.focusFollowKeyboardPolicy()
                 (view as? DeclarativeVerticalPagerLayout)?.setFocusFollowKeyboardEnabled(focusPolicy.enabled)

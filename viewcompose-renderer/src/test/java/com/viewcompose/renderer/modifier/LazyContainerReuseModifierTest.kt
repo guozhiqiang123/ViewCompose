@@ -1,9 +1,11 @@
 package com.viewcompose.renderer.modifier
 
 import com.viewcompose.ui.modifier.FocusFollowKeyboardModifierElement
+import com.viewcompose.ui.modifier.LazyContainerMotionModifierElement
 import com.viewcompose.ui.modifier.LazyContainerReuseModifierElement
 import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.modifier.focusFollowKeyboard
+import com.viewcompose.ui.modifier.lazyContainerMotion
 import com.viewcompose.ui.modifier.lazyContainerReuse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -27,5 +29,21 @@ class LazyContainerReuseModifierTest {
 
         val element = modifier.elements.single() as FocusFollowKeyboardModifierElement
         assertTrue(element.enabled)
+    }
+
+    @Test
+    fun `lazyContainerMotion appends motion element`() {
+        val modifier = Modifier.lazyContainerMotion(
+            animateInsert = true,
+            animateRemove = false,
+            animateMove = true,
+            animateChange = false,
+        )
+
+        val element = modifier.elements.single() as LazyContainerMotionModifierElement
+        assertTrue(element.animateInsert)
+        assertTrue(!element.animateRemove)
+        assertTrue(element.animateMove)
+        assertTrue(!element.animateChange)
     }
 }

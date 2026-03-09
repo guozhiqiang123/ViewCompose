@@ -15,12 +15,20 @@ internal object FrameworkRecyclerViewDefaults {
         recyclerView: RecyclerView,
         sharePool: Boolean = false,
         disableItemAnimator: Boolean = false,
+        animateInsert: Boolean = true,
+        animateRemove: Boolean = true,
+        animateMove: Boolean = true,
+        animateChange: Boolean = true,
     ) {
         applyDefaults(
             recyclerView = recyclerView,
             sharedPool = lazyColumnPool,
             sharePool = sharePool,
             disableItemAnimator = disableItemAnimator,
+            animateInsert = animateInsert,
+            animateRemove = animateRemove,
+            animateMove = animateMove,
+            animateChange = animateChange,
         )
     }
 
@@ -28,12 +36,20 @@ internal object FrameworkRecyclerViewDefaults {
         recyclerView: RecyclerView,
         sharePool: Boolean = false,
         disableItemAnimator: Boolean = false,
+        animateInsert: Boolean = true,
+        animateRemove: Boolean = true,
+        animateMove: Boolean = true,
+        animateChange: Boolean = true,
     ) {
         applyDefaults(
             recyclerView = recyclerView,
             sharedPool = lazyRowPool,
             sharePool = sharePool,
             disableItemAnimator = disableItemAnimator,
+            animateInsert = animateInsert,
+            animateRemove = animateRemove,
+            animateMove = animateMove,
+            animateChange = animateChange,
         )
     }
 
@@ -41,12 +57,20 @@ internal object FrameworkRecyclerViewDefaults {
         recyclerView: RecyclerView,
         sharePool: Boolean = false,
         disableItemAnimator: Boolean = false,
+        animateInsert: Boolean = true,
+        animateRemove: Boolean = true,
+        animateMove: Boolean = true,
+        animateChange: Boolean = true,
     ) {
         applyDefaults(
             recyclerView = recyclerView,
             sharedPool = lazyGridPool,
             sharePool = sharePool,
             disableItemAnimator = disableItemAnimator,
+            animateInsert = animateInsert,
+            animateRemove = animateRemove,
+            animateMove = animateMove,
+            animateChange = animateChange,
         )
     }
 
@@ -54,12 +78,20 @@ internal object FrameworkRecyclerViewDefaults {
         recyclerView: RecyclerView,
         sharePool: Boolean = false,
         disableItemAnimator: Boolean = false,
+        animateInsert: Boolean = true,
+        animateRemove: Boolean = true,
+        animateMove: Boolean = true,
+        animateChange: Boolean = true,
     ) {
         applyDefaults(
             recyclerView = recyclerView,
             sharedPool = horizontalPagerPool,
             sharePool = sharePool,
             disableItemAnimator = disableItemAnimator,
+            animateInsert = animateInsert,
+            animateRemove = animateRemove,
+            animateMove = animateMove,
+            animateChange = animateChange,
         )
     }
 
@@ -67,12 +99,20 @@ internal object FrameworkRecyclerViewDefaults {
         recyclerView: RecyclerView,
         sharePool: Boolean = false,
         disableItemAnimator: Boolean = false,
+        animateInsert: Boolean = true,
+        animateRemove: Boolean = true,
+        animateMove: Boolean = true,
+        animateChange: Boolean = true,
     ) {
         applyDefaults(
             recyclerView = recyclerView,
             sharedPool = verticalPagerPool,
             sharePool = sharePool,
             disableItemAnimator = disableItemAnimator,
+            animateInsert = animateInsert,
+            animateRemove = animateRemove,
+            animateMove = animateMove,
+            animateChange = animateChange,
         )
     }
 
@@ -81,11 +121,23 @@ internal object FrameworkRecyclerViewDefaults {
         sharedPool: RecyclerView.RecycledViewPool,
         sharePool: Boolean,
         disableItemAnimator: Boolean,
+        animateInsert: Boolean,
+        animateRemove: Boolean,
+        animateMove: Boolean,
+        animateChange: Boolean,
     ) {
-        if (disableItemAnimator) {
+        val anyMotionEnabled = animateInsert || animateRemove || animateMove || animateChange
+        if (disableItemAnimator || !anyMotionEnabled) {
             recyclerView.itemAnimator = null
-        } else if (recyclerView.itemAnimator == null) {
-            recyclerView.itemAnimator = DefaultItemAnimator()
+        } else {
+            val configurable = recyclerView.itemAnimator as? FrameworkItemAnimator
+                ?: FrameworkItemAnimator().also { recyclerView.itemAnimator = it }
+            configurable.updateMotionPolicy(
+                animateInsert = animateInsert,
+                animateRemove = animateRemove,
+                animateMove = animateMove,
+                animateChange = animateChange,
+            )
         }
         if (sharePool) {
             recyclerView.setRecycledViewPool(sharedPool)
@@ -103,5 +155,78 @@ internal object FrameworkRecyclerViewDefaults {
         return RecyclerView.RecycledViewPool().also { local ->
             recyclerView.setTag(R.id.ui_framework_local_recycled_view_pool, local)
         }
+    }
+}
+
+private class FrameworkItemAnimator : DefaultItemAnimator() {
+    private var animateInsert: Boolean = true
+    private var animateRemove: Boolean = true
+    private var animateMove: Boolean = true
+    private var animateChange: Boolean = true
+
+    fun updateMotionPolicy(
+        animateInsert: Boolean,
+        animateRemove: Boolean,
+        animateMove: Boolean,
+        animateChange: Boolean,
+    ) {
+        this.animateInsert = animateInsert
+        this.animateRemove = animateRemove
+        this.animateMove = animateMove
+        this.animateChange = animateChange
+        supportsChangeAnimations = animateChange
+    }
+
+    override fun animateAdd(holder: RecyclerView.ViewHolder): Boolean {
+        if (!animateInsert) {
+            dispatchAddStarting(holder)
+            dispatchAddFinished(holder)
+            return false
+        }
+        return super.animateAdd(holder)
+    }
+
+    override fun animateRemove(holder: RecyclerView.ViewHolder): Boolean {
+        if (!animateRemove) {
+            dispatchRemoveStarting(holder)
+            dispatchRemoveFinished(holder)
+            return false
+        }
+        return super.animateRemove(holder)
+    }
+
+    override fun animateMove(
+        holder: RecyclerView.ViewHolder,
+        fromX: Int,
+        fromY: Int,
+        toX: Int,
+        toY: Int,
+    ): Boolean {
+        if (!animateMove) {
+            dispatchMoveStarting(holder)
+            dispatchMoveFinished(holder)
+            return false
+        }
+        return super.animateMove(holder, fromX, fromY, toX, toY)
+    }
+
+    override fun animateChange(
+        oldHolder: RecyclerView.ViewHolder,
+        newHolder: RecyclerView.ViewHolder?,
+        fromLeft: Int,
+        fromTop: Int,
+        toLeft: Int,
+        toTop: Int,
+    ): Boolean {
+        if (!animateChange) {
+            dispatchChangeStarting(oldHolder, true)
+            dispatchChangeFinished(oldHolder, true)
+            if (newHolder != null && newHolder !== oldHolder) {
+                dispatchChangeStarting(newHolder, false)
+                dispatchChangeFinished(newHolder, false)
+            }
+            return false
+        }
+        return super.animateChange(oldHolder, newHolder, fromLeft, fromTop, toLeft, toTop)
     }
 }

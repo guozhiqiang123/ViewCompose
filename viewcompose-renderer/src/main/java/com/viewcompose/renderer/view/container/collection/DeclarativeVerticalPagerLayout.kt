@@ -129,12 +129,20 @@ internal class DeclarativeVerticalPagerLayout(
     fun applyRecyclerDefaults(
         sharePool: Boolean = false,
         disableItemAnimator: Boolean = false,
+        animateInsert: Boolean = true,
+        animateRemove: Boolean = true,
+        animateMove: Boolean = true,
+        animateChange: Boolean = true,
     ) {
         resolvePagerRecyclerView()?.let { recyclerView ->
             FrameworkRecyclerViewDefaults.applyVerticalPagerDefaults(
                 recyclerView = recyclerView,
                 sharePool = sharePool,
                 disableItemAnimator = disableItemAnimator,
+                animateInsert = animateInsert,
+                animateRemove = animateRemove,
+                animateMove = animateMove,
+                animateChange = animateChange,
             )
         }
     }

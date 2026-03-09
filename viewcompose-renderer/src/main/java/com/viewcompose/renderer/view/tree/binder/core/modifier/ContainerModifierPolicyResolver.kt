@@ -1,12 +1,20 @@
 package com.viewcompose.renderer.view.tree
 
 import com.viewcompose.ui.modifier.FocusFollowKeyboardModifierElement
+import com.viewcompose.ui.modifier.LazyContainerMotionModifierElement
 import com.viewcompose.ui.modifier.LazyContainerReuseModifierElement
 import com.viewcompose.ui.modifier.Modifier
 
 internal data class LazyContainerReusePolicy(
     val sharePool: Boolean,
     val disableItemAnimator: Boolean,
+)
+
+internal data class LazyContainerMotionPolicy(
+    val animateInsert: Boolean,
+    val animateRemove: Boolean,
+    val animateMove: Boolean,
+    val animateChange: Boolean,
 )
 
 internal data class FocusFollowKeyboardPolicy(
@@ -26,6 +34,26 @@ internal fun Modifier.lazyContainerReusePolicy(): LazyContainerReusePolicy {
     return LazyContainerReusePolicy(
         sharePool = element.sharePool,
         disableItemAnimator = element.disableItemAnimator,
+    )
+}
+
+internal fun Modifier.lazyContainerMotionPolicy(): LazyContainerMotionPolicy {
+    val element = elements
+        .asReversed()
+        .firstOrNull { it is LazyContainerMotionModifierElement } as? LazyContainerMotionModifierElement
+    if (element == null) {
+        return LazyContainerMotionPolicy(
+            animateInsert = true,
+            animateRemove = true,
+            animateMove = true,
+            animateChange = true,
+        )
+    }
+    return LazyContainerMotionPolicy(
+        animateInsert = element.animateInsert,
+        animateRemove = element.animateRemove,
+        animateMove = element.animateMove,
+        animateChange = element.animateChange,
     )
 }
 
