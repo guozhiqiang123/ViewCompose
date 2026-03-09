@@ -33,7 +33,7 @@
 - [x] Step 6：animation 模块落地 Compose-like 动画 API
 - [x] Step 7：host-android 增加 AndroidAnimationInterop
 - [x] Step 8：容器 motion 策略（lazy/pager）
-- [ ] Step 9：ui-contract + gesture 模块落地 pointer/gesture API
+- [x] Step 9：ui-contract + gesture 模块落地 pointer/gesture API
 - [ ] Step 10：renderer 手势分发内核
 - [ ] Step 11：demo/preview/snapshot 覆盖
 - [ ] Step 12：文档收口与归档
@@ -47,7 +47,8 @@
 5. `a931e5d` refactor: apply graphics-layer modifier in renderer with stable patch semantics
 6. `dfcfa3d` feat: add compose-like animation core apis and transition primitives
 7. `ebacd65` feat: add android animation interop bridge for transition and motionlayout scenarios
-8. （本次提交）feat: add opt-in item motion support for lazy and pager containers
+8. `6407ca0` feat: add opt-in item motion support for lazy and pager containers
+9. （本次提交）feat: add pointer input contracts and high-level gesture apis
 
 ## 6. 阻塞记录
 

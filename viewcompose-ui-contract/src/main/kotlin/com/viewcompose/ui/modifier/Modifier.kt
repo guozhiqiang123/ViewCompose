@@ -1,6 +1,11 @@
 package com.viewcompose.ui.modifier
 
 import com.viewcompose.ui.layout.BoxAlignment
+import com.viewcompose.ui.gesture.GestureOrientation
+import com.viewcompose.ui.gesture.PointerEvent
+import com.viewcompose.ui.gesture.PointerEventResult
+import com.viewcompose.ui.gesture.SwipeDirection
+import com.viewcompose.ui.gesture.TransformDelta
 import com.viewcompose.ui.layout.HorizontalAlignment
 import com.viewcompose.ui.layout.VerticalAlignment
 
@@ -106,6 +111,38 @@ data class VisibilityModifierElement(
 
 data class ClickableModifierElement(
     val onClick: () -> Unit,
+) : ModifierElement
+
+data class PointerInputModifierElement(
+    val key: Any,
+    val onEvent: (PointerEvent) -> PointerEventResult,
+) : ModifierElement
+
+data class CombinedClickableModifierElement(
+    val enabled: Boolean,
+    val onClick: (() -> Unit)?,
+    val onDoubleClick: (() -> Unit)?,
+    val onLongClick: (() -> Unit)?,
+) : ModifierElement
+
+data class DraggableModifierElement(
+    val enabled: Boolean,
+    val orientation: GestureOrientation,
+    val onDragStarted: (() -> Unit)?,
+    val onDragStopped: ((velocity: Float) -> Unit)?,
+    val onDelta: (delta: Float) -> Unit,
+) : ModifierElement
+
+data class SwipeableModifierElement(
+    val enabled: Boolean,
+    val orientation: GestureOrientation,
+    val onSwipe: (SwipeDirection) -> Unit,
+    val onDelta: ((delta: Float) -> Unit)? = null,
+) : ModifierElement
+
+data class TransformableModifierElement(
+    val enabled: Boolean,
+    val onTransform: (TransformDelta) -> Unit,
 ) : ModifierElement
 
 data class ContentDescriptionModifierElement(
