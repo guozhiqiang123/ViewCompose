@@ -1,12 +1,10 @@
 package com.viewcompose.animation
 
-import com.viewcompose.runtime.mutableStateOf
 import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.modifier.alpha
 import com.viewcompose.widget.core.Box
 import com.viewcompose.widget.core.BoxScope
 import com.viewcompose.widget.core.UiTreeBuilder
-import com.viewcompose.widget.core.remember
 
 data class EnterTransition(
     val animationSpec: AnimationSpec = tween(),
@@ -41,25 +39,17 @@ fun UiTreeBuilder.AnimatedVisibility(
     exit: ExitTransition = fadeOut(),
     content: BoxScope.() -> Unit,
 ) {
-    val renderState = remember {
-        mutableStateOf(visible)
-    }
-    if (visible && !renderState.value) {
-        renderState.value = true
-    }
     val alphaState = animateFloatAsState(
         targetValue = if (visible) 1f else exit.targetAlpha,
         animationSpec = if (visible) enter.animationSpec else exit.animationSpec,
     )
-    if (!visible && alphaState.value <= 0.001f) {
-        renderState.value = false
-    }
-    if (!renderState.value) {
+    val shouldRender = visible || alphaState.value > (exit.targetAlpha + 0.001f)
+    if (!shouldRender) {
         return
     }
     Box(
         modifier = modifier
-            .alpha(alphaState.value),
+            .alpha(alphaState.value.coerceIn(0f, 1f)),
         content = content,
     )
 }

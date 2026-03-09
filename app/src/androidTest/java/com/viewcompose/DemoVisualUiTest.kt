@@ -685,6 +685,35 @@ class DemoVisualUiTest {
     }
 
     @Test
+    fun animationPage_visibilityToggle_showRestoresTargetContent() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            AnimationActivity::class.java,
+        ).putExtra(EXTRA_ANIMATION_PAGE_INDEX, 0)
+        launchDemoActivity<AnimationActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val target = activity.requireViewByTestTagVisible(DemoTestTags.ANIMATION_VISIBILITY_TARGET)
+                assertViewFullyVisible(target)
+                activity.clickByTestTag(DemoTestTags.ANIMATION_VISIBILITY_TOGGLE)
+            }
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val toggle = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_VISIBILITY_TOGGLE)
+                assertTrue(toggle.text.toString().contains("显示块"))
+                activity.clickByTestTag(DemoTestTags.ANIMATION_VISIBILITY_TOGGLE)
+            }
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val target = activity.requireViewByTestTagVisible(DemoTestTags.ANIMATION_VISIBILITY_TARGET)
+                val toggle = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_VISIBILITY_TOGGLE)
+                assertViewFullyVisible(target)
+                assertTrue(toggle.text.toString().contains("隐藏块"))
+            }
+        }
+    }
+
+    @Test
     fun animationPage_listMotion_controlsUpdateFirstItem() {
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),
