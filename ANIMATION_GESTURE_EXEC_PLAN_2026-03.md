@@ -27,7 +27,7 @@
 
 - [x] Step 1：落地执行计划文档并提交
 - [x] Step 2：新增 animation/gesture 模块并接入构建守卫
-- [ ] Step 3：统一 MonotonicFrameClock（runtime + core local + host 注入）
+- [x] Step 3：统一 MonotonicFrameClock（runtime + core local + host 注入）
 - [ ] Step 4：`ui-contract` 新增 `graphicsLayer` modifier
 - [ ] Step 5：renderer 接入 `graphicsLayer`
 - [ ] Step 6：animation 模块落地 Compose-like 动画 API
@@ -41,7 +41,8 @@
 ## 5. 提交记录
 
 1. `0ccf905` docs: add animation and gesture execution plan (compose-like + android-view aware)
-2. （待补充）
+2. `ef15848` build: add animation and gesture modules with package-root guards
+3. （待补充）
 
 ## 6. 阻塞记录
 

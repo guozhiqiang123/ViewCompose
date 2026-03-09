@@ -9,15 +9,19 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelStoreOwner
+import com.viewcompose.host.android.runtime.AndroidMonotonicFrameClock
 import com.viewcompose.lifecycle.ProvideLifecycleOwner
 import com.viewcompose.viewmodel.ProvideViewModelStoreOwner
 import com.viewcompose.widget.core.OverlayHost
 import com.viewcompose.widget.core.OverlayHostDefaults
+import com.viewcompose.widget.core.ProvideMonotonicFrameClock
 import com.viewcompose.widget.core.RenderStats
 import com.viewcompose.widget.core.RenderTreeResult
 import com.viewcompose.widget.core.UiEnvironment
 import com.viewcompose.widget.core.UiTreeBuilder
 import java.util.WeakHashMap
+
+private val defaultMonotonicFrameClock = AndroidMonotonicFrameClock()
 
 /**
  * Creates and returns a Fragment content root and binds the internal [RenderSession]
@@ -109,8 +113,10 @@ private fun UiTreeBuilder.withHostEnvironment(
 ) {
     ProvideLifecycleOwner(lifecycleOwner) {
         ProvideViewModelStoreOwner(viewModelStoreOwner) {
-            UiEnvironment(androidContext = root.context) {
-                content(root)
+            ProvideMonotonicFrameClock(defaultMonotonicFrameClock) {
+                UiEnvironment(androidContext = root.context) {
+                    content(root)
+                }
             }
         }
     }
