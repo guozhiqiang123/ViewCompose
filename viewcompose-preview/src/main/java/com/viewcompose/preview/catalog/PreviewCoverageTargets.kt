@@ -14,5 +14,7 @@ internal object PreviewCoverageTargets {
         "feedback-progress",
         "feedback-overlay-static",
         "modifier-style-anchor",
+        "animation-core-transitions",
+        "gesture-tap-drag-swipe-transform",
     )
 }

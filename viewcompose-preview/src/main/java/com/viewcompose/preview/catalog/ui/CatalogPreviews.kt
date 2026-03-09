@@ -9,7 +9,9 @@ import com.viewcompose.preview.catalog.model.PreviewSpecRef
 import com.viewcompose.preview.catalog.provider.CollectionPreviewSpecProvider
 import com.viewcompose.preview.catalog.provider.ContainerPreviewSpecProvider
 import com.viewcompose.preview.catalog.provider.ContentPreviewSpecProvider
+import com.viewcompose.preview.catalog.provider.AnimationPreviewSpecProvider
 import com.viewcompose.preview.catalog.provider.FeedbackPreviewSpecProvider
+import com.viewcompose.preview.catalog.provider.GesturePreviewSpecProvider
 import com.viewcompose.preview.catalog.provider.InputPreviewSpecProvider
 import com.viewcompose.preview.catalog.provider.ModifierPreviewSpecProvider
 import com.viewcompose.preview.catalog.provider.NavigationPreviewSpecProvider
@@ -110,6 +112,32 @@ private fun FeedbackCatalogPreview(
 @Composable
 private fun ModifierCatalogPreview(
     @PreviewParameter(ModifierPreviewSpecProvider::class) specRef: PreviewSpecRef,
+) {
+    PreviewCatalogSpecScreen(specId = specRef.id)
+}
+
+@Preview(
+    name = "Animation",
+    group = "ViewCompose/Catalog",
+    widthDp = 411,
+    heightDp = 891,
+)
+@Composable
+private fun AnimationCatalogPreview(
+    @PreviewParameter(AnimationPreviewSpecProvider::class) specRef: PreviewSpecRef,
+) {
+    PreviewCatalogSpecScreen(specId = specRef.id)
+}
+
+@Preview(
+    name = "Gesture",
+    group = "ViewCompose/Catalog",
+    widthDp = 411,
+    heightDp = 891,
+)
+@Composable
+private fun GestureCatalogPreview(
+    @PreviewParameter(GesturePreviewSpecProvider::class) specRef: PreviewSpecRef,
 ) {
     PreviewCatalogSpecScreen(specId = specRef.id)
 }

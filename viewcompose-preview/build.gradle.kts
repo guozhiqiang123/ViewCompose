@@ -42,6 +42,8 @@ dependencies {
     implementation(project(":viewcompose-runtime"))
     implementation(project(":viewcompose-ui-contract"))
     api(project(":viewcompose-widget-core"))
+    implementation(project(":viewcompose-animation"))
+    implementation(project(":viewcompose-gesture"))
     implementation(project(":viewcompose-host-android"))
 
     api(libs.androidx.compose.runtime)

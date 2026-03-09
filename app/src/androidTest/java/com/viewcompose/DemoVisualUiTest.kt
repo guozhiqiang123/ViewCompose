@@ -684,6 +684,83 @@ class DemoVisualUiTest {
         }
     }
 
+    @Test
+    fun animationPage_listMotion_controlsUpdateFirstItem() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            AnimationActivity::class.java,
+        ).putExtra(EXTRA_ANIMATION_PAGE_INDEX, 2)
+        launchDemoActivity<AnimationActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val first = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_LIST_FIRST)
+                assertTrue(first.text.toString().contains("Item A"))
+                activity.clickByTestTag(DemoTestTags.ANIMATION_LIST_ADD)
+            }
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val first = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_LIST_FIRST)
+                assertTrue(first.text.toString().contains("New"))
+                activity.clickByTestTag(DemoTestTags.ANIMATION_LIST_REORDER)
+            }
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val first = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_LIST_FIRST)
+                assertTrue(first.text.toString().contains("Item A"))
+            }
+        }
+    }
+
+    @Test
+    fun gesturesPage_tapAndDragSwipe_updateGestureSummaries() {
+        val tapIntent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            GesturesActivity::class.java,
+        ).putExtra(EXTRA_GESTURES_PAGE_INDEX, 0)
+        launchDemoActivity<GesturesActivity>(tapIntent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val count = activity.requireTextViewByTestTag(DemoTestTags.GESTURE_TAP_COUNT)
+                assertTrue(count.text.toString().contains("0"))
+                activity.tapByTestTag(DemoTestTags.GESTURE_TAP_TARGET)
+            }
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val count = activity.requireTextViewByTestTag(DemoTestTags.GESTURE_TAP_COUNT)
+                assertTrue(count.text.toString().contains("1"))
+            }
+        }
+
+        val dragSwipeIntent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            GesturesActivity::class.java,
+        ).putExtra(EXTRA_GESTURES_PAGE_INDEX, 1)
+        launchDemoActivity<GesturesActivity>(dragSwipeIntent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            var dragBefore = ""
+            scenario.onActivity { activity ->
+                dragBefore = activity.requireTextViewByTestTag(DemoTestTags.GESTURE_DRAG_VALUE).text.toString()
+                activity.swipeByTestTag(
+                    tag = DemoTestTags.GESTURE_DRAG_TARGET,
+                    startXRatio = 0.2f,
+                    endXRatio = 0.85f,
+                )
+                activity.swipeByTestTag(
+                    tag = DemoTestTags.GESTURE_SWIPE_TARGET,
+                    startXRatio = 0.2f,
+                    endXRatio = 0.85f,
+                )
+            }
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val dragAfter = activity.requireTextViewByTestTag(DemoTestTags.GESTURE_DRAG_VALUE).text.toString()
+                val swipe = activity.requireTextViewByTestTag(DemoTestTags.GESTURE_SWIPE_VALUE).text.toString()
+                assertTrue("Expected drag summary to update after swipe gesture", dragAfter != dragBefore)
+                assertTrue("Expected swipe summary to move to Right", swipe.contains("Right"))
+            }
+        }
+    }
+
     private fun extractCount(text: String): Int {
         return "(\\d+)".toRegex().find(text)?.value?.toIntOrNull() ?: 0
     }

@@ -27,3 +27,7 @@ internal class NavigationPreviewSpecProvider : DomainPreviewSpecProvider(Preview
 internal class FeedbackPreviewSpecProvider : DomainPreviewSpecProvider(PreviewDomain.Feedback)
 
 internal class ModifierPreviewSpecProvider : DomainPreviewSpecProvider(PreviewDomain.Modifier)
+
+internal class AnimationPreviewSpecProvider : DomainPreviewSpecProvider(PreviewDomain.Animation)
+
+internal class GesturePreviewSpecProvider : DomainPreviewSpecProvider(PreviewDomain.Gesture)

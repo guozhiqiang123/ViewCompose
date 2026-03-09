@@ -3,7 +3,9 @@ package com.viewcompose.preview.catalog
 import com.viewcompose.preview.catalog.domain.CollectionPreviewSpecs
 import com.viewcompose.preview.catalog.domain.ContainerPreviewSpecs
 import com.viewcompose.preview.catalog.domain.ContentPreviewSpecs
+import com.viewcompose.preview.catalog.domain.AnimationPreviewSpecs
 import com.viewcompose.preview.catalog.domain.FeedbackPreviewSpecs
+import com.viewcompose.preview.catalog.domain.GesturePreviewSpecs
 import com.viewcompose.preview.catalog.domain.InputPreviewSpecs
 import com.viewcompose.preview.catalog.domain.ModifierPreviewSpecs
 import com.viewcompose.preview.catalog.domain.NavigationPreviewSpecs
@@ -20,6 +22,8 @@ internal object PreviewCatalog {
             addAll(NavigationPreviewSpecs.all)
             addAll(FeedbackPreviewSpecs.all)
             addAll(ModifierPreviewSpecs.all)
+            addAll(AnimationPreviewSpecs.all)
+            addAll(GesturePreviewSpecs.all)
         }
     }
 
