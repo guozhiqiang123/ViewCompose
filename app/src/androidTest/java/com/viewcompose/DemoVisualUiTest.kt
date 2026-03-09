@@ -742,6 +742,41 @@ class DemoVisualUiTest {
     }
 
     @Test
+    fun animationPage_contentToggle_updatesAnimatedContentLabel() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            AnimationActivity::class.java,
+        ).putExtra(EXTRA_ANIMATION_PAGE_INDEX, 1)
+        launchDemoActivity<AnimationActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val label = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_CONTENT_LABEL)
+                assertTrue(label.text.toString().contains("主文案"))
+                activity.clickByTestTag(DemoTestTags.ANIMATION_CONTENT_TOGGLE)
+            }
+            waitForUiIdle()
+            val switchedToAlt = waitUntilActivityCondition(scenario, timeoutMs = 1_500L) { activity ->
+                val toggle = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_CONTENT_TOGGLE)
+                val label = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_CONTENT_LABEL)
+                toggle.text.toString().contains("切到主文案") &&
+                    label.text.toString().contains("替代文案")
+            }
+            assertTrue("Expected animated content label to switch to alternative copy", switchedToAlt)
+            scenario.onActivity { activity ->
+                activity.clickByTestTag(DemoTestTags.ANIMATION_CONTENT_TOGGLE)
+            }
+            waitForUiIdle()
+            val switchedBackToMain = waitUntilActivityCondition(scenario, timeoutMs = 1_500L) { activity ->
+                val toggle = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_CONTENT_TOGGLE)
+                val label = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_CONTENT_LABEL)
+                toggle.text.toString().contains("切到替代文案") &&
+                    label.text.toString().contains("主文案")
+            }
+            assertTrue("Expected animated content label to switch back to primary copy", switchedBackToMain)
+        }
+    }
+
+    @Test
     fun animationPage_listMotion_controlsUpdateFirstItem() {
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),

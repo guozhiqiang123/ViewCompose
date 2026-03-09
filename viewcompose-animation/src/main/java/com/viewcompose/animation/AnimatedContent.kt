@@ -6,6 +6,7 @@ import com.viewcompose.ui.modifier.alpha
 import com.viewcompose.ui.modifier.fillMaxSize
 import com.viewcompose.widget.core.Box
 import com.viewcompose.widget.core.BoxScope
+import com.viewcompose.widget.core.SideEffect
 import com.viewcompose.widget.core.UiTreeBuilder
 import com.viewcompose.widget.core.remember
 
@@ -15,37 +16,30 @@ fun <T> UiTreeBuilder.AnimatedContent(
     transitionSpec: () -> AnimationSpec = { tween() },
     content: BoxScope.(T) -> Unit,
 ) {
-    val currentState = remember {
+    val displayedState = remember {
         mutableStateOf(targetState)
     }
-    val outgoingState = remember {
-        mutableStateOf<T?>(null)
-    }
-    val toggle = remember {
-        mutableStateOf(false)
-    }
-    if (targetState != currentState.value) {
-        outgoingState.value = currentState.value
-        currentState.value = targetState
-        toggle.value = !toggle.value
-    }
+    val hasPendingTransition = targetState != displayedState.value
+    val outgoingState: T? = if (hasPendingTransition) displayedState.value else null
     val progress = animateFloatAsState(
-        targetValue = if (toggle.value) 1f else 0f,
+        targetValue = if (hasPendingTransition) 1f else 0f,
         animationSpec = transitionSpec(),
     )
-    val incomingAlpha = if (toggle.value) {
+    val incomingAlpha = if (hasPendingTransition) {
         progress.value
     } else {
-        1f - progress.value
+        1f
     }.coerceIn(0f, 1f)
     val outgoingAlpha = 1f - incomingAlpha
-    if (outgoingState.value != null && outgoingAlpha <= 0.001f) {
-        outgoingState.value = null
+    if (hasPendingTransition && outgoingAlpha <= 0.001f) {
+        SideEffect {
+            displayedState.value = targetState
+        }
     }
     Box(
         modifier = modifier,
     ) {
-        outgoingState.value?.let { previous ->
+        outgoingState?.let { previous ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -59,7 +53,7 @@ fun <T> UiTreeBuilder.AnimatedContent(
                 .fillMaxSize()
                 .alpha(incomingAlpha),
         ) {
-            content(currentState.value)
+            content(targetState)
         }
     }
 }
