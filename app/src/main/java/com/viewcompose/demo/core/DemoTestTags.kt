@@ -71,6 +71,12 @@ internal object DemoTestTags {
     const val FEEDBACK_POPUP_COUNT = "feedback_popup_count"
     const val FEEDBACK_TOAST_COUNT = "feedback_toast_count"
 
+    const val PREVIEW_THEME_TOGGLE = "preview_theme_toggle"
+    const val PREVIEW_DEVICE_TOGGLE = "preview_device_toggle"
+    const val PREVIEW_HOST_SAMPLE = "preview_host_sample"
+    const val PREVIEW_OVERLAY_MOCK = "preview_overlay_mock"
+    const val PREVIEW_SNAPSHOT_CMD = "preview_snapshot_cmd"
+
     const val STATE_PATCH_ADVANCE = "state_patch_advance"
     const val STATE_PATCH_SEGMENT_SUMMARY = "state_patch_segment_summary"
     const val STATE_PATCH_TAB_SUMMARY = "state_patch_tab_summary"

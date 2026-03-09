@@ -51,6 +51,9 @@
             android:name=".InteropActivity"
             android:exported="false" />
         <activity
+            android:name=".PreviewActivity"
+            android:exported="false" />
+        <activity
             android:name=".LayoutsActivity"
             android:exported="false" />
         <activity

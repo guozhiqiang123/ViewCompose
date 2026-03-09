@@ -82,5 +82,17 @@ class ComponentFamilySmokeUiTest {
             }
         }
 
+        launchDemoActivity<PreviewActivity>(
+            Intent(
+                ApplicationProvider.getApplicationContext(),
+                PreviewActivity::class.java,
+            ).putExtra(EXTRA_PREVIEW_PAGE_INDEX, 0),
+        ).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                assertViewFullyVisible(activity.requireViewByTestTagVisible(DemoTestTags.PREVIEW_HOST_SAMPLE))
+            }
+        }
+
     }
 }

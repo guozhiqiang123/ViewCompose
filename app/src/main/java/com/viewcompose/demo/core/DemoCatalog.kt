@@ -102,6 +102,15 @@ internal val DEMO_MODULES = listOf(
         activityClass = DiagnosticsActivity::class.java,
     ),
     DemoModule(
+        key = "preview",
+        title = "Preview",
+        subtitle = "Compose Preview bridge, static overlay mock scenes, and Paparazzi snapshot entrypoints.",
+        status = DemoModuleStatus.Available,
+        manualFocus = "preview bridge parity, static overlay mock semantics, snapshot route consistency",
+        benchmarkPath = "Catalog -> Open Preview -> Snapshot page",
+        activityClass = PreviewActivity::class.java,
+    ),
+    DemoModule(
         key = "actions",
         title = "Actions",
         subtitle = "Card, FAB, Chip, TextButton, ListItem, Badge 等 Action 类组件。",
