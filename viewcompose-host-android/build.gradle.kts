@@ -29,6 +29,7 @@ dependencies {
     implementation(project(":viewcompose-viewmodel"))
     implementation(project(":viewcompose-renderer"))
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.appcompat)

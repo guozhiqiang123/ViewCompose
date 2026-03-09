@@ -26,6 +26,5 @@ dependencies {
     implementation(project(":viewcompose-ui-contract"))
     implementation(project(":viewcompose-widget-core"))
     implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.coroutines.android)
     testImplementation(libs.junit)
 }
