@@ -5,6 +5,9 @@ import com.viewcompose.ui.modifier.TransformOrigin
 import com.viewcompose.ui.modifier.backgroundColor
 import com.viewcompose.ui.modifier.backgroundDrawableRes
 import com.viewcompose.ui.modifier.graphicsLayer
+import com.viewcompose.ui.modifier.CombinedClickableModifierElement
+import com.viewcompose.ui.modifier.GesturePriorityModifierElement
+import com.viewcompose.ui.gesture.GesturePriority
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
@@ -41,5 +44,28 @@ class ResolvedModifiersTest {
         assertEquals(0.5f, resolved.graphicsLayer?.transformOrigin?.pivotFractionX)
         assertEquals(0.5f, resolved.graphicsLayer?.transformOrigin?.pivotFractionY)
         assertEquals(true, resolved.graphicsLayer?.clip)
+    }
+
+    @Test
+    fun `resolve captures gesture modifier payloads`() {
+        val resolved = Modifier
+            .then(
+                CombinedClickableModifierElement(
+                    enabled = true,
+                    onClick = {},
+                    onDoubleClick = null,
+                    onLongClick = null,
+                ),
+            )
+            .then(
+                GesturePriorityModifierElement(
+                    priority = GesturePriority.High,
+                ),
+            )
+            .resolve()
+
+        assertNotNull(resolved.combinedClickable)
+        assertEquals(true, resolved.combinedClickable?.enabled)
+        assertEquals(GesturePriority.High, resolved.gesturePriority?.priority)
     }
 }

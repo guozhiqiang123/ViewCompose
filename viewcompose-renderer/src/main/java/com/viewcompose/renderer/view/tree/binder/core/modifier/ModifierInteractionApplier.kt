@@ -54,6 +54,10 @@ internal object ModifierInteractionApplier {
         if (node.type == NodeType.TextField) {
             // EditText should keep its intrinsic focus/click semantics.
             view.setOnClickListener(null)
+            ModifierGestureApplier.applyGestureState(
+                view = view,
+                resolved = resolved,
+            )
             return
         }
         val clickListener = resolved.clickable?.let { clickableElement ->
@@ -65,6 +69,10 @@ internal object ModifierInteractionApplier {
         view.isClickable = hasClickListener || keepIntrinsicInteraction
         view.isFocusable = hasClickListener || keepIntrinsicInteraction
         view.isFocusableInTouchMode = false
+        ModifierGestureApplier.applyGestureState(
+            view = view,
+            resolved = resolved,
+        )
     }
 
     fun applyTextAppearanceIfTextView(

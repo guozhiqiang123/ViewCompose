@@ -2,6 +2,7 @@ package com.viewcompose.ui.modifier
 
 import com.viewcompose.ui.layout.BoxAlignment
 import com.viewcompose.ui.gesture.GestureOrientation
+import com.viewcompose.ui.gesture.GesturePriority
 import com.viewcompose.ui.gesture.PointerEvent
 import com.viewcompose.ui.gesture.PointerEventResult
 import com.viewcompose.ui.gesture.SwipeDirection
@@ -143,6 +144,10 @@ data class SwipeableModifierElement(
 data class TransformableModifierElement(
     val enabled: Boolean,
     val onTransform: (TransformDelta) -> Unit,
+) : ModifierElement
+
+data class GesturePriorityModifierElement(
+    val priority: GesturePriority,
 ) : ModifierElement
 
 data class ContentDescriptionModifierElement(

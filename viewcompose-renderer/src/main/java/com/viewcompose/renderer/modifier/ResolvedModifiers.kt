@@ -24,6 +24,12 @@ internal class ResolvedModifiers(
     var visibility: VisibilityModifierElement? = null,
     var zIndex: ZIndexModifierElement? = null,
     var graphicsLayer: GraphicsLayerModifierElement? = null,
+    var pointerInput: PointerInputModifierElement? = null,
+    var combinedClickable: CombinedClickableModifierElement? = null,
+    var draggable: DraggableModifierElement? = null,
+    var swipeable: SwipeableModifierElement? = null,
+    var transformable: TransformableModifierElement? = null,
+    var gesturePriority: GesturePriorityModifierElement? = null,
     // ViewLayoutParamsFactory fields
     var boxAlign: BoxAlignModifierElement? = null,
     var margin: MarginModifierElement? = null,
@@ -59,6 +65,12 @@ internal fun Modifier.resolve(): ResolvedModifiers {
             is VisibilityModifierElement -> result.visibility = element
             is ZIndexModifierElement -> result.zIndex = element
             is GraphicsLayerModifierElement -> result.graphicsLayer = element
+            is PointerInputModifierElement -> result.pointerInput = element
+            is CombinedClickableModifierElement -> result.combinedClickable = element
+            is DraggableModifierElement -> result.draggable = element
+            is SwipeableModifierElement -> result.swipeable = element
+            is TransformableModifierElement -> result.transformable = element
+            is GesturePriorityModifierElement -> result.gesturePriority = element
             is BoxAlignModifierElement -> result.boxAlign = element
             is MarginModifierElement -> result.margin = element
             is SizeModifierElement -> result.size = element
@@ -68,6 +80,7 @@ internal fun Modifier.resolve(): ResolvedModifiers {
             is HorizontalAlignModifierElement -> result.horizontalAlign = element
             is VerticalAlignModifierElement -> result.verticalAlign = element
             is LazyContainerReuseModifierElement -> { /* handled by lazy container binders */ }
+            is LazyContainerMotionModifierElement -> { /* handled by lazy container binders */ }
             is FocusFollowKeyboardModifierElement -> { /* handled by lazy container binders */ }
             is NativeViewElement -> { /* handled separately in applyNativeViewConfigs */ }
         }

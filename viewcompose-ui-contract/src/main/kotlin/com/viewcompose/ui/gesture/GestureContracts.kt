@@ -6,6 +6,11 @@ enum class GestureOrientation {
     Free,
 }
 
+enum class GesturePriority {
+    Default,
+    High,
+}
+
 enum class PointerEventType {
     Down,
     Move,

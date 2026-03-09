@@ -1,6 +1,7 @@
 package com.viewcompose.gesture
 
 import com.viewcompose.ui.gesture.GestureOrientation
+import com.viewcompose.ui.gesture.GesturePriority
 import com.viewcompose.ui.gesture.PointerEvent
 import com.viewcompose.ui.gesture.PointerEventResult
 import com.viewcompose.ui.gesture.PointerEventType
@@ -12,6 +13,7 @@ import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.modifier.PointerInputModifierElement
 import com.viewcompose.ui.modifier.SwipeableModifierElement
 import com.viewcompose.ui.modifier.TransformableModifierElement
+import com.viewcompose.ui.modifier.GesturePriorityModifierElement
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -103,5 +105,12 @@ class GestureModifiersTest {
         assertEquals(3f, last.panY)
         assertEquals(1.2f, last.zoom)
         assertEquals(10f, last.rotation)
+    }
+
+    @Test
+    fun `gesturePriority appends expected priority element`() {
+        val modifier = Modifier.gesturePriority(GesturePriority.High)
+        val element = modifier.elements.single() as GesturePriorityModifierElement
+        assertEquals(GesturePriority.High, element.priority)
     }
 }

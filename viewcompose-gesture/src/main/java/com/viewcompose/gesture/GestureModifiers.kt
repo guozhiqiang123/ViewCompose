@@ -3,12 +3,14 @@ package com.viewcompose.gesture
 import com.viewcompose.runtime.State
 import com.viewcompose.runtime.mutableStateOf
 import com.viewcompose.ui.gesture.GestureOrientation
+import com.viewcompose.ui.gesture.GesturePriority
 import com.viewcompose.ui.gesture.PointerEvent
 import com.viewcompose.ui.gesture.PointerEventResult
 import com.viewcompose.ui.gesture.SwipeDirection
 import com.viewcompose.ui.gesture.TransformDelta
 import com.viewcompose.ui.modifier.CombinedClickableModifierElement
 import com.viewcompose.ui.modifier.DraggableModifierElement
+import com.viewcompose.ui.modifier.GesturePriorityModifierElement
 import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.modifier.PointerInputModifierElement
 import com.viewcompose.ui.modifier.SwipeableModifierElement
@@ -171,6 +173,16 @@ fun Modifier.transformable(
         TransformableModifierElement(
             enabled = enabled,
             onTransform = state::dispatchTransform,
+        ),
+    )
+}
+
+fun Modifier.gesturePriority(
+    priority: GesturePriority = GesturePriority.Default,
+): Modifier {
+    return then(
+        GesturePriorityModifierElement(
+            priority = priority,
         ),
     )
 }
