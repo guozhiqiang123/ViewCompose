@@ -1,9 +1,15 @@
 package com.viewcompose.widget.core
 
 import org.junit.Assert.assertSame
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class OverlayHostTest {
+    @Test
+    fun `overlay host defaults report missing android provider in widget-core classpath`() {
+        assertTrue(!OverlayHostDefaults.hasAndroidOverlayHostProviderForTest())
+    }
+
     @Test
     fun `overlay host uses no-op host outside provider`() {
         val host = OverlayHostContext.current

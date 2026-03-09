@@ -72,6 +72,10 @@ object OverlayHostDefaults {
         }
     }
 
+    internal fun hasAndroidOverlayHostProviderForTest(): Boolean {
+        return androidOverlayHostProvider != null
+    }
+
     private fun resolveAndroidOverlayHostProvider(): OverlayHostFactoryProvider? {
         return runCatching {
             val providers = ServiceLoader.load(

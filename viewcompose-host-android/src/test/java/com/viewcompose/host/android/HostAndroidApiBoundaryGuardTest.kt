@@ -1,4 +1,4 @@
-package com.viewcompose.widget.core.guard
+package com.viewcompose.host.android
 
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -9,31 +9,9 @@ import kotlin.io.path.extension
 import kotlin.io.path.isRegularFile
 import kotlin.io.path.readLines
 
-class WidgetCoreDependencyGuardTest {
+class HostAndroidApiBoundaryGuardTest {
     @Test
-    fun `widget-core main source must not import renderer package`() {
-        val sourceRoot = resolveMainSourceRoot()
-        val violations = mutableListOf<String>()
-        Files.walk(sourceRoot).use { paths ->
-            paths
-                .filter { it.isRegularFile() && it.extension == "kt" }
-                .forEach { file ->
-                    file.readLines()
-                        .filter { line -> line.startsWith("import com.viewcompose.renderer.") }
-                        .forEach { line ->
-                            violations += "${sourceRoot.relativize(file)}: $line"
-                        }
-                }
-        }
-
-        assertTrue(
-            "widget-core should not import renderer package.\n${violations.joinToString("\n")}",
-            violations.isEmpty(),
-        )
-    }
-
-    @Test
-    fun `widget-core main source must not import renderer diagnostics types`() {
+    fun `host-android public api source must not import renderer diagnostics types`() {
         val sourceRoot = resolveMainSourceRoot()
         val diagnosticsImports = setOf(
             "import com.viewcompose.renderer.view.tree.RenderStats",
@@ -44,6 +22,7 @@ class WidgetCoreDependencyGuardTest {
         Files.walk(sourceRoot).use { paths ->
             paths
                 .filter { it.isRegularFile() && it.extension == "kt" }
+                .filter { path -> !path.toString().contains("/runtime/") }
                 .forEach { file ->
                     file.readLines()
                         .filter { line -> diagnosticsImports.any(line::startsWith) }
@@ -54,7 +33,7 @@ class WidgetCoreDependencyGuardTest {
         }
 
         assertTrue(
-            "widget-core should not import renderer diagnostics types.\n${violations.joinToString("\n")}",
+            "host-android public API should not import renderer diagnostics types.\n${violations.joinToString("\n")}",
             violations.isEmpty(),
         )
     }
@@ -63,10 +42,11 @@ class WidgetCoreDependencyGuardTest {
         val cwd = Paths.get(System.getProperty("user.dir")).toAbsolutePath().normalize()
         val moduleRoot = when {
             Files.isDirectory(cwd.resolve("src/main/java")) -> cwd
-            Files.isDirectory(cwd.resolve("viewcompose-widget-core/src/main/java")) ->
-                cwd.resolve("viewcompose-widget-core")
-            else -> error("Cannot locate viewcompose-widget-core module root from $cwd")
+            Files.isDirectory(cwd.resolve("viewcompose-host-android/src/main/java")) ->
+                cwd.resolve("viewcompose-host-android")
+            else -> error("Cannot locate viewcompose-host-android module root from $cwd")
         }
-        return moduleRoot.resolve("src/main/java")
+        return moduleRoot.resolve("src/main/java/com/viewcompose/host/android")
     }
 }
+

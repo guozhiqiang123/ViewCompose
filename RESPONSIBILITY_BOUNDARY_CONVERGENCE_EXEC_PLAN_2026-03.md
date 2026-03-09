@@ -29,7 +29,7 @@
 - [x] Step 3 从 Collection DSL 抽离平台会话实现
 - [x] Step 4 host 回调类型硬切为 renderer-agnostic 诊断类型
 - [x] Step 5 overlay 默认装配改为 ServiceLoader 契约
-- [ ] Step 6 边界守卫与回归补齐
+- [x] Step 6 边界守卫与回归补齐
 - [ ] Step 7 文档收口与归档
 
 ## 5. 提交记录
@@ -39,6 +39,7 @@
 - `DONE` refactor: extract lazy item session implementation out of collection dsl
 - `DONE` refactor: hard-cut host render callbacks to renderer-agnostic diagnostics types
 - `DONE` refactor: replace overlay reflection contract with service-provider host factory
+- `DONE` test: add boundary guards for session runtime and diagnostics API decoupling
 
 ## 6. 阻塞记录
 
