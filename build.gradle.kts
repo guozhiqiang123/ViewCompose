@@ -187,3 +187,9 @@ tasks.register("qaFull") {
     description = "Run qaQuick plus connected UI tests on device/emulator."
     dependsOn("qaQuick", ":app:connectedDebugAndroidTest")
 }
+
+tasks.register("qaPreview") {
+    group = "verification"
+    description = "Run preview snapshot verification for viewcompose-preview."
+    dependsOn(":viewcompose-preview:verifyPaparazziDebug")
+}
