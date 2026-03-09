@@ -31,6 +31,7 @@
 6. 生命周期与 ViewModel 协作 API 已拆分为 `:viewcompose-lifecycle` 与 `:viewcompose-viewmodel`，并统一到新包 `com.viewcompose.lifecycle` / `com.viewcompose.viewmodel`
 7. 重组模型已硬切到 `SlotTable Lite` 节点组级脏区重组（无旧全量重建开关）
 8. 依赖边界已收口为 `runtime + ui-contract + widget-core + renderer(android) + host-android`，`widget-core` 不再直依赖 `renderer`
+9. `viewcompose-runtime` 已硬切为纯 Kotlin/JVM，并补齐 `policy/snapshot/observation/invalidation/composer` 核心测试分支
 
 ### 2.2 Demo 与验证层
 

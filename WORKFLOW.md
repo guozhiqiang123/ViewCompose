@@ -218,6 +218,15 @@
 3. lifecycle/viewmodel 对外包名固定为 `com.viewcompose.lifecycle` 与 `com.viewcompose.viewmodel`，并且源码必须放在各自模块。
 4. `qaQuick` 中的 `verifyModulePackageRoots` 与 `verifyAndroidModuleNamespaces` 为硬门禁，任何违规不得豁免合并。
 
+## 5.12 Runtime 纯度与测试覆盖约束
+
+涉及 `viewcompose-runtime` 的改动，必须遵守：
+
+1. `viewcompose-runtime` 固定为 Kotlin/JVM 模块，禁止回退 Android library 形态。
+2. runtime 主源码禁止 `android.*` / `androidx.*` import，且 runtime 构建禁止引入 `androidx.core.ktx`。
+3. `qaQuick` 中的 `verifyRuntimePurity` 为硬门禁，违规必须阻断合并。
+4. runtime 关键分支（policy/snapshot/observation/invalidation/composer）变更必须同步补单测，禁止只改实现不补回归。
+
 ## 6. 线程中断恢复原则
 
 如果聊天线程丢失、附件损坏或上下文中断，恢复顺序固定为：

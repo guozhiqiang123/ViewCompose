@@ -31,7 +31,7 @@
 - [x] Step 3 同步 `qaQuick` runtime 任务链
 - [x] Step 4 新增 runtime 纯度守卫并接入门禁
 - [x] Step 5 扩充 runtime 核心测试矩阵
-- [ ] Step 6 文档收口（ARCHITECTURE/WORKFLOW/ROADMAP）
+- [x] Step 6 文档收口（ARCHITECTURE/WORKFLOW/ROADMAP）
 - [ ] Step 7 执行计划归档
 
 ## 5. 提交记录
@@ -41,7 +41,9 @@
 - `DONE` build: align qaQuick runtime tasks with kotlin-jvm module
 - `DONE` test: add runtime purity guard for imports and dependencies
 - `DONE` test: expand runtime coverage for snapshot observation and composition core
+- `DONE` docs: codify runtime purity boundary and coverage baseline
 
 ## 6. 阻塞记录
 
 - 2026-03-09: Step 2 后根 `qaQuick` 旧 runtime 任务名（`compileDebugKotlin/testDebugUnitTest`）失效，Step 3 已完成任务链适配并恢复 `qaQuick/qaFull` 通过。
+- 2026-03-09: Step 5 里程碑 `qaFull` 受 instrumentation 已知失败阻塞：`ComponentFamilySmokeUiTest.keyComponentFamilies_haveVisibleSmokeAnchors` 在同一真机的双目标（USB + mDNS）执行中失败并触发进程崩溃；runtime 相关 `qaQuick` 与 `:viewcompose-runtime:test --rerun-tasks` 已通过。

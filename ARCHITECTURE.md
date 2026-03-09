@@ -25,7 +25,7 @@
 
 | 模块 | 职责 | 约束 |
 | --- | --- | --- |
-| `viewcompose-runtime` | 状态与读依赖观察（`state/observation`） | 不承载 Android 视图实现 |
+| `viewcompose-runtime` | 状态与读依赖观察（`state/observation`） | 纯 Kotlin/JVM 模块；主源码禁止 `android.*` / `androidx.*`，构建不引入 AndroidX 依赖 |
 | `viewcompose-ui-contract` | 纯 Kotlin UI 契约层（`Modifier`、`VNode/NodeSpec`、layout 枚举、collection/state 协议） | 主源码禁止 `android.*` / `androidx.*` |
 | `viewcompose-widget-core` | DSL、Theme/Defaults、Local 与 overlay 声明契约 | 不依赖 `viewcompose-renderer`；不放 Android 宿主入口 API |
 | `viewcompose-renderer` | Android View 渲染实现（reconcile、binder、patch、container） | 只消费 `ui-contract`，不承载业务 DSL |
