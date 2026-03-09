@@ -67,3 +67,4 @@
 | `PACKAGE_ROOT_STRICT_UNIFICATION_EXEC_PLAN_2026-03.md` | 已完成的严格单包根迁移执行计划（每模块单一包根 + package/namespace 守卫） |
 | `MIGRATION_UI_CONTRACT_HOST_ANDROID_2026-03.md` | `ui-contract + host-android` 分层迁移说明，内容已成为历史迁移记录 |
 | `PREVIEW_EXECUTION_PLAN_2026-03.md` | 已完成的开发预览执行计划（Compose Preview bridge + PreviewCatalog + Paparazzi + `qaPreview`） |
+| `DRAWABLE_BACKGROUND_EXEC_PLAN_2026-03.md` | 已完成的 drawable 背景 API 执行计划（`Modifier.backgroundDrawableRes` + renderer/demo/test/documentation 收口） |
