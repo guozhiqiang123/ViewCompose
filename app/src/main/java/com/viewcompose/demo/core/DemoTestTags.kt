@@ -50,6 +50,8 @@ internal object DemoTestTags {
 
     const val ACTIONS_CHIP_FILTER = "actions_chip_filter"
     const val ACTIONS_ELEVATED_CARD = "actions_elevated_card"
+    const val MODIFIERS_DRAWABLE_BACKGROUND_SAMPLE = "modifiers_drawable_background_sample"
+    const val MODIFIERS_DRAWABLE_BACKGROUND_COLOR_ONLY = "modifiers_drawable_background_color_only"
 
     const val NAVIGATION_BAR_PRIMARY = "navigation_bar_primary"
     const val NAVIGATION_SCAFFOLD = "navigation_scaffold"

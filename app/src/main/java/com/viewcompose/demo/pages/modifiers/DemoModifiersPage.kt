@@ -13,7 +13,7 @@ internal fun UiTreeBuilder.ModifiersPage(
 ) {
     val selectedPageState = remember { mutableStateOf(initialPageIndex.coerceIn(0, 2)) }
     val pageItems = when (selectedPageState.value) {
-        0 -> listOf("page", "page_filter", "elevation", "border_clip", "alpha_ripple", "corner", "verify")
+        0 -> listOf("page", "page_filter", "elevation", "border_clip", "background_drawable", "alpha_ripple", "corner", "verify")
         1 -> listOf("page", "page_filter", "size_constraints", "verify")
         else -> listOf("page", "page_filter", "accessibility", "native_view", "offset_zindex", "verify")
     }
@@ -49,6 +49,7 @@ private fun UiTreeBuilder.RenderModifiersSection(
 
         "elevation" -> ModifierElevationSection()
         "border_clip" -> ModifierBorderClipSection()
+        "background_drawable" -> ModifierBackgroundDrawableSection()
         "alpha_ripple" -> ModifierAlphaRippleSection()
         "corner" -> ModifierCornerSection()
         "size_constraints" -> ModifierSizeConstraintsSection()

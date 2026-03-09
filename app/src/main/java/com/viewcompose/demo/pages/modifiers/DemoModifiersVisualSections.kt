@@ -4,6 +4,7 @@ import com.viewcompose.ui.layout.BoxAlignment
 import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.modifier.alpha
 import com.viewcompose.ui.modifier.backgroundColor
+import com.viewcompose.ui.modifier.backgroundDrawableRes
 import com.viewcompose.ui.modifier.border
 import com.viewcompose.ui.modifier.clip
 import com.viewcompose.ui.modifier.cornerRadius
@@ -14,6 +15,7 @@ import com.viewcompose.ui.modifier.margin
 import com.viewcompose.ui.modifier.offset
 import com.viewcompose.ui.modifier.padding
 import com.viewcompose.ui.modifier.size
+import com.viewcompose.ui.modifier.testTag
 import com.viewcompose.ui.modifier.zIndex
 import com.viewcompose.widget.core.Box
 import com.viewcompose.widget.core.Button
@@ -195,6 +197,59 @@ internal fun UiTreeBuilder.ModifierAlphaRippleSection() {
                     .weight(1f),
             )
         }
+    }
+}
+
+internal fun UiTreeBuilder.ModifierBackgroundDrawableSection() {
+    ScenarioSection(
+        kind = ScenarioKind.Visual,
+        title = "backgroundDrawableRes 资源背景",
+        subtitle = "当同时设置 backgroundColor 与 backgroundDrawableRes 时，drawable 优先。",
+    ) {
+        Row(
+            spacing = 12.dp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .margin(bottom = 12.dp),
+        ) {
+            Box(
+                contentAlignment = BoxAlignment.Center,
+                modifier = Modifier
+                    .weight(1f)
+                    .height(96.dp)
+                    .backgroundColor(Theme.colors.error)
+                    .cornerRadius(12.dp)
+                    .border(1.dp, Theme.colors.divider)
+                    .testTag(DemoTestTags.MODIFIERS_DRAWABLE_BACKGROUND_COLOR_ONLY),
+            ) {
+                Text(
+                    text = "仅颜色",
+                    color = Theme.colors.textPrimary,
+                    style = UiTextStyle(fontSizeSp = 13.sp),
+                )
+            }
+            Box(
+                contentAlignment = BoxAlignment.Center,
+                modifier = Modifier
+                    .weight(1f)
+                    .height(96.dp)
+                    .backgroundColor(Theme.colors.error)
+                    .backgroundDrawableRes(R.drawable.demo_media_image)
+                    .cornerRadius(12.dp)
+                    .border(1.dp, Theme.colors.primary)
+                    .testTag(DemoTestTags.MODIFIERS_DRAWABLE_BACKGROUND_SAMPLE),
+            ) {
+                Text(
+                    text = "颜色 + Drawable",
+                    style = UiTextStyle(fontSizeSp = 12.sp),
+                )
+            }
+        }
+        Text(
+            text = "左侧只应用颜色；右侧同时配置颜色与 drawable，最终以 drawable 背景渲染。",
+            style = UiTextStyle(fontSizeSp = 13.sp),
+            color = TextDefaults.secondaryColor(),
+        )
     }
 }
 
