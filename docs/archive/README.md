@@ -51,6 +51,7 @@
 | `PACKAGE_RENAME_EXECUTION_PLAN_2026-03.md` | 已完成的包名/模块名迁移执行计划（`com.gzq.uiframework` -> `com.viewcompose`） |
 | `THEME_TOKEN_REFINEMENT_EXECUTION_PLAN_2026-03.md` | 已完成的 Theme Token 收口与升级执行计划（P0/P1） |
 | `BUSINESS_LOCAL_EXT_EXEC_PLAN_2026-03.md` | 已完成的业务侧自定义 Local 扩展执行计划（统一 Local API、去除旧调用方式） |
+| `STATE_SNAPSHOT_EXEC_PLAN_2026-03.md` | 已完成的状态系统升级执行计划（SnapshotMutationPolicy + MVCC + Snapshot 事务） |
 | `NODE_SPEC_ONLY_EXECUTION_PLAN_2026-03.md` | 已完成的 `VNode.props` 全量移除与 NodeSpec-only 迁移执行计划 |
 | `NODE_SPEC_ONLY_BLOCKER_CONTEXT_2026-03.md` | NodeSpec-only 收口阶段 `qaFull` 设备离线阻塞与解除记录 |
 | `RECOMPOSITION_LITE_EXEC_PLAN_2026-03.md` | 已完成的 SlotTable Lite + 子树级重组执行计划 |
