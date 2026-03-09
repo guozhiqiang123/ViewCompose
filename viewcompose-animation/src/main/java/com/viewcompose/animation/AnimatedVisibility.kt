@@ -1,13 +1,15 @@
 package com.viewcompose.animation
 
 import com.viewcompose.ui.modifier.Modifier
-import com.viewcompose.ui.modifier.alpha
+import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.spec.AnimatedVisibilityHostNodeProps
 import com.viewcompose.widget.core.Box
 import com.viewcompose.widget.core.BoxScope
 import com.viewcompose.widget.core.ColumnScope
 import com.viewcompose.widget.core.RowScope
 import com.viewcompose.widget.core.UiTreeBuilder
 import com.viewcompose.widget.core.remember
+import kotlin.math.abs
 
 enum class SizeTransformAxis {
     Both,
@@ -276,6 +278,10 @@ private fun UiTreeBuilder.animatedVisibilityCore(
 ) {
     val enterFade = enter.elements.filterIsInstance<EnterTransitionElement.Fade>().lastOrNull()
     val exitFade = exit.elements.filterIsInstance<ExitTransitionElement.Fade>().lastOrNull()
+    val enterWidthExpand = enter.findExpandForWidthAxis()
+    val enterHeightExpand = enter.findExpandForHeightAxis()
+    val exitWidthShrink = exit.findShrinkForWidthAxis()
+    val exitHeightShrink = exit.findShrinkForHeightAxis()
     val stateMachine = remember(visibleState) {
         AnimatedVisibilityStateMachine(initialVisible = visibleState.currentState)
     }
@@ -287,23 +293,71 @@ private fun UiTreeBuilder.animatedVisibilityCore(
 
         AnimatedVisibilityPhase.PostExit,
         AnimatedVisibilityPhase.Idle,
-        -> exitFade?.targetAlpha ?: 0f
+        -> exitFade?.targetAlpha ?: 1f
     }
     val alphaSpec = when (beforeSnapshot.phase) {
         AnimatedVisibilityPhase.PreEnter,
         AnimatedVisibilityPhase.Visible,
-        -> enterFade?.animationSpec ?: tween()
+        -> enterFade?.animationSpec ?: snap()
 
         AnimatedVisibilityPhase.PostExit,
         AnimatedVisibilityPhase.Idle,
-        -> exitFade?.animationSpec ?: tween()
+        -> exitFade?.animationSpec ?: snap()
+    }
+    val targetWidthScale = when (beforeSnapshot.phase) {
+        AnimatedVisibilityPhase.PreEnter,
+        AnimatedVisibilityPhase.Visible,
+        -> 1f
+
+        AnimatedVisibilityPhase.PostExit,
+        AnimatedVisibilityPhase.Idle,
+        -> exitWidthShrink?.targetScale ?: 1f
+    }
+    val widthSpec = when (beforeSnapshot.phase) {
+        AnimatedVisibilityPhase.PreEnter,
+        AnimatedVisibilityPhase.Visible,
+        -> enterWidthExpand?.animationSpec ?: snap()
+
+        AnimatedVisibilityPhase.PostExit,
+        AnimatedVisibilityPhase.Idle,
+        -> exitWidthShrink?.animationSpec ?: snap()
+    }
+    val targetHeightScale = when (beforeSnapshot.phase) {
+        AnimatedVisibilityPhase.PreEnter,
+        AnimatedVisibilityPhase.Visible,
+        -> 1f
+
+        AnimatedVisibilityPhase.PostExit,
+        AnimatedVisibilityPhase.Idle,
+        -> exitHeightShrink?.targetScale ?: 1f
+    }
+    val heightSpec = when (beforeSnapshot.phase) {
+        AnimatedVisibilityPhase.PreEnter,
+        AnimatedVisibilityPhase.Visible,
+        -> enterHeightExpand?.animationSpec ?: snap()
+
+        AnimatedVisibilityPhase.PostExit,
+        AnimatedVisibilityPhase.Idle,
+        -> exitHeightShrink?.animationSpec ?: snap()
     }
     val alphaState = animateFloatAsState(
         targetValue = targetAlpha,
         animationSpec = alphaSpec,
     )
-    val exitFinished = alphaState.value <= (targetAlpha + 0.001f)
-    val enterFinished = alphaState.value >= 0.999f
+    val widthScaleState = animateFloatAsState(
+        targetValue = targetWidthScale,
+        animationSpec = widthSpec,
+    )
+    val heightScaleState = animateFloatAsState(
+        targetValue = targetHeightScale,
+        animationSpec = heightSpec,
+    )
+    val exitFinished = alphaState.value.isApproximately(targetAlpha) &&
+        widthScaleState.value.isApproximately(targetWidthScale) &&
+        heightScaleState.value.isApproximately(targetHeightScale)
+    val enterFinished = alphaState.value.isApproximately(targetAlpha) &&
+        widthScaleState.value.isApproximately(targetWidthScale) &&
+        heightScaleState.value.isApproximately(targetHeightScale)
     val afterSnapshot = stateMachine.afterAnimation(
         targetVisible = visibleState.targetState,
         enterFinished = enterFinished,
@@ -323,8 +377,52 @@ private fun UiTreeBuilder.animatedVisibilityCore(
     if (!afterSnapshot.shouldRender) {
         return
     }
-    Box(
-        modifier = modifier.alpha(alphaState.value.coerceIn(0f, 1f)),
-        content = content,
-    )
+    val hasSizeTransform = enterWidthExpand != null ||
+        enterHeightExpand != null ||
+        exitWidthShrink != null ||
+        exitHeightShrink != null
+    emit(
+        type = NodeType.AnimatedVisibilityHost,
+        spec = AnimatedVisibilityHostNodeProps(
+            alpha = alphaState.value.coerceIn(0f, 1f),
+            widthScale = widthScaleState.value.coerceAtLeast(0f),
+            heightScale = heightScaleState.value.coerceAtLeast(0f),
+            clipToBounds = hasSizeTransform,
+        ),
+        modifier = modifier,
+    ) {
+        Box(content = content)
+    }
+}
+
+private fun EnterTransition.findExpandForWidthAxis(): EnterTransitionElement.Expand? {
+    return elements
+        .asReversed()
+        .filterIsInstance<EnterTransitionElement.Expand>()
+        .firstOrNull { it.axis == SizeTransformAxis.Both || it.axis == SizeTransformAxis.Horizontal }
+}
+
+private fun EnterTransition.findExpandForHeightAxis(): EnterTransitionElement.Expand? {
+    return elements
+        .asReversed()
+        .filterIsInstance<EnterTransitionElement.Expand>()
+        .firstOrNull { it.axis == SizeTransformAxis.Both || it.axis == SizeTransformAxis.Vertical }
+}
+
+private fun ExitTransition.findShrinkForWidthAxis(): ExitTransitionElement.Shrink? {
+    return elements
+        .asReversed()
+        .filterIsInstance<ExitTransitionElement.Shrink>()
+        .firstOrNull { it.axis == SizeTransformAxis.Both || it.axis == SizeTransformAxis.Horizontal }
+}
+
+private fun ExitTransition.findShrinkForHeightAxis(): ExitTransitionElement.Shrink? {
+    return elements
+        .asReversed()
+        .filterIsInstance<ExitTransitionElement.Shrink>()
+        .firstOrNull { it.axis == SizeTransformAxis.Both || it.axis == SizeTransformAxis.Vertical }
+}
+
+private fun Float.isApproximately(target: Float): Boolean {
+    return abs(this - target) <= 0.001f
 }
