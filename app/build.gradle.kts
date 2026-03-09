@@ -52,6 +52,8 @@ dependencies {
     implementation(project(":viewcompose-renderer"))
     implementation(project(":viewcompose-widget-core"))
     implementation(project(":viewcompose-host-android"))
+    implementation(project(":viewcompose-animation"))
+    implementation(project(":viewcompose-gesture"))
     implementation(project(":viewcompose-lifecycle"))
     implementation(project(":viewcompose-viewmodel"))
     implementation(project(":viewcompose-overlay-android"))
