@@ -3,6 +3,7 @@ package com.viewcompose.runtime.composition
 import com.viewcompose.runtime.mutableStateOf
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ComposerLiteTest {
@@ -111,5 +112,52 @@ class ComposerLiteTest {
         assertEquals(0, firstRead)
         assertEquals(0, secondRead)
         assertEquals(1, state.value)
+    }
+
+    @Test
+    fun `composeRoot rejects re-entrant invocation`() {
+        val composer = ComposerLite()
+
+        val error = runCatching {
+            composer.composeRoot {
+                composer.composeRoot { Unit }
+            }
+        }.exceptionOrNull()
+
+        assertTrue(error is IllegalStateException)
+    }
+
+    @Test
+    fun `side effect runs only after commit`() {
+        val composer = ComposerLite()
+        var executions = 0
+
+        composer.composeRoot {
+            composer.sideEffect { executions += 1 }
+            Unit
+        }
+
+        assertEquals(0, executions)
+        composer.commitSideEffects()
+        assertEquals(1, executions)
+    }
+
+    @Test
+    fun `dispose clears pending invalidations and stops future enqueue`() {
+        val state = mutableStateOf(0)
+        val composer = ComposerLite()
+        composer.composeRoot {
+            composer.runGroup(signature = "node", inputs = listOf(state.value)) {
+                state.value
+            }
+        }
+        state.value = 1
+        assertTrue(composer.hasPendingInvalidations())
+
+        composer.dispose()
+        assertTrue(!composer.hasPendingInvalidations())
+
+        state.value = 2
+        assertTrue(!composer.hasPendingInvalidations())
     }
 }
