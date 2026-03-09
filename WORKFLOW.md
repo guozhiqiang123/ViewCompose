@@ -134,13 +134,13 @@
 2. `viewModel`/`savedStateHandle` 放在 `:viewcompose-viewmodel`（`com.viewcompose.viewmodel`）。
 3. 宿主默认 Local 注入由 `viewcompose-host-android` 的 host bridge 负责，不在上述模块重复实现注入逻辑。
 
-## 5.3 反射契约约束
+## 5.3 服务提供者优先约束（Overlay/Host）
 
-如果实现依赖反射字符串（类名/方法名/构造签名），必须同步满足：
+扩展装配默认走服务契约（SPI），反射仅作为最后兜底且需单独评审：
 
-1. 在架构文档写明反射契约来源与落点。
-2. 添加契约测试（至少校验类可加载 + 关键构造/方法存在）。
-3. 后续包路径或类名重构时，反射常量与契约测试必须同一步更新。
+1. overlay 默认装配必须通过 `OverlayHostFactoryProvider + ServiceLoader`，禁止新增 `Class.forName` 字符串反射主路径。
+2. `viewcompose-overlay-android` 的默认实现必须通过 `META-INF/services` 注册 provider；缺失时行为必须稳定回退 no-op 并可观测日志提示。
+3. 若确实需要反射（临时兼容场景），必须在同一步补充架构文档与契约测试，并登记移除计划，不得长期保留。
 
 ## 5.4 Local API 一致性
 
@@ -226,6 +226,15 @@
 2. runtime 主源码禁止 `android.*` / `androidx.*` import，且 runtime 构建禁止引入 `androidx.core.ktx`。
 3. `qaQuick` 中的 `verifyRuntimePurity` 为硬门禁，违规必须阻断合并。
 4. runtime 关键分支（policy/snapshot/observation/invalidation/composer）变更必须同步补单测，禁止只改实现不补回归。
+
+## 5.13 Host 会话与诊断边界约束
+
+涉及 `RenderSession`、host 诊断回调或会话创建路径改动时，必须遵守：
+
+1. Android 会话执行细节（frame clock/dispatcher）只放 `viewcompose-host-android`，`widget-core` 仅保留 `RenderSessionRuntime` 契约与 provider。
+2. `host-android` 对外 API（`setUiContent`/`renderInto`）禁止暴露 renderer 诊断类型；统一使用 core 诊断类型 `RenderStats`/`RenderTreeResult`。
+3. lazy item 子会话与 overlay surface 子会话必须通过会话契约创建，禁止直接 new 平台具体实现类。
+4. 相关重构必须补边界守卫测试，至少覆盖“禁止 renderer 类型泄漏到 host public API”与“provider 缺失回退 no-op”两条路径。
 
 ## 6. 线程中断恢复原则
 

@@ -120,10 +120,11 @@ flowchart TD
 
 1. `com.viewcompose.host.android.ComponentActivity.setUiContent(...)` 不暴露内部 `RenderSession` 给页面调用方，并由宿主自动管理 `dispose`。
 2. `com.viewcompose.host.android.Fragment.setUiContent(...)` 是官方入口：不暴露内部 `RenderSession`，并在 `viewLifecycleOwner` 销毁时自动 `dispose`。
-3. `setUiContent` 的默认 `overlayHostFactory` 优先尝试 `AndroidOverlayHost`（classpath 可用时）；不可用时回退 no-op 并输出提示，可由调用方显式覆盖。
-4. 上述默认行为依赖反射契约类名 `com.viewcompose.overlay.android.host.AndroidOverlayHost`；若 overlay 包路径调整，必须同步更新反射常量与契约测试。
-5. system bars insets 走组件侧 `Modifier.systemBarsInsetsPadding(...)`，不绑死 Activity 全局参数。
-6. core 渲染引擎由 `viewcompose-host-android` 通过 `installCoreRenderEngine(...)` 接口注册，`widget-core` 不再通过反射装配 renderer。
+3. `setUiContent` 的默认 `overlayHostFactory` 走 `OverlayHostDefaults.androidOrNoOp(...)`：优先通过 `OverlayHostFactoryProvider`（`ServiceLoader`）发现 Android 实现；缺失时回退 no-op 并输出提示。
+4. `overlay-android` 必须通过 `META-INF/services` 注册 `OverlayHostFactoryProvider`，禁止回退字符串反射装配（`Class.forName`）。
+5. host 对外回调 `onRenderStats/onRenderResult` 只能暴露 core 自有诊断类型（`com.viewcompose.widget.core.RenderStats/RenderTreeResult`），renderer 诊断类型仅允许出现在 host 内部适配层。
+6. system bars insets 走组件侧 `Modifier.systemBarsInsetsPadding(...)`，不绑死 Activity 全局参数。
+7. core 渲染引擎由 `viewcompose-host-android` 通过 `installCoreRenderEngine(...)` 接口注册，`widget-core` 不再通过反射装配 renderer。
 
 ### 4.4 延迟 session 容器边界
 
