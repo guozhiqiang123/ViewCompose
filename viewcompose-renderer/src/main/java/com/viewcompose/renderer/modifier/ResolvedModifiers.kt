@@ -6,6 +6,7 @@ internal class ResolvedModifiers(
     // ViewModifierApplier fields
     var alpha: AlphaModifierElement? = null,
     var backgroundColor: BackgroundColorModifierElement? = null,
+    var backgroundDrawableRes: BackgroundDrawableResModifierElement? = null,
     var clickable: ClickableModifierElement? = null,
     var contentDescription: ContentDescriptionModifierElement? = null,
     var testTag: TestTagModifierElement? = null,
@@ -39,6 +40,7 @@ internal fun Modifier.resolve(): ResolvedModifiers {
         when (element) {
             is AlphaModifierElement -> result.alpha = element
             is BackgroundColorModifierElement -> result.backgroundColor = element
+            is BackgroundDrawableResModifierElement -> result.backgroundDrawableRes = element
             is ClickableModifierElement -> result.clickable = element
             is ContentDescriptionModifierElement -> result.contentDescription = element
             is TestTagModifierElement -> result.testTag = element

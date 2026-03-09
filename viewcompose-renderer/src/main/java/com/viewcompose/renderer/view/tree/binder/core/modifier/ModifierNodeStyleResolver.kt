@@ -19,6 +19,7 @@ internal object ModifierNodeStyleResolver {
         defaultRippleColor: Int,
     ): NodeStyle {
         return NodeStyle(
+            backgroundDrawableResId = resolved.backgroundDrawableRes?.resId,
             backgroundColor = resolved.backgroundColor?.color ?: readNodeBackgroundColor(node),
             borderWidth = resolved.border?.width ?: readNodeBorderWidth(node) ?: 0,
             borderColor = resolved.border?.color ?: readNodeBorderColor(node) ?: Color.TRANSPARENT,
@@ -137,6 +138,7 @@ internal object ModifierNodeStyleResolver {
 }
 
 internal data class NodeStyle(
+    val backgroundDrawableResId: Int?,
     val backgroundColor: Int?,
     val borderWidth: Int,
     val borderColor: Int,
