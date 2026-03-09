@@ -215,6 +215,7 @@ flowchart TD
 3. Android 高阶动画（`TransitionManager/MotionLayout/Animator`）只能通过 `viewcompose-host-android` 的 interop 入口接入，禁止回流到平台无关主链。
 4. renderer 手势消费规则固定为“手势先消费，未消费再回落 clickable”，并维持方向锁 + slop + priority 的冲突策略。
 5. 列表/分页动画默认 opt-in（`Modifier.lazyContainerMotion(...)`），并与 `Modifier.lazyContainerReuse(...)` 兼容，不改变未启用容器行为。
+6. `AnimatedVisibility` 语义固定为 Compose 对齐：默认 `fadeIn+expandIn` / `shrinkOut+fadeOut`，并通过 `NodeType.AnimatedVisibilityHost` 参与父布局尺寸动画；exit 全部动画完成后才移除 subtree。
 
 ## 5. 当前热点与风险
 

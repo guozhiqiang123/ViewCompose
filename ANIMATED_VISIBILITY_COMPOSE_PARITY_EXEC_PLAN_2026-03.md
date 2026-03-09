@@ -29,11 +29,11 @@
 ## 4. 提交记录
 
 1. `1b61215` docs: add animated visibility compose-parity execution plan
-2. `TBD` refactor: hard-cut animated visibility transitions to compose-like combinable model
-3. `TBD` feat: add compose-like visibility state machine with post-exit removal
-4. `TBD` feat: add animated visibility host node with layout-participating size animation
-5. `TBD` refactor: route animated visibility dsl through animated host node
-6. `TBD` test: add animated visibility compose-parity regression coverage
+2. `274c411` refactor: hard-cut animated visibility transitions to compose-like combinable model
+3. `f786c5f` feat: add compose-like visibility state machine with post-exit removal
+4. `d5f1bd7` feat: add animated visibility host node with layout-participating size animation
+5. `3eaa9ec` refactor: route animated visibility dsl through animated host node
+6. `aacb593` test: add animated visibility compose-parity regression coverage
 
 ## 5. 阻塞记录
 

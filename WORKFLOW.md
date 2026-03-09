@@ -267,6 +267,7 @@
 3. `graphicsLayer` 语义变更必须同步补 renderer patch/rebind 稳定性测试，禁止通过全量 rebind 兜底。
 4. 手势事件消费规则固定为“手势优先，未消费再 clickable 回落”；涉及冲突策略修改时必须补“子手势 vs 父滚动容器”回归。
 5. 列表/分页动画能力默认 opt-in；改动 `lazyContainerMotion` 或 `lazyContainerReuse` 语义时必须补容器回归与文档说明。
+6. `AnimatedVisibility` 必须走 `NodeType.AnimatedVisibilityHost` 承载尺寸动画；隐藏语义固定为“exit 动画结束后再移除 subtree”。
 
 ## 6. 线程中断恢复原则
 
