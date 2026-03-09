@@ -37,6 +37,7 @@
 
 - `DONE` docs: add p3 boundary refinement execution plan
 - `DONE` refactor: split node binder descriptors by domain with single-source aggregator
+- `DONE` refactor: group node binder descriptor sources under dedicated descriptor directory
 
 ## 6. 阻塞记录
 
