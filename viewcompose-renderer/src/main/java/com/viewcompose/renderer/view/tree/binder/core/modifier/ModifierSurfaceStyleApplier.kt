@@ -129,7 +129,12 @@ internal object ModifierSurfaceStyleApplier {
                 restoreOriginalForeground(view)
             }
         }
-        applyCornerOutline(view, cornerRadius, forceClip)
+        val shouldAutoClipForDrawableCorner = backgroundDrawable != null && hasCorner
+        applyCornerOutline(
+            view = view,
+            cornerRadius = cornerRadius,
+            forceClip = forceClip || shouldAutoClipForDrawableCorner,
+        )
     }
 
     private fun restoreOriginalBackground(view: View) {

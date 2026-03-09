@@ -6,6 +6,7 @@ import android.graphics.drawable.LayerDrawable
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -139,6 +140,8 @@ class DemoVisualUiTest {
                 assertViewFullyVisible(drawablePreferred)
                 assertTrue("Expected color-only sample to use GradientDrawable background", colorOnly.background is GradientDrawable)
                 assertTrue("Expected drawable sample to use layered drawable background", drawablePreferred.background is LayerDrawable)
+                assertFalse("Expected color-only sample to keep non-clipped outline by default", colorOnly.clipToOutline)
+                assertTrue("Expected drawable sample to auto-clip when cornerRadius is set", drawablePreferred.clipToOutline)
             }
         }
     }

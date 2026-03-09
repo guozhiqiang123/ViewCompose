@@ -204,7 +204,7 @@ internal fun UiTreeBuilder.ModifierBackgroundDrawableSection() {
     ScenarioSection(
         kind = ScenarioKind.Visual,
         title = "backgroundDrawableRes 资源背景",
-        subtitle = "当同时设置 backgroundColor 与 backgroundDrawableRes 时，drawable 优先。",
+        subtitle = "当同时设置 backgroundColor 与 backgroundDrawableRes 时，drawable 优先；配合 cornerRadius 自动裁剪。",
     ) {
         Row(
             spacing = 12.dp,
@@ -246,7 +246,7 @@ internal fun UiTreeBuilder.ModifierBackgroundDrawableSection() {
             }
         }
         Text(
-            text = "左侧只应用颜色；右侧同时配置颜色与 drawable，最终以 drawable 背景渲染。",
+            text = "左侧只应用颜色（不自动裁剪）；右侧同时配置 drawable + cornerRadius，将自动裁剪。",
             style = UiTextStyle(fontSizeSp = 13.sp),
             color = TextDefaults.secondaryColor(),
         )
