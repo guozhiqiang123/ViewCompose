@@ -30,6 +30,7 @@ dependencies {
     implementation(project(":viewcompose-renderer"))
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     testImplementation(libs.junit)
