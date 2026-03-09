@@ -7,6 +7,7 @@ import com.viewcompose.widget.core.BoxScope
 import com.viewcompose.widget.core.ColumnScope
 import com.viewcompose.widget.core.RowScope
 import com.viewcompose.widget.core.UiTreeBuilder
+import com.viewcompose.widget.core.remember
 
 enum class SizeTransformAxis {
     Both,
@@ -165,8 +166,28 @@ fun UiTreeBuilder.AnimatedVisibility(
     exit: ExitTransition = shrinkOut() + fadeOut(),
     content: BoxScope.() -> Unit,
 ) {
+    val visibleState = remember {
+        MutableTransitionState(visible)
+    }
+    visibleState.targetState = visible
     animatedVisibilityCore(
-        visible = visible,
+        visibleState = visibleState,
+        modifier = modifier,
+        enter = enter,
+        exit = exit,
+        content = content,
+    )
+}
+
+fun UiTreeBuilder.AnimatedVisibility(
+    visibleState: MutableTransitionState<Boolean>,
+    modifier: Modifier = Modifier,
+    enter: EnterTransition = fadeIn() + expandIn(),
+    exit: ExitTransition = shrinkOut() + fadeOut(),
+    content: BoxScope.() -> Unit,
+) {
+    animatedVisibilityCore(
+        visibleState = visibleState,
         modifier = modifier,
         enter = enter,
         exit = exit,
@@ -181,8 +202,28 @@ fun RowScope.AnimatedVisibility(
     exit: ExitTransition = shrinkHorizontally() + fadeOut(),
     content: BoxScope.() -> Unit,
 ) {
+    val visibleState = remember {
+        MutableTransitionState(visible)
+    }
+    visibleState.targetState = visible
     animatedVisibilityCore(
-        visible = visible,
+        visibleState = visibleState,
+        modifier = modifier,
+        enter = enter,
+        exit = exit,
+        content = content,
+    )
+}
+
+fun RowScope.AnimatedVisibility(
+    visibleState: MutableTransitionState<Boolean>,
+    modifier: Modifier = Modifier,
+    enter: EnterTransition = fadeIn() + expandHorizontally(),
+    exit: ExitTransition = shrinkHorizontally() + fadeOut(),
+    content: BoxScope.() -> Unit,
+) {
+    animatedVisibilityCore(
+        visibleState = visibleState,
         modifier = modifier,
         enter = enter,
         exit = exit,
@@ -197,8 +238,28 @@ fun ColumnScope.AnimatedVisibility(
     exit: ExitTransition = shrinkVertically() + fadeOut(),
     content: BoxScope.() -> Unit,
 ) {
+    val visibleState = remember {
+        MutableTransitionState(visible)
+    }
+    visibleState.targetState = visible
     animatedVisibilityCore(
-        visible = visible,
+        visibleState = visibleState,
+        modifier = modifier,
+        enter = enter,
+        exit = exit,
+        content = content,
+    )
+}
+
+fun ColumnScope.AnimatedVisibility(
+    visibleState: MutableTransitionState<Boolean>,
+    modifier: Modifier = Modifier,
+    enter: EnterTransition = fadeIn() + expandVertically(),
+    exit: ExitTransition = shrinkVertically() + fadeOut(),
+    content: BoxScope.() -> Unit,
+) {
+    animatedVisibilityCore(
+        visibleState = visibleState,
         modifier = modifier,
         enter = enter,
         exit = exit,
@@ -207,7 +268,7 @@ fun ColumnScope.AnimatedVisibility(
 }
 
 private fun UiTreeBuilder.animatedVisibilityCore(
-    visible: Boolean,
+    visibleState: MutableTransitionState<Boolean>,
     modifier: Modifier,
     enter: EnterTransition,
     exit: ExitTransition,
@@ -215,22 +276,51 @@ private fun UiTreeBuilder.animatedVisibilityCore(
 ) {
     val enterFade = enter.elements.filterIsInstance<EnterTransitionElement.Fade>().lastOrNull()
     val exitFade = exit.elements.filterIsInstance<ExitTransitionElement.Fade>().lastOrNull()
-    val targetAlpha = when {
-        visible -> 1f
-        exitFade != null -> exitFade.targetAlpha
-        else -> 0f
+    val stateMachine = remember(visibleState) {
+        AnimatedVisibilityStateMachine(initialVisible = visibleState.currentState)
     }
-    val alphaSpec = when {
-        visible -> enterFade?.animationSpec ?: tween()
-        exitFade != null -> exitFade.animationSpec
-        else -> tween()
+    val beforeSnapshot = stateMachine.beforeAnimation(targetVisible = visibleState.targetState)
+    val targetAlpha = when (beforeSnapshot.phase) {
+        AnimatedVisibilityPhase.PreEnter,
+        AnimatedVisibilityPhase.Visible,
+        -> 1f
+
+        AnimatedVisibilityPhase.PostExit,
+        AnimatedVisibilityPhase.Idle,
+        -> exitFade?.targetAlpha ?: 0f
+    }
+    val alphaSpec = when (beforeSnapshot.phase) {
+        AnimatedVisibilityPhase.PreEnter,
+        AnimatedVisibilityPhase.Visible,
+        -> enterFade?.animationSpec ?: tween()
+
+        AnimatedVisibilityPhase.PostExit,
+        AnimatedVisibilityPhase.Idle,
+        -> exitFade?.animationSpec ?: tween()
     }
     val alphaState = animateFloatAsState(
         targetValue = targetAlpha,
         animationSpec = alphaSpec,
     )
-    val shouldRender = visible || alphaState.value > (targetAlpha + 0.001f)
-    if (!shouldRender) {
+    val exitFinished = alphaState.value <= (targetAlpha + 0.001f)
+    val enterFinished = alphaState.value >= 0.999f
+    val afterSnapshot = stateMachine.afterAnimation(
+        targetVisible = visibleState.targetState,
+        enterFinished = enterFinished,
+        exitFinished = exitFinished,
+    )
+    visibleState.currentState = when (afterSnapshot.phase) {
+        AnimatedVisibilityPhase.PreEnter,
+        AnimatedVisibilityPhase.Idle,
+        -> false
+
+        AnimatedVisibilityPhase.Visible,
+        AnimatedVisibilityPhase.PostExit,
+        -> true
+    }
+    visibleState.isIdle = (afterSnapshot.phase == AnimatedVisibilityPhase.Visible && visibleState.targetState) ||
+        (afterSnapshot.phase == AnimatedVisibilityPhase.Idle && !visibleState.targetState)
+    if (!afterSnapshot.shouldRender) {
         return
     }
     Box(
