@@ -29,7 +29,7 @@
 - [x] Step 2 descriptor 分域拆分并保留单源聚合
 - [x] Step 3 descriptor 结构与覆盖守卫测试
 - [x] Step 4 modifier 运行策略提取下沉到 renderer（硬切）
-- [ ] Step 5 policy 测试迁移到 renderer
+- [x] Step 5 policy 测试迁移到 renderer
 - [ ] Step 6 文档边界收口（ARCHITECTURE/WORKFLOW）
 - [ ] Step 7 最终门禁、归档与索引更新
 
@@ -40,6 +40,7 @@
 - `DONE` refactor: group node binder descriptor sources under dedicated descriptor directory
 - `DONE` test: add descriptor structure and coverage guards
 - `DONE` refactor: move modifier runtime policy extraction out of ui-contract
+- `DONE` test: migrate modifier policy tests to renderer policy resolver
 
 ## 6. 阻塞记录
 
