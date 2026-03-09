@@ -29,7 +29,7 @@
 - [x] Step 1 新增执行计划文档并首提
 - [x] Step 2 runtime 硬切为 Kotlin/JVM
 - [x] Step 3 同步 `qaQuick` runtime 任务链
-- [ ] Step 4 新增 runtime 纯度守卫并接入门禁
+- [x] Step 4 新增 runtime 纯度守卫并接入门禁
 - [ ] Step 5 扩充 runtime 核心测试矩阵
 - [ ] Step 6 文档收口（ARCHITECTURE/WORKFLOW/ROADMAP）
 - [ ] Step 7 执行计划归档
@@ -39,6 +39,7 @@
 - `DONE` docs: add runtime purity and test coverage execution plan
 - `DONE` build: hard-switch runtime module to pure kotlin-jvm
 - `DONE` build: align qaQuick runtime tasks with kotlin-jvm module
+- `DONE` test: add runtime purity guard for imports and dependencies
 
 ## 6. 阻塞记录
 

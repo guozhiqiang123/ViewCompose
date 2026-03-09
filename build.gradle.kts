@@ -125,11 +125,55 @@ tasks.register("verifyAndroidModuleNamespaces") {
     }
 }
 
+tasks.register("verifyRuntimePurity") {
+    group = "verification"
+    description = "Verify runtime remains Kotlin/JVM-pure without Android imports/dependencies."
+    doLast {
+        val violations = mutableListOf<String>()
+        val runtimeMainDir = rootDir.resolve("viewcompose-runtime").resolve("src/main")
+        if (runtimeMainDir.exists()) {
+            runtimeMainDir.walkTopDown()
+                .filter { it.isFile && (it.extension == "kt" || it.extension == "java") }
+                .forEach { file ->
+                    file.useLines { lines ->
+                        lines.forEachIndexed { index, line ->
+                            val trimmed = line.trimStart()
+                            if (
+                                trimmed.startsWith("import android.") ||
+                                trimmed.startsWith("import androidx.")
+                            ) {
+                                violations += "${file.relativeTo(rootDir)}:${index + 1} -> forbidden import '$trimmed'"
+                            }
+                        }
+                    }
+                }
+        }
+
+        val runtimeBuildFile = rootDir.resolve("viewcompose-runtime/build.gradle.kts")
+        if (runtimeBuildFile.exists()) {
+            val content = runtimeBuildFile.readText()
+            if (content.contains("androidx.core.ktx")) {
+                violations += "viewcompose-runtime/build.gradle.kts -> forbidden dependency androidx.core.ktx"
+            }
+        }
+
+        if (violations.isNotEmpty()) {
+            error(
+                buildString {
+                    appendLine("Runtime purity verification failed:")
+                    violations.sorted().forEach { appendLine("- $it") }
+                },
+            )
+        }
+    }
+}
+
 tasks.register("qaQuick") {
     group = "verification"
     description = "Run compile + unit-test quality gate for all core modules."
     dependsOn("verifyModulePackageRoots")
     dependsOn("verifyAndroidModuleNamespaces")
+    dependsOn("verifyRuntimePurity")
     dependsOn(qaQuickTasks)
 }
 
