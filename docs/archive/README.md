@@ -57,3 +57,4 @@
 | `RENDERER_COMPLEXITY_CONVERGENCE_EXEC_PLAN_2026-03.md` | 已完成的 renderer 复杂度收敛执行计划（ViewModifierApplier 分层 + binder/differ descriptor 单源化） |
 | `WIDGET_CORE_RENDERER_DECOUPLE_EXEC_PLAN_2026-03.md` | 已完成的 widget-core 与 renderer 依赖解耦执行计划（ui-contract + host-android 分层硬切） |
 | `PACKAGE_ROOT_STRICT_UNIFICATION_EXEC_PLAN_2026-03.md` | 已完成的严格单包根迁移执行计划（每模块单一包根 + package/namespace 守卫） |
+| `MIGRATION_UI_CONTRACT_HOST_ANDROID_2026-03.md` | `ui-contract + host-android` 分层迁移说明，内容已成为历史迁移记录 |
