@@ -58,3 +58,6 @@
   - 现象：焦点后 recycler 锚点偏移 `-25px`（阈值 `12px`），断言失败。
   - 已验证：`qaQuick` 通过；`collectionsStress_*` 与 `statePatch*` 相关回归均已通过。
   - 处理：在 `ROADMAP.md` 保留该项 UI 风险状态，后续以输入焦点/IME 策略专项处理。
+- `2026-03-09` 阻塞已解除：
+  - 复跑用例 `DemoVisualUiTest.inputSearch_focusSearchBar_doesNotAutoScrollList` 已通过（`1/1`）。
+  - 阻塞上下文归档见 [RECOMPOSITION_LITE_BLOCKER_CONTEXT_2026-03.md](/Users/gzq/AndroidStudioProjects/UIFramework/docs/archive/RECOMPOSITION_LITE_BLOCKER_CONTEXT_2026-03.md)。

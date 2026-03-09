@@ -39,3 +39,9 @@
 ```bash
 ./gradlew :app:connectedDebugAndroidTest
 ```
+
+## Resolution
+
+- `2026-03-09`: blocker resolved.
+- Verification:
+  - `./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.viewcompose.DemoVisualUiTest#inputSearch_focusSearchBar_doesNotAutoScrollList` passed (`1/1`).
