@@ -55,6 +55,7 @@ internal object DemoTestTags {
 
     const val ANIMATION_VISIBILITY_TOGGLE = "animation_visibility_toggle"
     const val ANIMATION_VISIBILITY_TARGET = "animation_visibility_target"
+    const val ANIMATION_VISIBILITY_FOOTER = "animation_visibility_footer"
     const val ANIMATION_CONTENT_TOGGLE = "animation_content_toggle"
     const val ANIMATION_CONTENT_LABEL = "animation_content_label"
     const val ANIMATION_LIST_ADD = "animation_list_add"

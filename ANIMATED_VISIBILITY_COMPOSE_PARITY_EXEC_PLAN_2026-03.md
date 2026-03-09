@@ -23,7 +23,7 @@
 - [x] Step 3 新增可见性状态机与 `MutableTransitionState<Boolean>` 版本 API。
 - [x] Step 4 新增 `AnimatedVisibilityHost` 节点与 renderer 容器实现。
 - [x] Step 5 `AnimatedVisibility` DSL 改为发射专用节点并完成语义切换。
-- [ ] Step 6 Demo 与回归用例补齐（显隐、占位缩放、无闪烁）。
+- [x] Step 6 Demo 与回归用例补齐（显隐、占位缩放、无闪烁）。
 - [ ] Step 7 文档收口并归档执行计划。
 
 ## 4. 提交记录
@@ -33,6 +33,7 @@
 3. `TBD` feat: add compose-like visibility state machine with post-exit removal
 4. `TBD` feat: add animated visibility host node with layout-participating size animation
 5. `TBD` refactor: route animated visibility dsl through animated host node
+6. `TBD` test: add animated visibility compose-parity regression coverage
 
 ## 5. 阻塞记录
 

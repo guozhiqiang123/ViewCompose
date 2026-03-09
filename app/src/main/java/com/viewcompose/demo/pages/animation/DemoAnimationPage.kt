@@ -3,8 +3,6 @@ package com.viewcompose
 import com.viewcompose.animation.AnimatedContent
 import com.viewcompose.animation.AnimatedVisibility
 import com.viewcompose.animation.animateFloatAsState
-import com.viewcompose.animation.fadeIn
-import com.viewcompose.animation.fadeOut
 import com.viewcompose.animation.spring
 import com.viewcompose.animation.tween
 import com.viewcompose.ui.modifier.Modifier
@@ -97,8 +95,6 @@ internal fun UiTreeBuilder.AnimationPage(
                 }
                 AnimatedVisibility(
                     visible = visibleState.value,
-                    enter = fadeIn(tween(220)),
-                    exit = fadeOut(tween(220)),
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag(DemoTestTags.ANIMATION_VISIBILITY_TARGET),
@@ -116,6 +112,13 @@ internal fun UiTreeBuilder.AnimationPage(
                         Text(text = "Animation Core Surface")
                     }
                 }
+                Text(
+                    text = "Visibility footer anchor",
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier
+                        .margin(top = 6.dp)
+                        .testTag(DemoTestTags.ANIMATION_VISIBILITY_FOOTER),
+                )
             }
 
             "transition" -> ScenarioSection(

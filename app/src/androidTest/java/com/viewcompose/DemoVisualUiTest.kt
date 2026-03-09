@@ -3,6 +3,7 @@ package com.viewcompose
 import android.content.Intent
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
+import android.view.View
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -691,24 +692,40 @@ class DemoVisualUiTest {
             AnimationActivity::class.java,
         ).putExtra(EXTRA_ANIMATION_PAGE_INDEX, 0)
         launchDemoActivity<AnimationActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            var footerTopBeforeHide = 0
+            var footerTopAfterHide = 0
             waitForUiIdle()
             scenario.onActivity { activity ->
                 val target = activity.requireViewByTestTagVisible(DemoTestTags.ANIMATION_VISIBILITY_TARGET)
+                val footer = activity.requireViewByTestTagVisible(DemoTestTags.ANIMATION_VISIBILITY_FOOTER)
+                footerTopBeforeHide = viewTopOnScreen(footer)
                 assertViewFullyVisible(target)
                 activity.clickByTestTag(DemoTestTags.ANIMATION_VISIBILITY_TOGGLE)
             }
             waitForUiIdle()
             scenario.onActivity { activity ->
                 val toggle = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_VISIBILITY_TOGGLE)
+                val footer = activity.requireViewByTestTagVisible(DemoTestTags.ANIMATION_VISIBILITY_FOOTER)
+                footerTopAfterHide = viewTopOnScreen(footer)
                 assertTrue(toggle.text.toString().contains("显示块"))
+                assertTrue(
+                    "Expected footer to move up after hide, before=$footerTopBeforeHide, after=$footerTopAfterHide",
+                    footerTopAfterHide < footerTopBeforeHide,
+                )
                 activity.clickByTestTag(DemoTestTags.ANIMATION_VISIBILITY_TOGGLE)
             }
             waitForUiIdle()
             scenario.onActivity { activity ->
                 val target = activity.requireViewByTestTagVisible(DemoTestTags.ANIMATION_VISIBILITY_TARGET)
                 val toggle = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_VISIBILITY_TOGGLE)
+                val footer = activity.requireViewByTestTagVisible(DemoTestTags.ANIMATION_VISIBILITY_FOOTER)
+                val footerTopAfterShow = viewTopOnScreen(footer)
                 assertViewFullyVisible(target)
                 assertTrue(toggle.text.toString().contains("隐藏块"))
+                assertTrue(
+                    "Expected footer to move down after show, hidden=$footerTopAfterHide, shown=$footerTopAfterShow",
+                    footerTopAfterShow > footerTopAfterHide,
+                )
             }
         }
     }
@@ -794,5 +811,11 @@ class DemoVisualUiTest {
                 abs(before.offset - after.offset) <= maxOffsetDeltaPx,
             )
         }
+    }
+
+    private fun viewTopOnScreen(view: View): Int {
+        val location = IntArray(2)
+        view.getLocationOnScreen(location)
+        return location[1]
     }
 }
