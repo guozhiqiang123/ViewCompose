@@ -21,7 +21,7 @@
 - [x] Step 1 新增执行文档并提交（本文件）。
 - [x] Step 2 动画 API 硬切为可组合过渡模型（含默认值切换）。
 - [x] Step 3 新增可见性状态机与 `MutableTransitionState<Boolean>` 版本 API。
-- [ ] Step 4 新增 `AnimatedVisibilityHost` 节点与 renderer 容器实现。
+- [x] Step 4 新增 `AnimatedVisibilityHost` 节点与 renderer 容器实现。
 - [ ] Step 5 `AnimatedVisibility` DSL 改为发射专用节点并完成语义切换。
 - [ ] Step 6 Demo 与回归用例补齐（显隐、占位缩放、无闪烁）。
 - [ ] Step 7 文档收口并归档执行计划。
@@ -31,7 +31,9 @@
 1. `1b61215` docs: add animated visibility compose-parity execution plan
 2. `TBD` refactor: hard-cut animated visibility transitions to compose-like combinable model
 3. `TBD` feat: add compose-like visibility state machine with post-exit removal
+4. `TBD` feat: add animated visibility host node with layout-participating size animation
 
 ## 5. 阻塞记录
 
-当前无阻塞。
+1. `2026-03-09 18:58:57 CST`：`qaFull` 执行到 `:app:connectedDebugAndroidTest` 失败，原因是设备离线（`No online devices found` / `Device is OFFLINE`）。  
+   当前按 `qaQuick` 继续推进，待设备恢复后补跑 `qaFull` 收口。

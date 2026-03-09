@@ -5,6 +5,7 @@ import com.viewcompose.ui.node.spec.BoxNodeProps
 import com.viewcompose.ui.node.spec.ButtonNodeProps
 import com.viewcompose.ui.node.spec.ColumnNodeProps
 import com.viewcompose.ui.node.spec.DividerNodeProps
+import com.viewcompose.ui.node.spec.AnimatedVisibilityHostNodeProps
 import com.viewcompose.ui.node.spec.FlowColumnNodeProps
 import com.viewcompose.ui.node.spec.FlowRowNodeProps
 import com.viewcompose.ui.node.spec.HorizontalPagerNodeProps
@@ -50,6 +51,7 @@ class NodeBinderDescriptorGuardTest {
             NodeType.Column,
             NodeType.Box,
             NodeType.Surface,
+            NodeType.AnimatedVisibilityHost,
             NodeType.Spacer,
             NodeType.Divider,
             NodeType.Image,
@@ -109,6 +111,7 @@ class NodeBinderDescriptorGuardTest {
         RowNodePatch::class,
         ColumnNodePatch::class,
         BoxNodePatch::class,
+        AnimatedVisibilityHostNodePatch::class,
         ImageNodePatch::class,
         IconButtonNodePatch::class,
         DividerNodePatch::class,
@@ -140,6 +143,7 @@ class NodeBinderDescriptorGuardTest {
         NodeType.Column -> "Column"
         NodeType.Box -> "Box"
         NodeType.Surface -> "Surface"
+        NodeType.AnimatedVisibilityHost -> "AnimatedVisibilityHost"
         NodeType.Spacer -> "Spacer"
         NodeType.Divider -> "Divider"
         NodeType.Image -> "Image"
@@ -173,6 +177,7 @@ class NodeBinderDescriptorGuardTest {
         is RowNodePatch -> "RowNodePatch"
         is ColumnNodePatch -> "ColumnNodePatch"
         is BoxNodePatch -> "BoxNodePatch"
+        is AnimatedVisibilityHostNodePatch -> "AnimatedVisibilityHostNodePatch"
         is ImageNodePatch -> "ImageNodePatch"
         is IconButtonNodePatch -> "IconButtonNodePatch"
         is DividerNodePatch -> "DividerNodePatch"
@@ -202,6 +207,7 @@ class NodeBinderDescriptorGuardTest {
         is RowNodeProps -> "RowNodeProps"
         is ColumnNodeProps -> "ColumnNodeProps"
         is BoxNodeProps -> "BoxNodeProps"
+        is AnimatedVisibilityHostNodeProps -> "AnimatedVisibilityHostNodeProps"
         is ImageNodeProps -> "ImageNodeProps"
         is IconButtonNodeProps -> "IconButtonNodeProps"
         is DividerNodeProps -> "DividerNodeProps"

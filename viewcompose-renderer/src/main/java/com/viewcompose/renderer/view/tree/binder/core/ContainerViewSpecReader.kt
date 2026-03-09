@@ -6,6 +6,7 @@ import com.viewcompose.ui.layout.HorizontalAlignment
 import com.viewcompose.ui.layout.VerticalAlignment
 import com.viewcompose.ui.node.VNode
 import com.viewcompose.ui.node.spec.AndroidViewNodeProps
+import com.viewcompose.ui.node.spec.AnimatedVisibilityHostNodeProps
 import com.viewcompose.ui.node.spec.BoxNodeProps
 import com.viewcompose.ui.node.spec.ColumnNodeProps
 import com.viewcompose.ui.node.spec.DividerNodeProps
@@ -62,6 +63,16 @@ internal object ContainerViewSpecReader {
         return ContainerViewBinder.DividerSpec(
             color = spec.color,
             thickness = spec.thickness,
+        )
+    }
+
+    fun readAnimatedVisibilityHostSpec(node: VNode): ContainerViewBinder.AnimatedVisibilityHostSpec {
+        val spec = node.requireSpec<AnimatedVisibilityHostNodeProps>()
+        return ContainerViewBinder.AnimatedVisibilityHostSpec(
+            alpha = spec.alpha,
+            widthScale = spec.widthScale,
+            heightScale = spec.heightScale,
+            clipToBounds = spec.clipToBounds,
         )
     }
 

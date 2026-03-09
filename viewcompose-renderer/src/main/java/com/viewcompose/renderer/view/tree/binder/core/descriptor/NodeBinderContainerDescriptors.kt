@@ -2,6 +2,7 @@ package com.viewcompose.renderer.view.tree
 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.spec.AnimatedVisibilityHostNodeProps
 import com.viewcompose.ui.node.spec.BoxNodeProps
 import com.viewcompose.ui.node.spec.ColumnNodeProps
 import com.viewcompose.ui.node.spec.FlowColumnNodeProps
@@ -11,6 +12,7 @@ import com.viewcompose.ui.node.spec.RowNodeProps
 import com.viewcompose.ui.node.spec.ScrollableColumnNodeProps
 import com.viewcompose.ui.node.spec.ScrollableRowNodeProps
 import com.viewcompose.renderer.view.container.DeclarativeBoxLayout
+import com.viewcompose.renderer.view.container.DeclarativeAnimatedVisibilityHostLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowColumnLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowRowLayout
 import com.viewcompose.renderer.view.container.DeclarativeLinearLayout
@@ -42,6 +44,15 @@ internal fun MutableList<NodeBinderDescriptor>.addContainerNodeBinderDescriptors
         apply = { view, patch ->
             ContainerNodePatchApplier.applyBoxPatch(
                 view = view as DeclarativeBoxLayout,
+                patch = patch,
+            )
+        },
+    )
+    val animatedVisibilityHostPatch = patchDescriptor<AnimatedVisibilityHostNodeProps, AnimatedVisibilityHostNodePatch>(
+        factory = { previous, next -> AnimatedVisibilityHostNodePatch(previous, next) },
+        apply = { view, patch ->
+            ContainerNodePatchApplier.applyAnimatedVisibilityHostPatch(
+                view = view as DeclarativeAnimatedVisibilityHostLayout,
                 patch = patch,
             )
         },
@@ -138,6 +149,18 @@ internal fun MutableList<NodeBinderDescriptor>.addContainerNodeBinderDescriptors
                 )
             },
             patch = boxPatch,
+        ),
+    )
+    add(
+        descriptor(
+            nodeType = NodeType.AnimatedVisibilityHost,
+            bind = { view, node ->
+                ContainerViewBinder.bindAnimatedVisibilityHost(
+                    view = view as DeclarativeAnimatedVisibilityHostLayout,
+                    spec = ContainerViewBinder.readAnimatedVisibilityHostSpec(node),
+                )
+            },
+            patch = animatedVisibilityHostPatch,
         ),
     )
     add(

@@ -15,6 +15,7 @@ sealed interface NodeType {
     data object Column : NodeType
     data object Box : NodeType
     data object Surface : NodeType
+    data object AnimatedVisibilityHost : NodeType
     data object Spacer : NodeType
     data object Divider : NodeType
     data object Image : NodeType

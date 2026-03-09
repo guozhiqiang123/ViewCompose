@@ -4,6 +4,7 @@ import com.viewcompose.ui.node.spec.BoxNodeProps
 import com.viewcompose.ui.node.spec.ButtonNodeProps
 import com.viewcompose.ui.node.spec.ColumnNodeProps
 import com.viewcompose.ui.node.spec.DividerNodeProps
+import com.viewcompose.ui.node.spec.AnimatedVisibilityHostNodeProps
 import com.viewcompose.ui.node.spec.FlowColumnNodeProps
 import com.viewcompose.ui.node.spec.FlowRowNodeProps
 import com.viewcompose.ui.node.spec.HorizontalPagerNodeProps
@@ -99,6 +100,11 @@ internal data class ColumnNodePatch(
 internal data class BoxNodePatch(
     val previous: BoxNodeProps,
     val next: BoxNodeProps,
+) : NodeViewPatch
+
+internal data class AnimatedVisibilityHostNodePatch(
+    val previous: AnimatedVisibilityHostNodeProps,
+    val next: AnimatedVisibilityHostNodeProps,
 ) : NodeViewPatch
 
 internal data class ImageNodePatch(

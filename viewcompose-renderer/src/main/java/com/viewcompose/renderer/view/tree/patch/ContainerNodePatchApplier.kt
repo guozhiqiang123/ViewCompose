@@ -4,6 +4,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.viewcompose.ui.node.LazyListItem
 import com.viewcompose.renderer.view.container.DeclarativeBoxLayout
+import com.viewcompose.renderer.view.container.DeclarativeAnimatedVisibilityHostLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowColumnLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowRowLayout
 import com.viewcompose.renderer.view.container.DeclarativeHorizontalPagerLayout
@@ -17,6 +18,7 @@ import com.viewcompose.renderer.view.container.DeclarativeSegmentedControlLayout
 import com.viewcompose.renderer.view.container.DeclarativeTabRowLayout
 import com.viewcompose.renderer.view.container.DeclarativeVerticalPagerLayout
 import com.viewcompose.renderer.view.tree.BoxNodePatch
+import com.viewcompose.renderer.view.tree.AnimatedVisibilityHostNodePatch
 import com.viewcompose.renderer.view.tree.CollectionViewBinder
 import com.viewcompose.renderer.view.tree.ColumnNodePatch
 import com.viewcompose.renderer.view.tree.ContainerViewBinder
@@ -89,6 +91,21 @@ internal object ContainerNodePatchApplier {
                 view.contentGravity = next.contentAlignment.toGravity()
             }
         }
+    }
+
+    fun applyAnimatedVisibilityHostPatch(
+        view: DeclarativeAnimatedVisibilityHostLayout,
+        patch: AnimatedVisibilityHostNodePatch,
+    ) {
+        ContainerViewBinder.bindAnimatedVisibilityHost(
+            view = view,
+            spec = ContainerViewBinder.AnimatedVisibilityHostSpec(
+                alpha = patch.next.alpha,
+                widthScale = patch.next.widthScale,
+                heightScale = patch.next.heightScale,
+                clipToBounds = patch.next.clipToBounds,
+            ),
+        )
     }
 
     fun applyLazyColumnPatch(

@@ -7,6 +7,7 @@ import com.viewcompose.renderer.R
 import com.viewcompose.ui.layout.MainAxisArrangement
 import com.viewcompose.ui.node.VNode
 import com.viewcompose.renderer.view.container.DeclarativeBoxLayout
+import com.viewcompose.renderer.view.container.DeclarativeAnimatedVisibilityHostLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowColumnLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowRowLayout
 import com.viewcompose.renderer.view.container.DeclarativeLinearLayout
@@ -26,6 +27,13 @@ internal object ContainerViewBinder {
     data class DividerSpec(
         val color: Int,
         val thickness: Int,
+    )
+
+    data class AnimatedVisibilityHostSpec(
+        val alpha: Float,
+        val widthScale: Float,
+        val heightScale: Float,
+        val clipToBounds: Boolean,
     )
 
     data class AndroidViewSpec(
@@ -71,6 +79,16 @@ internal object ContainerViewBinder {
         view.contentGravity = spec.gravity
     }
 
+    fun bindAnimatedVisibilityHost(
+        view: DeclarativeAnimatedVisibilityHostLayout,
+        spec: AnimatedVisibilityHostSpec,
+    ) {
+        view.alpha = spec.alpha
+        view.widthScale = spec.widthScale
+        view.heightScale = spec.heightScale
+        view.clipToBounds = spec.clipToBounds
+    }
+
     fun bindFlowRow(
         view: DeclarativeFlowRowLayout,
         spec: FlowRowSpec,
@@ -111,6 +129,10 @@ internal object ContainerViewBinder {
 
     fun readDividerSpec(node: VNode): DividerSpec {
         return ContainerViewSpecReader.readDividerSpec(node)
+    }
+
+    fun readAnimatedVisibilityHostSpec(node: VNode): AnimatedVisibilityHostSpec {
+        return ContainerViewSpecReader.readAnimatedVisibilityHostSpec(node)
     }
 
     fun readAndroidViewSpec(node: VNode): AndroidViewSpec {
