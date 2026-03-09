@@ -26,7 +26,7 @@
 ## 4. 执行步骤
 
 - [x] Step 1：落地执行计划文档并提交
-- [ ] Step 2：新增 animation/gesture 模块并接入构建守卫
+- [x] Step 2：新增 animation/gesture 模块并接入构建守卫
 - [ ] Step 3：统一 MonotonicFrameClock（runtime + core local + host 注入）
 - [ ] Step 4：`ui-contract` 新增 `graphicsLayer` modifier
 - [ ] Step 5：renderer 接入 `graphicsLayer`
@@ -40,7 +40,8 @@
 
 ## 5. 提交记录
 
-1. （待补充）
+1. `0ccf905` docs: add animation and gesture execution plan (compose-like + android-view aware)
+2. （待补充）
 
 ## 6. 阻塞记录
 

@@ -21,6 +21,8 @@ val modulePackageRoots = mapOf(
     "viewcompose-lifecycle" to "com.viewcompose.lifecycle",
     "viewcompose-viewmodel" to "com.viewcompose.viewmodel",
     "viewcompose-preview" to "com.viewcompose.preview",
+    "viewcompose-animation" to "com.viewcompose.animation",
+    "viewcompose-gesture" to "com.viewcompose.gesture",
 )
 
 val kotlinJvmModules = setOf(
@@ -39,6 +41,8 @@ val qaQuickTasks = listOf(
     ":viewcompose-overlay-android:compileDebugKotlin",
     ":viewcompose-image-coil:compileDebugKotlin",
     ":viewcompose-preview:compileDebugKotlin",
+    ":viewcompose-animation:compileDebugKotlin",
+    ":viewcompose-gesture:compileDebugKotlin",
     ":app:compileDebugKotlin",
     ":viewcompose-runtime:test",
     ":viewcompose-ui-contract:test",
@@ -50,6 +54,8 @@ val qaQuickTasks = listOf(
     ":viewcompose-overlay-android:testDebugUnitTest",
     ":viewcompose-image-coil:testDebugUnitTest",
     ":viewcompose-preview:testDebugUnitTest",
+    ":viewcompose-animation:testDebugUnitTest",
+    ":viewcompose-gesture:testDebugUnitTest",
     ":app:testDebugUnitTest",
 )
 

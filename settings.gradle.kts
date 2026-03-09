@@ -32,4 +32,6 @@ include(":viewcompose-benchmark")
 include(":viewcompose-lifecycle")
 include(":viewcompose-viewmodel")
 include(":viewcompose-preview")
+include(":viewcompose-animation")
+include(":viewcompose-gesture")
  
