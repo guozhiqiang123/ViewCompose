@@ -1,24 +1,26 @@
-package com.viewcompose.widget.core
+package com.viewcompose.host.android.runtime
 
 import android.view.Choreographer
 import java.util.WeakHashMap
 
 internal class AndroidChoreographerFrameClock(
-    private val choreographerProvider: () -> Choreographer = { Choreographer.getInstance() },
+    private val choreographer: Choreographer = Choreographer.getInstance(),
 ) : RenderFrameClock {
     private val callbacks = WeakHashMap<RenderFrameCallback, Choreographer.FrameCallback>()
 
     override fun postFrameCallback(callback: RenderFrameCallback) {
-        val frameCallback = callbacks.getOrPut(callback) {
+        val choreographerCallback = callbacks.getOrPut(callback) {
             Choreographer.FrameCallback { frameTimeNanos ->
                 callback.doFrame(frameTimeNanos)
             }
         }
-        choreographerProvider().postFrameCallback(frameCallback)
+        choreographer.postFrameCallback(choreographerCallback)
     }
 
     override fun removeFrameCallback(callback: RenderFrameCallback) {
-        val frameCallback = callbacks.remove(callback) ?: return
-        choreographerProvider().removeFrameCallback(frameCallback)
+        callbacks.remove(callback)?.let { choreographerCallback ->
+            choreographer.removeFrameCallback(choreographerCallback)
+        }
     }
 }
+

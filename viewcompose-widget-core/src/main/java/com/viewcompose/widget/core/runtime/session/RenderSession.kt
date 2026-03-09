@@ -18,18 +18,29 @@ class RenderSession(
     private var mountedNodes: List<Any> = emptyList()
     private var disposed: Boolean = false
     private val overlayRequestStore = OverlayRequestStore()
-    private val frameDispatcher = FrameAlignedRenderDispatcher(
-        frameClock = AndroidChoreographerFrameClock(),
-        onFrameRender = ::render,
-    )
+    private var requestRender: (() -> Unit)? = null
     private val composer = ComposerLite(
         warningLogger = { message -> Log.w(debugTag, message) },
-        onInvalidated = ::scheduleRender,
+        onInvalidated = { requestRender?.invoke() },
     )
+    private val runtime = RenderSessionRuntimeProvider
+        .create(
+            onRenderNow = ::renderNow,
+            onDisposeNow = ::disposeNow,
+        ).also { installedRuntime ->
+            requestRender = installedRuntime::requestRender
+        }
 
     fun render() {
+        runtime.render()
+    }
+
+    fun dispose() {
+        runtime.dispose()
+    }
+
+    private fun renderNow() {
         if (disposed) return
-        frameDispatcher.cancelPending()
         try {
             var tree: List<com.viewcompose.ui.node.VNode> = emptyList()
             if (!composer.hasPendingInvalidations()) {
@@ -67,10 +78,10 @@ class RenderSession(
         }
     }
 
-    fun dispose() {
+    private fun disposeNow() {
         if (disposed) return
         disposed = true
-        frameDispatcher.dispose()
+        requestRender = null
         CoreRenderEngineProvider.engine.disposeMounted(
             container = container,
             mountedNodes = mountedNodes,
@@ -78,11 +89,6 @@ class RenderSession(
         mountedNodes = emptyList()
         overlayHost.clear(overlaySessionId)
         composer.dispose()
-    }
-
-    private fun scheduleRender() {
-        if (disposed) return
-        frameDispatcher.requestFrame()
     }
 
     private companion object {

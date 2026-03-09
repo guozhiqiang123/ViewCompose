@@ -1,4 +1,4 @@
-package com.viewcompose.widget.core
+package com.viewcompose.host.android.runtime
 
 import android.os.Handler
 import android.os.Looper
@@ -62,3 +62,4 @@ internal class FrameAlignedRenderDispatcher(
         cancelPending()
     }
 }
+

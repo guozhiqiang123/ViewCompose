@@ -1,6 +1,7 @@
-package com.viewcompose.widget.core
+package com.viewcompose.host.android.runtime
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.util.ArrayDeque
 import java.util.LinkedHashSet
@@ -103,6 +104,23 @@ class FrameAlignedRenderDispatcherTest {
         assertEquals(1, renders)
     }
 
+    @Test
+    fun `dispose cancels pending callback once`() {
+        val clock = FakeFrameClock()
+        val dispatcher = FrameAlignedRenderDispatcher(
+            frameClock = clock,
+            onFrameRender = {},
+            isMainThread = { true },
+            postToMain = { runnable -> runnable.run() },
+        )
+
+        dispatcher.requestFrame()
+        dispatcher.dispose()
+        dispatcher.dispose()
+
+        assertEquals(1, clock.removeCount)
+    }
+
     private class FakeFrameClock : RenderFrameClock {
         var postCount: Int = 0
         var removeCount: Int = 0
@@ -127,3 +145,4 @@ class FrameAlignedRenderDispatcherTest {
         }
     }
 }
+

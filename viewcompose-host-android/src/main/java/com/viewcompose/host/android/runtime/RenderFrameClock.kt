@@ -1,4 +1,4 @@
-package com.viewcompose.widget.core
+package com.viewcompose.host.android.runtime
 
 internal fun interface RenderFrameCallback {
     fun doFrame(frameTimeNanos: Long)
@@ -9,3 +9,4 @@ internal interface RenderFrameClock {
 
     fun removeFrameCallback(callback: RenderFrameCallback)
 }
+
