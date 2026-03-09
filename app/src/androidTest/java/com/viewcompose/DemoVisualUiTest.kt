@@ -1,6 +1,8 @@
 package com.viewcompose
 
 import android.content.Intent
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.LayerDrawable
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -117,6 +119,26 @@ class DemoVisualUiTest {
                 assertTrue("Expected elevated card z > 0 after click", afterZ > 0f)
                 assertTrue("Expected elevation to remain stable after click", abs(afterElevation - beforeElevation) <= 0.5f)
                 assertTrue("Expected z to remain stable after click", abs(afterZ - beforeZ) <= 0.5f)
+            }
+        }
+    }
+
+    @Test
+    fun modifiersPage_drawableBackgroundOverridesColorBackground() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            ModifiersActivity::class.java,
+        ).putExtra(EXTRA_MODIFIERS_PAGE_INDEX, 0)
+        launchDemoActivity<ModifiersActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            captureDeviceScreenshot("modifiers-drawable-background-light")
+            scenario.onActivity { activity ->
+                val colorOnly = activity.requireViewByTestTagVisible(DemoTestTags.MODIFIERS_DRAWABLE_BACKGROUND_COLOR_ONLY)
+                val drawablePreferred = activity.requireViewByTestTagVisible(DemoTestTags.MODIFIERS_DRAWABLE_BACKGROUND_SAMPLE)
+                assertViewFullyVisible(colorOnly)
+                assertViewFullyVisible(drawablePreferred)
+                assertTrue("Expected color-only sample to use GradientDrawable background", colorOnly.background is GradientDrawable)
+                assertTrue("Expected drawable sample to use layered drawable background", drawablePreferred.background is LayerDrawable)
             }
         }
     }
