@@ -19,7 +19,7 @@
 
 - 技术基线：Kotlin + Android View System
 - SDK：`minSdk 24`、`compileSdk 36`
-- 当前模块：`:viewcompose-runtime`、`:viewcompose-ui-contract`、`:viewcompose-widget-core`、`:viewcompose-renderer`、`:viewcompose-host-android`、`:viewcompose-overlay-android`、`:viewcompose-image-coil`、`:viewcompose-lifecycle`、`:viewcompose-viewmodel`、`:viewcompose-preview`、`:viewcompose-benchmark`、`:app`
+- 当前模块：`:viewcompose-runtime`、`:viewcompose-ui-contract`、`:viewcompose-animation`、`:viewcompose-gesture`、`:viewcompose-widget-core`、`:viewcompose-renderer`、`:viewcompose-host-android`、`:viewcompose-overlay-android`、`:viewcompose-image-coil`、`:viewcompose-lifecycle`、`:viewcompose-viewmodel`、`:viewcompose-preview`、`:viewcompose-benchmark`、`:app`
 
 ### 2.1 模块职责
 
@@ -27,6 +27,8 @@
 | --- | --- | --- |
 | `viewcompose-runtime` | 状态与读依赖观察（`state/observation`） | 纯 Kotlin/JVM 模块；主源码禁止 `android.*` / `androidx.*`，构建不引入 AndroidX 依赖 |
 | `viewcompose-ui-contract` | 纯 Kotlin UI 契约层（`Modifier`、`VNode/NodeSpec`、layout 枚举、collection/state 协议） | 主源码禁止 `android.*` / `androidx.*` |
+| `viewcompose-animation` | 平台无关动画 API（`AnimationSpec`、`Animatable`、`animate*AsState`、`Transition`、`AnimatedVisibility/Content`） | 动画驱动统一使用 `MonotonicFrameClock` + coroutine；不直接依赖 Android View 动画实现 |
+| `viewcompose-gesture` | 平台无关手势 API（`pointerInput`、`combinedClickable`、`draggable/swipeable/transformable`） | 仅定义手势语义与状态；平台事件分发由 renderer/host 承接 |
 | `viewcompose-widget-core` | DSL、Theme/Defaults、Local 与 overlay 声明契约 | 不依赖 `viewcompose-renderer`；不放 Android 宿主入口 API |
 | `viewcompose-renderer` | Android View 渲染实现（reconcile、binder、patch、container） | 只消费 `ui-contract`，不承载业务 DSL |
 | `viewcompose-host-android` | Android 宿主运行时与入口（`setUiContent/renderInto/RenderSession`、`AndroidView/nativeView`、宿主 Local 注入） | 只做平台执行与注入，不承载业务 DSL |
@@ -47,6 +49,7 @@
 3. overlay：声明契约与平台实现已分层
 4. 节点语义已完成 `NodeSpec-only` 收口（无 `Props` 双轨）
 5. 生命周期与 ViewModel 协作 API 已从 `widget-core` 拆分到独立模块，宿主自动注入能力保持不变
+6. 动画与手势已形成“平台无关主链 + Android interop 扩展”双层模型（animation/gesture + host interop）
 
 ### 2.3 `app` 目录落位基线
 
@@ -204,6 +207,14 @@ flowchart TD
 2. Android Studio Preview 与 Paparazzi 必须共享 `PreviewCatalog` 单源，禁止双份示例维护。
 3. overlay 在 preview 场景仅允许静态内容模拟；真实窗口行为继续由 instrumentation 覆盖。
 4. 新增组件（或关键复合组件）必须同轮补 `PreviewSpec` 与 Paparazzi 快照基线。
+
+### 4.13 动画与手势边界
+
+1. `viewcompose-animation` 与 `viewcompose-gesture` 只承载平台无关 API；不内嵌 Android View 具体实现。
+2. `graphicsLayer` 是主链动画承载能力；与 `alpha/offset/elevation/zIndex` 冲突时，以 `graphicsLayer` 同语义字段优先。
+3. Android 高阶动画（`TransitionManager/MotionLayout/Animator`）只能通过 `viewcompose-host-android` 的 interop 入口接入，禁止回流到平台无关主链。
+4. renderer 手势消费规则固定为“手势先消费，未消费再回落 clickable”，并维持方向锁 + slop + priority 的冲突策略。
+5. 列表/分页动画默认 opt-in（`Modifier.lazyContainerMotion(...)`），并与 `Modifier.lazyContainerReuse(...)` 兼容，不改变未启用容器行为。
 
 ## 5. 当前热点与风险
 

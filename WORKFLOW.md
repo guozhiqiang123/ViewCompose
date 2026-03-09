@@ -258,6 +258,16 @@
 4. preview 模块禁止依赖 `:app`，禁止 import demo 包路径。
 5. overlay 在 preview 场景只允许静态模拟，真实弹窗行为回归必须落在 instrumentation。
 
+## 5.16 动画与手势约束
+
+涉及动画/手势能力新增或改造时，必须遵守：
+
+1. 平台无关主链能力放 `:viewcompose-animation` / `:viewcompose-gesture`，禁止把 Android 具体实现回流到这两个模块。
+2. Android 高阶动画能力（`TransitionManager/MotionLayout/Animator`）仅允许通过 `:viewcompose-host-android` interop API 暴露。
+3. `graphicsLayer` 语义变更必须同步补 renderer patch/rebind 稳定性测试，禁止通过全量 rebind 兜底。
+4. 手势事件消费规则固定为“手势优先，未消费再 clickable 回落”；涉及冲突策略修改时必须补“子手势 vs 父滚动容器”回归。
+5. 列表/分页动画能力默认 opt-in；改动 `lazyContainerMotion` 或 `lazyContainerReuse` 语义时必须补容器回归与文档说明。
+
 ## 6. 线程中断恢复原则
 
 如果聊天线程丢失、附件损坏或上下文中断，恢复顺序固定为：

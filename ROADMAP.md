@@ -35,6 +35,7 @@
 10. 宿主公开诊断回调已收口到 core 自有类型（`RenderStats/RenderTreeResult`），host API 不再泄漏 renderer 实现类型
 11. overlay 默认装配已改为 `OverlayHostFactoryProvider + ServiceLoader`，无实现时稳定回退 no-op（移除反射路径）
 12. 开发预览模块已落地：`viewcompose-preview` 提供 Compose Preview bridge + `PreviewCatalog` + Paparazzi 快照回归（`qaPreview`）
+13. 动画与手势模块已落地：`viewcompose-animation` + `viewcompose-gesture`（Compose-like API + renderer 手势分发 + lazy/pager motion 策略 + Android interop）
 
 ### 2.2 Demo 与验证层
 
@@ -43,7 +44,7 @@
 3. instrumentation 已覆盖关键 smoke 回归路径，延迟 session 容器专项已覆盖 `LazyVerticalGrid`、`HorizontalPager`、`VerticalPager` 与 `ModalBottomSheet`
 4. 基线更新（2026-03-08）：tag-first UI 测试迁移与关键组件族 smoke 已完成；当前 `qaQuick` 可通过，`qaFull` 存在 1 条已知失败（`DemoVisualUiTest.inputSearch_focusSearchBar_doesNotAutoScrollList`，详见 `app/build/reports/androidTests/connected/debug/index.html`）。
 
-## 2.3 里程碑进度快照（2026-03-08）
+## 2.3 里程碑进度快照（2026-03-09）
 
 | Milestone | 状态 | 完成态字段（C/U/D/UI） | 说明 |
 | --- | --- | --- | --- |
@@ -52,6 +53,7 @@
 | C：Input 与表单态增强 | Next | C:✅ U:✅ D:✅ UI:⚠ | 已补 Input/Navigation smoke 基线；focus/IME/表单组合专项仍待系统化补齐 |
 | D：Diagnostics + Performance 联动 | In Progress | C:✅ U:✅ D:✅ UI:✅ | 已补 `DiffUtil + payload`、`SlotTable Lite` 子树重组与 `SkipSubtree/skippedSubtrees` 主路径，下一步聚焦可视化与发布态优化 |
 | E：开发预览与截图回归 | In Progress | C:✅ U:✅ D:✅ UI:✅ | `viewcompose-preview` + Compose Preview + Paparazzi + `qaPreview` 已落地；下一步补全新增组件自动缺口提示与深色快照集 |
+| F：动画与手势首轮覆盖 | In Progress | C:✅ U:✅ D:✅ UI:✅ | 已完成 `viewcompose-animation`/`viewcompose-gesture`、`graphicsLayer`、renderer 手势分发、列表 motion、demo+preview+screenshot 覆盖；下一步补强更复杂嵌套手势与动画性能画像 |
 
 ## 3. 统一设计原则
 
@@ -73,6 +75,8 @@
 | Diagnostics | 基础 render/layout 诊断已落地 | locals/render tree/patch 可视化与告警可读性 |
 | UI Testing | 核心 instrumentation 路径已建立 | 扩展容器专项、overlay 宿主专项、主题断言覆盖 |
 | Developer Preview | Compose Preview bridge + Paparazzi 快照链路已建立（`qaPreview` 可执行） | 继续扩展预览覆盖域与快照矩阵（Dark/Tablet） |
+| Animation | `viewcompose-animation` 已提供 Compose-like 动画 API（`animate*AsState/Animatable/Transition/Animated*`） | retarget/cancel 压测、性能画像、更多复杂场景样例 |
+| Gesture | `viewcompose-gesture` + renderer dispatcher 已支持 tap/drag/swipe/transform 与消费回落策略 | 深化嵌套滚动冲突策略、复杂手势并发场景回归 |
 | Performance | 已有 viewcompose-benchmark 基线，且 `DiffUtil + payload + SlotTable Lite + subtree skip` 主路径已落地 | 继续扩大 skip 覆盖、增强诊断指标、推进发布态优化 |
 
 ### 4.1 完成态字段定义（C/U/D/UI）
@@ -153,6 +157,21 @@
 
 1. 性能回归具备可量化证据
 2. 诊断面板能直观定位高频问题
+
+### Milestone F：动画与手势首轮覆盖
+
+交付：
+
+1. `viewcompose-animation`：`AnimationSpec`、`Animatable`、`animate*AsState`、`Transition`、`AnimatedVisibility/AnimatedContent/Crossfade/animateContentSize`
+2. `viewcompose-gesture`：`pointerInput`、`combinedClickable`、`draggable/swipeable/transformable` 与状态对象
+3. `graphicsLayer` + renderer patch 语义接入，Android 高阶动画 interop（`TransitionManager/MotionLayout/Animator`）
+4. demo 与 preview 覆盖：Animation/Gestures 可执行示例、PreviewCatalog 与 Paparazzi 快照
+
+完成标准：
+
+1. 新能力默认 opt-in，不破坏现有组件/容器行为
+2. 手势消费回落策略稳定（`gesture consumed -> no clickable fallback`）
+3. `qaQuick` 与 `qaPreview` 通过，设备可用时 `qaFull` 通过
 
 ## 6. 测试与 Demo 的统一门禁
 
