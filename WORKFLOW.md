@@ -77,13 +77,15 @@
 统一命令入口：
 
 1. 快速门禁：`./gradlew qaQuick`
-2. 全量门禁：`./gradlew qaFull`
+2. 预览快照门禁：`./gradlew qaPreview`
+3. 全量门禁：`./gradlew qaFull`
 
 说明：
 
 1. `qaQuick` = 核心模块编译 + unit test
-2. `qaFull` = `qaQuick` + `:app:connectedDebugAndroidTest`
-3. 能力标记为“完成”前，默认要求 `qaFull` 通过；若当前缺设备或存在临时豁免，必须在 roadmap 写明豁免范围和补齐时间
+2. `qaPreview` = `:viewcompose-preview:verifyPaparazziDebug`（开发预览截图回归）
+3. `qaFull` = `qaQuick` + `:app:connectedDebugAndroidTest`
+4. 能力标记为“完成”前，默认要求 `qaFull` 通过；若当前缺设备或存在临时豁免，必须在 roadmap 写明豁免范围和补齐时间
 
 ## 5. 新增代码归类原则
 
@@ -245,6 +247,16 @@
 1. `viewcompose-ui-contract` 仅维护 modifier 元素与 builder API，禁止放 renderer 运行策略提取函数。
 2. 容器策略提取（如 `lazyContainerReusePolicy/focusFollowKeyboardPolicy`）必须落在 renderer `core/modifier` 子域。
 3. 若新增策略类型，必须同时补充 renderer 单测，覆盖默认值与“链式最后覆盖”语义。
+
+## 5.15 开发预览约束
+
+涉及组件新增、组件行为调整或视觉语义调整时，必须同步维护开发预览资产：
+
+1. `:viewcompose-preview` 的 `PreviewCatalog` 是预览单源，新增组件时必须补 `PreviewSpec`。
+2. Paparazzi 快照测试必须消费同一份 `PreviewCatalog`，禁止单独维护第二套截图样例。
+3. `qaPreview` 为硬门禁；修改组件视觉语义后必须更新快照基线并通过 `verifyPaparazziDebug`。
+4. preview 模块禁止依赖 `:app`，禁止 import demo 包路径。
+5. overlay 在 preview 场景只允许静态模拟，真实弹窗行为回归必须落在 instrumentation。
 
 ## 6. 线程中断恢复原则
 

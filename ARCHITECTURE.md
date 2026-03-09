@@ -19,7 +19,7 @@
 
 - 技术基线：Kotlin + Android View System
 - SDK：`minSdk 24`、`compileSdk 36`
-- 当前模块：`:viewcompose-runtime`、`:viewcompose-ui-contract`、`:viewcompose-widget-core`、`:viewcompose-renderer`、`:viewcompose-host-android`、`:viewcompose-overlay-android`、`:viewcompose-image-coil`、`:viewcompose-lifecycle`、`:viewcompose-viewmodel`、`:viewcompose-benchmark`、`:app`
+- 当前模块：`:viewcompose-runtime`、`:viewcompose-ui-contract`、`:viewcompose-widget-core`、`:viewcompose-renderer`、`:viewcompose-host-android`、`:viewcompose-overlay-android`、`:viewcompose-image-coil`、`:viewcompose-lifecycle`、`:viewcompose-viewmodel`、`:viewcompose-preview`、`:viewcompose-benchmark`、`:app`
 
 ### 2.1 模块职责
 
@@ -34,6 +34,7 @@
 | `viewcompose-image-coil` | 远程图片加载桥接（`RemoteImageLoader` Android 实现） | 通过平台无关 target 契约接入，不回流核心渲染逻辑 |
 | `viewcompose-lifecycle` | 生命周期感知的状态收集 API（`collectAsStateWithLifecycle`）与生命周期 Local 对外入口 | 不承载 Android 视图实现；不新增宿主注入逻辑 |
 | `viewcompose-viewmodel` | ViewModel/SavedStateHandle 协作 API（`viewModel`、`savedStateHandle`）与 ViewModel Local 对外入口 | 不承载 Android 视图实现；不新增宿主注入逻辑 |
+| `viewcompose-preview` | 开发预览与截图回归（Compose Preview bridge、PreviewCatalog、Paparazzi） | 仅开发态能力；不参与 app 运行时入口；禁止依赖 `:app` |
 | `viewcompose-benchmark` | 宏基准入口与性能回归数据采集 | 不承载业务 demo 与框架语义逻辑 |
 | `app` | demo、manual verification、ui tests 入口 | 不承载框架核心实现 |
 
@@ -196,6 +197,13 @@ flowchart TD
 2. 约束范围覆盖 `src/main`、`src/test`、`src/androidTest`，测试源码不允许例外包根。
 3. Android 模块 `namespace` 必须与该模块包根一致（`viewcompose-ui-contract` 作为 Kotlin/JVM 模块例外）。
 4. lifecycle/viewmodel 的 Local 对外 API 包名固定为 `com.viewcompose.lifecycle` 与 `com.viewcompose.viewmodel`，并且源码归属必须落在对应模块，不得回流 `widget-core`。
+
+### 4.12 开发预览边界
+
+1. 开发预览能力集中在 `:viewcompose-preview`，不允许回流 `app` 或核心运行时模块。
+2. Android Studio Preview 与 Paparazzi 必须共享 `PreviewCatalog` 单源，禁止双份示例维护。
+3. overlay 在 preview 场景仅允许静态内容模拟；真实窗口行为继续由 instrumentation 覆盖。
+4. 新增组件（或关键复合组件）必须同轮补 `PreviewSpec` 与 Paparazzi 快照基线。
 
 ## 5. 当前热点与风险
 

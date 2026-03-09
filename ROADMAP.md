@@ -34,6 +34,7 @@
 9. `viewcompose-runtime` 已硬切为纯 Kotlin/JVM，并补齐 `policy/snapshot/observation/invalidation/composer` 核心测试分支
 10. 宿主公开诊断回调已收口到 core 自有类型（`RenderStats/RenderTreeResult`），host API 不再泄漏 renderer 实现类型
 11. overlay 默认装配已改为 `OverlayHostFactoryProvider + ServiceLoader`，无实现时稳定回退 no-op（移除反射路径）
+12. 开发预览模块已落地：`viewcompose-preview` 提供 Compose Preview bridge + `PreviewCatalog` + Paparazzi 快照回归（`qaPreview`）
 
 ### 2.2 Demo 与验证层
 
@@ -50,6 +51,7 @@
 | B：Collections 与容器扩展 | In Progress | C:✅ U:✅ D:✅ UI:✅ | 已补 `LazyVerticalGrid/HorizontalPager/VerticalPager` 专项回归，并新增 rotate-order 可见刷新断言（`qaFull` 21/21）；下一步聚焦 sticky headers 与 list state 抽象 |
 | C：Input 与表单态增强 | Next | C:✅ U:✅ D:✅ UI:⚠ | 已补 Input/Navigation smoke 基线；focus/IME/表单组合专项仍待系统化补齐 |
 | D：Diagnostics + Performance 联动 | In Progress | C:✅ U:✅ D:✅ UI:✅ | 已补 `DiffUtil + payload`、`SlotTable Lite` 子树重组与 `SkipSubtree/skippedSubtrees` 主路径，下一步聚焦可视化与发布态优化 |
+| E：开发预览与截图回归 | In Progress | C:✅ U:✅ D:✅ UI:✅ | `viewcompose-preview` + Compose Preview + Paparazzi + `qaPreview` 已落地；下一步补全新增组件自动缺口提示与深色快照集 |
 
 ## 3. 统一设计原则
 
@@ -70,6 +72,7 @@
 | Interop | `AndroidView` 可用 | 强化复杂原生 View 场景与主题/生命周期协同 |
 | Diagnostics | 基础 render/layout 诊断已落地 | locals/render tree/patch 可视化与告警可读性 |
 | UI Testing | 核心 instrumentation 路径已建立 | 扩展容器专项、overlay 宿主专项、主题断言覆盖 |
+| Developer Preview | Compose Preview bridge + Paparazzi 快照链路已建立（`qaPreview` 可执行） | 继续扩展预览覆盖域与快照矩阵（Dark/Tablet） |
 | Performance | 已有 viewcompose-benchmark 基线，且 `DiffUtil + payload + SlotTable Lite + subtree skip` 主路径已落地 | 继续扩大 skip 覆盖、增强诊断指标、推进发布态优化 |
 
 ### 4.1 完成态字段定义（C/U/D/UI）
