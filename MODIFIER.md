@@ -15,7 +15,7 @@
 5. 列表容器复用策略支持 `Modifier.lazyContainerReuse(sharePool, disableItemAnimator)`，默认不共享池
 6. 容器键盘跟随策略支持 `Modifier.focusFollowKeyboard(enabled)`，`enabled=true` 时由容器级 focus coordinator 统一执行最小滚动，避免 state 刷新与键盘跟随抢锚点
 7. `focusFollowKeyboard` 当前已覆盖 `LazyColumn`、`LazyVerticalGrid`、`VerticalPager`、`ScrollableColumn`；`LazyRow`、`HorizontalPager`、`ScrollableRow` 保持水平语义，不执行键盘上顶
-8. 背景资源支持 `Modifier.backgroundDrawableRes(resId)`；与 `backgroundColor` 同时存在时，drawable 优先；仅 `clip()` 时裁剪内容
+8. 背景资源支持 `Modifier.backgroundDrawableRes(resId)`；与 `backgroundColor` 同时存在时，drawable 优先；当同时存在 `cornerRadius` 时自动裁剪内容，`clip()` 仍可作为通用强制裁剪开关
 
 ## 3. 角色边界
 

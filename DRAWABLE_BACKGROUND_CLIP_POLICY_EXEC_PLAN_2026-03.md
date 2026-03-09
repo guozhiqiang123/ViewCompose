@@ -15,7 +15,7 @@
 ## 3. 执行步骤
 
 - [x] Step 1 新增执行文档并提交（本文件）。
-- [ ] Step 2 更新规范文档：声明 `backgroundDrawableRes + cornerRadius` 自动裁剪语义。
+- [x] Step 2 更新规范文档：声明 `backgroundDrawableRes + cornerRadius` 自动裁剪语义。
 - [ ] Step 3 renderer 实现调整：按新触发条件设置 `clipToOutline`。
 - [ ] Step 4 demo 与 UI 测试更新：去掉示例中的显式 `.clip()` 并补充断言。
 - [ ] Step 5 回归：`qaQuick` + 目标 UI 用例验证。
@@ -23,8 +23,8 @@
 ## 4. 提交记录
 
 1. （待补充）
+2. `2aa0b3b` docs: add drawable background clip policy execution plan
 
 ## 5. 阻塞记录
 
 当前无阻塞。
-
