@@ -35,7 +35,7 @@ fun InfiniteTransition.animateFloat(
     }
     val frameClock = LocalMonotonicFrameClock.current
     val animationCoroutineContext = LocalAnimationCoroutineContext.current
-    DisposableEffect(initialValue, targetValue, animationSpec, frameClock) {
+    DisposableEffect(initialValue, targetValue, animationSpec, frameClock, animationCoroutineContext) {
         val scope = CoroutineScope(SupervisorJob() + animationCoroutineContext)
         val job = scope.launch(start = CoroutineStart.UNDISPATCHED) {
             var from = initialValue
