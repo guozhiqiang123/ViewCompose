@@ -106,11 +106,15 @@ class NodeBindingDifferTest {
     }
 
     @Test
-    fun `rebinds when modifier changes`() {
+    fun `patches when modifier changes and node has patch factory`() {
         val previous = textNode()
         val next = textNode(modifier = Modifier.padding(8))
 
-        assertSame(NodeBindingPlan.Rebind, NodeBindingDiffer.plan(previous, next))
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is TextNodePatch)
+        assertTrue(plan.modifierChanged)
     }
 
     @Test
@@ -124,6 +128,22 @@ class NodeBindingDifferTest {
             type = NodeType.Spacer,
             spec = UnknownNodeSpec(value = 2),
             modifier = Modifier,
+        )
+
+        assertSame(NodeBindingPlan.Rebind, NodeBindingDiffer.plan(previous, next))
+    }
+
+    @Test
+    fun `rebinds when modifier changes but node has no patch factory`() {
+        val previous = VNode(
+            type = NodeType.Spacer,
+            spec = UnknownNodeSpec(value = 1),
+            modifier = Modifier,
+        )
+        val next = VNode(
+            type = NodeType.Spacer,
+            spec = UnknownNodeSpec(value = 1),
+            modifier = Modifier.padding(8),
         )
 
         assertSame(NodeBindingPlan.Rebind, NodeBindingDiffer.plan(previous, next))
