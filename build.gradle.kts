@@ -20,8 +20,13 @@ val modulePackageRoots = mapOf(
     "viewcompose-viewmodel" to "com.viewcompose.viewmodel",
 )
 
+val kotlinJvmModules = setOf(
+    "viewcompose-ui-contract",
+    "viewcompose-runtime",
+)
+
 val qaQuickTasks = listOf(
-    ":viewcompose-runtime:compileDebugKotlin",
+    ":viewcompose-runtime:compileKotlin",
     ":viewcompose-ui-contract:compileKotlin",
     ":viewcompose-host-android:compileDebugKotlin",
     ":viewcompose-lifecycle:compileDebugKotlin",
@@ -31,7 +36,7 @@ val qaQuickTasks = listOf(
     ":viewcompose-overlay-android:compileDebugKotlin",
     ":viewcompose-image-coil:compileDebugKotlin",
     ":app:compileDebugKotlin",
-    ":viewcompose-runtime:testDebugUnitTest",
+    ":viewcompose-runtime:test",
     ":viewcompose-ui-contract:test",
     ":viewcompose-host-android:testDebugUnitTest",
     ":viewcompose-lifecycle:testDebugUnitTest",
@@ -92,7 +97,7 @@ tasks.register("verifyAndroidModuleNamespaces") {
         val violations = mutableListOf<String>()
 
         modulePackageRoots.forEach { (module, expectedNamespace) ->
-            if (module == "viewcompose-ui-contract") return@forEach
+            if (module in kotlinJvmModules) return@forEach
             val buildFile = rootDir.resolve(module).resolve("build.gradle.kts")
             if (!buildFile.exists()) {
                 violations += "$module -> missing build.gradle.kts"

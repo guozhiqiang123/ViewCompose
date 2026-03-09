@@ -28,7 +28,7 @@
 
 - [x] Step 1 新增执行计划文档并首提
 - [x] Step 2 runtime 硬切为 Kotlin/JVM
-- [ ] Step 3 同步 `qaQuick` runtime 任务链
+- [x] Step 3 同步 `qaQuick` runtime 任务链
 - [ ] Step 4 新增 runtime 纯度守卫并接入门禁
 - [ ] Step 5 扩充 runtime 核心测试矩阵
 - [ ] Step 6 文档收口（ARCHITECTURE/WORKFLOW/ROADMAP）
@@ -38,7 +38,8 @@
 
 - `DONE` docs: add runtime purity and test coverage execution plan
 - `DONE` build: hard-switch runtime module to pure kotlin-jvm
+- `DONE` build: align qaQuick runtime tasks with kotlin-jvm module
 
 ## 6. 阻塞记录
 
-- 2026-03-09: Step 2 后根 `qaQuick` 旧 runtime 任务名（`compileDebugKotlin/testDebugUnitTest`）失效，按计划在 Step 3 同步任务链恢复；Step 2 已用 `:viewcompose-runtime:compileKotlin :viewcompose-runtime:test` 验证通过。
+- 2026-03-09: Step 2 后根 `qaQuick` 旧 runtime 任务名（`compileDebugKotlin/testDebugUnitTest`）失效，Step 3 已完成任务链适配并恢复 `qaQuick/qaFull` 通过。
