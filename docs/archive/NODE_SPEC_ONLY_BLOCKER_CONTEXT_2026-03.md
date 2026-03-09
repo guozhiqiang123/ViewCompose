@@ -31,3 +31,8 @@
 1. Ensure at least one Android device/emulator is online (`adb devices` should show `device`).
 2. Re-run:
    - `./gradlew qaFull`
+
+## 7. Resolution
+
+- `2026-03-09`: blocker resolved.
+- Verification: `./gradlew qaFull` passed with connected device tests (`32/32`).
