@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.kotlin.jvm) apply false
 }
 
@@ -18,6 +19,7 @@ val modulePackageRoots = mapOf(
     "viewcompose-benchmark" to "com.viewcompose.benchmark",
     "viewcompose-lifecycle" to "com.viewcompose.lifecycle",
     "viewcompose-viewmodel" to "com.viewcompose.viewmodel",
+    "viewcompose-preview" to "com.viewcompose.preview",
 )
 
 val kotlinJvmModules = setOf(
@@ -35,6 +37,7 @@ val qaQuickTasks = listOf(
     ":viewcompose-widget-core:compileDebugKotlin",
     ":viewcompose-overlay-android:compileDebugKotlin",
     ":viewcompose-image-coil:compileDebugKotlin",
+    ":viewcompose-preview:compileDebugKotlin",
     ":app:compileDebugKotlin",
     ":viewcompose-runtime:test",
     ":viewcompose-ui-contract:test",
@@ -45,6 +48,7 @@ val qaQuickTasks = listOf(
     ":viewcompose-widget-core:testDebugUnitTest",
     ":viewcompose-overlay-android:testDebugUnitTest",
     ":viewcompose-image-coil:testDebugUnitTest",
+    ":viewcompose-preview:testDebugUnitTest",
     ":app:testDebugUnitTest",
 )
 

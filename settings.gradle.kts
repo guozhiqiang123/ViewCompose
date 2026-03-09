@@ -31,4 +31,5 @@ include(":viewcompose-image-coil")
 include(":viewcompose-benchmark")
 include(":viewcompose-lifecycle")
 include(":viewcompose-viewmodel")
+include(":viewcompose-preview")
  
