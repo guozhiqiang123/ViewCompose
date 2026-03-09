@@ -61,3 +61,4 @@
 
 - 2026-03-08: Step 3 尝试执行 `qaFull`，`connectedDebugAndroidTest` 因设备离线失败（No online devices found）。
 - 2026-03-08: 最终收口再次执行 `qaFull`，`connectedDebugAndroidTest` 仍因设备离线失败（No online devices found）。
+- 2026-03-09: 设备恢复后执行 `qaFull` 通过（Pixel 4 XL - 13，32/32），上述阻塞已解除。
