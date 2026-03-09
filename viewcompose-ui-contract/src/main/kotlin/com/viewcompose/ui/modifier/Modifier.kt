@@ -145,6 +145,31 @@ data class ZIndexModifierElement(
     val zIndex: Float,
 ) : ModifierElement
 
+data class TransformOrigin(
+    val pivotFractionX: Float,
+    val pivotFractionY: Float,
+) {
+    companion object {
+        val Center = TransformOrigin(
+            pivotFractionX = 0.5f,
+            pivotFractionY = 0.5f,
+        )
+    }
+}
+
+data class GraphicsLayerModifierElement(
+    val scaleX: Float? = null,
+    val scaleY: Float? = null,
+    val rotationZ: Float? = null,
+    val rotationX: Float? = null,
+    val rotationY: Float? = null,
+    val translationX: Float? = null,
+    val translationY: Float? = null,
+    val alpha: Float? = null,
+    val transformOrigin: TransformOrigin? = null,
+    val clip: Boolean? = null,
+) : ModifierElement
+
 data class LazyContainerReuseModifierElement(
     val sharePool: Boolean,
     val disableItemAnimator: Boolean,
@@ -427,6 +452,34 @@ fun Modifier.offset(
 fun Modifier.zIndex(zIndex: Float): Modifier {
     return then(
         ZIndexModifierElement(zIndex),
+    )
+}
+
+fun Modifier.graphicsLayer(
+    scaleX: Float? = null,
+    scaleY: Float? = null,
+    rotationZ: Float? = null,
+    rotationX: Float? = null,
+    rotationY: Float? = null,
+    translationX: Float? = null,
+    translationY: Float? = null,
+    alpha: Float? = null,
+    transformOrigin: TransformOrigin? = null,
+    clip: Boolean? = null,
+): Modifier {
+    return then(
+        GraphicsLayerModifierElement(
+            scaleX = scaleX,
+            scaleY = scaleY,
+            rotationZ = rotationZ,
+            rotationX = rotationX,
+            rotationY = rotationY,
+            translationX = translationX,
+            translationY = translationY,
+            alpha = alpha,
+            transformOrigin = transformOrigin,
+            clip = clip,
+        ),
     )
 }
 
