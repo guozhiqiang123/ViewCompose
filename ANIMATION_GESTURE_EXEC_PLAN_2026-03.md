@@ -30,7 +30,7 @@
 - [x] Step 3：统一 MonotonicFrameClock（runtime + core local + host 注入）
 - [x] Step 4：`ui-contract` 新增 `graphicsLayer` modifier
 - [x] Step 5：renderer 接入 `graphicsLayer`
-- [ ] Step 6：animation 模块落地 Compose-like 动画 API
+- [x] Step 6：animation 模块落地 Compose-like 动画 API
 - [ ] Step 7：host-android 增加 AndroidAnimationInterop
 - [ ] Step 8：容器 motion 策略（lazy/pager）
 - [ ] Step 9：ui-contract + gesture 模块落地 pointer/gesture API
@@ -44,7 +44,8 @@
 2. `ef15848` build: add animation and gesture modules with package-root guards
 3. `14baee1` feat: add host-provided monotonic frame clock for composition animation runtime
 4. `29d1001` feat: add graphics-layer style modifier contract for animated transforms
-5. （待补充）
+5. `a931e5d` refactor: apply graphics-layer modifier in renderer with stable patch semantics
+6. （本次提交）feat: add compose-like animation core apis and transition primitives
 
 ## 6. 阻塞记录
 
