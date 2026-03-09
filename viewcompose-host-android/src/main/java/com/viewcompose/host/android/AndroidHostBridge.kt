@@ -10,11 +10,11 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelStoreOwner
 import com.viewcompose.lifecycle.ProvideLifecycleOwner
-import com.viewcompose.renderer.view.tree.RenderStats
-import com.viewcompose.renderer.view.tree.RenderTreeResult
 import com.viewcompose.viewmodel.ProvideViewModelStoreOwner
 import com.viewcompose.widget.core.OverlayHost
 import com.viewcompose.widget.core.OverlayHostDefaults
+import com.viewcompose.widget.core.RenderStats
+import com.viewcompose.widget.core.RenderTreeResult
 import com.viewcompose.widget.core.UiEnvironment
 import com.viewcompose.widget.core.UiTreeBuilder
 import java.util.WeakHashMap

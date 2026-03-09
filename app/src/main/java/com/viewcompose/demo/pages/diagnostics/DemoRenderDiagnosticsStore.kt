@@ -1,11 +1,12 @@
 package com.viewcompose
 
-import com.viewcompose.renderer.view.tree.RenderStructureStats
-import com.viewcompose.renderer.view.tree.RenderTreeResult
+import com.viewcompose.widget.core.RenderStats
+import com.viewcompose.widget.core.RenderStructureStats
+import com.viewcompose.widget.core.RenderTreeResult
 
 internal data class DemoRenderSnapshot(
     val renderCount: Int = 0,
-    val stats: com.viewcompose.renderer.view.tree.RenderStats = com.viewcompose.renderer.view.tree.RenderStats(),
+    val stats: RenderStats = RenderStats(),
     val structure: RenderStructureStats = RenderStructureStats(),
     val warnings: List<String> = emptyList(),
     val updatedAtMillis: Long = 0L,

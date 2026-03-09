@@ -1,11 +1,11 @@
 package com.viewcompose.host.android
 
 import android.view.ViewGroup
-import com.viewcompose.renderer.view.tree.RenderStats
-import com.viewcompose.renderer.view.tree.RenderTreeResult
 import com.viewcompose.host.android.runtime.ensureAndroidCoreRenderEngineInstalled
 import com.viewcompose.widget.core.OverlayHost
 import com.viewcompose.widget.core.OverlayHostDefaults
+import com.viewcompose.widget.core.RenderStats
+import com.viewcompose.widget.core.RenderTreeResult
 import com.viewcompose.widget.core.UiTreeBuilder
 
 class RenderSession internal constructor(
@@ -36,12 +36,8 @@ fun renderInto(
         debug = debug,
         debugTag = debugTag,
         overlayHost = overlayHost,
-        onRenderStats = { stats ->
-            (stats as? RenderStats)?.let { onRenderStats?.invoke(it) }
-        },
-        onRenderResult = { result ->
-            (result as? RenderTreeResult)?.let { onRenderResult?.invoke(it) }
-        },
+        onRenderStats = onRenderStats,
+        onRenderResult = onRenderResult,
     )
     session.render()
     return RenderSession(session)

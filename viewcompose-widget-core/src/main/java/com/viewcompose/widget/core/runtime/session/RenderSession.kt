@@ -11,8 +11,8 @@ class RenderSession(
     private val debug: Boolean = false,
     private val debugTag: String = "ViewCompose",
     private val overlayHost: OverlayHost = OverlayHostDefaults.noOp,
-    private val onRenderStats: ((Any) -> Unit)? = null,
-    private val onRenderResult: ((Any) -> Unit)? = null,
+    private val onRenderStats: ((RenderStats) -> Unit)? = null,
+    private val onRenderResult: ((RenderTreeResult) -> Unit)? = null,
 ) {
     private val overlaySessionId = OverlaySessionId("render-session-${nextOverlaySessionId.incrementAndGet()}")
     private var mountedNodes: List<Any> = emptyList()
@@ -70,8 +70,10 @@ class RenderSession(
             if (debug && frame.renderResult == null) {
                 Log.d(debugTag, "Rendered ${tree.size} root nodes")
             }
-            onRenderStats?.invoke(frame.renderStats ?: Unit)
-            onRenderResult?.invoke(frame.renderResult ?: Unit)
+            onRenderStats?.invoke(frame.renderStats)
+            frame.renderResult?.let { result ->
+                onRenderResult?.invoke(result)
+            }
             composer.commitSideEffects()
         } catch (e: Exception) {
             Log.e(debugTag, "Render failed, keeping previous view tree", e)

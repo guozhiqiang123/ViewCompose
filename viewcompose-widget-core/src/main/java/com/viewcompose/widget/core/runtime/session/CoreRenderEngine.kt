@@ -23,8 +23,8 @@ interface CoreRenderEngine {
 
 data class CoreRenderFrame(
     val mountedNodes: List<Any>,
-    val renderStats: Any? = null,
-    val renderResult: Any? = null,
+    val renderStats: RenderStats = RenderStats(),
+    val renderResult: RenderTreeResult? = null,
 )
 
 fun installCoreRenderEngine(engine: CoreRenderEngine) {
