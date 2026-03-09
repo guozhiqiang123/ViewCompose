@@ -73,7 +73,9 @@ renderer 侧避免“单目录平铺”，按职责拆到二级目录：
 2. `viewcompose-renderer/src/main/java/.../view/tree/binder/core`
    - 绑定流程核心（factory/differ/plan/registry/modifier）
    - `NodeBinderDescriptors` 是 bind/patch/diff 元数据单源注册表（禁止并行映射）
+   - descriptor 源文件固定收敛在 `core/descriptor/`，禁止回流平铺到 `core/` 根目录
    - `ViewModifierApplier` 仅作 facade，具体职责拆到 `core/modifier` 子模块
+   - 容器策略提取（如 lazy reuse / focus follow）位于 renderer `core/modifier`，不放在 `ui-contract` 的 `Modifier` 声明文件中
 3. `viewcompose-renderer/src/main/java/.../view/tree/binder/widget`
    - 分控件 binder 实现（content/input/media/feedback/collection 等）
 4. `viewcompose-renderer/src/main/java/.../view/lazy/{adapter,focus,layout,reuse,session,state}`
@@ -108,7 +110,8 @@ flowchart TD
 1. `Modifier`：通用修饰与 scoped parent-data。
 2. 组件语义参数：走组件 DSL 参数 + `NodeSpec`。
 3. 主题默认值：走 `Theme -> Defaults`，不把主题直接做成通用 modifier。
-4. 禁止新增 `Props/TypedPropKeys/PropKeys/node.props` 动态语义路径。
+4. `viewcompose-ui-contract` 的 `Modifier` 文件只承载“元素声明 + builder”；运行时策略提取（policy resolver）必须下沉到 renderer。
+5. 禁止新增 `Props/TypedPropKeys/PropKeys/node.props` 动态语义路径。
 
 对应规范：
 
@@ -183,8 +186,9 @@ flowchart TD
 
 1. `NodeViewBinderRegistry` 与 `NodeBindingDiffer` 的 bind/patch/diff 映射必须从 `NodeBinderDescriptors` 单源派生，禁止新增并行手工 map。
 2. 新增 `NodeType` 或新增 `NodeViewPatch` 时，只允许修改 descriptor 源；不得同时改 registry/differ 的独立映射分支。
-3. `ViewModifierApplier` 仅负责编排，不承载具体细节实现；样式/交互/insets/容器策略必须分别落在 `core/modifier` 子职责对象。
-4. 任何绕过 descriptor 的快速修复都视为架构违规，必须在同一迭代回补为单源注册。
+3. descriptor 源文件必须落在 `view/tree/binder/core/descriptor/`，`core/` 根目录禁止新增 `NodeBinder*.kt` 平铺文件。
+4. `ViewModifierApplier` 仅负责编排，不承载具体细节实现；样式/交互/insets/容器策略必须分别落在 `core/modifier` 子职责对象。
+5. 任何绕过 descriptor 的快速修复都视为架构违规，必须在同一迭代回补为单源注册。
 
 ### 4.11 模块单包根边界
 

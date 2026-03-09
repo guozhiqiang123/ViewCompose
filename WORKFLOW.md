@@ -199,6 +199,8 @@
 2. 禁止在 `NodeViewBinderRegistry` 或 `NodeBindingDiffer` 新增并行手工映射表。
 3. 新增节点能力时必须先补 descriptor，再补对应 binder/patch 逻辑。
 4. 变更完成后必须跑 descriptor guard tests，确保覆盖与一致性无缺口。
+5. `NodeBinder*.kt` 源码必须放在 `view/tree/binder/core/descriptor/`，禁止平铺回 `core/` 根目录。
+6. 若目录结构回退，必须在同一提交恢复目录收敛并补结构守卫测试。
 
 ## 5.10 模块依赖边界约束
 
@@ -235,6 +237,14 @@
 2. `host-android` 对外 API（`setUiContent`/`renderInto`）禁止暴露 renderer 诊断类型；统一使用 core 诊断类型 `RenderStats`/`RenderTreeResult`。
 3. lazy item 子会话与 overlay surface 子会话必须通过会话契约创建，禁止直接 new 平台具体实现类。
 4. 相关重构必须补边界守卫测试，至少覆盖“禁止 renderer 类型泄漏到 host public API”与“provider 缺失回退 no-op”两条路径。
+
+## 5.14 Modifier 契约与策略提取边界
+
+涉及 `Modifier` 或容器策略（reuse/focus follow）相关改动时，必须遵守：
+
+1. `viewcompose-ui-contract` 仅维护 modifier 元素与 builder API，禁止放 renderer 运行策略提取函数。
+2. 容器策略提取（如 `lazyContainerReusePolicy/focusFollowKeyboardPolicy`）必须落在 renderer `core/modifier` 子域。
+3. 若新增策略类型，必须同时补充 renderer 单测，覆盖默认值与“链式最后覆盖”语义。
 
 ## 6. 线程中断恢复原则
 
