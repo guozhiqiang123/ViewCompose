@@ -1,6 +1,14 @@
 package com.viewcompose.renderer.modifier
 
-import com.viewcompose.ui.modifier.*
+import com.viewcompose.renderer.view.tree.FocusFollowKeyboardPolicy
+import com.viewcompose.renderer.view.tree.LazyContainerReusePolicy
+import com.viewcompose.renderer.view.tree.focusFollowKeyboardPolicy
+import com.viewcompose.renderer.view.tree.lazyContainerReusePolicy
+import com.viewcompose.ui.modifier.FocusFollowKeyboardModifierElement
+import com.viewcompose.ui.modifier.LazyContainerReuseModifierElement
+import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.focusFollowKeyboard
+import com.viewcompose.ui.modifier.lazyContainerReuse
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue

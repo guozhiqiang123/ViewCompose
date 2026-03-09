@@ -4,8 +4,6 @@ import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.viewcompose.renderer.R
-import com.viewcompose.ui.modifier.focusFollowKeyboardPolicy
-import com.viewcompose.ui.modifier.lazyContainerReusePolicy
 import com.viewcompose.ui.node.NodeType
 import com.viewcompose.ui.node.VNode
 import com.viewcompose.renderer.view.container.DeclarativeHorizontalPagerLayout
