@@ -26,7 +26,7 @@
 ## 4. Checklist
 
 - [x] Step 1 新增执行计划文档并首提
-- [ ] Step 2 descriptor 分域拆分并保留单源聚合
+- [x] Step 2 descriptor 分域拆分并保留单源聚合
 - [ ] Step 3 descriptor 结构与覆盖守卫测试
 - [ ] Step 4 modifier 运行策略提取下沉到 renderer（硬切）
 - [ ] Step 5 policy 测试迁移到 renderer
@@ -36,6 +36,7 @@
 ## 5. 提交记录
 
 - `DONE` docs: add p3 boundary refinement execution plan
+- `DONE` refactor: split node binder descriptors by domain with single-source aggregator
 
 ## 6. 阻塞记录
 
