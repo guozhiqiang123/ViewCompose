@@ -53,6 +53,7 @@
 | `BUSINESS_LOCAL_EXT_EXEC_PLAN_2026-03.md` | 已完成的业务侧自定义 Local 扩展执行计划（统一 Local API、去除旧调用方式） |
 | `NODE_SPEC_ONLY_EXECUTION_PLAN_2026-03.md` | 已完成的 `VNode.props` 全量移除与 NodeSpec-only 迁移执行计划 |
 | `NODE_SPEC_ONLY_BLOCKER_CONTEXT_2026-03.md` | NodeSpec-only 收口阶段 `qaFull` 设备离线阻塞与解除记录 |
+| `RECOMPOSITION_LITE_EXEC_PLAN_2026-03.md` | 已完成的 SlotTable Lite + 子树级重组执行计划 |
 | `RECOMPOSITION_LITE_BLOCKER_CONTEXT_2026-03.md` | Recomposition Lite 收口阶段 instrumentation 阻塞与解除记录 |
 | `VIEWMODEL_LIFECYCLE_MODULE_SPLIT_EXEC_PLAN_2026-03.md` | 已完成的 ViewModel/Lifecycle 模块化拆分执行计划（双模块 + 新包名硬切） |
 | `FRAME_ALIGNED_SCHEDULER_EXEC_PLAN_2026-03.md` | 已完成的 RenderSession 帧对齐调度执行计划（Choreographer/frame-aligned scheduling） |
