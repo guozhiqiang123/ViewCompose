@@ -2,11 +2,12 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.paparazzi)
 }
 
 android {
     namespace = "com.viewcompose.preview"
-    compileSdk = 36
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 24
@@ -24,6 +25,17 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
+}
+
+configurations.configureEach {
+    resolutionStrategy.force(
+        "androidx.core:core:1.15.0",
+        "androidx.core:core-ktx:1.15.0",
+    )
 }
 
 dependencies {
@@ -31,13 +43,11 @@ dependencies {
     implementation(project(":viewcompose-widget-core"))
     implementation(project(":viewcompose-host-android"))
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     testImplementation(libs.junit)
+    testImplementation(libs.paparazzi)
 }

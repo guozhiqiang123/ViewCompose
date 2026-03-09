@@ -33,7 +33,7 @@ import com.viewcompose.widget.core.sp
 private fun ContentCatalogPreview(
     @PreviewParameter(ContentPreviewSpecProvider::class) specRef: PreviewSpecRef,
 ) {
-    CatalogPreviewEntry(specRef)
+    PreviewCatalogSpecScreen(specId = specRef.id)
 }
 
 @Preview(
@@ -46,7 +46,7 @@ private fun ContentCatalogPreview(
 private fun InputCatalogPreview(
     @PreviewParameter(InputPreviewSpecProvider::class) specRef: PreviewSpecRef,
 ) {
-    CatalogPreviewEntry(specRef)
+    PreviewCatalogSpecScreen(specId = specRef.id)
 }
 
 @Preview(
@@ -59,7 +59,7 @@ private fun InputCatalogPreview(
 private fun ContainerCatalogPreview(
     @PreviewParameter(ContainerPreviewSpecProvider::class) specRef: PreviewSpecRef,
 ) {
-    CatalogPreviewEntry(specRef)
+    PreviewCatalogSpecScreen(specId = specRef.id)
 }
 
 @Preview(
@@ -72,7 +72,7 @@ private fun ContainerCatalogPreview(
 private fun CollectionCatalogPreview(
     @PreviewParameter(CollectionPreviewSpecProvider::class) specRef: PreviewSpecRef,
 ) {
-    CatalogPreviewEntry(specRef)
+    PreviewCatalogSpecScreen(specId = specRef.id)
 }
 
 @Preview(
@@ -85,7 +85,7 @@ private fun CollectionCatalogPreview(
 private fun NavigationCatalogPreview(
     @PreviewParameter(NavigationPreviewSpecProvider::class) specRef: PreviewSpecRef,
 ) {
-    CatalogPreviewEntry(specRef)
+    PreviewCatalogSpecScreen(specId = specRef.id)
 }
 
 @Preview(
@@ -98,7 +98,7 @@ private fun NavigationCatalogPreview(
 private fun FeedbackCatalogPreview(
     @PreviewParameter(FeedbackPreviewSpecProvider::class) specRef: PreviewSpecRef,
 ) {
-    CatalogPreviewEntry(specRef)
+    PreviewCatalogSpecScreen(specId = specRef.id)
 }
 
 @Preview(
@@ -111,15 +111,16 @@ private fun FeedbackCatalogPreview(
 private fun ModifierCatalogPreview(
     @PreviewParameter(ModifierPreviewSpecProvider::class) specRef: PreviewSpecRef,
 ) {
-    CatalogPreviewEntry(specRef)
+    PreviewCatalogSpecScreen(specId = specRef.id)
 }
 
 @Composable
-private fun CatalogPreviewEntry(
-    specRef: PreviewSpecRef,
+internal fun PreviewCatalogSpecScreen(
+    specId: String,
+    themeMode: PreviewThemeMode = PreviewThemeMode.Light,
 ) {
-    val spec = PreviewCatalog.require(specRef.id)
-    ViewComposePreviewSurface(themeMode = PreviewThemeMode.Light) {
+    val spec = PreviewCatalog.require(specId)
+    ViewComposePreviewSurface(themeMode = themeMode) {
         Column(
             spacing = 10.dp,
             modifier = Modifier
