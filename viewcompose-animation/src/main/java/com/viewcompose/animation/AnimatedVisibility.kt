@@ -171,9 +171,9 @@ fun UiTreeBuilder.AnimatedVisibility(
     val visibleState = remember {
         MutableTransitionState(visible)
     }
-    visibleState.targetState = visible
     animatedVisibilityCore(
         visibleState = visibleState,
+        targetVisible = visible,
         modifier = modifier,
         enter = enter,
         exit = exit,
@@ -190,6 +190,7 @@ fun UiTreeBuilder.AnimatedVisibility(
 ) {
     animatedVisibilityCore(
         visibleState = visibleState,
+        targetVisible = visibleState.targetState,
         modifier = modifier,
         enter = enter,
         exit = exit,
@@ -207,9 +208,9 @@ fun RowScope.AnimatedVisibility(
     val visibleState = remember {
         MutableTransitionState(visible)
     }
-    visibleState.targetState = visible
     animatedVisibilityCore(
         visibleState = visibleState,
+        targetVisible = visible,
         modifier = modifier,
         enter = enter,
         exit = exit,
@@ -226,6 +227,7 @@ fun RowScope.AnimatedVisibility(
 ) {
     animatedVisibilityCore(
         visibleState = visibleState,
+        targetVisible = visibleState.targetState,
         modifier = modifier,
         enter = enter,
         exit = exit,
@@ -243,9 +245,9 @@ fun ColumnScope.AnimatedVisibility(
     val visibleState = remember {
         MutableTransitionState(visible)
     }
-    visibleState.targetState = visible
     animatedVisibilityCore(
         visibleState = visibleState,
+        targetVisible = visible,
         modifier = modifier,
         enter = enter,
         exit = exit,
@@ -262,6 +264,7 @@ fun ColumnScope.AnimatedVisibility(
 ) {
     animatedVisibilityCore(
         visibleState = visibleState,
+        targetVisible = visibleState.targetState,
         modifier = modifier,
         enter = enter,
         exit = exit,
@@ -271,6 +274,7 @@ fun ColumnScope.AnimatedVisibility(
 
 private fun UiTreeBuilder.animatedVisibilityCore(
     visibleState: MutableTransitionState<Boolean>,
+    targetVisible: Boolean,
     modifier: Modifier,
     enter: EnterTransition,
     exit: ExitTransition,
@@ -285,7 +289,7 @@ private fun UiTreeBuilder.animatedVisibilityCore(
     val stateMachine = remember(visibleState) {
         AnimatedVisibilityStateMachine(initialVisible = visibleState.currentState)
     }
-    val beforeSnapshot = stateMachine.beforeAnimation(targetVisible = visibleState.targetState)
+    val beforeSnapshot = stateMachine.beforeAnimation(targetVisible = targetVisible)
     val targetAlpha = when (beforeSnapshot.phase) {
         AnimatedVisibilityPhase.PreEnter,
         AnimatedVisibilityPhase.Visible,
@@ -359,7 +363,7 @@ private fun UiTreeBuilder.animatedVisibilityCore(
         widthScaleState.value.isApproximately(targetWidthScale) &&
         heightScaleState.value.isApproximately(targetHeightScale)
     val afterSnapshot = stateMachine.afterAnimation(
-        targetVisible = visibleState.targetState,
+        targetVisible = targetVisible,
         enterFinished = enterFinished,
         exitFinished = exitFinished,
     )
@@ -372,8 +376,9 @@ private fun UiTreeBuilder.animatedVisibilityCore(
         AnimatedVisibilityPhase.PostExit,
         -> true
     }
-    visibleState.isIdle = (afterSnapshot.phase == AnimatedVisibilityPhase.Visible && visibleState.targetState) ||
-        (afterSnapshot.phase == AnimatedVisibilityPhase.Idle && !visibleState.targetState)
+    visibleState.targetState = targetVisible
+    visibleState.isIdle = (afterSnapshot.phase == AnimatedVisibilityPhase.Visible && targetVisible) ||
+        (afterSnapshot.phase == AnimatedVisibilityPhase.Idle && !targetVisible)
     if (!afterSnapshot.shouldRender) {
         return
     }
