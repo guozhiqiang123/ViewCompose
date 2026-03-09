@@ -32,7 +32,7 @@
 - [x] Step 4 新增 runtime 纯度守卫并接入门禁
 - [x] Step 5 扩充 runtime 核心测试矩阵
 - [x] Step 6 文档收口（ARCHITECTURE/WORKFLOW/ROADMAP）
-- [ ] Step 7 执行计划归档
+- [x] Step 7 执行计划归档
 
 ## 5. 提交记录
 
@@ -42,8 +42,10 @@
 - `DONE` test: add runtime purity guard for imports and dependencies
 - `DONE` test: expand runtime coverage for snapshot observation and composition core
 - `DONE` docs: codify runtime purity boundary and coverage baseline
+- `DONE` docs: close and archive runtime purity and test coverage plan
 
 ## 6. 阻塞记录
 
 - 2026-03-09: Step 2 后根 `qaQuick` 旧 runtime 任务名（`compileDebugKotlin/testDebugUnitTest`）失效，Step 3 已完成任务链适配并恢复 `qaQuick/qaFull` 通过。
 - 2026-03-09: Step 5 里程碑 `qaFull` 受 instrumentation 已知失败阻塞：`ComponentFamilySmokeUiTest.keyComponentFamilies_haveVisibleSmokeAnchors` 在同一真机的双目标（USB + mDNS）执行中失败并触发进程崩溃；runtime 相关 `qaQuick` 与 `:viewcompose-runtime:test --rerun-tasks` 已通过。
+- 2026-03-09: Step 7 最终收口再次执行 `qaFull`，同一 instrumentation 用例与同一双目标设备现象复现；本计划按“runtime 范围已完成 + instrumentation 阻塞已登记”关闭归档。
