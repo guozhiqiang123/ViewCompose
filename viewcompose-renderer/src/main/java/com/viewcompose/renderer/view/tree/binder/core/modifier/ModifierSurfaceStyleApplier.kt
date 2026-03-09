@@ -5,9 +5,11 @@ import android.graphics.Color
 import android.graphics.Outline
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.LayerDrawable
 import android.graphics.drawable.RippleDrawable
 import android.view.View
 import android.view.ViewOutlineProvider
+import androidx.appcompat.content.res.AppCompatResources
 import com.viewcompose.renderer.R
 import com.viewcompose.ui.modifier.CornerRadiusModifierElement
 import com.viewcompose.renderer.modifier.ResolvedModifiers
@@ -49,6 +51,7 @@ internal object ModifierSurfaceStyleApplier {
         }
         applyBackgroundAndInteraction(
             view = view,
+            backgroundDrawableResId = null,
             backgroundColor = backgroundColor,
             borderWidth = borderWidth,
             borderColor = borderColor,
@@ -65,6 +68,7 @@ internal object ModifierSurfaceStyleApplier {
     ) {
         applyBackgroundAndInteraction(
             view = view,
+            backgroundDrawableResId = nodeStyle.backgroundDrawableResId,
             backgroundColor = nodeStyle.backgroundColor,
             borderWidth = nodeStyle.borderWidth,
             borderColor = nodeStyle.borderColor,
@@ -77,6 +81,7 @@ internal object ModifierSurfaceStyleApplier {
 
     fun applyBackgroundAndInteraction(
         view: View,
+        backgroundDrawableResId: Int?,
         backgroundColor: Int?,
         borderWidth: Int,
         borderColor: Int,
@@ -88,16 +93,29 @@ internal object ModifierSurfaceStyleApplier {
         val hasCorner = cornerRadius != null &&
             (cornerRadius.topStart > 0 || cornerRadius.topEnd > 0 ||
                 cornerRadius.bottomEnd > 0 || cornerRadius.bottomStart > 0)
-        val hasCustomShape = backgroundColor != null || hasCorner || borderWidth > 0
+        val backgroundDrawable = backgroundDrawableResId
+            ?.let { loadBackgroundDrawable(view, it) }
+        val hasCustomShape = backgroundDrawable != null || backgroundColor != null || hasCorner || borderWidth > 0
         if (hasCustomShape) {
-            view.background = createBackgroundDrawable(
-                backgroundColor = backgroundColor ?: Color.TRANSPARENT,
-                borderWidth = borderWidth,
-                borderColor = borderColor,
-                cornerRadius = cornerRadius,
-                rippleColor = rippleColor,
-                clickable = clickable,
-            )
+            view.background = if (backgroundDrawable != null) {
+                createDrawableResourceBackground(
+                    backgroundDrawable = backgroundDrawable,
+                    borderWidth = borderWidth,
+                    borderColor = borderColor,
+                    cornerRadius = cornerRadius,
+                    rippleColor = rippleColor,
+                    clickable = clickable,
+                )
+            } else {
+                createBackgroundDrawable(
+                    backgroundColor = backgroundColor ?: Color.TRANSPARENT,
+                    borderWidth = borderWidth,
+                    borderColor = borderColor,
+                    cornerRadius = cornerRadius,
+                    rippleColor = rippleColor,
+                    clickable = clickable,
+                )
+            }
             view.foreground = null
         } else {
             restoreOriginalBackground(view)
@@ -152,6 +170,46 @@ internal object ModifierSurfaceStyleApplier {
         return RippleDrawable(
             ColorStateList.valueOf(rippleColor),
             content,
+            GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                setColor(Color.WHITE)
+                if (borderWidth > 0) {
+                    setStroke(borderWidth, borderColor)
+                }
+                applyCornerRadiusToDrawable(this, cornerRadius)
+            },
+        )
+    }
+
+    private fun createDrawableResourceBackground(
+        backgroundDrawable: Drawable,
+        borderWidth: Int,
+        borderColor: Int,
+        cornerRadius: CornerRadiusModifierElement?,
+        rippleColor: Int,
+        clickable: Boolean,
+    ): Drawable {
+        val layeredContent = if (borderWidth > 0) {
+            LayerDrawable(
+                arrayOf(
+                    backgroundDrawable,
+                    GradientDrawable().apply {
+                        shape = GradientDrawable.RECTANGLE
+                        setColor(Color.TRANSPARENT)
+                        setStroke(borderWidth, borderColor)
+                        applyCornerRadiusToDrawable(this, cornerRadius)
+                    },
+                ),
+            )
+        } else {
+            backgroundDrawable
+        }
+        if (!clickable) {
+            return layeredContent
+        }
+        return RippleDrawable(
+            ColorStateList.valueOf(rippleColor),
+            layeredContent,
             GradientDrawable().apply {
                 shape = GradientDrawable.RECTANGLE
                 setColor(Color.WHITE)
@@ -220,5 +278,13 @@ internal object ModifierSurfaceStyleApplier {
         // Apply rounded outline for shadow, but only clip content when clip() is explicitly requested.
         view.clipToOutline = forceClip
         view.invalidateOutline()
+    }
+
+    private fun loadBackgroundDrawable(
+        view: View,
+        backgroundDrawableResId: Int,
+    ): Drawable? {
+        return AppCompatResources.getDrawable(view.context, backgroundDrawableResId)
+            ?.mutate()
     }
 }
