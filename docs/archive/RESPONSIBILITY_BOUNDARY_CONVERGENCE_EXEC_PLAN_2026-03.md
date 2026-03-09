@@ -30,7 +30,7 @@
 - [x] Step 4 host 回调类型硬切为 renderer-agnostic 诊断类型
 - [x] Step 5 overlay 默认装配改为 ServiceLoader 契约
 - [x] Step 6 边界守卫与回归补齐
-- [ ] Step 7 文档收口与归档
+- [x] Step 7 文档收口与归档
 
 ## 5. 提交记录
 
@@ -40,6 +40,8 @@
 - `DONE` refactor: hard-cut host render callbacks to renderer-agnostic diagnostics types
 - `DONE` refactor: replace overlay reflection contract with service-provider host factory
 - `DONE` test: add boundary guards for session runtime and diagnostics API decoupling
+- `DONE` docs: codify host-owned session execution and diagnostics boundaries
+- `DONE` docs: close and archive responsibility boundary convergence plan
 
 ## 6. 阻塞记录
 

@@ -59,6 +59,7 @@
 | `VIEWMODEL_LIFECYCLE_MODULE_SPLIT_EXEC_PLAN_2026-03.md` | 已完成的 ViewModel/Lifecycle 模块化拆分执行计划（双模块 + 新包名硬切） |
 | `FRAME_ALIGNED_SCHEDULER_EXEC_PLAN_2026-03.md` | 已完成的 RenderSession 帧对齐调度执行计划（Choreographer/frame-aligned scheduling） |
 | `RENDERER_COMPLEXITY_CONVERGENCE_EXEC_PLAN_2026-03.md` | 已完成的 renderer 复杂度收敛执行计划（ViewModifierApplier 分层 + binder/differ descriptor 单源化） |
+| `RESPONSIBILITY_BOUNDARY_CONVERGENCE_EXEC_PLAN_2026-03.md` | 已完成的职责边界收口执行计划（P1+P2 硬切：host 会话执行归位、诊断类型解耦、overlay SPI 装配） |
 | `RUNTIME_PURITY_TEST_COVERAGE_EXEC_PLAN_2026-03.md` | 已完成的 runtime 纯度与测试覆盖收口执行计划（Kotlin/JVM 硬切 + 核心分支测试矩阵补齐） |
 | `WIDGET_CORE_RENDERER_DECOUPLE_EXEC_PLAN_2026-03.md` | 已完成的 widget-core 与 renderer 依赖解耦执行计划（ui-contract + host-android 分层硬切） |
 | `WIDGET_CORE_RENDERER_DECOUPLE_BLOCKER_CONTEXT_2026-03.md` | widget-core 解耦阶段 `qaFull` 设备离线阻塞与解除记录 |
