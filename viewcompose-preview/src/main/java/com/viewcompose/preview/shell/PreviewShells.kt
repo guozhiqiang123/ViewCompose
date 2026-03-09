@@ -24,7 +24,9 @@ internal fun ViewComposePreviewSurface(
     ViewComposePreview(
         modifier = androidx.compose.ui.Modifier,
         options = ViewComposePreviewOptions(theme = themeMode),
-        content = content,
+        content = { _ ->
+            content.invoke(this)
+        },
     )
 }
 

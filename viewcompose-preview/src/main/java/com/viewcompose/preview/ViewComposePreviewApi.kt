@@ -1,5 +1,6 @@
 package com.viewcompose.preview
 
+import android.view.ViewGroup
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.viewcompose.preview.host.PreviewThemeMode
@@ -21,7 +22,7 @@ data class ViewComposePreviewOptions(
 fun ViewComposePreview(
     modifier: Modifier = Modifier,
     options: ViewComposePreviewOptions = ViewComposePreviewOptions(),
-    content: UiTreeBuilder.() -> Unit,
+    content: UiTreeBuilder.(ViewGroup) -> Unit,
 ) {
     ViewComposePreviewHost(
         modifier = modifier,

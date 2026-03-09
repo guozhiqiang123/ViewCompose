@@ -20,7 +20,7 @@ private fun DemoPreviewChapterLightPreview() {
             theme = ViewComposePreviewTheme.Light,
             debugTag = "DemoPreviewChapterLight",
         ),
-    ) {
+    ) { _ ->
         PreviewPage(initialPageIndex = 0)
     }
 }
@@ -39,7 +39,27 @@ private fun DemoPreviewChapterDarkPreview() {
             theme = ViewComposePreviewTheme.Dark,
             debugTag = "DemoPreviewChapterDark",
         ),
-    ) {
+    ) { _ ->
         PreviewPage(initialPageIndex = 1)
+    }
+}
+
+
+@Preview(
+    name = "Demo Catalog Dark",
+    group = "Demo/Preview",
+    widthDp = 411,
+    heightDp = 891,
+    showBackground = true,
+)
+@Composable
+private fun DemoPreviewCatalogPageDarkPreview() {
+    ViewComposePreview(
+        options = ViewComposePreviewOptions(
+            theme = ViewComposePreviewTheme.Dark,
+            debugTag = "DemoPreviewChapterDark",
+        ),
+    ) { root ->
+        DemoCatalogPage(root)
     }
 }

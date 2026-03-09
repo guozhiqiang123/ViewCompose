@@ -29,7 +29,7 @@ fun ViewComposePreviewHost(
     debug: Boolean = false,
     debugTag: String = "ViewComposePreview",
     overlayHost: OverlayHost = OverlayHostDefaults.noOp,
-    content: UiTreeBuilder.() -> Unit,
+    content: UiTreeBuilder.(ViewGroup) -> Unit,
 ) {
     val renderController = remember { PreviewRenderController() }
     val latestContent = rememberUpdatedState(content)
@@ -60,7 +60,7 @@ fun ViewComposePreviewHost(
                                 PreviewThemeMode.Dark -> UiThemeDefaults.dark()
                             },
                         ) {
-                            latestContent.value.invoke(this)
+                            latestContent.value.invoke(this, container)
                         }
                     }
                 },
