@@ -32,7 +32,7 @@
 - [x] Step 3 `ModifierSurfaceStyleApplier` 增加 drawable 分支与优先级
 - [x] Step 4 文档同步：`MODIFIER.md` 新增 API、优先级与组合语义
 - [x] Step 5 demo 用例 + instrumentation 回归补充（drawable 可见与状态切换稳定）
-- [x] Step 6 收口：`qaQuick` + `qaFull`，同步本文档状态（`qaFull` 存在既有 instrumentation 崩溃阻塞，见阻塞记录）
+- [x] Step 6 收口：`qaQuick` + `qaFull`，同步本文档状态
 
 ## 4. 提交记录
 
@@ -46,5 +46,5 @@
 
 ## 5. 阻塞记录
 
-1. `2026-03-09` 运行 `./gradlew qaFull` 时，`ComponentFamilySmokeUiTest#keyComponentFamilies_haveVisibleSmokeAnchors` 在设备侧出现 `Process crashed`，导致 `:app:connectedDebugAndroidTest` 失败。
-2. 同轮验证中，新增用例 `./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.viewcompose.DemoVisualUiTest#modifiersPage_drawableBackgroundOverridesColorBackground` 已通过。
+1. `2026-03-09` 首次 `qaFull` 出现过 `ComponentFamilySmokeUiTest#keyComponentFamilies_haveVisibleSmokeAnchors` 进程崩溃；同日重跑 `./gradlew qaFull` 已通过（33/33）。
+2. 新增用例 `./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.viewcompose.DemoVisualUiTest#modifiersPage_drawableBackgroundOverridesColorBackground` 已通过。
