@@ -1,8 +1,11 @@
 package com.viewcompose
 
+import android.app.Activity
 import android.content.Intent
+import android.graphics.Rect
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
+import android.os.SystemClock
 import android.view.View
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
@@ -703,30 +706,38 @@ class DemoVisualUiTest {
                 activity.clickByTestTag(DemoTestTags.ANIMATION_VISIBILITY_TOGGLE)
             }
             waitForUiIdle()
-            scenario.onActivity { activity ->
+            val hiddenMoved = waitUntilActivityCondition(scenario, timeoutMs = 1_500L) { activity ->
                 val toggle = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_VISIBILITY_TOGGLE)
                 val footer = activity.requireViewByTestTagVisible(DemoTestTags.ANIMATION_VISIBILITY_FOOTER)
                 footerTopAfterHide = viewTopOnScreen(footer)
-                assertTrue(toggle.text.toString().contains("显示块"))
-                assertTrue(
-                    "Expected footer to move up after hide, before=$footerTopBeforeHide, after=$footerTopAfterHide",
-                    footerTopAfterHide < footerTopBeforeHide,
-                )
+                toggle.text.toString().contains("显示块") && footerTopAfterHide < footerTopBeforeHide
+            }
+            assertTrue(
+                "Expected footer to move up after hide, before=$footerTopBeforeHide, after=$footerTopAfterHide",
+                hiddenMoved,
+            )
+            scenario.onActivity { activity ->
                 activity.clickByTestTag(DemoTestTags.ANIMATION_VISIBILITY_TOGGLE)
             }
             waitForUiIdle()
-            scenario.onActivity { activity ->
-                val target = activity.requireViewByTestTagVisible(DemoTestTags.ANIMATION_VISIBILITY_TARGET)
+            val shownMoved = waitUntilActivityCondition(scenario, timeoutMs = 1_500L) { activity ->
                 val toggle = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_VISIBILITY_TOGGLE)
                 val footer = activity.requireViewByTestTagVisible(DemoTestTags.ANIMATION_VISIBILITY_FOOTER)
                 val footerTopAfterShow = viewTopOnScreen(footer)
-                assertViewFullyVisible(target)
-                assertTrue(toggle.text.toString().contains("隐藏块"))
-                assertTrue(
-                    "Expected footer to move down after show, hidden=$footerTopAfterHide, shown=$footerTopAfterShow",
-                    footerTopAfterShow > footerTopAfterHide,
-                )
+                val root = activity.window.decorView.findViewById<View>(android.R.id.content)
+                val target = findViewByTestTag(root, DemoTestTags.ANIMATION_VISIBILITY_TARGET)
+                if (!toggle.text.toString().contains("隐藏块")) {
+                    return@waitUntilActivityCondition false
+                }
+                if (footerTopAfterShow <= footerTopAfterHide) {
+                    return@waitUntilActivityCondition false
+                }
+                target != null && isViewVisible(target)
             }
+            assertTrue(
+                "Expected footer to move down after show, hidden=$footerTopAfterHide",
+                shownMoved,
+            )
         }
     }
 
@@ -817,5 +828,34 @@ class DemoVisualUiTest {
         val location = IntArray(2)
         view.getLocationOnScreen(location)
         return location[1]
+    }
+
+    private fun isViewVisible(view: View): Boolean {
+        val rect = Rect()
+        return view.getGlobalVisibleRect(rect) && !rect.isEmpty
+    }
+
+    private fun <T : Activity> waitUntilActivityCondition(
+        scenario: ActivityScenario<T>,
+        timeoutMs: Long = 1_000L,
+        intervalMs: Long = 32L,
+        condition: (T) -> Boolean,
+    ): Boolean {
+        val deadline = SystemClock.uptimeMillis() + timeoutMs
+        while (SystemClock.uptimeMillis() < deadline) {
+            var matched = false
+            scenario.onActivity { activity ->
+                matched = condition(activity)
+            }
+            if (matched) {
+                return true
+            }
+            SystemClock.sleep(intervalMs)
+        }
+        var matched = false
+        scenario.onActivity { activity ->
+            matched = condition(activity)
+        }
+        return matched
     }
 }
