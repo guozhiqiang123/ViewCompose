@@ -90,6 +90,7 @@ private suspend fun <T> runOneShotAnimation(
     val endVector = converter.toVector(endValue)
     val durationNanos = durationNanos(animationSpec).coerceAtLeast(1L)
     val startNanos = frameClock.awaitFrameNanos()
+    var completed = false
     while (kotlin.coroutines.coroutineContext.isActive) {
         val frameNanos = frameClock.awaitFrameNanos()
         val playNanos = (frameNanos - startNanos).coerceAtLeast(0L)
@@ -107,10 +108,13 @@ private suspend fun <T> runOneShotAnimation(
         }
         onValue(converter.fromVector(vector))
         if (fraction >= 1f) {
+            completed = true
             break
         }
     }
-    onValue(endValue)
+    if (completed) {
+        onValue(endValue)
+    }
 }
 
 private fun durationNanos(spec: AnimationSpec): Long {

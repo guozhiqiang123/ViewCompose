@@ -7,6 +7,7 @@ import com.viewcompose.widget.core.LocalMonotonicFrameClock
 import com.viewcompose.widget.core.remember
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
@@ -34,7 +35,7 @@ fun InfiniteTransition.animateFloat(
     }
     val frameClock = LocalMonotonicFrameClock.current
     DisposableEffect(initialValue, targetValue, animationSpec, frameClock) {
-        val scope = CoroutineScope(SupervisorJob())
+        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         val job = scope.launch(start = CoroutineStart.UNDISPATCHED) {
             var from = initialValue
             var to = targetValue

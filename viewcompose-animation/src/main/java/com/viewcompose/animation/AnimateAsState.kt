@@ -8,6 +8,7 @@ import com.viewcompose.widget.core.remember
 import com.viewcompose.widget.core.rememberUpdatedState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -24,7 +25,7 @@ fun <T> animateValueAsState(
     val latestSpec = rememberUpdatedState(animationSpec)
     val frameClock = LocalMonotonicFrameClock.current
     DisposableEffect(targetValue, animationSpec, converter, frameClock) {
-        val scope = CoroutineScope(SupervisorJob())
+        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         val job = scope.launch(start = CoroutineStart.UNDISPATCHED) {
             runAnimation(
                 frameClock = frameClock,
