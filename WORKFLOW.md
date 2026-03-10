@@ -274,6 +274,7 @@
 9. swipe settle 语义变更必须补单测覆盖“速度触发/距离触发/最近锚点”三路径，禁止仅凭人工回归上线。
 10. `updateTransition` 语义必须保持“单 transition 多 channel 共享时间线”；`AnimatedVisibility` 必须复用该时间线，不允许回退到多自动画时钟拼装。
 11. `Modifier.animateContentSize(...)` 必须保持布局级尺寸动画语义（父布局可观察到连续尺寸变化），禁止回退到 `graphicsLayer` 缩放假象。
+12. `AnimatedSizeHost` 实现改动必须覆盖“展开 + 收起”双向视觉连续性，禁止出现只展开平滑、收起瞬跳的回归。
 
 ## 6. 线程中断恢复原则
 

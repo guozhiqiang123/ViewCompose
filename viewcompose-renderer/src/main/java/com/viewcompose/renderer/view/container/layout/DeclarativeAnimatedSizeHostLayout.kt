@@ -72,7 +72,18 @@ internal class DeclarativeAnimatedSizeHostLayout @JvmOverloads constructor(
         bottom: Int,
     ) {
         val startNs = System.nanoTime()
-        super.onLayout(changed, left, top, right, bottom)
+        val contentLeft = paddingLeft
+        val contentTop = paddingTop
+        val contentRight = (right - left - paddingRight).coerceAtLeast(contentLeft)
+        val contentBottom = (bottom - top - paddingBottom).coerceAtLeast(contentTop)
+        if (childCount == 1) {
+            // 中文：将唯一子节点按 host 当前动画尺寸布局，避免收起时子节点先跳到末端尺寸造成“瞬间收起”错觉。
+            // English: Layout the single child with the host's animated bounds to avoid visual snap-to-end
+            // during collapse when the wrapped node updates its target size immediately.
+            getChildAt(0).layout(contentLeft, contentTop, contentRight, contentBottom)
+        } else {
+            super.onLayout(changed, left, top, right, bottom)
+        }
         LayoutPassTracker.recordLayout(
             viewName = javaClass.simpleName,
             durationNs = System.nanoTime() - startNs,
