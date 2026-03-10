@@ -68,6 +68,7 @@ private class ViewGestureDispatcher(
     private var lockAxis: Axis? = null
     private var dragStarted = false
     private var combinedTapConsumed = false
+    private var pointerStreamActive = false
     private var transformStreamActive = false
     private var transformMidX = Float.NaN
     private var transformMidY = Float.NaN
@@ -131,35 +132,56 @@ private class ViewGestureDispatcher(
     fun dispose() {
         velocityTracker?.recycle()
         velocityTracker = null
+        pointerStreamActive = false
     }
 
     override fun onTouch(
         v: View,
         event: MotionEvent,
     ): Boolean {
+        val action = event.actionMasked
+        val hasPointerInput = resolved.pointerInput != null
+        if (action == MotionEvent.ACTION_DOWN && hasPointerInput) {
+            pointerStreamActive = true
+        }
+        val pointerConsumed = dispatchPointerInput(event)
+        if (pointerConsumed) {
+            if (action == MotionEvent.ACTION_DOWN &&
+                resolved.gesturePriority?.priority == GesturePriority.High
+            ) {
+                hostView.parent?.requestDisallowInterceptTouchEvent(true)
+            }
+            if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+                combinedTapConsumed = false
+                resetTrackingState()
+            }
+            return true
+        }
+
         val combinedEnabled = resolved.combinedClickable?.enabled == true
         val requiresContinuousStream =
+            hasPointerInput ||
             resolved.draggable?.enabled == true ||
                 resolved.swipeable?.enabled == true ||
                 resolved.transformable?.enabled == true
         if (combinedEnabled) {
             combinedDetector.onTouchEvent(event)
         }
-        val pointerConsumed = dispatchPointerInput(event)
         val transformConsumed = dispatchTransform(event)
         val dragSwipeConsumed = dispatchDragAndSwipe(event)
-        if (event.actionMasked == MotionEvent.ACTION_DOWN &&
+        if (action == MotionEvent.ACTION_DOWN &&
             resolved.gesturePriority?.priority == GesturePriority.High
         ) {
             hostView.parent?.requestDisallowInterceptTouchEvent(true)
         }
         val consumed = pointerConsumed || transformConsumed || dragSwipeConsumed || combinedTapConsumed
-        if (event.actionMasked == MotionEvent.ACTION_UP || event.actionMasked == MotionEvent.ACTION_CANCEL) {
+        if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
             combinedTapConsumed = false
+            pointerStreamActive = false
         }
         // combinedClickable owns tap gesture arbitration; keep fallback clickable disabled for this pointer stream.
         if (combinedEnabled) {
-            if (event.actionMasked == MotionEvent.ACTION_UP || event.actionMasked == MotionEvent.ACTION_CANCEL) {
+            if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
                 resetTrackingState()
             }
             return true
@@ -168,7 +190,10 @@ private class ViewGestureDispatcher(
             // Keep 2-finger transform stream attached to this node to avoid parent scroll interception.
             return true
         }
-        if (event.actionMasked == MotionEvent.ACTION_DOWN && requiresContinuousStream) {
+        if (pointerStreamActive) {
+            return true
+        }
+        if (action == MotionEvent.ACTION_DOWN && requiresContinuousStream) {
             // Keep the pointer stream on this view so drag/swipe/transform can receive MOVE/UP events.
             return true
         }
@@ -370,6 +395,7 @@ private class ViewGestureDispatcher(
         transformMidY = Float.NaN
         transformAngle = Float.NaN
         transformStreamActive = false
+        pointerStreamActive = false
     }
 
     private fun resolveGestureOrientation(
