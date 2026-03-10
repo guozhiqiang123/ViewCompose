@@ -182,6 +182,7 @@
 3. 并发冲突场景必须覆盖三类测试：无冲突、merge 成功、merge 失败。
 4. compose 一轮内的读取一致性必须有单测约束，防止“同一轮读值漂移”回归。
 5. 调整 snapshot 语义时，必须同步更新 [STATE_SNAPSHOT.md](/Users/gzq/AndroidStudioProjects/UIFramework/STATE_SNAPSHOT.md)。
+6. 在组合阶段发生“先写 mirror state 再读回”时，禁止把该回读值用于控制流（协程启动、任务调度、版本选择）；这类判定必须读取实时内核字段，并补对应回归用例。
 
 ## 5.8 帧对齐调度约束
 

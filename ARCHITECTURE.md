@@ -181,6 +181,7 @@ flowchart TD
 6. `rememberUpdatedState` 只保证“重组后可见”，不保证“同一组合阶段 effect 立即读取到最新值”。
 7. 当前 runtime 的 `DisposableEffect` 执行时机在组合阶段（非 apply 阶段）；涉及动画/协程启动路径时，若要求读取最新目标值，优先直接使用当前参数，或改为提交后时机执行。
 8. 若后续将 effect 时序升级到 Compose `RememberObserver` apply 语义，必须同步回归 `animate*AsState`、`AnimatedVisibility`、`collectAsState`、`produceState`。
+9. 组合阶段若先写 snapshot-backed mirror state 再立刻读回，该读值可能仍是旧快照；控制流判定（如动画协程启动、segment version 选择）必须基于实时内核值，不得依赖同帧 mirror 回读。
 
 ### 4.9 Render 调度边界
 

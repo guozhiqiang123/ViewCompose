@@ -82,6 +82,14 @@ class Transition<S> internal constructor(
         return core.segmentVersion == version && core.isRunning
     }
 
+    // 中文：组合阶段运行在只读快照里，syncFromCore() 写入的 mirror state 在同一轮读取可能仍是旧值。
+    // 因此“是否启动协程/是否注册时长”等控制流必须读取 core 实时值，避免同帧漏启动动画。
+    // English: Composition runs in a read snapshot; mirror-state writes from syncFromCore() may still
+    // read stale in the same pass. Control-flow decisions (launch/register) must use live core values.
+    internal fun runtimeIsRunning(): Boolean = core.isRunning
+
+    internal fun runtimeSegmentVersion(): Long = core.segmentVersion
+
     private fun syncFromCore() {
         currentStateHolder.value = core.currentState
         targetStateHolder.value = core.targetState
@@ -117,9 +125,11 @@ class Transition<S> internal constructor(
                 animationSpec = tween(),
             )
         }
-        val running = isRunning
-        val version = segmentVersion
+        val running = core.isRunning
+        val version = core.segmentVersion
         if (channelState.segmentVersion != version) {
+            val segmentInitialState = core.segmentInitialState
+            val segmentTargetState = core.segmentTargetState
             val spec = transitionSpec(segmentInitialState, segmentTargetState)
             val (start, end) = segmentEndpoints(
                 segmentInitialState,
@@ -140,10 +150,12 @@ class Transition<S> internal constructor(
                 endValue = channelState.endValue,
                 animationSpec = channelState.animationSpec,
                 converter = converter,
-                playTimeNanos = playTimeNanos,
+                // 中文：playTime 继续走 mirror state 读取，保证每帧写入能触发观察失效与重组。
+                // English: Keep playTime observed via mirror state so per-frame writes trigger invalidation.
+                playTimeNanos = playTimeNanosHolder.value,
             )
         } else {
-            outputState.value = valueForSettledState(targetState)
+            outputState.value = valueForSettledState(core.targetState)
         }
         return outputState
     }
@@ -227,8 +239,8 @@ fun <S> updateTransition(
     transition.updateTarget(targetState)
     val frameClock = LocalMonotonicFrameClock.current
     val animationCoroutineContext = LocalAnimationCoroutineContext.current
-    val running = transition.isRunning
-    val segmentVersion = transition.segmentVersion
+    val running = transition.runtimeIsRunning()
+    val segmentVersion = transition.runtimeSegmentVersion()
     DisposableEffect(transition, running, segmentVersion, frameClock, animationCoroutineContext) {
         if (!running) {
             return@DisposableEffect { }
