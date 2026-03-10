@@ -75,7 +75,7 @@
 | Diagnostics | 基础 render/layout 诊断已落地 | locals/render tree/patch 可视化与告警可读性 |
 | UI Testing | 核心 instrumentation 路径已建立 | 扩展容器专项、overlay 宿主专项、主题断言覆盖 |
 | Developer Preview | Compose Preview bridge + Paparazzi 快照链路已建立（`qaPreview` 可执行） | 继续扩展预览覆盖域与快照矩阵（Dark/Tablet） |
-| Animation | `viewcompose-animation` 已提供 Compose-like 动画 API（`animate*AsState/Animatable/Transition/Animated*`），`AnimatedVisibility` 已完成 Compose 默认语义与 Row/Column 轴向特化 | retarget/cancel 压测、性能画像、更多复杂场景样例 |
+| Animation | `viewcompose-animation` 已提供 Compose-like 动画 API（`animate*AsState/Animatable/Transition/Animated*`），`AnimatedVisibility` 已完成 Compose 默认语义与 Row/Column 轴向特化；Animation demo 已扩展为 6 标签页并覆盖全部业务公开动画 API，UI 回归链路已补齐 7 条 | retarget/cancel 压测、性能画像、更多复杂场景样例 |
 | Gesture | `viewcompose-gesture` + renderer dispatcher 已支持 tap/drag/swipe/transform 与消费回落策略 | 深化嵌套滚动冲突策略、复杂手势并发场景回归 |
 | Performance | 已有 viewcompose-benchmark 基线，且 `DiffUtil + payload + SlotTable Lite + subtree skip` 主路径已落地 | 继续扩大 skip 覆盖、增强诊断指标、推进发布态优化 |
 
@@ -165,7 +165,7 @@
 1. `viewcompose-animation`：`AnimationSpec`、`Animatable`、`animate*AsState`、`Transition`、`AnimatedVisibility/AnimatedContent/Crossfade/animateContentSize`
 2. `viewcompose-gesture`：`pointerInput`、`combinedClickable`、`draggable/swipeable/transformable` 与状态对象
 3. `graphicsLayer` + renderer patch 语义接入，Android 高阶动画 interop（`TransitionManager/MotionLayout/Animator`）
-4. demo 与 preview 覆盖：Animation/Gestures 可执行示例、PreviewCatalog 与 Paparazzi 快照
+4. demo 与 preview 覆盖：Animation 页已升级为 6 标签 API 索引（typed/generic/spec/transition/visibility-state/infinite/animatable），并形成 7 条 animation instrumentation 回归；PreviewCatalog 与 Paparazzi 快照已接入
 
 完成标准：
 
