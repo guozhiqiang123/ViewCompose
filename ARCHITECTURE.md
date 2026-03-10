@@ -219,6 +219,10 @@ flowchart TD
 4. renderer 手势消费规则固定为“手势先消费，未消费再回落 clickable”，并维持方向锁 + slop + priority 的冲突策略。
 5. 列表/分页动画默认 opt-in（`Modifier.lazyContainerMotion(...)`），并与 `Modifier.lazyContainerReuse(...)` 兼容，不改变未启用容器行为。
 6. `AnimatedVisibility` 语义固定为 Compose 对齐：默认 `fadeIn+expandIn` / `shrinkOut+fadeOut`，并通过 `NodeType.AnimatedVisibilityHost` 参与父布局尺寸动画；exit 全部动画完成后才移除 subtree。
+7. 手势仲裁顺序固定为 `pointerInput -> transform/drag/swipe -> combinedClickable`；当 `pointerInput` 返回 `Consumed` 时，必须强短路后续链路。
+8. transform 激活必须经过 slop 门槛：`panMotion`、`abs(1 - zoomChange) * centroidSize`、`abs(rotationRadians) * centroidSize` 任一超过 `touchSlop` 才进入 active 状态。
+9. swipe settle 语义固定为“速度优先 + 距离次之 + 最近 anchor 兜底”：先比较 `minimumFlingVelocity`，再比较 `max(touchSlop * 2, anchorSpan * 0.35)`，否则回最近锚点。
+10. transform active 后每帧只派发一次合并 delta（zoom/pan/rotation），并在 active 时再请求 `requestDisallowInterceptTouchEvent(true)`，避免提前抢占父容器。
 
 ## 5. 当前热点与风险
 

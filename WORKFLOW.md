@@ -268,6 +268,9 @@
 4. 手势事件消费规则固定为“手势优先，未消费再 clickable 回落”；涉及冲突策略修改时必须补“子手势 vs 父滚动容器”回归。
 5. 列表/分页动画能力默认 opt-in；改动 `lazyContainerMotion` 或 `lazyContainerReuse` 语义时必须补容器回归与文档说明。
 6. `AnimatedVisibility` 必须走 `NodeType.AnimatedVisibilityHost` 承载尺寸动画；隐藏语义固定为“exit 动画结束后再移除 subtree”。
+7. `pointerInput` 仲裁语义变更必须补“Consumed 强短路”回归：`pointerInput` 消费后，`transform/drag/swipe/combinedClickable` 均不可再触发。
+8. transform 阈值语义变更必须补单测覆盖 slop 三路径（pan/zoom/rotation）与 instrumentation 覆盖双指平移/旋转变化。
+9. swipe settle 语义变更必须补单测覆盖“速度触发/距离触发/最近锚点”三路径，禁止仅凭人工回归上线。
 
 ## 6. 线程中断恢复原则
 
