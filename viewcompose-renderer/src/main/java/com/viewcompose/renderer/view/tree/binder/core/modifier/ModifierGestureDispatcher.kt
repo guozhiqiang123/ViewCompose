@@ -68,8 +68,6 @@ private class ViewGestureDispatcher(
     private var transformMidX = Float.NaN
     private var transformMidY = Float.NaN
     private var transformAngle = Float.NaN
-    private val transformPoint0 = floatArrayOf(0f, 0f)
-    private val transformPoint1 = floatArrayOf(0f, 0f)
 
     private val combinedDetector = GestureDetector(
         hostView.context,
@@ -185,21 +183,17 @@ private class ViewGestureDispatcher(
         when (event.actionMasked) {
             MotionEvent.ACTION_POINTER_DOWN, MotionEvent.ACTION_DOWN -> {
                 if (event.pointerCount >= 2) {
-                    mapEventPointToParent(event, index = 0, outPoint = transformPoint0)
-                    mapEventPointToParent(event, index = 1, outPoint = transformPoint1)
-                    transformMidX = (transformPoint0[0] + transformPoint1[0]) * 0.5f
-                    transformMidY = (transformPoint0[1] + transformPoint1[1]) * 0.5f
-                    transformAngle = calculateAngle(transformPoint0, transformPoint1)
+                    transformMidX = (event.getX(0) + event.getX(1)) * 0.5f
+                    transformMidY = (event.getY(0) + event.getY(1)) * 0.5f
+                    transformAngle = calculateAngle(event)
                 }
             }
 
             MotionEvent.ACTION_MOVE -> {
                 if (event.pointerCount >= 2) {
-                    mapEventPointToParent(event, index = 0, outPoint = transformPoint0)
-                    mapEventPointToParent(event, index = 1, outPoint = transformPoint1)
-                    val nextMidX = (transformPoint0[0] + transformPoint1[0]) * 0.5f
-                    val nextMidY = (transformPoint0[1] + transformPoint1[1]) * 0.5f
-                    val nextAngle = calculateAngle(transformPoint0, transformPoint1)
+                    val nextMidX = (event.getX(0) + event.getX(1)) * 0.5f
+                    val nextMidY = (event.getY(0) + event.getY(1)) * 0.5f
+                    val nextAngle = calculateAngle(event)
                     val panX = if (transformMidX.isNaN()) 0f else nextMidX - transformMidX
                     val panY = if (transformMidY.isNaN()) 0f else nextMidY - transformMidY
                     val rotation = if (transformAngle.isNaN()) 0f else normalizeAngle(nextAngle - transformAngle)
@@ -407,26 +401,12 @@ private class ViewGestureDispatcher(
         }
     }
 
-    private fun mapEventPointToParent(
-        event: MotionEvent,
-        index: Int,
-        outPoint: FloatArray,
-    ) {
-        outPoint[0] = event.getX(index)
-        outPoint[1] = event.getY(index)
-        hostView.matrix.mapPoints(outPoint)
-        outPoint[0] += hostView.left
-        outPoint[1] += hostView.top
-    }
-
-    private fun calculateAngle(
-        point0: FloatArray,
-        point1: FloatArray,
-    ): Float {
+    private fun calculateAngle(event: MotionEvent): Float {
+        if (event.pointerCount < 2) return 0f
         return Math.toDegrees(
             atan2(
-                (point1[1] - point0[1]).toDouble(),
-                (point1[0] - point0[0]).toDouble(),
+                (event.getY(1) - event.getY(0)).toDouble(),
+                (event.getX(1) - event.getX(0)).toDouble(),
             ),
         ).toFloat()
     }
