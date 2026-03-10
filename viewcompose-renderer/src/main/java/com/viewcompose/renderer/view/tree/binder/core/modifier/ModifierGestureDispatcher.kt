@@ -2,7 +2,6 @@ package com.viewcompose.renderer.view.tree
 
 import android.view.GestureDetector
 import android.view.MotionEvent
-import android.view.ScaleGestureDetector
 import android.view.VelocityTracker
 import android.view.View
 import android.view.ViewConfiguration
@@ -19,6 +18,7 @@ import com.viewcompose.ui.gesture.SwipeDirection
 import com.viewcompose.ui.gesture.TransformDelta
 import kotlin.math.abs
 import kotlin.math.atan2
+import kotlin.math.sqrt
 
 private const val GESTURE_LOG_TAG: String = "ViewComposeGesture"
 
@@ -70,9 +70,14 @@ private class ViewGestureDispatcher(
     private var combinedTapConsumed = false
     private var pointerStreamActive = false
     private var transformStreamActive = false
+    private var transformPastTouchSlop = false
     private var transformMidX = Float.NaN
     private var transformMidY = Float.NaN
     private var transformAngle = Float.NaN
+    private var transformSpan = Float.NaN
+    private var transformPanMotion = 0f
+    private var transformZoomMotion = 0f
+    private var transformRotationMotion = 0f
 
     private val combinedDetector = GestureDetector(
         hostView.context,
@@ -105,22 +110,6 @@ private class ViewGestureDispatcher(
                 if (!element.enabled) return
                 onLongClick()
                 combinedTapConsumed = true
-            }
-        },
-    )
-
-    private val scaleDetector = ScaleGestureDetector(
-        hostView.context,
-        object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-            override fun onScale(detector: ScaleGestureDetector): Boolean {
-                val transform = resolved.transformable ?: return false
-                if (!transform.enabled) return false
-                transform.onTransform(
-                    TransformDelta(
-                        zoom = detector.scaleFactor,
-                    ),
-                )
-                return true
             }
         },
     )
@@ -211,20 +200,23 @@ private class ViewGestureDispatcher(
     private fun dispatchTransform(event: MotionEvent): Boolean {
         val transform = resolved.transformable ?: return false
         if (!transform.enabled) return false
-        val scaleConsumed = scaleDetector.onTouchEvent(event)
-        var moved = false
+        var dispatched = false
         when (event.actionMasked) {
             MotionEvent.ACTION_POINTER_DOWN, MotionEvent.ACTION_DOWN -> {
                 if (event.pointerCount >= 2) {
                     transformStreamActive = true
-                    hostView.parent?.requestDisallowInterceptTouchEvent(true)
+                    transformPastTouchSlop = false
                     transformMidX = (event.getX(0) + event.getX(1)) * 0.5f
                     transformMidY = (event.getY(0) + event.getY(1)) * 0.5f
                     transformAngle = calculateAngle(event)
+                    transformSpan = calculateSpan(event)
+                    transformPanMotion = 0f
+                    transformZoomMotion = 0f
+                    transformRotationMotion = 0f
                     debugLog {
                         "transform-start pointers=${event.pointerCount} " +
                             "mid=(${transformMidX.format(1)}, ${transformMidY.format(1)}) " +
-                            "angle=${transformAngle.format(2)}"
+                            "angle=${transformAngle.format(2)} span=${transformSpan.format(2)}"
                     }
                 }
             }
@@ -234,27 +226,55 @@ private class ViewGestureDispatcher(
                     val nextMidX = (event.getX(0) + event.getX(1)) * 0.5f
                     val nextMidY = (event.getY(0) + event.getY(1)) * 0.5f
                     val nextAngle = calculateAngle(event)
+                    val nextSpan = calculateSpan(event)
                     val panX = if (transformMidX.isNaN()) 0f else nextMidX - transformMidX
                     val panY = if (transformMidY.isNaN()) 0f else nextMidY - transformMidY
                     val rotation = if (transformAngle.isNaN()) 0f else normalizeAngle(nextAngle - transformAngle)
-                    val hasTransformDelta = panX != 0f || panY != 0f || rotation != 0f
-                    if (hasTransformDelta) {
+                    val zoom = if (transformSpan.isNaN() || transformSpan == 0f) 1f else nextSpan / transformSpan
+                    if (!transformPastTouchSlop) {
+                        val centroidSize = nextSpan * 0.5f
+                        val panMotion = vectorMagnitude(panX, panY)
+                        val zoomMotion = abs(1f - zoom) * centroidSize
+                        val rotationMotion =
+                            abs(Math.toRadians(rotation.toDouble()).toFloat()) * centroidSize
+                        transformPanMotion += panMotion
+                        transformZoomMotion += zoomMotion
+                        transformRotationMotion += rotationMotion
+                        if (transformPanMotion > touchSlop ||
+                            transformZoomMotion > touchSlop ||
+                            transformRotationMotion > touchSlop
+                        ) {
+                            transformPastTouchSlop = true
+                            hostView.parent?.requestDisallowInterceptTouchEvent(true)
+                            debugLog {
+                                "transform-active panMotion=${transformPanMotion.format(2)} " +
+                                    "zoomMotion=${transformZoomMotion.format(2)} " +
+                                    "rotationMotion=${transformRotationMotion.format(2)} " +
+                                    "touchSlop=${touchSlop.format(2)}"
+                            }
+                        }
+                    }
+                    val hasTransformDelta = zoom != 1f || panX != 0f || panY != 0f || rotation != 0f
+                    if (transformPastTouchSlop && hasTransformDelta) {
                         transform.onTransform(
                             TransformDelta(
+                                zoom = zoom,
                                 panX = panX,
                                 panY = panY,
                                 rotation = rotation,
                             ),
                         )
-                        moved = true
+                        dispatched = true
                         debugLog {
-                            "transform-move pan=(${panX.format(2)}, ${panY.format(2)}) " +
+                            "transform-move zoom=${zoom.format(3)} " +
+                                "pan=(${panX.format(2)}, ${panY.format(2)}) " +
                                 "rotation=${rotation.format(2)} pointers=${event.pointerCount}"
                         }
                     }
                     transformMidX = nextMidX
                     transformMidY = nextMidY
                     transformAngle = nextAngle
+                    transformSpan = nextSpan
                 }
             }
 
@@ -268,7 +288,7 @@ private class ViewGestureDispatcher(
                 }
             }
         }
-        return scaleConsumed || moved
+        return dispatched
     }
 
     private fun dispatchDragAndSwipe(event: MotionEvent): Boolean {
@@ -394,6 +414,11 @@ private class ViewGestureDispatcher(
         transformMidX = Float.NaN
         transformMidY = Float.NaN
         transformAngle = Float.NaN
+        transformSpan = Float.NaN
+        transformPastTouchSlop = false
+        transformPanMotion = 0f
+        transformZoomMotion = 0f
+        transformRotationMotion = 0f
         transformStreamActive = false
         pointerStreamActive = false
     }
@@ -481,6 +506,17 @@ private class ViewGestureDispatcher(
             normalized += 360f
         }
         return normalized
+    }
+
+    private fun calculateSpan(event: MotionEvent): Float {
+        if (event.pointerCount < 2) return 0f
+        val dx = event.getX(1) - event.getX(0)
+        val dy = event.getY(1) - event.getY(0)
+        return vectorMagnitude(dx, dy)
+    }
+
+    private fun vectorMagnitude(x: Float, y: Float): Float {
+        return sqrt((x * x) + (y * y))
     }
 
     private inline fun debugLog(message: () -> String) {

@@ -20,7 +20,7 @@
 ## Checklist
 - [x] Step 1: 新增执行文档并提交。
 - [x] Step 2: 分发仲裁硬切（pointerInput 强短路 + 流保持）。
-- [ ] Step 3: transform 阈值模型对齐 Compose 语义。
+- [x] Step 3: transform 阈值模型对齐 Compose 语义。
 - [ ] Step 4: swipe 判定升级为 anchor+velocity 联合。
 - [ ] Step 5: 清理 tracker 生命周期与日志策略。
 - [ ] Step 6: 单测/Instrumentation 回归补强。
@@ -29,6 +29,7 @@
 ## 提交记录
 1. `docs: add modifier gesture optimization execution plan`
 2. `refactor: enforce pointer-input-first gesture arbitration with strong consumption`
+3. `feat: add compose-like transform slop gating and merged delta dispatch`
 
 ## 阻塞记录
 - 暂无。
