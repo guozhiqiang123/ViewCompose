@@ -144,12 +144,18 @@ fun <T> Modifier.swipeable(
     onSwipe: ((SwipeDirection) -> Unit)? = null,
 ): Modifier {
     val sortedAnchors = anchors.toSortedMap()
+    val minAnchorPx = sortedAnchors.entries.firstOrNull()?.key
+    val maxAnchorPx = sortedAnchors.entries.lastOrNull()?.key
     val minAnchor = sortedAnchors.entries.firstOrNull()?.value
     val maxAnchor = sortedAnchors.entries.lastOrNull()?.value
+    val currentAnchorPx = sortedAnchors.entries.firstOrNull { it.value == state.currentValue.value }?.key
     return then(
         SwipeableModifierElement(
             enabled = enabled,
             orientation = orientation,
+            minAnchorPx = minAnchorPx,
+            maxAnchorPx = maxAnchorPx,
+            currentAnchorPx = currentAnchorPx,
             onSwipe = { direction ->
                 val target = when (direction) {
                     SwipeDirection.StartToEnd, SwipeDirection.TopToBottom -> maxAnchor
@@ -159,6 +165,16 @@ fun <T> Modifier.swipeable(
                     state.updateCurrent(target)
                 }
                 onSwipe?.invoke(direction)
+            },
+            onSettleToMin = {
+                if (minAnchor != null) {
+                    state.updateCurrent(minAnchor)
+                }
+            },
+            onSettleToMax = {
+                if (maxAnchor != null) {
+                    state.updateCurrent(maxAnchor)
+                }
             },
             onDelta = null,
         ),

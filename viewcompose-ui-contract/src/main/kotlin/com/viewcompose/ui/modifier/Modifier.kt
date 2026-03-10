@@ -137,7 +137,12 @@ data class DraggableModifierElement(
 data class SwipeableModifierElement(
     val enabled: Boolean,
     val orientation: GestureOrientation,
+    val minAnchorPx: Float?,
+    val maxAnchorPx: Float?,
+    val currentAnchorPx: Float?,
     val onSwipe: (SwipeDirection) -> Unit,
+    val onSettleToMin: (() -> Unit)? = null,
+    val onSettleToMax: (() -> Unit)? = null,
     val onDelta: ((delta: Float) -> Unit)? = null,
 ) : ModifierElement
 

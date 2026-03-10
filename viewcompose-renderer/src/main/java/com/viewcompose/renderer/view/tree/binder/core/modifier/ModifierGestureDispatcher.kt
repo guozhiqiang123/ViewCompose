@@ -18,6 +18,7 @@ import com.viewcompose.ui.gesture.SwipeDirection
 import com.viewcompose.ui.gesture.TransformDelta
 import kotlin.math.abs
 import kotlin.math.atan2
+import kotlin.math.max
 import kotlin.math.sqrt
 
 private const val GESTURE_LOG_TAG: String = "ViewComposeGesture"
@@ -57,8 +58,8 @@ private class ViewGestureDispatcher(
 
     private var resolved: ResolvedModifiers = ResolvedModifiers()
     private val touchSlop: Float = ViewConfiguration.get(hostView.context).scaledTouchSlop.toFloat()
-    private val swipeTriggerDistance: Float
-        get() = touchSlop * 4f
+    private val minimumFlingVelocity: Float =
+        ViewConfiguration.get(hostView.context).scaledMinimumFlingVelocity.toFloat()
 
     private var velocityTracker: VelocityTracker? = null
     private var downX: Float = 0f
@@ -67,6 +68,7 @@ private class ViewGestureDispatcher(
     private var lastY: Float = 0f
     private var lockAxis: Axis? = null
     private var dragStarted = false
+    private var swipeStartAnchorPx = 0f
     private var combinedTapConsumed = false
     private var pointerStreamActive = false
     private var transformStreamActive = false
@@ -313,6 +315,7 @@ private class ViewGestureDispatcher(
                 lastY = downY
                 lockAxis = null
                 dragStarted = false
+                swipeStartAnchorPx = swipeable?.currentAnchorPx ?: 0f
                 velocityTracker?.clear()
                 velocityTracker?.addMovement(event)
                 return false
@@ -371,22 +374,55 @@ private class ViewGestureDispatcher(
                     }
                     draggable?.onDragStopped?.invoke(velocity)
                 }
-                val swipeConsumed = if (axis != null && abs(total) >= swipeTriggerDistance) {
-                    val direction = when (axis) {
-                        Axis.Horizontal -> if (total >= 0f) {
-                            SwipeDirection.StartToEnd
-                        } else {
-                            SwipeDirection.EndToStart
-                        }
-
-                        Axis.Vertical -> if (total >= 0f) {
-                            SwipeDirection.TopToBottom
-                        } else {
-                            SwipeDirection.BottomToTop
-                        }
+                val velocity = when (axis) {
+                    Axis.Horizontal -> velocityTracker?.xVelocity ?: 0f
+                    Axis.Vertical -> velocityTracker?.yVelocity ?: 0f
+                    null -> 0f
+                }
+                val swipeConsumed = if (axis != null && swipeable != null) {
+                    val minAnchor = swipeable.minAnchorPx
+                    val maxAnchor = swipeable.maxAnchorPx
+                    val anchorSpan = if (minAnchor != null && maxAnchor != null) {
+                        abs(maxAnchor - minAnchor)
+                    } else {
+                        0f
                     }
-                    swipeable?.onSwipe?.invoke(direction)
-                    swipeable != null
+                    val distanceThreshold = max(touchSlop * 2f, anchorSpan * 0.35f)
+                    val preferVelocity = abs(velocity) >= minimumFlingVelocity
+                    val towardMax = when {
+                        preferVelocity -> velocity > 0f
+                        abs(total) >= distanceThreshold -> total > 0f
+                        else -> null
+                    }
+                    if (towardMax != null) {
+                        val direction = when (axis) {
+                            Axis.Horizontal -> if (towardMax) {
+                                SwipeDirection.StartToEnd
+                            } else {
+                                SwipeDirection.EndToStart
+                            }
+
+                            Axis.Vertical -> if (towardMax) {
+                                SwipeDirection.TopToBottom
+                            } else {
+                                SwipeDirection.BottomToTop
+                            }
+                        }
+                        swipeable.onSwipe(direction)
+                        true
+                    } else if (minAnchor != null && maxAnchor != null) {
+                        val projected = swipeStartAnchorPx + total
+                        val distanceToMin = abs(projected - minAnchor)
+                        val distanceToMax = abs(projected - maxAnchor)
+                        if (distanceToMax < distanceToMin) {
+                            swipeable.onSettleToMax?.invoke()
+                        } else {
+                            swipeable.onSettleToMin?.invoke()
+                        }
+                        true
+                    } else {
+                        false
+                    }
                 } else {
                     false
                 }
@@ -408,6 +444,7 @@ private class ViewGestureDispatcher(
         velocityTracker = null
         lockAxis = null
         dragStarted = false
+        swipeStartAnchorPx = 0f
     }
 
     private fun resetTransformTracking() {
