@@ -8,7 +8,9 @@ import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.InsetDrawable
 import android.graphics.drawable.LayerDrawable
 import android.graphics.drawable.RippleDrawable
+import android.os.SystemClock
 import android.view.Choreographer
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewParent
 import android.view.ViewGroup
@@ -175,6 +177,48 @@ internal fun Activity.clickByTestTag(tag: String) {
     current!!.performClick()
 }
 
+internal fun Activity.dragByTestTag(
+    tag: String,
+    deltaX: Float,
+    deltaY: Float = 0f,
+    steps: Int = 8,
+) {
+    val view = requireViewByTestTagVisible(tag)
+    assertTrue("Expected drag steps >= 2", steps >= 2)
+    val location = IntArray(2)
+    view.getLocationOnScreen(location)
+    val startX = location[0] + view.width * 0.5f
+    val startY = location[1] + view.height * 0.5f
+    val endX = startX + deltaX
+    val endY = startY + deltaY
+    val downTime = SystemClock.uptimeMillis()
+    dispatchGestureEvent(
+        downTime = downTime,
+        eventTime = downTime,
+        action = MotionEvent.ACTION_DOWN,
+        x = startX,
+        y = startY,
+    )
+    for (index in 1 until steps) {
+        val fraction = index.toFloat() / steps.toFloat()
+        val eventTime = downTime + index * 16L
+        dispatchGestureEvent(
+            downTime = downTime,
+            eventTime = eventTime,
+            action = MotionEvent.ACTION_MOVE,
+            x = startX + (endX - startX) * fraction,
+            y = startY + (endY - startY) * fraction,
+        )
+    }
+    dispatchGestureEvent(
+        downTime = downTime,
+        eventTime = downTime + steps * 16L,
+        action = MotionEvent.ACTION_UP,
+        x = endX,
+        y = endY,
+    )
+}
+
 internal fun Activity.focusInputByTestTag(tag: String) {
     val host = requireViewByTestTagVisible(tag)
     val input = findFirstEditText(host)
@@ -262,6 +306,28 @@ internal fun assertTextNotEllipsized(textView: TextView) {
         "Expected text to stay on-screen for text: ${textView.text}",
         textView.text.isNotEmpty() && textView.width <= textView.compoundPaddingLeft + textView.compoundPaddingRight,
     )
+}
+
+private fun Activity.dispatchGestureEvent(
+    downTime: Long,
+    eventTime: Long,
+    action: Int,
+    x: Float,
+    y: Float,
+) {
+    val event = MotionEvent.obtain(
+        downTime,
+        eventTime,
+        action,
+        x,
+        y,
+        0,
+    )
+    try {
+        dispatchTouchEvent(event)
+    } finally {
+        event.recycle()
+    }
 }
 
 internal fun findTextViewByText(root: View, text: String): TextView? {

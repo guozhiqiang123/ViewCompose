@@ -933,19 +933,32 @@ class DemoVisualUiTest {
         ).putExtra(EXTRA_GESTURES_PAGE_INDEX, 1)
         launchDemoActivity<GesturesActivity>(dragSwipeIntent, themeMode = DemoThemeMode.Light).use { scenario ->
             waitForUiIdle()
+            var dragBefore = 0f
             scenario.onActivity { activity ->
                 val dragTarget = activity.requireViewByTestTagVisible(DemoTestTags.GESTURE_DRAG_TARGET)
                 val swipeTarget = activity.requireViewByTestTagVisible(DemoTestTags.GESTURE_SWIPE_TARGET)
                 assertViewFullyVisible(dragTarget)
                 assertViewFullyVisible(swipeTarget)
+                dragBefore = extractFirstFloat(
+                    activity.requireTextViewByTestTag(DemoTestTags.GESTURE_DRAG_VALUE).text.toString(),
+                ) ?: 0f
+                activity.dragByTestTag(
+                    tag = DemoTestTags.GESTURE_DRAG_TARGET,
+                    deltaX = 180f,
+                )
+                activity.dragByTestTag(
+                    tag = DemoTestTags.GESTURE_SWIPE_TARGET,
+                    deltaX = 200f,
+                )
             }
             waitForUiIdle()
-            scenario.onActivity { activity ->
-                val dragAfter = activity.requireTextViewByTestTag(DemoTestTags.GESTURE_DRAG_VALUE).text.toString()
-                val swipe = activity.requireTextViewByTestTag(DemoTestTags.GESTURE_SWIPE_VALUE).text.toString()
-                assertTrue("Expected drag summary to keep stable numeric format", dragAfter.contains("Drag x ="))
-                assertTrue("Expected swipe summary default state to be Left", swipe.contains("Left"))
+            val dragAndSwipeUpdated = waitUntilActivityCondition(scenario, timeoutMs = 1_500L) { activity ->
+                val dragAfterText = activity.requireTextViewByTestTag(DemoTestTags.GESTURE_DRAG_VALUE).text.toString()
+                val swipeAfterText = activity.requireTextViewByTestTag(DemoTestTags.GESTURE_SWIPE_VALUE).text.toString()
+                val dragAfter = extractFirstFloat(dragAfterText) ?: dragBefore
+                abs(dragAfter - dragBefore) >= 12f && swipeAfterText.contains("Right")
             }
+            assertTrue("Expected drag and swipe summaries to update after gestures", dragAndSwipeUpdated)
         }
     }
 

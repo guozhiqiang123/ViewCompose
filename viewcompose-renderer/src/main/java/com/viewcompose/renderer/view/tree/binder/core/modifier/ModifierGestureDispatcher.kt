@@ -134,6 +134,10 @@ private class ViewGestureDispatcher(
         event: MotionEvent,
     ): Boolean {
         val combinedEnabled = resolved.combinedClickable?.enabled == true
+        val requiresContinuousStream =
+            resolved.draggable?.enabled == true ||
+                resolved.swipeable?.enabled == true ||
+                resolved.transformable?.enabled == true
         if (combinedEnabled) {
             combinedDetector.onTouchEvent(event)
         }
@@ -154,6 +158,10 @@ private class ViewGestureDispatcher(
             if (event.actionMasked == MotionEvent.ACTION_UP || event.actionMasked == MotionEvent.ACTION_CANCEL) {
                 resetTrackingState()
             }
+            return true
+        }
+        if (event.actionMasked == MotionEvent.ACTION_DOWN && requiresContinuousStream) {
+            // Keep the pointer stream on this view so drag/swipe/transform can receive MOVE/UP events.
             return true
         }
         return consumed
