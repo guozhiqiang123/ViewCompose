@@ -29,7 +29,7 @@
 
 ## Checklist
 - [x] Step 1: 新增执行文档并提交。
-- [ ] Step 2: 新增模块并接入构建拓扑/守卫/qa 任务。
+- [x] Step 2: 新增模块并接入构建拓扑/守卫/qa 任务。
 - [ ] Step 3: `ui-contract` 约束布局契约与 modifier 元数据落地。
 - [ ] Step 4: `viewcompose-widget-constraintlayout` DSL 与 scope 落地。
 - [ ] Step 5: renderer 映射、binder/patch/layout params、ConstraintSet 应用引擎接入。
@@ -39,6 +39,7 @@
 
 ## 提交记录
 1. `docs: add constraint layout execution plan`
+2. `build: add constraintlayout widget module and wire quality guards`
 
 ## 阻塞记录
 - 暂无。

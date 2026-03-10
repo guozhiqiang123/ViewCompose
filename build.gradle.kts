@@ -25,6 +25,7 @@ val modulePackageRoots = mapOf(
     "viewcompose-animation-core" to "com.viewcompose.animation.core",
     "viewcompose-gesture" to "com.viewcompose.gesture",
     "viewcompose-gesture-core" to "com.viewcompose.gesture.core",
+    "viewcompose-widget-constraintlayout" to "com.viewcompose.widget.constraintlayout",
 )
 
 val kotlinJvmModules = setOf(
@@ -49,6 +50,7 @@ val qaQuickTasks = listOf(
     ":viewcompose-animation-core:compileKotlin",
     ":viewcompose-gesture:compileDebugKotlin",
     ":viewcompose-gesture-core:compileKotlin",
+    ":viewcompose-widget-constraintlayout:compileDebugKotlin",
     ":app:compileDebugKotlin",
     ":viewcompose-runtime:test",
     ":viewcompose-ui-contract:test",
@@ -64,6 +66,7 @@ val qaQuickTasks = listOf(
     ":viewcompose-animation-core:test",
     ":viewcompose-gesture:testDebugUnitTest",
     ":viewcompose-gesture-core:test",
+    ":viewcompose-widget-constraintlayout:testDebugUnitTest",
     ":app:testDebugUnitTest",
 )
 
