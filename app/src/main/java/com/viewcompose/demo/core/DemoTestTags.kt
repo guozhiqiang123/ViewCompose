@@ -100,6 +100,8 @@ internal object DemoTestTags {
     const val GESTURE_TAP_TARGET = "gesture_tap_target"
     const val GESTURE_TAP_COUNT = "gesture_tap_count"
     const val GESTURE_POINTER_LOG = "gesture_pointer_log"
+    const val GESTURE_POINTER_CONSUMED_TARGET = "gesture_pointer_consumed_target"
+    const val GESTURE_POINTER_CONSUMED_CLICK_COUNT = "gesture_pointer_consumed_click_count"
     const val GESTURE_DRAG_TARGET = "gesture_drag_target"
     const val GESTURE_DRAG_VALUE = "gesture_drag_value"
     const val GESTURE_SWIPE_TARGET = "gesture_swipe_target"

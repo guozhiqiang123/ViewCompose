@@ -180,6 +180,29 @@ internal fun Activity.clickByTestTag(tag: String) {
     current!!.performClick()
 }
 
+internal fun Activity.tapByTestTag(tag: String) {
+    val view = requireViewByTestTagVisible(tag)
+    val location = IntArray(2)
+    view.getLocationOnScreen(location)
+    val x = location[0] + view.width * 0.5f
+    val y = location[1] + view.height * 0.5f
+    val downTime = SystemClock.uptimeMillis()
+    dispatchGestureEvent(
+        downTime = downTime,
+        eventTime = downTime,
+        action = MotionEvent.ACTION_DOWN,
+        x = x,
+        y = y,
+    )
+    dispatchGestureEvent(
+        downTime = downTime,
+        eventTime = downTime + 16L,
+        action = MotionEvent.ACTION_UP,
+        x = x,
+        y = y,
+    )
+}
+
 internal fun Activity.dragByTestTag(
     tag: String,
     deltaX: Float,

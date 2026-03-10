@@ -23,7 +23,7 @@
 - [x] Step 3: transform 阈值模型对齐 Compose 语义。
 - [x] Step 4: swipe 判定升级为 anchor+velocity 联合。
 - [x] Step 5: 清理 tracker 生命周期与日志策略。
-- [ ] Step 6: 单测/Instrumentation 回归补强。
+- [x] Step 6: 单测/Instrumentation 回归补强。
 - [ ] Step 7: 文档收口并归档执行文档。
 
 ## 提交记录
@@ -32,6 +32,8 @@
 3. `feat: add compose-like transform slop gating and merged delta dispatch`
 4. `feat: upgrade swipe settle policy to anchor-distance and velocity combined thresholds`
 5. `refactor: harden gesture tracker lifecycle and remove redundant motion bookkeeping`
+6. `test: add gesture arbitration and threshold unit coverage`
+7. `test: extend transform and swipe instrumentation invariants`
 
 ## 阻塞记录
 - 暂无。

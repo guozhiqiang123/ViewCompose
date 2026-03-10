@@ -47,6 +47,8 @@ internal fun UiTreeBuilder.GesturePage(
 ) {
     val selectedPageState = remember { mutableStateOf(initialPageIndex.coerceIn(0, 2)) }
     val tapCountState = remember { mutableStateOf(0) }
+    val consumedPointerClickCountState = remember { mutableStateOf(0) }
+    val consumedPointerEventState = remember { mutableStateOf("None") }
     val dragOffsetState = remember { mutableStateOf(0f) }
     val dragTextOffsetState = remember { mutableStateOf(0f) }
     val dragTextFrameUpdater = remember {
@@ -144,6 +146,33 @@ internal fun UiTreeBuilder.GesturePage(
                     text = "Pointer: ${pointerEventState.value}",
                     color = TextDefaults.secondaryColor(),
                     modifier = Modifier.testTag(DemoTestTags.GESTURE_POINTER_LOG),
+                )
+                Surface(
+                    variant = SurfaceVariant.Variant,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .margin(top = 8.dp)
+                        .combinedClickable(
+                            onClick = { consumedPointerClickCountState.value += 1 },
+                        )
+                        .pointerInput(key = "tap-pointer-consumed") { event ->
+                            consumedPointerEventState.value = event.type.name
+                            PointerEventResult.Consumed
+                        }
+                        .padding(14.dp)
+                        .testTag(DemoTestTags.GESTURE_POINTER_CONSUMED_TARGET),
+                ) {
+                    Text(text = "PointerInput consumed target")
+                }
+                Text(
+                    text = "Consumed click count: ${consumedPointerClickCountState.value}",
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier.testTag(DemoTestTags.GESTURE_POINTER_CONSUMED_CLICK_COUNT),
+                )
+                Text(
+                    text = "Consumed pointer: ${consumedPointerEventState.value}",
+                    color = TextDefaults.secondaryColor(),
+                    style = UiTextStyle(fontSizeSp = 12.sp),
                 )
             }
 

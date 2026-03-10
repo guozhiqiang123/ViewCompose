@@ -963,6 +963,31 @@ class DemoVisualUiTest {
     }
 
     @Test
+    fun gesturesPage_pointerInputConsumed_shortCircuitsCombinedClickable() {
+        val tapIntent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            GesturesActivity::class.java,
+        ).putExtra(EXTRA_GESTURES_PAGE_INDEX, 0)
+        launchDemoActivity<GesturesActivity>(tapIntent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val target = activity.requireViewByTestTagVisible(DemoTestTags.GESTURE_POINTER_CONSUMED_TARGET)
+                assertViewFullyVisible(target)
+                activity.tapByTestTag(DemoTestTags.GESTURE_POINTER_CONSUMED_TARGET)
+            }
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val count =
+                    activity.requireTextViewByTestTag(DemoTestTags.GESTURE_POINTER_CONSUMED_CLICK_COUNT).text.toString()
+                assertTrue(
+                    "Expected consumed pointer input to suppress combinedClickable click",
+                    count.contains("0"),
+                )
+            }
+        }
+    }
+
+    @Test
     fun gesturesPage_transform_updatesPanAndRotationSummaries() {
         val transformIntent = Intent(
             ApplicationProvider.getApplicationContext(),
