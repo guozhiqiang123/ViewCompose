@@ -20,7 +20,7 @@
 
 ## Checklist
 - [x] Step 1: 新增执行计划文档并提交。
-- [ ] Step 2: 新增 `:viewcompose-gesture-core` 并接入构建守卫。
+- [x] Step 2: 新增 `:viewcompose-gesture-core` 并接入构建守卫。
 - [ ] Step 3: 手势策略内核从 renderer 硬切迁入 `gesture-core`。
 - [ ] Step 4: renderer 改为事件适配层（调用 `gesture-core`）。
 - [ ] Step 5: `viewcompose-gesture` 拆分 DSL/State 入口。
@@ -29,6 +29,7 @@
 
 ## 提交记录
 1. `docs: add gesture architecture convergence execution plan`
+2. `build: add gesture-core module and purity guardrails`
 
 ## 阻塞记录
 - 阻塞文件：`GESTURE_ARCH_BLOCKER_CONTEXT_2026-03.md`

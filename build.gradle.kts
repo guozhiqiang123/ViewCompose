@@ -24,12 +24,14 @@ val modulePackageRoots = mapOf(
     "viewcompose-animation" to "com.viewcompose.animation",
     "viewcompose-animation-core" to "com.viewcompose.animation.core",
     "viewcompose-gesture" to "com.viewcompose.gesture",
+    "viewcompose-gesture-core" to "com.viewcompose.gesture.core",
 )
 
 val kotlinJvmModules = setOf(
     "viewcompose-ui-contract",
     "viewcompose-runtime",
     "viewcompose-animation-core",
+    "viewcompose-gesture-core",
 )
 
 val qaQuickTasks = listOf(
@@ -46,6 +48,7 @@ val qaQuickTasks = listOf(
     ":viewcompose-animation:compileDebugKotlin",
     ":viewcompose-animation-core:compileKotlin",
     ":viewcompose-gesture:compileDebugKotlin",
+    ":viewcompose-gesture-core:compileKotlin",
     ":app:compileDebugKotlin",
     ":viewcompose-runtime:test",
     ":viewcompose-ui-contract:test",
@@ -60,6 +63,7 @@ val qaQuickTasks = listOf(
     ":viewcompose-animation:testDebugUnitTest",
     ":viewcompose-animation-core:test",
     ":viewcompose-gesture:testDebugUnitTest",
+    ":viewcompose-gesture-core:test",
     ":app:testDebugUnitTest",
 )
 
@@ -183,12 +187,48 @@ tasks.register("verifyRuntimePurity") {
     }
 }
 
+tasks.register("verifyGestureCorePurity") {
+    group = "verification"
+    description = "Verify gesture-core remains Kotlin/JVM-pure without Android imports."
+    doLast {
+        val violations = mutableListOf<String>()
+        val gestureCoreMainDir = rootDir.resolve("viewcompose-gesture-core").resolve("src/main")
+        if (gestureCoreMainDir.exists()) {
+            gestureCoreMainDir.walkTopDown()
+                .filter { it.isFile && (it.extension == "kt" || it.extension == "java") }
+                .forEach { file ->
+                    file.useLines { lines ->
+                        lines.forEachIndexed { index, line ->
+                            val trimmed = line.trimStart()
+                            if (
+                                trimmed.startsWith("import android.") ||
+                                trimmed.startsWith("import androidx.")
+                            ) {
+                                violations += "${file.relativeTo(rootDir)}:${index + 1} -> forbidden import '$trimmed'"
+                            }
+                        }
+                    }
+                }
+        }
+
+        if (violations.isNotEmpty()) {
+            error(
+                buildString {
+                    appendLine("Gesture-core purity verification failed:")
+                    violations.sorted().forEach { appendLine("- $it") }
+                },
+            )
+        }
+    }
+}
+
 tasks.register("qaQuick") {
     group = "verification"
     description = "Run compile + unit-test quality gate for all core modules."
     dependsOn("verifyModulePackageRoots")
     dependsOn("verifyAndroidModuleNamespaces")
     dependsOn("verifyRuntimePurity")
+    dependsOn("verifyGestureCorePurity")
     dependsOn(qaQuickTasks)
 }
 
