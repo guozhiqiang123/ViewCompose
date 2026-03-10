@@ -962,6 +962,35 @@ class DemoVisualUiTest {
         }
     }
 
+    @Test
+    fun gesturesPage_transform_updatesPanAndRotationSummaries() {
+        val transformIntent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            GesturesActivity::class.java,
+        ).putExtra(EXTRA_GESTURES_PAGE_INDEX, 2)
+        launchDemoActivity<GesturesActivity>(transformIntent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val target = activity.requireViewByTestTagVisible(DemoTestTags.GESTURE_TRANSFORM_TARGET)
+                assertViewFullyVisible(target)
+                activity.transformByTestTag(
+                    tag = DemoTestTags.GESTURE_TRANSFORM_TARGET,
+                    panX = 140f,
+                    panY = 88f,
+                    rotationDegrees = 36f,
+                    zoomRatio = 1.18f,
+                )
+            }
+            waitForUiIdle()
+            val transformUpdated = waitUntilActivityCondition(scenario, timeoutMs = 2_000L) { activity ->
+                val text = activity.requireTextViewByTestTag(DemoTestTags.GESTURE_TRANSFORM_VALUE).text.toString()
+                val metrics = extractTransformMetrics(text) ?: return@waitUntilActivityCondition false
+                abs(metrics.panX) >= 8f && abs(metrics.panY) >= 8f && abs(metrics.rotation) >= 8f
+            }
+            assertTrue("Expected transform gesture to update pan and rotation summaries", transformUpdated)
+        }
+    }
+
     private fun extractCount(text: String): Int {
         return "(\\d+)".toRegex().find(text)?.value?.toIntOrNull() ?: 0
     }
@@ -969,6 +998,24 @@ class DemoVisualUiTest {
     private fun extractFirstFloat(text: String): Float? {
         return "(-?\\d+(?:\\.\\d+)?)".toRegex().find(text)?.value?.toFloatOrNull()
     }
+
+    private fun extractTransformMetrics(text: String): TransformMetrics? {
+        val regex = """scale=(-?\d+(?:\.\d+)?)\s+pan=\((-?\d+),\s*(-?\d+)\)\s+rot=(-?\d+(?:\.\d+)?)""".toRegex()
+        val match = regex.find(text) ?: return null
+        return TransformMetrics(
+            scale = match.groupValues[1].toFloatOrNull() ?: return null,
+            panX = match.groupValues[2].toFloatOrNull() ?: return null,
+            panY = match.groupValues[3].toFloatOrNull() ?: return null,
+            rotation = match.groupValues[4].toFloatOrNull() ?: return null,
+        )
+    }
+
+    private data class TransformMetrics(
+        val scale: Float,
+        val panX: Float,
+        val panY: Float,
+        val rotation: Float,
+    )
 
     private fun assertFocusActionKeepsRecyclerAnchor(
         scenario: ActivityScenario<InputActivity>,

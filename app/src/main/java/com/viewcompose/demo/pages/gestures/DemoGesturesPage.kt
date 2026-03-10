@@ -77,7 +77,7 @@ internal fun UiTreeBuilder.GesturePage(
         panXState.value = (panXState.value + panX).coerceIn(-120f, 120f)
         panYState.value = (panYState.value + panY).coerceIn(-120f, 120f)
         rotationState.value += rotation
-        transformLogState.value = "zoom=${"%.2f".format(scaleState.value)} rot=${"%.1f".format(rotationState.value)}"
+        transformLogState.value = "delta pan=(${panX.roundToInt()}, ${panY.roundToInt()}) delta rot=${"%.2f".format(rotation)}"
     }
     val swipeIsRight = swipeState.currentValue.value == "Right"
     val swipeVisualOffset = animateFloatAsState(
@@ -237,8 +237,8 @@ internal fun UiTreeBuilder.GesturePage(
                             .graphicsLayer(
                                 scaleX = scaleState.value,
                                 scaleY = scaleState.value,
-                                translationX = panXState.value,
-                                translationY = panYState.value,
+                                translationX = panXState.value * 1.6f,
+                                translationY = panYState.value * 1.6f,
                                 rotationZ = rotationState.value,
                             )
                             .backgroundColor(0xFFDBEAFE.toInt())

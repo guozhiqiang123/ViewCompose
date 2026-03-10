@@ -6,6 +6,7 @@ import android.view.ScaleGestureDetector
 import android.view.VelocityTracker
 import android.view.View
 import android.view.ViewConfiguration
+import android.util.Log
 import com.viewcompose.renderer.R
 import com.viewcompose.renderer.modifier.ResolvedModifiers
 import com.viewcompose.ui.gesture.GestureOrientation
@@ -18,6 +19,8 @@ import com.viewcompose.ui.gesture.SwipeDirection
 import com.viewcompose.ui.gesture.TransformDelta
 import kotlin.math.abs
 import kotlin.math.atan2
+
+private const val GESTURE_LOG_TAG: String = "ViewComposeGesture"
 
 internal object ModifierGestureApplier {
     fun applyGestureState(
@@ -65,6 +68,7 @@ private class ViewGestureDispatcher(
     private var lockAxis: Axis? = null
     private var dragStarted = false
     private var combinedTapConsumed = false
+    private var transformStreamActive = false
     private var transformMidX = Float.NaN
     private var transformMidY = Float.NaN
     private var transformAngle = Float.NaN
@@ -160,6 +164,10 @@ private class ViewGestureDispatcher(
             }
             return true
         }
+        if (transformStreamActive) {
+            // Keep 2-finger transform stream attached to this node to avoid parent scroll interception.
+            return true
+        }
         if (event.actionMasked == MotionEvent.ACTION_DOWN && requiresContinuousStream) {
             // Keep the pointer stream on this view so drag/swipe/transform can receive MOVE/UP events.
             return true
@@ -183,9 +191,16 @@ private class ViewGestureDispatcher(
         when (event.actionMasked) {
             MotionEvent.ACTION_POINTER_DOWN, MotionEvent.ACTION_DOWN -> {
                 if (event.pointerCount >= 2) {
+                    transformStreamActive = true
+                    hostView.parent?.requestDisallowInterceptTouchEvent(true)
                     transformMidX = (event.getX(0) + event.getX(1)) * 0.5f
                     transformMidY = (event.getY(0) + event.getY(1)) * 0.5f
                     transformAngle = calculateAngle(event)
+                    debugLog {
+                        "transform-start pointers=${event.pointerCount} " +
+                            "mid=(${transformMidX.format(1)}, ${transformMidY.format(1)}) " +
+                            "angle=${transformAngle.format(2)}"
+                    }
                 }
             }
 
@@ -197,7 +212,8 @@ private class ViewGestureDispatcher(
                     val panX = if (transformMidX.isNaN()) 0f else nextMidX - transformMidX
                     val panY = if (transformMidY.isNaN()) 0f else nextMidY - transformMidY
                     val rotation = if (transformAngle.isNaN()) 0f else normalizeAngle(nextAngle - transformAngle)
-                    if (abs(panX) > 0.5f || abs(panY) > 0.5f || abs(rotation) > 0.5f) {
+                    val hasTransformDelta = panX != 0f || panY != 0f || rotation != 0f
+                    if (hasTransformDelta) {
                         transform.onTransform(
                             TransformDelta(
                                 panX = panX,
@@ -206,6 +222,10 @@ private class ViewGestureDispatcher(
                             ),
                         )
                         moved = true
+                        debugLog {
+                            "transform-move pan=(${panX.format(2)}, ${panY.format(2)}) " +
+                                "rotation=${rotation.format(2)} pointers=${event.pointerCount}"
+                        }
                     }
                     transformMidX = nextMidX
                     transformMidY = nextMidY
@@ -215,9 +235,11 @@ private class ViewGestureDispatcher(
 
             MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 if (event.pointerCount <= 2) {
+                    transformStreamActive = false
                     transformMidX = Float.NaN
                     transformMidY = Float.NaN
                     transformAngle = Float.NaN
+                    debugLog { "transform-end action=${event.actionMasked} pointers=${event.pointerCount}" }
                 }
             }
         }
@@ -228,7 +250,11 @@ private class ViewGestureDispatcher(
         val draggable = resolved.draggable?.takeIf { it.enabled }
         val swipeable = resolved.swipeable?.takeIf { it.enabled }
         if (draggable == null && swipeable == null) {
-            resetTrackingState()
+            // Do not clear transform tracking here; transformable may coexist without drag/swipe.
+            if (transformStreamActive) {
+                debugLog { "drag-swipe bypassed while transform stream is active" }
+            }
+            resetDragSwipeTracking()
             return false
         }
         velocityTracker = (velocityTracker ?: VelocityTracker.obtain()).also { tracker ->
@@ -320,7 +346,7 @@ private class ViewGestureDispatcher(
                     false
                 }
                 val dragConsumed = dragStarted
-                resetTrackingState()
+                resetDragSwipeTracking()
                 return dragConsumed || swipeConsumed
             }
         }
@@ -328,13 +354,22 @@ private class ViewGestureDispatcher(
     }
 
     private fun resetTrackingState() {
+        resetDragSwipeTracking()
+        resetTransformTracking()
+    }
+
+    private fun resetDragSwipeTracking() {
         velocityTracker?.recycle()
         velocityTracker = null
         lockAxis = null
         dragStarted = false
+    }
+
+    private fun resetTransformTracking() {
         transformMidX = Float.NaN
         transformMidY = Float.NaN
         transformAngle = Float.NaN
+        transformStreamActive = false
     }
 
     private fun resolveGestureOrientation(
@@ -420,5 +455,16 @@ private class ViewGestureDispatcher(
             normalized += 360f
         }
         return normalized
+    }
+
+    private inline fun debugLog(message: () -> String) {
+        if (!Log.isLoggable(GESTURE_LOG_TAG, Log.DEBUG)) {
+            return
+        }
+        Log.d(GESTURE_LOG_TAG, message())
+    }
+
+    private fun Float.format(digits: Int): String {
+        return "%.${digits}f".format(this)
     }
 }

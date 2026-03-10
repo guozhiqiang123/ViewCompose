@@ -34,6 +34,9 @@ import org.junit.Assert.assertTrue
 import java.io.File
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import kotlin.math.cos
+import kotlin.math.min
+import kotlin.math.sin
 
 internal data class RecyclerViewportAnchor(
     val position: Int,
@@ -219,6 +222,90 @@ internal fun Activity.dragByTestTag(
     )
 }
 
+internal fun Activity.transformByTestTag(
+    tag: String,
+    panX: Float = 120f,
+    panY: Float = 72f,
+    rotationDegrees: Float = 28f,
+    zoomRatio: Float = 1.2f,
+    steps: Int = 10,
+) {
+    val view = requireViewByTestTagVisible(tag)
+    assertTrue("Expected transform steps >= 2", steps >= 2)
+    val centerX = view.width * 0.5f
+    val centerY = view.height * 0.5f
+    val startRadius = min(view.width, view.height) * 0.18f
+    val endRadius = (startRadius * zoomRatio).coerceAtLeast(startRadius + 8f)
+    val startAngleRad = Math.toRadians(20.0).toFloat()
+    val endAngleRad = Math.toRadians((20f + rotationDegrees).toDouble()).toFloat()
+    val downTime = SystemClock.uptimeMillis()
+
+    val start = twoPointerCoords(
+        centerX = centerX,
+        centerY = centerY,
+        radius = startRadius,
+        angleRad = startAngleRad,
+    )
+    dispatchMultiTouchEvent(
+        target = view,
+        downTime = downTime,
+        eventTime = downTime,
+        actionMasked = MotionEvent.ACTION_DOWN,
+        points = listOf(start.first),
+    )
+    dispatchMultiTouchEvent(
+        target = view,
+        downTime = downTime,
+        eventTime = downTime + 8L,
+        actionMasked = MotionEvent.ACTION_POINTER_DOWN,
+        actionIndex = 1,
+        points = listOf(start.first, start.second),
+    )
+
+    for (step in 1..steps) {
+        val fraction = step.toFloat() / steps.toFloat()
+        val currentCenterX = centerX + panX * fraction
+        val currentCenterY = centerY + panY * fraction
+        val currentRadius = startRadius + (endRadius - startRadius) * fraction
+        val currentAngle = startAngleRad + (endAngleRad - startAngleRad) * fraction
+        val pointers = twoPointerCoords(
+            centerX = currentCenterX,
+            centerY = currentCenterY,
+            radius = currentRadius,
+            angleRad = currentAngle,
+        )
+        dispatchMultiTouchEvent(
+            target = view,
+            downTime = downTime,
+            eventTime = downTime + 8L + step * 16L,
+            actionMasked = MotionEvent.ACTION_MOVE,
+            points = listOf(pointers.first, pointers.second),
+        )
+    }
+
+    val end = twoPointerCoords(
+        centerX = centerX + panX,
+        centerY = centerY + panY,
+        radius = endRadius,
+        angleRad = endAngleRad,
+    )
+    dispatchMultiTouchEvent(
+        target = view,
+        downTime = downTime,
+        eventTime = downTime + 8L + (steps + 1) * 16L,
+        actionMasked = MotionEvent.ACTION_POINTER_UP,
+        actionIndex = 1,
+        points = listOf(end.first, end.second),
+    )
+    dispatchMultiTouchEvent(
+        target = view,
+        downTime = downTime,
+        eventTime = downTime + 8L + (steps + 2) * 16L,
+        actionMasked = MotionEvent.ACTION_UP,
+        points = listOf(end.first),
+    )
+}
+
 internal fun Activity.focusInputByTestTag(tag: String) {
     val host = requireViewByTestTagVisible(tag)
     val input = findFirstEditText(host)
@@ -328,6 +415,69 @@ private fun Activity.dispatchGestureEvent(
     } finally {
         event.recycle()
     }
+}
+
+private fun dispatchMultiTouchEvent(
+    target: View,
+    downTime: Long,
+    eventTime: Long,
+    actionMasked: Int,
+    points: List<Pair<Float, Float>>,
+    actionIndex: Int = 0,
+) {
+    val pointerCount = points.size
+    val pointerProperties = Array(pointerCount) { index ->
+        MotionEvent.PointerProperties().apply {
+            id = index
+            toolType = MotionEvent.TOOL_TYPE_FINGER
+        }
+    }
+    val pointerCoords = Array(pointerCount) { index ->
+        MotionEvent.PointerCoords().apply {
+            x = points[index].first
+            y = points[index].second
+            pressure = 1f
+            size = 1f
+        }
+    }
+    val action = when (actionMasked) {
+        MotionEvent.ACTION_POINTER_DOWN, MotionEvent.ACTION_POINTER_UP -> {
+            actionMasked or (actionIndex shl MotionEvent.ACTION_POINTER_INDEX_SHIFT)
+        }
+        else -> actionMasked
+    }
+    val event = MotionEvent.obtain(
+        downTime,
+        eventTime,
+        action,
+        pointerCount,
+        pointerProperties,
+        pointerCoords,
+        0,
+        0,
+        1f,
+        1f,
+        0,
+        0,
+        0,
+        0,
+    )
+    try {
+        target.dispatchTouchEvent(event)
+    } finally {
+        event.recycle()
+    }
+}
+
+private fun twoPointerCoords(
+    centerX: Float,
+    centerY: Float,
+    radius: Float,
+    angleRad: Float,
+): Pair<Pair<Float, Float>, Pair<Float, Float>> {
+    val dx = cos(angleRad) * radius
+    val dy = sin(angleRad) * radius
+    return (centerX - dx to centerY - dy) to (centerX + dx to centerY + dy)
 }
 
 internal fun findTextViewByText(root: View, text: String): TextView? {
