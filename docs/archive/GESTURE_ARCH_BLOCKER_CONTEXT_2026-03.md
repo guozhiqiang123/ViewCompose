@@ -11,7 +11,7 @@
   - 代码改动未提交（工作区中）
   - 相关变更：`ModifierGestureDispatcher` 适配层收敛 + instrumentation 脆弱断言修复
 
-## 当前分支与工作区
+## 当前分支与工作区（阻塞发生时）
 - Branch: `main`
 - Worktree: dirty（2 个文件修改中）
 
@@ -27,3 +27,9 @@
 ## 恢复命令
 - 优先单设备复跑：`./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.viewcompose.DemoVisualUiTest`
 - 全量复跑：`./gradlew qaFull`
+
+## 阻塞解除记录
+- 2026-03-10：按设备策略仅使用 `Pixel 4 XL` 执行
+  - 命令：`ANDROID_SERIAL=98101FFBA003AE ./gradlew qaFull`
+  - 结果：`Finished 44 tests on Pixel 4 XL - 13`，`BUILD SUCCESSFUL`
+- 结论：该 blocker 已解除，可归档。
