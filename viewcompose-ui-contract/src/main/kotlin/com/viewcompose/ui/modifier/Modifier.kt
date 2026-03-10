@@ -106,6 +106,27 @@ data class AlphaModifierElement(
     val alpha: Float,
 ) : ModifierElement
 
+sealed interface ContentSizeAnimationSpecModel
+
+data class ContentSizeTweenSpecModel(
+    val durationMillis: Int,
+    val delayMillis: Int,
+) : ContentSizeAnimationSpecModel
+
+data class ContentSizeSpringSpecModel(
+    val durationMillis: Int,
+) : ContentSizeAnimationSpecModel
+
+data class ContentSizeKeyframesSpecModel(
+    val durationMillis: Int,
+) : ContentSizeAnimationSpecModel
+
+data object ContentSizeSnapSpecModel : ContentSizeAnimationSpecModel
+
+data class AnimateContentSizeModifierElement(
+    val animationSpec: ContentSizeAnimationSpecModel,
+) : ModifierElement
+
 data class VisibilityModifierElement(
     val visibility: Visibility,
 ) : ModifierElement

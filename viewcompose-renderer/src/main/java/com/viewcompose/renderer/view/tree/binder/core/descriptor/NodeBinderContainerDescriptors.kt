@@ -2,6 +2,7 @@ package com.viewcompose.renderer.view.tree
 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.viewcompose.ui.node.NodeType
+import com.viewcompose.ui.node.spec.AnimatedSizeHostNodeProps
 import com.viewcompose.ui.node.spec.AnimatedVisibilityHostNodeProps
 import com.viewcompose.ui.node.spec.BoxNodeProps
 import com.viewcompose.ui.node.spec.ColumnNodeProps
@@ -12,6 +13,7 @@ import com.viewcompose.ui.node.spec.RowNodeProps
 import com.viewcompose.ui.node.spec.ScrollableColumnNodeProps
 import com.viewcompose.ui.node.spec.ScrollableRowNodeProps
 import com.viewcompose.renderer.view.container.DeclarativeBoxLayout
+import com.viewcompose.renderer.view.container.DeclarativeAnimatedSizeHostLayout
 import com.viewcompose.renderer.view.container.DeclarativeAnimatedVisibilityHostLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowColumnLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowRowLayout
@@ -53,6 +55,15 @@ internal fun MutableList<NodeBinderDescriptor>.addContainerNodeBinderDescriptors
         apply = { view, patch ->
             ContainerNodePatchApplier.applyAnimatedVisibilityHostPatch(
                 view = view as DeclarativeAnimatedVisibilityHostLayout,
+                patch = patch,
+            )
+        },
+    )
+    val animatedSizeHostPatch = patchDescriptor<AnimatedSizeHostNodeProps, AnimatedSizeHostNodePatch>(
+        factory = { previous, next -> AnimatedSizeHostNodePatch(previous, next) },
+        apply = { view, patch ->
+            ContainerNodePatchApplier.applyAnimatedSizeHostPatch(
+                view = view as DeclarativeAnimatedSizeHostLayout,
                 patch = patch,
             )
         },
@@ -161,6 +172,18 @@ internal fun MutableList<NodeBinderDescriptor>.addContainerNodeBinderDescriptors
                 )
             },
             patch = animatedVisibilityHostPatch,
+        ),
+    )
+    add(
+        descriptor(
+            nodeType = NodeType.AnimatedSizeHost,
+            bind = { view, node ->
+                ContainerViewBinder.bindAnimatedSizeHost(
+                    view = view as DeclarativeAnimatedSizeHostLayout,
+                    spec = ContainerViewBinder.readAnimatedSizeHostSpec(node),
+                )
+            },
+            patch = animatedSizeHostPatch,
         ),
     )
     add(

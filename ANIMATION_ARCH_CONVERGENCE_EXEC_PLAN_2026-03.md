@@ -24,7 +24,7 @@
 - [x] Step 2: 新增 `:viewcompose-animation-core` 并迁移动画内核。
 - [x] Step 3: 修复 `TweenSpec.delayMillis` 与动画播放/中断模型。
 - [x] Step 4: `updateTransition` / `AnimatedVisibility` 统一 transition 状态机语义。
-- [ ] Step 5: `animateContentSize` 落地（ui-contract + renderer 包装宿主）。
+- [x] Step 5: `animateContentSize` 落地（ui-contract + renderer 包装宿主）。
 - [ ] Step 6: `Animatable` 易用性重构 + `rememberAnimatable` + `InfiniteTransition` typed API。
 - [ ] Step 7: Android interop 补齐（ViewPropertyAnimator + DynamicAnimation）。
 - [ ] Step 8: 测试体系补强（core/unit/instrumentation）与门禁跑通。
@@ -35,6 +35,7 @@
 2. `build: split animation core into standalone kotlin-jvm module`
 3. `refactor: fix tween delay semantics and standardize animation run results`
 4. `refactor: hard-cut transition and animated visibility onto shared transition timeline`
+5. `feat: implement layout-participating animateContentSize host wrapping`
 
 ## 阻塞记录
 - 暂无。

@@ -37,6 +37,7 @@ object ViewTreeRenderer {
         nodes: List<VNode>,
         onReconcile: ((RenderTreeResult) -> Unit)? = null,
     ): RenderTreeResult {
+        val renderNodes = AnimatedSizeNodeWrapper.wrapTree(nodes)
         val reconcileResult = ChildReconciler.reconcile(
             previous = previous.map { mountedNode ->
                 ReconcileNode(
@@ -44,7 +45,7 @@ object ViewTreeRenderer {
                     payload = mountedNode,
                 )
             },
-            nodes = nodes,
+            nodes = renderNodes,
         )
         val pipelineResult = ViewTreePatchPipeline.execute(
             container = container,
@@ -61,14 +62,14 @@ object ViewTreeRenderer {
             },
         )
         val structure = RenderStructureStats.from(
-            nodes = nodes,
+            nodes = renderNodes,
             mountedNodes = pipelineResult.mountedNodes,
         )
         val warnings = if (onReconcile == null) {
             emptyList()
         } else {
             collectRenderWarnings(
-                nodes = nodes,
+                nodes = renderNodes,
                 structure = structure,
                 stats = pipelineResult.stats,
             )

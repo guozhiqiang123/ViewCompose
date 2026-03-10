@@ -21,6 +21,7 @@ internal class ResolvedModifiers(
     var imeInsetsPadding: ImeInsetsPaddingModifierElement? = null,
     var minHeight: MinHeightModifierElement? = null,
     var minWidth: MinWidthModifierElement? = null,
+    var animateContentSize: AnimateContentSizeModifierElement? = null,
     var visibility: VisibilityModifierElement? = null,
     var zIndex: ZIndexModifierElement? = null,
     var graphicsLayer: GraphicsLayerModifierElement? = null,
@@ -62,6 +63,7 @@ internal fun Modifier.resolve(): ResolvedModifiers {
             is ImeInsetsPaddingModifierElement -> result.imeInsetsPadding = element
             is MinHeightModifierElement -> result.minHeight = element
             is MinWidthModifierElement -> result.minWidth = element
+            is AnimateContentSizeModifierElement -> result.animateContentSize = element
             is VisibilityModifierElement -> result.visibility = element
             is ZIndexModifierElement -> result.zIndex = element
             is GraphicsLayerModifierElement -> result.graphicsLayer = element

@@ -6,8 +6,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.viewcompose.renderer.R
 import com.viewcompose.ui.layout.MainAxisArrangement
 import com.viewcompose.ui.node.VNode
+import com.viewcompose.ui.modifier.ContentSizeAnimationSpecModel
 import com.viewcompose.renderer.view.container.DeclarativeBoxLayout
 import com.viewcompose.renderer.view.container.DeclarativeAnimatedVisibilityHostLayout
+import com.viewcompose.renderer.view.container.DeclarativeAnimatedSizeHostLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowColumnLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowRowLayout
 import com.viewcompose.renderer.view.container.DeclarativeLinearLayout
@@ -34,6 +36,10 @@ internal object ContainerViewBinder {
         val widthScale: Float,
         val heightScale: Float,
         val clipToBounds: Boolean,
+    )
+
+    data class AnimatedSizeHostSpec(
+        val animationSpec: ContentSizeAnimationSpecModel,
     )
 
     data class AndroidViewSpec(
@@ -89,6 +95,13 @@ internal object ContainerViewBinder {
         view.clipToBounds = spec.clipToBounds
     }
 
+    fun bindAnimatedSizeHost(
+        view: DeclarativeAnimatedSizeHostLayout,
+        spec: AnimatedSizeHostSpec,
+    ) {
+        view.animationSpec = spec.animationSpec
+    }
+
     fun bindFlowRow(
         view: DeclarativeFlowRowLayout,
         spec: FlowRowSpec,
@@ -133,6 +146,10 @@ internal object ContainerViewBinder {
 
     fun readAnimatedVisibilityHostSpec(node: VNode): AnimatedVisibilityHostSpec {
         return ContainerViewSpecReader.readAnimatedVisibilityHostSpec(node)
+    }
+
+    fun readAnimatedSizeHostSpec(node: VNode): AnimatedSizeHostSpec {
+        return ContainerViewSpecReader.readAnimatedSizeHostSpec(node)
     }
 
     fun readAndroidViewSpec(node: VNode): AndroidViewSpec {
