@@ -804,6 +804,128 @@ class DemoVisualUiTest {
     }
 
     @Test
+    fun animationPage_specsPanel_switchesTypedAndGenericAnimations() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            AnimationActivity::class.java,
+        ).putExtra(EXTRA_ANIMATION_PAGE_INDEX, 3)
+        launchDemoActivity<AnimationActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            var floatBefore = ""
+            var vectorBefore = ""
+            scenario.onActivity { activity ->
+                floatBefore = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_SPEC_FLOAT_VALUE).text.toString()
+                vectorBefore = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_SPEC_VECTOR_VALUE).text.toString()
+                activity.clickByTestTag(DemoTestTags.ANIMATION_SPEC_KIND_TOGGLE)
+                activity.clickByTestTag(DemoTestTags.ANIMATION_SPEC_TARGET_TOGGLE)
+                activity.clickByTestTag(DemoTestTags.ANIMATION_SPEC_VECTOR_TOGGLE)
+                activity.clickByTestTag(DemoTestTags.ANIMATION_SPEC_SIZE_TOGGLE)
+            }
+            waitForUiIdle()
+            val typedAndGenericUpdated = waitUntilActivityCondition(scenario, timeoutMs = 1_500L) { activity ->
+                val floatAfter = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_SPEC_FLOAT_VALUE).text.toString()
+                val vectorAfter = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_SPEC_VECTOR_VALUE).text.toString()
+                val sizeProbe = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_SPEC_SIZE_PROBE)
+                floatAfter != floatBefore &&
+                    vectorAfter != vectorBefore &&
+                    isViewVisible(sizeProbe)
+            }
+            assertTrue("Expected specs panel to update typed and generic animation values", typedAndGenericUpdated)
+        }
+    }
+
+    @Test
+    fun animationPage_transitionPanel_updatesAllTransitionChannels() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            AnimationActivity::class.java,
+        ).putExtra(EXTRA_ANIMATION_PAGE_INDEX, 4)
+        launchDemoActivity<AnimationActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            var alphaBefore = ""
+            var intBefore = ""
+            var dpBefore = ""
+            var colorBefore = ""
+            scenario.onActivity { activity ->
+                alphaBefore = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_TRANSITION_ALPHA).text.toString()
+                intBefore = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_TRANSITION_INT).text.toString()
+                dpBefore = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_TRANSITION_DP).text.toString()
+                colorBefore = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_TRANSITION_COLOR).text.toString()
+                activity.clickByTestTag(DemoTestTags.ANIMATION_TRANSITION_TOGGLE)
+            }
+            waitForUiIdle()
+            val transitionValuesUpdated = waitUntilActivityCondition(scenario, timeoutMs = 1_500L) { activity ->
+                val alphaAfter = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_TRANSITION_ALPHA).text.toString()
+                val intAfter = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_TRANSITION_INT).text.toString()
+                val dpAfter = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_TRANSITION_DP).text.toString()
+                val colorAfter = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_TRANSITION_COLOR).text.toString()
+                alphaAfter != alphaBefore &&
+                    intAfter != intBefore &&
+                    dpAfter != dpBefore &&
+                    colorAfter != colorBefore
+            }
+            assertTrue("Expected transition panel channels to update after toggle", transitionValuesUpdated)
+        }
+    }
+
+    @Test
+    fun animationPage_visibilityStatePanel_reportsIdleAndTargetState() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            AnimationActivity::class.java,
+        ).putExtra(EXTRA_ANIMATION_PAGE_INDEX, 4)
+        launchDemoActivity<AnimationActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                activity.clickByTestTag(DemoTestTags.ANIMATION_VISIBILITY_STATE_TOGGLE)
+                activity.clickByTestTag(DemoTestTags.ANIMATION_ROW_AXIS_TOGGLE)
+                activity.clickByTestTag(DemoTestTags.ANIMATION_COLUMN_AXIS_TOGGLE)
+            }
+            waitForUiIdle()
+            val visibilityStateAndAxisUpdated = waitUntilActivityCondition(scenario, timeoutMs = 1_500L) { activity ->
+                val status = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_VISIBILITY_STATE_STATUS).text.toString()
+                val rowToggle = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_ROW_AXIS_TOGGLE).text.toString()
+                val columnToggle = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_COLUMN_AXIS_TOGGLE).text.toString()
+                status.contains("target=true") &&
+                    rowToggle.contains("隐藏") &&
+                    columnToggle.contains("隐藏")
+            }
+            assertTrue("Expected visibility state status and axis targets to update", visibilityStateAndAxisUpdated)
+        }
+    }
+
+    @Test
+    fun animationPage_infiniteAndAnimatable_controlsAffectRenderedValue() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            AnimationActivity::class.java,
+        ).putExtra(EXTRA_ANIMATION_PAGE_INDEX, 5)
+        launchDemoActivity<AnimationActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_INFINITE_VALUE)
+                activity.clickByTestTag(DemoTestTags.ANIMATION_INFINITE_REPEAT_MODE)
+                activity.clickByTestTag(DemoTestTags.ANIMATION_ANIMATABLE_SNAP_HIGH)
+            }
+            waitForUiIdle()
+            val snapHighApplied = waitUntilActivityCondition(scenario, timeoutMs = 1_500L) { activity ->
+                val text = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_ANIMATABLE_VALUE).text.toString()
+                extractFirstFloat(text)?.let { it >= 0.99f } == true
+            }
+            assertTrue("Expected animatable value to reach ~1.0 after snap high", snapHighApplied)
+            scenario.onActivity { activity ->
+                activity.clickByTestTag(DemoTestTags.ANIMATION_ANIMATABLE_SNAP_LOW)
+            }
+            waitForUiIdle()
+            val snapLowApplied = waitUntilActivityCondition(scenario, timeoutMs = 1_500L) { activity ->
+                val text = activity.requireTextViewByTestTag(DemoTestTags.ANIMATION_ANIMATABLE_VALUE).text.toString()
+                extractFirstFloat(text)?.let { it <= 0.01f } == true
+            }
+            assertTrue("Expected animatable value to reach ~0.0 after snap low", snapLowApplied)
+        }
+    }
+
+    @Test
     fun gesturesPage_tapAndDragSwipe_updateGestureSummaries() {
         val dragSwipeIntent = Intent(
             ApplicationProvider.getApplicationContext(),
@@ -829,6 +951,10 @@ class DemoVisualUiTest {
 
     private fun extractCount(text: String): Int {
         return "(\\d+)".toRegex().find(text)?.value?.toIntOrNull() ?: 0
+    }
+
+    private fun extractFirstFloat(text: String): Float? {
+        return "(-?\\d+(?:\\.\\d+)?)".toRegex().find(text)?.value?.toFloatOrNull()
     }
 
     private fun assertFocusActionKeepsRecyclerAnchor(
