@@ -8,7 +8,12 @@ import android.transition.Transition
 import android.transition.TransitionManager
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewPropertyAnimator
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.dynamicanimation.animation.DynamicAnimation
+import androidx.dynamicanimation.animation.FlingAnimation
+import androidx.dynamicanimation.animation.SpringAnimation
+import androidx.dynamicanimation.animation.SpringForce
 import com.viewcompose.host.android.AndroidView
 import com.viewcompose.host.android.nativeView
 import com.viewcompose.ui.modifier.Modifier
@@ -76,6 +81,73 @@ object AndroidAnimationInterop {
             }
             if (onEnd != null) {
                 doOnAnimationEnd(onEnd)
+            }
+            start()
+        }
+    }
+
+    fun startViewPropertyAnimator(
+        target: View,
+        durationMillis: Long = 300L,
+        startDelayMillis: Long = 0L,
+        interpolator: TimeInterpolator? = null,
+        configure: ViewPropertyAnimator.() -> Unit,
+        onEnd: (() -> Unit)? = null,
+    ): ViewPropertyAnimator {
+        return target.animate().apply {
+            duration = durationMillis
+            startDelay = startDelayMillis
+            interpolator?.let { this.interpolator = it }
+            configure()
+            if (onEnd != null) {
+                withEndAction(onEnd)
+            }
+            start()
+        }
+    }
+
+    fun startSpringAnimation(
+        target: View,
+        property: DynamicAnimation.ViewProperty,
+        finalPosition: Float,
+        startVelocity: Float = 0f,
+        stiffness: Float = SpringForce.STIFFNESS_MEDIUM,
+        dampingRatio: Float = SpringForce.DAMPING_RATIO_NO_BOUNCY,
+        onEnd: (() -> Unit)? = null,
+    ): SpringAnimation {
+        return SpringAnimation(target, property).apply {
+            spring = SpringForce(finalPosition).apply {
+                this.stiffness = stiffness
+                this.dampingRatio = dampingRatio
+            }
+            setStartVelocity(startVelocity)
+            onEnd?.let {
+                addEndListener { _, _, _, _ ->
+                    it()
+                }
+            }
+            start()
+        }
+    }
+
+    fun startFlingAnimation(
+        target: View,
+        property: DynamicAnimation.ViewProperty,
+        startVelocity: Float,
+        friction: Float = 1.1f,
+        minValue: Float = -Float.MAX_VALUE,
+        maxValue: Float = Float.MAX_VALUE,
+        onEnd: (() -> Unit)? = null,
+    ): FlingAnimation {
+        return FlingAnimation(target, property).apply {
+            setStartVelocity(startVelocity)
+            setFriction(friction)
+            setMinValue(minValue)
+            setMaxValue(maxValue)
+            onEnd?.let {
+                addEndListener { _, _, _, _ ->
+                    it()
+                }
             }
             start()
         }
