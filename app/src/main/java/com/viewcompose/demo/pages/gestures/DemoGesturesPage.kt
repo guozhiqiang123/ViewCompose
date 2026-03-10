@@ -1,6 +1,10 @@
 package com.viewcompose
 
 import android.view.Choreographer
+import com.viewcompose.animation.animateColorAsState
+import com.viewcompose.animation.animateFloatAsState
+import com.viewcompose.animation.spring
+import com.viewcompose.animation.tween
 import com.viewcompose.gesture.combinedClickable
 import com.viewcompose.gesture.draggable
 import com.viewcompose.gesture.gesturePriority
@@ -14,6 +18,7 @@ import com.viewcompose.ui.gesture.GestureOrientation
 import com.viewcompose.ui.gesture.GesturePriority
 import com.viewcompose.ui.gesture.PointerEventResult
 import com.viewcompose.ui.modifier.Modifier
+import com.viewcompose.ui.modifier.backgroundColor
 import com.viewcompose.ui.modifier.fillMaxSize
 import com.viewcompose.ui.modifier.fillMaxWidth
 import com.viewcompose.ui.modifier.graphicsLayer
@@ -73,6 +78,15 @@ internal fun UiTreeBuilder.GesturePage(
         rotationState.value += rotation
         transformLogState.value = "zoom=${"%.2f".format(scaleState.value)} rot=${"%.1f".format(rotationState.value)}"
     }
+    val swipeIsRight = swipeState.currentValue.value == "Right"
+    val swipeVisualOffset = animateFloatAsState(
+        targetValue = if (swipeIsRight) 112f else 0f,
+        animationSpec = spring(durationMillis = 280),
+    )
+    val swipeVisualColor = animateColorAsState(
+        targetValue = if (swipeIsRight) 0xFFD9FBE8.toInt() else 0xFFF1F5F9.toInt(),
+        animationSpec = tween(durationMillis = 220),
+    )
 
     val sections = when (selectedPageState.value) {
         0 -> listOf("page", "filter", "tap", "verify")
@@ -168,16 +182,24 @@ internal fun UiTreeBuilder.GesturePage(
                             anchors = mapOf(0f to "Left", 120f to "Right"),
                             orientation = GestureOrientation.Horizontal,
                         )
+                        .graphicsLayer(translationX = swipeVisualOffset.value)
+                        .backgroundColor(swipeVisualColor.value)
                         .padding(12.dp)
                         .testTag(DemoTestTags.GESTURE_SWIPE_TARGET),
                 ) {
-                    Text(text = "Swipe horizontally")
+                    Text(text = if (swipeIsRight) "Swipe horizontally · Right ✅" else "Swipe horizontally · Left ⬅")
                 }
                 Text(
                     text = "Swipe state = ${swipeState.currentValue.value}",
                     modifier = Modifier
                         .margin(top = 6.dp)
                         .testTag(DemoTestTags.GESTURE_SWIPE_VALUE),
+                )
+                Text(
+                    text = if (swipeIsRight) "视觉反馈：卡片右移并变绿" else "视觉反馈：卡片归位并恢复浅灰",
+                    color = TextDefaults.secondaryColor(),
+                    style = UiTextStyle(fontSizeSp = 12.sp),
+                    modifier = Modifier.margin(top = 4.dp),
                 )
             }
 
