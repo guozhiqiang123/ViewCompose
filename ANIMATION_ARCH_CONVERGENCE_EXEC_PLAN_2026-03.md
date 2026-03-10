@@ -27,7 +27,7 @@
 - [x] Step 5: `animateContentSize` 落地（ui-contract + renderer 包装宿主）。
 - [x] Step 6: `Animatable` 易用性重构 + `rememberAnimatable` + `InfiniteTransition` typed API。
 - [x] Step 7: Android interop 补齐（ViewPropertyAnimator + DynamicAnimation）。
-- [ ] Step 8: 测试体系补强（core/unit/instrumentation）与门禁跑通。
+- [x] Step 8: 测试体系补强（core/unit/instrumentation）与门禁跑通。
 - [ ] Step 9: 文档收口与归档。
 
 ## 提交记录
