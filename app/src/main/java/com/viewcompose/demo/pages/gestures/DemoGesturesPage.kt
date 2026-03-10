@@ -1,5 +1,6 @@
 package com.viewcompose
 
+import android.view.Choreographer
 import com.viewcompose.gesture.combinedClickable
 import com.viewcompose.gesture.draggable
 import com.viewcompose.gesture.gesturePriority
@@ -22,6 +23,7 @@ import com.viewcompose.ui.modifier.testTag
 import com.viewcompose.runtime.mutableStateOf
 import com.viewcompose.widget.core.Button
 import com.viewcompose.widget.core.Column
+import com.viewcompose.widget.core.DisposableEffect
 import com.viewcompose.widget.core.LazyColumn
 import com.viewcompose.widget.core.Surface
 import com.viewcompose.widget.core.SurfaceVariant
@@ -40,6 +42,12 @@ internal fun UiTreeBuilder.GesturePage(
     val selectedPageState = remember { mutableStateOf(initialPageIndex.coerceIn(0, 2)) }
     val tapCountState = remember { mutableStateOf(0) }
     val dragOffsetState = remember { mutableStateOf(0f) }
+    val dragTextOffsetState = remember { mutableStateOf(0f) }
+    val dragTextFrameUpdater = remember {
+        FrameCoalescedFloatUpdater { value ->
+            dragTextOffsetState.value = value
+        }
+    }
     val swipeState = rememberSwipeableState("Left")
     val pointerEventState = remember { mutableStateOf("None") }
     val scaleState = remember { mutableStateOf(1f) }
@@ -47,9 +55,16 @@ internal fun UiTreeBuilder.GesturePage(
     val panXState = remember { mutableStateOf(0f) }
     val panYState = remember { mutableStateOf(0f) }
     val transformLogState = remember { mutableStateOf("idle") }
+    DisposableEffect(dragTextFrameUpdater) {
+        return@DisposableEffect {
+            dragTextFrameUpdater.dispose()
+        }
+    }
 
     val draggableState = rememberDraggableState { delta ->
-        dragOffsetState.value = (dragOffsetState.value + delta).coerceIn(-240f, 240f)
+        val nextOffset = (dragOffsetState.value + delta).coerceIn(-240f, 240f)
+        dragOffsetState.value = nextOffset
+        dragTextFrameUpdater.submit(nextOffset)
     }
     val transformState = rememberTransformableState { zoom, panX, panY, rotation ->
         scaleState.value = (scaleState.value * zoom).coerceIn(0.6f, 2.2f)
@@ -138,7 +153,7 @@ internal fun UiTreeBuilder.GesturePage(
                     Text(text = "Drag horizontally")
                 }
                 Text(
-                    text = "Drag x = ${dragOffsetState.value.roundToInt()}",
+                    text = "Drag x = ${dragTextOffsetState.value.roundToInt()}",
                     modifier = Modifier
                         .margin(top = 6.dp)
                         .testTag(DemoTestTags.GESTURE_DRAG_VALUE),
@@ -219,5 +234,40 @@ internal fun UiTreeBuilder.GesturePage(
                 ),
             )
         }
+    }
+}
+
+private class FrameCoalescedFloatUpdater(
+    private val onValue: (Float) -> Unit,
+) : Choreographer.FrameCallback {
+    private var scheduled = false
+    private var hasPending = false
+    private var pendingValue = 0f
+
+    fun submit(value: Float) {
+        pendingValue = value
+        hasPending = true
+        if (scheduled) {
+            return
+        }
+        scheduled = true
+        Choreographer.getInstance().postFrameCallback(this)
+    }
+
+    override fun doFrame(frameTimeNanos: Long) {
+        scheduled = false
+        if (!hasPending) {
+            return
+        }
+        hasPending = false
+        onValue(pendingValue)
+    }
+
+    fun dispose() {
+        if (scheduled) {
+            Choreographer.getInstance().removeFrameCallback(this)
+        }
+        scheduled = false
+        hasPending = false
     }
 }
