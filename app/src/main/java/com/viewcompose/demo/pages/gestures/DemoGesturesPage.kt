@@ -17,6 +17,7 @@ import com.viewcompose.gesture.transformable
 import com.viewcompose.runtime.mutableStateOf
 import com.viewcompose.ui.gesture.GestureOrientation
 import com.viewcompose.ui.gesture.GesturePriority
+import com.viewcompose.ui.gesture.PointerEventType
 import com.viewcompose.ui.gesture.PointerEventResult
 import com.viewcompose.ui.layout.BoxAlignment
 import com.viewcompose.ui.modifier.Modifier
@@ -48,6 +49,7 @@ internal fun UiTreeBuilder.GesturePage(
     val selectedPageState = remember { mutableStateOf(initialPageIndex.coerceIn(0, 2)) }
     val tapCountState = remember { mutableStateOf(0) }
     val consumedPointerClickCountState = remember { mutableStateOf(0) }
+    val consumedPointerBlockedTapCountState = remember { mutableStateOf(0) }
     val consumedPointerEventState = remember { mutableStateOf("None") }
     val dragOffsetState = remember { mutableStateOf(0f) }
     val dragTextOffsetState = remember { mutableStateOf(0f) }
@@ -157,6 +159,9 @@ internal fun UiTreeBuilder.GesturePage(
                         )
                         .pointerInput(key = "tap-pointer-consumed") { event ->
                             consumedPointerEventState.value = event.type.name
+                            if (event.type == PointerEventType.Up) {
+                                consumedPointerBlockedTapCountState.value += 1
+                            }
                             PointerEventResult.Consumed
                         }
                         .padding(14.dp)
@@ -165,7 +170,7 @@ internal fun UiTreeBuilder.GesturePage(
                     Text(text = "PointerInput consumed target")
                 }
                 Text(
-                    text = "Consumed click count: ${consumedPointerClickCountState.value}",
+                    text = "Consumed click count: ${consumedPointerClickCountState.value} · Blocked taps: ${consumedPointerBlockedTapCountState.value}",
                     color = TextDefaults.secondaryColor(),
                     modifier = Modifier.testTag(DemoTestTags.GESTURE_POINTER_CONSUMED_CLICK_COUNT),
                 )
