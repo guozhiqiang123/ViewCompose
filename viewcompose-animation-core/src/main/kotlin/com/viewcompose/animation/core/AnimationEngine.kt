@@ -99,33 +99,22 @@ private suspend fun <T> runOneShotAnimation(
         onValue(endValue)
         return AnimationRunResult.Completed
     }
-    val startVector = converter.toVector(startValue)
-    val endVector = converter.toVector(endValue)
-    val timing = timingNanos(animationSpec)
+    val totalDurationNanos = animationDurationNanos(animationSpec)
     val startNanos = frameClock.awaitFrameNanos()
     var completed = false
     while (kotlin.coroutines.coroutineContext.isActive) {
         val frameNanos = frameClock.awaitFrameNanos()
         val playNanos = (frameNanos - startNanos).coerceAtLeast(0L)
-        val delayedPlayNanos = playNanos - timing.delayNanos
-        if (delayedPlayNanos < 0L) {
-            onValue(startValue)
-            continue
-        }
-        val fraction = (delayedPlayNanos.toDouble() / timing.durationNanos.toDouble()).toFloat().coerceIn(0f, 1f)
-        val normalized = interpolateFraction(
-            animationSpec = animationSpec,
-            fraction = fraction,
+        onValue(
+            sampleAnimationValue(
+                startValue = startValue,
+                endValue = endValue,
+                animationSpec = animationSpec,
+                converter = converter,
+                playTimeNanos = playNanos,
+            ),
         )
-        val vector = FloatArray(startVector.size) { index ->
-            lerp(
-                start = startVector[index],
-                stop = endVector.getOrElse(index) { startVector[index] },
-                fraction = normalized,
-            )
-        }
-        onValue(converter.fromVector(vector))
-        if (fraction >= 1f) {
+        if (playNanos >= totalDurationNanos) {
             completed = true
             break
         }
@@ -141,6 +130,53 @@ private data class AnimationTimingNanos(
     val delayNanos: Long,
     val durationNanos: Long,
 )
+
+fun animationDurationNanos(
+    spec: AnimationSpec,
+): Long {
+    return timingNanos(spec).let { timing ->
+        timing.delayNanos + timing.durationNanos
+    }
+}
+
+fun <T> sampleAnimationValue(
+    startValue: T,
+    endValue: T,
+    animationSpec: AnimationSpec,
+    converter: AnimationConverter<T>,
+    playTimeNanos: Long,
+): T {
+    if (animationSpec is SnapSpec) {
+        return endValue
+    }
+    val timing = timingNanos(animationSpec)
+    val delayedPlayNanos = playTimeNanos.coerceAtLeast(0L) - timing.delayNanos
+    if (delayedPlayNanos <= 0L) {
+        return startValue
+    }
+    val fraction = (delayedPlayNanos.toDouble() / timing.durationNanos.toDouble()).toFloat().coerceIn(0f, 1f)
+    val normalized = interpolateFraction(
+        animationSpec = animationSpec,
+        fraction = fraction,
+    )
+    val startVector = converter.toVector(startValue)
+    val endVector = converter.toVector(endValue)
+    val vector = FloatArray(startVector.size) { index ->
+        lerp(
+            start = startVector[index],
+            stop = endVector.getOrElse(index) { startVector[index] },
+            fraction = normalized,
+        )
+    }
+    return converter.fromVector(vector)
+}
+
+fun isAnimationFinished(
+    spec: AnimationSpec,
+    playTimeNanos: Long,
+): Boolean {
+    return playTimeNanos >= animationDurationNanos(spec)
+}
 
 private fun timingNanos(spec: AnimationSpec): AnimationTimingNanos {
     return when (spec) {

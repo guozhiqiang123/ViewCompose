@@ -289,100 +289,99 @@ private fun UiTreeBuilder.animatedVisibilityCore(
     val enterHeightExpand = enter.findExpandForHeightAxis()
     val exitWidthShrink = exit.findShrinkForWidthAxis()
     val exitHeightShrink = exit.findShrinkForHeightAxis()
-    val stateMachine = remember(visibleState) {
-        AnimatedVisibilityStateMachine(initialVisible = visibleState.currentState)
-    }
-    val beforeSnapshot = stateMachine.beforeAnimation(targetVisible = targetVisible)
-    val targetAlpha = when (beforeSnapshot.phase) {
-        AnimatedVisibilityPhase.PreEnter,
-        AnimatedVisibilityPhase.Visible,
-        -> 1f
-
-        AnimatedVisibilityPhase.PostExit,
-        AnimatedVisibilityPhase.Idle,
-        -> exitFade?.targetAlpha ?: 1f
-    }
-    val alphaSpec = when (beforeSnapshot.phase) {
-        AnimatedVisibilityPhase.PreEnter,
-        AnimatedVisibilityPhase.Visible,
-        -> enterFade?.animationSpec ?: snap()
-
-        AnimatedVisibilityPhase.PostExit,
-        AnimatedVisibilityPhase.Idle,
-        -> exitFade?.animationSpec ?: snap()
-    }
-    val targetWidthScale = when (beforeSnapshot.phase) {
-        AnimatedVisibilityPhase.PreEnter,
-        AnimatedVisibilityPhase.Visible,
-        -> 1f
-
-        AnimatedVisibilityPhase.PostExit,
-        AnimatedVisibilityPhase.Idle,
-        -> exitWidthShrink?.targetScale ?: 1f
-    }
-    val widthSpec = when (beforeSnapshot.phase) {
-        AnimatedVisibilityPhase.PreEnter,
-        AnimatedVisibilityPhase.Visible,
-        -> enterWidthExpand?.animationSpec ?: snap()
-
-        AnimatedVisibilityPhase.PostExit,
-        AnimatedVisibilityPhase.Idle,
-        -> exitWidthShrink?.animationSpec ?: snap()
-    }
-    val targetHeightScale = when (beforeSnapshot.phase) {
-        AnimatedVisibilityPhase.PreEnter,
-        AnimatedVisibilityPhase.Visible,
-        -> 1f
-
-        AnimatedVisibilityPhase.PostExit,
-        AnimatedVisibilityPhase.Idle,
-        -> exitHeightShrink?.targetScale ?: 1f
-    }
-    val heightSpec = when (beforeSnapshot.phase) {
-        AnimatedVisibilityPhase.PreEnter,
-        AnimatedVisibilityPhase.Visible,
-        -> enterHeightExpand?.animationSpec ?: snap()
-
-        AnimatedVisibilityPhase.PostExit,
-        AnimatedVisibilityPhase.Idle,
-        -> exitHeightShrink?.animationSpec ?: snap()
-    }
-    val alphaState = animateFloatAsState(
-        targetValue = targetAlpha,
-        animationSpec = alphaSpec,
+    val transition = updateTransition(
+        targetState = targetVisible,
+        label = "animated_visibility",
     )
-    val widthScaleState = animateFloatAsState(
-        targetValue = targetWidthScale,
-        animationSpec = widthSpec,
-    )
-    val heightScaleState = animateFloatAsState(
-        targetValue = targetHeightScale,
-        animationSpec = heightSpec,
-    )
-    val exitFinished = alphaState.value.isApproximately(targetAlpha) &&
-        widthScaleState.value.isApproximately(targetWidthScale) &&
-        heightScaleState.value.isApproximately(targetHeightScale)
-    val enterFinished = alphaState.value.isApproximately(targetAlpha) &&
-        widthScaleState.value.isApproximately(targetWidthScale) &&
-        heightScaleState.value.isApproximately(targetHeightScale)
-    val afterSnapshot = stateMachine.afterAnimation(
-        targetVisible = targetVisible,
-        enterFinished = enterFinished,
-        exitFinished = exitFinished,
-    )
-    visibleState.currentState = when (afterSnapshot.phase) {
-        AnimatedVisibilityPhase.PreEnter,
-        AnimatedVisibilityPhase.Idle,
-        -> false
+    val alphaState = transition.animateFloatBySegment(
+        transitionSpec = { initial, target ->
+            when {
+                !initial && target -> enterFade?.animationSpec ?: snap()
+                initial && !target -> exitFade?.animationSpec ?: snap()
+                else -> snap()
+            }
+        },
+        segmentEndpoints = { initial, target, current ->
+            val hiddenAlpha = exitFade?.targetAlpha ?: 1f
+            when {
+                !initial && target -> {
+                    val start = if (current.isApproximately(hiddenAlpha)) {
+                        enterFade?.initialAlpha ?: current
+                    } else {
+                        current
+                    }
+                    start to 1f
+                }
 
-        AnimatedVisibilityPhase.Visible,
-        AnimatedVisibilityPhase.PostExit,
-        -> true
-    }
+                initial && !target -> current to hiddenAlpha
+                else -> current to if (target) 1f else hiddenAlpha
+            }
+        },
+        valueForSettledState = { settledVisible ->
+            if (settledVisible) 1f else (exitFade?.targetAlpha ?: 1f)
+        },
+    )
+    val widthScaleState = transition.animateFloatBySegment(
+        transitionSpec = { initial, target ->
+            when {
+                !initial && target -> enterWidthExpand?.animationSpec ?: snap()
+                initial && !target -> exitWidthShrink?.animationSpec ?: snap()
+                else -> snap()
+            }
+        },
+        segmentEndpoints = { initial, target, current ->
+            val hiddenWidthScale = exitWidthShrink?.targetScale ?: 1f
+            when {
+                !initial && target -> {
+                    val start = if (current.isApproximately(hiddenWidthScale)) {
+                        enterWidthExpand?.initialScale ?: current
+                    } else {
+                        current
+                    }
+                    start to 1f
+                }
+
+                initial && !target -> current to hiddenWidthScale
+                else -> current to if (target) 1f else hiddenWidthScale
+            }
+        },
+        valueForSettledState = { settledVisible ->
+            if (settledVisible) 1f else (exitWidthShrink?.targetScale ?: 1f)
+        },
+    )
+    val heightScaleState = transition.animateFloatBySegment(
+        transitionSpec = { initial, target ->
+            when {
+                !initial && target -> enterHeightExpand?.animationSpec ?: snap()
+                initial && !target -> exitHeightShrink?.animationSpec ?: snap()
+                else -> snap()
+            }
+        },
+        segmentEndpoints = { initial, target, current ->
+            val hiddenHeightScale = exitHeightShrink?.targetScale ?: 1f
+            when {
+                !initial && target -> {
+                    val start = if (current.isApproximately(hiddenHeightScale)) {
+                        enterHeightExpand?.initialScale ?: current
+                    } else {
+                        current
+                    }
+                    start to 1f
+                }
+
+                initial && !target -> current to hiddenHeightScale
+                else -> current to if (target) 1f else hiddenHeightScale
+            }
+        },
+        valueForSettledState = { settledVisible ->
+            if (settledVisible) 1f else (exitHeightShrink?.targetScale ?: 1f)
+        },
+    )
+    visibleState.currentState = transition.currentState
     visibleState.targetState = targetVisible
-    visibleState.isIdle = (afterSnapshot.phase == AnimatedVisibilityPhase.Visible && targetVisible) ||
-        (afterSnapshot.phase == AnimatedVisibilityPhase.Idle && !targetVisible)
-    if (!afterSnapshot.shouldRender) {
+    visibleState.isIdle = !transition.isRunning && transition.currentState == transition.targetState
+    val shouldRender = transition.currentState || transition.targetState || transition.isRunning
+    if (!shouldRender) {
         return
     }
     val hasSizeTransform = enterWidthExpand != null ||
@@ -431,6 +430,6 @@ private fun ExitTransition.findShrinkForHeightAxis(): ExitTransitionElement.Shri
         .firstOrNull { it.axis == SizeTransformAxis.Both || it.axis == SizeTransformAxis.Vertical }
 }
 
-private fun Float.isApproximately(target: Float): Boolean {
-    return abs(this - target) <= 0.001f
+private fun Float.isApproximately(other: Float): Boolean {
+    return abs(this - other) <= 0.001f
 }
