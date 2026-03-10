@@ -74,3 +74,4 @@
 | `MODIFIER_GESTURE_OPT_EXEC_PLAN_2026-03.md` | 已完成的 Modifier 手势优化执行计划（pointerInput 强短路、transform slop 门槛、swipe 距离+速度联合判定与回归补强） |
 | `GESTURE_ARCH_CONVERGENCE_EXEC_PLAN_2026-03.md` | 已完成的 Gesture 跨平台分层重构执行计划（`gesture-core` 策略内核 + `gesture` DSL 入口 + renderer 事件适配收口） |
 | `GESTURE_ARCH_BLOCKER_CONTEXT_2026-03.md` | Gesture 架构重构阶段设备门禁阻塞记录（Huawei 并行噪声）及 Pixel 4 XL 单设备复跑解除记录 |
+| `CONSTRAINT_LAYOUT_EXEC_PLAN_2026-03.md` | 已完成的 ConstraintLayout 组件模块化执行计划（`viewcompose-widget-constraintlayout` + renderer 映射 + demo/preview/test/documentation 收口） |

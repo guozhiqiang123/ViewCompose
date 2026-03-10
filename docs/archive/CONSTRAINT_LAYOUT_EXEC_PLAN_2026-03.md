@@ -35,7 +35,7 @@
 - [x] Step 5: renderer 映射、binder/patch/layout params、ConstraintSet 应用引擎接入。
 - [x] Step 6: demo + preview + docs 同步。
 - [x] Step 7: unit/instrumentation 回归补齐与门禁收口。
-- [ ] Step 8: 完结归档。
+- [x] Step 8: 完结归档。
 
 ## 提交记录
 1. `docs: add constraint layout execution plan`
@@ -43,7 +43,9 @@
 3. `feat: add constraint layout contracts and modifier metadata primitives`
 4. `feat: add constraint layout widget dsl with compose-aligned and concise APIs`
 5. `feat: add renderer constraint layout mapping and constraint-set application engine`
-6. `feat: add constraintlayout demo preview coverage and documentation`
+6. `feat: add constraintlayout demo and preview showcase`
+7. `test: add constraintlayout renderer and ui coverage`
+8. `docs: close and archive constraint layout execution plan`
 
 ## 阻塞记录
 - 暂无。
