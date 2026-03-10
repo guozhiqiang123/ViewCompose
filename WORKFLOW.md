@@ -99,7 +99,7 @@
 
 默认判断顺序：
 
-1. 先判断模块职责边界，例如 `viewcompose-runtime`、`viewcompose-ui-contract`、`viewcompose-widget-core`、`viewcompose-renderer`、`viewcompose-host-android`、`viewcompose-lifecycle`、`viewcompose-viewmodel`、`app`
+1. 先判断模块职责边界，例如 `viewcompose-runtime`、`viewcompose-ui-contract`、`viewcompose-widget-core`、`viewcompose-widget-constraintlayout`、`viewcompose-renderer`、`viewcompose-host-android`、`viewcompose-lifecycle`、`viewcompose-viewmodel`、`app`
 2. 再判断目录职责边界，例如 `context/`、`dsl/`、`runtime/`、`view/`、`defaults/`
 3. 最后才决定具体文件名
 
@@ -276,6 +276,16 @@
 11. `Modifier.animateContentSize(...)` 必须保持布局级尺寸动画语义（父布局可观察到连续尺寸变化），禁止回退到 `graphicsLayer` 缩放假象。
 12. `AnimatedSizeHost` 实现改动必须覆盖“展开 + 收起”双向视觉连续性，禁止出现只展开平滑、收起瞬跳的回归。
 13. 手势策略算法（axis lock / transform slop / swipe settle）变更必须改在 `:viewcompose-gesture-core`，renderer 仅允许阈值采集与事件分发适配。
+
+## 5.17 ConstraintLayout 约束
+
+涉及 `ConstraintLayout` 能力新增或改造时，必须遵守：
+
+1. 组件 DSL 与 scope 只放 `:viewcompose-widget-constraintlayout`；renderer 只做 Android `ConstraintLayout` 映射与约束应用。
+2. `layoutId/constrainAs/constrain` 属于 parent-data，错误宿主必须触发 `ModifierParentDataValidator` 警告，禁止静默忽略。
+3. 同一 child 同时存在 inline 约束与 decoupled `ConstraintSet` 时，必须保持 inline 优先并输出一次 warning。
+4. `ConstraintDimension` 与 `Modifier.width/height/size` 冲突时，必须保持约束 dimension 优先。
+5. 新增 guideline/barrier/chain/constraintSet 语义时，必须同轮补 DSL 单测 + renderer 单测 + demo UI 回归锚点。
 
 ## 6. 线程中断恢复原则
 

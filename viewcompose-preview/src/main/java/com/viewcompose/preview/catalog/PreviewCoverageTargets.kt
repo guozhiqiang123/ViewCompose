@@ -8,6 +8,7 @@ internal object PreviewCoverageTargets {
         "input-text-fields",
         "container-box-row-column",
         "container-flow-scroll",
+        "container-constraint-layout",
         "collection-lazy-column",
         "collection-grid-pagers-tabs",
         "navigation-app-bars",

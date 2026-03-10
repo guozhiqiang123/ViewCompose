@@ -9,8 +9,11 @@ import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.modifier.backgroundColor
 import com.viewcompose.ui.modifier.fillMaxWidth
 import com.viewcompose.ui.modifier.height
+import com.viewcompose.ui.modifier.layoutId
 import com.viewcompose.ui.modifier.margin
 import com.viewcompose.ui.modifier.padding
+import com.viewcompose.ui.node.spec.ConstraintChainStyle
+import com.viewcompose.ui.node.spec.ConstraintDimension
 import com.viewcompose.widget.core.Box
 import com.viewcompose.widget.core.Column
 import com.viewcompose.widget.core.FlowRow
@@ -21,6 +24,7 @@ import com.viewcompose.widget.core.SurfaceVariant
 import com.viewcompose.widget.core.Text
 import com.viewcompose.widget.core.Theme
 import com.viewcompose.widget.core.dp
+import com.viewcompose.widget.constraintlayout.*
 
 internal object ContainerPreviewSpecs {
     val all: List<PreviewSpec> = listOf(
@@ -112,6 +116,89 @@ internal object ContainerPreviewSpecs {
                                     Text(text = "Item $index")
                                 }
                             }
+                        }
+                    }
+                }
+            },
+        ),
+        PreviewSpec(
+            id = "container-constraint-layout",
+            title = "ConstraintLayout (Anchors + Helpers + Set)",
+            domain = PreviewDomain.Container,
+            content = {
+                val compactSet = constraintSet {
+                    val (titleRef, markerRef) = createRefs("title", "marker")
+                    constrain("title") {
+                        startToStart(parent)
+                        topToTop(parent)
+                    }
+                    constrain("marker") {
+                        startToStart(titleRef)
+                        topToBottom(titleRef, margin = 10.dp)
+                        endToEnd(parent)
+                        width = ConstraintDimension.FillToConstraints
+                    }
+                }
+                Column(
+                    spacing = 8.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .margin(horizontal = 12.dp, vertical = 8.dp),
+                ) {
+                    ConstraintLayout(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(136.dp)
+                            .backgroundColor(Theme.colors.surfaceVariant)
+                            .padding(10.dp),
+                    ) {
+                        val (aRef, bRef, cRef) = createRefs("a", "b", "c")
+                        createHorizontalChain(aRef, bRef, cRef, style = ConstraintChainStyle.SpreadInside)
+                        Surface(
+                            variant = SurfaceVariant.Default,
+                            modifier = Modifier.constrainAs(aRef) {
+                                topToTop(parent)
+                                bottomToBottom(parent)
+                                width = ConstraintDimension.Fixed(64.dp)
+                                height = ConstraintDimension.Fixed(44.dp)
+                            },
+                        ) { Box(contentAlignment = BoxAlignment.Center, modifier = Modifier.fillMaxWidth()) { Text(text = "A") } }
+                        Surface(
+                            variant = SurfaceVariant.Variant,
+                            modifier = Modifier.constrainAs(bRef) {
+                                topToTop(parent)
+                                bottomToBottom(parent)
+                                width = ConstraintDimension.Fixed(64.dp)
+                                height = ConstraintDimension.Fixed(44.dp)
+                            },
+                        ) { Box(contentAlignment = BoxAlignment.Center, modifier = Modifier.fillMaxWidth()) { Text(text = "B") } }
+                        Surface(
+                            variant = SurfaceVariant.Default,
+                            modifier = Modifier.constrainAs(cRef) {
+                                topToTop(parent)
+                                bottomToBottom(parent)
+                                width = ConstraintDimension.Fixed(64.dp)
+                                height = ConstraintDimension.Fixed(44.dp)
+                            },
+                        ) { Box(contentAlignment = BoxAlignment.Center, modifier = Modifier.fillMaxWidth()) { Text(text = "C") } }
+                    }
+                    ConstraintLayout(
+                        constraintSet = compactSet,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(96.dp)
+                            .backgroundColor(Theme.colors.background)
+                            .padding(10.dp),
+                    ) {
+                        Text(
+                            text = "Decoupled Set",
+                            modifier = Modifier.layoutId("title"),
+                        )
+                        Surface(
+                            variant = SurfaceVariant.Variant,
+                            modifier = Modifier.layoutId("marker").padding(horizontal = 10.dp, vertical = 6.dp),
+                        ) {
+                            Text(text = "layout updates by set")
                         }
                     }
                 }

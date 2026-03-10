@@ -51,6 +51,7 @@ dependencies {
     implementation(project(":viewcompose-ui-contract"))
     implementation(project(":viewcompose-renderer"))
     implementation(project(":viewcompose-widget-core"))
+    implementation(project(":viewcompose-widget-constraintlayout"))
     implementation(project(":viewcompose-host-android"))
     implementation(project(":viewcompose-animation"))
     implementation(project(":viewcompose-gesture"))

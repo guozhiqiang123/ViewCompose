@@ -11,13 +11,17 @@ import com.viewcompose.ui.modifier.cornerRadius
 import com.viewcompose.ui.modifier.fillMaxSize
 import com.viewcompose.ui.modifier.fillMaxWidth
 import com.viewcompose.ui.modifier.height
+import com.viewcompose.ui.modifier.layoutId
 import com.viewcompose.ui.modifier.margin
 import com.viewcompose.ui.modifier.offset
 import com.viewcompose.ui.modifier.padding
 import com.viewcompose.ui.modifier.testTag
 import com.viewcompose.ui.modifier.zIndex
 import com.viewcompose.ui.node.ImageSource
+import com.viewcompose.ui.node.spec.ConstraintChainStyle
+import com.viewcompose.ui.node.spec.ConstraintDimension
 import com.viewcompose.runtime.mutableStateOf
+import com.viewcompose.widget.constraintlayout.*
 import com.viewcompose.widget.core.Box
 import com.viewcompose.widget.core.Button
 import com.viewcompose.widget.core.ButtonSize
@@ -50,13 +54,24 @@ internal fun UiTreeBuilder.LayoutPage(
     val benchmarkState = remember { mutableStateOf(false) }
     val useLongLabelsState = remember { mutableStateOf(false) }
     val flowItemCountState = remember { mutableStateOf(8) }
-    val selectedPageState = remember { mutableStateOf(initialPageIndex.coerceIn(0, 5)) }
+    val constraintHelperLongState = remember { mutableStateOf(false) }
+    val constraintSetExpandedState = remember { mutableStateOf(false) }
+    val selectedPageState = remember { mutableStateOf(initialPageIndex.coerceIn(0, 6)) }
     val pageItems = when (selectedPageState.value) {
         0 -> listOf("benchmark", "page", "page_filter", "row", "column", "verify")
         1 -> listOf("page", "page_filter", "box", "verify")
         2 -> listOf("page", "page_filter", "edge", "verify")
         3 -> listOf("page", "page_filter", "flow", "verify")
         4 -> listOf("page", "page_filter", "scrollable", "verify")
+        5 -> listOf(
+            "page",
+            "page_filter",
+            "constraint_basic",
+            "constraint_helpers",
+            "constraint_chain",
+            "constraint_set",
+            "verify",
+        )
         else -> listOf("page", "page_filter", "verify")
     }
     LazyColumn(
@@ -68,11 +83,19 @@ internal fun UiTreeBuilder.LayoutPage(
             "page" -> ChapterPageOverviewSection(
                 title = "布局组件",
                 goal = "验证线性容器、Box 叠加、流式布局和滚动容器的测量、摆放、间距和子项覆盖的稳定性。",
-                modules = listOf("DeclarativeLinearLayout", "DeclarativeBoxLayout", "FlowRow", "FlowColumn", "ScrollableColumn", "ScrollableRow"),
+                modules = listOf(
+                    "DeclarativeLinearLayout",
+                    "DeclarativeBoxLayout",
+                    "FlowRow",
+                    "FlowColumn",
+                    "ScrollableColumn",
+                    "ScrollableRow",
+                    "DeclarativeConstraintLayout",
+                ),
             )
 
             "page_filter" -> ChapterPageFilterSection(
-                pages = listOf("线性", "叠加", "边界", "流式", "滚动", "清单"),
+                pages = listOf("线性", "叠加", "边界", "流式", "滚动", "约束", "清单"),
                 selectedIndex = selectedPageState.value,
                 onSelectionChange = { selectedPageState.value = it },
             )
@@ -417,6 +440,259 @@ internal fun UiTreeBuilder.LayoutPage(
                 }
             }
 
+            "constraint_basic" -> ScenarioSection(
+                kind = ScenarioKind.Core,
+                title = "Constraint 基础锚点",
+                subtitle = "anchors + dimension + bias 组合，验证约束节点在 renderer 主链路可稳定布局。",
+            ) {
+                ConstraintLayout(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(188.dp)
+                        .backgroundColor(SurfaceDefaults.backgroundColor())
+                        .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                        .padding(12.dp)
+                        .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_BASIC_CONTAINER),
+                ) {
+                    val (titleRef, contentRef, badgeRef) = createRefs("title", "content", "badge")
+                    Text(
+                        text = "约束基础卡片",
+                        style = UiTextStyle(fontSizeSp = 15.sp),
+                        modifier = Modifier.constrainAs(titleRef) {
+                            topToTop(parent)
+                            startToStart(parent)
+                        },
+                    )
+                    Surface(
+                        variant = SurfaceVariant.Variant,
+                        modifier = Modifier.constrainAs(contentRef) {
+                            startToStart(parent)
+                            endToEnd(parent)
+                            topToBottom(titleRef, margin = 12.dp)
+                            bottomToBottom(parent)
+                            width = ConstraintDimension.FillToConstraints
+                            height = ConstraintDimension.FillToConstraints
+                        }.padding(12.dp),
+                    ) {
+                        Text(
+                            text = "content 通过 FillToConstraints 拉伸；badge 由 bias 控制位置。",
+                            style = UiTextStyle(fontSizeSp = 13.sp),
+                            color = TextDefaults.secondaryColor(),
+                        )
+                    }
+                    Surface(
+                        variant = SurfaceVariant.Default,
+                        modifier = Modifier
+                            .constrainAs(badgeRef) {
+                                startToStart(contentRef, margin = 8.dp)
+                                endToEnd(contentRef, margin = 8.dp)
+                                topToTop(contentRef, margin = 8.dp)
+                                horizontalBias = 0.78f
+                            }
+                            .padding(horizontal = 10.dp, vertical = 6.dp)
+                            .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_BASIC_BADGE),
+                    ) {
+                        Text(text = "Bias")
+                    }
+                }
+            }
+
+            "constraint_helpers" -> ScenarioSection(
+                kind = ScenarioKind.Core,
+                title = "Guideline + Barrier",
+                subtitle = "guideline 控制分区，barrier 在文本宽度变化后仍给右侧内容稳定锚点。",
+            ) {
+                Button(
+                    text = if (constraintHelperLongState.value) "使用短文案" else "使用长文案",
+                    size = ButtonSize.Compact,
+                    variant = ButtonVariant.Outlined,
+                    modifier = Modifier
+                        .margin(bottom = 8.dp)
+                        .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_HELPERS_TOGGLE),
+                    onClick = { constraintHelperLongState.value = !constraintHelperLongState.value },
+                )
+                ConstraintLayout(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(176.dp)
+                        .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                        .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                        .padding(12.dp)
+                        .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_HELPERS_CONTAINER),
+                ) {
+                    val leftPartition = createGuidelineFromStart(0.62f)
+                    val (headlineRef, summaryRef, markerRef) = createRefs("headline", "summary", "marker")
+                    val endBarrier = createEndBarrier(headlineRef, summaryRef, margin = 6.dp)
+                    Text(
+                        text = "Helper 区",
+                        style = UiTextStyle(fontSizeSp = 14.sp),
+                        modifier = Modifier.constrainAs(headlineRef) {
+                            startToStart(parent)
+                            topToTop(parent)
+                            endToStart(leftPartition, margin = 8.dp)
+                            width = ConstraintDimension.FillToConstraints
+                        },
+                    )
+                    Text(
+                        text = if (constraintHelperLongState.value) {
+                            "这是一段更长的说明文案，用于验证 barrier 会跟随最长文本边界。"
+                        } else {
+                            "简短说明文案。"
+                        },
+                        style = UiTextStyle(fontSizeSp = 12.sp),
+                        color = TextDefaults.secondaryColor(),
+                        modifier = Modifier.constrainAs(summaryRef) {
+                            startToStart(parent)
+                            topToBottom(headlineRef, margin = 8.dp)
+                            endToStart(leftPartition, margin = 8.dp)
+                            width = ConstraintDimension.FillToConstraints
+                        },
+                    )
+                    Surface(
+                        variant = SurfaceVariant.Default,
+                        modifier = Modifier
+                            .constrainAs(markerRef) {
+                                startToEnd(endBarrier, margin = 8.dp)
+                                topToTop(parent)
+                            }
+                            .padding(horizontal = 10.dp, vertical = 6.dp)
+                            .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_HELPERS_MARKER),
+                    ) {
+                        Text(text = "Barrier Marker")
+                    }
+                }
+            }
+
+            "constraint_chain" -> ScenarioSection(
+                kind = ScenarioKind.Core,
+                title = "Chain 编排",
+                subtitle = "horizontal chain 统一分配空间，验证链式布局在 patch 后保持稳定。",
+            ) {
+                ConstraintLayout(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(148.dp)
+                        .backgroundColor(SurfaceDefaults.backgroundColor())
+                        .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                        .padding(12.dp)
+                        .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_CHAIN_CONTAINER),
+                ) {
+                    val (startRef, middleRef, endRef) = createRefs("start", "middle", "end")
+                    createHorizontalChain(
+                        startRef,
+                        middleRef,
+                        endRef,
+                        style = ConstraintChainStyle.SpreadInside,
+                    )
+                    Surface(
+                        variant = SurfaceVariant.Variant,
+                        modifier = Modifier
+                            .constrainAs(startRef) {
+                                topToTop(parent)
+                                bottomToBottom(parent)
+                                width = ConstraintDimension.Fixed(88.dp)
+                                height = ConstraintDimension.Fixed(56.dp)
+                            }
+                            .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_CHAIN_START),
+                    ) { Box(contentAlignment = BoxAlignment.Center, modifier = Modifier.fillMaxSize()) { Text(text = "A") } }
+                    Surface(
+                        variant = SurfaceVariant.Default,
+                        modifier = Modifier
+                            .constrainAs(middleRef) {
+                                topToTop(parent)
+                                bottomToBottom(parent)
+                                width = ConstraintDimension.Fixed(88.dp)
+                                height = ConstraintDimension.Fixed(56.dp)
+                            }
+                            .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_CHAIN_MIDDLE),
+                    ) { Box(contentAlignment = BoxAlignment.Center, modifier = Modifier.fillMaxSize()) { Text(text = "B") } }
+                    Surface(
+                        variant = SurfaceVariant.Variant,
+                        modifier = Modifier
+                            .constrainAs(endRef) {
+                                topToTop(parent)
+                                bottomToBottom(parent)
+                                width = ConstraintDimension.Fixed(88.dp)
+                                height = ConstraintDimension.Fixed(56.dp)
+                            }
+                            .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_CHAIN_END),
+                    ) { Box(contentAlignment = BoxAlignment.Center, modifier = Modifier.fillMaxSize()) { Text(text = "C") } }
+                }
+            }
+
+            "constraint_set" -> ScenarioSection(
+                kind = ScenarioKind.Visual,
+                title = "Decoupled ConstraintSet",
+                subtitle = "constraintSet 动态切换，验证约束重算与布局即时刷新。",
+            ) {
+                Button(
+                    text = if (constraintSetExpandedState.value) "切换到竖向布局" else "切换到横向布局",
+                    variant = ButtonVariant.Outlined,
+                    modifier = Modifier
+                        .margin(bottom = 8.dp)
+                        .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_SET_TOGGLE),
+                    onClick = { constraintSetExpandedState.value = !constraintSetExpandedState.value },
+                )
+                val compactSet = constraintSet {
+                    val (titleRef, markerRef) = createRefs("title", "marker")
+                    constrain("title") {
+                        startToStart(parent)
+                        topToTop(parent)
+                    }
+                    constrain("marker") {
+                        startToStart(titleRef)
+                        topToBottom(titleRef, margin = 12.dp)
+                        endToEnd(parent)
+                        width = ConstraintDimension.FillToConstraints
+                    }
+                }
+                val expandedSet = constraintSet {
+                    val (titleRef, markerRef) = createRefs("title", "marker")
+                    constrain("title") {
+                        startToStart(parent)
+                        topToTop(parent)
+                        bottomToBottom(parent)
+                    }
+                    constrain("marker") {
+                        startToEnd(titleRef, margin = 12.dp)
+                        endToEnd(parent)
+                        topToTop(parent)
+                        bottomToBottom(parent)
+                        width = ConstraintDimension.FillToConstraints
+                    }
+                }
+                ConstraintLayout(
+                    constraintSet = if (constraintSetExpandedState.value) expandedSet else compactSet,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(156.dp)
+                        .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                        .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                        .padding(12.dp),
+                ) {
+                    Text(
+                        text = if (constraintSetExpandedState.value) "横向模式" else "竖向模式",
+                        style = UiTextStyle(fontSizeSp = 14.sp),
+                        modifier = Modifier.layoutId("title"),
+                    )
+                    Surface(
+                        variant = SurfaceVariant.Default,
+                        modifier = Modifier
+                            .layoutId("marker")
+                            .padding(horizontal = 12.dp, vertical = 8.dp)
+                            .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_SET_MARKER),
+                    ) {
+                        Text(
+                            text = if (constraintSetExpandedState.value) {
+                                "marker 已切换到标题右侧。"
+                            } else {
+                                "marker 位于标题下方。"
+                            },
+                        )
+                    }
+                }
+            }
+
             else -> VerificationNotesSection(
                 what = "布局组件应验证线性容器、Box 叠加、流式布局和滚动容器的稳定性。",
                 howToVerify = listOf(
@@ -426,11 +702,13 @@ internal fun UiTreeBuilder.LayoutPage(
                     "增减 FlowRow 标签数量，确认自动换行正确。",
                     "上下滑动 ScrollableColumn，确认滚动流畅。",
                     "左右滑动 ScrollableRow，确认横向滚动正常。",
+                    "切到约束页，确认 anchors/guideline/barrier/chain/constraintSet 场景都可见且布局关系正确。",
                 ),
                 expected = listOf(
                     "线性容器默认子项不会意外扩展成整行。",
                     "FlowRow/FlowColumn 自动换行/换列，spacing 均匀。",
                     "ScrollableColumn/ScrollableRow 滚动流畅无卡顿。",
+                    "ConstraintLayout 场景切换后布局即时刷新，无崩溃与错位。",
                 ),
             )
         }

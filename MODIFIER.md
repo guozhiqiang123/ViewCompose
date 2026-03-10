@@ -17,6 +17,7 @@
 7. `focusFollowKeyboard` 当前已覆盖 `LazyColumn`、`LazyVerticalGrid`、`VerticalPager`、`ScrollableColumn`；`LazyRow`、`HorizontalPager`、`ScrollableRow` 保持水平语义，不执行键盘上顶
 8. 背景资源支持 `Modifier.backgroundDrawableRes(resId)`；与 `backgroundColor` 同时存在时，drawable 优先；当同时存在 `cornerRadius` 时自动裁剪内容，`clip()` 仍可作为通用强制裁剪开关
 9. 内容尺寸动画支持 `Modifier.animateContentSize(...)`；renderer 会在 patch 前自动插入 `AnimatedSizeHost`，以“真实测量尺寸插值”参与父布局重排（非 graphicsLayer 视觉缩放）
+10. 约束 parent-data 支持 `Modifier.layoutId(...)`、`Modifier.constrainAs(...)`、`Modifier.constrain(...)`；仅对 `ConstraintLayout` 子节点生效
 
 ## 3. 角色边界
 
@@ -45,6 +46,7 @@
 3. `ColumnScope.weight`
 4. `ColumnScope.align`
 5. `BoxScope.align`
+6. `ConstraintLayout` 子项约束 parent-data：`layoutId/constrainAs/constrain`
 
 ### 3.3 NodeSpec（组件语义）
 
