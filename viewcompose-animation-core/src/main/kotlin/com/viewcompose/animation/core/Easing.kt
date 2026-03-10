@@ -19,3 +19,49 @@ object EasingDefaults {
         t * t
     }
 }
+
+class CubicBezierEasing(
+    private val x1: Float,
+    private val y1: Float,
+    private val x2: Float,
+    private val y2: Float,
+) : Easing {
+    override fun transform(fraction: Float): Float {
+        val t = solveTForX(fraction.coerceIn(0f, 1f))
+        return cubic(y1, y2, t)
+    }
+
+    private fun solveTForX(x: Float): Float {
+        var low = 0f
+        var high = 1f
+        repeat(16) {
+            val mid = (low + high) * 0.5f
+            val midX = cubic(x1, x2, mid)
+            if (midX < x) {
+                low = mid
+            } else {
+                high = mid
+            }
+        }
+        return (low + high) * 0.5f
+    }
+
+    private fun cubic(p1: Float, p2: Float, t: Float): Float {
+        val u = 1f - t
+        return 3f * u * u * t * p1 +
+            3f * u * t * t * p2 +
+            t * t * t
+    }
+}
+
+fun cubicBezier(
+    x1: Float,
+    y1: Float,
+    x2: Float,
+    y2: Float,
+): Easing = CubicBezierEasing(
+    x1 = x1,
+    y1 = y1,
+    x2 = x2,
+    y2 = y2,
+)

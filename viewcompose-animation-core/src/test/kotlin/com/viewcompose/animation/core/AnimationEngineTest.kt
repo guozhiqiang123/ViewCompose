@@ -6,6 +6,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -15,7 +16,7 @@ class AnimationEngineTest {
     fun `runAnimation reaches target for tween`() = runBlocking {
         val clock = FakeClock()
         var last = 0f
-        runAnimation(
+        val result = runAnimation(
             frameClock = clock,
             startValue = 0f,
             endValue = 1f,
@@ -24,6 +25,7 @@ class AnimationEngineTest {
         ) { value ->
             last = value
         }
+        assertEquals(AnimationRunResult.Completed, result)
         assertTrue(abs(last - 1f) < 0.0001f)
     }
 
@@ -31,7 +33,7 @@ class AnimationEngineTest {
     fun `repeatable reverse ends at start value on even iterations`() = runBlocking {
         val clock = FakeClock()
         var last = 0f
-        runAnimation(
+        val result = runAnimation(
             frameClock = clock,
             startValue = 0f,
             endValue = 10f,
@@ -44,7 +46,31 @@ class AnimationEngineTest {
         ) { value ->
             last = value
         }
+        assertEquals(AnimationRunResult.Completed, result)
         assertTrue(abs(last - 0f) < 0.0001f)
+    }
+
+    @Test
+    fun `tween delay keeps start value before interpolation`() = runBlocking {
+        val clock = FakeClock()
+        val samples = mutableListOf<Float>()
+        val result = runAnimation(
+            frameClock = clock,
+            startValue = 0f,
+            endValue = 1f,
+            animationSpec = tween(
+                durationMillis = 64,
+                delayMillis = 48,
+            ),
+            converter = AnimationConverters.Float,
+        ) { value ->
+            samples += value
+        }
+        assertEquals(AnimationRunResult.Completed, result)
+        assertTrue("Expected delay samples before interpolation", samples.size >= 4)
+        assertTrue(abs(samples[0] - 0f) < 0.0001f)
+        assertTrue(abs(samples[1] - 0f) < 0.0001f)
+        assertTrue(abs(samples[2] - 0f) < 0.0001f)
     }
 
     @Test

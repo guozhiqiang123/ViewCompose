@@ -10,6 +10,11 @@ internal suspend fun MonotonicFrameClock.awaitFrameNanos(): Long {
     return withFrameNanos { it }
 }
 
+enum class AnimationRunResult {
+    Completed,
+    Cancelled,
+}
+
 suspend fun <T> runAnimation(
     frameClock: MonotonicFrameClock,
     startValue: T,
@@ -17,13 +22,13 @@ suspend fun <T> runAnimation(
     animationSpec: AnimationSpec,
     converter: AnimationConverter<T>,
     onValue: (T) -> Unit,
-) {
+): AnimationRunResult {
     when (animationSpec) {
         is RepeatableSpec -> {
             var from = startValue
             var to = endValue
             repeat(max(0, animationSpec.iterations)) { iteration ->
-                runOneShotAnimation(
+                val result = runOneShotAnimation(
                     frameClock = frameClock,
                     startValue = from,
                     endValue = to,
@@ -31,19 +36,23 @@ suspend fun <T> runAnimation(
                     converter = converter,
                     onValue = onValue,
                 )
+                if (result == AnimationRunResult.Cancelled) {
+                    return AnimationRunResult.Cancelled
+                }
                 if (animationSpec.repeatMode == RepeatMode.Reverse && iteration < animationSpec.iterations - 1) {
                     val temp = from
                     from = to
                     to = temp
                 }
             }
+            return AnimationRunResult.Completed
         }
 
         is InfiniteRepeatableSpec -> {
             var from = startValue
             var to = endValue
             while (kotlin.coroutines.coroutineContext.isActive) {
-                runOneShotAnimation(
+                val result = runOneShotAnimation(
                     frameClock = frameClock,
                     startValue = from,
                     endValue = to,
@@ -51,6 +60,9 @@ suspend fun <T> runAnimation(
                     converter = converter,
                     onValue = onValue,
                 )
+                if (result == AnimationRunResult.Cancelled) {
+                    return AnimationRunResult.Cancelled
+                }
                 if (animationSpec.repeatMode == RepeatMode.Reverse) {
                     val temp = from
                     from = to
@@ -59,10 +71,11 @@ suspend fun <T> runAnimation(
                     onValue(startValue)
                 }
             }
+            return AnimationRunResult.Cancelled
         }
 
         else -> {
-            runOneShotAnimation(
+            return runOneShotAnimation(
                 frameClock = frameClock,
                 startValue = startValue,
                 endValue = endValue,
@@ -81,20 +94,25 @@ private suspend fun <T> runOneShotAnimation(
     animationSpec: AnimationSpec,
     converter: AnimationConverter<T>,
     onValue: (T) -> Unit,
-) {
+): AnimationRunResult {
     if (animationSpec is SnapSpec) {
         onValue(endValue)
-        return
+        return AnimationRunResult.Completed
     }
     val startVector = converter.toVector(startValue)
     val endVector = converter.toVector(endValue)
-    val durationNanos = durationNanos(animationSpec).coerceAtLeast(1L)
+    val timing = timingNanos(animationSpec)
     val startNanos = frameClock.awaitFrameNanos()
     var completed = false
     while (kotlin.coroutines.coroutineContext.isActive) {
         val frameNanos = frameClock.awaitFrameNanos()
         val playNanos = (frameNanos - startNanos).coerceAtLeast(0L)
-        val fraction = (playNanos.toDouble() / durationNanos.toDouble()).toFloat().coerceIn(0f, 1f)
+        val delayedPlayNanos = playNanos - timing.delayNanos
+        if (delayedPlayNanos < 0L) {
+            onValue(startValue)
+            continue
+        }
+        val fraction = (delayedPlayNanos.toDouble() / timing.durationNanos.toDouble()).toFloat().coerceIn(0f, 1f)
         val normalized = interpolateFraction(
             animationSpec = animationSpec,
             fraction = fraction,
@@ -114,17 +132,36 @@ private suspend fun <T> runOneShotAnimation(
     }
     if (completed) {
         onValue(endValue)
+        return AnimationRunResult.Completed
     }
+    return AnimationRunResult.Cancelled
 }
 
-private fun durationNanos(spec: AnimationSpec): Long {
+private data class AnimationTimingNanos(
+    val delayNanos: Long,
+    val durationNanos: Long,
+)
+
+private fun timingNanos(spec: AnimationSpec): AnimationTimingNanos {
     return when (spec) {
-        is TweenSpec -> ((spec.durationMillis + spec.delayMillis).coerceAtLeast(0)).toLong() * 1_000_000L
-        is SpringSpec -> spec.durationMillis.toLong().coerceAtLeast(1L) * 1_000_000L
-        is KeyframesSpec -> spec.durationMillis.toLong().coerceAtLeast(1L) * 1_000_000L
-        is RepeatableSpec -> durationNanos(spec.animation)
-        is InfiniteRepeatableSpec -> durationNanos(spec.animation)
-        SnapSpec -> 1L
+        is TweenSpec -> AnimationTimingNanos(
+            delayNanos = spec.delayMillis.toLong().coerceAtLeast(0L) * 1_000_000L,
+            durationNanos = spec.durationMillis.toLong().coerceAtLeast(1L) * 1_000_000L,
+        )
+
+        is SpringSpec -> AnimationTimingNanos(
+            delayNanos = 0L,
+            durationNanos = spec.durationMillis.toLong().coerceAtLeast(1L) * 1_000_000L,
+        )
+
+        is KeyframesSpec -> AnimationTimingNanos(
+            delayNanos = 0L,
+            durationNanos = spec.durationMillis.toLong().coerceAtLeast(1L) * 1_000_000L,
+        )
+
+        is RepeatableSpec -> timingNanos(spec.animation)
+        is InfiniteRepeatableSpec -> timingNanos(spec.animation)
+        SnapSpec -> AnimationTimingNanos(delayNanos = 0L, durationNanos = 1L)
     }
 }
 
