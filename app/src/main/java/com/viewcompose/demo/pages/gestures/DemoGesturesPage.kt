@@ -3,7 +3,6 @@ package com.viewcompose
 import android.view.Choreographer
 import com.viewcompose.animation.animateColorAsState
 import com.viewcompose.animation.animateFloatAsState
-import com.viewcompose.animation.keyframes
 import com.viewcompose.animation.spring
 import com.viewcompose.animation.tween
 import com.viewcompose.gesture.combinedClickable
@@ -29,6 +28,7 @@ import com.viewcompose.ui.modifier.height
 import com.viewcompose.ui.modifier.margin
 import com.viewcompose.ui.modifier.padding
 import com.viewcompose.ui.modifier.testTag
+import com.viewcompose.widget.core.Button
 import com.viewcompose.widget.core.DisposableEffect
 import com.viewcompose.widget.core.LazyColumn
 import com.viewcompose.widget.core.Surface
@@ -209,31 +209,55 @@ internal fun UiTreeBuilder.GesturePage(
             "transform" -> ScenarioSection(
                 kind = ScenarioKind.Visual,
                 title = "Transform",
-                subtitle = "transformable + pointerInput 验证缩放、平移、旋转事件在同一目标上更新。",
+                subtitle = "扩大可操作区域 + 高优先级手势，验证缩放/平移/旋转更直观且更易操作。",
             ) {
                 Surface(
                     variant = SurfaceVariant.Variant,
+                    contentAlignment = BoxAlignment.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .transformable(state = transformState)
+                        .height(220.dp)
+                        .gesturePriority(GesturePriority.High)
+                        .backgroundColor(0xFFEFF6FF.toInt())
+                        .padding(8.dp)
                         .pointerInput(key = "transform-pointer") { event ->
                             pointerEventState.value = event.type.name
                             PointerEventResult.Ignored
                         }
-                        .graphicsLayer(
-                            scaleX = scaleState.value,
-                            scaleY = scaleState.value,
-                            translationX = panXState.value,
-                            translationY = panYState.value,
-                            rotationZ = rotationState.value,
-                        )
-                        .padding(14.dp)
+                        .transformable(state = transformState)
                         .testTag(DemoTestTags.GESTURE_TRANSFORM_TARGET),
                 ) {
-                    Text(text = "Pinch / rotate / pan target")
+                    Surface(
+                        variant = SurfaceVariant.Default,
+                        contentAlignment = BoxAlignment.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .margin(horizontal = 64.dp)
+                            .height(92.dp)
+                            .graphicsLayer(
+                                scaleX = scaleState.value,
+                                scaleY = scaleState.value,
+                                translationX = panXState.value,
+                                translationY = panYState.value,
+                                rotationZ = rotationState.value,
+                            )
+                            .backgroundColor(0xFFDBEAFE.toInt())
+                            .padding(8.dp),
+                    ) {
+                        Text(
+                            text = "Transform Target",
+                            style = UiTextStyle(fontSizeSp = 15.sp),
+                        )
+                    }
                 }
                 Text(
-                    text = transformLogState.value,
+                    text = "双指在蓝色块上缩放/平移/旋转（文本标签不再参与缩放）",
+                    color = TextDefaults.secondaryColor(),
+                    style = UiTextStyle(fontSizeSp = 12.sp),
+                    modifier = Modifier.margin(top = 6.dp),
+                )
+                Text(
+                    text = "scale=${"%.2f".format(scaleState.value)}  pan=(${panXState.value.roundToInt()}, ${panYState.value.roundToInt()})  rot=${"%.1f".format(rotationState.value)}",
                     style = UiTextStyle(fontSizeSp = 13.sp),
                     modifier = Modifier
                         .margin(top = 8.dp)
@@ -243,6 +267,38 @@ internal fun UiTreeBuilder.GesturePage(
                     text = "Pointer: ${pointerEventState.value}",
                     color = TextDefaults.secondaryColor(),
                 )
+                Text(
+                    text = transformLogState.value,
+                    color = TextDefaults.secondaryColor(),
+                    style = UiTextStyle(fontSizeSp = 12.sp),
+                    modifier = Modifier.margin(top = 4.dp),
+                )
+                Button(
+                    text = "重置 Transform",
+                    onClick = {
+                        scaleState.value = 1f
+                        panXState.value = 0f
+                        panYState.value = 0f
+                        rotationState.value = 0f
+                        transformLogState.value = "idle"
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .margin(top = 8.dp),
+                )
+                Surface(
+                    variant = SurfaceVariant.Variant,
+                    contentAlignment = BoxAlignment.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .margin(top = 8.dp)
+                        .padding(vertical = 10.dp),
+                ) {
+                    Text(
+                        text = "观察点：缩放时蓝色块清晰、无明显文字虚影",
+                        style = UiTextStyle(fontSizeSp = 12.sp),
+                    )
+                }
             }
 
             else -> VerificationNotesSection(
