@@ -24,7 +24,7 @@
 - [x] Step 4: swipe 判定升级为 anchor+velocity 联合。
 - [x] Step 5: 清理 tracker 生命周期与日志策略。
 - [x] Step 6: 单测/Instrumentation 回归补强。
-- [ ] Step 7: 文档收口并归档执行文档。
+- [x] Step 7: 文档收口并归档执行文档。
 
 ## 提交记录
 1. `docs: add modifier gesture optimization execution plan`
@@ -34,6 +34,8 @@
 5. `refactor: harden gesture tracker lifecycle and remove redundant motion bookkeeping`
 6. `test: add gesture arbitration and threshold unit coverage`
 7. `test: extend transform and swipe instrumentation invariants`
+8. `docs: codify gesture arbitration and threshold boundaries`
+9. `docs: close and archive modifier gesture optimization plan`
 
 ## 阻塞记录
 - 暂无。
