@@ -24,7 +24,7 @@
 - [x] Step 3: 手势策略内核从 renderer 硬切迁入 `gesture-core`。
 - [x] Step 4: renderer 改为事件适配层（调用 `gesture-core`）。
 - [x] Step 5: `viewcompose-gesture` 拆分 DSL/State 入口。
-- [ ] Step 6: 测试迁移与补强（unit + instrumentation）。
+- [x] Step 6: 测试迁移与补强（unit + instrumentation）。
 - [ ] Step 7: 文档收口与归档。
 
 ## 提交记录
@@ -33,6 +33,7 @@
 3. `refactor: move gesture policy core out of renderer`
 4. `refactor: simplify renderer gesture dispatcher with core-driven decisions`
 5. `refactor: split gesture dsl and state entrypoints for maintainable layering`
+6. `test: migrate gesture policy tests to core and add threshold coverage`
 
 ## 阻塞记录
 - 阻塞文件：`GESTURE_ARCH_BLOCKER_CONTEXT_2026-03.md`

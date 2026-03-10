@@ -1020,6 +1020,42 @@ class DemoVisualUiTest {
     }
 
     @Test
+    fun gesturesPage_pointerInputConsumed_andTapTargetStillReceivesClick() {
+        val tapIntent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            GesturesActivity::class.java,
+        ).putExtra(EXTRA_GESTURES_PAGE_INDEX, 0)
+        launchDemoActivity<GesturesActivity>(tapIntent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                activity.tapByTestTag(DemoTestTags.GESTURE_POINTER_CONSUMED_TARGET)
+                activity.tapByTestTag(DemoTestTags.GESTURE_TAP_TARGET)
+            }
+            waitForUiIdle()
+            val pointerAndTapStable = waitUntilActivityCondition(scenario, timeoutMs = 1_500L) { activity ->
+                val consumedText = activity.requireTextViewByTestTag(
+                    DemoTestTags.GESTURE_POINTER_CONSUMED_CLICK_COUNT,
+                ).text.toString()
+                val tapText = activity.requireTextViewByTestTag(
+                    DemoTestTags.GESTURE_TAP_COUNT,
+                ).text.toString()
+                val blockedTaps = "Blocked taps:\\s*(\\d+)".toRegex()
+                    .find(consumedText)
+                    ?.groupValues
+                    ?.getOrNull(1)
+                    ?.toIntOrNull() ?: 0
+                consumedText.contains("Consumed click count: 0") &&
+                    blockedTaps >= 1 &&
+                    extractCount(tapText) >= 1
+            }
+            assertTrue(
+                "Expected consumed pointer branch to block its click while normal tap target still updates",
+                pointerAndTapStable,
+            )
+        }
+    }
+
+    @Test
     fun gesturesPage_transform_updatesPanAndRotationSummaries() {
         val transformIntent = Intent(
             ApplicationProvider.getApplicationContext(),
