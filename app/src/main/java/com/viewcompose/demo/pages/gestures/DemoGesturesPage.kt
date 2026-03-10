@@ -3,6 +3,7 @@ package com.viewcompose
 import android.view.Choreographer
 import com.viewcompose.animation.animateColorAsState
 import com.viewcompose.animation.animateFloatAsState
+import com.viewcompose.animation.keyframes
 import com.viewcompose.animation.spring
 import com.viewcompose.animation.tween
 import com.viewcompose.gesture.combinedClickable
@@ -14,20 +15,20 @@ import com.viewcompose.gesture.rememberSwipeableState
 import com.viewcompose.gesture.rememberTransformableState
 import com.viewcompose.gesture.swipeable
 import com.viewcompose.gesture.transformable
+import com.viewcompose.runtime.mutableStateOf
 import com.viewcompose.ui.gesture.GestureOrientation
 import com.viewcompose.ui.gesture.GesturePriority
 import com.viewcompose.ui.gesture.PointerEventResult
+import com.viewcompose.ui.layout.BoxAlignment
 import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.modifier.backgroundColor
 import com.viewcompose.ui.modifier.fillMaxSize
 import com.viewcompose.ui.modifier.fillMaxWidth
 import com.viewcompose.ui.modifier.graphicsLayer
+import com.viewcompose.ui.modifier.height
 import com.viewcompose.ui.modifier.margin
 import com.viewcompose.ui.modifier.padding
 import com.viewcompose.ui.modifier.testTag
-import com.viewcompose.runtime.mutableStateOf
-import com.viewcompose.widget.core.Button
-import com.viewcompose.widget.core.Column
 import com.viewcompose.widget.core.DisposableEffect
 import com.viewcompose.widget.core.LazyColumn
 import com.viewcompose.widget.core.Surface
@@ -174,8 +175,10 @@ internal fun UiTreeBuilder.GesturePage(
                 )
                 Surface(
                     variant = SurfaceVariant.Variant,
+                    contentAlignment = BoxAlignment.Center,
                     modifier = Modifier
                         .fillMaxWidth()
+                        .height(80.dp)
                         .margin(top = 10.dp)
                         .swipeable(
                             state = swipeState,
