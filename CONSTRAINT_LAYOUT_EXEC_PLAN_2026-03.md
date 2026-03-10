@@ -33,8 +33,8 @@
 - [x] Step 3: `ui-contract` 约束布局契约与 modifier 元数据落地。
 - [x] Step 4: `viewcompose-widget-constraintlayout` DSL 与 scope 落地。
 - [x] Step 5: renderer 映射、binder/patch/layout params、ConstraintSet 应用引擎接入。
-- [ ] Step 6: demo + preview + docs 同步。
-- [ ] Step 7: unit/instrumentation 回归补齐与门禁收口。
+- [x] Step 6: demo + preview + docs 同步。
+- [x] Step 7: unit/instrumentation 回归补齐与门禁收口。
 - [ ] Step 8: 完结归档。
 
 ## 提交记录
@@ -43,6 +43,7 @@
 3. `feat: add constraint layout contracts and modifier metadata primitives`
 4. `feat: add constraint layout widget dsl with compose-aligned and concise APIs`
 5. `feat: add renderer constraint layout mapping and constraint-set application engine`
+6. `feat: add constraintlayout demo preview coverage and documentation`
 
 ## 阻塞记录
 - 暂无。

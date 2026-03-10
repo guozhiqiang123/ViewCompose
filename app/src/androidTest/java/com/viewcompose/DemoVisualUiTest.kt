@@ -438,6 +438,99 @@ class DemoVisualUiTest {
     }
 
     @Test
+    fun layoutsConstraint_coreScenes_keepExpectedRelativePositions() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            LayoutsActivity::class.java,
+        ).putExtra(EXTRA_LAYOUTS_PAGE_INDEX, 5)
+        launchDemoActivity<LayoutsActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            captureDeviceScreenshot("layouts-constraint-core-light")
+            scenario.onActivity { activity ->
+                val basicContainer = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_BASIC_CONTAINER)
+                val basicBadge = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_BASIC_BADGE)
+                assertViewFullyVisible(basicContainer)
+                assertViewFullyVisible(basicBadge)
+
+                val badgeCenterX = viewCenterXOnScreen(basicBadge)
+                val basicContainerCenterX = viewCenterXOnScreen(basicContainer)
+                assertTrue(
+                    "Expected basic badge to stay in right half of its container.",
+                    badgeCenterX > basicContainerCenterX,
+                )
+            }
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val helpersContainer = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_HELPERS_CONTAINER)
+                val helpersMarker = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_HELPERS_MARKER)
+                assertViewFullyVisible(helpersContainer)
+                assertViewFullyVisible(helpersMarker)
+                val containerLeft = viewLeftOnScreen(helpersContainer)
+                val containerTop = viewTopOnScreen(helpersContainer)
+                val containerRight = containerLeft + helpersContainer.width
+                val markerLeft = viewLeftOnScreen(helpersMarker)
+                val markerTop = viewTopOnScreen(helpersMarker)
+                assertTrue(
+                    "Expected helper marker to stay inside helper container horizontal bounds. " +
+                        "markerLeft=$markerLeft, containerLeft=$containerLeft, containerRight=$containerRight",
+                    markerLeft in containerLeft..containerRight,
+                )
+                assertTrue(
+                    "Expected helper marker to stay near helper container top edge. " +
+                        "markerTop=$markerTop, containerTop=$containerTop",
+                    markerTop <= containerTop + helpersContainer.height / 3,
+                )
+            }
+            waitForUiIdle()
+            val chainStable = waitUntilActivityCondition(scenario, timeoutMs = 1_500L) { activity ->
+                val chainContainer = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_CHAIN_CONTAINER)
+                val chainStart = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_CHAIN_START)
+                val chainMiddle = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_CHAIN_MIDDLE)
+                val chainEnd = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_CHAIN_END)
+                val startCenterX = viewCenterXOnScreen(chainStart)
+                val middleCenterX = viewCenterXOnScreen(chainMiddle)
+                val endCenterX = viewCenterXOnScreen(chainEnd)
+                val containerLeft = viewLeftOnScreen(chainContainer)
+                val containerRight = containerLeft + chainContainer.width
+                startCenterX < middleCenterX &&
+                    middleCenterX < endCenterX &&
+                    middleCenterX in containerLeft..containerRight
+            }
+            assertTrue(
+                "Expected chain layout to settle to ascending horizontal order within timeout.",
+                chainStable,
+            )
+        }
+    }
+
+    @Test
+    fun layoutsConstraint_decoupledConstraintSetToggle_repositionsMarker() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            LayoutsActivity::class.java,
+        ).putExtra(EXTRA_LAYOUTS_PAGE_INDEX, 5)
+        launchDemoActivity<LayoutsActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            var beforeLeft = 0
+            var beforeTop = 0
+            scenario.onActivity { activity ->
+                val marker = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_SET_MARKER)
+                beforeLeft = viewLeftOnScreen(marker)
+                beforeTop = viewTopOnScreen(marker)
+                activity.clickByTestTag(DemoTestTags.LAYOUTS_CONSTRAINT_SET_TOGGLE)
+            }
+            val moved = waitUntilActivityCondition(scenario, timeoutMs = 1_500L) { activity ->
+                val marker = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_SET_MARKER)
+                val leftDelta = abs(viewLeftOnScreen(marker) - beforeLeft)
+                val topDelta = abs(viewTopOnScreen(marker) - beforeTop)
+                val toggleText = activity.requireTextViewByTestTag(DemoTestTags.LAYOUTS_CONSTRAINT_SET_TOGGLE).text.toString()
+                (leftDelta >= 12 || topDelta >= 12) && toggleText.contains("竖向布局")
+            }
+            assertTrue("Expected decoupled constraint set toggle to reposition marker immediately.", moved)
+        }
+    }
+
+    @Test
     fun collectionsStress_toggleUpdatesVisibleControls() {
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),
@@ -1142,6 +1235,16 @@ class DemoVisualUiTest {
         val location = IntArray(2)
         view.getLocationOnScreen(location)
         return location[1]
+    }
+
+    private fun viewLeftOnScreen(view: View): Int {
+        val location = IntArray(2)
+        view.getLocationOnScreen(location)
+        return location[0]
+    }
+
+    private fun viewCenterXOnScreen(view: View): Int {
+        return viewLeftOnScreen(view) + (view.width / 2)
     }
 
     private fun isViewVisible(view: View): Boolean {
