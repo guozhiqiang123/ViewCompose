@@ -25,7 +25,7 @@
 - [x] Step 3: 修复 `TweenSpec.delayMillis` 与动画播放/中断模型。
 - [x] Step 4: `updateTransition` / `AnimatedVisibility` 统一 transition 状态机语义。
 - [x] Step 5: `animateContentSize` 落地（ui-contract + renderer 包装宿主）。
-- [ ] Step 6: `Animatable` 易用性重构 + `rememberAnimatable` + `InfiniteTransition` typed API。
+- [x] Step 6: `Animatable` 易用性重构 + `rememberAnimatable` + `InfiniteTransition` typed API。
 - [ ] Step 7: Android interop 补齐（ViewPropertyAnimator + DynamicAnimation）。
 - [ ] Step 8: 测试体系补强（core/unit/instrumentation）与门禁跑通。
 - [ ] Step 9: 文档收口与归档。
@@ -36,6 +36,7 @@
 3. `refactor: fix tween delay semantics and standardize animation run results`
 4. `refactor: hard-cut transition and animated visibility onto shared transition timeline`
 5. `feat: implement layout-participating animateContentSize host wrapping`
+6. `feat: simplify animatable usage and add typed infinite transition apis`
 
 ## 阻塞记录
 - 暂无。

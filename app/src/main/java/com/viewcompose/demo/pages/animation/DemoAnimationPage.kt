@@ -2,7 +2,6 @@ package com.viewcompose
 
 import com.viewcompose.animation.AnimatedContent
 import com.viewcompose.animation.AnimatedVisibility
-import com.viewcompose.animation.Animatable
 import com.viewcompose.animation.Crossfade
 import com.viewcompose.animation.MutableTransitionState
 import com.viewcompose.animation.animateColorAsState
@@ -25,6 +24,7 @@ import com.viewcompose.animation.core.infiniteRepeatable
 import com.viewcompose.animation.core.keyframe
 import com.viewcompose.animation.core.keyframes
 import com.viewcompose.animation.rememberInfiniteTransition
+import com.viewcompose.animation.rememberAnimatable
 import com.viewcompose.animation.core.repeatable
 import com.viewcompose.animation.shrinkHorizontally
 import com.viewcompose.animation.shrinkOut
@@ -48,7 +48,6 @@ import com.viewcompose.widget.core.Button
 import com.viewcompose.widget.core.ButtonVariant
 import com.viewcompose.widget.core.Column
 import com.viewcompose.widget.core.LocalAnimationCoroutineContext
-import com.viewcompose.widget.core.LocalMonotonicFrameClock
 import com.viewcompose.widget.core.LazyColumn
 import com.viewcompose.widget.core.Row
 import com.viewcompose.widget.core.Surface
@@ -90,8 +89,7 @@ internal fun UiTreeBuilder.AnimationPage(
     val infiniteReverseState = remember { mutableStateOf(false) }
     val animatableCommandState = remember { mutableStateOf(AnimatableCommand.None) }
     val animatableCommandNonceState = remember { mutableStateOf(0) }
-    val animatable = remember { Animatable(0f, AnimationConverters.Float) }
-    val frameClock = LocalMonotonicFrameClock.current
+    val animatable = rememberAnimatable(initialValue = 0f, converter = AnimationConverters.Float)
     val animationCoroutineContext = LocalAnimationCoroutineContext.current
 
     val sections = when (selectedPageState.value) {
@@ -106,7 +104,6 @@ internal fun UiTreeBuilder.AnimationPage(
     DisposableEffect(
         animatableCommandState.value,
         animatableCommandNonceState.value,
-        frameClock,
         animationCoroutineContext,
     ) {
         val scope = CoroutineScope(SupervisorJob() + animationCoroutineContext)
@@ -120,7 +117,6 @@ internal fun UiTreeBuilder.AnimationPage(
                 animatable.animateTo(
                     targetValue = 1f,
                     animationSpec = tween(durationMillis = 420),
-                    frameClock = frameClock,
                 )
             }
 
@@ -128,7 +124,6 @@ internal fun UiTreeBuilder.AnimationPage(
                 animatable.animateTo(
                     targetValue = 0f,
                     animationSpec = spring(durationMillis = 520),
-                    frameClock = frameClock,
                 )
             }
 

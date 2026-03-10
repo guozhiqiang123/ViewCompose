@@ -1,5 +1,6 @@
 package com.viewcompose.animation
 
+import com.viewcompose.animation.core.AnimationConverter
 import com.viewcompose.animation.core.AnimationConverters
 import com.viewcompose.animation.core.InfiniteRepeatableSpec
 import com.viewcompose.animation.core.RepeatMode
@@ -36,6 +37,67 @@ fun InfiniteTransition.animateFloat(
         animation = tween(),
     ),
 ): State<Float> {
+    return animateValue(
+        initialValue = initialValue,
+        targetValue = targetValue,
+        converter = AnimationConverters.Float,
+        animationSpec = animationSpec,
+    )
+}
+
+fun InfiniteTransition.animateInt(
+    initialValue: Int,
+    targetValue: Int,
+    animationSpec: InfiniteRepeatableSpec = infiniteRepeatable(
+        animation = tween(),
+    ),
+): State<Int> {
+    return animateValue(
+        initialValue = initialValue,
+        targetValue = targetValue,
+        converter = AnimationConverters.Int,
+        animationSpec = animationSpec,
+    )
+}
+
+fun InfiniteTransition.animateColor(
+    initialValue: Int,
+    targetValue: Int,
+    animationSpec: InfiniteRepeatableSpec = infiniteRepeatable(
+        animation = tween(),
+    ),
+): State<Int> {
+    return animateValue(
+        initialValue = initialValue,
+        targetValue = targetValue,
+        converter = AnimationConverters.ColorInt,
+        animationSpec = animationSpec,
+    )
+}
+
+fun InfiniteTransition.animateDp(
+    initialValue: Int,
+    targetValue: Int,
+    animationSpec: InfiniteRepeatableSpec = infiniteRepeatable(
+        animation = tween(),
+    ),
+): State<Int> {
+    return animateValue(
+        initialValue = initialValue,
+        targetValue = targetValue,
+        converter = AnimationConverters.Int,
+        animationSpec = animationSpec,
+    )
+}
+
+fun <T> InfiniteTransition.animateValue(
+    initialValue: T,
+    targetValue: T,
+    converter: AnimationConverter<T>,
+    animationSpec: InfiniteRepeatableSpec = infiniteRepeatable(
+        animation = tween(),
+    ),
+): State<T> {
     val valueState = remember {
         mutableStateOf(initialValue)
     }
@@ -52,7 +114,7 @@ fun InfiniteTransition.animateFloat(
                     startValue = from,
                     endValue = to,
                     animationSpec = animationSpec.animation,
-                    converter = AnimationConverters.Float,
+                    converter = converter,
                 ) { next ->
                     valueState.value = next
                 }
