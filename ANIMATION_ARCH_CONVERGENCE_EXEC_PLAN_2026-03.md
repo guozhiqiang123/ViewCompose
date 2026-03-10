@@ -38,6 +38,7 @@
 5. `feat: implement layout-participating animateContentSize host wrapping`
 6. `feat: simplify animatable usage and add typed infinite transition apis`
 7. `feat: extend android animation interop with property and dynamic animations`
+8. `test: add animation core and animated size host regression coverage`
 
 ## 阻塞记录
 - 暂无。

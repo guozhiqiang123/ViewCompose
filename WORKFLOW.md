@@ -262,7 +262,7 @@
 
 涉及动画/手势能力新增或改造时，必须遵守：
 
-1. 平台无关主链能力放 `:viewcompose-animation` / `:viewcompose-gesture`，禁止把 Android 具体实现回流到这两个模块。
+1. 动画能力分层固定为 `:viewcompose-animation-core`（内核）+ `:viewcompose-animation`（DSL 集成）+ `:viewcompose-host-android`（interop）；手势平台无关能力放 `:viewcompose-gesture`，禁止把 Android 具体实现回流到 core/animation/gesture。
 2. Android 高阶动画能力（`TransitionManager/MotionLayout/Animator`）仅允许通过 `:viewcompose-host-android` interop API 暴露。
 3. `graphicsLayer` 语义变更必须同步补 renderer patch/rebind 稳定性测试，禁止通过全量 rebind 兜底。
 4. 手势事件消费规则固定为“手势优先，未消费再 clickable 回落”；涉及冲突策略修改时必须补“子手势 vs 父滚动容器”回归。
@@ -271,6 +271,8 @@
 7. `pointerInput` 仲裁语义变更必须补“Consumed 强短路”回归：`pointerInput` 消费后，`transform/drag/swipe/combinedClickable` 均不可再触发。
 8. transform 阈值语义变更必须补单测覆盖 slop 三路径（pan/zoom/rotation）与 instrumentation 覆盖双指平移/旋转变化。
 9. swipe settle 语义变更必须补单测覆盖“速度触发/距离触发/最近锚点”三路径，禁止仅凭人工回归上线。
+10. `updateTransition` 语义必须保持“单 transition 多 channel 共享时间线”；`AnimatedVisibility` 必须复用该时间线，不允许回退到多自动画时钟拼装。
+11. `Modifier.animateContentSize(...)` 必须保持布局级尺寸动画语义（父布局可观察到连续尺寸变化），禁止回退到 `graphicsLayer` 缩放假象。
 
 ## 6. 线程中断恢复原则
 

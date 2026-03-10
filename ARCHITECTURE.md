@@ -19,7 +19,7 @@
 
 - 技术基线：Kotlin + Android View System
 - SDK：`minSdk 24`、`compileSdk 36`
-- 当前模块：`:viewcompose-runtime`、`:viewcompose-ui-contract`、`:viewcompose-animation`、`:viewcompose-gesture`、`:viewcompose-widget-core`、`:viewcompose-renderer`、`:viewcompose-host-android`、`:viewcompose-overlay-android`、`:viewcompose-image-coil`、`:viewcompose-lifecycle`、`:viewcompose-viewmodel`、`:viewcompose-preview`、`:viewcompose-benchmark`、`:app`
+- 当前模块：`:viewcompose-runtime`、`:viewcompose-ui-contract`、`:viewcompose-animation-core`、`:viewcompose-animation`、`:viewcompose-gesture`、`:viewcompose-widget-core`、`:viewcompose-renderer`、`:viewcompose-host-android`、`:viewcompose-overlay-android`、`:viewcompose-image-coil`、`:viewcompose-lifecycle`、`:viewcompose-viewmodel`、`:viewcompose-preview`、`:viewcompose-benchmark`、`:app`
 
 ### 2.1 模块职责
 
@@ -27,7 +27,8 @@
 | --- | --- | --- |
 | `viewcompose-runtime` | 状态与读依赖观察（`state/observation`） | 纯 Kotlin/JVM 模块；主源码禁止 `android.*` / `androidx.*`，构建不引入 AndroidX 依赖 |
 | `viewcompose-ui-contract` | 纯 Kotlin UI 契约层（`Modifier`、`VNode/NodeSpec`、layout 枚举、collection/state 协议） | 主源码禁止 `android.*` / `androidx.*` |
-| `viewcompose-animation` | 平台无关动画 API（`AnimationSpec`、`Animatable`、`animate*AsState`、`Transition`、`AnimatedVisibility/Content`） | 动画驱动统一使用 `MonotonicFrameClock` + coroutine；不直接依赖 Android View 动画实现 |
+| `viewcompose-animation-core` | 动画内核（`AnimationSpec/Easing/Converter/Engine/TransitionCore`） | 纯 Kotlin/JVM；禁止引入 Android 依赖 |
+| `viewcompose-animation` | 动画 DSL 集成层（`animate*AsState/Animatable/Transition/AnimatedVisibility/Content`） | 调用层 API；运行时驱动统一使用 `MonotonicFrameClock` + coroutine；不直接依赖 Android View 动画实现 |
 | `viewcompose-gesture` | 平台无关手势 API（`pointerInput`、`combinedClickable`、`draggable/swipeable/transformable`） | 仅定义手势语义与状态；平台事件分发由 renderer/host 承接 |
 | `viewcompose-widget-core` | DSL、Theme/Defaults、Local 与 overlay 声明契约 | 不依赖 `viewcompose-renderer`；不放 Android 宿主入口 API |
 | `viewcompose-renderer` | Android View 渲染实现（reconcile、binder、patch、container） | 只消费 `ui-contract`，不承载业务 DSL |
@@ -49,7 +50,7 @@
 3. overlay：声明契约与平台实现已分层
 4. 节点语义已完成 `NodeSpec-only` 收口（无 `Props` 双轨）
 5. 生命周期与 ViewModel 协作 API 已从 `widget-core` 拆分到独立模块，宿主自动注入能力保持不变
-6. 动画与手势已形成“平台无关主链 + Android interop 扩展”双层模型（animation/gesture + host interop）
+6. 动画与手势已形成“内核 + DSL + Android interop 扩展”三层模型（animation-core + animation/gesture + host interop）
 
 ### 2.3 `app` 目录落位基线
 
@@ -223,6 +224,8 @@ flowchart TD
 8. transform 激活必须经过 slop 门槛：`panMotion`、`abs(1 - zoomChange) * centroidSize`、`abs(rotationRadians) * centroidSize` 任一超过 `touchSlop` 才进入 active 状态。
 9. swipe settle 语义固定为“速度优先 + 距离次之 + 最近 anchor 兜底”：先比较 `minimumFlingVelocity`，再比较 `max(touchSlop * 2, anchorSpan * 0.35)`，否则回最近锚点。
 10. transform active 后每帧只派发一次合并 delta（zoom/pan/rotation），并在 active 时再请求 `requestDisallowInterceptTouchEvent(true)`，避免提前抢占父容器。
+11. `Modifier.animateContentSize(...)` 通过 renderer 侧 `AnimatedSizeHost` 结构包装落地，执行真实测量尺寸插值并参与父布局重排（非 `graphicsLayer` 缩放假象）。
+12. `Animatable` 默认通过 `rememberAnimatable(...)` 绑定 frame clock，`animateTo(...)` 不再要求调用侧显式传 `frameClock`；非组合场景可通过构造参数显式绑定。
 
 ## 5. 当前热点与风险
 
