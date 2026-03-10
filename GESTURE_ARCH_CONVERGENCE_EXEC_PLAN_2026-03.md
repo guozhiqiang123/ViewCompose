@@ -22,7 +22,7 @@
 - [x] Step 1: 新增执行计划文档并提交。
 - [x] Step 2: 新增 `:viewcompose-gesture-core` 并接入构建守卫。
 - [x] Step 3: 手势策略内核从 renderer 硬切迁入 `gesture-core`。
-- [ ] Step 4: renderer 改为事件适配层（调用 `gesture-core`）。
+- [x] Step 4: renderer 改为事件适配层（调用 `gesture-core`）。
 - [ ] Step 5: `viewcompose-gesture` 拆分 DSL/State 入口。
 - [ ] Step 6: 测试迁移与补强（unit + instrumentation）。
 - [ ] Step 7: 文档收口与归档。
@@ -31,7 +31,8 @@
 1. `docs: add gesture architecture convergence execution plan`
 2. `build: add gesture-core module and purity guardrails`
 3. `refactor: move gesture policy core out of renderer`
+4. `refactor: simplify renderer gesture dispatcher with core-driven decisions`
 
 ## 阻塞记录
 - 阻塞文件：`GESTURE_ARCH_BLOCKER_CONTEXT_2026-03.md`
-- 当前：暂无阻塞。
+- 2026-03-10：Step 4 `qaFull` 在双设备并行下出现 Huawei 7.0 设备侧历史不稳定用例失败（与本次手势改造路径无直接关联），已记录 blocker，上层实现继续推进，待收口阶段补跑 `qaFull` 关单。

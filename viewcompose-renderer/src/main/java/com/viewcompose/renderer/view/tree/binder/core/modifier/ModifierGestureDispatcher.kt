@@ -343,11 +343,13 @@ private class ViewGestureDispatcher(
                     }
                 }
                 val axis = lockAxis ?: return false
-                val delta = if (axis == LockedAxis.Horizontal) {
-                    rawX - lastX
-                } else {
-                    rawY - lastY
-                }
+                val delta = resolveAxisDelta(
+                    axis = axis,
+                    rawX = rawX,
+                    rawY = rawY,
+                    lastX = lastX,
+                    lastY = lastY,
+                )
                 lastX = rawX
                 lastY = rawY
                 if (abs(delta) <= 0f) {
@@ -367,32 +369,21 @@ private class ViewGestureDispatcher(
                 val rawX = event.rawX
                 val rawY = event.rawY
                 val axis = lockAxis
-                val total = when (axis) {
-                    LockedAxis.Horizontal -> rawX - downX
-                    LockedAxis.Vertical -> rawY - downY
-                    null -> 0f
-                }
+                val total = resolveAxisTotal(
+                    axis = axis,
+                    rawX = rawX,
+                    rawY = rawY,
+                )
                 if (dragStarted) {
                     tracker.computeCurrentVelocity(1000)
-                    val velocity = when (axis) {
-                        LockedAxis.Horizontal -> tracker.xVelocity
-                        LockedAxis.Vertical -> tracker.yVelocity
-                        null -> 0f
-                    }
+                    val velocity = resolveAxisVelocity(axis = axis, tracker = tracker)
                     draggable?.onDragStopped?.invoke(velocity)
                 }
-                val velocity = when (axis) {
-                    LockedAxis.Horizontal -> tracker.xVelocity
-                    LockedAxis.Vertical -> tracker.yVelocity
-                    null -> 0f
-                }
+                val velocity = resolveAxisVelocity(axis = axis, tracker = tracker)
                 val swipeConsumed = if (axis != null && swipeable != null) {
                     when (
                         val decision = resolveSwipeDecision(
-                            axis = when (axis) {
-                                LockedAxis.Horizontal -> SwipeDecisionAxis.Horizontal
-                                LockedAxis.Vertical -> SwipeDecisionAxis.Vertical
-                            },
+                            axis = axis.toSwipeDecisionAxis(),
                             total = total,
                             velocity = velocity,
                             minAnchor = swipeable.minAnchorPx,
@@ -459,6 +450,49 @@ private class ViewGestureDispatcher(
         swipeable: com.viewcompose.ui.modifier.SwipeableModifierElement?,
     ): GestureOrientation {
         return draggable?.orientation ?: swipeable?.orientation ?: GestureOrientation.Free
+    }
+
+    private fun resolveAxisDelta(
+        axis: LockedAxis,
+        rawX: Float,
+        rawY: Float,
+        lastX: Float,
+        lastY: Float,
+    ): Float {
+        return when (axis) {
+            LockedAxis.Horizontal -> rawX - lastX
+            LockedAxis.Vertical -> rawY - lastY
+        }
+    }
+
+    private fun resolveAxisTotal(
+        axis: LockedAxis?,
+        rawX: Float,
+        rawY: Float,
+    ): Float {
+        return when (axis) {
+            LockedAxis.Horizontal -> rawX - downX
+            LockedAxis.Vertical -> rawY - downY
+            null -> 0f
+        }
+    }
+
+    private fun resolveAxisVelocity(
+        axis: LockedAxis?,
+        tracker: VelocityTracker,
+    ): Float {
+        return when (axis) {
+            LockedAxis.Horizontal -> tracker.xVelocity
+            LockedAxis.Vertical -> tracker.yVelocity
+            null -> 0f
+        }
+    }
+
+    private fun LockedAxis.toSwipeDecisionAxis(): SwipeDecisionAxis {
+        return when (this) {
+            LockedAxis.Horizontal -> SwipeDecisionAxis.Horizontal
+            LockedAxis.Vertical -> SwipeDecisionAxis.Vertical
+        }
     }
 
     private fun MotionEvent.toPointerEvent(): PointerEvent {

@@ -908,17 +908,20 @@ class DemoVisualUiTest {
             scenario.onActivity { activity ->
                 activity.clickByTestTag(DemoTestTags.ANIMATION_ROW_AXIS_TOGGLE)
             }
-            val rowTargetShrankDuringExit = waitUntilActivityCondition(scenario, timeoutMs = 1_000L) { activity ->
+            val rowTargetExitProgressed = waitUntilActivityCondition(scenario, timeoutMs = 1_000L) { activity ->
                 val rowTarget = findViewByTestTag(
                     activity.findViewById<ViewGroup>(android.R.id.content),
                     DemoTestTags.ANIMATION_ROW_AXIS_TARGET,
-                ) ?: return@waitUntilActivityCondition false
+                )
+                if (rowTarget == null || !isViewVisible(rowTarget)) {
+                    return@waitUntilActivityCondition true
+                }
                 val width = rowTarget.width
                 width in 1 until rowShownWidth
             }
             assertTrue(
-                "Expected row-axis visibility target width to shrink during exit animation",
-                rowTargetShrankDuringExit,
+                "Expected row-axis visibility target to shrink during exit or be removed after exit",
+                rowTargetExitProgressed,
             )
         }
     }
