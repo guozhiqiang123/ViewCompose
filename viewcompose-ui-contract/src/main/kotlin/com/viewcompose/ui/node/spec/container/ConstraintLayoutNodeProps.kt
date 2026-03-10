@@ -77,13 +77,15 @@ sealed interface ConstraintDimension {
 
 data class ConstraintGuidelineSpec(
     val id: String,
-    val orientation: ConstraintGuidelineOrientation,
+    val direction: ConstraintGuidelineDirection,
     val position: ConstraintGuidelinePosition,
 )
 
-enum class ConstraintGuidelineOrientation {
-    Vertical,
-    Horizontal,
+enum class ConstraintGuidelineDirection {
+    FromStart,
+    FromEnd,
+    FromTop,
+    FromBottom,
 }
 
 sealed interface ConstraintGuidelinePosition {
