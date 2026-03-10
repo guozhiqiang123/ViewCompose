@@ -11,6 +11,8 @@ internal class ResolvedModifiers(
     var contentDescription: ContentDescriptionModifierElement? = null,
     var testTag: TestTagModifierElement? = null,
     var overlayAnchor: OverlayAnchorModifierElement? = null,
+    var layoutId: LayoutIdModifierElement? = null,
+    var constraint: ConstraintModifierElement? = null,
     var border: BorderModifierElement? = null,
     var cornerRadius: CornerRadiusModifierElement? = null,
     var clip: ClipModifierElement? = null,
@@ -53,6 +55,8 @@ internal fun Modifier.resolve(): ResolvedModifiers {
             is ContentDescriptionModifierElement -> result.contentDescription = element
             is TestTagModifierElement -> result.testTag = element
             is OverlayAnchorModifierElement -> result.overlayAnchor = element
+            is LayoutIdModifierElement -> result.layoutId = element
+            is ConstraintModifierElement -> result.constraint = element
             is BorderModifierElement -> result.border = element
             is CornerRadiusModifierElement -> result.cornerRadius = element
             is ClipModifierElement -> result.clip = element
@@ -98,5 +102,7 @@ internal fun layoutModifiersChanged(previous: ResolvedModifiers, next: ResolvedM
         previous.height != next.height ||
         previous.weight != next.weight ||
         previous.horizontalAlign != next.horizontalAlign ||
-        previous.verticalAlign != next.verticalAlign
+        previous.verticalAlign != next.verticalAlign ||
+        previous.layoutId != next.layoutId ||
+        previous.constraint != next.constraint
 }

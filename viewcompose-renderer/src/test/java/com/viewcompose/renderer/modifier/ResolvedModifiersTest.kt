@@ -5,9 +5,15 @@ import com.viewcompose.ui.modifier.TransformOrigin
 import com.viewcompose.ui.modifier.backgroundColor
 import com.viewcompose.ui.modifier.backgroundDrawableRes
 import com.viewcompose.ui.modifier.graphicsLayer
+import com.viewcompose.ui.modifier.layoutId
 import com.viewcompose.ui.modifier.CombinedClickableModifierElement
+import com.viewcompose.ui.modifier.ConstraintModifierElement
 import com.viewcompose.ui.modifier.GesturePriorityModifierElement
 import com.viewcompose.ui.gesture.GesturePriority
+import com.viewcompose.ui.node.spec.ConstraintAnchor
+import com.viewcompose.ui.node.spec.ConstraintAnchorLink
+import com.viewcompose.ui.node.spec.ConstraintAnchorTarget
+import com.viewcompose.ui.node.spec.ConstraintItemSpec
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
@@ -67,5 +73,27 @@ class ResolvedModifiersTest {
         assertNotNull(resolved.combinedClickable)
         assertEquals(true, resolved.combinedClickable?.enabled)
         assertEquals(GesturePriority.High, resolved.gesturePriority?.priority)
+    }
+
+    @Test
+    fun `resolve captures constraint parent-data modifiers`() {
+        val resolved = Modifier
+            .layoutId("card")
+            .then(
+                ConstraintModifierElement(
+                    referenceId = "card",
+                    constraint = ConstraintItemSpec(
+                        start = ConstraintAnchorLink(
+                            target = ConstraintAnchorTarget.parent(ConstraintAnchor.Start),
+                            margin = 16,
+                        ),
+                    ),
+                ),
+            )
+            .resolve()
+
+        assertEquals("card", resolved.layoutId?.layoutId)
+        assertEquals("card", resolved.constraint?.referenceId)
+        assertEquals(16, resolved.constraint?.constraint?.start?.margin)
     }
 }

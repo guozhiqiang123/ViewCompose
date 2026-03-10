@@ -63,6 +63,7 @@ internal object ViewNodeFactory {
                 orientation = LinearLayout.VERTICAL
             }
             NodeType.Box, NodeType.Surface -> DeclarativeBoxLayout(context)
+            NodeType.ConstraintLayout -> DeclarativeBoxLayout(context)
             NodeType.AnimatedVisibilityHost -> DeclarativeAnimatedVisibilityHostLayout(context)
             NodeType.AnimatedSizeHost -> DeclarativeAnimatedSizeHostLayout(context)
             NodeType.Spacer, NodeType.Divider -> View(context)

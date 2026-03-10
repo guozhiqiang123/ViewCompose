@@ -1,7 +1,9 @@
 package com.viewcompose.renderer.layout
 
 import com.viewcompose.ui.modifier.BoxAlignModifierElement
+import com.viewcompose.ui.modifier.ConstraintModifierElement
 import com.viewcompose.ui.modifier.HorizontalAlignModifierElement
+import com.viewcompose.ui.modifier.LayoutIdModifierElement
 import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.modifier.VerticalAlignModifierElement
 import com.viewcompose.ui.modifier.WeightModifierElement
@@ -10,6 +12,10 @@ import com.viewcompose.ui.layout.HorizontalAlignment
 import com.viewcompose.ui.layout.VerticalAlignment
 import com.viewcompose.ui.node.NodeType
 import com.viewcompose.ui.node.VNode
+import com.viewcompose.ui.node.spec.ConstraintAnchor
+import com.viewcompose.ui.node.spec.ConstraintAnchorLink
+import com.viewcompose.ui.node.spec.ConstraintAnchorTarget
+import com.viewcompose.ui.node.spec.ConstraintItemSpec
 import com.viewcompose.ui.node.spec.EmptyNodeSpec
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -91,5 +97,58 @@ class ModifierParentDataValidatorTest {
             listOf("Modifier.align(VerticalAlignment) only applies to children of Row."),
             mismatchedVerticalWarnings,
         )
+    }
+
+    @Test
+    fun `constraint parent data warns outside constraint layout`() {
+        val warnings = ModifierParentDataValidator.validate(
+            parent = ParentDataHost.Row,
+            node = VNode(
+                type = NodeType.Text,
+                spec = EmptyNodeSpec,
+                modifier = Modifier
+                    .then(LayoutIdModifierElement("item-1"))
+                    .then(
+                        ConstraintModifierElement(
+                            referenceId = "item-1",
+                            constraint = ConstraintItemSpec(
+                                start = ConstraintAnchorLink(
+                                    target = ConstraintAnchorTarget.parent(ConstraintAnchor.Start),
+                                ),
+                            ),
+                        ),
+                    ),
+            ),
+        )
+
+        assertEquals(
+            listOf("ConstraintLayout parent-data modifiers only apply to children of ConstraintLayout."),
+            warnings,
+        )
+    }
+
+    @Test
+    fun `constraint parent data is valid under constraint layout host`() {
+        val warnings = ModifierParentDataValidator.validate(
+            parent = ParentDataHost.ConstraintLayout,
+            node = VNode(
+                type = NodeType.Text,
+                spec = EmptyNodeSpec,
+                modifier = Modifier
+                    .then(LayoutIdModifierElement("item-2"))
+                    .then(
+                        ConstraintModifierElement(
+                            referenceId = "item-2",
+                            constraint = ConstraintItemSpec(
+                                top = ConstraintAnchorLink(
+                                    target = ConstraintAnchorTarget.parent(ConstraintAnchor.Top),
+                                ),
+                            ),
+                        ),
+                    ),
+            ),
+        )
+
+        assertTrue(warnings.isEmpty())
     }
 }

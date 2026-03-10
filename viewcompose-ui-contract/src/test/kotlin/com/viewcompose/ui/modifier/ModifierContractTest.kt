@@ -1,5 +1,9 @@
 package com.viewcompose.ui.modifier
 
+import com.viewcompose.ui.node.spec.ConstraintAnchor
+import com.viewcompose.ui.node.spec.ConstraintAnchorLink
+import com.viewcompose.ui.node.spec.ConstraintAnchorTarget
+import com.viewcompose.ui.node.spec.ConstraintItemSpec
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -69,5 +73,28 @@ class ModifierContractTest {
         assertEquals(false, motion.animateRemove)
         assertEquals(true, motion.animateMove)
         assertEquals(false, motion.animateChange)
+    }
+
+    @Test
+    fun `layoutId and constraint metadata append in order`() {
+        val modifier = Modifier
+            .layoutId("hero-card")
+            .then(
+                ConstraintModifierElement(
+                    referenceId = "hero-card",
+                    constraint = ConstraintItemSpec(
+                        top = ConstraintAnchorLink(
+                            target = ConstraintAnchorTarget.parent(ConstraintAnchor.Top),
+                            margin = 12,
+                        ),
+                    ),
+                ),
+            )
+
+        assertEquals(2, modifier.elements.size)
+        assertEquals("hero-card", (modifier.elements[0] as LayoutIdModifierElement).layoutId)
+        val constraintElement = modifier.elements[1] as ConstraintModifierElement
+        assertEquals("hero-card", constraintElement.referenceId)
+        assertEquals(12, constraintElement.constraint.top?.margin)
     }
 }

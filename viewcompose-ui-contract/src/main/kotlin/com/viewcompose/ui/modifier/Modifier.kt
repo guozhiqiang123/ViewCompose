@@ -9,6 +9,7 @@ import com.viewcompose.ui.gesture.SwipeDirection
 import com.viewcompose.ui.gesture.TransformDelta
 import com.viewcompose.ui.layout.HorizontalAlignment
 import com.viewcompose.ui.layout.VerticalAlignment
+import com.viewcompose.ui.node.spec.ConstraintItemSpec
 
 open class Modifier private constructor(
     val elements: List<ModifierElement>,
@@ -186,6 +187,15 @@ data class TestTagModifierElement(
 
 data class OverlayAnchorModifierElement(
     val anchorId: String,
+) : ModifierElement
+
+data class LayoutIdModifierElement(
+    val layoutId: String,
+) : ModifierElement
+
+data class ConstraintModifierElement(
+    val constraint: ConstraintItemSpec,
+    val referenceId: String? = null,
 ) : ModifierElement
 
 data class WeightModifierElement(
@@ -509,6 +519,12 @@ fun Modifier.testTag(tag: String): Modifier {
 fun Modifier.overlayAnchor(anchorId: String): Modifier {
     return then(
         OverlayAnchorModifierElement(anchorId),
+    )
+}
+
+fun Modifier.layoutId(id: String): Modifier {
+    return then(
+        LayoutIdModifierElement(layoutId = id),
     )
 }
 

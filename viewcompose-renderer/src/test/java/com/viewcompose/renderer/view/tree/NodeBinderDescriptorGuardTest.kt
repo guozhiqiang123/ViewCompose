@@ -146,6 +146,7 @@ class NodeBinderDescriptorGuardTest {
         NodeType.Column -> "Column"
         NodeType.Box -> "Box"
         NodeType.Surface -> "Surface"
+        NodeType.ConstraintLayout -> "ConstraintLayout"
         NodeType.AnimatedVisibilityHost -> "AnimatedVisibilityHost"
         NodeType.AnimatedSizeHost -> "AnimatedSizeHost"
         NodeType.Spacer -> "Spacer"

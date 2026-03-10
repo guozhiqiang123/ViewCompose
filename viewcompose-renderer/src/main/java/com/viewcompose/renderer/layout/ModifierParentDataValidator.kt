@@ -3,7 +3,9 @@ package com.viewcompose.renderer.layout
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.viewcompose.ui.modifier.BoxAlignModifierElement
+import com.viewcompose.ui.modifier.ConstraintModifierElement
 import com.viewcompose.ui.modifier.HorizontalAlignModifierElement
+import com.viewcompose.ui.modifier.LayoutIdModifierElement
 import com.viewcompose.ui.modifier.VerticalAlignModifierElement
 import com.viewcompose.ui.modifier.WeightModifierElement
 import com.viewcompose.ui.node.VNode
@@ -14,6 +16,7 @@ internal enum class ParentDataHost {
     Row,
     Column,
     Box,
+    ConstraintLayout,
     Other,
 }
 
@@ -23,12 +26,20 @@ internal object ModifierParentDataValidator {
         node: VNode,
     ): List<String> {
         return validate(
-            parent = when (parent) {
-                is DeclarativeBoxLayout -> ParentDataHost.Box
-                is DeclarativeLinearLayout -> if (parent.orientation == LinearLayout.HORIZONTAL) {
+            parent = when {
+                parent is DeclarativeBoxLayout -> ParentDataHost.Box
+                parent is DeclarativeLinearLayout && parent.orientation == LinearLayout.HORIZONTAL -> {
                     ParentDataHost.Row
-                } else {
+                }
+
+                parent is DeclarativeLinearLayout -> {
                     ParentDataHost.Column
+                }
+
+                // Keep renderer dependency one-way: detect by runtime type name so this validator
+                // can evolve before/after constraint container wiring commits.
+                parent.javaClass.name == "com.viewcompose.renderer.view.container.DeclarativeConstraintLayout" -> {
+                    ParentDataHost.ConstraintLayout
                 }
 
                 else -> ParentDataHost.Other
@@ -46,6 +57,8 @@ internal object ModifierParentDataValidator {
         val hasBoxAlign = node.modifier.elements.any { it is BoxAlignModifierElement }
         val hasHorizontalAlign = node.modifier.elements.any { it is HorizontalAlignModifierElement }
         val hasVerticalAlign = node.modifier.elements.any { it is VerticalAlignModifierElement }
+        val hasLayoutId = node.modifier.elements.any { it is LayoutIdModifierElement }
+        val hasConstraint = node.modifier.elements.any { it is ConstraintModifierElement }
 
         if (hasWeight && parent !in setOf(ParentDataHost.Row, ParentDataHost.Column)) {
             warnings += "Modifier.weight() only applies to children of Row/Column."
@@ -62,6 +75,9 @@ internal object ModifierParentDataValidator {
             if (parent != ParentDataHost.Row) {
                 warnings += "Modifier.align(VerticalAlignment) only applies to children of Row."
             }
+        }
+        if ((hasLayoutId || hasConstraint) && parent != ParentDataHost.ConstraintLayout) {
+            warnings += "ConstraintLayout parent-data modifiers only apply to children of ConstraintLayout."
         }
         return warnings
     }
