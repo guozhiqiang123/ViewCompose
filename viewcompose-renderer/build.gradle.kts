@@ -24,6 +24,7 @@ android {
 dependencies {
     implementation(project(":viewcompose-runtime"))
     implementation(project(":viewcompose-ui-contract"))
+    implementation(project(":viewcompose-gesture-core"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.viewpager2)

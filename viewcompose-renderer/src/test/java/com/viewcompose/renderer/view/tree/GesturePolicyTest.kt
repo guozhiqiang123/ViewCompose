@@ -1,5 +1,10 @@
 package com.viewcompose.renderer.view.tree
 
+import com.viewcompose.gesture.core.SwipeDecision
+import com.viewcompose.gesture.core.SwipeDecisionAxis
+import com.viewcompose.gesture.core.SwipeSettleTarget
+import com.viewcompose.gesture.core.resolveSwipeDecision
+import com.viewcompose.gesture.core.shouldActivateTransform
 import com.viewcompose.ui.gesture.SwipeDirection
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -32,7 +37,7 @@ class GesturePolicyTest {
     @Test
     fun resolveSwipeDecision_prefersVelocityOverDistance() {
         val decision = resolveSwipeDecision(
-            axis = GestureAxis.Horizontal,
+            axis = SwipeDecisionAxis.Horizontal,
             total = 8f,
             velocity = 1800f,
             minAnchor = 0f,
@@ -50,7 +55,7 @@ class GesturePolicyTest {
     @Test
     fun resolveSwipeDecision_usesDistanceThreshold_whenVelocityLow() {
         val decision = resolveSwipeDecision(
-            axis = GestureAxis.Vertical,
+            axis = SwipeDecisionAxis.Vertical,
             total = -100f,
             velocity = -10f,
             minAnchor = 0f,
@@ -68,7 +73,7 @@ class GesturePolicyTest {
     @Test
     fun resolveSwipeDecision_settlesToNearestAnchor_whenBelowThreshold() {
         val decision = resolveSwipeDecision(
-            axis = GestureAxis.Horizontal,
+            axis = SwipeDecisionAxis.Horizontal,
             total = 40f,
             velocity = 0f,
             minAnchor = 0f,
@@ -86,7 +91,7 @@ class GesturePolicyTest {
     @Test
     fun resolveSwipeDecision_returnsNone_whenNoAnchorsAndNoThresholdHit() {
         val decision = resolveSwipeDecision(
-            axis = GestureAxis.Horizontal,
+            axis = SwipeDecisionAxis.Horizontal,
             total = 4f,
             velocity = 0f,
             minAnchor = null,

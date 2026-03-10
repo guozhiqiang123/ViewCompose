@@ -1,15 +1,21 @@
-package com.viewcompose.renderer.view.tree
+package com.viewcompose.gesture.core
 
+import com.viewcompose.ui.gesture.GestureOrientation
 import com.viewcompose.ui.gesture.SwipeDirection
 import kotlin.math.abs
 import kotlin.math.max
 
-internal enum class GestureAxis {
+enum class LockedAxis {
     Horizontal,
     Vertical,
 }
 
-internal sealed interface SwipeDecision {
+enum class SwipeDecisionAxis {
+    Horizontal,
+    Vertical,
+}
+
+sealed interface SwipeDecision {
     data class Swipe(val direction: SwipeDirection) : SwipeDecision
 
     data class Settle(val target: SwipeSettleTarget) : SwipeDecision
@@ -17,12 +23,41 @@ internal sealed interface SwipeDecision {
     data object None : SwipeDecision
 }
 
-internal enum class SwipeSettleTarget {
+enum class SwipeSettleTarget {
     Min,
     Max,
 }
 
-internal fun shouldActivateTransform(
+fun resolveLockAxis(
+    dx: Float,
+    dy: Float,
+    orientation: GestureOrientation,
+    touchSlop: Float,
+): LockedAxis? {
+    val absDx = abs(dx)
+    val absDy = abs(dy)
+    return when (orientation) {
+        GestureOrientation.Horizontal -> {
+            if (absDx < touchSlop || absDx < absDy) null else LockedAxis.Horizontal
+        }
+
+        GestureOrientation.Vertical -> {
+            if (absDy < touchSlop || absDy < absDx) null else LockedAxis.Vertical
+        }
+
+        GestureOrientation.Free -> {
+            if (maxOf(absDx, absDy) < touchSlop) {
+                null
+            } else if (absDx >= absDy) {
+                LockedAxis.Horizontal
+            } else {
+                LockedAxis.Vertical
+            }
+        }
+    }
+}
+
+fun shouldActivateTransform(
     panMotion: Float,
     zoomMotion: Float,
     rotationMotion: Float,
@@ -31,8 +66,8 @@ internal fun shouldActivateTransform(
     return panMotion > touchSlop || zoomMotion > touchSlop || rotationMotion > touchSlop
 }
 
-internal fun resolveSwipeDecision(
-    axis: GestureAxis,
+fun resolveSwipeDecision(
+    axis: SwipeDecisionAxis,
     total: Float,
     velocity: Float,
     minAnchor: Float?,
@@ -56,13 +91,13 @@ internal fun resolveSwipeDecision(
     if (towardMax != null) {
         return SwipeDecision.Swipe(
             direction = when (axis) {
-                GestureAxis.Horizontal -> if (towardMax) {
+                SwipeDecisionAxis.Horizontal -> if (towardMax) {
                     SwipeDirection.StartToEnd
                 } else {
                     SwipeDirection.EndToStart
                 }
 
-                GestureAxis.Vertical -> if (towardMax) {
+                SwipeDecisionAxis.Vertical -> if (towardMax) {
                     SwipeDirection.TopToBottom
                 } else {
                     SwipeDirection.BottomToTop

@@ -6,6 +6,13 @@ import android.view.VelocityTracker
 import android.view.View
 import android.view.ViewConfiguration
 import android.util.Log
+import com.viewcompose.gesture.core.LockedAxis
+import com.viewcompose.gesture.core.SwipeDecision
+import com.viewcompose.gesture.core.SwipeDecisionAxis
+import com.viewcompose.gesture.core.SwipeSettleTarget
+import com.viewcompose.gesture.core.resolveLockAxis
+import com.viewcompose.gesture.core.resolveSwipeDecision
+import com.viewcompose.gesture.core.shouldActivateTransform
 import com.viewcompose.renderer.R
 import com.viewcompose.renderer.modifier.ResolvedModifiers
 import com.viewcompose.ui.gesture.GestureOrientation
@@ -49,11 +56,6 @@ internal object ModifierGestureApplier {
 private class ViewGestureDispatcher(
     private val hostView: View,
 ) : View.OnTouchListener {
-    private enum class Axis {
-        Horizontal,
-        Vertical,
-    }
-
     private var resolved: ResolvedModifiers = ResolvedModifiers()
     private val touchSlop: Float = ViewConfiguration.get(hostView.context).scaledTouchSlop.toFloat()
     private val minimumFlingVelocity: Float =
@@ -64,7 +66,7 @@ private class ViewGestureDispatcher(
     private var downY: Float = 0f
     private var lastX: Float = 0f
     private var lastY: Float = 0f
-    private var lockAxis: Axis? = null
+    private var lockAxis: LockedAxis? = null
     private var dragStarted = false
     private var swipeStartAnchorPx = 0f
     private var combinedTapConsumed = false
@@ -334,13 +336,14 @@ private class ViewGestureDispatcher(
                         dx = dx,
                         dy = dy,
                         orientation = resolveGestureOrientation(draggable, swipeable),
+                        touchSlop = touchSlop,
                     )
                     if (lockAxis != null) {
                         hostView.parent?.requestDisallowInterceptTouchEvent(true)
                     }
                 }
                 val axis = lockAxis ?: return false
-                val delta = if (axis == Axis.Horizontal) {
+                val delta = if (axis == LockedAxis.Horizontal) {
                     rawX - lastX
                 } else {
                     rawY - lastY
@@ -365,30 +368,30 @@ private class ViewGestureDispatcher(
                 val rawY = event.rawY
                 val axis = lockAxis
                 val total = when (axis) {
-                    Axis.Horizontal -> rawX - downX
-                    Axis.Vertical -> rawY - downY
+                    LockedAxis.Horizontal -> rawX - downX
+                    LockedAxis.Vertical -> rawY - downY
                     null -> 0f
                 }
                 if (dragStarted) {
                     tracker.computeCurrentVelocity(1000)
                     val velocity = when (axis) {
-                        Axis.Horizontal -> tracker.xVelocity
-                        Axis.Vertical -> tracker.yVelocity
+                        LockedAxis.Horizontal -> tracker.xVelocity
+                        LockedAxis.Vertical -> tracker.yVelocity
                         null -> 0f
                     }
                     draggable?.onDragStopped?.invoke(velocity)
                 }
                 val velocity = when (axis) {
-                    Axis.Horizontal -> tracker.xVelocity
-                    Axis.Vertical -> tracker.yVelocity
+                    LockedAxis.Horizontal -> tracker.xVelocity
+                    LockedAxis.Vertical -> tracker.yVelocity
                     null -> 0f
                 }
                 val swipeConsumed = if (axis != null && swipeable != null) {
                     when (
                         val decision = resolveSwipeDecision(
                             axis = when (axis) {
-                                Axis.Horizontal -> GestureAxis.Horizontal
-                                Axis.Vertical -> GestureAxis.Vertical
+                                LockedAxis.Horizontal -> SwipeDecisionAxis.Horizontal
+                                LockedAxis.Vertical -> SwipeDecisionAxis.Vertical
                             },
                             total = total,
                             velocity = velocity,
@@ -456,34 +459,6 @@ private class ViewGestureDispatcher(
         swipeable: com.viewcompose.ui.modifier.SwipeableModifierElement?,
     ): GestureOrientation {
         return draggable?.orientation ?: swipeable?.orientation ?: GestureOrientation.Free
-    }
-
-    private fun resolveLockAxis(
-        dx: Float,
-        dy: Float,
-        orientation: GestureOrientation,
-    ): Axis? {
-        val absDx = abs(dx)
-        val absDy = abs(dy)
-        return when (orientation) {
-            GestureOrientation.Horizontal -> {
-                if (absDx < touchSlop || absDx < absDy) null else Axis.Horizontal
-            }
-
-            GestureOrientation.Vertical -> {
-                if (absDy < touchSlop || absDy < absDx) null else Axis.Vertical
-            }
-
-            GestureOrientation.Free -> {
-                if (maxOf(absDx, absDy) < touchSlop) {
-                    null
-                } else if (absDx >= absDy) {
-                    Axis.Horizontal
-                } else {
-                    Axis.Vertical
-                }
-            }
-        }
     }
 
     private fun MotionEvent.toPointerEvent(): PointerEvent {
