@@ -7,6 +7,7 @@ import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
 import android.os.SystemClock
 import android.view.View
+import android.view.ViewGroup
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -891,6 +892,34 @@ class DemoVisualUiTest {
                     columnToggle.contains("隐藏")
             }
             assertTrue("Expected visibility state status and axis targets to update", visibilityStateAndAxisUpdated)
+            var rowShownWidth = 0
+            val rowTargetShown = waitUntilActivityCondition(scenario, timeoutMs = 1_000L) { activity ->
+                val rowTarget = findViewByTestTag(
+                    activity.findViewById<ViewGroup>(android.R.id.content),
+                    DemoTestTags.ANIMATION_ROW_AXIS_TARGET,
+                )
+                if (rowTarget == null || !isViewVisible(rowTarget)) {
+                    return@waitUntilActivityCondition false
+                }
+                rowShownWidth = rowTarget.width
+                rowShownWidth > 0
+            }
+            assertTrue("Expected row-axis visibility target to become visible", rowTargetShown)
+            scenario.onActivity { activity ->
+                activity.clickByTestTag(DemoTestTags.ANIMATION_ROW_AXIS_TOGGLE)
+            }
+            val rowTargetShrankDuringExit = waitUntilActivityCondition(scenario, timeoutMs = 1_000L) { activity ->
+                val rowTarget = findViewByTestTag(
+                    activity.findViewById<ViewGroup>(android.R.id.content),
+                    DemoTestTags.ANIMATION_ROW_AXIS_TARGET,
+                ) ?: return@waitUntilActivityCondition false
+                val width = rowTarget.width
+                width in 1 until rowShownWidth
+            }
+            assertTrue(
+                "Expected row-axis visibility target width to shrink during exit animation",
+                rowTargetShrankDuringExit,
+            )
         }
     }
 
