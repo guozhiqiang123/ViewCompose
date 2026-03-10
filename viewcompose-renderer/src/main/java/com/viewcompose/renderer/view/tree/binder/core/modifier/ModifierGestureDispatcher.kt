@@ -304,9 +304,10 @@ private class ViewGestureDispatcher(
             resetDragSwipeTracking()
             return false
         }
-        velocityTracker = (velocityTracker ?: VelocityTracker.obtain()).also { tracker ->
-            tracker.addMovement(event)
+        if (transformStreamActive && event.pointerCount > 1) {
+            return false
         }
+        val tracker = velocityTracker ?: VelocityTracker.obtain().also { velocityTracker = it }
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 downX = event.rawX
@@ -316,12 +317,13 @@ private class ViewGestureDispatcher(
                 lockAxis = null
                 dragStarted = false
                 swipeStartAnchorPx = swipeable?.currentAnchorPx ?: 0f
-                velocityTracker?.clear()
-                velocityTracker?.addMovement(event)
+                tracker.clear()
+                tracker.addMovement(event)
                 return false
             }
 
             MotionEvent.ACTION_MOVE -> {
+                tracker.addMovement(event)
                 val rawX = event.rawX
                 val rawY = event.rawY
                 val dx = rawX - downX
@@ -357,6 +359,7 @@ private class ViewGestureDispatcher(
             }
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                tracker.addMovement(event)
                 val rawX = event.rawX
                 val rawY = event.rawY
                 val axis = lockAxis
@@ -366,17 +369,17 @@ private class ViewGestureDispatcher(
                     null -> 0f
                 }
                 if (dragStarted) {
-                    velocityTracker?.computeCurrentVelocity(1000)
+                    tracker.computeCurrentVelocity(1000)
                     val velocity = when (axis) {
-                        Axis.Horizontal -> velocityTracker?.xVelocity ?: 0f
-                        Axis.Vertical -> velocityTracker?.yVelocity ?: 0f
+                        Axis.Horizontal -> tracker.xVelocity
+                        Axis.Vertical -> tracker.yVelocity
                         null -> 0f
                     }
                     draggable?.onDragStopped?.invoke(velocity)
                 }
                 val velocity = when (axis) {
-                    Axis.Horizontal -> velocityTracker?.xVelocity ?: 0f
-                    Axis.Vertical -> velocityTracker?.yVelocity ?: 0f
+                    Axis.Horizontal -> tracker.xVelocity
+                    Axis.Vertical -> tracker.yVelocity
                     null -> 0f
                 }
                 val swipeConsumed = if (axis != null && swipeable != null) {
