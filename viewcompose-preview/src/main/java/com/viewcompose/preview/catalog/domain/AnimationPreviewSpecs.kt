@@ -3,7 +3,7 @@ package com.viewcompose.preview.catalog.domain
 import com.viewcompose.animation.AnimatedContent
 import com.viewcompose.animation.AnimatedVisibility
 import com.viewcompose.animation.animateFloatAsState
-import com.viewcompose.animation.tween
+import com.viewcompose.animation.core.tween
 import com.viewcompose.preview.catalog.model.PreviewDomain
 import com.viewcompose.preview.catalog.model.PreviewSpec
 import com.viewcompose.ui.modifier.Modifier

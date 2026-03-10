@@ -3,8 +3,8 @@ package com.viewcompose
 import android.view.Choreographer
 import com.viewcompose.animation.animateColorAsState
 import com.viewcompose.animation.animateFloatAsState
-import com.viewcompose.animation.spring
-import com.viewcompose.animation.tween
+import com.viewcompose.animation.core.spring
+import com.viewcompose.animation.core.tween
 import com.viewcompose.gesture.combinedClickable
 import com.viewcompose.gesture.draggable
 import com.viewcompose.gesture.gesturePriority

@@ -1,5 +1,7 @@
 package com.viewcompose.animation
 
+import com.viewcompose.animation.core.AnimationSpec
+import com.viewcompose.animation.core.spring
 import com.viewcompose.ui.modifier.Modifier
 
 /**

@@ -1,4 +1,4 @@
-package com.viewcompose.animation
+package com.viewcompose.animation.core
 
 import com.viewcompose.runtime.frame.MonotonicFrameClock
 import kotlin.math.cos
@@ -10,7 +10,7 @@ internal suspend fun MonotonicFrameClock.awaitFrameNanos(): Long {
     return withFrameNanos { it }
 }
 
-internal suspend fun <T> runAnimation(
+suspend fun <T> runAnimation(
     frameClock: MonotonicFrameClock,
     startValue: T,
     endValue: T,

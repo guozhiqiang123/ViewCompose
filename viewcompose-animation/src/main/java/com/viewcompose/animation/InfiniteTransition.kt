@@ -1,5 +1,11 @@
 package com.viewcompose.animation
 
+import com.viewcompose.animation.core.AnimationConverters
+import com.viewcompose.animation.core.InfiniteRepeatableSpec
+import com.viewcompose.animation.core.RepeatMode
+import com.viewcompose.animation.core.infiniteRepeatable
+import com.viewcompose.animation.core.runAnimation
+import com.viewcompose.animation.core.tween
 import com.viewcompose.runtime.State
 import com.viewcompose.runtime.mutableStateOf
 import com.viewcompose.widget.core.DisposableEffect

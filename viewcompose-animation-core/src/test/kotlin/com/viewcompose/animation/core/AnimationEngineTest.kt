@@ -1,4 +1,4 @@
-package com.viewcompose.animation
+package com.viewcompose.animation.core
 
 import com.viewcompose.runtime.frame.MonotonicFrameClock
 import kotlin.math.abs

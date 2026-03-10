@@ -21,7 +21,7 @@
 
 ## Checklist
 - [x] Step 1: 新增执行文档并提交。
-- [ ] Step 2: 新增 `:viewcompose-animation-core` 并迁移动画内核。
+- [x] Step 2: 新增 `:viewcompose-animation-core` 并迁移动画内核。
 - [ ] Step 3: 修复 `TweenSpec.delayMillis` 与动画播放/中断模型。
 - [ ] Step 4: `updateTransition` / `AnimatedVisibility` 统一 transition 状态机语义。
 - [ ] Step 5: `animateContentSize` 落地（ui-contract + renderer 包装宿主）。
@@ -32,6 +32,7 @@
 
 ## 提交记录
 1. `docs: add animation architecture convergence execution plan`
+2. `build: split animation core into standalone kotlin-jvm module`
 
 ## 阻塞记录
 - 暂无。

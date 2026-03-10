@@ -1,4 +1,4 @@
-package com.viewcompose.animation
+package com.viewcompose.animation.core
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

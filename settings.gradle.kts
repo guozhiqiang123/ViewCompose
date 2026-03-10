@@ -33,5 +33,6 @@ include(":viewcompose-lifecycle")
 include(":viewcompose-viewmodel")
 include(":viewcompose-preview")
 include(":viewcompose-animation")
+include(":viewcompose-animation-core")
 include(":viewcompose-gesture")
  

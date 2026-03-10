@@ -1,4 +1,4 @@
-package com.viewcompose.animation
+package com.viewcompose.animation.core
 
 interface AnimationConverter<T> {
     fun toVector(value: T): FloatArray

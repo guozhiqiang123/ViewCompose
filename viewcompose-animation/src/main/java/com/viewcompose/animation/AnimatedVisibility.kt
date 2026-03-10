@@ -1,5 +1,8 @@
 package com.viewcompose.animation
 
+import com.viewcompose.animation.core.AnimationSpec
+import com.viewcompose.animation.core.snap
+import com.viewcompose.animation.core.tween
 import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.node.NodeType
 import com.viewcompose.ui.node.spec.AnimatedVisibilityHostNodeProps

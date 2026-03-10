@@ -1,5 +1,9 @@
 package com.viewcompose.animation
 
+import com.viewcompose.animation.core.AnimationConverter
+import com.viewcompose.animation.core.AnimationSpec
+import com.viewcompose.animation.core.runAnimation
+import com.viewcompose.animation.core.spring
 import com.viewcompose.runtime.MutableState
 import com.viewcompose.runtime.State
 import com.viewcompose.runtime.mutableStateOf

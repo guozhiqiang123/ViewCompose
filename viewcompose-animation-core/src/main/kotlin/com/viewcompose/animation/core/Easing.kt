@@ -1,4 +1,4 @@
-package com.viewcompose.animation
+package com.viewcompose.animation.core
 
 fun interface Easing {
     fun transform(fraction: Float): Float

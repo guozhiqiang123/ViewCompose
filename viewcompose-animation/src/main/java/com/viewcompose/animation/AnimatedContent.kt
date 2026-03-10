@@ -1,5 +1,7 @@
 package com.viewcompose.animation
 
+import com.viewcompose.animation.core.AnimationSpec
+import com.viewcompose.animation.core.tween
 import com.viewcompose.runtime.mutableStateOf
 import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.modifier.alpha
