@@ -10,6 +10,7 @@ import com.viewcompose.ui.node.spec.AnimatedSizeHostNodeProps
 import com.viewcompose.ui.node.spec.AnimatedVisibilityHostNodeProps
 import com.viewcompose.ui.node.spec.BoxNodeProps
 import com.viewcompose.ui.node.spec.ColumnNodeProps
+import com.viewcompose.ui.node.spec.ConstraintLayoutNodeProps
 import com.viewcompose.ui.node.spec.DividerNodeProps
 import com.viewcompose.ui.node.spec.FlowColumnNodeProps
 import com.viewcompose.ui.node.spec.FlowRowNodeProps
@@ -56,6 +57,14 @@ internal object ContainerViewSpecReader {
         val spec = node.requireSpec<BoxNodeProps>()
         return ContainerViewBinder.BoxSpec(
             gravity = spec.contentAlignment.toGravity(),
+        )
+    }
+
+    fun readConstraintLayoutSpec(node: VNode): ContainerViewBinder.ConstraintLayoutSpec {
+        val spec = node.requireSpec<ConstraintLayoutNodeProps>()
+        return ContainerViewBinder.ConstraintLayoutSpec(
+            decoupledConstraintSet = spec.constraintSet,
+            inlineHelpers = spec.helpers,
         )
     }
 

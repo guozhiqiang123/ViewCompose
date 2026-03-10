@@ -44,6 +44,14 @@ internal object ModifierInteractionApplier {
         view.minimumHeight = minHeight
         view.minimumWidth = minWidth
         view.contentDescription = resolved.contentDescription?.contentDescription
+        view.setTag(
+            R.id.ui_framework_constraint_layout_id,
+            resolved.layoutId?.layoutId ?: resolved.constraint?.referenceId,
+        )
+        view.setTag(
+            R.id.ui_framework_constraint_item_spec,
+            resolved.constraint?.constraint,
+        )
     }
 
     fun applyClickAndFocusState(

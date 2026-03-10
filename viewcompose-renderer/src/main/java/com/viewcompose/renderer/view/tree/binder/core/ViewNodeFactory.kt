@@ -21,6 +21,7 @@ import com.viewcompose.ui.node.VNode
 import com.viewcompose.renderer.view.container.DeclarativeBoxLayout
 import com.viewcompose.renderer.view.container.DeclarativeAnimatedVisibilityHostLayout
 import com.viewcompose.renderer.view.container.DeclarativeAnimatedSizeHostLayout
+import com.viewcompose.renderer.view.container.DeclarativeConstraintLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowColumnLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowRowLayout
 import com.viewcompose.renderer.view.container.DeclarativeHorizontalPagerLayout
@@ -63,7 +64,7 @@ internal object ViewNodeFactory {
                 orientation = LinearLayout.VERTICAL
             }
             NodeType.Box, NodeType.Surface -> DeclarativeBoxLayout(context)
-            NodeType.ConstraintLayout -> DeclarativeBoxLayout(context)
+            NodeType.ConstraintLayout -> DeclarativeConstraintLayout(context)
             NodeType.AnimatedVisibilityHost -> DeclarativeAnimatedVisibilityHostLayout(context)
             NodeType.AnimatedSizeHost -> DeclarativeAnimatedSizeHostLayout(context)
             NodeType.Spacer, NodeType.Divider -> View(context)

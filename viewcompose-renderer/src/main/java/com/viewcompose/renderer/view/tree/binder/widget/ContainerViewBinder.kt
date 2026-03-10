@@ -7,9 +7,12 @@ import com.viewcompose.renderer.R
 import com.viewcompose.ui.layout.MainAxisArrangement
 import com.viewcompose.ui.node.VNode
 import com.viewcompose.ui.modifier.ContentSizeAnimationSpecModel
+import com.viewcompose.ui.node.spec.ConstraintHelpersSpec
+import com.viewcompose.ui.node.spec.ConstraintSetSpec
 import com.viewcompose.renderer.view.container.DeclarativeBoxLayout
 import com.viewcompose.renderer.view.container.DeclarativeAnimatedVisibilityHostLayout
 import com.viewcompose.renderer.view.container.DeclarativeAnimatedSizeHostLayout
+import com.viewcompose.renderer.view.container.DeclarativeConstraintLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowColumnLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowRowLayout
 import com.viewcompose.renderer.view.container.DeclarativeLinearLayout
@@ -24,6 +27,11 @@ internal object ContainerViewBinder {
 
     data class BoxSpec(
         val gravity: Int,
+    )
+
+    data class ConstraintLayoutSpec(
+        val decoupledConstraintSet: ConstraintSetSpec?,
+        val inlineHelpers: ConstraintHelpersSpec,
     )
 
     data class DividerSpec(
@@ -85,6 +93,14 @@ internal object ContainerViewBinder {
         view.contentGravity = spec.gravity
     }
 
+    fun bindConstraintLayout(
+        view: DeclarativeConstraintLayout,
+        spec: ConstraintLayoutSpec,
+    ) {
+        view.decoupledConstraintSetSpec = spec.decoupledConstraintSet
+        view.inlineHelpersSpec = spec.inlineHelpers
+    }
+
     fun bindAnimatedVisibilityHost(
         view: DeclarativeAnimatedVisibilityHostLayout,
         spec: AnimatedVisibilityHostSpec,
@@ -138,6 +154,10 @@ internal object ContainerViewBinder {
 
     fun readBoxSpec(node: VNode): BoxSpec {
         return ContainerViewSpecReader.readBoxSpec(node)
+    }
+
+    fun readConstraintLayoutSpec(node: VNode): ConstraintLayoutSpec {
+        return ContainerViewSpecReader.readConstraintLayoutSpec(node)
     }
 
     fun readDividerSpec(node: VNode): DividerSpec {

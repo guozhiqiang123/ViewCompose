@@ -5,9 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.viewcompose.ui.layout.BoxAlignment
 import com.viewcompose.ui.layout.HorizontalAlignment
 import com.viewcompose.ui.layout.VerticalAlignment
+import com.viewcompose.ui.node.spec.ConstraintDimension
 import com.viewcompose.ui.modifier.MarginModifierElement
 import com.viewcompose.ui.node.NodeType
 import com.viewcompose.ui.node.VNode
@@ -15,6 +17,7 @@ import com.viewcompose.renderer.layout.LayoutParamDefaultsResolver
 import com.viewcompose.renderer.layout.ModifierParentDataValidator
 import com.viewcompose.renderer.modifier.ResolvedModifiers
 import com.viewcompose.renderer.modifier.resolve
+import com.viewcompose.renderer.view.container.DeclarativeConstraintLayout
 import com.viewcompose.renderer.view.container.DeclarativeBoxLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowColumnLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowRowLayout
@@ -42,6 +45,7 @@ internal object ViewLayoutParamsFactory {
         val weight = resolved.weight
         val horizontalAlign = resolved.horizontalAlign
         val verticalAlign = resolved.verticalAlign
+        val constraintSpec = resolved.constraint?.constraint
         val useLinearLikeDefaults = parent is DeclarativeLinearLayout ||
             parent is DeclarativeFlowRowLayout ||
             parent is DeclarativeFlowColumnLayout
@@ -69,8 +73,14 @@ internal object ViewLayoutParamsFactory {
                 linearOrientation = linearLikeOrientation,
             )
         }
-        val width = widthModifier?.width ?: size?.width ?: defaultWidth
-        val height = heightModifier?.height ?: size?.height ?: defaultHeight
+        val width = constraintSpec?.width?.toLayoutParamValue()
+            ?: widthModifier?.width
+            ?: size?.width
+            ?: defaultWidth
+        val height = constraintSpec?.height?.toLayoutParamValue()
+            ?: heightModifier?.height
+            ?: size?.height
+            ?: defaultHeight
         return when (parent) {
             is DeclarativeLinearLayout -> {
                 val resolvedWidth = if (
@@ -109,6 +119,10 @@ internal object ViewLayoutParamsFactory {
             ) {
                 gravity = boxAlign?.alignment?.toGravity() ?: DeclarativeBoxLayout.UNSET_GRAVITY
             }
+
+            is DeclarativeConstraintLayout -> ConstraintLayout.LayoutParams(width, height).applyLayoutParams(
+                margin = margin,
+            )
 
             is FrameLayout -> FrameLayout.LayoutParams(width, height).applyLayoutParams(margin = margin)
             else -> ViewGroup.MarginLayoutParams(width, height).applyMargin(margin)
@@ -199,6 +213,15 @@ internal object ViewLayoutParamsFactory {
             BoxAlignment.BottomStart -> android.view.Gravity.BOTTOM or android.view.Gravity.START
             BoxAlignment.BottomCenter -> android.view.Gravity.BOTTOM or android.view.Gravity.CENTER_HORIZONTAL
             BoxAlignment.BottomEnd -> android.view.Gravity.BOTTOM or android.view.Gravity.END
+        }
+    }
+
+    private fun ConstraintDimension.toLayoutParamValue(): Int {
+        return when (this) {
+            ConstraintDimension.WrapContent -> ViewGroup.LayoutParams.WRAP_CONTENT
+            ConstraintDimension.FillToConstraints -> 0
+            ConstraintDimension.MatchParent -> ViewGroup.LayoutParams.MATCH_PARENT
+            is ConstraintDimension.Fixed -> value
         }
     }
 }

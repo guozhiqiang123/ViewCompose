@@ -15,6 +15,11 @@ import com.viewcompose.ui.node.collection.TabRowTab
 import com.viewcompose.ui.node.spec.BoxNodeProps
 import com.viewcompose.ui.node.spec.ButtonNodeProps
 import com.viewcompose.ui.node.spec.ColumnNodeProps
+import com.viewcompose.ui.node.spec.ConstraintGuidelineDirection
+import com.viewcompose.ui.node.spec.ConstraintGuidelinePosition
+import com.viewcompose.ui.node.spec.ConstraintGuidelineSpec
+import com.viewcompose.ui.node.spec.ConstraintHelpersSpec
+import com.viewcompose.ui.node.spec.ConstraintLayoutNodeProps
 import com.viewcompose.ui.node.spec.DividerNodeProps
 import com.viewcompose.ui.node.spec.FlowColumnNodeProps
 import com.viewcompose.ui.node.spec.FlowRowNodeProps
@@ -358,6 +363,17 @@ class NodeBindingDifferTest {
 
         assertTrue(plan is NodeBindingPlan.Patch)
         assertTrue((plan as NodeBindingPlan.Patch).patch is BoxNodePatch)
+    }
+
+    @Test
+    fun `patches constraint layout semantic updates`() {
+        val previous = constraintLayoutNode(guidelineId = "guide-a")
+        val next = constraintLayoutNode(guidelineId = "guide-b")
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is ConstraintLayoutNodePatch)
     }
 
     @Test
@@ -783,6 +799,27 @@ class NodeBindingDifferTest {
             spec = BoxNodeProps(
                 contentAlignment = contentAlignment,
                 rippleColor = rippleColor,
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun constraintLayoutNode(
+        guidelineId: String = "guide",
+    ): VNode {
+        return VNode(
+            type = NodeType.ConstraintLayout,
+            spec = ConstraintLayoutNodeProps(
+                constraintSet = null,
+                helpers = ConstraintHelpersSpec(
+                    guidelines = listOf(
+                        ConstraintGuidelineSpec(
+                            id = guidelineId,
+                            direction = ConstraintGuidelineDirection.FromTop,
+                            position = ConstraintGuidelinePosition.Fraction(0.2f),
+                        ),
+                    ),
+                ),
             ),
             modifier = Modifier,
         )

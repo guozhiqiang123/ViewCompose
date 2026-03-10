@@ -3,6 +3,7 @@ package com.viewcompose.renderer.view.tree
 import com.viewcompose.ui.node.spec.BoxNodeProps
 import com.viewcompose.ui.node.spec.ButtonNodeProps
 import com.viewcompose.ui.node.spec.ColumnNodeProps
+import com.viewcompose.ui.node.spec.ConstraintLayoutNodeProps
 import com.viewcompose.ui.node.spec.DividerNodeProps
 import com.viewcompose.ui.node.spec.AnimatedSizeHostNodeProps
 import com.viewcompose.ui.node.spec.AnimatedVisibilityHostNodeProps
@@ -101,6 +102,11 @@ internal data class ColumnNodePatch(
 internal data class BoxNodePatch(
     val previous: BoxNodeProps,
     val next: BoxNodeProps,
+) : NodeViewPatch
+
+internal data class ConstraintLayoutNodePatch(
+    val previous: ConstraintLayoutNodeProps,
+    val next: ConstraintLayoutNodeProps,
 ) : NodeViewPatch
 
 internal data class AnimatedVisibilityHostNodePatch(

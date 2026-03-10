@@ -10,6 +10,7 @@ import com.viewcompose.ui.modifier.VerticalAlignModifierElement
 import com.viewcompose.ui.modifier.WeightModifierElement
 import com.viewcompose.ui.node.VNode
 import com.viewcompose.renderer.view.container.DeclarativeBoxLayout
+import com.viewcompose.renderer.view.container.DeclarativeConstraintLayout
 import com.viewcompose.renderer.view.container.DeclarativeLinearLayout
 
 internal enum class ParentDataHost {
@@ -36,9 +37,7 @@ internal object ModifierParentDataValidator {
                     ParentDataHost.Column
                 }
 
-                // Keep renderer dependency one-way: detect by runtime type name so this validator
-                // can evolve before/after constraint container wiring commits.
-                parent.javaClass.name == "com.viewcompose.renderer.view.container.DeclarativeConstraintLayout" -> {
+                parent is DeclarativeConstraintLayout -> {
                     ParentDataHost.ConstraintLayout
                 }
 

@@ -14,6 +14,7 @@ import com.viewcompose.renderer.reconcile.ReconcileResult
 import com.viewcompose.renderer.reconcile.RemovePatch
 import com.viewcompose.renderer.reconcile.RenderPatch
 import com.viewcompose.renderer.reconcile.ReusePatch
+import com.viewcompose.renderer.view.container.DeclarativeConstraintLayout
 import com.viewcompose.renderer.view.container.ChildHostViewGroup
 
 internal object ViewTreePatchPipeline {
@@ -139,6 +140,7 @@ internal object ViewTreePatchPipeline {
                         emittedModifierWarnings = emittedModifierWarnings,
                         resolved = nextResolved,
                     )
+                    (container as? DeclarativeConstraintLayout)?.requestConstraintRebuild()
                 }
                 val childResult = if (shouldReconcileChildren(bindingPlan)) {
                     reconcileChildren(

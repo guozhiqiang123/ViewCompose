@@ -6,6 +6,7 @@ import com.viewcompose.ui.node.spec.AnimatedSizeHostNodeProps
 import com.viewcompose.ui.node.spec.AnimatedVisibilityHostNodeProps
 import com.viewcompose.ui.node.spec.BoxNodeProps
 import com.viewcompose.ui.node.spec.ColumnNodeProps
+import com.viewcompose.ui.node.spec.ConstraintLayoutNodeProps
 import com.viewcompose.ui.node.spec.FlowColumnNodeProps
 import com.viewcompose.ui.node.spec.FlowRowNodeProps
 import com.viewcompose.ui.node.spec.PullToRefreshNodeProps
@@ -15,6 +16,7 @@ import com.viewcompose.ui.node.spec.ScrollableRowNodeProps
 import com.viewcompose.renderer.view.container.DeclarativeBoxLayout
 import com.viewcompose.renderer.view.container.DeclarativeAnimatedSizeHostLayout
 import com.viewcompose.renderer.view.container.DeclarativeAnimatedVisibilityHostLayout
+import com.viewcompose.renderer.view.container.DeclarativeConstraintLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowColumnLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowRowLayout
 import com.viewcompose.renderer.view.container.DeclarativeLinearLayout
@@ -46,6 +48,15 @@ internal fun MutableList<NodeBinderDescriptor>.addContainerNodeBinderDescriptors
         apply = { view, patch ->
             ContainerNodePatchApplier.applyBoxPatch(
                 view = view as DeclarativeBoxLayout,
+                patch = patch,
+            )
+        },
+    )
+    val constraintLayoutPatch = patchDescriptor<ConstraintLayoutNodeProps, ConstraintLayoutNodePatch>(
+        factory = { previous, next -> ConstraintLayoutNodePatch(previous, next) },
+        apply = { view, patch ->
+            ContainerNodePatchApplier.applyConstraintLayoutPatch(
+                view = view as DeclarativeConstraintLayout,
                 patch = patch,
             )
         },
@@ -148,6 +159,18 @@ internal fun MutableList<NodeBinderDescriptor>.addContainerNodeBinderDescriptors
                 )
             },
             patch = boxPatch,
+        ),
+    )
+    add(
+        descriptor(
+            nodeType = NodeType.ConstraintLayout,
+            bind = { view, node ->
+                ContainerViewBinder.bindConstraintLayout(
+                    view = view as DeclarativeConstraintLayout,
+                    spec = ContainerViewBinder.readConstraintLayoutSpec(node),
+                )
+            },
+            patch = constraintLayoutPatch,
         ),
     )
     add(

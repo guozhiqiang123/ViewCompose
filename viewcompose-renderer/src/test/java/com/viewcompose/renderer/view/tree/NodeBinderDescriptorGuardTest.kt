@@ -4,6 +4,7 @@ import com.viewcompose.ui.node.NodeType
 import com.viewcompose.ui.node.spec.BoxNodeProps
 import com.viewcompose.ui.node.spec.ButtonNodeProps
 import com.viewcompose.ui.node.spec.ColumnNodeProps
+import com.viewcompose.ui.node.spec.ConstraintLayoutNodeProps
 import com.viewcompose.ui.node.spec.DividerNodeProps
 import com.viewcompose.ui.node.spec.AnimatedSizeHostNodeProps
 import com.viewcompose.ui.node.spec.AnimatedVisibilityHostNodeProps
@@ -52,6 +53,7 @@ class NodeBinderDescriptorGuardTest {
             NodeType.Column,
             NodeType.Box,
             NodeType.Surface,
+            NodeType.ConstraintLayout,
             NodeType.AnimatedVisibilityHost,
             NodeType.AnimatedSizeHost,
             NodeType.Spacer,
@@ -113,6 +115,7 @@ class NodeBinderDescriptorGuardTest {
         RowNodePatch::class,
         ColumnNodePatch::class,
         BoxNodePatch::class,
+        ConstraintLayoutNodePatch::class,
         AnimatedVisibilityHostNodePatch::class,
         AnimatedSizeHostNodePatch::class,
         ImageNodePatch::class,
@@ -182,6 +185,7 @@ class NodeBinderDescriptorGuardTest {
         is RowNodePatch -> "RowNodePatch"
         is ColumnNodePatch -> "ColumnNodePatch"
         is BoxNodePatch -> "BoxNodePatch"
+        is ConstraintLayoutNodePatch -> "ConstraintLayoutNodePatch"
         is AnimatedVisibilityHostNodePatch -> "AnimatedVisibilityHostNodePatch"
         is AnimatedSizeHostNodePatch -> "AnimatedSizeHostNodePatch"
         is ImageNodePatch -> "ImageNodePatch"
@@ -213,6 +217,7 @@ class NodeBinderDescriptorGuardTest {
         is RowNodeProps -> "RowNodeProps"
         is ColumnNodeProps -> "ColumnNodeProps"
         is BoxNodeProps -> "BoxNodeProps"
+        is ConstraintLayoutNodeProps -> "ConstraintLayoutNodeProps"
         is AnimatedVisibilityHostNodeProps -> "AnimatedVisibilityHostNodeProps"
         is AnimatedSizeHostNodeProps -> "AnimatedSizeHostNodeProps"
         is ImageNodeProps -> "ImageNodeProps"

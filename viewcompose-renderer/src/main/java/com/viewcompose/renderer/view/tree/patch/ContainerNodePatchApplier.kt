@@ -6,6 +6,7 @@ import com.viewcompose.ui.node.LazyListItem
 import com.viewcompose.renderer.view.container.DeclarativeBoxLayout
 import com.viewcompose.renderer.view.container.DeclarativeAnimatedSizeHostLayout
 import com.viewcompose.renderer.view.container.DeclarativeAnimatedVisibilityHostLayout
+import com.viewcompose.renderer.view.container.DeclarativeConstraintLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowColumnLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowRowLayout
 import com.viewcompose.renderer.view.container.DeclarativeHorizontalPagerLayout
@@ -24,6 +25,7 @@ import com.viewcompose.renderer.view.tree.AnimatedVisibilityHostNodePatch
 import com.viewcompose.renderer.view.tree.CollectionViewBinder
 import com.viewcompose.renderer.view.tree.ColumnNodePatch
 import com.viewcompose.renderer.view.tree.ContainerViewBinder
+import com.viewcompose.renderer.view.tree.ConstraintLayoutNodePatch
 import com.viewcompose.renderer.view.tree.FlowColumnNodePatch
 import com.viewcompose.renderer.view.tree.FlowRowNodePatch
 import com.viewcompose.renderer.view.tree.HorizontalPagerNodePatch
@@ -93,6 +95,19 @@ internal object ContainerNodePatchApplier {
                 view.contentGravity = next.contentAlignment.toGravity()
             }
         }
+    }
+
+    fun applyConstraintLayoutPatch(
+        view: DeclarativeConstraintLayout,
+        patch: ConstraintLayoutNodePatch,
+    ) {
+        ContainerViewBinder.bindConstraintLayout(
+            view = view,
+            spec = ContainerViewBinder.ConstraintLayoutSpec(
+                decoupledConstraintSet = patch.next.constraintSet,
+                inlineHelpers = patch.next.helpers,
+            ),
+        )
     }
 
     fun applyAnimatedVisibilityHostPatch(
