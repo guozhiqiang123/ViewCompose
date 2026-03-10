@@ -236,8 +236,8 @@ private class ViewGestureDispatcher(
         }
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
-                downX = event.x
-                downY = event.y
+                downX = event.rawX
+                downY = event.rawY
                 lastX = downX
                 lastY = downY
                 lockAxis = null
@@ -248,8 +248,10 @@ private class ViewGestureDispatcher(
             }
 
             MotionEvent.ACTION_MOVE -> {
-                val dx = event.x - downX
-                val dy = event.y - downY
+                val rawX = event.rawX
+                val rawY = event.rawY
+                val dx = rawX - downX
+                val dy = rawY - downY
                 if (lockAxis == null) {
                     lockAxis = resolveLockAxis(
                         dx = dx,
@@ -262,12 +264,12 @@ private class ViewGestureDispatcher(
                 }
                 val axis = lockAxis ?: return false
                 val delta = if (axis == Axis.Horizontal) {
-                    event.x - lastX
+                    rawX - lastX
                 } else {
-                    event.y - lastY
+                    rawY - lastY
                 }
-                lastX = event.x
-                lastY = event.y
+                lastX = rawX
+                lastY = rawY
                 if (abs(delta) <= 0f) {
                     return false
                 }
@@ -281,10 +283,12 @@ private class ViewGestureDispatcher(
             }
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                val rawX = event.rawX
+                val rawY = event.rawY
                 val axis = lockAxis
                 val total = when (axis) {
-                    Axis.Horizontal -> event.x - downX
-                    Axis.Vertical -> event.y - downY
+                    Axis.Horizontal -> rawX - downX
+                    Axis.Vertical -> rawY - downY
                     null -> 0f
                 }
                 if (dragStarted) {
