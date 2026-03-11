@@ -26,7 +26,7 @@
 ## 4. Checklist
 
 - [x] Step 1 新增执行计划文档并首提
-- [ ] Step 2 修复 animation-core repeat/infinite 语义与 busy-loop 风险
+- [x] Step 2 修复 animation-core repeat/infinite 语义与 busy-loop 风险
 - [ ] Step 3 收口 animateContentSize spec 模型与 renderer 执行语义
 - [ ] Step 4 修复 graphicsLayer transformOrigin 的尺寸变化同步
 - [ ] Step 5 补齐测试并执行门禁回归
@@ -35,6 +35,7 @@
 ## 5. 提交记录
 
 - `DONE` docs: add animation re-audit execution plan
+- `DONE` fix: align repeatable/infinite animation-core sampling semantics and guard infinite-snap loop
 
 ## 6. 阻塞记录
 
