@@ -185,7 +185,7 @@ internal fun UiTreeBuilder.GraphicsPage() {
             "gradient_blend" -> ScenarioSection(
                 kind = ScenarioKind.Stress,
                 title = "Gradient + Blend/Filter",
-                subtitle = "切换 Multiply，观察叠色变化；同时附带 blur imageFilter 降级路径。",
+                subtitle = "切换 Multiply，观察高对比重叠层变化；同时附带 blur imageFilter 降级路径。",
             ) {
                 Button(
                     text = if (blendMultiplyState.value) "Blend: Multiply" else "Blend: SrcOver",
@@ -219,22 +219,32 @@ internal fun UiTreeBuilder.GraphicsPage() {
                     drawRect(
                         rect = Rect(0f, 0f, width, height),
                         paint = DrawPaint(
-                            brush = Brush.RadialGradient(
-                                center = Offset(width * 0.28f, height * 0.35f),
-                                radius = width * 0.8f,
+                            brush = Brush.LinearGradient(
+                                from = Offset(0f, 0f),
+                                to = Offset(width, height),
                                 colorStops = listOf(
-                                    ColorStop(0f, 0xFFBFDBFE.toInt()),
-                                    ColorStop(1f, 0xFFF8FAFC.toInt()),
+                                    ColorStop(0f, 0xFFFFFFFF.toInt()),
+                                    ColorStop(1f, 0xFFE2E8F0.toInt()),
                                 ),
                             ),
                         ),
                     )
+                    // Base layer: vivid yellow circle.
                     drawCircle(
-                        center = Offset(width * 0.43f, height * 0.55f),
-                        radius = min(width, height) * 0.24f,
+                        center = Offset(width * 0.46f, height * 0.56f),
+                        radius = min(width, height) * 0.23f,
                         paint = DrawPaint(
-                            brush = Brush.SolidColor(0xFF2563EB.toInt()),
-                            alpha = 0.78f,
+                            brush = Brush.SolidColor(0xFFFACC15.toInt()),
+                            alpha = 0.96f,
+                        ),
+                    )
+                    // Blend target layer: magenta circle with toggle-able blend mode.
+                    drawCircle(
+                        center = Offset(width * 0.60f, height * 0.56f),
+                        radius = min(width, height) * 0.23f,
+                        paint = DrawPaint(
+                            brush = Brush.SolidColor(0xFFEC4899.toInt()),
+                            alpha = 0.96f,
                             blendMode = if (blendMultiplyState.value) {
                                 BlendMode.Multiply
                             } else {
@@ -242,14 +252,26 @@ internal fun UiTreeBuilder.GraphicsPage() {
                             },
                         ),
                     )
-                    drawCircle(
-                        center = Offset(width * 0.62f, height * 0.55f),
-                        radius = min(width, height) * 0.24f,
+                    // Filter sample: keep a small blur block for imageFilter regression path.
+                    drawRoundRect(
+                        roundRect = RoundRect(
+                            rect = Rect(width * 0.70f, height * 0.16f, width * 0.90f, height * 0.34f),
+                            topLeft = Radius(14f, 14f),
+                            topRight = Radius(14f, 14f),
+                            bottomRight = Radius(14f, 14f),
+                            bottomLeft = Radius(14f, 14f),
+                        ),
                         paint = DrawPaint(
-                            brush = Brush.SolidColor(0xFFF97316.toInt()),
-                            alpha = 0.72f,
+                            brush = Brush.SolidColor(0xFF1E293B.toInt()),
+                            alpha = 0.62f,
                             imageFilter = ImageFilterModel.Blur(radiusX = 2f, radiusY = 2f),
                         ),
+                    )
+                    drawText(
+                        text = "Blend target",
+                        origin = Offset(20f, height - 16f),
+                        style = TextStyle(textSizePx = 28f, isBold = true),
+                        paint = DrawPaint(brush = Brush.SolidColor(0xFF0F172A.toInt())),
                     )
                 }
             }
