@@ -2,18 +2,26 @@ package com.viewcompose.renderer.view.container
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.util.AttributeSet
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.DecelerateInterpolator
+import android.view.animation.LinearInterpolator
+import android.view.animation.PathInterpolator
 import android.widget.FrameLayout
 import com.viewcompose.renderer.view.tree.LayoutPassTracker
 import com.viewcompose.ui.modifier.ContentSizeAnimationSpecModel
+import com.viewcompose.ui.modifier.ContentSizeEasingModel
+import com.viewcompose.ui.modifier.ContentSizeInfiniteRepeatableSpecModel
+import com.viewcompose.ui.modifier.ContentSizeKeyframeModel
 import com.viewcompose.ui.modifier.ContentSizeKeyframesSpecModel
+import com.viewcompose.ui.modifier.ContentSizeRepeatModeModel
+import com.viewcompose.ui.modifier.ContentSizeRepeatableSpecModel
 import com.viewcompose.ui.modifier.ContentSizeSnapSpecModel
 import com.viewcompose.ui.modifier.ContentSizeSpringSpecModel
 import com.viewcompose.ui.modifier.ContentSizeTweenSpecModel
+import kotlin.math.cos
+import kotlin.math.exp
 import kotlin.math.roundToInt
 
 internal class DeclarativeAnimatedSizeHostLayout @JvmOverloads constructor(
@@ -116,17 +124,25 @@ internal class DeclarativeAnimatedSizeHostLayout @JvmOverloads constructor(
             duration = config.durationMillis
             startDelay = config.delayMillis
             interpolator = config.interpolator
+            repeatCount = config.repeatCount
+            repeatMode = config.repeatMode
             addUpdateListener { animator ->
                 val fraction = animator.animatedValue as Float
                 animatedWidthPx = lerp(startWidth, endWidth, fraction)
                 animatedHeightPx = lerp(startHeight, endHeight, fraction)
                 requestLayout()
             }
+            var wasCancelled = false
             addListener(
                 object : AnimatorListenerAdapter() {
+                    override fun onAnimationCancel(animation: Animator) {
+                        wasCancelled = true
+                    }
+
                     override fun onAnimationEnd(animation: Animator) {
-                        animatedWidthPx = endWidth
-                        animatedHeightPx = endHeight
+                        if (wasCancelled) return
+                        animatedWidthPx = lerp(startWidth, endWidth, config.terminalFraction)
+                        animatedHeightPx = lerp(startHeight, endHeight, config.terminalFraction)
                         requestLayout()
                     }
                 },
@@ -138,7 +154,10 @@ internal class DeclarativeAnimatedSizeHostLayout @JvmOverloads constructor(
     private data class AnimationRuntimeConfig(
         val durationMillis: Long,
         val delayMillis: Long,
-        val interpolator: android.animation.TimeInterpolator,
+        val interpolator: TimeInterpolator,
+        val repeatCount: Int,
+        val repeatMode: Int,
+        val terminalFraction: Float,
     )
 
     private fun ContentSizeAnimationSpecModel.resolveConfig(): AnimationRuntimeConfig {
@@ -146,25 +165,69 @@ internal class DeclarativeAnimatedSizeHostLayout @JvmOverloads constructor(
             is ContentSizeTweenSpecModel -> AnimationRuntimeConfig(
                 durationMillis = durationMillis.toLong().coerceAtLeast(1L),
                 delayMillis = delayMillis.toLong().coerceAtLeast(0L),
-                interpolator = AccelerateDecelerateInterpolator(),
+                interpolator = easing.toInterpolator(),
+                repeatCount = 0,
+                repeatMode = ValueAnimator.RESTART,
+                terminalFraction = 1f,
             )
 
             is ContentSizeSpringSpecModel -> AnimationRuntimeConfig(
                 durationMillis = durationMillis.toLong().coerceAtLeast(1L),
                 delayMillis = 0L,
-                interpolator = DecelerateInterpolator(),
+                interpolator = SpringApproximationInterpolator(
+                    dampingRatio = dampingRatio,
+                    stiffness = stiffness,
+                ),
+                repeatCount = 0,
+                repeatMode = ValueAnimator.RESTART,
+                terminalFraction = 1f,
             )
 
             is ContentSizeKeyframesSpecModel -> AnimationRuntimeConfig(
                 durationMillis = durationMillis.toLong().coerceAtLeast(1L),
                 delayMillis = 0L,
-                interpolator = AccelerateDecelerateInterpolator(),
+                interpolator = KeyframesInterpolator(
+                    durationMillis = durationMillis.coerceAtLeast(1),
+                    keyframes = keyframes,
+                ),
+                repeatCount = 0,
+                repeatMode = ValueAnimator.RESTART,
+                terminalFraction = 1f,
             )
 
             ContentSizeSnapSpecModel -> AnimationRuntimeConfig(
                 durationMillis = 0L,
                 delayMillis = 0L,
-                interpolator = AccelerateDecelerateInterpolator(),
+                interpolator = LinearInterpolator(),
+                repeatCount = 0,
+                repeatMode = ValueAnimator.RESTART,
+                terminalFraction = 1f,
+            )
+
+            is ContentSizeRepeatableSpecModel -> {
+                val normalizedIterations = iterations.coerceAtLeast(0)
+                if (normalizedIterations == 0) {
+                    return AnimationRuntimeConfig(
+                        durationMillis = 0L,
+                        delayMillis = 0L,
+                        interpolator = LinearInterpolator(),
+                        repeatCount = 0,
+                        repeatMode = ValueAnimator.RESTART,
+                        terminalFraction = 0f,
+                    )
+                }
+                val inner = animation.resolveConfig()
+                inner.copy(
+                    repeatCount = (normalizedIterations - 1).coerceAtLeast(0),
+                    repeatMode = repeatMode.toAnimatorRepeatMode(),
+                    terminalFraction = repeatMode.terminalFraction(iterations = normalizedIterations),
+                )
+            }
+
+            is ContentSizeInfiniteRepeatableSpecModel -> animation.resolveConfig().copy(
+                repeatCount = ValueAnimator.INFINITE,
+                repeatMode = repeatMode.toAnimatorRepeatMode(),
+                terminalFraction = 1f,
             )
         }
     }
@@ -175,5 +238,84 @@ internal class DeclarativeAnimatedSizeHostLayout @JvmOverloads constructor(
         fraction: Float,
     ): Float {
         return start + (end - start) * fraction
+    }
+
+    private fun ContentSizeRepeatModeModel.toAnimatorRepeatMode(): Int {
+        return when (this) {
+            ContentSizeRepeatModeModel.Restart -> ValueAnimator.RESTART
+            ContentSizeRepeatModeModel.Reverse -> ValueAnimator.REVERSE
+        }
+    }
+
+    private fun ContentSizeRepeatModeModel.terminalFraction(iterations: Int): Float {
+        return if (this == ContentSizeRepeatModeModel.Reverse && iterations % 2 == 0) {
+            0f
+        } else {
+            1f
+        }
+    }
+
+    private fun ContentSizeEasingModel.toInterpolator(): TimeInterpolator {
+        return when (this) {
+            ContentSizeEasingModel.Linear -> LinearInterpolator()
+            ContentSizeEasingModel.FastOutSlowIn -> TimeInterpolator { fraction ->
+                val t = fraction.coerceIn(0f, 1f)
+                (3f * t * t) - (2f * t * t * t)
+            }
+
+            ContentSizeEasingModel.LinearOutSlowIn -> TimeInterpolator { fraction ->
+                val t = fraction.coerceIn(0f, 1f)
+                1f - (1f - t) * (1f - t)
+            }
+
+            ContentSizeEasingModel.FastOutLinearIn -> TimeInterpolator { fraction ->
+                val t = fraction.coerceIn(0f, 1f)
+                t * t
+            }
+
+            is ContentSizeEasingModel.CubicBezier -> PathInterpolator(x1, y1, x2, y2)
+        }
+    }
+
+    private class SpringApproximationInterpolator(
+        private val dampingRatio: Float,
+        private val stiffness: Float,
+    ) : TimeInterpolator {
+        override fun getInterpolation(input: Float): Float {
+            val t = input.coerceIn(0f, 1f)
+            val damping = exp((-dampingRatio * 6f * t).toDouble()).toFloat()
+            val oscillation = cos((stiffness * 0.06f * t).toDouble()).toFloat()
+            return (1f - damping * oscillation).coerceIn(0f, 1f)
+        }
+    }
+
+    private class KeyframesInterpolator(
+        private val durationMillis: Int,
+        private val keyframes: List<ContentSizeKeyframeModel>,
+    ) : TimeInterpolator {
+        override fun getInterpolation(input: Float): Float {
+            if (keyframes.isEmpty()) {
+                return input.coerceIn(0f, 1f)
+            }
+            val clamped = input.coerceIn(0f, 1f)
+            val time = (durationMillis * clamped).toInt()
+            val sorted = keyframes.sortedBy { it.timeMillis }
+            val before = sorted.lastOrNull { it.timeMillis <= time } ?: ContentSizeKeyframeModel(0, 0f)
+            val after = sorted.firstOrNull { it.timeMillis >= time } ?: ContentSizeKeyframeModel(durationMillis, 1f)
+            if (before.timeMillis == after.timeMillis) {
+                return before.valueFraction.coerceIn(0f, 1f)
+            }
+            val local = ((time - before.timeMillis).toFloat() / (after.timeMillis - before.timeMillis).toFloat())
+                .coerceIn(0f, 1f)
+            return localLerp(before.valueFraction, after.valueFraction, local).coerceIn(0f, 1f)
+        }
+
+        private fun localLerp(
+            start: Float,
+            end: Float,
+            fraction: Float,
+        ): Float {
+            return start + (end - start) * fraction
+        }
     }
 }

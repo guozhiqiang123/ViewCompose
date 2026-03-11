@@ -2,6 +2,7 @@ package com.viewcompose.renderer.view.tree
 
 import com.viewcompose.ui.modifier.AlphaModifierElement
 import com.viewcompose.ui.modifier.AnimateContentSizeModifierElement
+import com.viewcompose.ui.modifier.ContentSizeEasingModel
 import com.viewcompose.ui.modifier.ContentSizeTweenSpecModel
 import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.modifier.width
@@ -28,6 +29,7 @@ class AnimatedSizeNodeWrapperTest {
                         animationSpec = ContentSizeTweenSpecModel(
                             durationMillis = 240,
                             delayMillis = 24,
+                            easing = ContentSizeEasingModel.FastOutSlowIn,
                         ),
                     ),
                 ),

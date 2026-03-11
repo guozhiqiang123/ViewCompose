@@ -21,10 +21,10 @@ object EasingDefaults {
 }
 
 class CubicBezierEasing(
-    private val x1: Float,
-    private val y1: Float,
-    private val x2: Float,
-    private val y2: Float,
+    val x1: Float,
+    val y1: Float,
+    val x2: Float,
+    val y2: Float,
 ) : Easing {
     override fun transform(fraction: Float): Float {
         val t = solveTForX(fraction.coerceIn(0f, 1f))
