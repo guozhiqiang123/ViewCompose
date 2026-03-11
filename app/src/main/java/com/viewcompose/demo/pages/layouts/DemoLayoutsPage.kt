@@ -699,13 +699,13 @@ internal fun UiTreeBuilder.LayoutPage(
             "constraint_virtual_helpers" -> ScenarioSection(
                 kind = ScenarioKind.Visual,
                 title = "Virtual Helpers",
-                subtitle = "Flow/Group/Layer/Placeholder 组合，验证 helper 状态切换后布局与可见性稳定更新。",
+                subtitle = "Flow/Group/Layer/Placeholder 对比模式：一键切换后，排布、可见性、占位承载与成组变换都应有明显变化。",
             ) {
                 Button(
                     text = if (constraintVirtualAlternateState.value) {
-                        "切回默认 Helper 状态"
+                        "切回基线模式（A）"
                     } else {
-                        "切到替代 Helper 状态"
+                        "切到对比模式（B）"
                     },
                     variant = ButtonVariant.Outlined,
                     modifier = Modifier
@@ -746,7 +746,7 @@ internal fun UiTreeBuilder.LayoutPage(
                     constraintSet = virtualSet,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(244.dp)
+                        .height(264.dp)
                         .backgroundColor(SurfaceDefaults.variantBackgroundColor())
                         .cornerRadius(SurfaceDefaults.cardCornerRadius())
                         .padding(12.dp)
@@ -759,9 +759,9 @@ internal fun UiTreeBuilder.LayoutPage(
                         chipC,
                         chipD,
                         id = "flow-helper",
-                        horizontalGap = 8.dp,
-                        verticalGap = 8.dp,
-                        maxElementsWrap = 2,
+                        horizontalGap = if (constraintVirtualAlternateState.value) 14.dp else 8.dp,
+                        verticalGap = if (constraintVirtualAlternateState.value) 14.dp else 8.dp,
+                        maxElementsWrap = if (constraintVirtualAlternateState.value) 1 else 2,
                     )
                     createGroup(
                         chipB,
@@ -777,15 +777,22 @@ internal fun UiTreeBuilder.LayoutPage(
                         chipA,
                         chipD,
                         id = "layer-helper",
-                        rotation = if (constraintVirtualAlternateState.value) 14f else 0f,
-                        translationX = if (constraintVirtualAlternateState.value) 10f else 0f,
+                        rotation = if (constraintVirtualAlternateState.value) 30f else 0f,
+                        scaleX = if (constraintVirtualAlternateState.value) 1.16f else 1f,
+                        scaleY = if (constraintVirtualAlternateState.value) 1.16f else 1f,
+                        translationX = if (constraintVirtualAlternateState.value) 24f else 0f,
+                        translationY = if (constraintVirtualAlternateState.value) -10f else 0f,
                     )
                     createPlaceholder(
                         content = if (constraintVirtualAlternateState.value) chipA else chipD,
                         id = "placeholder-helper",
                     )
                     Text(
-                        text = "Virtual Helpers",
+                        text = if (constraintVirtualAlternateState.value) {
+                            "模式 B：Flow 单列 · Group 隐藏 · Placeholder=A · Layer 强变换"
+                        } else {
+                            "模式 A：Flow 双列 · Group 显示 · Placeholder=D · Layer 中性"
+                        },
                         style = UiTextStyle(fontSizeSp = 14.sp),
                         modifier = Modifier.layoutId("title"),
                     )
@@ -796,7 +803,7 @@ internal fun UiTreeBuilder.LayoutPage(
                             .padding(horizontal = 12.dp, vertical = 8.dp)
                             .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_CHIP_A),
                     ) {
-                        Text(text = "A")
+                        Text(text = "A (Layer+Placeholder)")
                     }
                     Surface(
                         variant = SurfaceVariant.Variant,
@@ -805,7 +812,7 @@ internal fun UiTreeBuilder.LayoutPage(
                             .padding(horizontal = 12.dp, vertical = 8.dp)
                             .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_GROUP_MEMBER),
                     ) {
-                        Text(text = "B")
+                        Text(text = "B (Group)")
                     }
                     Surface(
                         variant = SurfaceVariant.Default,
@@ -813,7 +820,7 @@ internal fun UiTreeBuilder.LayoutPage(
                             .layoutId("chip-c")
                             .padding(horizontal = 12.dp, vertical = 8.dp),
                     ) {
-                        Text(text = "C")
+                        Text(text = "C (Group)")
                     }
                     Surface(
                         variant = SurfaceVariant.Variant,
@@ -821,13 +828,13 @@ internal fun UiTreeBuilder.LayoutPage(
                             .layoutId("chip-d")
                             .padding(horizontal = 12.dp, vertical = 8.dp),
                     ) {
-                        Text(text = "D")
+                        Text(text = "D (Placeholder)")
                     }
                     Text(
                         text = if (constraintVirtualAlternateState.value) {
-                            "Group: hidden(B/C) · Placeholder: A · Layer: rotated"
+                            "Group: hidden(B/C) · Placeholder: A · Layer: rotate+scale+translate · Flow: single column"
                         } else {
-                            "Group: visible(B/C) · Placeholder: D · Layer: neutral"
+                            "Group: visible(B/C) · Placeholder: D · Layer: neutral · Flow: 2-column wrap"
                         },
                         style = UiTextStyle(fontSizeSp = 12.sp),
                         color = TextDefaults.secondaryColor(),
