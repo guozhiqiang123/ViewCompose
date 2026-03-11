@@ -29,7 +29,7 @@
 - [x] Step 1: 新增执行计划文档并提交。
 - [x] Step 2: 扩展 `ui-contract` helper 数据模型（Flow/Group/Layer/Placeholder）。
 - [x] Step 3: 扩展 widget DSL 与 `constraintSet` builder API。
-- [ ] Step 4: renderer 接入 Virtual Helpers 创建与应用逻辑。
+- [x] Step 4: renderer 接入 Virtual Helpers 创建与应用逻辑。
 - [ ] Step 5: 测试补齐（DSL + renderer + UI）。
 - [ ] Step 6: 文档收口并归档/状态同步（ROADMAP/ARCHITECTURE/WORKFLOW）。
 
@@ -37,6 +37,7 @@
 1. `docs: add constraintlayout virtual helpers execution plan`
 2. `feat: add virtual helper specs to constraintlayout contract`
 3. `feat: add constraintlayout dsl apis for virtual helpers`
+4. `feat: add renderer support for constraintlayout virtual helpers`
 
 ## 阻塞记录
 - 暂无。

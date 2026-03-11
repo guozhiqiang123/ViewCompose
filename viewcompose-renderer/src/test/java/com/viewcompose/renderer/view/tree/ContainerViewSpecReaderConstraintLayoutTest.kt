@@ -11,12 +11,17 @@ import com.viewcompose.ui.node.spec.ConstraintChainOrientation
 import com.viewcompose.ui.node.spec.ConstraintChainSpec
 import com.viewcompose.ui.node.spec.ConstraintChainStyle
 import com.viewcompose.ui.node.spec.ConstraintDimension
+import com.viewcompose.ui.node.spec.ConstraintFlowSpec
 import com.viewcompose.ui.node.spec.ConstraintGuidelineDirection
 import com.viewcompose.ui.node.spec.ConstraintGuidelinePosition
 import com.viewcompose.ui.node.spec.ConstraintGuidelineSpec
+import com.viewcompose.ui.node.spec.ConstraintGroupSpec
+import com.viewcompose.ui.node.spec.ConstraintHelperVisibility
 import com.viewcompose.ui.node.spec.ConstraintHelpersSpec
 import com.viewcompose.ui.node.spec.ConstraintItemSpec
+import com.viewcompose.ui.node.spec.ConstraintLayerSpec
 import com.viewcompose.ui.node.spec.ConstraintLayoutNodeProps
+import com.viewcompose.ui.node.spec.ConstraintPlaceholderSpec
 import com.viewcompose.ui.node.spec.ConstraintSetSpec
 import com.viewcompose.ui.node.spec.EmptyNodeSpec
 import org.junit.Assert.assertEquals
@@ -66,6 +71,32 @@ class ContainerViewSpecReaderConstraintLayoutTest {
                     style = ConstraintChainStyle.SpreadInside,
                 ),
             ),
+            flows = listOf(
+                ConstraintFlowSpec(
+                    id = "flow-inline",
+                    referencedIds = listOf("a", "b"),
+                ),
+            ),
+            groups = listOf(
+                ConstraintGroupSpec(
+                    id = "group-inline",
+                    referencedIds = listOf("title"),
+                    visibility = ConstraintHelperVisibility.Gone,
+                ),
+            ),
+            layers = listOf(
+                ConstraintLayerSpec(
+                    id = "layer-inline",
+                    referencedIds = listOf("title"),
+                    rotation = 16f,
+                ),
+            ),
+            placeholders = listOf(
+                ConstraintPlaceholderSpec(
+                    id = "placeholder-inline",
+                    contentId = "title",
+                ),
+            ),
         )
         val node = VNode(
             type = NodeType.ConstraintLayout,
@@ -79,6 +110,10 @@ class ContainerViewSpecReaderConstraintLayoutTest {
 
         assertEquals(constraintSet, read.decoupledConstraintSet)
         assertEquals(inlineHelpers, read.inlineHelpers)
+        assertEquals("flow-inline", read.inlineHelpers.flows.single().id)
+        assertEquals("group-inline", read.inlineHelpers.groups.single().id)
+        assertEquals("layer-inline", read.inlineHelpers.layers.single().id)
+        assertEquals("placeholder-inline", read.inlineHelpers.placeholders.single().id)
     }
 
     @Test
