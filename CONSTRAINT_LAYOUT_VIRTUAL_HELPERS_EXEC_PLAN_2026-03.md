@@ -41,4 +41,4 @@
 5. `test: add virtual helper demo anchors and ui regression coverage`
 
 ## 阻塞记录
-- 暂无。
+- 2026-03-11（Step 6）：`ANDROID_SERIAL=98101FFBA003AE ./gradlew qaFull` 触发 instrumentation 进程崩溃，失败模式为 `Activity never becomes requested state "[RESUMED]"` + `Instrumentation run failed due to Process crashed`。已记录到 [CONSTRAINT_LAYOUT_BLOCKER_CONTEXT_2026-03.md](/Users/gzq/AndroidStudioProjects/UIFramework/CONSTRAINT_LAYOUT_BLOCKER_CONTEXT_2026-03.md)，待设备/环境恢复后补跑收口。

@@ -36,7 +36,7 @@
 11. overlay 默认装配已改为 `OverlayHostFactoryProvider + ServiceLoader`，无实现时稳定回退 no-op（移除反射路径）
 12. 开发预览模块已落地：`viewcompose-preview` 提供 Compose Preview bridge + `PreviewCatalog` + Paparazzi 快照回归（`qaPreview`）
 13. 动画与手势模块已落地：`viewcompose-animation-core` + `viewcompose-animation` + `viewcompose-gesture-core` + `viewcompose-gesture`（Compose-like API + 手势策略内核 + renderer 事件适配 + lazy/pager motion 策略 + Android interop）
-14. 约束布局能力已落地：`viewcompose-widget-constraintlayout` + renderer `DeclarativeConstraintLayout`，支持 anchors/dimension/bias/baseline/baselineToTop/baselineToBottom/circle/guideline/barrier/chain(+weights)/decoupled `ConstraintSet`，并补齐 match-constraint `min/max/percent/constrained`
+14. 约束布局能力已落地：`viewcompose-widget-constraintlayout` + renderer `DeclarativeConstraintLayout`，支持 anchors/dimension/bias/baseline/baselineToTop/baselineToBottom/circle/guideline/barrier/chain(+weights)/Flow/Group/Layer/Placeholder/decoupled `ConstraintSet`，并补齐 match-constraint `min/max/percent/constrained`
 
 ### 2.2 Demo 与验证层
 
@@ -76,7 +76,7 @@
 | Diagnostics | 基础 render/layout 诊断已落地 | locals/render tree/patch 可视化与告警可读性 |
 | UI Testing | 核心 instrumentation 路径已建立 | 扩展容器专项、overlay 宿主专项、主题断言覆盖 |
 | Developer Preview | Compose Preview bridge + Paparazzi 快照链路已建立（`qaPreview` 可执行） | 继续扩展预览覆盖域与快照矩阵（Dark/Tablet） |
-| ConstraintLayout | 已新增 `viewcompose-widget-constraintlayout` 与 renderer 映射，核心能力覆盖 anchors/helpers/constraintSet + advanced dimensions/weights/circle/baseline extensions | 下一步补 Virtual Helpers（Flow/Group/Layer/Placeholder）与 MotionLayout interop 专题（保持 host-android 边界） |
+| ConstraintLayout | 已新增 `viewcompose-widget-constraintlayout` 与 renderer 映射，核心能力覆盖 anchors/helpers/constraintSet + advanced dimensions/weights/circle/baseline extensions + Virtual Helpers（Flow/Group/Layer/Placeholder） | 下一步推进 MotionLayout interop 专题（保持 host-android 边界） |
 | Animation | `viewcompose-animation-core` + `viewcompose-animation` 已完成内核/DSL 分层；`Transition` 为共享时间线语义，`AnimatedVisibility` 已完成 Compose 默认语义与 Row/Column 轴向特化，`animateContentSize` 已落地布局级尺寸动画；Animation demo 已扩展为 6 标签页并覆盖全部业务公开动画 API，UI 回归链路已补齐 7 条 | retarget/cancel 压测、性能画像、更多复杂场景样例 |
 | Gesture | `viewcompose-gesture-core` + `viewcompose-gesture` + renderer dispatcher 已支持 tap/drag/swipe/transform 与消费回落策略 | 深化嵌套滚动冲突策略、复杂手势并发场景回归 |
 | Performance | 已有 viewcompose-benchmark 基线，且 `DiffUtil + payload + SlotTable Lite + subtree skip` 主路径已落地 | 继续扩大 skip 覆盖、增强诊断指标、推进发布态优化 |
