@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import androidx.core.view.doOnLayout
 import androidx.constraintlayout.helper.widget.Flow
 import androidx.constraintlayout.helper.widget.Layer
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -574,13 +575,32 @@ internal class DeclarativeConstraintLayout @JvmOverloads constructor(
         layerView.setReferencedIds(referencedIds)
         layerView.visibility = spec.visibility.toViewVisibility()
         layerView.elevation = spec.elevation
-        layerView.rotation = spec.rotation
-        layerView.scaleX = spec.scaleX
-        layerView.scaleY = spec.scaleY
-        layerView.translationX = spec.translationX
-        layerView.translationY = spec.translationY
-        layerView.pivotX = spec.pivotX ?: Float.NaN
-        layerView.pivotY = spec.pivotY ?: Float.NaN
+        if (referencedIds.isEmpty()) {
+            return
+        }
+        layerView.doOnLayout { view ->
+            applyLayerTransformsSafely(
+                layerView = view as Layer,
+                spec = spec,
+            )
+        }
+    }
+
+    private fun applyLayerTransformsSafely(
+        layerView: Layer,
+        spec: ConstraintLayerSpec,
+    ) {
+        try {
+            layerView.rotation = spec.rotation
+            layerView.scaleX = spec.scaleX
+            layerView.scaleY = spec.scaleY
+            layerView.translationX = spec.translationX
+            layerView.translationY = spec.translationY
+            layerView.pivotX = spec.pivotX ?: Float.NaN
+            layerView.pivotY = spec.pivotY ?: Float.NaN
+        } catch (error: RuntimeException) {
+            warnOnce("Layer '${spec.id}' transform apply failed after layout: ${error.message}")
+        }
     }
 
     private fun applyPlaceholderHelper(
@@ -613,7 +633,7 @@ internal class DeclarativeConstraintLayout @JvmOverloads constructor(
     ): T {
         val current = helperViews[key]
         if (viewClass.isInstance(current)) {
-            val typed = viewClass.cast(current)
+            val typed = requireNotNull(viewClass.cast(current))
             if (typed.id != viewId) {
                 typed.id = viewId
             }
