@@ -90,7 +90,12 @@ class ConstraintLayoutDslTest {
             val hero = createRef("hero")
             val details = createRef("details")
             val topGuide = createGuidelineFromTop(0.3f, id = "guide")
-            createVerticalChain(hero, details, style = ConstraintChainStyle.SpreadInside)
+            createVerticalChain(
+                hero,
+                details,
+                weights = listOf(1f, 2f),
+                style = ConstraintChainStyle.SpreadInside,
+            )
             constrain("hero") {
                 topToTop(topGuide)
                 startToStart(parent)
@@ -105,6 +110,56 @@ class ConstraintLayoutDslTest {
         assertEquals(1, set.helpers.guidelines.size)
         assertEquals(1, set.helpers.chains.size)
         assertEquals("guide", set.helpers.guidelines.single().id)
+        assertEquals(listOf(1f, 2f), set.helpers.chains.single().weights)
+    }
+
+    @Test
+    fun `constrain scope emits advanced dimensions baseline and circle fields`() {
+        val spec = Modifier.constrain("hero") {
+            startToStart(parent, margin = 8)
+            endToEnd(parent, margin = 8)
+            topToTop(parent)
+            width = com.viewcompose.ui.node.spec.ConstraintDimension.FillToConstraints
+            height = com.viewcompose.ui.node.spec.ConstraintDimension.FillToConstraints
+            widthMin = 120
+            widthMax = 360
+            widthPercent = 0.6f
+            heightMin = 80
+            heightMax = 400
+            heightPercent = 0.5f
+            constrainedWidth = true
+            constrainedHeight = true
+            baselineToTop(parent, margin = 6)
+            val target = ConstraintReference("avatar")
+            circular(target = target, radius = 72, angle = 45f)
+        }.elements.filterIsInstance<ConstraintModifierElement>().single().constraint
+
+        assertEquals(120, spec.widthMin)
+        assertEquals(360, spec.widthMax)
+        assertEquals(0.6f, spec.widthPercent)
+        assertEquals(80, spec.heightMin)
+        assertEquals(400, spec.heightMax)
+        assertEquals(0.5f, spec.heightPercent)
+        assertEquals(true, spec.constrainedWidth)
+        assertEquals(true, spec.constrainedHeight)
+        assertEquals(
+            com.viewcompose.ui.node.spec.ConstraintAnchor.Top,
+            spec.baselineToTop?.target?.anchor,
+        )
+        assertEquals("avatar", spec.circle?.targetId)
+    }
+
+    @Test
+    fun `create chain fails fast when weights size mismatches refs`() {
+        try {
+            constraintSet {
+                val (a, b) = createRefs("a", "b")
+                createHorizontalChain(a, b, weights = listOf(1f))
+            }
+            throw AssertionError("Expected IllegalArgumentException for mismatched chain weights size")
+        } catch (expected: IllegalArgumentException) {
+            assertTrue(expected.message?.contains("weights size") == true)
+        }
     }
 
     @Test

@@ -12,6 +12,7 @@ import com.viewcompose.ui.node.spec.ConstraintBarrierSpec
 import com.viewcompose.ui.node.spec.ConstraintChainOrientation
 import com.viewcompose.ui.node.spec.ConstraintChainSpec
 import com.viewcompose.ui.node.spec.ConstraintChainStyle
+import com.viewcompose.ui.node.spec.ConstraintCircleSpec
 import com.viewcompose.ui.node.spec.ConstraintDimension
 import com.viewcompose.ui.node.spec.ConstraintGuidelineDirection
 import com.viewcompose.ui.node.spec.ConstraintGuidelinePosition
@@ -108,11 +109,22 @@ class ConstraintConstrainScope internal constructor() {
     private var top: ConstraintAnchorLink? = null
     private var bottom: ConstraintAnchorLink? = null
     private var baseline: ConstraintAnchorTarget? = null
+    private var baselineToTop: ConstraintAnchorLink? = null
+    private var baselineToBottom: ConstraintAnchorLink? = null
     var width: ConstraintDimension = ConstraintDimension.WrapContent
     var height: ConstraintDimension = ConstraintDimension.WrapContent
+    var widthMin: Int? = null
+    var widthMax: Int? = null
+    var widthPercent: Float? = null
+    var heightMin: Int? = null
+    var heightMax: Int? = null
+    var heightPercent: Float? = null
+    var constrainedWidth: Boolean = false
+    var constrainedHeight: Boolean = false
     var horizontalBias: Float? = null
     var verticalBias: Float? = null
     var dimensionRatio: String? = null
+    private var circle: ConstraintCircleSpec? = null
 
     fun startToStart(
         target: ConstraintReferenceTarget = parent,
@@ -217,6 +229,42 @@ class ConstraintConstrainScope internal constructor() {
         )
     }
 
+    fun baselineToTop(
+        target: ConstraintReferenceTarget,
+        margin: Int = 0,
+        goneMargin: Int? = null,
+    ) {
+        baselineToTop = ConstraintAnchorLink(
+            target = target.toAnchorTarget(ConstraintAnchor.Top),
+            margin = margin,
+            goneMargin = goneMargin,
+        )
+    }
+
+    fun baselineToBottom(
+        target: ConstraintReferenceTarget,
+        margin: Int = 0,
+        goneMargin: Int? = null,
+    ) {
+        baselineToBottom = ConstraintAnchorLink(
+            target = target.toAnchorTarget(ConstraintAnchor.Bottom),
+            margin = margin,
+            goneMargin = goneMargin,
+        )
+    }
+
+    fun circular(
+        target: ConstraintReference,
+        radius: Int,
+        angle: Float,
+    ) {
+        circle = ConstraintCircleSpec(
+            targetId = target.id,
+            radius = radius,
+            angle = angle,
+        )
+    }
+
     fun centerHorizontallyTo(target: ConstraintReferenceTarget = parent) {
         startToStart(target)
         endToEnd(target)
@@ -234,11 +282,22 @@ class ConstraintConstrainScope internal constructor() {
             top = top,
             bottom = bottom,
             baseline = baseline,
+            baselineToTop = baselineToTop,
+            baselineToBottom = baselineToBottom,
             width = width,
             height = height,
+            widthMin = widthMin,
+            widthMax = widthMax,
+            widthPercent = widthPercent,
+            heightMin = heightMin,
+            heightMax = heightMax,
+            heightPercent = heightPercent,
+            constrainedWidth = constrainedWidth,
+            constrainedHeight = constrainedHeight,
             horizontalBias = horizontalBias,
             verticalBias = verticalBias,
             dimensionRatio = dimensionRatio,
+            circle = circle,
         )
     }
 }
@@ -247,6 +306,18 @@ private fun buildConstraintSpec(content: ConstraintConstrainScope.() -> Unit): C
     return ConstraintConstrainScope()
         .apply(content)
         .build()
+}
+
+private fun validateChainWeights(
+    weights: List<Float>?,
+    expectedSize: Int,
+) {
+    if (weights == null) {
+        return
+    }
+    require(weights.size == expectedSize) {
+        "Constraint chain weights size must match referenced ids size. expected=$expectedSize actual=${weights.size}"
+    }
 }
 
 fun Modifier.constrainAs(
@@ -476,13 +547,16 @@ fun ConstraintLayoutScope.createBottomBarrier(
 private fun ConstraintLayoutScope.registerChain(
     orientation: ConstraintChainOrientation,
     refs: Array<out ConstraintReference>,
+    weights: List<Float>?,
     style: ConstraintChainStyle,
     bias: Float?,
 ) {
+    validateChainWeights(weights, refs.size)
     val context = requireConstraintContext()
     context.helpers.chains += ConstraintChainSpec(
         orientation = orientation,
         referencedIds = refs.map { ref -> ref.id },
+        weights = weights,
         style = style,
         bias = bias,
     )
@@ -490,12 +564,14 @@ private fun ConstraintLayoutScope.registerChain(
 
 fun ConstraintLayoutScope.createHorizontalChain(
     vararg refs: ConstraintReference,
+    weights: List<Float>? = null,
     style: ConstraintChainStyle = ConstraintChainStyle.Spread,
     bias: Float? = null,
 ) {
     registerChain(
         orientation = ConstraintChainOrientation.Horizontal,
         refs = refs,
+        weights = weights,
         style = style,
         bias = bias,
     )
@@ -503,12 +579,14 @@ fun ConstraintLayoutScope.createHorizontalChain(
 
 fun ConstraintLayoutScope.createVerticalChain(
     vararg refs: ConstraintReference,
+    weights: List<Float>? = null,
     style: ConstraintChainStyle = ConstraintChainStyle.Spread,
     bias: Float? = null,
 ) {
     registerChain(
         orientation = ConstraintChainOrientation.Vertical,
         refs = refs,
+        weights = weights,
         style = style,
         bias = bias,
     )
@@ -695,12 +773,15 @@ class ConstraintSetBuilder internal constructor() {
 
     fun createHorizontalChain(
         vararg refs: ConstraintReference,
+        weights: List<Float>? = null,
         style: ConstraintChainStyle = ConstraintChainStyle.Spread,
         bias: Float? = null,
     ) {
+        validateChainWeights(weights, refs.size)
         helpers.chains += ConstraintChainSpec(
             orientation = ConstraintChainOrientation.Horizontal,
             referencedIds = refs.map { ref -> ref.id },
+            weights = weights,
             style = style,
             bias = bias,
         )
@@ -708,12 +789,15 @@ class ConstraintSetBuilder internal constructor() {
 
     fun createVerticalChain(
         vararg refs: ConstraintReference,
+        weights: List<Float>? = null,
         style: ConstraintChainStyle = ConstraintChainStyle.Spread,
         bias: Float? = null,
     ) {
+        validateChainWeights(weights, refs.size)
         helpers.chains += ConstraintChainSpec(
             orientation = ConstraintChainOrientation.Vertical,
             referencedIds = refs.map { ref -> ref.id },
+            weights = weights,
             style = style,
             bias = bias,
         )

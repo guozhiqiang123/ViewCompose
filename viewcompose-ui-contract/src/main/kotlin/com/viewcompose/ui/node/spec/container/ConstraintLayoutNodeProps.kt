@@ -22,11 +22,22 @@ data class ConstraintItemSpec(
     val top: ConstraintAnchorLink? = null,
     val bottom: ConstraintAnchorLink? = null,
     val baseline: ConstraintAnchorTarget? = null,
+    val baselineToTop: ConstraintAnchorLink? = null,
+    val baselineToBottom: ConstraintAnchorLink? = null,
     val width: ConstraintDimension = ConstraintDimension.WrapContent,
     val height: ConstraintDimension = ConstraintDimension.WrapContent,
+    val widthMin: Int? = null,
+    val widthMax: Int? = null,
+    val widthPercent: Float? = null,
+    val heightMin: Int? = null,
+    val heightMax: Int? = null,
+    val heightPercent: Float? = null,
+    val constrainedWidth: Boolean = false,
+    val constrainedHeight: Boolean = false,
     val horizontalBias: Float? = null,
     val verticalBias: Float? = null,
     val dimensionRatio: String? = null,
+    val circle: ConstraintCircleSpec? = null,
 )
 
 data class ConstraintAnchorLink(
@@ -62,6 +73,12 @@ enum class ConstraintAnchor {
     Bottom,
     Baseline,
 }
+
+data class ConstraintCircleSpec(
+    val targetId: String,
+    val radius: Int,
+    val angle: Float,
+)
 
 sealed interface ConstraintDimension {
     data object WrapContent : ConstraintDimension
@@ -116,6 +133,7 @@ enum class ConstraintBarrierDirection {
 data class ConstraintChainSpec(
     val orientation: ConstraintChainOrientation,
     val referencedIds: List<String>,
+    val weights: List<Float>? = null,
     val style: ConstraintChainStyle = ConstraintChainStyle.Spread,
     val bias: Float? = null,
 )
