@@ -34,6 +34,7 @@ import com.viewcompose.graphics.core.StrokeCap
 import com.viewcompose.graphics.core.StrokeJoin
 import com.viewcompose.graphics.core.TextStyle
 import kotlin.math.max
+import kotlin.math.sqrt
 
 internal object AndroidDrawCommandExecutor {
     fun execute(
@@ -267,11 +268,11 @@ internal object AndroidDrawCommandExecutor {
     }
 
     private fun Paint.applyImageFilter(filter: ImageFilterModel?) {
-        maskFilter = when (filter) {
-            is ImageFilterModel.Blur ->
-                BlurMaskFilter(max(filter.radiusX, filter.radiusY), BlurMaskFilter.Blur.NORMAL)
-            is ImageFilterModel.Chain -> null
-            null -> null
+        val blurRadii = combinedBlurRadii(filter)
+        maskFilter = if (blurRadii == null) {
+            null
+        } else {
+            BlurMaskFilter(max(blurRadii.first, blurRadii.second), BlurMaskFilter.Blur.NORMAL)
         }
     }
 
@@ -425,6 +426,31 @@ internal object AndroidDrawCommandExecutor {
             roundRect.bottomLeft.x.coerceAtLeast(0f),
             roundRect.bottomLeft.y.coerceAtLeast(0f),
         )
+    }
+
+    internal fun combinedBlurRadii(filter: ImageFilterModel?): Pair<Float, Float>? {
+        if (filter == null) return null
+        var sumXSquare = 0f
+        var sumYSquare = 0f
+        var hasBlur = false
+
+        fun collect(node: ImageFilterModel) {
+            when (node) {
+                is ImageFilterModel.Blur -> {
+                    sumXSquare += node.radiusX * node.radiusX
+                    sumYSquare += node.radiusY * node.radiusY
+                    hasBlur = true
+                }
+                is ImageFilterModel.Chain -> {
+                    collect(node.inner)
+                    collect(node.outer)
+                }
+            }
+        }
+
+        collect(filter)
+        if (!hasBlur) return null
+        return sqrt(sumXSquare) to sqrt(sumYSquare)
     }
 
     private fun FloatArray.isUniformCornerRadii(): Boolean {

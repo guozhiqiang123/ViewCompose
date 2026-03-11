@@ -1,9 +1,12 @@
 package com.viewcompose.renderer.view.graphics
 
+import com.viewcompose.graphics.core.ImageFilterModel
 import com.viewcompose.graphics.core.Radius
 import com.viewcompose.graphics.core.Rect
 import com.viewcompose.graphics.core.RoundRect
 import org.junit.Assert.assertArrayEquals
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 class AndroidDrawCommandExecutorTest {
@@ -39,5 +42,27 @@ class AndroidDrawCommandExecutorTest {
             AndroidDrawCommandExecutor.roundRectRadii(roundRect),
             0f,
         )
+    }
+
+    @Test
+    fun `combinedBlurRadii merges nested chain as single gaussian radius`() {
+        val chain = ImageFilterModel.Chain(
+            outer = ImageFilterModel.Blur(radiusX = 4f, radiusY = 3f),
+            inner = ImageFilterModel.Chain(
+                outer = ImageFilterModel.Blur(radiusX = 0f, radiusY = 4f),
+                inner = ImageFilterModel.Blur(radiusX = 3f, radiusY = 0f),
+            ),
+        )
+
+        val merged = AndroidDrawCommandExecutor.combinedBlurRadii(chain)
+
+        requireNotNull(merged)
+        assertEquals(5f, merged.first, 0.0001f)
+        assertEquals(5f, merged.second, 0.0001f)
+    }
+
+    @Test
+    fun `combinedBlurRadii returns null when filter is absent`() {
+        assertNull(AndroidDrawCommandExecutor.combinedBlurRadii(null))
     }
 }
