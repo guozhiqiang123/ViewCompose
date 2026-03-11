@@ -76,12 +76,12 @@ internal fun UiTreeBuilder.LayoutPage(
             "constraint_helpers",
             "constraint_chain",
             "constraint_set",
+            "constraint_virtual_helpers",
             "constraint_anchor_advanced",
             "constraint_dimension_advanced",
             "constraint_helpers_full",
             "constraint_vertical_chain",
             "constraint_set_helpers_mirror",
-            "constraint_virtual_helpers",
             "verify",
         )
         else -> listOf("page", "page_filter", "verify")

@@ -573,6 +573,106 @@ class DemoVisualUiTest {
     }
 
     @Test
+    fun layoutsConstraint_anchorAndDimensionAdvancedScenes_keepVisibleAndReactive() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            LayoutsActivity::class.java,
+        ).putExtra(EXTRA_LAYOUTS_PAGE_INDEX, 5)
+        launchDemoActivity<LayoutsActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            var ratioBeforeWidth = 0
+            var ratioBeforeHeight = 0
+            scenario.onActivity { activity ->
+                val container = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_ANCHOR_ADVANCED_CONTAINER)
+                val baseline = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_ANCHOR_ADVANCED_BASELINE)
+                val circle = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_ANCHOR_ADVANCED_CIRCLE)
+                val status = activity.requireTextViewByTestTag(DemoTestTags.LAYOUTS_CONSTRAINT_ANCHOR_ADVANCED_STATUS)
+                assertViewFullyVisible(container)
+                assertViewFullyVisible(baseline)
+                assertViewFullyVisible(circle)
+                assertTrue(status.text.toString().contains("baselineToBaseline"))
+
+                val ratio = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_DIMENSION_ADVANCED_RATIO)
+                ratioBeforeWidth = ratio.width
+                ratioBeforeHeight = ratio.height
+                activity.clickByTestTag(DemoTestTags.LAYOUTS_CONSTRAINT_DIMENSION_ADVANCED_TOGGLE)
+            }
+            val ratioUpdated = waitUntilActivityCondition(scenario, timeoutMs = 1_500L) { activity ->
+                val ratio = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_DIMENSION_ADVANCED_RATIO)
+                val status = activity.requireTextViewByTestTag(DemoTestTags.LAYOUTS_CONSTRAINT_DIMENSION_ADVANCED_STATUS).text.toString()
+                (abs(ratio.width - ratioBeforeWidth) >= 8 || abs(ratio.height - ratioBeforeHeight) >= 8) &&
+                    status.contains("扩展模式")
+            }
+            assertTrue("Expected dimension advanced toggle to update ratio card size and status.", ratioUpdated)
+        }
+    }
+
+    @Test
+    fun layoutsConstraint_helpersFullAndVerticalChain_toggleUpdatesLayoutRelations() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            LayoutsActivity::class.java,
+        ).putExtra(EXTRA_LAYOUTS_PAGE_INDEX, 5)
+        launchDemoActivity<LayoutsActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            var markerBeforeLeft = 0
+            var middleBeforeTop = 0
+            scenario.onActivity { activity ->
+                val marker = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_HELPERS_FULL_MARKER)
+                markerBeforeLeft = viewLeftOnScreen(marker)
+                activity.clickByTestTag(DemoTestTags.LAYOUTS_CONSTRAINT_HELPERS_FULL_TOGGLE)
+            }
+            val helperUpdated = waitUntilActivityCondition(scenario, timeoutMs = 1_500L) { activity ->
+                val marker = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_HELPERS_FULL_MARKER)
+                val status = activity.requireTextViewByTestTag(DemoTestTags.LAYOUTS_CONSTRAINT_HELPERS_FULL_STATUS).text.toString()
+                abs(viewLeftOnScreen(marker) - markerBeforeLeft) >= 8 && status.contains("fraction 模式")
+            }
+            assertTrue("Expected helpers full toggle to reposition marker and switch status mode.", helperUpdated)
+
+            scenario.onActivity { activity ->
+                val middle = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_VERTICAL_CHAIN_MIDDLE)
+                middleBeforeTop = viewTopOnScreen(middle)
+                activity.clickByTestTag(DemoTestTags.LAYOUTS_CONSTRAINT_VERTICAL_CHAIN_TOGGLE)
+            }
+            val chainUpdated = waitUntilActivityCondition(scenario, timeoutMs = 1_500L) { activity ->
+                val middle = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_VERTICAL_CHAIN_MIDDLE)
+                val toggleText = activity.requireTextViewByTestTag(DemoTestTags.LAYOUTS_CONSTRAINT_VERTICAL_CHAIN_TOGGLE).text.toString()
+                abs(viewTopOnScreen(middle) - middleBeforeTop) >= 8 && toggleText.contains("SpreadInside")
+            }
+            assertTrue("Expected vertical chain toggle to change chain arrangement and middle item position.", chainUpdated)
+        }
+    }
+
+    @Test
+    fun layoutsConstraint_constraintSetHelperMirror_toggleRepositionsMarker() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            LayoutsActivity::class.java,
+        ).putExtra(EXTRA_LAYOUTS_PAGE_INDEX, 5)
+        launchDemoActivity<LayoutsActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            var markerBeforeLeft = 0
+            var markerBeforeTop = 0
+            scenario.onActivity { activity ->
+                val status = activity.requireTextViewByTestTag(DemoTestTags.LAYOUTS_CONSTRAINT_SET_HELPERS_STATUS).text.toString()
+                assertTrue(status.contains("ConstraintSet(A)"))
+                val marker = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_SET_HELPERS_MARKER)
+                markerBeforeLeft = viewLeftOnScreen(marker)
+                markerBeforeTop = viewTopOnScreen(marker)
+                activity.clickByTestTag(DemoTestTags.LAYOUTS_CONSTRAINT_SET_HELPERS_TOGGLE)
+            }
+            val switched = waitUntilActivityCondition(scenario, timeoutMs = 1_500L) { activity ->
+                val marker = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_SET_HELPERS_MARKER)
+                val status = activity.requireTextViewByTestTag(DemoTestTags.LAYOUTS_CONSTRAINT_SET_HELPERS_STATUS).text.toString()
+                val leftDelta = abs(viewLeftOnScreen(marker) - markerBeforeLeft)
+                val topDelta = abs(viewTopOnScreen(marker) - markerBeforeTop)
+                (leftDelta >= 10 || topDelta >= 10) && status.contains("ConstraintSet(B)")
+            }
+            assertTrue("Expected helper mirror constraintSet toggle to reposition marker and switch status.", switched)
+        }
+    }
+
+    @Test
     fun collectionsStress_toggleUpdatesVisibleControls() {
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),
