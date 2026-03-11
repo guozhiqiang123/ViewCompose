@@ -33,7 +33,7 @@
 - [x] Step 1: 执行文档与阻塞文档落地
 - [x] Step 2: 新增 graphics-core / graphics 模块与守卫接入
 - [x] Step 3: graphics-core 图形模型与绘制指令落地
-- [ ] Step 4: ui-contract 新增 Canvas 节点与 draw modifier 契约
+- [x] Step 4: ui-contract 新增 Canvas 节点与 draw modifier 契约
 - [ ] Step 5: viewcompose-graphics API（Canvas + draw modifiers）落地
 - [ ] Step 6: renderer 接入 Canvas 节点与 draw modifier 管线
 - [ ] Step 7: host-android 新增 AndroidGraphicsInterop
@@ -50,6 +50,7 @@
 1. `docs: add graphics execution plan and blocker context`
 2. `build: add graphics modules and purity guardrails`
 3. `feat: add graphics-core geometry paint path command and cache primitives`
+4. `feat: add canvas node and draw modifier contracts in ui-contract`
 
 ## 阻塞记录
 - 见 [GRAPHICS_BLOCKER_CONTEXT_2026-03.md](/Users/gzq/AndroidStudioProjects/UIFramework/GRAPHICS_BLOCKER_CONTEXT_2026-03.md)

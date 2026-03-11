@@ -7,5 +7,6 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":viewcompose-graphics-core"))
     testImplementation(libs.junit)
 }

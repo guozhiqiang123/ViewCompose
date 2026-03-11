@@ -1,6 +1,9 @@
 package com.viewcompose.ui.modifier
 
 import com.viewcompose.ui.layout.BoxAlignment
+import com.viewcompose.ui.graphics.DrawBlock
+import com.viewcompose.ui.graphics.DrawCacheBuildBlock
+import com.viewcompose.ui.graphics.DrawContentBlock
 import com.viewcompose.ui.gesture.GestureOrientation
 import com.viewcompose.ui.gesture.GesturePriority
 import com.viewcompose.ui.gesture.PointerEvent
@@ -105,6 +108,21 @@ data class MinWidthModifierElement(
 
 data class AlphaModifierElement(
     val alpha: Float,
+) : ModifierElement
+
+data class DrawBehindModifierElement(
+    val key: Any,
+    val onDraw: DrawBlock,
+) : ModifierElement
+
+data class DrawWithContentModifierElement(
+    val key: Any,
+    val onDraw: DrawContentBlock,
+) : ModifierElement
+
+data class DrawWithCacheModifierElement(
+    val key: Any,
+    val onBuildDrawCache: DrawCacheBuildBlock,
 ) : ModifierElement
 
 sealed interface ContentSizeAnimationSpecModel
@@ -489,6 +507,62 @@ fun Modifier.minWidth(minWidth: Int): Modifier {
 fun Modifier.alpha(alpha: Float): Modifier {
     return then(
         AlphaModifierElement(alpha),
+    )
+}
+
+fun Modifier.drawBehind(
+    key: Any = Unit,
+    onDraw: DrawBlock,
+): Modifier {
+    return then(
+        DrawBehindModifierElement(
+            key = key,
+            onDraw = onDraw,
+        ),
+    )
+}
+
+fun Modifier.drawWithContent(
+    key: Any = Unit,
+    onDraw: DrawContentBlock,
+): Modifier {
+    return then(
+        DrawWithContentModifierElement(
+            key = key,
+            onDraw = onDraw,
+        ),
+    )
+}
+
+fun Modifier.drawWithCache(
+    key: Any = Unit,
+    onBuildDrawCache: DrawCacheBuildBlock,
+): Modifier {
+    return then(
+        DrawWithCacheModifierElement(
+            key = key,
+            onBuildDrawCache = onBuildDrawCache,
+        ),
+    )
+}
+
+fun Modifier.draw(
+    key: Any = Unit,
+    onDraw: DrawBlock,
+): Modifier {
+    return drawBehind(
+        key = key,
+        onDraw = onDraw,
+    )
+}
+
+fun Modifier.drawCache(
+    key: Any = Unit,
+    onBuildDrawCache: DrawCacheBuildBlock,
+): Modifier {
+    return drawWithCache(
+        key = key,
+        onBuildDrawCache = onBuildDrawCache,
     )
 }
 

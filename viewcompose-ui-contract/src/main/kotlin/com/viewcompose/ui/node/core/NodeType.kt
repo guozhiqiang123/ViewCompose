@@ -20,6 +20,7 @@ sealed interface NodeType {
     data object AnimatedSizeHost : NodeType
     data object Spacer : NodeType
     data object Divider : NodeType
+    data object Canvas : NodeType
     data object Image : NodeType
     data object AndroidView : NodeType
     data object LazyColumn : NodeType

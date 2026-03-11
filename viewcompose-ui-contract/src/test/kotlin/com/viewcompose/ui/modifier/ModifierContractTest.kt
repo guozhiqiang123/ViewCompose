@@ -1,5 +1,6 @@
 package com.viewcompose.ui.modifier
 
+import com.viewcompose.graphics.core.DrawCommand
 import com.viewcompose.ui.node.spec.ConstraintAnchor
 import com.viewcompose.ui.node.spec.ConstraintAnchorLink
 import com.viewcompose.ui.node.spec.ConstraintAnchorTarget
@@ -54,6 +55,27 @@ class ModifierContractTest {
         assertEquals(0.5f, layer.transformOrigin?.pivotFractionX)
         assertEquals(0.5f, layer.transformOrigin?.pivotFractionY)
         assertEquals(true, layer.clip)
+    }
+
+    @Test
+    fun `draw modifiers append in chaining order`() {
+        val modifier = Modifier
+            .drawBehind { _ ->
+                drawRect(
+                    rect = com.viewcompose.graphics.core.Rect(0f, 0f, 10f, 10f),
+                )
+            }
+            .drawWithContent { _ ->
+                drawContent()
+            }
+            .drawWithCache {
+                listOf(DrawCommand.Save, DrawCommand.Restore)
+            }
+
+        assertEquals(3, modifier.elements.size)
+        assertTrue(modifier.elements[0] is DrawBehindModifierElement)
+        assertTrue(modifier.elements[1] is DrawWithContentModifierElement)
+        assertTrue(modifier.elements[2] is DrawWithCacheModifierElement)
     }
 
     @Test
