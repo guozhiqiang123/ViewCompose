@@ -7,6 +7,7 @@ import com.viewcompose.ui.node.spec.ConstraintLayoutNodeProps
 import com.viewcompose.ui.node.spec.DividerNodeProps
 import com.viewcompose.ui.node.spec.AnimatedSizeHostNodeProps
 import com.viewcompose.ui.node.spec.AnimatedVisibilityHostNodeProps
+import com.viewcompose.ui.node.spec.CanvasNodeProps
 import com.viewcompose.ui.node.spec.FlowColumnNodeProps
 import com.viewcompose.ui.node.spec.FlowRowNodeProps
 import com.viewcompose.ui.node.spec.HorizontalPagerNodeProps
@@ -132,6 +133,11 @@ internal data class IconButtonNodePatch(
 internal data class DividerNodePatch(
     val previous: DividerNodeProps,
     val next: DividerNodeProps,
+) : NodeViewPatch
+
+internal data class CanvasNodePatch(
+    val previous: CanvasNodeProps,
+    val next: CanvasNodeProps,
 ) : NodeViewPatch
 
 internal data class ScrollableColumnNodePatch(

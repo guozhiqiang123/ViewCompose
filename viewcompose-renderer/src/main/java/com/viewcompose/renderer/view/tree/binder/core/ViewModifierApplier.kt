@@ -69,6 +69,10 @@ internal object ViewModifierApplier {
             resolved = resolved,
             nodeStyle = nodeStyle,
         )
+        ModifierGraphicsApplier.applyGraphicsModifiers(
+            view = view,
+            resolved = resolved,
+        )
         ModifierSurfaceStyleApplier.applySurfaceStyle(
             view = view,
             resolved = resolved,

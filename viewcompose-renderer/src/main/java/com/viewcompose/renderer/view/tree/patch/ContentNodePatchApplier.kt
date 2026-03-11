@@ -8,10 +8,12 @@ import android.widget.TextView
 import androidx.core.widget.TextViewCompat
 import com.viewcompose.ui.node.TextOverflow
 import com.viewcompose.renderer.view.tree.ButtonNodePatch
+import com.viewcompose.renderer.view.tree.CanvasNodePatch
 import com.viewcompose.renderer.view.tree.ContentViewBinder
 import com.viewcompose.renderer.view.tree.DividerNodePatch
 import com.viewcompose.renderer.view.tree.TextNodePatch
 import com.viewcompose.renderer.view.tree.ViewModifierApplier
+import com.viewcompose.renderer.view.container.DeclarativeCanvasLayout
 
 internal object ContentNodePatchApplier {
     fun applyTextPatch(
@@ -151,6 +153,15 @@ internal object ContentNodePatchApplier {
     ) {
         if (patch.previous.color != patch.next.color) {
             view.setBackgroundColor(patch.next.color)
+        }
+    }
+
+    fun applyCanvasPatch(
+        view: DeclarativeCanvasLayout,
+        patch: CanvasNodePatch,
+    ) {
+        if (patch.previous.onDraw != patch.next.onDraw) {
+            view.setCanvasDrawBlock(patch.next.onDraw)
         }
     }
 

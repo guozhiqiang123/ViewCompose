@@ -16,9 +16,12 @@ import com.viewcompose.ui.node.TextDecoration
 import com.viewcompose.ui.node.TextOverflow
 import com.viewcompose.ui.node.VNode
 import com.viewcompose.ui.node.spec.ButtonNodeProps
+import com.viewcompose.ui.node.spec.CanvasNodeProps
 import com.viewcompose.ui.node.spec.TextNodeProps
 import com.viewcompose.ui.node.spec.UiFontFamily
 import com.viewcompose.renderer.interop.toTypefaceOrNull
+import com.viewcompose.renderer.view.container.DeclarativeCanvasLayout
+import com.viewcompose.ui.graphics.DrawBlock
 
 internal object ContentViewBinder {
     data class TextSpec(
@@ -43,6 +46,10 @@ internal object ContentViewBinder {
         val iconTint: Int,
         val iconSize: Int,
         val onClick: (() -> Unit)?,
+    )
+
+    data class CanvasSpec(
+        val onDraw: DrawBlock,
     )
 
     fun bindText(
@@ -109,6 +116,13 @@ internal object ContentViewBinder {
         }
     }
 
+    fun bindCanvas(
+        view: DeclarativeCanvasLayout,
+        spec: CanvasSpec,
+    ) {
+        view.setCanvasDrawBlock(spec.onDraw)
+    }
+
     fun readTextSpec(node: VNode): TextSpec {
         val spec = node.requireSpec<TextNodeProps>()
         return TextSpec(
@@ -136,6 +150,13 @@ internal object ContentViewBinder {
             iconTint = spec.iconTint,
             iconSize = spec.iconSize,
             onClick = spec.onClick,
+        )
+    }
+
+    fun readCanvasSpec(node: VNode): CanvasSpec {
+        val spec = node.requireSpec<CanvasNodeProps>()
+        return CanvasSpec(
+            onDraw = spec.onDraw,
         )
     }
 

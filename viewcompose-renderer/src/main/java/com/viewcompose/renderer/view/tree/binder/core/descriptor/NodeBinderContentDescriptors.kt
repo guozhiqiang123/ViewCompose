@@ -3,8 +3,10 @@ package com.viewcompose.renderer.view.tree
 import android.widget.TextView
 import com.viewcompose.ui.node.NodeType
 import com.viewcompose.ui.node.spec.ButtonNodeProps
+import com.viewcompose.ui.node.spec.CanvasNodeProps
 import com.viewcompose.ui.node.spec.DividerNodeProps
 import com.viewcompose.ui.node.spec.TextNodeProps
+import com.viewcompose.renderer.view.container.DeclarativeCanvasLayout
 import com.viewcompose.renderer.view.tree.patch.ContentNodePatchApplier
 
 internal fun MutableList<NodeBinderDescriptor>.addContentNodeBinderDescriptors() {
@@ -31,6 +33,15 @@ internal fun MutableList<NodeBinderDescriptor>.addContentNodeBinderDescriptors()
         apply = { view, patch ->
             ContentNodePatchApplier.applyDividerPatch(
                 view = view,
+                patch = patch,
+            )
+        },
+    )
+    val canvasPatch = patchDescriptor<CanvasNodeProps, CanvasNodePatch>(
+        factory = { previous, next -> CanvasNodePatch(previous, next) },
+        apply = { view, patch ->
+            ContentNodePatchApplier.applyCanvasPatch(
+                view = view as DeclarativeCanvasLayout,
                 patch = patch,
             )
         },
@@ -75,6 +86,18 @@ internal fun MutableList<NodeBinderDescriptor>.addContentNodeBinderDescriptors()
                 )
             },
             patch = dividerPatch,
+        ),
+    )
+    add(
+        descriptor(
+            nodeType = NodeType.Canvas,
+            bind = { view, node ->
+                ContentViewBinder.bindCanvas(
+                    view = view as DeclarativeCanvasLayout,
+                    spec = ContentViewBinder.readCanvasSpec(node),
+                )
+            },
+            patch = canvasPatch,
         ),
     )
 }

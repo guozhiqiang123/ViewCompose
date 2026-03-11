@@ -5,6 +5,10 @@ import com.viewcompose.ui.modifier.*
 internal class ResolvedModifiers(
     // ViewModifierApplier fields
     var alpha: AlphaModifierElement? = null,
+    var drawBehind: DrawBehindModifierElement? = null,
+    var drawWithContent: DrawWithContentModifierElement? = null,
+    var drawWithCache: DrawWithCacheModifierElement? = null,
+    var drawElements: List<ModifierElement> = emptyList(),
     var backgroundColor: BackgroundColorModifierElement? = null,
     var backgroundDrawableRes: BackgroundDrawableResModifierElement? = null,
     var clickable: ClickableModifierElement? = null,
@@ -46,9 +50,22 @@ internal class ResolvedModifiers(
 
 internal fun Modifier.resolve(): ResolvedModifiers {
     val result = ResolvedModifiers()
+    val drawElements = mutableListOf<ModifierElement>()
     for (element in elements) {
         when (element) {
             is AlphaModifierElement -> result.alpha = element
+            is DrawBehindModifierElement -> {
+                result.drawBehind = element
+                drawElements += element
+            }
+            is DrawWithContentModifierElement -> {
+                result.drawWithContent = element
+                drawElements += element
+            }
+            is DrawWithCacheModifierElement -> {
+                result.drawWithCache = element
+                drawElements += element
+            }
             is BackgroundColorModifierElement -> result.backgroundColor = element
             is BackgroundDrawableResModifierElement -> result.backgroundDrawableRes = element
             is ClickableModifierElement -> result.clickable = element
@@ -91,6 +108,7 @@ internal fun Modifier.resolve(): ResolvedModifiers {
             is NativeViewElement -> { /* handled separately in applyNativeViewConfigs */ }
         }
     }
+    result.drawElements = drawElements.toList()
     return result
 }
 

@@ -20,6 +20,7 @@ import com.viewcompose.ui.node.spec.ConstraintGuidelinePosition
 import com.viewcompose.ui.node.spec.ConstraintGuidelineSpec
 import com.viewcompose.ui.node.spec.ConstraintHelpersSpec
 import com.viewcompose.ui.node.spec.ConstraintLayoutNodeProps
+import com.viewcompose.ui.node.spec.CanvasNodeProps
 import com.viewcompose.ui.node.spec.DividerNodeProps
 import com.viewcompose.ui.node.spec.FlowColumnNodeProps
 import com.viewcompose.ui.node.spec.FlowRowNodeProps
@@ -330,6 +331,17 @@ class NodeBindingDifferTest {
 
         assertTrue(plan is NodeBindingPlan.Patch)
         assertTrue((plan as NodeBindingPlan.Patch).patch is DividerNodePatch)
+    }
+
+    @Test
+    fun `patches canvas semantic updates`() {
+        val previous = canvasNode(token = "before")
+        val next = canvasNode(token = "after")
+
+        val plan = NodeBindingDiffer.plan(previous, next)
+
+        assertTrue(plan is NodeBindingPlan.Patch)
+        assertTrue((plan as NodeBindingPlan.Patch).patch is CanvasNodePatch)
     }
 
     @Test
@@ -757,6 +769,22 @@ class NodeBindingDifferTest {
             spec = DividerNodeProps(
                 color = color,
                 thickness = 1,
+            ),
+            modifier = Modifier,
+        )
+    }
+
+    private fun canvasNode(
+        token: String,
+    ): VNode {
+        return VNode(
+            type = NodeType.Canvas,
+            spec = CanvasNodeProps(
+                onDraw = { _ ->
+                    if (token.isEmpty()) {
+                        Unit
+                    }
+                },
             ),
             modifier = Modifier,
         )

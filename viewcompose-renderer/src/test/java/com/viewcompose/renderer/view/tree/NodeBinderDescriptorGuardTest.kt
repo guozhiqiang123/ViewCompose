@@ -8,6 +8,7 @@ import com.viewcompose.ui.node.spec.ConstraintLayoutNodeProps
 import com.viewcompose.ui.node.spec.DividerNodeProps
 import com.viewcompose.ui.node.spec.AnimatedSizeHostNodeProps
 import com.viewcompose.ui.node.spec.AnimatedVisibilityHostNodeProps
+import com.viewcompose.ui.node.spec.CanvasNodeProps
 import com.viewcompose.ui.node.spec.FlowColumnNodeProps
 import com.viewcompose.ui.node.spec.FlowRowNodeProps
 import com.viewcompose.ui.node.spec.HorizontalPagerNodeProps
@@ -58,6 +59,7 @@ class NodeBinderDescriptorGuardTest {
             NodeType.AnimatedSizeHost,
             NodeType.Spacer,
             NodeType.Divider,
+            NodeType.Canvas,
             NodeType.Image,
             NodeType.AndroidView,
             NodeType.LazyColumn,
@@ -121,6 +123,7 @@ class NodeBinderDescriptorGuardTest {
         ImageNodePatch::class,
         IconButtonNodePatch::class,
         DividerNodePatch::class,
+        CanvasNodePatch::class,
         ScrollableColumnNodePatch::class,
         ScrollableRowNodePatch::class,
         FlowRowNodePatch::class,
@@ -154,6 +157,7 @@ class NodeBinderDescriptorGuardTest {
         NodeType.AnimatedSizeHost -> "AnimatedSizeHost"
         NodeType.Spacer -> "Spacer"
         NodeType.Divider -> "Divider"
+        NodeType.Canvas -> "Canvas"
         NodeType.Image -> "Image"
         NodeType.AndroidView -> "AndroidView"
         NodeType.LazyColumn -> "LazyColumn"
@@ -191,6 +195,7 @@ class NodeBinderDescriptorGuardTest {
         is ImageNodePatch -> "ImageNodePatch"
         is IconButtonNodePatch -> "IconButtonNodePatch"
         is DividerNodePatch -> "DividerNodePatch"
+        is CanvasNodePatch -> "CanvasNodePatch"
         is ScrollableColumnNodePatch -> "ScrollableColumnNodePatch"
         is ScrollableRowNodePatch -> "ScrollableRowNodePatch"
         is FlowRowNodePatch -> "FlowRowNodePatch"
@@ -223,6 +228,7 @@ class NodeBinderDescriptorGuardTest {
         is ImageNodeProps -> "ImageNodeProps"
         is IconButtonNodeProps -> "IconButtonNodeProps"
         is DividerNodeProps -> "DividerNodeProps"
+        is CanvasNodeProps -> "CanvasNodeProps"
         is ScrollableColumnNodeProps -> "ScrollableColumnNodeProps"
         is ScrollableRowNodeProps -> "ScrollableRowNodeProps"
         is FlowRowNodeProps -> "FlowRowNodeProps"

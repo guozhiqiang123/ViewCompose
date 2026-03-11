@@ -21,6 +21,7 @@ import com.viewcompose.ui.node.VNode
 import com.viewcompose.renderer.view.container.DeclarativeBoxLayout
 import com.viewcompose.renderer.view.container.DeclarativeAnimatedVisibilityHostLayout
 import com.viewcompose.renderer.view.container.DeclarativeAnimatedSizeHostLayout
+import com.viewcompose.renderer.view.container.DeclarativeCanvasLayout
 import com.viewcompose.renderer.view.container.DeclarativeConstraintLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowColumnLayout
 import com.viewcompose.renderer.view.container.DeclarativeFlowRowLayout
@@ -68,6 +69,7 @@ internal object ViewNodeFactory {
             NodeType.AnimatedVisibilityHost -> DeclarativeAnimatedVisibilityHostLayout(context)
             NodeType.AnimatedSizeHost -> DeclarativeAnimatedSizeHostLayout(context)
             NodeType.Spacer, NodeType.Divider -> View(context)
+            NodeType.Canvas -> DeclarativeCanvasLayout(context)
             NodeType.Image -> ImageView(context)
             NodeType.AndroidView -> (createAndroidView?.invoke(context) as? View) ?: View(context)
             NodeType.LazyColumn -> RecyclerView(context).apply {
