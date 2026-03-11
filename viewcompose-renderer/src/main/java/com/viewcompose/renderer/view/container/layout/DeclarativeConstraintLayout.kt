@@ -571,9 +571,28 @@ internal class DeclarativeConstraintLayout @JvmOverloads constructor(
         if (referencedIds.isEmpty()) {
             warnOnce("Layer '${spec.id}' has no valid referenced ids.")
         }
-        layerView.setReferencedIds(referencedIds)
+        val resolvableReferencedIds = referencedIds.filter { referencedId ->
+            val targetView = findViewById<View>(referencedId)
+            if (targetView == null) {
+                warnOnce(
+                    "Layer '${spec.id}' skipped unresolved referenced view id=$referencedId to avoid invalid transform target.",
+                )
+                false
+            } else {
+                true
+            }
+        }.toIntArray()
+        if (resolvableReferencedIds.size != referencedIds.size) {
+            warnOnce(
+                "Layer '${spec.id}' contains unresolved references; only resolvable views will receive transforms.",
+            )
+        }
+        layerView.setReferencedIds(resolvableReferencedIds)
         layerView.visibility = spec.visibility.toViewVisibility()
         layerView.elevation = spec.elevation
+        if (resolvableReferencedIds.isEmpty()) {
+            return
+        }
         layerView.rotation = spec.rotation
         layerView.scaleX = spec.scaleX
         layerView.scaleY = spec.scaleY
@@ -613,7 +632,7 @@ internal class DeclarativeConstraintLayout @JvmOverloads constructor(
     ): T {
         val current = helperViews[key]
         if (viewClass.isInstance(current)) {
-            val typed = viewClass.cast(current)
+            val typed = requireNotNull(viewClass.cast(current))
             if (typed.id != viewId) {
                 typed.id = viewId
             }
