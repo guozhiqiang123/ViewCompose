@@ -64,6 +64,13 @@ internal class DeclarativeConstraintLayout @JvmOverloads constructor(
     private val emittedWarnings = mutableSetOf<String>()
     private var pendingConstraintRebuild = false
     private var mutatingHelperViews = false
+    private val rebuildRunnable = Runnable {
+        if (!pendingConstraintRebuild) {
+            return@Runnable
+        }
+        pendingConstraintRebuild = false
+        applyConstraintsInternal()
+    }
 
     private data class ChainResolvedItem(
         val viewId: Int,
@@ -76,6 +83,7 @@ internal class DeclarativeConstraintLayout @JvmOverloads constructor(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        flushPendingConstraintRebuild()
         val startNs = System.nanoTime()
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         LayoutPassTracker.recordMeasure(
@@ -91,6 +99,7 @@ internal class DeclarativeConstraintLayout @JvmOverloads constructor(
         right: Int,
         bottom: Int,
     ) {
+        flushPendingConstraintRebuild()
         val startNs = System.nanoTime()
         super.onLayout(changed, left, top, right, bottom)
         LayoutPassTracker.recordLayout(
@@ -118,13 +127,18 @@ internal class DeclarativeConstraintLayout @JvmOverloads constructor(
             return
         }
         pendingConstraintRebuild = true
-        post {
-            pendingConstraintRebuild = false
-            applyConstraintsInternal()
-        }
+        post(rebuildRunnable)
     }
 
     fun applyConstraintsNow() {
+        flushPendingConstraintRebuild()
+    }
+
+    private fun flushPendingConstraintRebuild() {
+        if (!pendingConstraintRebuild) {
+            return
+        }
+        removeCallbacks(rebuildRunnable)
         pendingConstraintRebuild = false
         applyConstraintsInternal()
     }
@@ -562,8 +576,8 @@ internal class DeclarativeConstraintLayout @JvmOverloads constructor(
         val layerView = ensureHelperView(
             key = key,
             viewId = helperId,
-            viewClass = Layer::class.java,
-        ) { Layer(context) }
+            viewClass = SafeLayer::class.java,
+        ) { SafeLayer(context) }
         val referencedIds = resolveReferencedIds(
             referenceIds = spec.referencedIds,
             helperReferenceIds = helperReferenceIds,
@@ -1141,6 +1155,35 @@ internal class DeclarativeConstraintLayout @JvmOverloads constructor(
     private fun warnOnce(message: String) {
         if (emittedWarnings.add(message)) {
             Log.w(WARNING_TAG, message)
+        }
+    }
+}
+
+private class SafeLayer(
+    context: Context,
+) : Layer(context) {
+    override fun updatePostLayout(container: ConstraintLayout) {
+        val referencedIds = referencedIds
+        if (referencedIds.isEmpty()) {
+            return
+        }
+        val validReferencedIds = referencedIds.filter { id ->
+            container.getViewById(id) != null
+        }.toIntArray()
+        if (validReferencedIds.size != referencedIds.size) {
+            setReferencedIds(validReferencedIds)
+        }
+        if (validReferencedIds.isEmpty()) {
+            return
+        }
+        try {
+            super.updatePostLayout(container)
+        } catch (error: NullPointerException) {
+            Log.w(
+                "UIConstraintLayout",
+                "SafeLayer skipped updatePostLayout due to transient null referenced view.",
+                error,
+            )
         }
     }
 }
