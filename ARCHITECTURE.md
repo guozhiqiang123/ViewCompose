@@ -53,7 +53,7 @@
 4. 节点语义已完成 `NodeSpec-only` 收口（无 `Props` 双轨）
 5. 生命周期与 ViewModel 协作 API 已从 `widget-core` 拆分到独立模块，宿主自动注入能力保持不变
 6. 动画与手势已形成“内核 + DSL + Android interop 扩展”分层模型（animation-core + animation、gesture-core + gesture、host interop）
-7. ConstraintLayout 已按“widget DSL 模块 + renderer 平台映射”分层落地，支持 anchors/dimension/bias/baseline/guideline/barrier/chain/decoupled constraintSet
+7. ConstraintLayout 已按“widget DSL 模块 + renderer 平台映射”分层落地，支持 anchors/dimension/bias/baseline/baselineToTop/baselineToBottom/circle/guideline/barrier/chain(+weights)/decoupled constraintSet，以及 match-constraint 进阶参数（min/max/percent/constrained）
 
 ### 2.3 `app` 目录落位基线
 

@@ -286,6 +286,9 @@
 3. 同一 child 同时存在 inline 约束与 decoupled `ConstraintSet` 时，必须保持 inline 优先并输出一次 warning。
 4. `ConstraintDimension` 与 `Modifier.width/height/size` 冲突时，必须保持约束 dimension 优先。
 5. 新增 guideline/barrier/chain/constraintSet 语义时，必须同轮补 DSL 单测 + renderer 单测 + demo UI 回归锚点。
+6. `Barrier(allowsGoneWidgets = ...)` 参数必须真实生效，禁止仅保留参数但在 renderer 侧静默降级。
+7. chain `weights` 与 `referencedIds` 数量不一致时必须 fail-fast（DSL）并在 renderer 输出一次可定位 warning。
+8. 约束新增 `min/max/percent/constrained`、`baselineToTop/baselineToBottom`、`circle` 语义时，必须同轮补齐 DSL 发射断言与 renderer 应用断言。
 
 ## 6. 线程中断恢复原则
 

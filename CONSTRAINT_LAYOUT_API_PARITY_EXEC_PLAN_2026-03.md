@@ -27,6 +27,7 @@
 ## 提交记录
 1. `docs: add constraint layout api parity execution plan`
 2. `feat: extend constraintlayout contracts and dsl for advanced constraints`
+3. `feat: complete advanced constraintlayout renderer constraint application`
 
 ## 阻塞记录
-- 暂无。
+- `qaFull` 在 Pixel 4 XL 执行 `ComponentFamilySmokeUiTest#keyComponentFamilies_haveVisibleSmokeAnchors` 时长时间停留在 `0/n` 进度，手动停止后 instrumentation 报告 `Process crashed`；本轮先以 `qaQuick + 模块单测` 收口，待 smoke 用例稳定后补跑全量 `qaFull`。
