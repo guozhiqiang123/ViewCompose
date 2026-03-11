@@ -14,6 +14,10 @@ data class ConstraintHelpersSpec(
     val guidelines: List<ConstraintGuidelineSpec> = emptyList(),
     val barriers: List<ConstraintBarrierSpec> = emptyList(),
     val chains: List<ConstraintChainSpec> = emptyList(),
+    val flows: List<ConstraintFlowSpec> = emptyList(),
+    val groups: List<ConstraintGroupSpec> = emptyList(),
+    val layers: List<ConstraintLayerSpec> = emptyList(),
+    val placeholders: List<ConstraintPlaceholderSpec> = emptyList(),
 )
 
 data class ConstraintItemSpec(
@@ -147,4 +151,90 @@ enum class ConstraintChainStyle {
     Spread,
     SpreadInside,
     Packed,
+}
+
+data class ConstraintFlowSpec(
+    val id: String,
+    val referencedIds: List<String>,
+    val orientation: ConstraintFlowOrientation = ConstraintFlowOrientation.Horizontal,
+    val wrapMode: ConstraintFlowWrapMode = ConstraintFlowWrapMode.None,
+    val horizontalGap: Int = 0,
+    val verticalGap: Int = 0,
+    val horizontalStyle: ConstraintChainStyle = ConstraintChainStyle.Spread,
+    val verticalStyle: ConstraintChainStyle = ConstraintChainStyle.Spread,
+    val firstHorizontalStyle: ConstraintChainStyle? = null,
+    val firstVerticalStyle: ConstraintChainStyle? = null,
+    val lastHorizontalStyle: ConstraintChainStyle? = null,
+    val lastVerticalStyle: ConstraintChainStyle? = null,
+    val horizontalBias: Float? = null,
+    val verticalBias: Float? = null,
+    val firstHorizontalBias: Float? = null,
+    val firstVerticalBias: Float? = null,
+    val lastHorizontalBias: Float? = null,
+    val lastVerticalBias: Float? = null,
+    val horizontalAlign: ConstraintFlowHorizontalAlign = ConstraintFlowHorizontalAlign.Center,
+    val verticalAlign: ConstraintFlowVerticalAlign = ConstraintFlowVerticalAlign.Center,
+    val maxElementsWrap: Int = -1,
+    val padding: Int = 0,
+    val paddingStart: Int = 0,
+    val paddingEnd: Int = 0,
+    val paddingTop: Int = 0,
+    val paddingBottom: Int = 0,
+)
+
+enum class ConstraintFlowOrientation {
+    Horizontal,
+    Vertical,
+}
+
+enum class ConstraintFlowWrapMode {
+    None,
+    Chain,
+    Aligned,
+}
+
+enum class ConstraintFlowHorizontalAlign {
+    Start,
+    End,
+    Center,
+}
+
+enum class ConstraintFlowVerticalAlign {
+    Top,
+    Bottom,
+    Center,
+    Baseline,
+}
+
+data class ConstraintGroupSpec(
+    val id: String,
+    val referencedIds: List<String>,
+    val visibility: ConstraintHelperVisibility = ConstraintHelperVisibility.Visible,
+    val elevation: Float = 0f,
+)
+
+data class ConstraintLayerSpec(
+    val id: String,
+    val referencedIds: List<String>,
+    val visibility: ConstraintHelperVisibility = ConstraintHelperVisibility.Visible,
+    val elevation: Float = 0f,
+    val rotation: Float = 0f,
+    val scaleX: Float = 1f,
+    val scaleY: Float = 1f,
+    val translationX: Float = 0f,
+    val translationY: Float = 0f,
+    val pivotX: Float? = null,
+    val pivotY: Float? = null,
+)
+
+data class ConstraintPlaceholderSpec(
+    val id: String,
+    val contentId: String? = null,
+    val emptyVisibility: ConstraintHelperVisibility = ConstraintHelperVisibility.Invisible,
+)
+
+enum class ConstraintHelperVisibility {
+    Visible,
+    Invisible,
+    Gone,
 }

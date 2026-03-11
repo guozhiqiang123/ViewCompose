@@ -26,8 +26,8 @@
    - 里程碑与收口：`ANDROID_SERIAL=98101FFBA003AE ./gradlew qaFull`
 
 ## Checklist
-- [ ] Step 1: 新增执行计划文档并提交。
-- [ ] Step 2: 扩展 `ui-contract` helper 数据模型（Flow/Group/Layer/Placeholder）。
+- [x] Step 1: 新增执行计划文档并提交。
+- [x] Step 2: 扩展 `ui-contract` helper 数据模型（Flow/Group/Layer/Placeholder）。
 - [ ] Step 3: 扩展 widget DSL 与 `constraintSet` builder API。
 - [ ] Step 4: renderer 接入 Virtual Helpers 创建与应用逻辑。
 - [ ] Step 5: 测试补齐（DSL + renderer + UI）。
@@ -35,6 +35,7 @@
 
 ## 提交记录
 1. `docs: add constraintlayout virtual helpers execution plan`
+2. `feat: add virtual helper specs to constraintlayout contract`
 
 ## 阻塞记录
 - 暂无。
