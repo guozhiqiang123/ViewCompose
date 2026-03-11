@@ -11,42 +11,42 @@ internal object LazyFocusFollowLayoutMonitor {
     private const val TAG = "UIFocusFollow"
 
     fun isEnabled(recyclerView: RecyclerView): Boolean {
-        return recyclerView.getTag(R.id.ui_framework_focus_follow_enabled) as? Boolean == true
+        return recyclerView.getTag(R.id.viewcompose_focus_follow_enabled) as? Boolean == true
     }
 
     fun apply(
         recyclerView: RecyclerView,
         enabled: Boolean,
     ) {
-        val existingLayoutListener = recyclerView.getTag(R.id.ui_framework_focus_follow_layout_listener)
+        val existingLayoutListener = recyclerView.getTag(R.id.viewcompose_focus_follow_layout_listener)
             as? View.OnLayoutChangeListener
-        val existingGlobalFocusListener = recyclerView.getTag(R.id.ui_framework_focus_follow_global_focus_listener)
+        val existingGlobalFocusListener = recyclerView.getTag(R.id.viewcompose_focus_follow_global_focus_listener)
             as? ViewTreeObserver.OnGlobalFocusChangeListener
-        val existingGlobalLayoutListener = recyclerView.getTag(R.id.ui_framework_focus_follow_global_layout_listener)
+        val existingGlobalLayoutListener = recyclerView.getTag(R.id.viewcompose_focus_follow_global_layout_listener)
             as? ViewTreeObserver.OnGlobalLayoutListener
         if (!enabled) {
             if (existingLayoutListener != null) {
                 recyclerView.removeOnLayoutChangeListener(existingLayoutListener)
-                recyclerView.setTag(R.id.ui_framework_focus_follow_layout_listener, null)
+                recyclerView.setTag(R.id.viewcompose_focus_follow_layout_listener, null)
             }
             if (existingGlobalFocusListener != null) {
                 val viewTreeObserver = recyclerView.viewTreeObserver
                 if (viewTreeObserver.isAlive) {
                     viewTreeObserver.removeOnGlobalFocusChangeListener(existingGlobalFocusListener)
                 }
-                recyclerView.setTag(R.id.ui_framework_focus_follow_global_focus_listener, null)
+                recyclerView.setTag(R.id.viewcompose_focus_follow_global_focus_listener, null)
             }
             if (existingGlobalLayoutListener != null) {
                 val viewTreeObserver = recyclerView.viewTreeObserver
                 if (viewTreeObserver.isAlive) {
                     viewTreeObserver.removeOnGlobalLayoutListener(existingGlobalLayoutListener)
                 }
-                recyclerView.setTag(R.id.ui_framework_focus_follow_global_layout_listener, null)
+                recyclerView.setTag(R.id.viewcompose_focus_follow_global_layout_listener, null)
             }
             debugLog {
                 "detach listeners rv=${recyclerView.hashCode()}"
             }
-            recyclerView.setTag(R.id.ui_framework_focus_follow_enabled, false)
+            recyclerView.setTag(R.id.viewcompose_focus_follow_enabled, false)
             return
         }
         if (existingLayoutListener == null) {
@@ -55,21 +55,21 @@ internal object LazyFocusFollowLayoutMonitor {
                 ensureFocusedChildVisible(target, trigger = "layoutChange")
             }
             recyclerView.addOnLayoutChangeListener(listener)
-            recyclerView.setTag(R.id.ui_framework_focus_follow_layout_listener, listener)
+            recyclerView.setTag(R.id.viewcompose_focus_follow_layout_listener, listener)
         }
         if (existingGlobalFocusListener == null) {
             val globalFocusListener = ViewTreeObserver.OnGlobalFocusChangeListener { _, _ ->
                 ensureFocusedChildVisible(recyclerView, trigger = "globalFocus")
             }
             recyclerView.viewTreeObserver.addOnGlobalFocusChangeListener(globalFocusListener)
-            recyclerView.setTag(R.id.ui_framework_focus_follow_global_focus_listener, globalFocusListener)
+            recyclerView.setTag(R.id.viewcompose_focus_follow_global_focus_listener, globalFocusListener)
         }
         if (existingGlobalLayoutListener == null) {
             val globalLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
                 ensureFocusedChildVisible(recyclerView, trigger = "globalLayout")
             }
             recyclerView.viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
-            recyclerView.setTag(R.id.ui_framework_focus_follow_global_layout_listener, globalLayoutListener)
+            recyclerView.setTag(R.id.viewcompose_focus_follow_global_layout_listener, globalLayoutListener)
         }
         debugLog {
             "attach listeners rv=${recyclerView.hashCode()} " +
@@ -77,7 +77,7 @@ internal object LazyFocusFollowLayoutMonitor {
                 "focus=${existingGlobalFocusListener != null} " +
                 "globalLayout=${existingGlobalLayoutListener != null}"
         }
-        recyclerView.setTag(R.id.ui_framework_focus_follow_enabled, true)
+        recyclerView.setTag(R.id.viewcompose_focus_follow_enabled, true)
         ensureFocusedChildVisible(recyclerView, trigger = "apply")
     }
 

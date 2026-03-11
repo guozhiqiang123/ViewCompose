@@ -187,8 +187,8 @@ internal class DeclarativeConstraintLayout @JvmOverloads constructor(
         val constraints = linkedMapOf<String, ConstraintItemSpec>()
         for (index in 0 until childCount) {
             val child = getChildAt(index)
-            val referenceId = child.getTag(R.id.ui_framework_constraint_layout_id) as? String
-            val inlineSpec = child.getTag(R.id.ui_framework_constraint_item_spec) as? ConstraintItemSpec
+            val referenceId = child.getTag(R.id.viewcompose_constraint_layout_id) as? String
+            val inlineSpec = child.getTag(R.id.viewcompose_constraint_item_spec) as? ConstraintItemSpec
             if (referenceId == null || inlineSpec == null) {
                 continue
             }
@@ -300,7 +300,7 @@ internal class DeclarativeConstraintLayout @JvmOverloads constructor(
         val activeReferenceIds = mutableSetOf<String>()
         for (index in 0 until childCount) {
             val child = getChildAt(index)
-            val referenceId = child.getTag(R.id.ui_framework_constraint_layout_id) as? String ?: continue
+            val referenceId = child.getTag(R.id.viewcompose_constraint_layout_id) as? String ?: continue
             activeReferenceIds += referenceId
             val resolvedViewId = referenceIdToViewId.getOrPut(referenceId) { View.generateViewId() }
             if (child.id != resolvedViewId) {

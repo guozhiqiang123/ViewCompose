@@ -16,21 +16,21 @@ import com.viewcompose.renderer.modifier.ResolvedModifiers
 
 internal object ModifierSurfaceStyleApplier {
     fun cacheOriginalBackground(view: View) {
-        if (view.getTag(R.id.ui_framework_original_background) != null) {
+        if (view.getTag(R.id.viewcompose_original_background) != null) {
             return
         }
         view.setTag(
-            R.id.ui_framework_original_background,
+            R.id.viewcompose_original_background,
             cloneDrawable(view.background),
         )
     }
 
     fun cacheOriginalForeground(view: View) {
-        if (view.getTag(R.id.ui_framework_original_foreground) != null) {
+        if (view.getTag(R.id.viewcompose_original_foreground) != null) {
             return
         }
         view.setTag(
-            R.id.ui_framework_original_foreground,
+            R.id.viewcompose_original_foreground,
             cloneDrawable(view.foreground),
         )
     }
@@ -139,13 +139,13 @@ internal object ModifierSurfaceStyleApplier {
 
     private fun restoreOriginalBackground(view: View) {
         view.background = cloneDrawable(
-            view.getTag(R.id.ui_framework_original_background) as? Drawable,
+            view.getTag(R.id.viewcompose_original_background) as? Drawable,
         )
     }
 
     private fun restoreOriginalForeground(view: View) {
         view.foreground = cloneDrawable(
-            view.getTag(R.id.ui_framework_original_foreground) as? Drawable,
+            view.getTag(R.id.viewcompose_original_foreground) as? Drawable,
         )
     }
 

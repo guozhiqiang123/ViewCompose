@@ -14,32 +14,32 @@ internal object ScrollableFocusFollowLayoutMonitor {
         scrollView: ScrollView,
         enabled: Boolean,
     ) {
-        val existingLayoutListener = scrollView.getTag(R.id.ui_framework_focus_follow_layout_listener)
+        val existingLayoutListener = scrollView.getTag(R.id.viewcompose_focus_follow_layout_listener)
             as? View.OnLayoutChangeListener
-        val existingGlobalFocusListener = scrollView.getTag(R.id.ui_framework_focus_follow_global_focus_listener)
+        val existingGlobalFocusListener = scrollView.getTag(R.id.viewcompose_focus_follow_global_focus_listener)
             as? ViewTreeObserver.OnGlobalFocusChangeListener
-        val existingGlobalLayoutListener = scrollView.getTag(R.id.ui_framework_focus_follow_global_layout_listener)
+        val existingGlobalLayoutListener = scrollView.getTag(R.id.viewcompose_focus_follow_global_layout_listener)
             as? ViewTreeObserver.OnGlobalLayoutListener
         if (!enabled) {
             if (existingLayoutListener != null) {
                 scrollView.removeOnLayoutChangeListener(existingLayoutListener)
-                scrollView.setTag(R.id.ui_framework_focus_follow_layout_listener, null)
+                scrollView.setTag(R.id.viewcompose_focus_follow_layout_listener, null)
             }
             if (existingGlobalFocusListener != null) {
                 val observer = scrollView.viewTreeObserver
                 if (observer.isAlive) {
                     observer.removeOnGlobalFocusChangeListener(existingGlobalFocusListener)
                 }
-                scrollView.setTag(R.id.ui_framework_focus_follow_global_focus_listener, null)
+                scrollView.setTag(R.id.viewcompose_focus_follow_global_focus_listener, null)
             }
             if (existingGlobalLayoutListener != null) {
                 val observer = scrollView.viewTreeObserver
                 if (observer.isAlive) {
                     observer.removeOnGlobalLayoutListener(existingGlobalLayoutListener)
                 }
-                scrollView.setTag(R.id.ui_framework_focus_follow_global_layout_listener, null)
+                scrollView.setTag(R.id.viewcompose_focus_follow_global_layout_listener, null)
             }
-            scrollView.setTag(R.id.ui_framework_focus_follow_enabled, false)
+            scrollView.setTag(R.id.viewcompose_focus_follow_enabled, false)
             return
         }
         if (existingLayoutListener == null) {
@@ -48,23 +48,23 @@ internal object ScrollableFocusFollowLayoutMonitor {
                 ensureFocusedChildVisible(target)
             }
             scrollView.addOnLayoutChangeListener(listener)
-            scrollView.setTag(R.id.ui_framework_focus_follow_layout_listener, listener)
+            scrollView.setTag(R.id.viewcompose_focus_follow_layout_listener, listener)
         }
         if (existingGlobalFocusListener == null) {
             val listener = ViewTreeObserver.OnGlobalFocusChangeListener { _, _ ->
                 ensureFocusedChildVisible(scrollView)
             }
             scrollView.viewTreeObserver.addOnGlobalFocusChangeListener(listener)
-            scrollView.setTag(R.id.ui_framework_focus_follow_global_focus_listener, listener)
+            scrollView.setTag(R.id.viewcompose_focus_follow_global_focus_listener, listener)
         }
         if (existingGlobalLayoutListener == null) {
             val listener = ViewTreeObserver.OnGlobalLayoutListener {
                 ensureFocusedChildVisible(scrollView)
             }
             scrollView.viewTreeObserver.addOnGlobalLayoutListener(listener)
-            scrollView.setTag(R.id.ui_framework_focus_follow_global_layout_listener, listener)
+            scrollView.setTag(R.id.viewcompose_focus_follow_global_layout_listener, listener)
         }
-        scrollView.setTag(R.id.ui_framework_focus_follow_enabled, true)
+        scrollView.setTag(R.id.viewcompose_focus_follow_enabled, true)
         ensureFocusedChildVisible(scrollView)
     }
 

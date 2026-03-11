@@ -115,7 +115,7 @@ internal class DeclarativeLazyVerticalGridLayout(
         verticalSpacing: Int,
         spanCount: Int,
     ) {
-        val existing = getTag(R.id.ui_framework_lazy_grid_spacing_decoration)
+        val existing = getTag(R.id.viewcompose_lazy_grid_spacing_decoration)
             as? LazyGridSpacingDecoration
         if (existing != null) {
             existing.update(horizontalSpacing, verticalSpacing, spanCount)
@@ -123,7 +123,7 @@ internal class DeclarativeLazyVerticalGridLayout(
             return
         }
         val decoration = LazyGridSpacingDecoration(horizontalSpacing, verticalSpacing, spanCount)
-        setTag(R.id.ui_framework_lazy_grid_spacing_decoration, decoration)
+        setTag(R.id.viewcompose_lazy_grid_spacing_decoration, decoration)
         addItemDecoration(decoration)
     }
 }

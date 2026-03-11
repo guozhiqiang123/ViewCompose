@@ -121,7 +121,7 @@ internal object InputViewBinder {
         view: SeekBar,
         spec: SliderSpec,
     ) {
-        val listener = view.getTag(R.id.ui_framework_seek_listener) as? SeekBar.OnSeekBarChangeListener
+        val listener = view.getTag(R.id.viewcompose_seek_listener) as? SeekBar.OnSeekBarChangeListener
         if (listener != null) {
             view.setOnSeekBarChangeListener(null)
         }
@@ -144,7 +144,7 @@ internal object InputViewBinder {
             override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
         }
         view.setOnSeekBarChangeListener(nextListener)
-        view.setTag(R.id.ui_framework_seek_listener, nextListener)
+        view.setTag(R.id.viewcompose_seek_listener, nextListener)
     }
 
     private fun bindCompoundButton(
@@ -293,7 +293,7 @@ internal object InputViewBinder {
         currentValue: String,
         onValueChange: ((String) -> Unit)?,
     ) {
-        val previousWatcher = view.getTag(R.id.ui_framework_text_watcher) as? TextWatcher
+        val previousWatcher = view.getTag(R.id.viewcompose_text_watcher) as? TextWatcher
         if (previousWatcher != null) {
             view.removeTextChangedListener(previousWatcher)
         }
@@ -320,7 +320,7 @@ internal object InputViewBinder {
             }
         }
         view.addTextChangedListener(watcher)
-        view.setTag(R.id.ui_framework_text_watcher, watcher)
+        view.setTag(R.id.viewcompose_text_watcher, watcher)
     }
 
     private fun updateReadOnly(

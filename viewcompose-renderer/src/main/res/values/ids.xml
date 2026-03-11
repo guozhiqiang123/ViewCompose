@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="ui_framework_original_background" type="id" />
-    <item name="ui_framework_original_foreground" type="id" />
-    <item name="ui_framework_text_watcher" type="id" />
-    <item name="ui_framework_seek_listener" type="id" />
-    <item name="ui_framework_lazy_spacing_decoration" type="id" />
-    <item name="ui_framework_lazy_grid_spacing_decoration" type="id" />
-    <item name="ui_framework_test_tag" type="id" />
-    <item name="ui_framework_constraint_layout_id" type="id" />
-    <item name="ui_framework_constraint_item_spec" type="id" />
-    <item name="ui_framework_system_bars_padding_state" type="id" />
-    <item name="ui_framework_local_recycled_view_pool" type="id" />
-    <item name="ui_framework_focus_follow_layout_listener" type="id" />
-    <item name="ui_framework_focus_follow_global_focus_listener" type="id" />
-    <item name="ui_framework_focus_follow_global_layout_listener" type="id" />
-    <item name="ui_framework_focus_follow_enabled" type="id" />
-    <item name="ui_framework_focus_follow_warning_emitted" type="id" />
-    <item name="ui_framework_gesture_dispatcher" type="id" />
+    <item name="viewcompose_original_background" type="id" />
+    <item name="viewcompose_original_foreground" type="id" />
+    <item name="viewcompose_text_watcher" type="id" />
+    <item name="viewcompose_seek_listener" type="id" />
+    <item name="viewcompose_lazy_spacing_decoration" type="id" />
+    <item name="viewcompose_lazy_grid_spacing_decoration" type="id" />
+    <item name="viewcompose_test_tag" type="id" />
+    <item name="viewcompose_constraint_layout_id" type="id" />
+    <item name="viewcompose_constraint_item_spec" type="id" />
+    <item name="viewcompose_system_bars_padding_state" type="id" />
+    <item name="viewcompose_local_recycled_view_pool" type="id" />
+    <item name="viewcompose_focus_follow_layout_listener" type="id" />
+    <item name="viewcompose_focus_follow_global_focus_listener" type="id" />
+    <item name="viewcompose_focus_follow_global_layout_listener" type="id" />
+    <item name="viewcompose_focus_follow_enabled" type="id" />
+    <item name="viewcompose_focus_follow_warning_emitted" type="id" />
+    <item name="viewcompose_gesture_dispatcher" type="id" />
 </resources>

@@ -144,10 +144,10 @@ internal object ModifierContainerPolicyApplier {
         view: View,
         nodeType: NodeType,
     ) {
-        if (view.getTag(R.id.ui_framework_focus_follow_warning_emitted) == true) {
+        if (view.getTag(R.id.viewcompose_focus_follow_warning_emitted) == true) {
             return
         }
-        view.setTag(R.id.ui_framework_focus_follow_warning_emitted, true)
+        view.setTag(R.id.viewcompose_focus_follow_warning_emitted, true)
         Log.w(
             FOCUS_FOLLOW_TAG,
             "focusFollowKeyboard(enabled=true) is ignored for $nodeType because keyboard follow only targets vertical overflow containers.",

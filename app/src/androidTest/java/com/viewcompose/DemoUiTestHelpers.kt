@@ -534,7 +534,7 @@ internal fun findViewByContentDescription(root: View, description: String): View
 }
 
 internal fun findViewByTestTag(root: View, tag: String): View? {
-    if (root.getTag(RendererR.id.ui_framework_test_tag) == tag) {
+    if (root.getTag(RendererR.id.viewcompose_test_tag) == tag) {
         return root
     }
     if (root is ViewGroup) {

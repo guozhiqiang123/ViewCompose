@@ -45,11 +45,11 @@ internal object ModifierInteractionApplier {
         view.minimumWidth = minWidth
         view.contentDescription = resolved.contentDescription?.contentDescription
         view.setTag(
-            R.id.ui_framework_constraint_layout_id,
+            R.id.viewcompose_constraint_layout_id,
             resolved.layoutId?.layoutId ?: resolved.constraint?.referenceId,
         )
         view.setTag(
-            R.id.ui_framework_constraint_item_spec,
+            R.id.viewcompose_constraint_item_spec,
             resolved.constraint?.constraint,
         )
     }
@@ -126,6 +126,6 @@ internal object ModifierInteractionApplier {
         view: View,
         testTag: String?,
     ) {
-        view.setTag(R.id.ui_framework_test_tag, testTag)
+        view.setTag(R.id.viewcompose_test_tag, testTag)
     }
 }

@@ -189,14 +189,14 @@ internal object ContainerViewBinder {
         spacing: Int,
         orientation: Int = LinearLayoutManager.VERTICAL,
     ) {
-        val existing = recyclerView.getTag(R.id.ui_framework_lazy_spacing_decoration) as? LazyListSpacingDecoration
+        val existing = recyclerView.getTag(R.id.viewcompose_lazy_spacing_decoration) as? LazyListSpacingDecoration
         if (existing != null) {
             existing.updateSpacing(spacing)
             recyclerView.invalidateItemDecorations()
             return
         }
         val decoration = LazyListSpacingDecoration(spacing, orientation)
-        recyclerView.setTag(R.id.ui_framework_lazy_spacing_decoration, decoration)
+        recyclerView.setTag(R.id.viewcompose_lazy_spacing_decoration, decoration)
         recyclerView.addItemDecoration(decoration)
     }
 }

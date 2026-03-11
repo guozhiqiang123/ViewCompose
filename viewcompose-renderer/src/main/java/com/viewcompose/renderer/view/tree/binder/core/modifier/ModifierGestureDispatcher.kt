@@ -39,14 +39,14 @@ internal object ModifierGestureApplier {
             resolved.swipeable != null ||
             resolved.transformable != null
         if (!hasGesture) {
-            (view.getTag(R.id.ui_framework_gesture_dispatcher) as? ViewGestureDispatcher)?.dispose()
-            view.setTag(R.id.ui_framework_gesture_dispatcher, null)
+            (view.getTag(R.id.viewcompose_gesture_dispatcher) as? ViewGestureDispatcher)?.dispose()
+            view.setTag(R.id.viewcompose_gesture_dispatcher, null)
             view.setOnTouchListener(null)
             return
         }
-        val dispatcher = (view.getTag(R.id.ui_framework_gesture_dispatcher) as? ViewGestureDispatcher)
+        val dispatcher = (view.getTag(R.id.viewcompose_gesture_dispatcher) as? ViewGestureDispatcher)
             ?: ViewGestureDispatcher(view).also {
-                view.setTag(R.id.ui_framework_gesture_dispatcher, it)
+                view.setTag(R.id.viewcompose_gesture_dispatcher, it)
             }
         dispatcher.update(resolved)
         view.setOnTouchListener(dispatcher)

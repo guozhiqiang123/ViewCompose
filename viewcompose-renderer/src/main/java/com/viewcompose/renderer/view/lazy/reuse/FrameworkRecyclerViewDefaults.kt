@@ -147,13 +147,13 @@ internal object FrameworkRecyclerViewDefaults {
     }
 
     private fun resolveLocalPool(recyclerView: RecyclerView): RecyclerView.RecycledViewPool {
-        val existing = recyclerView.getTag(R.id.ui_framework_local_recycled_view_pool)
+        val existing = recyclerView.getTag(R.id.viewcompose_local_recycled_view_pool)
             as? RecyclerView.RecycledViewPool
         if (existing != null) {
             return existing
         }
         return RecyclerView.RecycledViewPool().also { local ->
-            recyclerView.setTag(R.id.ui_framework_local_recycled_view_pool, local)
+            recyclerView.setTag(R.id.viewcompose_local_recycled_view_pool, local)
         }
     }
 }

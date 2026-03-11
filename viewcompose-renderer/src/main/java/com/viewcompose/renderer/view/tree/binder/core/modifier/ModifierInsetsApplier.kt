@@ -34,18 +34,18 @@ internal object ModifierInsetsApplier {
         basePadding: PaddingModifierElement?,
     ) {
         if (systemBarsModifier == null && imeModifier == null) {
-            val state = view.getTag(R.id.ui_framework_system_bars_padding_state) as? WindowInsetsPaddingState
+            val state = view.getTag(R.id.viewcompose_system_bars_padding_state) as? WindowInsetsPaddingState
             if (state != null) {
                 view.setPadding(state.baseLeft, state.baseTop, state.baseRight, state.baseBottom)
-                view.setTag(R.id.ui_framework_system_bars_padding_state, null)
+                view.setTag(R.id.viewcompose_system_bars_padding_state, null)
             }
             ViewCompat.setOnApplyWindowInsetsListener(view, null)
             return
         }
 
-        val state = (view.getTag(R.id.ui_framework_system_bars_padding_state) as? WindowInsetsPaddingState)
+        val state = (view.getTag(R.id.viewcompose_system_bars_padding_state) as? WindowInsetsPaddingState)
             ?: WindowInsetsPaddingState().also {
-                view.setTag(R.id.ui_framework_system_bars_padding_state, it)
+                view.setTag(R.id.viewcompose_system_bars_padding_state, it)
             }
         if (basePadding != null) {
             state.baseLeft = basePadding.left

@@ -181,7 +181,7 @@ internal object InputNodePatchApplier {
     ) {
         val previous = patch.previous
         val next = patch.next
-        val listener = view.getTag(R.id.ui_framework_seek_listener) as? SeekBar.OnSeekBarChangeListener
+        val listener = view.getTag(R.id.viewcompose_seek_listener) as? SeekBar.OnSeekBarChangeListener
         if (listener != null) {
             view.setOnSeekBarChangeListener(null)
         }
@@ -213,6 +213,6 @@ internal object InputNodePatchApplier {
             override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
         }
         view.setOnSeekBarChangeListener(nextListener)
-        view.setTag(R.id.ui_framework_seek_listener, nextListener)
+        view.setTag(R.id.viewcompose_seek_listener, nextListener)
     }
 }
