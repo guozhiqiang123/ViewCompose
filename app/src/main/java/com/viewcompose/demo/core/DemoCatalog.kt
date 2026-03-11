@@ -149,10 +149,10 @@ internal val DEMO_MODULES = listOf(
     DemoModule(
         key = "graphics",
         title = "Graphics",
-        subtitle = "Canvas, draw pipeline, gradients, and custom graphics primitives are still missing.",
-        status = DemoModuleStatus.Planned,
-        manualFocus = "draw modifiers, canvas primitives, custom graphics",
-        benchmarkPath = "Preview placeholder",
+        subtitle = "Canvas node, draw modifiers, gradients/blend, and draw cache scenarios.",
+        status = DemoModuleStatus.Available,
+        manualFocus = "canvas primitives, drawWithContent semantics, blend/filter, cache key invalidation",
+        benchmarkPath = "Catalog -> Graphics -> drawWithCache scenario",
         activityClass = GraphicsActivity::class.java,
     ),
     DemoModule(

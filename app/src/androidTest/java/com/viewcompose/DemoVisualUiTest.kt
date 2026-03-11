@@ -1305,6 +1305,47 @@ class DemoVisualUiTest {
         }
     }
 
+    @Test
+    fun graphicsPage_blendAndDrawContentToggles_updateStatuses() {
+        launchDemoActivity(GraphicsActivity::class.java).use { scenario ->
+            waitForUiIdle()
+            captureDeviceScreenshot("graphics-core-light")
+            scenario.onActivity { activity ->
+                assertViewFullyVisible(activity.requireViewByTestTagVisible(DemoTestTags.GRAPHICS_PRIMITIVES_CANVAS))
+                assertViewFullyVisible(activity.requireViewByTestTagVisible(DemoTestTags.GRAPHICS_PATH_CLIP_CANVAS))
+                assertViewFullyVisible(activity.requireViewByTestTagVisible(DemoTestTags.GRAPHICS_BLEND_CANVAS))
+                assertViewFullyVisible(activity.requireViewByTestTagVisible(DemoTestTags.GRAPHICS_DRAW_CONTENT_CANVAS))
+                activity.clickByTestTag(DemoTestTags.GRAPHICS_BLEND_TOGGLE)
+                activity.clickByTestTag(DemoTestTags.GRAPHICS_DRAW_CONTENT_TOGGLE)
+            }
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val blendStatus = activity.requireTextViewByTestTag(DemoTestTags.GRAPHICS_BLEND_STATUS).text.toString()
+                val drawStatus = activity.requireTextViewByTestTag(DemoTestTags.GRAPHICS_DRAW_CONTENT_STATUS).text.toString()
+                assertTrue("Expected blend status to switch to Multiply", blendStatus.contains("Multiply"))
+                assertTrue("Expected drawWithContent status to report intercepted content", drawStatus.contains("拦截内容"))
+            }
+        }
+    }
+
+    @Test
+    fun graphicsPage_cacheControls_updateCacheStatusText() {
+        launchDemoActivity(GraphicsActivity::class.java).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                assertViewFullyVisible(activity.requireViewByTestTagVisible(DemoTestTags.GRAPHICS_CACHE_CANVAS))
+                val before = activity.requireTextViewByTestTag(DemoTestTags.GRAPHICS_CACHE_STATUS).text.toString()
+                assertTrue(before.contains("cacheKey=0"))
+                activity.clickByTestTag(DemoTestTags.GRAPHICS_CACHE_KEY_BUMP)
+            }
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                val after = activity.requireTextViewByTestTag(DemoTestTags.GRAPHICS_CACHE_STATUS).text.toString()
+                assertTrue("Expected cache key to increase after bump button", after.contains("cacheKey=1"))
+            }
+        }
+    }
+
     private fun extractCount(text: String): Int {
         return "(\\d+)".toRegex().find(text)?.value?.toIntOrNull() ?: 0
     }

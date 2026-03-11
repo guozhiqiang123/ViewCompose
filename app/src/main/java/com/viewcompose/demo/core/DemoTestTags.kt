@@ -134,6 +134,18 @@ internal object DemoTestTags {
     const val ANIMATION_ANIMATABLE_STOP = "animation_animatable_stop"
     const val ANIMATION_ANIMATABLE_VALUE = "animation_animatable_value"
 
+    const val GRAPHICS_PRIMITIVES_CANVAS = "graphics_primitives_canvas"
+    const val GRAPHICS_PATH_CLIP_CANVAS = "graphics_path_clip_canvas"
+    const val GRAPHICS_BLEND_TOGGLE = "graphics_blend_toggle"
+    const val GRAPHICS_BLEND_STATUS = "graphics_blend_status"
+    const val GRAPHICS_BLEND_CANVAS = "graphics_blend_canvas"
+    const val GRAPHICS_DRAW_CONTENT_TOGGLE = "graphics_draw_content_toggle"
+    const val GRAPHICS_DRAW_CONTENT_STATUS = "graphics_draw_content_status"
+    const val GRAPHICS_DRAW_CONTENT_CANVAS = "graphics_draw_content_canvas"
+    const val GRAPHICS_CACHE_KEY_BUMP = "graphics_cache_key_bump"
+    const val GRAPHICS_CACHE_STATUS = "graphics_cache_status"
+    const val GRAPHICS_CACHE_CANVAS = "graphics_cache_canvas"
+
     const val GESTURE_TAP_TARGET = "gesture_tap_target"
     const val GESTURE_TAP_COUNT = "gesture_tap_count"
     const val GESTURE_POINTER_LOG = "gesture_pointer_log"
