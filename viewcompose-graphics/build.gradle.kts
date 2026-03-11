@@ -23,8 +23,8 @@ android {
 
 dependencies {
     api(project(":viewcompose-graphics-core"))
+    api(project(":viewcompose-ui-contract"))
+    api(project(":viewcompose-widget-core"))
     implementation(project(":viewcompose-runtime"))
-    implementation(project(":viewcompose-ui-contract"))
-    implementation(project(":viewcompose-widget-core"))
     testImplementation(libs.junit)
 }
