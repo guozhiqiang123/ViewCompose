@@ -1,6 +1,7 @@
 package com.viewcompose.host.android
 
 import android.view.View
+import com.viewcompose.host.android.graphics.androidGraphics
 import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.modifier.NativeViewElement
 import com.viewcompose.ui.node.NodeType
@@ -30,6 +31,13 @@ class AndroidInteropDslTest {
     @Test
     fun `nativeView adds native view modifier element`() {
         val modifier = Modifier.nativeView(key = "host") { _: View -> Unit }
+        assertEquals(1, modifier.elements.size)
+        assertTrue(modifier.elements.single() is NativeViewElement)
+    }
+
+    @Test
+    fun `androidGraphics adds native view modifier element`() {
+        val modifier = Modifier.androidGraphics(key = "graphics") { _: View -> Unit }
         assertEquals(1, modifier.elements.size)
         assertTrue(modifier.elements.single() is NativeViewElement)
     }

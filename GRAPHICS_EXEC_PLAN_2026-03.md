@@ -36,7 +36,7 @@
 - [x] Step 4: ui-contract 新增 Canvas 节点与 draw modifier 契约
 - [x] Step 5: viewcompose-graphics API（Canvas + draw modifiers）落地
 - [x] Step 6: renderer 接入 Canvas 节点与 draw modifier 管线
-- [ ] Step 7: host-android 新增 AndroidGraphicsInterop
+- [x] Step 7: host-android 新增 AndroidGraphicsInterop
 - [ ] Step 8: demo + preview + instrumentation 覆盖
 - [ ] Step 9: 文档收口与归档
 
@@ -53,6 +53,7 @@
 4. `feat: add canvas node and draw modifier contracts in ui-contract`
 5. `feat: add graphics dsl canvas and draw modifier wrappers`
 6. `feat: integrate canvas node and draw modifier pipeline in renderer`
+7. `feat: add android graphics interop bridge in host-android`
 
 ## 阻塞记录
 - 见 [GRAPHICS_BLOCKER_CONTEXT_2026-03.md](/Users/gzq/AndroidStudioProjects/UIFramework/GRAPHICS_BLOCKER_CONTEXT_2026-03.md)
