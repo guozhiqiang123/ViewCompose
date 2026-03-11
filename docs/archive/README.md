@@ -71,6 +71,7 @@
 | `DRAWABLE_BACKGROUND_CLIP_POLICY_EXEC_PLAN_2026-03.md` | 已完成的 drawable 背景圆角自动裁剪策略调整执行计划（`backgroundDrawableRes + cornerRadius` 自动裁剪） |
 | `ANIMATION_GESTURE_EXEC_PLAN_2026-03.md` | 已完成的动画与手势执行计划（animation/gesture 模块、graphicsLayer、手势分发、demo+preview+snapshot 收口） |
 | `ANIMATED_VISIBILITY_COMPOSE_PARITY_EXEC_PLAN_2026-03.md` | 已完成的 AnimatedVisibility Compose 语义对齐执行计划（可组合过渡 + host 节点尺寸动画 + 状态机退出后移除） |
+| `ANIMATION_REAUDIT_EXEC_PLAN_2026-03.md` | 已完成的动画复扫问题收口执行计划（repeat/infinite 语义修复、animateContentSize spec 语义透传、transformOrigin 同步） |
 | `MODIFIER_GESTURE_OPT_EXEC_PLAN_2026-03.md` | 已完成的 Modifier 手势优化执行计划（pointerInput 强短路、transform slop 门槛、swipe 距离+速度联合判定与回归补强） |
 | `GESTURE_ARCH_CONVERGENCE_EXEC_PLAN_2026-03.md` | 已完成的 Gesture 跨平台分层重构执行计划（`gesture-core` 策略内核 + `gesture` DSL 入口 + renderer 事件适配收口） |
 | `GESTURE_ARCH_BLOCKER_CONTEXT_2026-03.md` | Gesture 架构重构阶段设备门禁阻塞记录（Huawei 并行噪声）及 Pixel 4 XL 单设备复跑解除记录 |

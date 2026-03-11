@@ -30,7 +30,7 @@
 - [x] Step 3 收口 animateContentSize spec 模型与 renderer 执行语义
 - [x] Step 4 修复 graphicsLayer transformOrigin 的尺寸变化同步
 - [x] Step 5 补齐测试并执行门禁回归
-- [ ] Step 6 收口文档并归档执行计划
+- [x] Step 6 收口文档并归档执行计划
 
 ## 5. 提交记录
 
@@ -39,6 +39,7 @@
 - `DONE` fix: preserve animateContentSize easing/spring/keyframes/repeat semantics across animation and renderer
 - `DONE` fix: keep graphicsLayer transformOrigin pivot in sync with host view size changes
 - `DONE` test: run animation-core/animation/renderer unit suites and qaQuick
+- `DONE` docs: archive animation re-audit execution plan
 
 ## 6. 阻塞记录
 
