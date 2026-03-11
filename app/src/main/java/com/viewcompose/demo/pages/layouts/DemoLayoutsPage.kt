@@ -57,6 +57,10 @@ internal fun UiTreeBuilder.LayoutPage(
     val flowItemCountState = remember { mutableStateOf(8) }
     val constraintHelperLongState = remember { mutableStateOf(false) }
     val constraintSetExpandedState = remember { mutableStateOf(false) }
+    val constraintDimensionAdvancedState = remember { mutableStateOf(false) }
+    val constraintHelpersFullState = remember { mutableStateOf(false) }
+    val constraintVerticalChainPackedState = remember { mutableStateOf(false) }
+    val constraintSetHelpersAlternateState = remember { mutableStateOf(false) }
     val constraintVirtualAlternateState = remember { mutableStateOf(false) }
     val selectedPageState = remember { mutableStateOf(initialPageIndex.coerceIn(0, 6)) }
     val pageItems = when (selectedPageState.value) {
@@ -72,6 +76,11 @@ internal fun UiTreeBuilder.LayoutPage(
             "constraint_helpers",
             "constraint_chain",
             "constraint_set",
+            "constraint_anchor_advanced",
+            "constraint_dimension_advanced",
+            "constraint_helpers_full",
+            "constraint_vertical_chain",
+            "constraint_set_helpers_mirror",
             "constraint_virtual_helpers",
             "verify",
         )
@@ -696,6 +705,615 @@ internal fun UiTreeBuilder.LayoutPage(
                 }
             }
 
+            "constraint_anchor_advanced" -> ScenarioSection(
+                kind = ScenarioKind.Core,
+                title = "Anchor Advanced",
+                subtitle = "覆盖 bottomToTop / baseline* / center* / circular 等高级锚点 API。",
+            ) {
+                ConstraintLayout(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(232.dp)
+                        .backgroundColor(SurfaceDefaults.backgroundColor())
+                        .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                        .padding(12.dp)
+                        .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_ANCHOR_ADVANCED_CONTAINER),
+                ) {
+                    val leaderRef = createRef("anchor-leader")
+                    val baselineRef = createRef("anchor-baseline")
+                    val baselineTopRef = createRef("anchor-baseline-top")
+                    val baselineBottomRef = createRef("anchor-baseline-bottom")
+                    val centeredRef = createRef("anchor-centered")
+                    val circleCenterRef = createRef("anchor-circle-center")
+                    val circleNodeRef = createRef("anchor-circle-node")
+                    val targetRef = createRef("anchor-target")
+                    val linkedRef = createRef("anchor-linked")
+                    Text(
+                        text = "Leader 16sp",
+                        style = UiTextStyle(fontSizeSp = 16.sp),
+                        modifier = Modifier.constrainAs(leaderRef) {
+                            topToTop(parent)
+                            startToStart(parent)
+                        },
+                    )
+                    Text(
+                        text = "Baseline",
+                        style = UiTextStyle(fontSizeSp = 12.sp),
+                        modifier = Modifier
+                            .constrainAs(baselineRef) {
+                                startToEnd(leaderRef, margin = 10.dp)
+                                baselineToBaseline(leaderRef)
+                            }
+                            .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_ANCHOR_ADVANCED_BASELINE),
+                    )
+                    Text(
+                        text = "B→Top",
+                        style = UiTextStyle(fontSizeSp = 12.sp),
+                        modifier = Modifier.constrainAs(baselineTopRef) {
+                            startToEnd(baselineRef, margin = 10.dp)
+                            baselineToTop(leaderRef, margin = 2.dp)
+                        },
+                    )
+                    Text(
+                        text = "B→Bottom",
+                        style = UiTextStyle(fontSizeSp = 12.sp),
+                        modifier = Modifier.constrainAs(baselineBottomRef) {
+                            startToEnd(baselineTopRef, margin = 10.dp)
+                            baselineToBottom(leaderRef, margin = 2.dp)
+                        },
+                    )
+                    Surface(
+                        variant = SurfaceVariant.Variant,
+                        modifier = Modifier
+                            .constrainAs(centeredRef) {
+                                centerHorizontallyTo(parent)
+                                centerVerticallyTo(parent)
+                                width = ConstraintDimension.Fixed(118.dp)
+                                height = ConstraintDimension.Fixed(44.dp)
+                            },
+                    ) {
+                        Box(contentAlignment = BoxAlignment.Center, modifier = Modifier.fillMaxSize()) {
+                            Text(text = "center*")
+                        }
+                    }
+                    Surface(
+                        variant = SurfaceVariant.Default,
+                        modifier = Modifier
+                            .constrainAs(circleCenterRef) {
+                                topToTop(parent)
+                                endToEnd(parent)
+                                width = ConstraintDimension.Fixed(40.dp)
+                                height = ConstraintDimension.Fixed(40.dp)
+                            },
+                    ) {
+                        Box(contentAlignment = BoxAlignment.Center, modifier = Modifier.fillMaxSize()) {
+                            Text(text = "C")
+                        }
+                    }
+                    Surface(
+                        variant = SurfaceVariant.Variant,
+                        modifier = Modifier
+                            .constrainAs(circleNodeRef) {
+                                circular(
+                                    target = circleCenterRef,
+                                    radius = 54.dp,
+                                    angle = 225f,
+                                )
+                                width = ConstraintDimension.Fixed(56.dp)
+                                height = ConstraintDimension.Fixed(30.dp)
+                            }
+                            .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_ANCHOR_ADVANCED_CIRCLE),
+                    ) {
+                        Box(contentAlignment = BoxAlignment.Center, modifier = Modifier.fillMaxSize()) {
+                            Text(text = "circular")
+                        }
+                    }
+                    Surface(
+                        variant = SurfaceVariant.Default,
+                        modifier = Modifier
+                            .constrainAs(targetRef) {
+                                bottomToBottom(parent)
+                                endToEnd(parent)
+                                width = ConstraintDimension.Fixed(92.dp)
+                                height = ConstraintDimension.Fixed(32.dp)
+                            },
+                    ) {
+                        Box(contentAlignment = BoxAlignment.Center, modifier = Modifier.fillMaxSize()) {
+                            Text(text = "Target")
+                        }
+                    }
+                    Surface(
+                        variant = SurfaceVariant.Variant,
+                        modifier = Modifier
+                            .constrainAs(linkedRef) {
+                                bottomToTop(targetRef, margin = 8.dp)
+                                endToEnd(targetRef)
+                                width = ConstraintDimension.Fixed(92.dp)
+                                height = ConstraintDimension.Fixed(32.dp)
+                            },
+                    ) {
+                        Box(contentAlignment = BoxAlignment.Center, modifier = Modifier.fillMaxSize()) {
+                            Text(text = "bottomToTop")
+                        }
+                    }
+                }
+                Text(
+                    text = "已覆盖：bottomToTop / baselineToBaseline / baselineToTop / baselineToBottom / centerHorizontallyTo / centerVerticallyTo / circular。",
+                    style = UiTextStyle(fontSizeSp = 12.sp),
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier
+                        .margin(top = 6.dp)
+                        .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_ANCHOR_ADVANCED_STATUS),
+                )
+            }
+
+            "constraint_dimension_advanced" -> ScenarioSection(
+                kind = ScenarioKind.Visual,
+                title = "Dimension Advanced",
+                subtitle = "覆盖 min/max/percent、constrainedWidth/Height 和 dimensionRatio。",
+            ) {
+                Button(
+                    text = if (constraintDimensionAdvancedState.value) "切回紧凑尺寸" else "切到扩展尺寸",
+                    variant = ButtonVariant.Outlined,
+                    modifier = Modifier
+                        .margin(bottom = 8.dp)
+                        .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_DIMENSION_ADVANCED_TOGGLE),
+                    onClick = { constraintDimensionAdvancedState.value = !constraintDimensionAdvancedState.value },
+                )
+                ConstraintLayout(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(220.dp)
+                        .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                        .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                        .padding(12.dp)
+                        .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_DIMENSION_ADVANCED_CONTAINER),
+                ) {
+                    val (widthRef, heightRef, ratioRef) = createRefs("dim-width", "dim-height", "dim-ratio")
+                    Surface(
+                        variant = SurfaceVariant.Default,
+                        modifier = Modifier
+                            .constrainAs(widthRef) {
+                                startToStart(parent)
+                                endToEnd(parent)
+                                topToTop(parent)
+                                width = ConstraintDimension.FillToConstraints
+                                height = ConstraintDimension.Fixed(38.dp)
+                                widthPercent = if (constraintDimensionAdvancedState.value) 0.82f else 0.56f
+                                widthMin = 120.dp
+                                widthMax = 280.dp
+                                constrainedWidth = true
+                            }
+                            .padding(horizontal = 10.dp, vertical = 6.dp),
+                    ) {
+                        Text(text = "widthPercent + widthMin/Max + constrainedWidth")
+                    }
+                    Surface(
+                        variant = SurfaceVariant.Variant,
+                        modifier = Modifier
+                            .constrainAs(heightRef) {
+                                startToStart(parent)
+                                topToBottom(widthRef, margin = 10.dp)
+                                bottomToBottom(parent)
+                                width = ConstraintDimension.Fixed(104.dp)
+                                height = ConstraintDimension.FillToConstraints
+                                heightPercent = if (constraintDimensionAdvancedState.value) 0.62f else 0.38f
+                                heightMin = 64.dp
+                                heightMax = 146.dp
+                                constrainedHeight = true
+                            }
+                            .padding(horizontal = 8.dp, vertical = 6.dp),
+                    ) {
+                        Text(text = "heightPercent\nmin/max")
+                    }
+                    Surface(
+                        variant = SurfaceVariant.Default,
+                        modifier = Modifier
+                            .constrainAs(ratioRef) {
+                                startToEnd(heightRef, margin = 10.dp)
+                                endToEnd(parent)
+                                topToBottom(widthRef, margin = 10.dp)
+                                bottomToBottom(parent)
+                                width = ConstraintDimension.FillToConstraints
+                                height = ConstraintDimension.FillToConstraints
+                                dimensionRatio = if (constraintDimensionAdvancedState.value) "16:9" else "1:1"
+                            }
+                            .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_DIMENSION_ADVANCED_RATIO),
+                    ) {
+                        Box(contentAlignment = BoxAlignment.Center, modifier = Modifier.fillMaxSize()) {
+                            Text(text = if (constraintDimensionAdvancedState.value) "ratio 16:9" else "ratio 1:1")
+                        }
+                    }
+                }
+                Text(
+                    text = if (constraintDimensionAdvancedState.value) {
+                        "扩展模式：widthPercent=0.82, heightPercent=0.62, ratio=16:9"
+                    } else {
+                        "紧凑模式：widthPercent=0.56, heightPercent=0.38, ratio=1:1"
+                    },
+                    style = UiTextStyle(fontSizeSp = 12.sp),
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier
+                        .margin(top = 6.dp)
+                        .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_DIMENSION_ADVANCED_STATUS),
+                )
+            }
+
+            "constraint_helpers_full" -> ScenarioSection(
+                kind = ScenarioKind.Visual,
+                title = "Guideline + Barrier Full",
+                subtitle = "覆盖 End/Top/Bottom guideline 与 Start/Top/Bottom barrier（含 margin/allowsGoneWidgets）。",
+            ) {
+                Button(
+                    text = if (constraintHelpersFullState.value) "切到 fraction 模式" else "切到 offset 模式",
+                    variant = ButtonVariant.Outlined,
+                    modifier = Modifier
+                        .margin(bottom = 8.dp)
+                        .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_HELPERS_FULL_TOGGLE),
+                    onClick = { constraintHelpersFullState.value = !constraintHelpersFullState.value },
+                )
+                ConstraintLayout(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(208.dp)
+                        .backgroundColor(SurfaceDefaults.backgroundColor())
+                        .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                        .padding(12.dp)
+                        .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_HELPERS_FULL_CONTAINER),
+                ) {
+                    val guideEnd = if (constraintHelpersFullState.value) {
+                        createGuidelineFromEnd(0.26f, id = "helpers-full-guide-end")
+                    } else {
+                        createGuidelineFromEnd(68.dp, id = "helpers-full-guide-end")
+                    }
+                    val guideTop = if (constraintHelpersFullState.value) {
+                        createGuidelineFromTop(0.22f, id = "helpers-full-guide-top")
+                    } else {
+                        createGuidelineFromTop(24.dp, id = "helpers-full-guide-top")
+                    }
+                    val guideBottom = if (constraintHelpersFullState.value) {
+                        createGuidelineFromBottom(0.18f, id = "helpers-full-guide-bottom")
+                    } else {
+                        createGuidelineFromBottom(30.dp, id = "helpers-full-guide-bottom")
+                    }
+                    val (probeTopRef, probeMiddleRef, probeBottomRef, markerRef) = createRefs(
+                        "helpers-full-probe-top",
+                        "helpers-full-probe-middle",
+                        "helpers-full-probe-bottom",
+                        "helpers-full-marker",
+                    )
+                    val startBarrier = createStartBarrier(
+                        probeTopRef,
+                        probeMiddleRef,
+                        probeBottomRef,
+                        id = "helpers-full-start-barrier",
+                        margin = if (constraintHelpersFullState.value) 14.dp else 4.dp,
+                        allowsGoneWidgets = constraintHelpersFullState.value,
+                    )
+                    val topBarrier = createTopBarrier(
+                        probeTopRef,
+                        probeMiddleRef,
+                        id = "helpers-full-top-barrier",
+                        margin = if (constraintHelpersFullState.value) 10.dp else 4.dp,
+                        allowsGoneWidgets = constraintHelpersFullState.value,
+                    )
+                    val bottomBarrier = createBottomBarrier(
+                        probeMiddleRef,
+                        probeBottomRef,
+                        id = "helpers-full-bottom-barrier",
+                        margin = if (constraintHelpersFullState.value) 10.dp else 4.dp,
+                        allowsGoneWidgets = constraintHelpersFullState.value,
+                    )
+                    Surface(
+                        variant = SurfaceVariant.Variant,
+                        modifier = Modifier
+                            .constrainAs(probeTopRef) {
+                                topToTop(guideTop)
+                                endToStart(guideEnd, margin = 6.dp)
+                                width = ConstraintDimension.Fixed(110.dp)
+                                height = ConstraintDimension.Fixed(30.dp)
+                            },
+                    ) {
+                        Box(contentAlignment = BoxAlignment.Center, modifier = Modifier.fillMaxSize()) {
+                            Text(text = "Top Probe")
+                        }
+                    }
+                    Surface(
+                        variant = SurfaceVariant.Default,
+                        modifier = Modifier
+                            .constrainAs(probeMiddleRef) {
+                                topToBottom(probeTopRef, margin = 8.dp)
+                                endToStart(guideEnd, margin = 6.dp)
+                                width = ConstraintDimension.Fixed(126.dp)
+                                height = ConstraintDimension.Fixed(30.dp)
+                            },
+                    ) {
+                        Box(contentAlignment = BoxAlignment.Center, modifier = Modifier.fillMaxSize()) {
+                            Text(text = "Middle Probe")
+                        }
+                    }
+                    Surface(
+                        variant = SurfaceVariant.Variant,
+                        modifier = Modifier
+                            .constrainAs(probeBottomRef) {
+                                bottomToTop(guideBottom)
+                                endToStart(guideEnd, margin = 6.dp)
+                                width = ConstraintDimension.Fixed(98.dp)
+                                height = ConstraintDimension.Fixed(30.dp)
+                            },
+                    ) {
+                        Box(contentAlignment = BoxAlignment.Center, modifier = Modifier.fillMaxSize()) {
+                            Text(text = "Bottom Probe")
+                        }
+                    }
+                    Surface(
+                        variant = SurfaceVariant.Default,
+                        modifier = Modifier
+                            .constrainAs(markerRef) {
+                                endToStart(startBarrier, margin = 8.dp)
+                                topToBottom(topBarrier, margin = 8.dp)
+                                bottomToTop(bottomBarrier, margin = 8.dp)
+                                width = ConstraintDimension.Fixed(112.dp)
+                                height = ConstraintDimension.Fixed(34.dp)
+                            }
+                            .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_HELPERS_FULL_MARKER),
+                    ) {
+                        Box(contentAlignment = BoxAlignment.Center, modifier = Modifier.fillMaxSize()) {
+                            Text(text = "Barrier Marker")
+                        }
+                    }
+                }
+                Text(
+                    text = if (constraintHelpersFullState.value) {
+                        "fraction 模式：Guideline=End/Top/Bottom fraction，Barrier margin 更大且 allowsGoneWidgets=true。"
+                    } else {
+                        "offset 模式：Guideline=End/Top/Bottom offset，Barrier margin 较小且 allowsGoneWidgets=false。"
+                    },
+                    style = UiTextStyle(fontSizeSp = 12.sp),
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier
+                        .margin(top = 6.dp)
+                        .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_HELPERS_FULL_STATUS),
+                )
+            }
+
+            "constraint_vertical_chain" -> ScenarioSection(
+                kind = ScenarioKind.Core,
+                title = "Vertical Chain",
+                subtitle = "覆盖 createVerticalChain 的 weights + bias + style。",
+            ) {
+                Button(
+                    text = if (constraintVerticalChainPackedState.value) "切到 SpreadInside" else "切到 Packed",
+                    variant = ButtonVariant.Outlined,
+                    modifier = Modifier
+                        .margin(bottom = 8.dp)
+                        .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_VERTICAL_CHAIN_TOGGLE),
+                    onClick = { constraintVerticalChainPackedState.value = !constraintVerticalChainPackedState.value },
+                )
+                ConstraintLayout(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(220.dp)
+                        .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                        .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                        .padding(12.dp)
+                        .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_VERTICAL_CHAIN_CONTAINER),
+                ) {
+                    val (topRef, middleRef, bottomRef) = createRefs("v-chain-top", "v-chain-middle", "v-chain-bottom")
+                    createVerticalChain(
+                        topRef,
+                        middleRef,
+                        bottomRef,
+                        weights = if (constraintVerticalChainPackedState.value) {
+                            listOf(1f, 2f, 1f)
+                        } else {
+                            listOf(1f, 1f, 1f)
+                        },
+                        style = if (constraintVerticalChainPackedState.value) {
+                            ConstraintChainStyle.Packed
+                        } else {
+                            ConstraintChainStyle.SpreadInside
+                        },
+                        bias = if (constraintVerticalChainPackedState.value) 0.3f else 0.5f,
+                    )
+                    Surface(
+                        variant = SurfaceVariant.Default,
+                        modifier = Modifier
+                            .constrainAs(topRef) {
+                                topToTop(parent)
+                                startToStart(parent)
+                                endToEnd(parent)
+                                width = ConstraintDimension.FillToConstraints
+                                height = ConstraintDimension.Fixed(42.dp)
+                            }
+                            .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_VERTICAL_CHAIN_TOP),
+                    ) {
+                        Box(contentAlignment = BoxAlignment.Center, modifier = Modifier.fillMaxSize()) {
+                            Text(text = "Top")
+                        }
+                    }
+                    Surface(
+                        variant = SurfaceVariant.Variant,
+                        modifier = Modifier
+                            .constrainAs(middleRef) {
+                                startToStart(parent)
+                                endToEnd(parent)
+                                width = ConstraintDimension.FillToConstraints
+                                height = ConstraintDimension.Fixed(42.dp)
+                            }
+                            .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_VERTICAL_CHAIN_MIDDLE),
+                    ) {
+                        Box(contentAlignment = BoxAlignment.Center, modifier = Modifier.fillMaxSize()) {
+                            Text(text = "Middle")
+                        }
+                    }
+                    Surface(
+                        variant = SurfaceVariant.Default,
+                        modifier = Modifier
+                            .constrainAs(bottomRef) {
+                                bottomToBottom(parent)
+                                startToStart(parent)
+                                endToEnd(parent)
+                                width = ConstraintDimension.FillToConstraints
+                                height = ConstraintDimension.Fixed(42.dp)
+                            }
+                            .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_VERTICAL_CHAIN_BOTTOM),
+                    ) {
+                        Box(contentAlignment = BoxAlignment.Center, modifier = Modifier.fillMaxSize()) {
+                            Text(text = "Bottom")
+                        }
+                    }
+                }
+            }
+
+            "constraint_set_helpers_mirror" -> ScenarioSection(
+                kind = ScenarioKind.Visual,
+                title = "ConstraintSet Helper Mirror",
+                subtitle = "在 decoupled constraintSet 中复用 helper + chain，验证 builder 入口完整可用。",
+            ) {
+                Button(
+                    text = if (constraintSetHelpersAlternateState.value) "切回横向 helper-set" else "切到纵向 helper-set",
+                    variant = ButtonVariant.Outlined,
+                    modifier = Modifier
+                        .margin(bottom = 8.dp)
+                        .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_SET_HELPERS_TOGGLE),
+                    onClick = { constraintSetHelpersAlternateState.value = !constraintSetHelpersAlternateState.value },
+                )
+                val helperSetHorizontal = constraintSet {
+                    val (aRef, bRef, cRef, markerRef) = createRefs("set-h-a", "set-h-b", "set-h-c", "set-marker")
+                    createHorizontalChain(
+                        aRef,
+                        bRef,
+                        cRef,
+                        style = ConstraintChainStyle.SpreadInside,
+                        bias = 0.5f,
+                    )
+                    val endBarrier = createEndBarrier(
+                        aRef,
+                        bRef,
+                        cRef,
+                        id = "set-h-end-barrier",
+                        margin = 6.dp,
+                    )
+                    constrain("set-h-a") {
+                        topToTop(parent)
+                        bottomToBottom(parent)
+                        width = ConstraintDimension.Fixed(64.dp)
+                        height = ConstraintDimension.Fixed(36.dp)
+                    }
+                    constrain("set-h-b") {
+                        topToTop(parent)
+                        bottomToBottom(parent)
+                        width = ConstraintDimension.Fixed(64.dp)
+                        height = ConstraintDimension.Fixed(36.dp)
+                    }
+                    constrain("set-h-c") {
+                        topToTop(parent)
+                        bottomToBottom(parent)
+                        width = ConstraintDimension.Fixed(64.dp)
+                        height = ConstraintDimension.Fixed(36.dp)
+                    }
+                    constrain("set-marker") {
+                        startToEnd(endBarrier, margin = 8.dp)
+                        topToTop(parent)
+                        width = ConstraintDimension.Fixed(92.dp)
+                        height = ConstraintDimension.Fixed(36.dp)
+                    }
+                }
+                val helperSetVertical = constraintSet {
+                    val (aRef, bRef, cRef, markerRef) = createRefs("set-h-a", "set-h-b", "set-h-c", "set-marker")
+                    createVerticalChain(
+                        aRef,
+                        bRef,
+                        cRef,
+                        style = ConstraintChainStyle.Packed,
+                        bias = 0.22f,
+                    )
+                    val topBarrier = createTopBarrier(
+                        aRef,
+                        bRef,
+                        cRef,
+                        id = "set-v-top-barrier",
+                        margin = 6.dp,
+                    )
+                    constrain("set-h-a") {
+                        startToStart(parent)
+                        endToEnd(parent)
+                        width = ConstraintDimension.Fixed(92.dp)
+                        height = ConstraintDimension.Fixed(34.dp)
+                    }
+                    constrain("set-h-b") {
+                        startToStart(parent)
+                        endToEnd(parent)
+                        width = ConstraintDimension.Fixed(92.dp)
+                        height = ConstraintDimension.Fixed(34.dp)
+                    }
+                    constrain("set-h-c") {
+                        startToStart(parent)
+                        endToEnd(parent)
+                        width = ConstraintDimension.Fixed(92.dp)
+                        height = ConstraintDimension.Fixed(34.dp)
+                    }
+                    constrain("set-marker") {
+                        topToBottom(topBarrier, margin = 8.dp)
+                        startToStart(parent)
+                        endToEnd(parent)
+                        width = ConstraintDimension.Fixed(126.dp)
+                        height = ConstraintDimension.Fixed(34.dp)
+                    }
+                }
+                ConstraintLayout(
+                    constraintSet = if (constraintSetHelpersAlternateState.value) helperSetVertical else helperSetHorizontal,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(172.dp)
+                        .backgroundColor(SurfaceDefaults.backgroundColor())
+                        .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                        .padding(12.dp)
+                        .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_SET_HELPERS_CONTAINER),
+                ) {
+                    Surface(
+                        variant = SurfaceVariant.Default,
+                        modifier = Modifier.layoutId("set-h-a").padding(horizontal = 8.dp, vertical = 6.dp),
+                    ) {
+                        Text(text = "A")
+                    }
+                    Surface(
+                        variant = SurfaceVariant.Variant,
+                        modifier = Modifier.layoutId("set-h-b").padding(horizontal = 8.dp, vertical = 6.dp),
+                    ) {
+                        Text(text = "B")
+                    }
+                    Surface(
+                        variant = SurfaceVariant.Default,
+                        modifier = Modifier.layoutId("set-h-c").padding(horizontal = 8.dp, vertical = 6.dp),
+                    ) {
+                        Text(text = "C")
+                    }
+                    Surface(
+                        variant = SurfaceVariant.Variant,
+                        modifier = Modifier
+                            .layoutId("set-marker")
+                            .padding(horizontal = 8.dp, vertical = 6.dp)
+                            .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_SET_HELPERS_MARKER),
+                    ) {
+                        Text(text = if (constraintSetHelpersAlternateState.value) "vertical helper-set" else "horizontal helper-set")
+                    }
+                }
+                Text(
+                    text = if (constraintSetHelpersAlternateState.value) {
+                        "ConstraintSet(B): createVerticalChain + createTopBarrier 生效。"
+                    } else {
+                        "ConstraintSet(A): createHorizontalChain + createEndBarrier 生效。"
+                    },
+                    style = UiTextStyle(fontSizeSp = 12.sp),
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier
+                        .margin(top = 6.dp)
+                        .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_SET_HELPERS_STATUS),
+                )
+            }
+
             "constraint_virtual_helpers" -> ScenarioSection(
                 kind = ScenarioKind.Visual,
                 title = "Virtual Helpers",
@@ -919,13 +1537,14 @@ internal fun UiTreeBuilder.LayoutPage(
                     "增减 FlowRow 标签数量，确认自动换行正确。",
                     "上下滑动 ScrollableColumn，确认滚动流畅。",
                     "左右滑动 ScrollableRow，确认横向滚动正常。",
-                    "切到约束页，确认 anchors/guideline/barrier/chain/constraintSet/virtual helpers 场景都可见且布局关系正确。",
+                    "切到约束页，按分区验证 API 覆盖矩阵：Anchor Advanced、Dimension Advanced、Guideline+Barrier Full、Vertical Chain、ConstraintSet Helper Mirror、Virtual Helpers。",
+                    "切换约束场景中的 toggle 按钮，确认状态文案、关键 marker、位置/尺寸关系有可见变化。",
                 ),
                 expected = listOf(
                     "线性容器默认子项不会意外扩展成整行。",
                     "FlowRow/FlowColumn 自动换行/换列，spacing 均匀。",
                     "ScrollableColumn/ScrollableRow 滚动流畅无卡顿。",
-                    "ConstraintLayout 场景切换后布局即时刷新，无崩溃与错位；Virtual Helpers 状态切换可见且稳定。",
+                    "ConstraintLayout 全部业务 API 在 demo 中均有可见锚点；场景切换后布局即时刷新，无崩溃与错位。",
                 ),
             )
         }
