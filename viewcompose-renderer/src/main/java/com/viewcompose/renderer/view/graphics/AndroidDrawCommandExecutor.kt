@@ -195,13 +195,19 @@ internal object AndroidDrawCommandExecutor {
                 }
             }
             is Drawable -> {
-                val prevBounds = source.bounds
+                val prevBounds = android.graphics.Rect(source.bounds)
                 if (dstRect != null) {
                     source.bounds = dstRect
                 } else {
                     source.setBounds(0, 0, command.image.width, command.image.height)
                 }
+                val layerBounds = RectF(source.bounds)
+                val checkpoint = canvas.saveLayer(
+                    layerBounds,
+                    command.paint.toDrawableCompositePaint(),
+                )
                 source.draw(canvas)
+                canvas.restoreToCount(checkpoint)
                 source.bounds = prevBounds
             }
         }
@@ -247,6 +253,16 @@ internal object AndroidDrawCommandExecutor {
             setBlendModeCompat(this@toAndroidPaint.blendMode)
             colorFilter = this@toAndroidPaint.colorFilter.toAndroidColorFilter()
             applyImageFilter(this@toAndroidPaint.imageFilter)
+        }
+    }
+
+    private fun DrawPaint.toDrawableCompositePaint(): Paint {
+        return Paint().apply {
+            isAntiAlias = antiAlias
+            alpha = (this@toDrawableCompositePaint.alpha.coerceIn(0f, 1f) * 255).toInt()
+            setBlendModeCompat(this@toDrawableCompositePaint.blendMode)
+            colorFilter = this@toDrawableCompositePaint.colorFilter.toAndroidColorFilter()
+            applyImageFilter(this@toDrawableCompositePaint.imageFilter)
         }
     }
 
