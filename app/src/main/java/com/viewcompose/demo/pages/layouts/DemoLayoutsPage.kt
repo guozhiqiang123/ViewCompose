@@ -713,80 +713,15 @@ internal fun UiTreeBuilder.LayoutPage(
                         .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_TOGGLE),
                     onClick = { constraintVirtualAlternateState.value = !constraintVirtualAlternateState.value },
                 )
-                val virtualSet = constraintSet {
-                    val titleRef = createRef("title")
-                    val flowRef = createRef("flow-helper")
-                    val placeholderRef = createRef("placeholder-helper")
-                    val statusRef = createRef("status")
-                    constrain("title") {
-                        topToTop(parent)
-                        startToStart(parent)
-                    }
-                    constrain("flow-helper") {
-                        topToBottom(titleRef, margin = 8.dp)
-                        startToStart(parent)
-                        endToEnd(parent)
-                        width = ConstraintDimension.FillToConstraints
-                    }
-                    constrain("placeholder-helper") {
-                        topToBottom(flowRef, margin = 8.dp)
-                        startToStart(parent)
-                        endToEnd(parent)
-                        width = ConstraintDimension.FillToConstraints
-                        height = ConstraintDimension.Fixed(42.dp)
-                    }
-                    constrain("status") {
-                        topToBottom(placeholderRef, margin = 8.dp)
-                        startToStart(parent)
-                        endToEnd(parent)
-                        width = ConstraintDimension.FillToConstraints
-                    }
-                }
-                ConstraintLayout(
-                    constraintSet = virtualSet,
+                Column(
+                    spacing = 10.dp,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(264.dp)
                         .backgroundColor(SurfaceDefaults.variantBackgroundColor())
                         .cornerRadius(SurfaceDefaults.cardCornerRadius())
                         .padding(12.dp)
                         .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_CONTAINER),
                 ) {
-                    val (chipA, chipB, chipC, chipD) = createRefs("chip-a", "chip-b", "chip-c", "chip-d")
-                    createFlow(
-                        chipA,
-                        chipB,
-                        chipC,
-                        chipD,
-                        id = "flow-helper",
-                        horizontalGap = if (constraintVirtualAlternateState.value) 14.dp else 8.dp,
-                        verticalGap = if (constraintVirtualAlternateState.value) 14.dp else 8.dp,
-                        maxElementsWrap = if (constraintVirtualAlternateState.value) 1 else 2,
-                    )
-                    createGroup(
-                        chipB,
-                        chipC,
-                        id = "group-helper",
-                        visibility = if (constraintVirtualAlternateState.value) {
-                            ConstraintHelperVisibility.Gone
-                        } else {
-                            ConstraintHelperVisibility.Visible
-                        },
-                    )
-                    createLayer(
-                        chipA,
-                        chipD,
-                        id = "layer-helper",
-                        rotation = if (constraintVirtualAlternateState.value) 30f else 0f,
-                        scaleX = if (constraintVirtualAlternateState.value) 1.16f else 1f,
-                        scaleY = if (constraintVirtualAlternateState.value) 1.16f else 1f,
-                        translationX = if (constraintVirtualAlternateState.value) 24f else 0f,
-                        translationY = if (constraintVirtualAlternateState.value) -10f else 0f,
-                    )
-                    createPlaceholder(
-                        content = if (constraintVirtualAlternateState.value) chipA else chipD,
-                        id = "placeholder-helper",
-                    )
                     Text(
                         text = if (constraintVirtualAlternateState.value) {
                             "模式 B：Flow 单列 · Group 隐藏 · Placeholder=A · Layer 强变换"
@@ -794,53 +729,183 @@ internal fun UiTreeBuilder.LayoutPage(
                             "模式 A：Flow 双列 · Group 显示 · Placeholder=D · Layer 中性"
                         },
                         style = UiTextStyle(fontSizeSp = 14.sp),
-                        modifier = Modifier.layoutId("title"),
                     )
-                    Surface(
-                        variant = SurfaceVariant.Default,
-                        modifier = Modifier
-                            .layoutId("chip-a")
-                            .padding(horizontal = 12.dp, vertical = 8.dp)
-                            .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_CHIP_A),
-                    ) {
-                        Text(text = "A (Layer+Placeholder)")
+
+                    val flowSet = constraintSet {
+                        val flowRef = createRef("flow-helper")
+                        constrain("flow-helper") {
+                            topToTop(parent)
+                            startToStart(parent)
+                            endToEnd(parent)
+                            width = ConstraintDimension.FillToConstraints
+                        }
                     }
-                    Surface(
-                        variant = SurfaceVariant.Variant,
-                        modifier = Modifier
-                            .layoutId("chip-b")
-                            .padding(horizontal = 12.dp, vertical = 8.dp)
-                            .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_GROUP_MEMBER),
+                    ConstraintLayout(
+                        constraintSet = flowSet,
+                        modifier = Modifier.fillMaxWidth().height(78.dp),
                     ) {
-                        Text(text = "B (Group)")
+                        val (flowA, flowB, flowC, flowD) = createRefs("flow-a", "flow-b", "flow-c", "flow-d")
+                        createFlow(
+                            flowA,
+                            flowB,
+                            flowC,
+                            flowD,
+                            id = "flow-helper",
+                            horizontalGap = if (constraintVirtualAlternateState.value) 14.dp else 8.dp,
+                            verticalGap = if (constraintVirtualAlternateState.value) 14.dp else 8.dp,
+                            maxElementsWrap = if (constraintVirtualAlternateState.value) 1 else 2,
+                        )
+                        Surface(variant = SurfaceVariant.Default, modifier = Modifier.layoutId("flow-a").padding(horizontal = 10.dp, vertical = 6.dp)) { Text("Flow-1") }
+                        Surface(variant = SurfaceVariant.Variant, modifier = Modifier.layoutId("flow-b").padding(horizontal = 10.dp, vertical = 6.dp)) { Text("Flow-2") }
+                        Surface(variant = SurfaceVariant.Default, modifier = Modifier.layoutId("flow-c").padding(horizontal = 10.dp, vertical = 6.dp)) { Text("Flow-3") }
+                        Surface(variant = SurfaceVariant.Variant, modifier = Modifier.layoutId("flow-d").padding(horizontal = 10.dp, vertical = 6.dp)) { Text("Flow-4") }
                     }
-                    Surface(
-                        variant = SurfaceVariant.Default,
-                        modifier = Modifier
-                            .layoutId("chip-c")
-                            .padding(horizontal = 12.dp, vertical = 8.dp),
+
+                    val groupSet = constraintSet {
+                        constrain("group-a") {
+                            topToTop(parent)
+                            startToStart(parent)
+                        }
+                        constrain("group-b") {
+                            topToTop(parent)
+                            endToEnd(parent)
+                        }
+                    }
+                    ConstraintLayout(
+                        constraintSet = groupSet,
+                        modifier = Modifier.fillMaxWidth().height(42.dp),
                     ) {
-                        Text(text = "C (Group)")
+                        val (groupA, groupB) = createRefs("group-a", "group-b")
+                        createGroup(
+                            groupA,
+                            groupB,
+                            id = "group-helper",
+                            visibility = if (constraintVirtualAlternateState.value) {
+                                ConstraintHelperVisibility.Gone
+                            } else {
+                                ConstraintHelperVisibility.Visible
+                            },
+                        )
+                        Surface(
+                            variant = SurfaceVariant.Variant,
+                            modifier = Modifier
+                                .layoutId("group-a")
+                                .padding(horizontal = 10.dp, vertical = 6.dp)
+                                .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_GROUP_MEMBER),
+                        ) {
+                            Text(text = "Group-A")
+                        }
+                        Surface(
+                            variant = SurfaceVariant.Default,
+                            modifier = Modifier.layoutId("group-b").padding(horizontal = 10.dp, vertical = 6.dp),
+                        ) {
+                            Text(text = "Group-B")
+                        }
                     }
-                    Surface(
-                        variant = SurfaceVariant.Variant,
-                        modifier = Modifier
-                            .layoutId("chip-d")
-                            .padding(horizontal = 12.dp, vertical = 8.dp),
+
+                    val layerSet = constraintSet {
+                        constrain("layer-a") {
+                            topToTop(parent)
+                            startToStart(parent)
+                        }
+                        constrain("layer-b") {
+                            topToTop(parent)
+                            endToEnd(parent)
+                        }
+                    }
+                    ConstraintLayout(
+                        constraintSet = layerSet,
+                        modifier = Modifier.fillMaxWidth().height(62.dp),
                     ) {
-                        Text(text = "D (Placeholder)")
+                        val (layerA, layerB) = createRefs("layer-a", "layer-b")
+                        createLayer(
+                            layerA,
+                            layerB,
+                            id = "layer-helper",
+                            rotation = if (constraintVirtualAlternateState.value) 30f else 0f,
+                            scaleX = if (constraintVirtualAlternateState.value) 1.16f else 1f,
+                            scaleY = if (constraintVirtualAlternateState.value) 1.16f else 1f,
+                            translationX = if (constraintVirtualAlternateState.value) 24f else 0f,
+                            translationY = if (constraintVirtualAlternateState.value) -10f else 0f,
+                        )
+                        Surface(
+                            variant = SurfaceVariant.Default,
+                            modifier = Modifier
+                                .layoutId("layer-a")
+                                .padding(horizontal = 10.dp, vertical = 6.dp)
+                                .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_CHIP_A),
+                        ) {
+                            Text(text = "Layer-A")
+                        }
+                        Surface(
+                            variant = SurfaceVariant.Variant,
+                            modifier = Modifier.layoutId("layer-b").padding(horizontal = 10.dp, vertical = 6.dp),
+                        ) {
+                            Text(text = "Layer-B")
+                        }
                     }
+
+                    val placeholderSet = constraintSet {
+                        val hostRef = createRef("placeholder-helper")
+                        constrain("placeholder-a") {
+                            topToTop(parent)
+                            startToStart(parent)
+                        }
+                        constrain("placeholder-b") {
+                            topToTop(parent)
+                            endToEnd(parent)
+                        }
+                        constrain("placeholder-helper") {
+                            topToBottom(createRef("placeholder-a"), margin = 6.dp)
+                            startToStart(parent)
+                            endToEnd(parent)
+                            width = ConstraintDimension.FillToConstraints
+                            height = ConstraintDimension.Fixed(38.dp)
+                        }
+                        constrain("placeholder-note") {
+                            topToBottom(hostRef, margin = 4.dp)
+                            startToStart(parent)
+                        }
+                    }
+                    ConstraintLayout(
+                        constraintSet = placeholderSet,
+                        modifier = Modifier.fillMaxWidth().height(88.dp),
+                    ) {
+                        val placeholderA = createRef("placeholder-a")
+                        val placeholderB = createRef("placeholder-b")
+                        createPlaceholder(
+                            content = if (constraintVirtualAlternateState.value) placeholderA else placeholderB,
+                            id = "placeholder-helper",
+                        )
+                        Surface(
+                            variant = SurfaceVariant.Default,
+                            modifier = Modifier.layoutId("placeholder-a").padding(horizontal = 8.dp, vertical = 4.dp),
+                        ) {
+                            Text(text = "Placeholder-A")
+                        }
+                        Surface(
+                            variant = SurfaceVariant.Variant,
+                            modifier = Modifier.layoutId("placeholder-b").padding(horizontal = 8.dp, vertical = 4.dp),
+                        ) {
+                            Text(text = "Placeholder-B")
+                        }
+                        Surface(
+                            variant = SurfaceVariant.Default,
+                            modifier = Modifier.layoutId("placeholder-note").padding(horizontal = 8.dp, vertical = 4.dp),
+                        ) {
+                            Text(text = if (constraintVirtualAlternateState.value) "当前承载 A" else "当前承载 B")
+                        }
+                    }
+
                     Text(
                         text = if (constraintVirtualAlternateState.value) {
-                            "Group: hidden(B/C) · Placeholder: A · Layer: rotate+scale+translate · Flow: single column"
+                            "Group: hidden(A/B) · Placeholder: A · Layer: rotate+scale+translate · Flow: single column"
                         } else {
-                            "Group: visible(B/C) · Placeholder: D · Layer: neutral · Flow: 2-column wrap"
+                            "Group: visible(A/B) · Placeholder: B · Layer: neutral · Flow: 2-column wrap"
                         },
                         style = UiTextStyle(fontSizeSp = 12.sp),
                         color = TextDefaults.secondaryColor(),
-                        modifier = Modifier
-                            .layoutId("status")
-                            .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_STATUS),
+                        modifier = Modifier.testTag(DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_STATUS),
                     )
                 }
             }
