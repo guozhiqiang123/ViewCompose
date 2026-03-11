@@ -6,8 +6,11 @@ import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.node.NodeType
 import com.viewcompose.ui.node.spec.ConstraintChainOrientation
 import com.viewcompose.ui.node.spec.ConstraintChainStyle
+import com.viewcompose.ui.node.spec.ConstraintFlowOrientation
+import com.viewcompose.ui.node.spec.ConstraintFlowWrapMode
 import com.viewcompose.ui.node.spec.ConstraintGuidelineDirection
 import com.viewcompose.ui.node.spec.ConstraintGuidelinePosition
+import com.viewcompose.ui.node.spec.ConstraintHelperVisibility
 import com.viewcompose.ui.node.spec.ConstraintLayoutNodeProps
 import com.viewcompose.ui.node.spec.ConstraintSetSpec
 import com.viewcompose.widget.core.Text
@@ -111,6 +114,79 @@ class ConstraintLayoutDslTest {
         assertEquals(1, set.helpers.chains.size)
         assertEquals("guide", set.helpers.guidelines.single().id)
         assertEquals(listOf(1f, 2f), set.helpers.chains.single().weights)
+    }
+
+    @Test
+    fun `constraint layout emits virtual helper metadata`() {
+        val tree = buildVNodeTree {
+            ConstraintLayout {
+                val (a, b, c) = createRefs("a", "b", "c")
+                createFlow(
+                    a,
+                    b,
+                    c,
+                    id = "flow-main",
+                    orientation = ConstraintFlowOrientation.Vertical,
+                    wrapMode = ConstraintFlowWrapMode.Chain,
+                    horizontalGap = 6,
+                    verticalGap = 8,
+                    maxElementsWrap = 2,
+                )
+                createGroup(
+                    a,
+                    b,
+                    id = "group-main",
+                    visibility = ConstraintHelperVisibility.Gone,
+                )
+                createLayer(
+                    a,
+                    b,
+                    id = "layer-main",
+                    rotation = 12f,
+                    translationX = 14f,
+                )
+                createPlaceholder(
+                    content = c,
+                    id = "placeholder-main",
+                    emptyVisibility = ConstraintHelperVisibility.Invisible,
+                )
+                Text(text = "A", modifier = Modifier.constrainAs(a) { startToStart(parent) })
+                Text(text = "B", modifier = Modifier.constrainAs(b) { topToBottom(a) })
+                Text(text = "C", modifier = Modifier.constrainAs(c) { topToBottom(b) })
+            }
+        }
+
+        val spec = tree.single().spec as ConstraintLayoutNodeProps
+        assertEquals(1, spec.helpers.flows.size)
+        assertEquals("flow-main", spec.helpers.flows.single().id)
+        assertEquals(ConstraintFlowOrientation.Vertical, spec.helpers.flows.single().orientation)
+        assertEquals(ConstraintFlowWrapMode.Chain, spec.helpers.flows.single().wrapMode)
+        assertEquals(1, spec.helpers.groups.size)
+        assertEquals(ConstraintHelperVisibility.Gone, spec.helpers.groups.single().visibility)
+        assertEquals(1, spec.helpers.layers.size)
+        assertEquals(12f, spec.helpers.layers.single().rotation)
+        assertEquals(1, spec.helpers.placeholders.size)
+        assertEquals("c", spec.helpers.placeholders.single().contentId)
+    }
+
+    @Test
+    fun `constraintSet collects virtual helper metadata`() {
+        val set = constraintSet {
+            val (a, b) = createRefs("a", "b")
+            createFlow(a, b, id = "flow-set")
+            createGroup(a, b, id = "group-set")
+            createLayer(a, b, id = "layer-set", scaleX = 1.2f, scaleY = 0.8f)
+            createPlaceholder(content = b, id = "placeholder-set")
+            constrain("a") {
+                startToStart(parent)
+                topToTop(parent)
+            }
+        }
+
+        assertEquals(listOf("flow-set"), set.helpers.flows.map { it.id })
+        assertEquals(listOf("group-set"), set.helpers.groups.map { it.id })
+        assertEquals(listOf("layer-set"), set.helpers.layers.map { it.id })
+        assertEquals(listOf("placeholder-set"), set.helpers.placeholders.map { it.id })
     }
 
     @Test

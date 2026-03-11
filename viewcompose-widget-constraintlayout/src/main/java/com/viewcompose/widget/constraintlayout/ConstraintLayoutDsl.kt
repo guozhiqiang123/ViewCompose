@@ -14,12 +14,21 @@ import com.viewcompose.ui.node.spec.ConstraintChainSpec
 import com.viewcompose.ui.node.spec.ConstraintChainStyle
 import com.viewcompose.ui.node.spec.ConstraintCircleSpec
 import com.viewcompose.ui.node.spec.ConstraintDimension
+import com.viewcompose.ui.node.spec.ConstraintFlowHorizontalAlign
+import com.viewcompose.ui.node.spec.ConstraintFlowOrientation
+import com.viewcompose.ui.node.spec.ConstraintFlowSpec
+import com.viewcompose.ui.node.spec.ConstraintFlowVerticalAlign
+import com.viewcompose.ui.node.spec.ConstraintFlowWrapMode
 import com.viewcompose.ui.node.spec.ConstraintGuidelineDirection
 import com.viewcompose.ui.node.spec.ConstraintGuidelinePosition
 import com.viewcompose.ui.node.spec.ConstraintGuidelineSpec
+import com.viewcompose.ui.node.spec.ConstraintGroupSpec
+import com.viewcompose.ui.node.spec.ConstraintHelperVisibility
 import com.viewcompose.ui.node.spec.ConstraintHelpersSpec
 import com.viewcompose.ui.node.spec.ConstraintItemSpec
+import com.viewcompose.ui.node.spec.ConstraintLayerSpec
 import com.viewcompose.ui.node.spec.ConstraintLayoutNodeProps
+import com.viewcompose.ui.node.spec.ConstraintPlaceholderSpec
 import com.viewcompose.ui.node.spec.ConstraintSetSpec
 import com.viewcompose.widget.core.UiTreeBuilder
 
@@ -45,6 +54,10 @@ private class MutableConstraintHelpersCollector {
     val guidelines = mutableListOf<ConstraintGuidelineSpec>()
     val barriers = mutableListOf<ConstraintBarrierSpec>()
     val chains = mutableListOf<ConstraintChainSpec>()
+    val flows = mutableListOf<ConstraintFlowSpec>()
+    val groups = mutableListOf<ConstraintGroupSpec>()
+    val layers = mutableListOf<ConstraintLayerSpec>()
+    val placeholders = mutableListOf<ConstraintPlaceholderSpec>()
 
     fun allocId(prefix: String): String {
         val id = "$prefix-${nextAutoId}"
@@ -57,6 +70,10 @@ private class MutableConstraintHelpersCollector {
             guidelines = guidelines,
             barriers = barriers,
             chains = chains,
+            flows = flows,
+            groups = groups,
+            layers = layers,
+            placeholders = placeholders,
         )
     }
 }
@@ -544,6 +561,135 @@ fun ConstraintLayoutScope.createBottomBarrier(
     return registerBarrier(id, ConstraintBarrierDirection.Bottom, refs, margin, allowsGoneWidgets)
 }
 
+fun ConstraintLayoutScope.createFlow(
+    vararg refs: ConstraintReference,
+    id: String = allocHelperId("flow"),
+    orientation: ConstraintFlowOrientation = ConstraintFlowOrientation.Horizontal,
+    wrapMode: ConstraintFlowWrapMode = ConstraintFlowWrapMode.None,
+    horizontalGap: Int = 0,
+    verticalGap: Int = 0,
+    horizontalStyle: ConstraintChainStyle = ConstraintChainStyle.Spread,
+    verticalStyle: ConstraintChainStyle = ConstraintChainStyle.Spread,
+    firstHorizontalStyle: ConstraintChainStyle? = null,
+    firstVerticalStyle: ConstraintChainStyle? = null,
+    lastHorizontalStyle: ConstraintChainStyle? = null,
+    lastVerticalStyle: ConstraintChainStyle? = null,
+    horizontalBias: Float? = null,
+    verticalBias: Float? = null,
+    firstHorizontalBias: Float? = null,
+    firstVerticalBias: Float? = null,
+    lastHorizontalBias: Float? = null,
+    lastVerticalBias: Float? = null,
+    horizontalAlign: ConstraintFlowHorizontalAlign = ConstraintFlowHorizontalAlign.Center,
+    verticalAlign: ConstraintFlowVerticalAlign = ConstraintFlowVerticalAlign.Center,
+    maxElementsWrap: Int = -1,
+    padding: Int = 0,
+    paddingStart: Int = 0,
+    paddingEnd: Int = 0,
+    paddingTop: Int = 0,
+    paddingBottom: Int = 0,
+): ConstraintReference {
+    require(refs.isNotEmpty()) {
+        "Flow helper requires at least one referenced id."
+    }
+    val context = requireConstraintContext()
+    context.helpers.flows += ConstraintFlowSpec(
+        id = id,
+        referencedIds = refs.map { ref -> ref.id },
+        orientation = orientation,
+        wrapMode = wrapMode,
+        horizontalGap = horizontalGap,
+        verticalGap = verticalGap,
+        horizontalStyle = horizontalStyle,
+        verticalStyle = verticalStyle,
+        firstHorizontalStyle = firstHorizontalStyle,
+        firstVerticalStyle = firstVerticalStyle,
+        lastHorizontalStyle = lastHorizontalStyle,
+        lastVerticalStyle = lastVerticalStyle,
+        horizontalBias = horizontalBias,
+        verticalBias = verticalBias,
+        firstHorizontalBias = firstHorizontalBias,
+        firstVerticalBias = firstVerticalBias,
+        lastHorizontalBias = lastHorizontalBias,
+        lastVerticalBias = lastVerticalBias,
+        horizontalAlign = horizontalAlign,
+        verticalAlign = verticalAlign,
+        maxElementsWrap = maxElementsWrap,
+        padding = padding,
+        paddingStart = paddingStart,
+        paddingEnd = paddingEnd,
+        paddingTop = paddingTop,
+        paddingBottom = paddingBottom,
+    )
+    return ConstraintReference(id)
+}
+
+fun ConstraintLayoutScope.createGroup(
+    vararg refs: ConstraintReference,
+    id: String = allocHelperId("group"),
+    visibility: ConstraintHelperVisibility = ConstraintHelperVisibility.Visible,
+    elevation: Float = 0f,
+): ConstraintReference {
+    require(refs.isNotEmpty()) {
+        "Group helper requires at least one referenced id."
+    }
+    val context = requireConstraintContext()
+    context.helpers.groups += ConstraintGroupSpec(
+        id = id,
+        referencedIds = refs.map { ref -> ref.id },
+        visibility = visibility,
+        elevation = elevation,
+    )
+    return ConstraintReference(id)
+}
+
+fun ConstraintLayoutScope.createLayer(
+    vararg refs: ConstraintReference,
+    id: String = allocHelperId("layer"),
+    visibility: ConstraintHelperVisibility = ConstraintHelperVisibility.Visible,
+    elevation: Float = 0f,
+    rotation: Float = 0f,
+    scaleX: Float = 1f,
+    scaleY: Float = 1f,
+    translationX: Float = 0f,
+    translationY: Float = 0f,
+    pivotX: Float? = null,
+    pivotY: Float? = null,
+): ConstraintReference {
+    require(refs.isNotEmpty()) {
+        "Layer helper requires at least one referenced id."
+    }
+    val context = requireConstraintContext()
+    context.helpers.layers += ConstraintLayerSpec(
+        id = id,
+        referencedIds = refs.map { ref -> ref.id },
+        visibility = visibility,
+        elevation = elevation,
+        rotation = rotation,
+        scaleX = scaleX,
+        scaleY = scaleY,
+        translationX = translationX,
+        translationY = translationY,
+        pivotX = pivotX,
+        pivotY = pivotY,
+    )
+    return ConstraintReference(id)
+}
+
+fun ConstraintLayoutScope.createPlaceholder(
+    content: ConstraintReference? = null,
+    id: String = allocHelperId("placeholder"),
+    emptyVisibility: ConstraintHelperVisibility = ConstraintHelperVisibility.Invisible,
+): ConstraintReference {
+    val context = requireConstraintContext()
+    context.helpers.placeholders += ConstraintPlaceholderSpec(
+        id = id,
+        contentId = content?.id,
+        emptyVisibility = emptyVisibility,
+    )
+    return ConstraintReference(id)
+}
+
 private fun ConstraintLayoutScope.registerChain(
     orientation: ConstraintChainOrientation,
     refs: Array<out ConstraintReference>,
@@ -767,6 +913,131 @@ class ConstraintSetBuilder internal constructor() {
             referencedIds = refs.map { ref -> ref.id },
             margin = margin,
             allowsGoneWidgets = allowsGoneWidgets,
+        )
+        return ConstraintReference(id)
+    }
+
+    fun createFlow(
+        vararg refs: ConstraintReference,
+        id: String = helpers.allocId("flow"),
+        orientation: ConstraintFlowOrientation = ConstraintFlowOrientation.Horizontal,
+        wrapMode: ConstraintFlowWrapMode = ConstraintFlowWrapMode.None,
+        horizontalGap: Int = 0,
+        verticalGap: Int = 0,
+        horizontalStyle: ConstraintChainStyle = ConstraintChainStyle.Spread,
+        verticalStyle: ConstraintChainStyle = ConstraintChainStyle.Spread,
+        firstHorizontalStyle: ConstraintChainStyle? = null,
+        firstVerticalStyle: ConstraintChainStyle? = null,
+        lastHorizontalStyle: ConstraintChainStyle? = null,
+        lastVerticalStyle: ConstraintChainStyle? = null,
+        horizontalBias: Float? = null,
+        verticalBias: Float? = null,
+        firstHorizontalBias: Float? = null,
+        firstVerticalBias: Float? = null,
+        lastHorizontalBias: Float? = null,
+        lastVerticalBias: Float? = null,
+        horizontalAlign: ConstraintFlowHorizontalAlign = ConstraintFlowHorizontalAlign.Center,
+        verticalAlign: ConstraintFlowVerticalAlign = ConstraintFlowVerticalAlign.Center,
+        maxElementsWrap: Int = -1,
+        padding: Int = 0,
+        paddingStart: Int = 0,
+        paddingEnd: Int = 0,
+        paddingTop: Int = 0,
+        paddingBottom: Int = 0,
+    ): ConstraintReference {
+        require(refs.isNotEmpty()) {
+            "Flow helper requires at least one referenced id."
+        }
+        helpers.flows += ConstraintFlowSpec(
+            id = id,
+            referencedIds = refs.map { ref -> ref.id },
+            orientation = orientation,
+            wrapMode = wrapMode,
+            horizontalGap = horizontalGap,
+            verticalGap = verticalGap,
+            horizontalStyle = horizontalStyle,
+            verticalStyle = verticalStyle,
+            firstHorizontalStyle = firstHorizontalStyle,
+            firstVerticalStyle = firstVerticalStyle,
+            lastHorizontalStyle = lastHorizontalStyle,
+            lastVerticalStyle = lastVerticalStyle,
+            horizontalBias = horizontalBias,
+            verticalBias = verticalBias,
+            firstHorizontalBias = firstHorizontalBias,
+            firstVerticalBias = firstVerticalBias,
+            lastHorizontalBias = lastHorizontalBias,
+            lastVerticalBias = lastVerticalBias,
+            horizontalAlign = horizontalAlign,
+            verticalAlign = verticalAlign,
+            maxElementsWrap = maxElementsWrap,
+            padding = padding,
+            paddingStart = paddingStart,
+            paddingEnd = paddingEnd,
+            paddingTop = paddingTop,
+            paddingBottom = paddingBottom,
+        )
+        return ConstraintReference(id)
+    }
+
+    fun createGroup(
+        vararg refs: ConstraintReference,
+        id: String = helpers.allocId("group"),
+        visibility: ConstraintHelperVisibility = ConstraintHelperVisibility.Visible,
+        elevation: Float = 0f,
+    ): ConstraintReference {
+        require(refs.isNotEmpty()) {
+            "Group helper requires at least one referenced id."
+        }
+        helpers.groups += ConstraintGroupSpec(
+            id = id,
+            referencedIds = refs.map { ref -> ref.id },
+            visibility = visibility,
+            elevation = elevation,
+        )
+        return ConstraintReference(id)
+    }
+
+    fun createLayer(
+        vararg refs: ConstraintReference,
+        id: String = helpers.allocId("layer"),
+        visibility: ConstraintHelperVisibility = ConstraintHelperVisibility.Visible,
+        elevation: Float = 0f,
+        rotation: Float = 0f,
+        scaleX: Float = 1f,
+        scaleY: Float = 1f,
+        translationX: Float = 0f,
+        translationY: Float = 0f,
+        pivotX: Float? = null,
+        pivotY: Float? = null,
+    ): ConstraintReference {
+        require(refs.isNotEmpty()) {
+            "Layer helper requires at least one referenced id."
+        }
+        helpers.layers += ConstraintLayerSpec(
+            id = id,
+            referencedIds = refs.map { ref -> ref.id },
+            visibility = visibility,
+            elevation = elevation,
+            rotation = rotation,
+            scaleX = scaleX,
+            scaleY = scaleY,
+            translationX = translationX,
+            translationY = translationY,
+            pivotX = pivotX,
+            pivotY = pivotY,
+        )
+        return ConstraintReference(id)
+    }
+
+    fun createPlaceholder(
+        content: ConstraintReference? = null,
+        id: String = helpers.allocId("placeholder"),
+        emptyVisibility: ConstraintHelperVisibility = ConstraintHelperVisibility.Invisible,
+    ): ConstraintReference {
+        helpers.placeholders += ConstraintPlaceholderSpec(
+            id = id,
+            contentId = content?.id,
+            emptyVisibility = emptyVisibility,
         )
         return ConstraintReference(id)
     }
