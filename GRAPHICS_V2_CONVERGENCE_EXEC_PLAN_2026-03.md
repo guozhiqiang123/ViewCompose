@@ -43,7 +43,7 @@
 - [x] Step 2: 修复 RoundRect 四角半径语义 + 回归
 - [x] Step 3: 修复 Drawable 分支 DrawPaint 生效 + 回归
 - [x] Step 4: 修复 ImageFilter Chain 生效路径 + 回归
-- [ ] Step 5: 文档同步（ARCHITECTURE/ROADMAP/PERFORMANCE/MODIFIER）
+- [x] Step 5: 文档同步（ARCHITECTURE/ROADMAP/PERFORMANCE/MODIFIER）
 - [ ] Step 6: 收口与归档
 
 ## Validation
@@ -58,6 +58,7 @@
 2. `fix: honor per-corner radii for draw round rect commands`
 3. `fix: apply DrawPaint compositing to drawable draw commands`
 4. `fix: support chained image blur filters in draw paint executor`
+5. `docs: align graphics v2 semantics across architecture roadmap performance and modifier docs`
 
 ## Blockers
 

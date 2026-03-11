@@ -18,7 +18,7 @@
 8. 背景资源支持 `Modifier.backgroundDrawableRes(resId)`；与 `backgroundColor` 同时存在时，drawable 优先；当同时存在 `cornerRadius` 时自动裁剪内容，`clip()` 仍可作为通用强制裁剪开关
 9. 内容尺寸动画支持 `Modifier.animateContentSize(...)`；renderer 会在 patch 前自动插入 `AnimatedSizeHost`，以“真实测量尺寸插值”参与父布局重排（非 graphicsLayer 视觉缩放）
 10. 约束 parent-data 支持 `Modifier.layoutId(...)`、`Modifier.constrainAs(...)`、`Modifier.constrain(...)`；仅对 `ConstraintLayout` 子节点生效
-11. 图形绘制 modifier 已接入：`Modifier.drawBehind`、`Modifier.drawWithContent`、`Modifier.drawWithCache`（以及短写 `draw/drawCache`）；执行顺序按 modifier 链稳定，`drawWithContent` 可显式控制内容透传
+11. 图形绘制 modifier 已接入：`Modifier.drawBehind`、`Modifier.drawWithContent`、`Modifier.drawWithCache`（以及短写 `draw/drawCache`）；执行顺序按 modifier 链稳定，`drawWithContent` 可显式控制内容透传；底层执行保证 `DrawRoundRect` 四角半径与 `Drawable + DrawPaint` 组合语义不丢失
 
 ## 3. 角色边界
 

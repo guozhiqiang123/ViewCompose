@@ -244,6 +244,9 @@ flowchart TD
 3. draw modifier 绘制顺序固定：`drawBehind` 在内容前，`drawWithContent` 显式控制内容绘制，多 draw modifier 按 modifier 链顺序稳定执行。
 4. `drawWithCache` 语义固定为“依赖变化才重建缓存命令”；禁止每帧重建缓存对象掩盖性能问题。
 5. Android 专属高阶图形能力（`RenderEffect`、`RuntimeShader`、`Drawable/Canvas` bridge）只能经 `host-android` 的 `AndroidGraphicsInterop` 暴露，禁止回流平台无关主链。
+6. `DrawRoundRect` 必须遵守四角半径语义：四角一致时走 `drawRoundRect` 快路径，非一致时走 `Path.addRoundRect`，禁止退回“只读 topLeft”实现。
+7. `DrawImage` 的 `Drawable` 分支必须应用 `DrawPaint` 组合语义（alpha/blend/colorFilter/imageFilter），并在绘制后恢复原始 `bounds`。
+8. `ImageFilterModel.Chain` 必须在执行层可生效；当前 `Blur + Chain` 路径采用递归合并半径（高斯方差累加）后下发到平台滤镜，禁止直接忽略 `Chain`。
 
 ## 5. 当前热点与风险
 
