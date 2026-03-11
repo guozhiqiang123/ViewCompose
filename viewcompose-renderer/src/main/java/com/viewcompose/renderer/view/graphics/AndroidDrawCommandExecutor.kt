@@ -29,6 +29,7 @@ import com.viewcompose.graphics.core.ImageFilterModel
 import com.viewcompose.graphics.core.PathCommand
 import com.viewcompose.graphics.core.PathFillType
 import com.viewcompose.graphics.core.PathModel
+import com.viewcompose.graphics.core.RoundRect
 import com.viewcompose.graphics.core.StrokeCap
 import com.viewcompose.graphics.core.StrokeJoin
 import com.viewcompose.graphics.core.TextStyle
@@ -93,17 +94,24 @@ internal object AndroidDrawCommandExecutor {
                     command.rect.bottom,
                     command.paint.toAndroidPaint(),
                 )
-                is DrawCommand.DrawRoundRect -> canvas.drawRoundRect(
-                    RectF(
+                is DrawCommand.DrawRoundRect -> {
+                    val rect = RectF(
                         command.roundRect.rect.left,
                         command.roundRect.rect.top,
                         command.roundRect.rect.right,
                         command.roundRect.rect.bottom,
-                    ),
-                    max(command.roundRect.topLeft.x, command.roundRect.topLeft.y),
-                    max(command.roundRect.topLeft.x, command.roundRect.topLeft.y),
-                    command.paint.toAndroidPaint(),
-                )
+                    )
+                    val paint = command.paint.toAndroidPaint()
+                    val radii = roundRectRadii(command.roundRect)
+                    if (radii.isUniformCornerRadii()) {
+                        canvas.drawRoundRect(rect, radii[0], radii[1], paint)
+                    } else {
+                        val path = Path().apply {
+                            addRoundRect(rect, radii, Path.Direction.CW)
+                        }
+                        canvas.drawPath(path, paint)
+                    }
+                }
                 is DrawCommand.DrawCircle -> canvas.drawCircle(
                     command.center.x,
                     command.center.y,
@@ -388,5 +396,30 @@ internal object AndroidDrawCommandExecutor {
         isFakeBoldText = style.isBold
         textSkewX = if (style.isItalic) -0.25f else 0f
         return this
+    }
+
+    internal fun roundRectRadii(roundRect: RoundRect): FloatArray {
+        return floatArrayOf(
+            roundRect.topLeft.x.coerceAtLeast(0f),
+            roundRect.topLeft.y.coerceAtLeast(0f),
+            roundRect.topRight.x.coerceAtLeast(0f),
+            roundRect.topRight.y.coerceAtLeast(0f),
+            roundRect.bottomRight.x.coerceAtLeast(0f),
+            roundRect.bottomRight.y.coerceAtLeast(0f),
+            roundRect.bottomLeft.x.coerceAtLeast(0f),
+            roundRect.bottomLeft.y.coerceAtLeast(0f),
+        )
+    }
+
+    private fun FloatArray.isUniformCornerRadii(): Boolean {
+        if (size != 8) return false
+        val x = this[0]
+        val y = this[1]
+        return this[2] == x &&
+            this[3] == y &&
+            this[4] == x &&
+            this[5] == y &&
+            this[6] == x &&
+            this[7] == y
     }
 }
