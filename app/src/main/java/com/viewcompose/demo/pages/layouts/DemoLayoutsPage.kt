@@ -16,7 +16,9 @@ import com.viewcompose.ui.modifier.margin
 import com.viewcompose.ui.modifier.offset
 import com.viewcompose.ui.modifier.padding
 import com.viewcompose.ui.modifier.testTag
+import com.viewcompose.ui.modifier.visibility
 import com.viewcompose.ui.modifier.zIndex
+import com.viewcompose.ui.modifier.Visibility
 import com.viewcompose.ui.node.ImageSource
 import com.viewcompose.ui.node.spec.ConstraintChainStyle
 import com.viewcompose.ui.node.spec.ConstraintDimension
@@ -1408,6 +1410,13 @@ internal fun UiTreeBuilder.LayoutPage(
                             variant = SurfaceVariant.Variant,
                             modifier = Modifier
                                 .layoutId("group-a")
+                                .visibility(
+                                    if (constraintVirtualAlternateState.value) {
+                                        Visibility.Gone
+                                    } else {
+                                        Visibility.Visible
+                                    },
+                                )
                                 .padding(horizontal = 10.dp, vertical = 6.dp)
                                 .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_GROUP_MEMBER),
                         ) {

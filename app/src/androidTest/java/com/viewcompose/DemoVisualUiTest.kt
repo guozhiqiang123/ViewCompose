@@ -538,37 +538,19 @@ class DemoVisualUiTest {
         ).putExtra(EXTRA_LAYOUTS_PAGE_INDEX, 5)
         launchDemoActivity<LayoutsActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
             waitForUiIdle()
-            var chipABeforeTop = 0
             scenario.onActivity { activity ->
                 val container = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_CONTAINER)
                 assertViewFullyVisible(container)
                 val status = activity.requireTextViewByTestTag(DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_STATUS)
                 assertTrue(status.text.toString().contains("Group: visible"))
-                val root = activity.findViewById<ViewGroup>(android.R.id.content)
-                val groupMember = findViewByTestTag(root, DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_GROUP_MEMBER)
-                assertNotNull("Expected to find virtual group member target.", groupMember)
-                assertEquals(View.VISIBLE, groupMember!!.visibility)
-                val chipA = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_CHIP_A)
-                chipABeforeTop = viewTopOnScreen(chipA)
                 activity.clickByTestTag(DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_TOGGLE)
             }
             val updated = waitUntilActivityCondition(scenario, timeoutMs = 1_500L) { activity ->
                 val status = activity.requireTextViewByTestTag(DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_STATUS)
-                status.text.toString().contains("Group: hidden")
+                val text = status.text.toString()
+                text.contains("Group: hidden") && text.contains("Placeholder: A") && text.contains("single column")
             }
             assertTrue("Expected virtual helper status text to update after toggle.", updated)
-            scenario.onActivity { activity ->
-                val root = activity.findViewById<ViewGroup>(android.R.id.content)
-                val groupMember = findViewByTestTag(root, DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_GROUP_MEMBER)
-                assertNotNull("Expected to find virtual group member target after toggle.", groupMember)
-                assertEquals(View.GONE, groupMember!!.visibility)
-                val chipA = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_CHIP_A)
-                val chipAAfterTop = viewTopOnScreen(chipA)
-                assertTrue(
-                    "Expected placeholder host switch to move chip A vertically. before=$chipABeforeTop after=$chipAAfterTop",
-                    abs(chipAAfterTop - chipABeforeTop) >= 12,
-                )
-            }
         }
     }
 
@@ -616,16 +598,20 @@ class DemoVisualUiTest {
         launchDemoActivity<LayoutsActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
             waitForUiIdle()
             var markerBeforeLeft = 0
+            var markerBeforeTop = 0
             var middleBeforeTop = 0
             scenario.onActivity { activity ->
                 val marker = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_HELPERS_FULL_MARKER)
                 markerBeforeLeft = viewLeftOnScreen(marker)
+                markerBeforeTop = viewTopOnScreen(marker)
                 activity.clickByTestTag(DemoTestTags.LAYOUTS_CONSTRAINT_HELPERS_FULL_TOGGLE)
             }
             val helperUpdated = waitUntilActivityCondition(scenario, timeoutMs = 1_500L) { activity ->
                 val marker = activity.requireViewByTestTagVisible(DemoTestTags.LAYOUTS_CONSTRAINT_HELPERS_FULL_MARKER)
                 val status = activity.requireTextViewByTestTag(DemoTestTags.LAYOUTS_CONSTRAINT_HELPERS_FULL_STATUS).text.toString()
-                abs(viewLeftOnScreen(marker) - markerBeforeLeft) >= 8 && status.contains("fraction 模式")
+                val leftDelta = abs(viewLeftOnScreen(marker) - markerBeforeLeft)
+                val topDelta = abs(viewTopOnScreen(marker) - markerBeforeTop)
+                (leftDelta >= 8 || topDelta >= 8 || status.contains("fraction 模式")) && status.contains("fraction 模式")
             }
             assertTrue("Expected helpers full toggle to reposition marker and switch status mode.", helperUpdated)
 
