@@ -30,4 +30,4 @@
 3. `feat: complete advanced constraintlayout renderer constraint application`
 
 ## 阻塞记录
-- `qaFull` 在 Pixel 4 XL 执行 `ComponentFamilySmokeUiTest#keyComponentFamilies_haveVisibleSmokeAnchors` 时长时间停留在 `0/n` 进度，手动停止后 instrumentation 报告 `Process crashed`；本轮先以 `qaQuick + 模块单测` 收口，待 smoke 用例稳定后补跑全量 `qaFull`。
+- 已解除（2026-03-11）：复跑前将 Pixel 4 XL 拉回前台 Home 可交互状态后，`ComponentFamilySmokeUiTest#keyComponentFamilies_haveVisibleSmokeAnchors` 与 `qaFull` 全部通过。

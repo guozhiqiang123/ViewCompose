@@ -1,7 +1,8 @@
-# ConstraintLayout 阻塞上下文（2026-03）
+# ConstraintLayout 阻塞上下文（2026-03，已关闭）
 
 ## 时间
-- 2026-03-11
+- 首次记录：2026-03-11
+- 关闭时间：2026-03-11
 
 ## 当前分支与工作区
 - branch: `main`
@@ -14,15 +15,20 @@
 1. `qaQuick` 通过。
 2. `:viewcompose-ui-contract:test`、`:viewcompose-widget-constraintlayout:test`、`:viewcompose-renderer:test` 通过。
 3. 设备 `Pixel 4 XL (serial: 98101FFBA003AE)` 在线可用。
+4. 重新执行前将设备拉回前台 Home（唤醒 + dismiss keyguard + HOME）。
+5. 复跑通过：
+   - `ANDROID_SERIAL=98101FFBA003AE ./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.viewcompose.ComponentFamilySmokeUiTest#keyComponentFamilies_haveVisibleSmokeAnchors`
+   - `ANDROID_SERIAL=98101FFBA003AE ./gradlew qaFull`
 
 ## 阻塞现象
-1. `ANDROID_SERIAL=98101FFBA003AE ./gradlew qaFull` 在 instrumentation 起跑后长时间停留在 `0/46`。
-2. 单测复现命令 `:app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.viewcompose.ComponentFamilySmokeUiTest#keyComponentFamilies_haveVisibleSmokeAnchors` 同样长时间停留在 `0/1`。
-3. 手动停止后，任务返回 `Instrumentation run failed due to Process crashed`，报告路径：
-   - `app/build/reports/androidTests/connected/debug/index.html`
+1. 历史现象：instrumentation 在设备非前台可交互状态下会长时间停留在 `0/n`。
+2. 复验结果：将设备恢复到可交互前台状态后，原阻塞用例与 `qaFull` 均可稳定完成。
 
 ## 下一条恢复命令
 ```bash
-ANDROID_SERIAL=98101FFBA003AE ./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.viewcompose.ComponentFamilySmokeUiTest#keyComponentFamilies_haveVisibleSmokeAnchors --info
+adb -s 98101FFBA003AE shell input keyevent KEYCODE_WAKEUP
+adb -s 98101FFBA003AE shell wm dismiss-keyguard
+adb -s 98101FFBA003AE shell input keyevent 82
+adb -s 98101FFBA003AE shell am start -W -a android.intent.action.MAIN -c android.intent.category.HOME
+ANDROID_SERIAL=98101FFBA003AE ./gradlew qaFull
 ```
-
