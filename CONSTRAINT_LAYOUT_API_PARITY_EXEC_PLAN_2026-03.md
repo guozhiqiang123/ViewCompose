@@ -20,12 +20,13 @@
 - [x] Step 1: 新增执行文档并提交。
 - [x] Step 2: 扩展 ui-contract 约束数据模型（P0+P1 字段）。
 - [x] Step 3: 扩展 widget DSL（constrain/constraintSet helper API）。
-- [ ] Step 4: renderer 约束应用引擎补齐（dimension/chain/circle/baseline/barrier）。
-- [ ] Step 5: 测试补强（DSL + spec reader + renderer 关键路径）。
+- [x] Step 4: renderer 约束应用引擎补齐（dimension/chain/circle/baseline/barrier）。
+- [x] Step 5: 测试补强（DSL + spec reader + renderer 关键路径）。
 - [ ] Step 6: 文档收口并归档执行计划。
 
 ## 提交记录
 1. `docs: add constraint layout api parity execution plan`
+2. `feat: extend constraintlayout contracts and dsl for advanced constraints`
 
 ## 阻塞记录
 - 暂无。

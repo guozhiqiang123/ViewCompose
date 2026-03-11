@@ -49,6 +49,11 @@ internal class DeclarativeConstraintLayout @JvmOverloads constructor(
     private val emittedWarnings = mutableSetOf<String>()
     private var pendingConstraintRebuild = false
 
+    private data class ChainResolvedItem(
+        val viewId: Int,
+        val weight: Float?,
+    )
+
     init {
         clipChildren = false
         clipToPadding = false
@@ -267,11 +272,7 @@ internal class DeclarativeConstraintLayout @JvmOverloads constructor(
                 barrier.margin,
                 *references.toIntArray(),
             )
-            if (!barrier.allowsGoneWidgets) {
-                warnOnce(
-                    "Barrier '${barrier.id}' sets allowsGoneWidgets=false, but this ConstraintSet API level does not expose direct toggling. Default behavior is used.",
-                )
-            }
+            constraintSet.getConstraint(helperId)?.layout?.mBarrierAllowsGoneWidgets = barrier.allowsGoneWidgets
         }
 
         helperIdToViewId.keys.retainAll(activeHelpers)
@@ -327,24 +328,35 @@ internal class DeclarativeConstraintLayout @JvmOverloads constructor(
         helperReferenceIds: Map<String, Int>,
     ) {
         chains.forEachIndexed { index, chain ->
-            val resolvedIds = chain.referencedIds.mapNotNull { referenceId ->
-                resolveReferenceId(
+            val chainWeights = chain.weights
+            if (chainWeights != null && chainWeights.size != chain.referencedIds.size) {
+                warnOnce(
+                    "Chain[$index] weights size (${chainWeights.size}) does not match referenced ids size " +
+                        "(${chain.referencedIds.size}). Extra values are ignored.",
+                )
+            }
+            val resolvedItems = chain.referencedIds.mapIndexedNotNull { refIndex, referenceId ->
+                val resolvedId = resolveReferenceId(
                     referenceId = referenceId,
                     helperReferenceIds = helperReferenceIds,
                     warningPrefix = "Chain[$index]",
+                ) ?: return@mapIndexedNotNull null
+                ChainResolvedItem(
+                    viewId = resolvedId,
+                    weight = chainWeights?.getOrNull(refIndex),
                 )
             }
-            if (resolvedIds.size < 2) {
+            if (resolvedItems.size < 2) {
                 warnOnce("Chain[$index] requires at least two valid references.")
                 return@forEachIndexed
             }
             when (chain.orientation) {
                 ConstraintChainOrientation.Horizontal -> {
-                    applyHorizontalChain(constraintSet, resolvedIds, chain)
+                    applyHorizontalChain(constraintSet, resolvedItems, chain)
                 }
 
                 ConstraintChainOrientation.Vertical -> {
-                    applyVerticalChain(constraintSet, resolvedIds, chain)
+                    applyVerticalChain(constraintSet, resolvedItems, chain)
                 }
             }
         }
@@ -352,9 +364,10 @@ internal class DeclarativeConstraintLayout @JvmOverloads constructor(
 
     private fun applyHorizontalChain(
         constraintSet: ConstraintSet,
-        resolvedIds: List<Int>,
+        resolvedItems: List<ChainResolvedItem>,
         chain: ConstraintChainSpec,
     ) {
+        val resolvedIds = resolvedItems.map { item -> item.viewId }
         val first = resolvedIds.first()
         val last = resolvedIds.last()
         constraintSet.connect(first, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
@@ -382,13 +395,19 @@ internal class DeclarativeConstraintLayout @JvmOverloads constructor(
         chain.bias?.let { bias ->
             constraintSet.setHorizontalBias(first, bias)
         }
+        resolvedItems.forEach { item ->
+            item.weight?.let { weight ->
+                constraintSet.setHorizontalWeight(item.viewId, weight)
+            }
+        }
     }
 
     private fun applyVerticalChain(
         constraintSet: ConstraintSet,
-        resolvedIds: List<Int>,
+        resolvedItems: List<ChainResolvedItem>,
         chain: ConstraintChainSpec,
     ) {
+        val resolvedIds = resolvedItems.map { item -> item.viewId }
         val first = resolvedIds.first()
         val last = resolvedIds.last()
         constraintSet.connect(first, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
@@ -416,6 +435,11 @@ internal class DeclarativeConstraintLayout @JvmOverloads constructor(
         chain.bias?.let { bias ->
             constraintSet.setVerticalBias(first, bias)
         }
+        resolvedItems.forEach { item ->
+            item.weight?.let { weight ->
+                constraintSet.setVerticalWeight(item.viewId, weight)
+            }
+        }
     }
 
     private fun applyItemConstraints(
@@ -431,6 +455,18 @@ internal class DeclarativeConstraintLayout @JvmOverloads constructor(
             }
             constraintSet.constrainWidth(viewId, item.width.toLayoutParam())
             constraintSet.constrainHeight(viewId, item.height.toLayoutParam())
+            item.widthMin?.let { minWidth -> constraintSet.constrainMinWidth(viewId, minWidth) }
+            item.widthMax?.let { maxWidth -> constraintSet.constrainMaxWidth(viewId, maxWidth) }
+            item.widthPercent?.let { percent ->
+                constraintSet.constrainPercentWidth(viewId, percent.coerceIn(0f, 1f))
+            }
+            item.heightMin?.let { minHeight -> constraintSet.constrainMinHeight(viewId, minHeight) }
+            item.heightMax?.let { maxHeight -> constraintSet.constrainMaxHeight(viewId, maxHeight) }
+            item.heightPercent?.let { percent ->
+                constraintSet.constrainPercentHeight(viewId, percent.coerceIn(0f, 1f))
+            }
+            constraintSet.constrainedWidth(viewId, item.constrainedWidth)
+            constraintSet.constrainedHeight(viewId, item.constrainedHeight)
             item.start?.applyTo(
                 constraintSet = constraintSet,
                 sourceViewId = viewId,
@@ -459,30 +495,62 @@ internal class DeclarativeConstraintLayout @JvmOverloads constructor(
                 helperReferenceIds = helperReferenceIds,
                 referenceId = referenceId,
             )
-            item.baseline?.let { baselineTarget ->
-                if (baselineTarget.anchor != ConstraintAnchor.Baseline) {
-                    warnOnce("Constraint item '$referenceId' baseline target must use Baseline anchor.")
+            applyBaselineConstraints(
+                constraintSet = constraintSet,
+                sourceViewId = viewId,
+                referenceId = referenceId,
+                item = item,
+                helperReferenceIds = helperReferenceIds,
+            )
+            item.circle?.let { circle ->
+                val targetId = referenceIdToViewId[circle.targetId] ?: helperReferenceIds[circle.targetId]
+                if (targetId == null) {
+                    warnOnce("Constraint item '$referenceId' circle target '${circle.targetId}' was not found.")
                 } else {
-                    val targetId = resolveTargetId(
-                        target = baselineTarget,
-                        helperReferenceIds = helperReferenceIds,
+                    constraintSet.constrainCircle(
+                        viewId,
+                        targetId,
+                        circle.radius,
+                        circle.angle,
                     )
-                    if (targetId != null) {
-                        constraintSet.connect(
-                            viewId,
-                            ConstraintSet.BASELINE,
-                            targetId,
-                            ConstraintSet.BASELINE,
-                        )
-                    } else {
-                        warnOnce("Constraint item '$referenceId' baseline target '${baselineTarget.id}' was not found.")
-                    }
                 }
             }
             item.horizontalBias?.let { bias -> constraintSet.setHorizontalBias(viewId, bias) }
             item.verticalBias?.let { bias -> constraintSet.setVerticalBias(viewId, bias) }
             item.dimensionRatio?.let { ratio -> constraintSet.setDimensionRatio(viewId, ratio) }
         }
+    }
+
+    private fun applyBaselineConstraints(
+        constraintSet: ConstraintSet,
+        sourceViewId: Int,
+        referenceId: String,
+        item: ConstraintItemSpec,
+        helperReferenceIds: Map<String, Int>,
+    ) {
+        val baselineLinks = listOfNotNull(
+            item.baseline?.let { target ->
+                ConstraintAnchorLink(
+                    target = target,
+                )
+            },
+            item.baselineToTop,
+            item.baselineToBottom,
+        )
+        if (baselineLinks.size > 1) {
+            warnOnce(
+                "Constraint item '$referenceId' declares multiple baseline links. " +
+                    "Only the first declaration is applied.",
+            )
+        }
+        val selected = baselineLinks.firstOrNull() ?: return
+        selected.applyTo(
+            constraintSet = constraintSet,
+            sourceViewId = sourceViewId,
+            sourceAnchor = ConstraintAnchor.Baseline,
+            helperReferenceIds = helperReferenceIds,
+            referenceId = referenceId,
+        )
     }
 
     private fun ConstraintAnchorLink.applyTo(
@@ -502,8 +570,19 @@ internal class DeclarativeConstraintLayout @JvmOverloads constructor(
         }
         val sourceSide = sourceAnchor.toConstraintSetSide()
         val targetSide = target.anchor.toConstraintSetSide()
-        if (sourceAnchor == ConstraintAnchor.Baseline && target.anchor != ConstraintAnchor.Baseline) {
-            warnOnce("Constraint item '$referenceId' baseline can only connect to baseline.")
+        if (
+            sourceAnchor == ConstraintAnchor.Baseline &&
+            target.anchor !in setOf(
+                ConstraintAnchor.Baseline,
+                ConstraintAnchor.Top,
+                ConstraintAnchor.Bottom,
+            )
+        ) {
+            warnOnce("Constraint item '$referenceId' baseline can only connect to baseline/top/bottom.")
+            return
+        }
+        if (sourceAnchor != ConstraintAnchor.Baseline && target.anchor == ConstraintAnchor.Baseline) {
+            warnOnce("Constraint item '$referenceId' non-baseline anchors cannot connect to baseline.")
             return
         }
         constraintSet.connect(
@@ -546,14 +625,16 @@ internal class DeclarativeConstraintLayout @JvmOverloads constructor(
         val graph = mutableMapOf<String, MutableSet<String>>()
         constraints.forEach { (sourceId, spec) ->
             val dependencies = mutableSetOf<String>()
-            listOf(
-                spec.start?.target,
-                spec.end?.target,
-                spec.top?.target,
-                spec.bottom?.target,
-                spec.baseline,
-            ).forEach { target ->
-                val targetId = target?.id ?: return@forEach
+            listOfNotNull(
+                spec.start?.target?.id,
+                spec.end?.target?.id,
+                spec.top?.target?.id,
+                spec.bottom?.target?.id,
+                spec.baseline?.id,
+                spec.baselineToTop?.target?.id,
+                spec.baselineToBottom?.target?.id,
+                spec.circle?.targetId,
+            ).forEach { targetId ->
                 if (constraints.containsKey(targetId)) {
                     dependencies += targetId
                 }

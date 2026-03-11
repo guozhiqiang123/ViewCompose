@@ -30,6 +30,9 @@ class ContainerViewSpecReaderConstraintLayoutTest {
             constraints = mapOf(
                 "title" to ConstraintItemSpec(
                     width = ConstraintDimension.FillToConstraints,
+                    widthMin = 120,
+                    widthPercent = 0.4f,
+                    constrainedWidth = true,
                     start = ConstraintAnchorLink(
                         target = ConstraintAnchorTarget.parent(ConstraintAnchor.Start),
                         margin = 16,
@@ -59,6 +62,7 @@ class ContainerViewSpecReaderConstraintLayoutTest {
                 ConstraintChainSpec(
                     orientation = ConstraintChainOrientation.Horizontal,
                     referencedIds = listOf("a", "b", "c"),
+                    weights = listOf(1f, 2f, 1f),
                     style = ConstraintChainStyle.SpreadInside,
                 ),
             ),
