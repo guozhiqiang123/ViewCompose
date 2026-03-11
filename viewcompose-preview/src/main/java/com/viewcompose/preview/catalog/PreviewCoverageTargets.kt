@@ -17,5 +17,6 @@ internal object PreviewCoverageTargets {
         "modifier-style-anchor",
         "animation-core-transitions",
         "gesture-tap-drag-swipe-transform",
+        "graphics-canvas-draw-pipeline",
     )
 }

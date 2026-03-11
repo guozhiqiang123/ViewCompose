@@ -31,3 +31,5 @@ internal class ModifierPreviewSpecProvider : DomainPreviewSpecProvider(PreviewDo
 internal class AnimationPreviewSpecProvider : DomainPreviewSpecProvider(PreviewDomain.Animation)
 
 internal class GesturePreviewSpecProvider : DomainPreviewSpecProvider(PreviewDomain.Gesture)
+
+internal class GraphicsPreviewSpecProvider : DomainPreviewSpecProvider(PreviewDomain.Graphics)

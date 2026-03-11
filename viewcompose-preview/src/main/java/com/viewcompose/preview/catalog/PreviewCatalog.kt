@@ -6,6 +6,7 @@ import com.viewcompose.preview.catalog.domain.ContentPreviewSpecs
 import com.viewcompose.preview.catalog.domain.AnimationPreviewSpecs
 import com.viewcompose.preview.catalog.domain.FeedbackPreviewSpecs
 import com.viewcompose.preview.catalog.domain.GesturePreviewSpecs
+import com.viewcompose.preview.catalog.domain.GraphicsPreviewSpecs
 import com.viewcompose.preview.catalog.domain.InputPreviewSpecs
 import com.viewcompose.preview.catalog.domain.ModifierPreviewSpecs
 import com.viewcompose.preview.catalog.domain.NavigationPreviewSpecs
@@ -24,6 +25,7 @@ internal object PreviewCatalog {
             addAll(ModifierPreviewSpecs.all)
             addAll(AnimationPreviewSpecs.all)
             addAll(GesturePreviewSpecs.all)
+            addAll(GraphicsPreviewSpecs.all)
         }
     }
 

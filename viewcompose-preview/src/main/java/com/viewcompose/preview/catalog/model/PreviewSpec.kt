@@ -14,6 +14,7 @@ internal enum class PreviewDomain(
     Modifier("Modifier"),
     Animation("Animation"),
     Gesture("Gesture"),
+    Graphics("Graphics"),
 }
 
 internal data class PreviewSpec(

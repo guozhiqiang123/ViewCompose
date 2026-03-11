@@ -12,6 +12,7 @@ import com.viewcompose.preview.catalog.provider.ContentPreviewSpecProvider
 import com.viewcompose.preview.catalog.provider.AnimationPreviewSpecProvider
 import com.viewcompose.preview.catalog.provider.FeedbackPreviewSpecProvider
 import com.viewcompose.preview.catalog.provider.GesturePreviewSpecProvider
+import com.viewcompose.preview.catalog.provider.GraphicsPreviewSpecProvider
 import com.viewcompose.preview.catalog.provider.InputPreviewSpecProvider
 import com.viewcompose.preview.catalog.provider.ModifierPreviewSpecProvider
 import com.viewcompose.preview.catalog.provider.NavigationPreviewSpecProvider
@@ -138,6 +139,19 @@ private fun AnimationCatalogPreview(
 @Composable
 private fun GestureCatalogPreview(
     @PreviewParameter(GesturePreviewSpecProvider::class) specRef: PreviewSpecRef,
+) {
+    PreviewCatalogSpecScreen(specId = specRef.id)
+}
+
+@Preview(
+    name = "Graphics",
+    group = "ViewCompose/Catalog",
+    widthDp = 411,
+    heightDp = 891,
+)
+@Composable
+private fun GraphicsCatalogPreview(
+    @PreviewParameter(GraphicsPreviewSpecProvider::class) specRef: PreviewSpecRef,
 ) {
     PreviewCatalogSpecScreen(specId = specRef.id)
 }
