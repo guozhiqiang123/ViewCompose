@@ -81,3 +81,4 @@
 | `CONSTRAINT_LAYOUT_DEMO_API_COVERAGE_2026-03.md` | ConstraintLayout 业务 API 函数级 demo 覆盖矩阵与人工验证锚点说明（阶段性覆盖快照） |
 | `ANIMATION_ARCH_CONVERGENCE_EXEC_PLAN_2026-03.md` | 已完成的 Animation 架构级重构收口执行计划（animation-core 分层、transition 语义收口、animateContentSize 落地） |
 | `GRAPHICS_EXEC_PLAN_2026-03.md` | 已完成的 Graphics 跨平台分层执行计划（graphics-core/graphics 模块、renderer draw pipeline、demo+preview+Paparazzi 收口） |
+| `GRAPHICS_V2_CONVERGENCE_EXEC_PLAN_2026-03.md` | 已完成的 Graphics v2 收口执行计划（RoundRect 四角半径、Drawable DrawPaint、ImageFilter Chain 语义修复与文档同步） |
