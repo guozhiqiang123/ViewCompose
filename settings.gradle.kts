@@ -36,5 +36,7 @@ include(":viewcompose-animation")
 include(":viewcompose-animation-core")
 include(":viewcompose-gesture")
 include(":viewcompose-gesture-core")
+include(":viewcompose-graphics")
+include(":viewcompose-graphics-core")
 include(":viewcompose-widget-constraintlayout")
  

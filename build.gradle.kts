@@ -25,6 +25,8 @@ val modulePackageRoots = mapOf(
     "viewcompose-animation-core" to "com.viewcompose.animation.core",
     "viewcompose-gesture" to "com.viewcompose.gesture",
     "viewcompose-gesture-core" to "com.viewcompose.gesture.core",
+    "viewcompose-graphics" to "com.viewcompose.graphics",
+    "viewcompose-graphics-core" to "com.viewcompose.graphics.core",
     "viewcompose-widget-constraintlayout" to "com.viewcompose.widget.constraintlayout",
 )
 
@@ -33,6 +35,7 @@ val kotlinJvmModules = setOf(
     "viewcompose-runtime",
     "viewcompose-animation-core",
     "viewcompose-gesture-core",
+    "viewcompose-graphics-core",
 )
 
 val qaQuickTasks = listOf(
@@ -50,6 +53,8 @@ val qaQuickTasks = listOf(
     ":viewcompose-animation-core:compileKotlin",
     ":viewcompose-gesture:compileDebugKotlin",
     ":viewcompose-gesture-core:compileKotlin",
+    ":viewcompose-graphics:compileDebugKotlin",
+    ":viewcompose-graphics-core:compileKotlin",
     ":viewcompose-widget-constraintlayout:compileDebugKotlin",
     ":app:compileDebugKotlin",
     ":viewcompose-runtime:test",
@@ -66,6 +71,8 @@ val qaQuickTasks = listOf(
     ":viewcompose-animation-core:test",
     ":viewcompose-gesture:testDebugUnitTest",
     ":viewcompose-gesture-core:test",
+    ":viewcompose-graphics:testDebugUnitTest",
+    ":viewcompose-graphics-core:test",
     ":viewcompose-widget-constraintlayout:testDebugUnitTest",
     ":app:testDebugUnitTest",
 )
@@ -225,6 +232,41 @@ tasks.register("verifyGestureCorePurity") {
     }
 }
 
+tasks.register("verifyGraphicsCorePurity") {
+    group = "verification"
+    description = "Verify graphics-core remains Kotlin/JVM-pure without Android imports."
+    doLast {
+        val violations = mutableListOf<String>()
+        val graphicsCoreMainDir = rootDir.resolve("viewcompose-graphics-core").resolve("src/main")
+        if (graphicsCoreMainDir.exists()) {
+            graphicsCoreMainDir.walkTopDown()
+                .filter { it.isFile && (it.extension == "kt" || it.extension == "java") }
+                .forEach { file ->
+                    file.useLines { lines ->
+                        lines.forEachIndexed { index, line ->
+                            val trimmed = line.trimStart()
+                            if (
+                                trimmed.startsWith("import android.") ||
+                                trimmed.startsWith("import androidx.")
+                            ) {
+                                violations += "${file.relativeTo(rootDir)}:${index + 1} -> forbidden import '$trimmed'"
+                            }
+                        }
+                    }
+                }
+        }
+
+        if (violations.isNotEmpty()) {
+            error(
+                buildString {
+                    appendLine("Graphics-core purity verification failed:")
+                    violations.sorted().forEach { appendLine("- $it") }
+                },
+            )
+        }
+    }
+}
+
 tasks.register("qaQuick") {
     group = "verification"
     description = "Run compile + unit-test quality gate for all core modules."
@@ -232,6 +274,7 @@ tasks.register("qaQuick") {
     dependsOn("verifyAndroidModuleNamespaces")
     dependsOn("verifyRuntimePurity")
     dependsOn("verifyGestureCorePurity")
+    dependsOn("verifyGraphicsCorePurity")
     dependsOn(qaQuickTasks)
 }
 
