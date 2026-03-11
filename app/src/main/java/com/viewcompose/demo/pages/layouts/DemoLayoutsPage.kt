@@ -20,6 +20,7 @@ import com.viewcompose.ui.modifier.zIndex
 import com.viewcompose.ui.node.ImageSource
 import com.viewcompose.ui.node.spec.ConstraintChainStyle
 import com.viewcompose.ui.node.spec.ConstraintDimension
+import com.viewcompose.ui.node.spec.ConstraintHelperVisibility
 import com.viewcompose.runtime.mutableStateOf
 import com.viewcompose.widget.constraintlayout.*
 import com.viewcompose.widget.core.Box
@@ -56,6 +57,7 @@ internal fun UiTreeBuilder.LayoutPage(
     val flowItemCountState = remember { mutableStateOf(8) }
     val constraintHelperLongState = remember { mutableStateOf(false) }
     val constraintSetExpandedState = remember { mutableStateOf(false) }
+    val constraintVirtualAlternateState = remember { mutableStateOf(false) }
     val selectedPageState = remember { mutableStateOf(initialPageIndex.coerceIn(0, 6)) }
     val pageItems = when (selectedPageState.value) {
         0 -> listOf("benchmark", "page", "page_filter", "row", "column", "verify")
@@ -70,6 +72,7 @@ internal fun UiTreeBuilder.LayoutPage(
             "constraint_helpers",
             "constraint_chain",
             "constraint_set",
+            "constraint_virtual_helpers",
             "verify",
         )
         else -> listOf("page", "page_filter", "verify")
@@ -693,6 +696,148 @@ internal fun UiTreeBuilder.LayoutPage(
                 }
             }
 
+            "constraint_virtual_helpers" -> ScenarioSection(
+                kind = ScenarioKind.Visual,
+                title = "Virtual Helpers",
+                subtitle = "Flow/Group/Layer/Placeholder 组合，验证 helper 状态切换后布局与可见性稳定更新。",
+            ) {
+                Button(
+                    text = if (constraintVirtualAlternateState.value) {
+                        "切回默认 Helper 状态"
+                    } else {
+                        "切到替代 Helper 状态"
+                    },
+                    variant = ButtonVariant.Outlined,
+                    modifier = Modifier
+                        .margin(bottom = 8.dp)
+                        .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_TOGGLE),
+                    onClick = { constraintVirtualAlternateState.value = !constraintVirtualAlternateState.value },
+                )
+                val virtualSet = constraintSet {
+                    val titleRef = createRef("title")
+                    val flowRef = createRef("flow-helper")
+                    val placeholderRef = createRef("placeholder-helper")
+                    val statusRef = createRef("status")
+                    constrain("title") {
+                        topToTop(parent)
+                        startToStart(parent)
+                    }
+                    constrain("flow-helper") {
+                        topToBottom(titleRef, margin = 8.dp)
+                        startToStart(parent)
+                        endToEnd(parent)
+                        width = ConstraintDimension.FillToConstraints
+                    }
+                    constrain("placeholder-helper") {
+                        topToBottom(flowRef, margin = 8.dp)
+                        startToStart(parent)
+                        endToEnd(parent)
+                        width = ConstraintDimension.FillToConstraints
+                        height = ConstraintDimension.Fixed(42.dp)
+                    }
+                    constrain("status") {
+                        topToBottom(placeholderRef, margin = 8.dp)
+                        startToStart(parent)
+                        endToEnd(parent)
+                        width = ConstraintDimension.FillToConstraints
+                    }
+                }
+                ConstraintLayout(
+                    constraintSet = virtualSet,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(244.dp)
+                        .backgroundColor(SurfaceDefaults.variantBackgroundColor())
+                        .cornerRadius(SurfaceDefaults.cardCornerRadius())
+                        .padding(12.dp)
+                        .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_CONTAINER),
+                ) {
+                    val (chipA, chipB, chipC, chipD) = createRefs("chip-a", "chip-b", "chip-c", "chip-d")
+                    createFlow(
+                        chipA,
+                        chipB,
+                        chipC,
+                        chipD,
+                        id = "flow-helper",
+                        horizontalGap = 8.dp,
+                        verticalGap = 8.dp,
+                        maxElementsWrap = 2,
+                    )
+                    createGroup(
+                        chipB,
+                        chipC,
+                        id = "group-helper",
+                        visibility = if (constraintVirtualAlternateState.value) {
+                            ConstraintHelperVisibility.Gone
+                        } else {
+                            ConstraintHelperVisibility.Visible
+                        },
+                    )
+                    createLayer(
+                        chipA,
+                        chipD,
+                        id = "layer-helper",
+                        rotation = if (constraintVirtualAlternateState.value) 14f else 0f,
+                        translationX = if (constraintVirtualAlternateState.value) 10f else 0f,
+                    )
+                    createPlaceholder(
+                        content = if (constraintVirtualAlternateState.value) chipA else chipD,
+                        id = "placeholder-helper",
+                    )
+                    Text(
+                        text = "Virtual Helpers",
+                        style = UiTextStyle(fontSizeSp = 14.sp),
+                        modifier = Modifier.layoutId("title"),
+                    )
+                    Surface(
+                        variant = SurfaceVariant.Default,
+                        modifier = Modifier
+                            .layoutId("chip-a")
+                            .padding(horizontal = 12.dp, vertical = 8.dp)
+                            .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_CHIP_A),
+                    ) {
+                        Text(text = "A")
+                    }
+                    Surface(
+                        variant = SurfaceVariant.Variant,
+                        modifier = Modifier
+                            .layoutId("chip-b")
+                            .padding(horizontal = 12.dp, vertical = 8.dp)
+                            .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_GROUP_MEMBER),
+                    ) {
+                        Text(text = "B")
+                    }
+                    Surface(
+                        variant = SurfaceVariant.Default,
+                        modifier = Modifier
+                            .layoutId("chip-c")
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
+                    ) {
+                        Text(text = "C")
+                    }
+                    Surface(
+                        variant = SurfaceVariant.Variant,
+                        modifier = Modifier
+                            .layoutId("chip-d")
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
+                    ) {
+                        Text(text = "D")
+                    }
+                    Text(
+                        text = if (constraintVirtualAlternateState.value) {
+                            "Group: hidden(B/C) · Placeholder: A · Layer: rotated"
+                        } else {
+                            "Group: visible(B/C) · Placeholder: D · Layer: neutral"
+                        },
+                        style = UiTextStyle(fontSizeSp = 12.sp),
+                        color = TextDefaults.secondaryColor(),
+                        modifier = Modifier
+                            .layoutId("status")
+                            .testTag(DemoTestTags.LAYOUTS_CONSTRAINT_VIRTUAL_STATUS),
+                    )
+                }
+            }
+
             else -> VerificationNotesSection(
                 what = "布局组件应验证线性容器、Box 叠加、流式布局和滚动容器的稳定性。",
                 howToVerify = listOf(
@@ -702,13 +847,13 @@ internal fun UiTreeBuilder.LayoutPage(
                     "增减 FlowRow 标签数量，确认自动换行正确。",
                     "上下滑动 ScrollableColumn，确认滚动流畅。",
                     "左右滑动 ScrollableRow，确认横向滚动正常。",
-                    "切到约束页，确认 anchors/guideline/barrier/chain/constraintSet 场景都可见且布局关系正确。",
+                    "切到约束页，确认 anchors/guideline/barrier/chain/constraintSet/virtual helpers 场景都可见且布局关系正确。",
                 ),
                 expected = listOf(
                     "线性容器默认子项不会意外扩展成整行。",
                     "FlowRow/FlowColumn 自动换行/换列，spacing 均匀。",
                     "ScrollableColumn/ScrollableRow 滚动流畅无卡顿。",
-                    "ConstraintLayout 场景切换后布局即时刷新，无崩溃与错位。",
+                    "ConstraintLayout 场景切换后布局即时刷新，无崩溃与错位；Virtual Helpers 状态切换可见且稳定。",
                 ),
             )
         }

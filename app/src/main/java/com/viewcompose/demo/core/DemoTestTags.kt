@@ -21,6 +21,11 @@ internal object DemoTestTags {
     const val LAYOUTS_CONSTRAINT_CHAIN_END = "layouts_constraint_chain_end"
     const val LAYOUTS_CONSTRAINT_SET_TOGGLE = "layouts_constraint_set_toggle"
     const val LAYOUTS_CONSTRAINT_SET_MARKER = "layouts_constraint_set_marker"
+    const val LAYOUTS_CONSTRAINT_VIRTUAL_CONTAINER = "layouts_constraint_virtual_container"
+    const val LAYOUTS_CONSTRAINT_VIRTUAL_TOGGLE = "layouts_constraint_virtual_toggle"
+    const val LAYOUTS_CONSTRAINT_VIRTUAL_STATUS = "layouts_constraint_virtual_status"
+    const val LAYOUTS_CONSTRAINT_VIRTUAL_CHIP_A = "layouts_constraint_virtual_chip_a"
+    const val LAYOUTS_CONSTRAINT_VIRTUAL_GROUP_MEMBER = "layouts_constraint_virtual_group_member"
 
     const val COLLECTIONS_BENCHMARK_TOGGLE = "collections_benchmark_toggle"
     const val COLLECTIONS_BENCHMARK_RESET = "collections_benchmark_reset"
