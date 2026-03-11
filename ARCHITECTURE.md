@@ -232,7 +232,7 @@ flowchart TD
 8. transform 激活必须经过 slop 门槛：`panMotion`、`abs(1 - zoomChange) * centroidSize`、`abs(rotationRadians) * centroidSize` 任一超过 `touchSlop` 才进入 active 状态。
 9. swipe settle 语义固定为“速度优先 + 距离次之 + 最近 anchor 兜底”：先比较 `minimumFlingVelocity`，再比较 `max(touchSlop * 2, anchorSpan * 0.35)`，否则回最近锚点。
 10. transform active 后每帧只派发一次合并 delta（zoom/pan/rotation），并在 active 时再请求 `requestDisallowInterceptTouchEvent(true)`，避免提前抢占父容器。
-11. `Modifier.animateContentSize(...)` 通过 renderer 侧 `AnimatedSizeHost` 结构包装落地，执行真实测量尺寸插值并参与父布局重排（非 `graphicsLayer` 缩放假象）。
+11. `Modifier.animateContentSize(...)` 通过 renderer 侧 `AnimatedSizeHost` 结构包装落地，执行真实测量尺寸插值并参与父布局重排（非 `graphicsLayer` 缩放假象）；`AnimationSpec` 的 easing/spring/keyframes/repeat/reverse 语义必须在执行层保持一致。
 12. `Animatable` 默认通过 `rememberAnimatable(...)` 绑定 frame clock，`animateTo(...)` 不再要求调用侧显式传 `frameClock`；非组合场景可通过构造参数显式绑定。
 13. `AnimatedSizeHost` 收起路径必须避免“子节点先跳到末端尺寸”；子节点布局需跟随 host 当前动画尺寸，保证展开/收起两方向的视觉连续性。
 14. 手势策略新增或修改（axis lock/slop/swipe settle）必须下沉到 `viewcompose-gesture-core`；renderer 禁止新增并行策略分支。

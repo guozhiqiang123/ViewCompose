@@ -28,8 +28,8 @@
 - [x] Step 1 新增执行计划文档并首提
 - [x] Step 2 修复 animation-core repeat/infinite 语义与 busy-loop 风险
 - [x] Step 3 收口 animateContentSize spec 模型与 renderer 执行语义
-- [ ] Step 4 修复 graphicsLayer transformOrigin 的尺寸变化同步
-- [ ] Step 5 补齐测试并执行门禁回归
+- [x] Step 4 修复 graphicsLayer transformOrigin 的尺寸变化同步
+- [x] Step 5 补齐测试并执行门禁回归
 - [ ] Step 6 收口文档并归档执行计划
 
 ## 5. 提交记录
@@ -37,6 +37,8 @@
 - `DONE` docs: add animation re-audit execution plan
 - `DONE` fix: align repeatable/infinite animation-core sampling semantics and guard infinite-snap loop
 - `DONE` fix: preserve animateContentSize easing/spring/keyframes/repeat semantics across animation and renderer
+- `DONE` fix: keep graphicsLayer transformOrigin pivot in sync with host view size changes
+- `DONE` test: run animation-core/animation/renderer unit suites and qaQuick
 
 ## 6. 阻塞记录
 

@@ -6,6 +6,7 @@ import android.widget.TextView
 import com.viewcompose.renderer.R
 import com.viewcompose.ui.modifier.NativeViewElement
 import com.viewcompose.ui.modifier.OVERLAY_ANCHOR_TAG_KEY
+import com.viewcompose.ui.modifier.TransformOrigin
 import com.viewcompose.ui.modifier.Visibility
 import com.viewcompose.ui.node.NodeType
 import com.viewcompose.ui.node.VNode
@@ -37,10 +38,7 @@ internal object ModifierInteractionApplier {
         view.rotation = layer?.rotationZ ?: 0f
         view.rotationX = layer?.rotationX ?: 0f
         view.rotationY = layer?.rotationY ?: 0f
-        layer?.transformOrigin?.let { origin ->
-            view.pivotX = view.width * origin.pivotFractionX
-            view.pivotY = view.height * origin.pivotFractionY
-        }
+        applyTransformOrigin(view, layer?.transformOrigin)
         view.minimumHeight = minHeight
         view.minimumWidth = minWidth
         view.contentDescription = resolved.contentDescription?.contentDescription
@@ -127,5 +125,37 @@ internal object ModifierInteractionApplier {
         testTag: String?,
     ) {
         view.setTag(R.id.viewcompose_test_tag, testTag)
+    }
+
+    private fun applyTransformOrigin(
+        view: View,
+        origin: TransformOrigin?,
+    ) {
+        val existing = view.getTag(R.id.viewcompose_transform_origin_listener) as? View.OnLayoutChangeListener
+        if (origin == null) {
+            if (existing != null) {
+                view.removeOnLayoutChangeListener(existing)
+                view.setTag(R.id.viewcompose_transform_origin_listener, null)
+            }
+            view.setTag(R.id.viewcompose_transform_origin, null)
+            return
+        }
+        view.setTag(R.id.viewcompose_transform_origin, origin)
+        applyPivotFromTransformOrigin(view, origin)
+        if (existing != null) return
+        val listener = View.OnLayoutChangeListener { changedView, _, _, _, _, _, _, _, _ ->
+            val currentOrigin = changedView.getTag(R.id.viewcompose_transform_origin) as? TransformOrigin ?: return@OnLayoutChangeListener
+            applyPivotFromTransformOrigin(changedView, currentOrigin)
+        }
+        view.addOnLayoutChangeListener(listener)
+        view.setTag(R.id.viewcompose_transform_origin_listener, listener)
+    }
+
+    private fun applyPivotFromTransformOrigin(
+        view: View,
+        origin: TransformOrigin,
+    ) {
+        view.pivotX = view.width * origin.pivotFractionX
+        view.pivotY = view.height * origin.pivotFractionY
     }
 }

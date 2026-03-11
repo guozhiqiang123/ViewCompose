@@ -16,7 +16,7 @@
 6. 容器键盘跟随策略支持 `Modifier.focusFollowKeyboard(enabled)`，`enabled=true` 时由容器级 focus coordinator 统一执行最小滚动，避免 state 刷新与键盘跟随抢锚点
 7. `focusFollowKeyboard` 当前已覆盖 `LazyColumn`、`LazyVerticalGrid`、`VerticalPager`、`ScrollableColumn`；`LazyRow`、`HorizontalPager`、`ScrollableRow` 保持水平语义，不执行键盘上顶
 8. 背景资源支持 `Modifier.backgroundDrawableRes(resId)`；与 `backgroundColor` 同时存在时，drawable 优先；当同时存在 `cornerRadius` 时自动裁剪内容，`clip()` 仍可作为通用强制裁剪开关
-9. 内容尺寸动画支持 `Modifier.animateContentSize(...)`；renderer 会在 patch 前自动插入 `AnimatedSizeHost`，以“真实测量尺寸插值”参与父布局重排（非 graphicsLayer 视觉缩放）
+9. 内容尺寸动画支持 `Modifier.animateContentSize(...)`；renderer 会在 patch 前自动插入 `AnimatedSizeHost`，以“真实测量尺寸插值”参与父布局重排（非 graphicsLayer 视觉缩放），并保留 `AnimationSpec` 的 easing/spring/keyframes/repeat 语义（含 reverse 终态）
 10. 约束 parent-data 支持 `Modifier.layoutId(...)`、`Modifier.constrainAs(...)`、`Modifier.constrain(...)`；仅对 `ConstraintLayout` 子节点生效
 11. 图形绘制 modifier 已接入：`Modifier.drawBehind`、`Modifier.drawWithContent`、`Modifier.drawWithCache`（以及短写 `draw/drawCache`）；执行顺序按 modifier 链稳定，`drawWithContent` 可显式控制内容透传；底层执行保证 `DrawRoundRect` 四角半径与 `Drawable + DrawPaint` 组合语义不丢失
 
@@ -36,7 +36,7 @@
 8. 逃生通道：`nativeView(key, configure)`
 9. 列表性能策略：`lazyContainerReuse(sharePool, disableItemAnimator)`
 10. 容器输入跟随策略：`focusFollowKeyboard(enabled)`（仅对可垂直滚动容器生效）
-11. 内容尺寸过渡：`animateContentSize(animationSpec)`（对节点尺寸变化做布局级动画）
+11. 内容尺寸过渡：`animateContentSize(animationSpec)`（对节点尺寸变化做布局级动画，spec 语义透传到执行层）
 12. 图形绘制阶段：`drawBehind/drawWithContent/drawWithCache`（用于自定义绘制与缓存命令）
 
 ### 3.2 Scoped Modifier（父容器相关 parent-data）
