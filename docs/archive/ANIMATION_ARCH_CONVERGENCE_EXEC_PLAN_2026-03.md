@@ -28,7 +28,7 @@
 - [x] Step 6: `Animatable` 易用性重构 + `rememberAnimatable` + `InfiniteTransition` typed API。
 - [x] Step 7: Android interop 补齐（ViewPropertyAnimator + DynamicAnimation）。
 - [x] Step 8: 测试体系补强（core/unit/instrumentation）与门禁跑通。
-- [ ] Step 9: 文档收口与归档。
+- [x] Step 9: 文档收口与归档。
 
 ## 提交记录
 1. `docs: add animation architecture convergence execution plan`
@@ -39,6 +39,7 @@
 6. `feat: simplify animatable usage and add typed infinite transition apis`
 7. `feat: extend android animation interop with property and dynamic animations`
 8. `test: add animation core and animated size host regression coverage`
+9. `docs: close and archive animation architecture convergence execution plan`
 
 ## 阻塞记录
-- 暂无。
+- 暂无（已收口）。

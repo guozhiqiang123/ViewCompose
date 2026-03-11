@@ -75,3 +75,8 @@
 | `GESTURE_ARCH_CONVERGENCE_EXEC_PLAN_2026-03.md` | 已完成的 Gesture 跨平台分层重构执行计划（`gesture-core` 策略内核 + `gesture` DSL 入口 + renderer 事件适配收口） |
 | `GESTURE_ARCH_BLOCKER_CONTEXT_2026-03.md` | Gesture 架构重构阶段设备门禁阻塞记录（Huawei 并行噪声）及 Pixel 4 XL 单设备复跑解除记录 |
 | `CONSTRAINT_LAYOUT_EXEC_PLAN_2026-03.md` | 已完成的 ConstraintLayout 组件模块化执行计划（`viewcompose-widget-constraintlayout` + renderer 映射 + demo/preview/test/documentation 收口） |
+| `CONSTRAINT_LAYOUT_API_PARITY_EXEC_PLAN_2026-03.md` | 已完成的 ConstraintLayout API 补齐执行计划（P0+P1：advanced dimension/weights/circle/baseline extensions/barrier 行为） |
+| `CONSTRAINT_LAYOUT_VIRTUAL_HELPERS_EXEC_PLAN_2026-03.md` | 已完成的 ConstraintLayout Virtual Helpers 补齐执行计划（Flow/Group/Layer/Placeholder） |
+| `CONSTRAINT_LAYOUT_BLOCKER_CONTEXT_2026-03.md` | ConstraintLayout Virtual Helpers 收口阶段 instrumentation 阻塞与 Pixel 4 XL 复跑解除记录 |
+| `CONSTRAINT_LAYOUT_DEMO_API_COVERAGE_2026-03.md` | ConstraintLayout 业务 API 函数级 demo 覆盖矩阵与人工验证锚点说明（阶段性覆盖快照） |
+| `ANIMATION_ARCH_CONVERGENCE_EXEC_PLAN_2026-03.md` | 已完成的 Animation 架构级重构收口执行计划（animation-core 分层、transition 语义收口、animateContentSize 落地） |

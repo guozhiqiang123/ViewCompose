@@ -22,12 +22,14 @@
 - [x] Step 3: 扩展 widget DSL（constrain/constraintSet helper API）。
 - [x] Step 4: renderer 约束应用引擎补齐（dimension/chain/circle/baseline/barrier）。
 - [x] Step 5: 测试补强（DSL + spec reader + renderer 关键路径）。
-- [ ] Step 6: 文档收口并归档执行计划。
+- [x] Step 6: 文档收口并归档执行计划。
 
 ## 提交记录
 1. `docs: add constraint layout api parity execution plan`
 2. `feat: extend constraintlayout contracts and dsl for advanced constraints`
 3. `feat: complete advanced constraintlayout renderer constraint application`
+4. `docs: close and archive constraint layout api parity execution plan`
 
 ## 阻塞记录
 - 已解除（2026-03-11）：复跑前将 Pixel 4 XL 拉回前台 Home 可交互状态后，`ComponentFamilySmokeUiTest#keyComponentFamilies_haveVisibleSmokeAnchors` 与 `qaFull` 全部通过。
+- 收口验证（2026-03-11）：再次使用 `Pixel 4 XL (98101FFBA003AE)` 复跑 smoke 与 `qaFull` 通过，执行计划转归档。

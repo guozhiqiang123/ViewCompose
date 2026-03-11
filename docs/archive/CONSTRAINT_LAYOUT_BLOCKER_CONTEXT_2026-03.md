@@ -4,6 +4,7 @@
 - 首次记录：2026-03-11
 - 首次关闭：2026-03-11
 - 重新打开：2026-03-11
+- 再次关闭：2026-03-11
 
 ## 当前分支与工作区
 - branch: `main`
@@ -27,9 +28,12 @@
 7. 参考日志：
    - `app/build/outputs/androidTest-results/connected/debug/Pixel 4 XL - 13/testlog/test-results.log`
    - `app/build/outputs/androidTest-results/connected/debug/Pixel 4 XL - 13/logcat-com.viewcompose.ComponentFamilySmokeUiTest-keyComponentFamilies_haveVisibleSmokeAnchors.txt`
+8. 复跑恢复结果（2026-03-11）：
+   - `ANDROID_SERIAL=98101FFBA003AE ./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.viewcompose.ComponentFamilySmokeUiTest#keyComponentFamilies_haveVisibleSmokeAnchors` 通过。
+   - `ANDROID_SERIAL=98101FFBA003AE ./gradlew qaFull` 通过。
 
 ## 阻塞原因
-设备在线但 instrumentation 进程在 smoke 用例阶段崩溃，导致 `qaFull` 无法作为本轮收口门禁继续执行。该失败模式并非本次 ConstraintLayout Virtual Helpers 改动特有路径，已在 smoke 与 demo 用例中重复出现。
+已解除。当前无阻塞，文档转归档保留历史追溯。
 
 ## 下一条恢复命令
 ```bash

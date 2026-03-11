@@ -31,7 +31,7 @@
 - [x] Step 3: 扩展 widget DSL 与 `constraintSet` builder API。
 - [x] Step 4: renderer 接入 Virtual Helpers 创建与应用逻辑。
 - [x] Step 5: 测试补齐（DSL + renderer + UI）。
-- [ ] Step 6: 文档收口并归档/状态同步（ROADMAP/ARCHITECTURE/WORKFLOW）。
+- [x] Step 6: 文档收口并归档/状态同步（ROADMAP/ARCHITECTURE/WORKFLOW）。
 
 ## 提交记录
 1. `docs: add constraintlayout virtual helpers execution plan`
@@ -40,6 +40,8 @@
 4. `feat: add renderer support for constraintlayout virtual helpers`
 5. `test: add virtual helper demo anchors and ui regression coverage`
 6. `docs: sync constraintlayout virtual helper status and record qaFull blocker`
+7. `docs: close and archive constraintlayout virtual helpers execution plan`
 
 ## 阻塞记录
-- 2026-03-11（Step 6）：`ANDROID_SERIAL=98101FFBA003AE ./gradlew qaFull` 触发 instrumentation 进程崩溃，失败模式为 `Activity never becomes requested state "[RESUMED]"` + `Instrumentation run failed due to Process crashed`。已记录到 [CONSTRAINT_LAYOUT_BLOCKER_CONTEXT_2026-03.md](/Users/gzq/AndroidStudioProjects/UIFramework/CONSTRAINT_LAYOUT_BLOCKER_CONTEXT_2026-03.md)，待设备/环境恢复后补跑收口。
+- 2026-03-11（Step 6）：`ANDROID_SERIAL=98101FFBA003AE ./gradlew qaFull` 触发 instrumentation 进程崩溃，失败模式为 `Activity never becomes requested state "[RESUMED]"` + `Instrumentation run failed due to Process crashed`。已记录到 [CONSTRAINT_LAYOUT_BLOCKER_CONTEXT_2026-03.md](/Users/gzq/AndroidStudioProjects/UIFramework/docs/archive/CONSTRAINT_LAYOUT_BLOCKER_CONTEXT_2026-03.md)。
+- 2026-03-11（阻塞解除）：同设备复跑 `ComponentFamilySmokeUiTest#keyComponentFamilies_haveVisibleSmokeAnchors` 与 `qaFull` 通过，阻塞关闭并归档。
