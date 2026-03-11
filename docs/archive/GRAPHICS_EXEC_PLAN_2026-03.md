@@ -38,7 +38,7 @@
 - [x] Step 6: renderer 接入 Canvas 节点与 draw modifier 管线
 - [x] Step 7: host-android 新增 AndroidGraphicsInterop
 - [x] Step 8: demo + preview + instrumentation 覆盖
-- [ ] Step 9: 文档收口与归档
+- [x] Step 9: 文档收口与归档
 
 ## 门禁
 - 每步：`./gradlew qaQuick` + `./gradlew qaPreview`
@@ -56,6 +56,8 @@
 7. `feat: add android graphics interop bridge in host-android`
 8. `demo: add graphics showcase scenarios and visual regression coverage`
 9. `test: add graphics preview catalog and paparazzi baseline coverage`
+10. `docs: codify graphics architecture boundaries and workflow guardrails`
+11. `docs: close and archive graphics execution plan`
 
 ## 阻塞记录
 - 见 [GRAPHICS_BLOCKER_CONTEXT_2026-03.md](/Users/gzq/AndroidStudioProjects/UIFramework/GRAPHICS_BLOCKER_CONTEXT_2026-03.md)
