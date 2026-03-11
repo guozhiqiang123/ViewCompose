@@ -99,7 +99,7 @@
 
 默认判断顺序：
 
-1. 先判断模块职责边界，例如 `viewcompose-runtime`、`viewcompose-ui-contract`、`viewcompose-widget-core`、`viewcompose-widget-constraintlayout`、`viewcompose-renderer`、`viewcompose-host-android`、`viewcompose-lifecycle`、`viewcompose-viewmodel`、`app`
+1. 先判断模块职责边界，例如 `viewcompose-runtime`、`viewcompose-ui-contract`、`viewcompose-animation-core`、`viewcompose-animation`、`viewcompose-gesture-core`、`viewcompose-gesture`、`viewcompose-graphics-core`、`viewcompose-graphics`、`viewcompose-widget-core`、`viewcompose-widget-constraintlayout`、`viewcompose-renderer`、`viewcompose-host-android`、`viewcompose-lifecycle`、`viewcompose-viewmodel`、`app`
 2. 再判断目录职责边界，例如 `context/`、`dsl/`、`runtime/`、`view/`、`defaults/`
 3. 最后才决定具体文件名
 
@@ -289,6 +289,17 @@
 6. `Barrier(allowsGoneWidgets = ...)` 参数必须真实生效，禁止仅保留参数但在 renderer 侧静默降级。
 7. chain `weights` 与 `referencedIds` 数量不一致时必须 fail-fast（DSL）并在 renderer 输出一次可定位 warning。
 8. 约束新增 `min/max/percent/constrained`、`baselineToTop/baselineToBottom`、`circle` 语义时，必须同轮补齐 DSL 发射断言与 renderer 应用断言。
+
+## 5.18 Graphics 分层与绘制语义约束
+
+涉及 graphics 能力新增或改造时，必须遵守：
+
+1. `viewcompose-graphics-core` 仅承载平台无关图形模型与 draw command，禁止引入 `android.*` / `androidx.*`。
+2. `viewcompose-graphics` 仅承载 DSL 与业务 API（`Canvas`、`drawBehind/drawWithContent/drawWithCache`），禁止直接落 Android Canvas 执行细节。
+3. renderer 仅做 `DrawCommand -> Android Canvas/Paint/Path` 执行映射与 patch 接入，不允许在业务层重复实现绘制命令。
+4. `drawWithCache` 变更必须补 cache 命中与失效断言，禁止通过每帧重建缓存绕过回归。
+5. Android 专属图形扩展（`RenderEffect`、`RuntimeShader`、`Drawable` bridge）必须落在 `viewcompose-host-android` interop，禁止回流 `graphics-core` 或 `graphics`。
+6. graphics 视觉语义变更必须同轮更新 `viewcompose-preview` 的 `PreviewCatalog` 与 Paparazzi 快照基线（`qaPreview` 硬门禁）。
 
 ## 6. 线程中断恢复原则
 

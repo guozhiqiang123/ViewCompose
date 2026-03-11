@@ -37,6 +37,7 @@
 12. 开发预览模块已落地：`viewcompose-preview` 提供 Compose Preview bridge + `PreviewCatalog` + Paparazzi 快照回归（`qaPreview`）
 13. 动画与手势模块已落地：`viewcompose-animation-core` + `viewcompose-animation` + `viewcompose-gesture-core` + `viewcompose-gesture`（Compose-like API + 手势策略内核 + renderer 事件适配 + lazy/pager motion 策略 + Android interop）
 14. 约束布局能力已落地：`viewcompose-widget-constraintlayout` + renderer `DeclarativeConstraintLayout`，支持 anchors/dimension/bias/baseline/baselineToTop/baselineToBottom/circle/guideline/barrier/chain(+weights)/Flow/Group/Layer/Placeholder/decoupled `ConstraintSet`，并补齐 match-constraint `min/max/percent/constrained`
+15. graphics 能力已落地：`viewcompose-graphics-core` + `viewcompose-graphics` + renderer draw pipeline + `host-android` interop；`Graphics` demo 与 preview/Paparazzi 覆盖已接入
 
 ### 2.2 Demo 与验证层
 
@@ -55,6 +56,7 @@
 | D：Diagnostics + Performance 联动 | In Progress | C:✅ U:✅ D:✅ UI:✅ | 已补 `DiffUtil + payload`、`SlotTable Lite` 子树重组与 `SkipSubtree/skippedSubtrees` 主路径，下一步聚焦可视化与发布态优化 |
 | E：开发预览与截图回归 | In Progress | C:✅ U:✅ D:✅ UI:✅ | `viewcompose-preview` + Compose Preview + Paparazzi + `qaPreview` 已落地；下一步补全新增组件自动缺口提示与深色快照集 |
 | F：动画与手势首轮覆盖 | Completed | C:✅ U:✅ D:✅ UI:✅ | 已完成 `viewcompose-animation-core` + `viewcompose-animation` 分层、`Transition` 共享时钟重构、`AnimatedVisibility` Compose 语义对齐、`animateContentSize` 布局级动画落地、`Animatable` 易用性重构、`InfiniteTransition` typed API、Android interop（MotionLayout/TransitionManager/ObjectAnimator/ViewPropertyAnimator/DynamicAnimation）与 demo+preview+回归测试收口 |
+| G：Graphics 2D 主链能力 | Completed | C:✅ U:✅ D:✅ UI:⚠ | 已完成 `viewcompose-graphics-core` + `viewcompose-graphics` 分层、Canvas/draw modifiers/drawWithCache、renderer 渲染管线与 `AndroidGraphicsInterop`，并补齐 demo+preview+Paparazzi；`qaFull` 当前受 ActivityScenario 生命周期不稳定影响待单独收口 |
 
 ## 3. 统一设计原则
 
@@ -79,6 +81,7 @@
 | ConstraintLayout | 已新增 `viewcompose-widget-constraintlayout` 与 renderer 映射，核心能力覆盖 anchors/helpers/constraintSet + advanced dimensions/weights/circle/baseline extensions + Virtual Helpers（Flow/Group/Layer/Placeholder） | 下一步推进 MotionLayout interop 专题（保持 host-android 边界） |
 | Animation | `viewcompose-animation-core` + `viewcompose-animation` 已完成内核/DSL 分层；`Transition` 为共享时间线语义，`AnimatedVisibility` 已完成 Compose 默认语义与 Row/Column 轴向特化，`animateContentSize` 已落地布局级尺寸动画；Animation demo 已扩展为 6 标签页并覆盖全部业务公开动画 API，UI 回归链路已补齐 7 条 | retarget/cancel 压测、性能画像、更多复杂场景样例 |
 | Gesture | `viewcompose-gesture-core` + `viewcompose-gesture` + renderer dispatcher 已支持 tap/drag/swipe/transform 与消费回落策略 | 深化嵌套滚动冲突策略、复杂手势并发场景回归 |
+| Graphics | `viewcompose-graphics-core` + `viewcompose-graphics` + renderer Canvas draw pipeline 已落地，支持 Canvas 节点与 draw modifiers（drawBehind/drawWithContent/drawWithCache） | 扩展 dark/tablet 预览快照与更复杂图形场景（图表/自定义控件） |
 | Performance | 已有 viewcompose-benchmark 基线，且 `DiffUtil + payload + SlotTable Lite + subtree skip` 主路径已落地 | 继续扩大 skip 覆盖、增强诊断指标、推进发布态优化 |
 
 ### 4.1 完成态字段定义（C/U/D/UI）
