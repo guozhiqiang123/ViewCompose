@@ -8,7 +8,6 @@ import com.viewcompose.ui.gesture.GestureOrientation
 import com.viewcompose.ui.gesture.GesturePriority
 import com.viewcompose.ui.gesture.PointerEvent
 import com.viewcompose.ui.gesture.PointerEventResult
-import com.viewcompose.ui.gesture.SwipeDirection
 import com.viewcompose.ui.gesture.TransformDelta
 import com.viewcompose.ui.layout.HorizontalAlignment
 import com.viewcompose.ui.layout.VerticalAlignment
@@ -213,16 +212,13 @@ data class DraggableModifierElement(
     val onDelta: (delta: Float) -> Unit,
 ) : ModifierElement
 
-data class SwipeableModifierElement(
+data class AnchoredDraggableModifierElement(
     val enabled: Boolean,
     val orientation: GestureOrientation,
-    val minAnchorPx: Float?,
-    val maxAnchorPx: Float?,
-    val currentAnchorPx: Float?,
-    val onSwipe: (SwipeDirection) -> Unit,
-    val onSettleToMin: (() -> Unit)? = null,
-    val onSettleToMax: (() -> Unit)? = null,
-    val onDelta: ((delta: Float) -> Unit)? = null,
+    val anchorOffsetsPx: List<Float>,
+    val currentOffsetPx: Float?,
+    val onDelta: (delta: Float) -> Unit,
+    val onSettleToOffset: (offsetPx: Float) -> Unit,
 ) : ModifierElement
 
 data class TransformableModifierElement(

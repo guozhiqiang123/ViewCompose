@@ -6,13 +6,14 @@ import com.viewcompose.animation.animateFloatAsState
 import com.viewcompose.animation.core.spring
 import com.viewcompose.animation.core.tween
 import com.viewcompose.gesture.combinedClickable
+import com.viewcompose.gesture.draggableAnchorsOf
 import com.viewcompose.gesture.draggable
 import com.viewcompose.gesture.gesturePriority
 import com.viewcompose.gesture.pointerInput
+import com.viewcompose.gesture.rememberAnchoredDraggableState
 import com.viewcompose.gesture.rememberDraggableState
-import com.viewcompose.gesture.rememberSwipeableState
 import com.viewcompose.gesture.rememberTransformableState
-import com.viewcompose.gesture.swipeable
+import com.viewcompose.gesture.anchoredDraggable
 import com.viewcompose.gesture.transformable
 import com.viewcompose.runtime.mutableStateOf
 import com.viewcompose.ui.gesture.GestureOrientation
@@ -58,7 +59,7 @@ internal fun UiTreeBuilder.GesturePage(
             dragTextOffsetState.value = value
         }
     }
-    val swipeState = rememberSwipeableState("Left")
+    val swipeState = rememberAnchoredDraggableState("Left")
     val pointerEventState = remember { mutableStateOf("None") }
     val scaleState = remember { mutableStateOf(1f) }
     val rotationState = remember { mutableStateOf(0f) }
@@ -214,9 +215,9 @@ internal fun UiTreeBuilder.GesturePage(
                         .fillMaxWidth()
                         .height(80.dp)
                         .margin(top = 10.dp)
-                        .swipeable(
+                        .anchoredDraggable(
                             state = swipeState,
-                            anchors = mapOf(0f to "Left", 120f to "Right"),
+                            anchors = draggableAnchorsOf(0f to "Left", 120f to "Right"),
                             orientation = GestureOrientation.Horizontal,
                         )
                         .graphicsLayer(translationX = swipeVisualOffset.value)

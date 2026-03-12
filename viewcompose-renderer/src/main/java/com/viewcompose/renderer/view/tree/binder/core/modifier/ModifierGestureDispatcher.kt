@@ -21,6 +21,7 @@ import com.viewcompose.ui.gesture.PointerChange
 import com.viewcompose.ui.gesture.PointerEvent
 import com.viewcompose.ui.gesture.PointerEventResult
 import com.viewcompose.ui.gesture.PointerEventType
+import com.viewcompose.ui.gesture.SwipeDirection
 import com.viewcompose.ui.gesture.TransformDelta
 import kotlin.math.abs
 import kotlin.math.atan2
@@ -36,7 +37,7 @@ internal object ModifierGestureApplier {
         val hasGesture = resolved.pointerInput != null ||
             resolved.combinedClickable != null ||
             resolved.draggable != null ||
-            resolved.swipeable != null ||
+            resolved.anchoredDraggable != null ||
             resolved.transformable != null
         if (!hasGesture) {
             (view.getTag(R.id.viewcompose_gesture_dispatcher) as? ViewGestureDispatcher)?.dispose()
@@ -153,7 +154,7 @@ private class ViewGestureDispatcher(
         val requiresContinuousStream =
             hasPointerInput ||
             resolved.draggable?.enabled == true ||
-                resolved.swipeable?.enabled == true ||
+                resolved.anchoredDraggable?.enabled == true ||
                 resolved.transformable?.enabled == true
         if (combinedEnabled) {
             combinedDetector.onTouchEvent(event)
@@ -298,8 +299,8 @@ private class ViewGestureDispatcher(
 
     private fun dispatchDragAndSwipe(event: MotionEvent): Boolean {
         val draggable = resolved.draggable?.takeIf { it.enabled }
-        val swipeable = resolved.swipeable?.takeIf { it.enabled }
-        if (draggable == null && swipeable == null) {
+        val anchoredDraggable = resolved.anchoredDraggable?.takeIf { it.enabled }
+        if (draggable == null && anchoredDraggable == null) {
             // Do not clear transform tracking here; transformable may coexist without drag/swipe.
             if (transformStreamActive) {
                 debugLog { "drag-swipe bypassed while transform stream is active" }
@@ -319,7 +320,7 @@ private class ViewGestureDispatcher(
                 lastY = downY
                 lockAxis = null
                 dragStarted = false
-                swipeStartAnchorPx = swipeable?.currentAnchorPx ?: 0f
+                swipeStartAnchorPx = anchoredDraggable?.currentOffsetPx ?: 0f
                 tracker.clear()
                 tracker.addMovement(event)
                 return false
@@ -335,7 +336,7 @@ private class ViewGestureDispatcher(
                     lockAxis = resolveLockAxis(
                         dx = dx,
                         dy = dy,
-                        orientation = resolveGestureOrientation(draggable, swipeable),
+                        orientation = resolveGestureOrientation(draggable, anchoredDraggable),
                         touchSlop = touchSlop,
                     )
                     if (lockAxis != null) {
@@ -360,7 +361,7 @@ private class ViewGestureDispatcher(
                     draggable?.onDragStarted?.invoke()
                 }
                 draggable?.onDelta?.invoke(delta)
-                swipeable?.onDelta?.invoke(delta)
+                anchoredDraggable?.onDelta?.invoke(delta)
                 return true
             }
 
@@ -380,28 +381,40 @@ private class ViewGestureDispatcher(
                     draggable?.onDragStopped?.invoke(velocity)
                 }
                 val velocity = resolveAxisVelocity(axis = axis, tracker = tracker)
-                val swipeConsumed = if (axis != null && swipeable != null) {
+                val swipeConsumed = if (axis != null && anchoredDraggable != null) {
+                    val minAnchorPx = anchoredDraggable.anchorOffsetsPx.firstOrNull()
+                    val maxAnchorPx = anchoredDraggable.anchorOffsetsPx.lastOrNull()
                     when (
                         val decision = resolveSwipeDecision(
                             axis = axis.toSwipeDecisionAxis(),
                             total = total,
                             velocity = velocity,
-                            minAnchor = swipeable.minAnchorPx,
-                            maxAnchor = swipeable.maxAnchorPx,
+                            minAnchor = minAnchorPx,
+                            maxAnchor = maxAnchorPx,
                             startAnchor = swipeStartAnchorPx,
                             touchSlop = touchSlop,
                             minFlingVelocity = minimumFlingVelocity,
                         )
                     ) {
                         is SwipeDecision.Swipe -> {
-                            swipeable.onSwipe(decision.direction)
+                            val targetOffset = when (decision.direction) {
+                                SwipeDirection.StartToEnd,
+                                SwipeDirection.TopToBottom -> maxAnchorPx
+                                SwipeDirection.EndToStart,
+                                SwipeDirection.BottomToTop -> minAnchorPx
+                            }
+                            if (targetOffset != null) {
+                                anchoredDraggable.onSettleToOffset(targetOffset)
+                            }
                             true
                         }
 
                         is SwipeDecision.Settle -> {
                             when (decision.target) {
-                                SwipeSettleTarget.Min -> swipeable.onSettleToMin?.invoke()
-                                SwipeSettleTarget.Max -> swipeable.onSettleToMax?.invoke()
+                                SwipeSettleTarget.Min -> minAnchorPx
+                                SwipeSettleTarget.Max -> maxAnchorPx
+                            }?.let { settledOffset ->
+                                anchoredDraggable.onSettleToOffset(settledOffset)
                             }
                             true
                         }
@@ -447,9 +460,9 @@ private class ViewGestureDispatcher(
 
     private fun resolveGestureOrientation(
         draggable: com.viewcompose.ui.modifier.DraggableModifierElement?,
-        swipeable: com.viewcompose.ui.modifier.SwipeableModifierElement?,
+        anchoredDraggable: com.viewcompose.ui.modifier.AnchoredDraggableModifierElement?,
     ): GestureOrientation {
-        return draggable?.orientation ?: swipeable?.orientation ?: GestureOrientation.Free
+        return draggable?.orientation ?: anchoredDraggable?.orientation ?: GestureOrientation.Free
     }
 
     private fun resolveAxisDelta(

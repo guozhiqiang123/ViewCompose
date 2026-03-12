@@ -1,11 +1,12 @@
 package com.viewcompose.preview.catalog.domain
 
 import com.viewcompose.gesture.combinedClickable
+import com.viewcompose.gesture.draggableAnchorsOf
 import com.viewcompose.gesture.draggable
+import com.viewcompose.gesture.anchoredDraggable
+import com.viewcompose.gesture.rememberAnchoredDraggableState
 import com.viewcompose.gesture.rememberDraggableState
-import com.viewcompose.gesture.rememberSwipeableState
 import com.viewcompose.gesture.rememberTransformableState
-import com.viewcompose.gesture.swipeable
 import com.viewcompose.gesture.transformable
 import com.viewcompose.preview.catalog.model.PreviewDomain
 import com.viewcompose.preview.catalog.model.PreviewSpec
@@ -32,7 +33,7 @@ internal object GesturePreviewSpecs {
             content = {
                 val taps = remember { mutableStateOf(0) }
                 val dragX = remember { mutableStateOf(0f) }
-                val swipeState = rememberSwipeableState("Left")
+                val swipeState = rememberAnchoredDraggableState("Left")
                 val scale = remember { mutableStateOf(1f) }
                 val draggableState = rememberDraggableState { delta ->
                     dragX.value = (dragX.value + delta).coerceIn(-80f, 80f)
@@ -72,9 +73,9 @@ internal object GesturePreviewSpecs {
                         variant = SurfaceVariant.Variant,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .swipeable(
+                            .anchoredDraggable(
                                 state = swipeState,
-                                anchors = mapOf(0f to "Left", 100f to "Right"),
+                                anchors = draggableAnchorsOf(0f to "Left", 100f to "Right"),
                                 orientation = GestureOrientation.Horizontal,
                             )
                             .padding(10.dp),

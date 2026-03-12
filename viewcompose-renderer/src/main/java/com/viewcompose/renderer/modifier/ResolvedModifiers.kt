@@ -34,7 +34,7 @@ internal class ResolvedModifiers(
     var pointerInput: PointerInputModifierElement? = null,
     var combinedClickable: CombinedClickableModifierElement? = null,
     var draggable: DraggableModifierElement? = null,
-    var swipeable: SwipeableModifierElement? = null,
+    var anchoredDraggable: AnchoredDraggableModifierElement? = null,
     var transformable: TransformableModifierElement? = null,
     var gesturePriority: GesturePriorityModifierElement? = null,
     // ViewLayoutParamsFactory fields
@@ -91,7 +91,7 @@ internal fun Modifier.resolve(): ResolvedModifiers {
             is PointerInputModifierElement -> result.pointerInput = element
             is CombinedClickableModifierElement -> result.combinedClickable = element
             is DraggableModifierElement -> result.draggable = element
-            is SwipeableModifierElement -> result.swipeable = element
+            is AnchoredDraggableModifierElement -> result.anchoredDraggable = element
             is TransformableModifierElement -> result.transformable = element
             is GesturePriorityModifierElement -> result.gesturePriority = element
             is BoxAlignModifierElement -> result.boxAlign = element

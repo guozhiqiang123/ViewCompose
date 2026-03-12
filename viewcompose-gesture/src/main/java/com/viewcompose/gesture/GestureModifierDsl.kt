@@ -4,13 +4,12 @@ import com.viewcompose.ui.gesture.GestureOrientation
 import com.viewcompose.ui.gesture.GesturePriority
 import com.viewcompose.ui.gesture.PointerEvent
 import com.viewcompose.ui.gesture.PointerEventResult
-import com.viewcompose.ui.gesture.SwipeDirection
+import com.viewcompose.ui.modifier.AnchoredDraggableModifierElement
 import com.viewcompose.ui.modifier.CombinedClickableModifierElement
 import com.viewcompose.ui.modifier.DraggableModifierElement
 import com.viewcompose.ui.modifier.GesturePriorityModifierElement
 import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.modifier.PointerInputModifierElement
-import com.viewcompose.ui.modifier.SwipeableModifierElement
 import com.viewcompose.ui.modifier.TransformableModifierElement
 
 fun Modifier.pointerInput(
@@ -59,47 +58,24 @@ fun Modifier.draggable(
     )
 }
 
-fun <T> Modifier.swipeable(
-    state: SwipeableState<T>,
-    anchors: Map<Float, T>,
+fun <T> Modifier.anchoredDraggable(
+    state: AnchoredDraggableState<T>,
+    anchors: DraggableAnchors<T>,
     orientation: GestureOrientation = GestureOrientation.Horizontal,
     enabled: Boolean = true,
-    onSwipe: ((SwipeDirection) -> Unit)? = null,
 ): Modifier {
-    val sortedAnchors = anchors.toSortedMap()
-    val minAnchorPx = sortedAnchors.entries.firstOrNull()?.key
-    val maxAnchorPx = sortedAnchors.entries.lastOrNull()?.key
-    val minAnchor = sortedAnchors.entries.firstOrNull()?.value
-    val maxAnchor = sortedAnchors.entries.lastOrNull()?.value
-    val currentAnchorPx = sortedAnchors.entries.firstOrNull { it.value == state.currentValue.value }?.key
+    require(orientation != GestureOrientation.Free) {
+        "anchoredDraggable only supports Horizontal or Vertical orientation."
+    }
+    state.updateAnchors(anchors)
     return then(
-        SwipeableModifierElement(
+        AnchoredDraggableModifierElement(
             enabled = enabled,
             orientation = orientation,
-            minAnchorPx = minAnchorPx,
-            maxAnchorPx = maxAnchorPx,
-            currentAnchorPx = currentAnchorPx,
-            onSwipe = { direction ->
-                val target = when (direction) {
-                    SwipeDirection.StartToEnd, SwipeDirection.TopToBottom -> maxAnchor
-                    SwipeDirection.EndToStart, SwipeDirection.BottomToTop -> minAnchor
-                }
-                if (target != null) {
-                    state.updateCurrent(target)
-                }
-                onSwipe?.invoke(direction)
-            },
-            onSettleToMin = {
-                if (minAnchor != null) {
-                    state.updateCurrent(minAnchor)
-                }
-            },
-            onSettleToMax = {
-                if (maxAnchor != null) {
-                    state.updateCurrent(maxAnchor)
-                }
-            },
-            onDelta = null,
+            anchorOffsetsPx = anchors.offsetsPx,
+            currentOffsetPx = state.currentOffsetPx.value,
+            onDelta = state::dispatchRawDelta,
+            onSettleToOffset = state::settleToOffset,
         ),
     )
 }

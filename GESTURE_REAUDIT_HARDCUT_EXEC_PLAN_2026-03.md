@@ -26,7 +26,7 @@
 ## 4. Checklist
 
 - [x] Step 1 新增执行计划文档并首提
-- [ ] Step 2 业务 API 硬切到 Anchored 模型
+- [x] Step 2 业务 API 硬切到 Anchored 模型
 - [ ] Step 3 `gesture-core` 补齐多锚点决策内核
 - [ ] Step 4 renderer 手势分发器硬切重构
 - [ ] Step 5 `combinedClickable` 行为语义收口
@@ -37,6 +37,7 @@
 ## 5. 提交记录
 
 - `DONE` docs: add gesture re-audit hard-cut execution plan
+- `DONE` refactor: hard-migrate swipeable api to anchored draggable model
 
 ## 6. 阻塞记录
 

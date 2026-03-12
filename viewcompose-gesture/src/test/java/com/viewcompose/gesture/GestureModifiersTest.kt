@@ -5,15 +5,14 @@ import com.viewcompose.ui.gesture.GesturePriority
 import com.viewcompose.ui.gesture.PointerEvent
 import com.viewcompose.ui.gesture.PointerEventResult
 import com.viewcompose.ui.gesture.PointerEventType
-import com.viewcompose.ui.gesture.SwipeDirection
 import com.viewcompose.ui.gesture.TransformDelta
+import com.viewcompose.ui.modifier.AnchoredDraggableModifierElement
 import com.viewcompose.ui.modifier.CombinedClickableModifierElement
 import com.viewcompose.ui.modifier.DraggableModifierElement
+import com.viewcompose.ui.modifier.GesturePriorityModifierElement
 import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.modifier.PointerInputModifierElement
-import com.viewcompose.ui.modifier.SwipeableModifierElement
 import com.viewcompose.ui.modifier.TransformableModifierElement
-import com.viewcompose.ui.modifier.GesturePriorityModifierElement
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -69,17 +68,17 @@ class GestureModifiersTest {
     }
 
     @Test
-    fun `swipeable updates state using anchors`() {
-        val state = SwipeableState(initialValue = "A")
-        val modifier = Modifier.swipeable(
+    fun `anchoredDraggable updates state using nearest anchor on settle`() {
+        val state = AnchoredDraggableState(initialValue = "A")
+        val modifier = Modifier.anchoredDraggable(
             state = state,
-            anchors = mapOf(0f to "A", 100f to "B"),
+            anchors = draggableAnchorsOf(0f to "A", 100f to "B"),
             orientation = GestureOrientation.Horizontal,
         )
-        val element = modifier.elements.single() as SwipeableModifierElement
-        element.onSwipe(SwipeDirection.StartToEnd)
+        val element = modifier.elements.single() as AnchoredDraggableModifierElement
+        element.onSettleToOffset(80f)
         assertEquals("B", state.currentValue.value)
-        element.onSwipe(SwipeDirection.EndToStart)
+        element.onSettleToOffset(10f)
         assertEquals("A", state.currentValue.value)
     }
 
