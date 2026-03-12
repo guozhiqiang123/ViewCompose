@@ -14,7 +14,9 @@ import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.modifier.PointerInputModifierElement
 import com.viewcompose.ui.modifier.TransformableModifierElement
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Test
 
 class GestureModifiersTest {
@@ -51,6 +53,18 @@ class GestureModifiersTest {
     }
 
     @Test
+    fun `combinedClickable without callbacks is no-op`() {
+        val base = Modifier
+        val modifier = base.combinedClickable(
+            enabled = true,
+            onClick = null,
+            onDoubleClick = null,
+            onLongClick = null,
+        )
+        assertSame(base, modifier)
+    }
+
+    @Test
     fun `draggable appends draggable element and forwards delta to state`() {
         var total = 0f
         val state = DraggableState(
@@ -80,6 +94,20 @@ class GestureModifiersTest {
         assertEquals("B", state.currentValue.value)
         element.onSettleToOffset(10f)
         assertEquals("A", state.currentValue.value)
+    }
+
+    @Test
+    fun `anchoredDraggable rejects free orientation`() {
+        try {
+            Modifier.anchoredDraggable(
+                state = AnchoredDraggableState(initialValue = "A"),
+                anchors = draggableAnchorsOf(0f to "A", 100f to "B"),
+                orientation = GestureOrientation.Free,
+            )
+            fail("Expected IllegalArgumentException for free orientation")
+        } catch (error: IllegalArgumentException) {
+            assertTrue(error.message?.contains("Horizontal or Vertical") == true)
+        }
     }
 
     @Test

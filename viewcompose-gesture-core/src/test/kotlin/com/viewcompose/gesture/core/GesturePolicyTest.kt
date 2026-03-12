@@ -6,6 +6,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Test
 
 class GesturePolicyTest {
@@ -204,5 +205,96 @@ class GesturePolicyTest {
             minFlingVelocity = 300f,
         )
         assertEquals(SwipeDecision.None, decision)
+    }
+
+    @Test
+    fun resolveAnchoredSettleTarget_prefersVelocityAndMovesToNextAnchor() {
+        val result = resolveAnchoredSettleTarget(
+            anchorsPx = listOf(-120f, 0f, 120f),
+            startOffsetPx = 0f,
+            currentOffsetPx = 12f,
+            velocityPxPerSecond = 2_000f,
+            touchSlopPx = 8f,
+            minFlingVelocityPxPerSecond = 500f,
+        )
+        assertEquals(120f, result.targetOffsetPx)
+        assertEquals(AnchoredSettleReason.Velocity, result.reason)
+    }
+
+    @Test
+    fun resolveAnchoredSettleTarget_usesDistanceThreshold_whenVelocityLow() {
+        val result = resolveAnchoredSettleTarget(
+            anchorsPx = listOf(-120f, 0f, 120f),
+            startOffsetPx = 0f,
+            currentOffsetPx = -90f,
+            velocityPxPerSecond = -10f,
+            touchSlopPx = 8f,
+            minFlingVelocityPxPerSecond = 500f,
+        )
+        assertEquals(-120f, result.targetOffsetPx)
+        assertEquals(AnchoredSettleReason.Distance, result.reason)
+    }
+
+    @Test
+    fun resolveAnchoredSettleTarget_fallsBackToNearestAnchor_whenBelowThreshold() {
+        val result = resolveAnchoredSettleTarget(
+            anchorsPx = listOf(-120f, 0f, 120f),
+            startOffsetPx = 0f,
+            currentOffsetPx = 20f,
+            velocityPxPerSecond = 0f,
+            touchSlopPx = 8f,
+            minFlingVelocityPxPerSecond = 500f,
+        )
+        assertEquals(0f, result.targetOffsetPx)
+        assertEquals(AnchoredSettleReason.Nearest, result.reason)
+    }
+
+    @Test
+    fun resolveAnchoredOffsetOnAnchorUpdate_prefersCurrentValueOffset_thenCurrentOffset() {
+        val anchoredByValue = resolveAnchoredOffsetOnAnchorUpdate(
+            anchorsPx = listOf(-100f, 0f, 100f),
+            currentValueOffsetPx = 0f,
+            currentOffsetPx = 80f,
+        )
+        assertEquals(0f, anchoredByValue)
+
+        val anchoredByOffset = resolveAnchoredOffsetOnAnchorUpdate(
+            anchorsPx = listOf(-100f, 0f, 100f),
+            currentValueOffsetPx = 30f,
+            currentOffsetPx = 80f,
+        )
+        assertEquals(100f, anchoredByOffset)
+    }
+
+    @Test
+    fun requireValidAnchorsPx_rejectsInvalidAnchorInputs() {
+        assertInvalidAnchors(
+            anchorsPx = emptyList(),
+            expectedMessagePart = "must not be empty",
+        )
+        assertInvalidAnchors(
+            anchorsPx = listOf(0f, 0f),
+            expectedMessagePart = "strictly increasing",
+        )
+        assertInvalidAnchors(
+            anchorsPx = listOf(0f, Float.NaN),
+            expectedMessagePart = "not finite",
+        )
+        assertInvalidAnchors(
+            anchorsPx = listOf(0f, Float.POSITIVE_INFINITY),
+            expectedMessagePart = "not finite",
+        )
+    }
+
+    private fun assertInvalidAnchors(
+        anchorsPx: List<Float>,
+        expectedMessagePart: String,
+    ) {
+        try {
+            requireValidAnchorsPx(anchorsPx)
+            fail("Expected IllegalArgumentException for anchors=$anchorsPx")
+        } catch (error: IllegalArgumentException) {
+            assertTrue(error.message?.contains(expectedMessagePart) == true)
+        }
     }
 }

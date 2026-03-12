@@ -2,6 +2,7 @@ package com.viewcompose.renderer.modifier
 
 import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.modifier.TransformOrigin
+import com.viewcompose.ui.modifier.AnchoredDraggableModifierElement
 import com.viewcompose.ui.modifier.backgroundColor
 import com.viewcompose.ui.modifier.backgroundDrawableRes
 import com.viewcompose.ui.modifier.graphicsLayer
@@ -10,6 +11,7 @@ import com.viewcompose.ui.modifier.CombinedClickableModifierElement
 import com.viewcompose.ui.modifier.ConstraintModifierElement
 import com.viewcompose.ui.modifier.GesturePriorityModifierElement
 import com.viewcompose.ui.gesture.GesturePriority
+import com.viewcompose.ui.gesture.GestureOrientation
 import com.viewcompose.ui.node.spec.ConstraintAnchor
 import com.viewcompose.ui.node.spec.ConstraintAnchorLink
 import com.viewcompose.ui.node.spec.ConstraintAnchorTarget
@@ -64,6 +66,16 @@ class ResolvedModifiersTest {
                 ),
             )
             .then(
+                AnchoredDraggableModifierElement(
+                    enabled = true,
+                    orientation = GestureOrientation.Horizontal,
+                    anchorOffsetsPx = listOf(0f, 80f, 160f),
+                    currentOffsetPx = 80f,
+                    onDelta = {},
+                    onSettleToOffset = {},
+                ),
+            )
+            .then(
                 GesturePriorityModifierElement(
                     priority = GesturePriority.High,
                 ),
@@ -71,6 +83,7 @@ class ResolvedModifiersTest {
             .resolve()
 
         assertNotNull(resolved.combinedClickable)
+        assertNotNull(resolved.anchoredDraggable)
         assertEquals(true, resolved.combinedClickable?.enabled)
         assertEquals(GesturePriority.High, resolved.gesturePriority?.priority)
     }

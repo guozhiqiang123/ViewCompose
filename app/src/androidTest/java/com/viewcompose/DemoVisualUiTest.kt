@@ -1205,13 +1205,34 @@ class DemoVisualUiTest {
                 )
             }
             waitForUiIdle()
-            val dragAndSwipeUpdated = waitUntilActivityCondition(scenario, timeoutMs = 1_500L) { activity ->
+            val movedToRightAnchor = waitUntilActivityCondition(scenario, timeoutMs = 1_500L) { activity ->
                 val dragAfterText = activity.requireTextViewByTestTag(DemoTestTags.GESTURE_DRAG_VALUE).text.toString()
                 val swipeAfterText = activity.requireTextViewByTestTag(DemoTestTags.GESTURE_SWIPE_VALUE).text.toString()
+                val swipeTargetText = activity.requireTextViewByTestTag(DemoTestTags.GESTURE_SWIPE_TARGET_VALUE).text.toString()
+                val swipeOffsetText = activity.requireTextViewByTestTag(DemoTestTags.GESTURE_SWIPE_OFFSET_VALUE).text.toString()
                 val dragAfter = extractFirstFloat(dragAfterText) ?: dragBefore
-                abs(dragAfter - dragBefore) >= 12f && swipeAfterText.contains("Right")
+                val offset = extractFirstFloat(swipeOffsetText) ?: 0f
+                abs(dragAfter - dragBefore) >= 12f &&
+                    swipeAfterText.contains("Right") &&
+                    swipeTargetText.contains("Right") &&
+                    offset >= 60f
             }
-            assertTrue("Expected drag and swipe summaries to update after gestures", dragAndSwipeUpdated)
+            assertTrue("Expected drag and swipe summaries to move to right anchor", movedToRightAnchor)
+            scenario.onActivity { activity ->
+                activity.dragByTestTag(
+                    tag = DemoTestTags.GESTURE_SWIPE_TARGET,
+                    deltaX = -420f,
+                )
+            }
+            waitForUiIdle()
+            val movedToLeftAnchor = waitUntilActivityCondition(scenario, timeoutMs = 1_500L) { activity ->
+                val swipeAfterText = activity.requireTextViewByTestTag(DemoTestTags.GESTURE_SWIPE_VALUE).text.toString()
+                val swipeTargetText = activity.requireTextViewByTestTag(DemoTestTags.GESTURE_SWIPE_TARGET_VALUE).text.toString()
+                val swipeOffsetText = activity.requireTextViewByTestTag(DemoTestTags.GESTURE_SWIPE_OFFSET_VALUE).text.toString()
+                val offset = extractFirstFloat(swipeOffsetText) ?: 0f
+                swipeAfterText.contains("Left") && swipeTargetText.contains("Left") && offset <= -60f
+            }
+            assertTrue("Expected swipe summaries to move to left anchor after reverse drag", movedToLeftAnchor)
         }
     }
 
