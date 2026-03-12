@@ -60,22 +60,6 @@ data class OverlayAnchorModifierElement(
     val anchorId: String,
 ) : ModifierElement
 
-data class LazyContainerReuseModifierElement(
-    val sharePool: Boolean,
-    val disableItemAnimator: Boolean,
-) : ModifierElement
-
-data class LazyContainerMotionModifierElement(
-    val animateInsert: Boolean,
-    val animateRemove: Boolean,
-    val animateMove: Boolean,
-    val animateChange: Boolean,
-) : ModifierElement
-
-data class FocusFollowKeyboardModifierElement(
-    val enabled: Boolean,
-) : ModifierElement
-
 class NativeViewElement(
     val stableKey: Any,
     val configure: (Any) -> Unit,
@@ -85,4 +69,3 @@ class NativeViewElement(
 
     override fun hashCode(): Int = stableKey.hashCode()
 }
-

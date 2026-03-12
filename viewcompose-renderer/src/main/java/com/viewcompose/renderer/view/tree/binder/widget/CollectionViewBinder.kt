@@ -2,9 +2,13 @@ package com.viewcompose.renderer.view.tree
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.viewcompose.renderer.view.lazy.focus.LazyFocusFollowLayoutMonitor
+import com.viewcompose.renderer.view.lazy.reuse.FrameworkRecyclerViewDefaults
 import com.viewcompose.ui.node.LazyListItem
 import com.viewcompose.ui.node.NavigationBarItem
 import com.viewcompose.ui.node.VNode
+import com.viewcompose.ui.node.policy.CollectionMotionPolicy
+import com.viewcompose.ui.node.policy.CollectionReusePolicy
 import com.viewcompose.ui.node.spec.LazyColumnNodeProps
 import com.viewcompose.ui.node.spec.LazyRowNodeProps
 import com.viewcompose.ui.node.spec.LazyVerticalGridNodeProps
@@ -21,6 +25,9 @@ internal object CollectionViewBinder {
         val spacing: Int,
         val items: List<LazyListItem>,
         val state: LazyListState? = null,
+        val reusePolicy: CollectionReusePolicy,
+        val motionPolicy: CollectionMotionPolicy,
+        val focusFollowKeyboard: Boolean,
     )
 
     data class NavigationBarSpec(
@@ -47,12 +54,28 @@ internal object CollectionViewBinder {
         val verticalSpacing: Int,
         val items: List<LazyListItem>,
         val state: LazyListState?,
+        val reusePolicy: CollectionReusePolicy,
+        val motionPolicy: CollectionMotionPolicy,
+        val focusFollowKeyboard: Boolean,
     )
 
     fun bindLazyColumn(
         view: RecyclerView,
         spec: LazyColumnSpec,
     ) {
+        FrameworkRecyclerViewDefaults.applyLazyColumnDefaults(
+            recyclerView = view,
+            sharePool = spec.reusePolicy.sharePool,
+            disableItemAnimator = spec.motionPolicy.disableItemAnimator,
+            animateInsert = spec.motionPolicy.animateInsert,
+            animateRemove = spec.motionPolicy.animateRemove,
+            animateMove = spec.motionPolicy.animateMove,
+            animateChange = spec.motionPolicy.animateChange,
+        )
+        LazyFocusFollowLayoutMonitor.apply(
+            recyclerView = view,
+            enabled = spec.focusFollowKeyboard,
+        )
         val adapter = view.adapter as? LazyListAdapter ?: LazyListAdapter().also {
             view.adapter = it
         }
@@ -76,6 +99,19 @@ internal object CollectionViewBinder {
         view: RecyclerView,
         spec: LazyColumnSpec,
     ) {
+        FrameworkRecyclerViewDefaults.applyLazyRowDefaults(
+            recyclerView = view,
+            sharePool = spec.reusePolicy.sharePool,
+            disableItemAnimator = spec.motionPolicy.disableItemAnimator,
+            animateInsert = spec.motionPolicy.animateInsert,
+            animateRemove = spec.motionPolicy.animateRemove,
+            animateMove = spec.motionPolicy.animateMove,
+            animateChange = spec.motionPolicy.animateChange,
+        )
+        LazyFocusFollowLayoutMonitor.apply(
+            recyclerView = view,
+            enabled = false,
+        )
         val adapter = view.adapter as? LazyListAdapter
             ?: LazyListAdapter(LinearLayoutManager.HORIZONTAL).also {
                 view.adapter = it
@@ -122,6 +158,15 @@ internal object CollectionViewBinder {
         view: DeclarativeLazyVerticalGridLayout,
         spec: LazyVerticalGridSpec,
     ) {
+        view.applyRecyclerDefaults(
+            sharePool = spec.reusePolicy.sharePool,
+            disableItemAnimator = spec.motionPolicy.disableItemAnimator,
+            animateInsert = spec.motionPolicy.animateInsert,
+            animateRemove = spec.motionPolicy.animateRemove,
+            animateMove = spec.motionPolicy.animateMove,
+            animateChange = spec.motionPolicy.animateChange,
+        )
+        view.setFocusFollowKeyboardEnabled(spec.focusFollowKeyboard)
         view.bind(
             spanCount = spec.spanCount,
             contentPadding = spec.contentPadding,
@@ -139,6 +184,9 @@ internal object CollectionViewBinder {
             spacing = spec.spacing,
             items = spec.items,
             state = spec.state,
+            reusePolicy = spec.reusePolicy,
+            motionPolicy = spec.motionPolicy,
+            focusFollowKeyboard = spec.focusFollowKeyboard,
         )
     }
 
@@ -149,6 +197,9 @@ internal object CollectionViewBinder {
             spacing = spec.spacing,
             items = spec.items,
             state = spec.state,
+            reusePolicy = spec.reusePolicy,
+            motionPolicy = spec.motionPolicy,
+            focusFollowKeyboard = false,
         )
     }
 
@@ -181,6 +232,9 @@ internal object CollectionViewBinder {
             verticalSpacing = spec.verticalSpacing,
             items = spec.items,
             state = spec.state,
+            reusePolicy = spec.reusePolicy,
+            motionPolicy = spec.motionPolicy,
+            focusFollowKeyboard = spec.focusFollowKeyboard,
         )
     }
 }

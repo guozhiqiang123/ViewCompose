@@ -5,6 +5,8 @@ import com.viewcompose.ui.node.SegmentedControlItem
 import com.viewcompose.ui.node.VNode
 import com.viewcompose.ui.node.collection.TabIndicatorPosition
 import com.viewcompose.ui.node.collection.TabIndicatorWidthMode
+import com.viewcompose.ui.node.policy.CollectionMotionPolicy
+import com.viewcompose.ui.node.policy.CollectionReusePolicy
 import com.viewcompose.ui.node.spec.HorizontalPagerNodeProps
 import com.viewcompose.ui.node.spec.SegmentedControlNodeProps
 import com.viewcompose.ui.node.spec.TabRowNodeProps
@@ -39,6 +41,8 @@ internal object PagerViewBinder {
         val offscreenPageLimit: Int,
         val pagerState: PagerState?,
         val userScrollEnabled: Boolean,
+        val reusePolicy: CollectionReusePolicy,
+        val motionPolicy: CollectionMotionPolicy,
     )
 
     data class VerticalPagerSpec(
@@ -48,6 +52,9 @@ internal object PagerViewBinder {
         val offscreenPageLimit: Int,
         val pagerState: PagerState?,
         val userScrollEnabled: Boolean,
+        val reusePolicy: CollectionReusePolicy,
+        val motionPolicy: CollectionMotionPolicy,
+        val focusFollowKeyboard: Boolean,
     )
 
     data class TabRowSpec(
@@ -96,6 +103,14 @@ internal object PagerViewBinder {
         view: DeclarativeHorizontalPagerLayout,
         spec: HorizontalPagerSpec,
     ) {
+        view.applyRecyclerDefaults(
+            sharePool = spec.reusePolicy.sharePool,
+            disableItemAnimator = spec.motionPolicy.disableItemAnimator,
+            animateInsert = spec.motionPolicy.animateInsert,
+            animateRemove = spec.motionPolicy.animateRemove,
+            animateMove = spec.motionPolicy.animateMove,
+            animateChange = spec.motionPolicy.animateChange,
+        )
         view.bind(
             pages = spec.pages,
             currentPage = spec.currentPage,
@@ -136,6 +151,15 @@ internal object PagerViewBinder {
         view: DeclarativeVerticalPagerLayout,
         spec: VerticalPagerSpec,
     ) {
+        view.applyRecyclerDefaults(
+            sharePool = spec.reusePolicy.sharePool,
+            disableItemAnimator = spec.motionPolicy.disableItemAnimator,
+            animateInsert = spec.motionPolicy.animateInsert,
+            animateRemove = spec.motionPolicy.animateRemove,
+            animateMove = spec.motionPolicy.animateMove,
+            animateChange = spec.motionPolicy.animateChange,
+        )
+        view.setFocusFollowKeyboardEnabled(spec.focusFollowKeyboard)
         view.bind(
             pages = spec.pages,
             currentPage = spec.currentPage,
@@ -174,6 +198,8 @@ internal object PagerViewBinder {
             offscreenPageLimit = spec.offscreenPageLimit,
             pagerState = spec.pagerState,
             userScrollEnabled = spec.userScrollEnabled,
+            reusePolicy = spec.reusePolicy,
+            motionPolicy = spec.motionPolicy,
         )
     }
 
@@ -210,6 +236,9 @@ internal object PagerViewBinder {
             offscreenPageLimit = spec.offscreenPageLimit,
             pagerState = spec.pagerState,
             userScrollEnabled = spec.userScrollEnabled,
+            reusePolicy = spec.reusePolicy,
+            motionPolicy = spec.motionPolicy,
+            focusFollowKeyboard = spec.focusFollowKeyboard,
         )
     }
 }

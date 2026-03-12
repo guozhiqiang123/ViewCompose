@@ -5,6 +5,8 @@ import com.viewcompose.ui.layout.MainAxisArrangement
 import com.viewcompose.ui.layout.VerticalAlignment
 import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.node.VNode
+import com.viewcompose.ui.node.policy.CollectionMotionPolicy
+import com.viewcompose.ui.node.policy.CollectionReusePolicy
 import com.viewcompose.ui.state.LazyListState
 import com.viewcompose.ui.state.PagerState
 
@@ -20,10 +22,26 @@ class ScrollableScope internal constructor() {
         contentPadding: Int = 0,
         spacing: Int = 0,
         state: LazyListState? = null,
+        reusePolicy: CollectionReusePolicy = CollectionReusePolicy(),
+        motionPolicy: CollectionMotionPolicy = CollectionMotionPolicy(),
+        focusFollowKeyboard: Boolean = false,
         modifier: Modifier = Modifier,
         itemContent: UiTreeBuilder.(T) -> Unit,
     ) {
-        with(delegate) { LazyColumn(items, key, contentPadding, spacing, state, modifier, itemContent) }
+        with(delegate) {
+            LazyColumn(
+                items = items,
+                key = key,
+                contentPadding = contentPadding,
+                spacing = spacing,
+                state = state,
+                reusePolicy = reusePolicy,
+                motionPolicy = motionPolicy,
+                focusFollowKeyboard = focusFollowKeyboard,
+                modifier = modifier,
+                itemContent = itemContent,
+            )
+        }
     }
 
     fun ScrollableColumn(
@@ -31,10 +49,21 @@ class ScrollableScope internal constructor() {
         spacing: Int = 0,
         arrangement: MainAxisArrangement = MainAxisArrangement.Start,
         horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Start,
+        focusFollowKeyboard: Boolean = false,
         modifier: Modifier = Modifier,
         content: ColumnScope.() -> Unit,
     ) {
-        with(delegate) { ScrollableColumn(key, spacing, arrangement, horizontalAlignment, modifier, content) }
+        with(delegate) {
+            ScrollableColumn(
+                key = key,
+                spacing = spacing,
+                arrangement = arrangement,
+                horizontalAlignment = horizontalAlignment,
+                focusFollowKeyboard = focusFollowKeyboard,
+                modifier = modifier,
+                content = content,
+            )
+        }
     }
 
     // ── 横向滚动 ──
@@ -45,10 +74,24 @@ class ScrollableScope internal constructor() {
         contentPadding: Int = 0,
         spacing: Int = 0,
         state: LazyListState? = null,
+        reusePolicy: CollectionReusePolicy = CollectionReusePolicy(),
+        motionPolicy: CollectionMotionPolicy = CollectionMotionPolicy(),
         modifier: Modifier = Modifier,
         itemContent: UiTreeBuilder.(T) -> Unit,
     ) {
-        with(delegate) { LazyRow(items, key, contentPadding, spacing, state, modifier, itemContent) }
+        with(delegate) {
+            LazyRow(
+                items = items,
+                key = key,
+                contentPadding = contentPadding,
+                spacing = spacing,
+                state = state,
+                reusePolicy = reusePolicy,
+                motionPolicy = motionPolicy,
+                modifier = modifier,
+                itemContent = itemContent,
+            )
+        }
     }
 
     fun ScrollableRow(
@@ -72,11 +115,27 @@ class ScrollableScope internal constructor() {
         horizontalSpacing: Int = 0,
         verticalSpacing: Int = 0,
         state: LazyListState? = null,
+        reusePolicy: CollectionReusePolicy = CollectionReusePolicy(),
+        motionPolicy: CollectionMotionPolicy = CollectionMotionPolicy(),
+        focusFollowKeyboard: Boolean = false,
         modifier: Modifier = Modifier,
         itemContent: UiTreeBuilder.(T) -> Unit,
     ) {
         with(delegate) {
-            LazyVerticalGrid(items, spanCount, key, contentPadding, horizontalSpacing, verticalSpacing, state, modifier, itemContent)
+            LazyVerticalGrid(
+                items = items,
+                spanCount = spanCount,
+                key = key,
+                contentPadding = contentPadding,
+                horizontalSpacing = horizontalSpacing,
+                verticalSpacing = verticalSpacing,
+                state = state,
+                reusePolicy = reusePolicy,
+                motionPolicy = motionPolicy,
+                focusFollowKeyboard = focusFollowKeyboard,
+                modifier = modifier,
+                itemContent = itemContent,
+            )
         }
     }
 
@@ -88,12 +147,25 @@ class ScrollableScope internal constructor() {
         pagerState: PagerState? = null,
         offscreenPageLimit: Int = 1,
         userScrollEnabled: Boolean = true,
+        reusePolicy: CollectionReusePolicy = CollectionReusePolicy(),
+        motionPolicy: CollectionMotionPolicy = CollectionMotionPolicy(),
         key: Any? = null,
         modifier: Modifier = Modifier,
         pages: HorizontalPagerScope.() -> Unit,
     ) {
         with(delegate) {
-            HorizontalPager(currentPage, onPageChanged, pagerState, offscreenPageLimit, userScrollEnabled, key, modifier, pages)
+            HorizontalPager(
+                currentPage = currentPage,
+                onPageChanged = onPageChanged,
+                pagerState = pagerState,
+                offscreenPageLimit = offscreenPageLimit,
+                userScrollEnabled = userScrollEnabled,
+                reusePolicy = reusePolicy,
+                motionPolicy = motionPolicy,
+                key = key,
+                modifier = modifier,
+                pages = pages,
+            )
         }
     }
 
@@ -103,12 +175,27 @@ class ScrollableScope internal constructor() {
         pagerState: PagerState? = null,
         offscreenPageLimit: Int = 1,
         userScrollEnabled: Boolean = true,
+        reusePolicy: CollectionReusePolicy = CollectionReusePolicy(),
+        motionPolicy: CollectionMotionPolicy = CollectionMotionPolicy(),
+        focusFollowKeyboard: Boolean = false,
         key: Any? = null,
         modifier: Modifier = Modifier,
         pages: HorizontalPagerScope.() -> Unit,
     ) {
         with(delegate) {
-            VerticalPager(currentPage, onPageChanged, pagerState, offscreenPageLimit, userScrollEnabled, key, modifier, pages)
+            VerticalPager(
+                currentPage = currentPage,
+                onPageChanged = onPageChanged,
+                pagerState = pagerState,
+                offscreenPageLimit = offscreenPageLimit,
+                userScrollEnabled = userScrollEnabled,
+                reusePolicy = reusePolicy,
+                motionPolicy = motionPolicy,
+                focusFollowKeyboard = focusFollowKeyboard,
+                key = key,
+                modifier = modifier,
+                pages = pages,
+            )
         }
     }
 

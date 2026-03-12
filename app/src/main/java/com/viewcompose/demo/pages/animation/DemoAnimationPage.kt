@@ -38,10 +38,10 @@ import com.viewcompose.ui.modifier.fillMaxSize
 import com.viewcompose.ui.modifier.fillMaxWidth
 import com.viewcompose.ui.modifier.graphicsLayer
 import com.viewcompose.ui.modifier.height
-import com.viewcompose.ui.modifier.lazyContainerMotion
 import com.viewcompose.ui.modifier.margin
 import com.viewcompose.ui.modifier.padding
 import com.viewcompose.ui.modifier.testTag
+import com.viewcompose.ui.node.policy.CollectionMotionPolicy
 import com.viewcompose.runtime.mutableStateOf
 import com.viewcompose.widget.core.DisposableEffect
 import com.viewcompose.widget.core.Button
@@ -329,15 +329,15 @@ internal fun UiTreeBuilder.AnimationPage(
                     items = listItemsState.value,
                     key = { it },
                     spacing = 8.dp,
+                    motionPolicy = CollectionMotionPolicy(
+                        animateInsert = true,
+                        animateRemove = true,
+                        animateMove = true,
+                        animateChange = true,
+                    ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(220.dp)
-                        .lazyContainerMotion(
-                            animateInsert = true,
-                            animateRemove = true,
-                            animateMove = true,
-                            animateChange = true,
-                        ),
+                        .height(220.dp),
                 ) { item ->
                     Surface(
                         variant = SurfaceVariant.Variant,

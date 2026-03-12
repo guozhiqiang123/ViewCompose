@@ -44,6 +44,9 @@ import com.viewcompose.renderer.view.tree.ContainerViewSpecReader
 import com.viewcompose.renderer.view.tree.VerticalPagerNodePatch
 import com.viewcompose.ui.state.LazyListConnector
 import com.viewcompose.renderer.view.lazy.adapter.LazyListAdapter
+import com.viewcompose.renderer.view.lazy.focus.LazyFocusFollowLayoutMonitor
+import com.viewcompose.renderer.view.lazy.focus.ScrollableFocusFollowLayoutMonitor
+import com.viewcompose.renderer.view.lazy.reuse.FrameworkRecyclerViewDefaults
 
 internal object ContainerNodePatchApplier {
     fun applyRowPatch(
@@ -143,6 +146,23 @@ internal object ContainerNodePatchApplier {
     ) {
         val previous = patch.previous
         val next = patch.next
+        if (previous.reusePolicy != next.reusePolicy || previous.motionPolicy != next.motionPolicy) {
+            FrameworkRecyclerViewDefaults.applyLazyColumnDefaults(
+                recyclerView = view,
+                sharePool = next.reusePolicy.sharePool,
+                disableItemAnimator = next.motionPolicy.disableItemAnimator,
+                animateInsert = next.motionPolicy.animateInsert,
+                animateRemove = next.motionPolicy.animateRemove,
+                animateMove = next.motionPolicy.animateMove,
+                animateChange = next.motionPolicy.animateChange,
+            )
+        }
+        if (previous.focusFollowKeyboard != next.focusFollowKeyboard) {
+            LazyFocusFollowLayoutMonitor.apply(
+                recyclerView = view,
+                enabled = next.focusFollowKeyboard,
+            )
+        }
         if (previous.contentPadding != next.contentPadding) {
             ContainerViewBinder.applyLazyListPadding(view, next.contentPadding)
         }
@@ -177,6 +197,21 @@ internal object ContainerNodePatchApplier {
     ) {
         val previous = patch.previous
         val next = patch.next
+        if (previous.reusePolicy != next.reusePolicy || previous.motionPolicy != next.motionPolicy) {
+            FrameworkRecyclerViewDefaults.applyLazyRowDefaults(
+                recyclerView = view,
+                sharePool = next.reusePolicy.sharePool,
+                disableItemAnimator = next.motionPolicy.disableItemAnimator,
+                animateInsert = next.motionPolicy.animateInsert,
+                animateRemove = next.motionPolicy.animateRemove,
+                animateMove = next.motionPolicy.animateMove,
+                animateChange = next.motionPolicy.animateChange,
+            )
+        }
+        LazyFocusFollowLayoutMonitor.apply(
+            recyclerView = view,
+            enabled = false,
+        )
         if (previous.contentPadding != next.contentPadding) {
             ContainerViewBinder.applyLazyListPadding(view, next.contentPadding)
         }
@@ -246,6 +281,12 @@ internal object ContainerNodePatchApplier {
             with(ContainerViewSpecReader) {
                 view.innerLayout.gravity = next.horizontalAlignment.toGravity()
             }
+        }
+        if (previous.focusFollowKeyboard != next.focusFollowKeyboard) {
+            ScrollableFocusFollowLayoutMonitor.apply(
+                scrollView = view,
+                enabled = next.focusFollowKeyboard,
+            )
         }
     }
 
@@ -340,6 +381,8 @@ internal object ContainerNodePatchApplier {
                 offscreenPageLimit = patch.next.offscreenPageLimit,
                 pagerState = patch.next.pagerState,
                 userScrollEnabled = patch.next.userScrollEnabled,
+                reusePolicy = patch.next.reusePolicy,
+                motionPolicy = patch.next.motionPolicy,
             ),
         )
     }
@@ -386,6 +429,9 @@ internal object ContainerNodePatchApplier {
                 offscreenPageLimit = patch.next.offscreenPageLimit,
                 pagerState = patch.next.pagerState,
                 userScrollEnabled = patch.next.userScrollEnabled,
+                reusePolicy = patch.next.reusePolicy,
+                motionPolicy = patch.next.motionPolicy,
+                focusFollowKeyboard = patch.next.focusFollowKeyboard,
             ),
         )
     }
@@ -403,6 +449,9 @@ internal object ContainerNodePatchApplier {
                 verticalSpacing = patch.next.verticalSpacing,
                 items = patch.next.items,
                 state = patch.next.state,
+                reusePolicy = patch.next.reusePolicy,
+                motionPolicy = patch.next.motionPolicy,
+                focusFollowKeyboard = patch.next.focusFollowKeyboard,
             ),
         )
     }

@@ -56,10 +56,6 @@ internal object ViewModifierApplier {
         defaultRippleColor: Int,
         resolved: ResolvedModifiers = node.modifier.resolve(),
     ) {
-        ModifierContainerPolicyApplier.applyScrollableContainerPolicies(
-            view = view,
-            node = node,
-        )
         val nodeStyle = ModifierNodeStyleResolver.resolveNodeStyle(
             node = node,
             resolved = resolved,

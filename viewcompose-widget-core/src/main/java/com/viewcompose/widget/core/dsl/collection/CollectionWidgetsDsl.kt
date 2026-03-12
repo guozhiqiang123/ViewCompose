@@ -7,6 +7,8 @@ import com.viewcompose.ui.node.NodeType
 import com.viewcompose.ui.node.collection.TabIndicatorPosition
 import com.viewcompose.ui.node.collection.TabIndicatorWidthMode
 import com.viewcompose.ui.node.collection.TabRowTab
+import com.viewcompose.ui.node.policy.CollectionMotionPolicy
+import com.viewcompose.ui.node.policy.CollectionReusePolicy
 import com.viewcompose.ui.node.spec.HorizontalPagerNodeProps
 import com.viewcompose.ui.node.spec.LazyColumnNodeProps
 import com.viewcompose.ui.node.spec.LazyRowNodeProps
@@ -22,6 +24,9 @@ fun <T> UiTreeBuilder.LazyColumn(
     contentPadding: Int = 0,
     spacing: Int = 0,
     state: LazyListState? = null,
+    reusePolicy: CollectionReusePolicy = CollectionReusePolicy(),
+    motionPolicy: CollectionMotionPolicy = CollectionMotionPolicy(),
+    focusFollowKeyboard: Boolean = false,
     modifier: Modifier = Modifier,
     itemContent: UiTreeBuilder.(T) -> Unit,
 ) {
@@ -56,6 +61,9 @@ fun <T> UiTreeBuilder.LazyColumn(
             spacing = spacing,
             items = resolvedItems,
             state = state,
+            reusePolicy = reusePolicy,
+            motionPolicy = motionPolicy,
+            focusFollowKeyboard = focusFollowKeyboard,
         ),
         modifier = modifier,
     )
@@ -67,6 +75,8 @@ fun <T> UiTreeBuilder.LazyRow(
     contentPadding: Int = 0,
     spacing: Int = 0,
     state: LazyListState? = null,
+    reusePolicy: CollectionReusePolicy = CollectionReusePolicy(),
+    motionPolicy: CollectionMotionPolicy = CollectionMotionPolicy(),
     modifier: Modifier = Modifier,
     itemContent: UiTreeBuilder.(T) -> Unit,
 ) {
@@ -101,6 +111,8 @@ fun <T> UiTreeBuilder.LazyRow(
             spacing = spacing,
             items = resolvedItems,
             state = state,
+            reusePolicy = reusePolicy,
+            motionPolicy = motionPolicy,
         ),
         modifier = modifier,
     )
@@ -114,6 +126,9 @@ fun <T> UiTreeBuilder.LazyVerticalGrid(
     horizontalSpacing: Int = 0,
     verticalSpacing: Int = 0,
     state: LazyListState? = null,
+    reusePolicy: CollectionReusePolicy = CollectionReusePolicy(),
+    motionPolicy: CollectionMotionPolicy = CollectionMotionPolicy(),
+    focusFollowKeyboard: Boolean = false,
     modifier: Modifier = Modifier,
     itemContent: UiTreeBuilder.(T) -> Unit,
 ) {
@@ -150,6 +165,9 @@ fun <T> UiTreeBuilder.LazyVerticalGrid(
             verticalSpacing = verticalSpacing,
             items = resolvedItems,
             state = state,
+            reusePolicy = reusePolicy,
+            motionPolicy = motionPolicy,
+            focusFollowKeyboard = focusFollowKeyboard,
         ),
         modifier = modifier,
     )
@@ -182,6 +200,8 @@ fun UiTreeBuilder.HorizontalPager(
     pagerState: PagerState? = null,
     offscreenPageLimit: Int = 1,
     userScrollEnabled: Boolean = true,
+    reusePolicy: CollectionReusePolicy = CollectionReusePolicy(),
+    motionPolicy: CollectionMotionPolicy = CollectionMotionPolicy(),
     key: Any? = null,
     modifier: Modifier = Modifier,
     pages: HorizontalPagerScope.() -> Unit,
@@ -217,6 +237,8 @@ fun UiTreeBuilder.HorizontalPager(
             offscreenPageLimit = offscreenPageLimit,
             pagerState = pagerState,
             userScrollEnabled = userScrollEnabled,
+            reusePolicy = reusePolicy,
+            motionPolicy = motionPolicy,
         ),
         modifier = modifier,
     )
@@ -236,6 +258,9 @@ fun UiTreeBuilder.VerticalPager(
     pagerState: PagerState? = null,
     offscreenPageLimit: Int = 1,
     userScrollEnabled: Boolean = true,
+    reusePolicy: CollectionReusePolicy = CollectionReusePolicy(),
+    motionPolicy: CollectionMotionPolicy = CollectionMotionPolicy(),
+    focusFollowKeyboard: Boolean = false,
     key: Any? = null,
     modifier: Modifier = Modifier,
     pages: HorizontalPagerScope.() -> Unit,
@@ -271,6 +296,9 @@ fun UiTreeBuilder.VerticalPager(
             offscreenPageLimit = offscreenPageLimit,
             pagerState = pagerState,
             userScrollEnabled = userScrollEnabled,
+            reusePolicy = reusePolicy,
+            motionPolicy = motionPolicy,
+            focusFollowKeyboard = focusFollowKeyboard,
         ),
         modifier = modifier,
     )

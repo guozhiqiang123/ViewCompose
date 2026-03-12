@@ -5,7 +5,6 @@ import com.viewcompose.ui.modifier.backgroundColor
 import com.viewcompose.ui.modifier.cornerRadius
 import com.viewcompose.ui.modifier.fillMaxSize
 import com.viewcompose.ui.modifier.fillMaxWidth
-import com.viewcompose.ui.modifier.focusFollowKeyboard
 import com.viewcompose.ui.modifier.height
 import com.viewcompose.ui.modifier.margin
 import com.viewcompose.ui.modifier.padding
@@ -95,16 +94,9 @@ internal fun UiTreeBuilder.InputPage(
     LazyColumn(
         items = pageItems,
         key = { it },
+        focusFollowKeyboard = selectedPageState.value == 3,
         modifier = Modifier
-            .fillMaxSize()
-            .then(
-                if (selectedPageState.value == 3) {
-                    Modifier
-                        .focusFollowKeyboard()
-                } else {
-                    Modifier
-                },
-            ),
+            .fillMaxSize(),
     ) { section ->
         when (section) {
             "page" -> ChapterPageOverviewSection(
@@ -529,13 +521,13 @@ internal fun UiTreeBuilder.InputPage(
                 )
                 ScrollableColumn(
                     spacing = 8.dp,
+                    focusFollowKeyboard = true,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(188.dp)
                         .backgroundColor(SurfaceDefaults.variantBackgroundColor())
                         .cornerRadius(SurfaceDefaults.cardCornerRadius())
                         .padding(12.dp)
-                        .focusFollowKeyboard()
                         .margin(bottom = 12.dp),
                 ) {
                     Text(
@@ -567,10 +559,10 @@ internal fun UiTreeBuilder.InputPage(
                 VerticalPager(
                     currentPage = focusFollowVerticalPagerPageState.value,
                     onPageChanged = { focusFollowVerticalPagerPageState.value = it },
+                    focusFollowKeyboard = true,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(188.dp)
-                        .focusFollowKeyboard()
                         .margin(bottom = 12.dp),
                 ) {
                     Page(key = "focus-follow-vertical-pager-search", contentToken = "focus-follow-vertical-pager-search") {
@@ -630,10 +622,10 @@ internal fun UiTreeBuilder.InputPage(
                 ) {
                     ScrollableColumn(
                         spacing = 8.dp,
+                        focusFollowKeyboard = true,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(12.dp)
-                            .focusFollowKeyboard(),
+                            .padding(12.dp),
                     ) {
                         SearchBar(
                             query = pullRefreshSearchQueryState.value,

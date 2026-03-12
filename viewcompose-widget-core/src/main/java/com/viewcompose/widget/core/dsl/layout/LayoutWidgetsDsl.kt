@@ -158,6 +158,7 @@ fun UiTreeBuilder.ScrollableColumn(
     spacing: Int = 0,
     arrangement: MainAxisArrangement = MainAxisArrangement.Start,
     horizontalAlignment: HorizontalAlignment = HorizontalAlignment.Start,
+    focusFollowKeyboard: Boolean = false,
     modifier: Modifier = Modifier,
     content: ColumnScope.() -> Unit,
 ) {
@@ -168,6 +169,7 @@ fun UiTreeBuilder.ScrollableColumn(
             spacing = spacing,
             arrangement = arrangement,
             horizontalAlignment = horizontalAlignment,
+            focusFollowKeyboard = focusFollowKeyboard,
         ),
         modifier = modifier,
         children = ColumnScope().apply(content).build(),

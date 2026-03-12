@@ -4,11 +4,9 @@ import com.viewcompose.ui.node.VNode
 import com.viewcompose.ui.node.spec.ScrollableColumnNodeProps
 import com.viewcompose.ui.node.spec.ScrollableRowNodeProps
 import com.viewcompose.ui.node.spec.PullToRefreshNodeProps
-import com.viewcompose.ui.layout.HorizontalAlignment
-import com.viewcompose.ui.layout.MainAxisArrangement
-import com.viewcompose.ui.layout.VerticalAlignment
 import com.viewcompose.renderer.view.container.DeclarativeScrollableColumnLayout
 import com.viewcompose.renderer.view.container.DeclarativeScrollableRowLayout
+import com.viewcompose.renderer.view.lazy.focus.ScrollableFocusFollowLayoutMonitor
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
 internal object ScrollableViewBinder {
@@ -18,11 +16,20 @@ internal object ScrollableViewBinder {
         val indicatorColor: Int,
     )
 
+    data class ScrollableColumnSpec(
+        val linearSpec: ContainerViewBinder.LinearSpec,
+        val focusFollowKeyboard: Boolean,
+    )
+
     fun bindScrollableColumn(
         view: DeclarativeScrollableColumnLayout,
-        spec: ContainerViewBinder.LinearSpec,
+        spec: ScrollableColumnSpec,
     ) {
-        ContainerViewBinder.bindColumn(view.innerLayout, spec)
+        ContainerViewBinder.bindColumn(view.innerLayout, spec.linearSpec)
+        ScrollableFocusFollowLayoutMonitor.apply(
+            scrollView = view,
+            enabled = spec.focusFollowKeyboard,
+        )
     }
 
     fun bindScrollableRow(
@@ -41,12 +48,15 @@ internal object ScrollableViewBinder {
         view.setColorSchemeColors(spec.indicatorColor)
     }
 
-    fun readScrollableColumnSpec(node: VNode): ContainerViewBinder.LinearSpec {
+    fun readScrollableColumnSpec(node: VNode): ScrollableColumnSpec {
         val spec = node.requireSpec<ScrollableColumnNodeProps>()
-        return ContainerViewBinder.LinearSpec(
-            spacing = spec.spacing,
-            arrangement = spec.arrangement,
-            gravity = with(ContainerViewSpecReader) { spec.horizontalAlignment.toGravity() },
+        return ScrollableColumnSpec(
+            linearSpec = ContainerViewBinder.LinearSpec(
+                spacing = spec.spacing,
+                arrangement = spec.arrangement,
+                gravity = with(ContainerViewSpecReader) { spec.horizontalAlignment.toGravity() },
+            ),
+            focusFollowKeyboard = spec.focusFollowKeyboard,
         )
     }
 
