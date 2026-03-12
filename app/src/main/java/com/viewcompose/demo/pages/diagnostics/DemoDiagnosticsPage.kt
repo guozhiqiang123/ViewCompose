@@ -1,5 +1,6 @@
 package com.viewcompose
 
+import android.view.Choreographer
 import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.modifier.fillMaxSize
 import com.viewcompose.ui.modifier.padding
@@ -34,18 +35,33 @@ internal fun UiTreeBuilder.DiagnosticsPage(
     entryHint: String? = null,
 ) {
     val pendingSnapshotRefreshState = remember { mutableStateOf(autoRefreshOnEnter) }
+    val snapshotRefreshRequestTokenState = remember { mutableStateOf(if (autoRefreshOnEnter) 1 else 0) }
+    val scheduledSnapshotRefreshTokenState = remember { mutableStateOf(-1) }
     val snapshotRefreshVersionState = remember { mutableStateOf(0) }
     val benchmarkRefreshCountState = remember { mutableStateOf(0) }
     val renderSnapshotState = remember { mutableStateOf(DemoRenderDiagnosticsStore.latestSnapshot()) }
     val patchSnapshotState = remember { mutableStateOf(DemoRenderDiagnosticsStore.latestPatchActiveSnapshot()) }
     val layoutSnapshotState = remember { mutableStateOf(LayoutPassTracker.snapshot()) }
     if (pendingSnapshotRefreshState.value) {
+        val refreshToken = snapshotRefreshRequestTokenState.value
         SideEffect {
-            renderSnapshotState.value = DemoRenderDiagnosticsStore.latestSnapshot()
-            patchSnapshotState.value = DemoRenderDiagnosticsStore.latestPatchActiveSnapshot()
-            layoutSnapshotState.value = LayoutPassTracker.snapshot()
-            snapshotRefreshVersionState.value = snapshotRefreshVersionState.value + 1
-            pendingSnapshotRefreshState.value = false
+            if (scheduledSnapshotRefreshTokenState.value == refreshToken) {
+                return@SideEffect
+            }
+            scheduledSnapshotRefreshTokenState.value = refreshToken
+            Choreographer.getInstance().postFrameCallback {
+                if (!pendingSnapshotRefreshState.value || snapshotRefreshRequestTokenState.value != refreshToken) {
+                    return@postFrameCallback
+                }
+                val latestSnapshot = DemoRenderDiagnosticsStore.latestSnapshot()
+                val latestPatchSnapshot = DemoRenderDiagnosticsStore.latestPatchActiveSnapshot()
+                renderSnapshotState.value = latestSnapshot
+                patchSnapshotState.value = latestPatchSnapshot
+                layoutSnapshotState.value = LayoutPassTracker.snapshot()
+                snapshotRefreshVersionState.value = snapshotRefreshVersionState.value + 1
+                pendingSnapshotRefreshState.value = false
+                scheduledSnapshotRefreshTokenState.value = -1
+            }
         }
     }
     val pageItems = when (selectedPageState.value) {
@@ -84,6 +100,7 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                     text = "刷新 Diagnostics Benchmark",
                     onClick = {
                         benchmarkRefreshCountState.value = benchmarkRefreshCountState.value + 1
+                        snapshotRefreshRequestTokenState.value = snapshotRefreshRequestTokenState.value + 1
                         pendingSnapshotRefreshState.value = true
                     },
                     modifier = Modifier.padding(bottom = 8.dp),
@@ -92,6 +109,7 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                     text = "重置 Diagnostics Benchmark",
                     onClick = {
                         benchmarkRefreshCountState.value = 0
+                        snapshotRefreshRequestTokenState.value = snapshotRefreshRequestTokenState.value + 1
                         pendingSnapshotRefreshState.value = true
                     },
                     modifier = Modifier.padding(bottom = 8.dp),
@@ -181,6 +199,7 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                 Button(
                     text = "刷新渲染器快照",
                     onClick = {
+                        snapshotRefreshRequestTokenState.value = snapshotRefreshRequestTokenState.value + 1
                         pendingSnapshotRefreshState.value = true
                     },
                     modifier = Modifier
@@ -197,6 +216,7 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                     text = "重置布局计数器",
                     onClick = {
                         LayoutPassTracker.reset()
+                        snapshotRefreshRequestTokenState.value = snapshotRefreshRequestTokenState.value + 1
                         pendingSnapshotRefreshState.value = true
                     },
                     modifier = Modifier.padding(bottom = 8.dp),
