@@ -1402,7 +1402,8 @@ class DemoVisualUiTest {
                 val updatedAt = activity.requireTextViewByTestTag(
                     DemoTestTags.DIAGNOSTICS_RENDER_UPDATED_AT,
                 ).text.toString()
-                sequence != beforeSequence && (count != beforeRenderCount || updatedAt != beforeUpdatedAt)
+                sequence != beforeSequence &&
+                    (count != beforeRenderCount || updatedAt != beforeUpdatedAt)
             }
             assertTrue(
                 "Expected diagnostics refresh to update render snapshot probes " +

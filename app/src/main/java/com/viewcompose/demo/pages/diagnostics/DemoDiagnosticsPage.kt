@@ -20,6 +20,7 @@ import com.viewcompose.widget.core.UiLayoutDirection
 import com.viewcompose.widget.core.UiTextStyle
 import com.viewcompose.widget.core.UiTreeBuilder
 import com.viewcompose.widget.core.dp
+import com.viewcompose.widget.core.key
 import com.viewcompose.widget.core.remember
 import com.viewcompose.widget.core.sp
 import com.viewcompose.runtime.MutableState
@@ -247,37 +248,49 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                         .padding(bottom = 8.dp)
                         .testTag(DemoTestTags.DIAGNOSTICS_PATCH_ACTIVE_CAPTURED_AT),
                 )
-                DiagnosticFactGroup(
-                    title = "最近渲染快照",
-                    facts = listOf(
-                        DiagnosticFact("快照序号", snapshotRefreshVersionState.value.toString()),
-                        DiagnosticFact("渲染次数", snapshot.renderCount.toString()),
-                        DiagnosticFact("更新时间", snapshot.updatedAtMillis.formatDiagnosticsTime()),
-                        DiagnosticFact("插入", snapshot.stats.inserts.toString()),
-                        DiagnosticFact("复用", snapshot.stats.reuses.toString()),
-                        DiagnosticFact("移除", snapshot.stats.removals.toString()),
-                        DiagnosticFact("已 Patch", snapshot.stats.patchedNodes.toString()),
-                        DiagnosticFact("已重绑", snapshot.stats.reboundNodes.toString()),
-                        DiagnosticFact("已跳过", snapshot.stats.skippedBindings.toString()),
-                        DiagnosticFact("子树跳过", snapshot.stats.skippedSubtrees.toString()),
-                        DiagnosticFact("VNode 数量", snapshot.structure.vnodeCount.toString()),
-                        DiagnosticFact("已挂载数量", snapshot.structure.mountedNodeCount.toString()),
-                        DiagnosticFact("VNode 深度", snapshot.structure.maxVNodeDepth.toString()),
-                        DiagnosticFact("挂载深度", snapshot.structure.maxMountedDepth.toString()),
-                    ),
-                )
-                DiagnosticFactGroup(
-                    title = "最近 Patch-Active 快照",
-                    facts = listOf(
-                        DiagnosticFact("捕获时间", patchCapturedAt),
-                        DiagnosticFact("已 Patch", patchPatchedCount.toString()),
-                        DiagnosticFact("已重绑", patchSnapshot?.stats?.reboundNodes?.toString() ?: "0"),
-                        DiagnosticFact("已跳过", patchSnapshot?.stats?.skippedBindings?.toString() ?: "0"),
-                        DiagnosticFact("子树跳过", patchSnapshot?.stats?.skippedSubtrees?.toString() ?: "0"),
-                        DiagnosticFact("挂载深度", patchSnapshot?.structure?.maxMountedDepth?.toString() ?: "0"),
-                        DiagnosticFact("警告", patchSnapshot?.warnings?.joinToString() ?: "无"),
-                    ),
-                )
+                key("diagnostics-render-facts-${snapshotRefreshVersionState.value}-${snapshot.renderCount}-${snapshot.updatedAtMillis}") {
+                    DiagnosticFactGroup(
+                        title = "最近渲染快照",
+                        facts = listOf(
+                            DiagnosticFact("快照序号", snapshotRefreshVersionState.value.toString()),
+                            DiagnosticFact("渲染次数", snapshot.renderCount.toString()),
+                            DiagnosticFact("更新时间", snapshot.updatedAtMillis.formatDiagnosticsTime()),
+                            DiagnosticFact("插入", snapshot.stats.inserts.toString()),
+                            DiagnosticFact("复用", snapshot.stats.reuses.toString()),
+                            DiagnosticFact("移除", snapshot.stats.removals.toString()),
+                            DiagnosticFact("已 Patch", snapshot.stats.patchedNodes.toString()),
+                            DiagnosticFact("已重绑", snapshot.stats.reboundNodes.toString()),
+                            DiagnosticFact("已跳过", snapshot.stats.skippedBindings.toString()),
+                            DiagnosticFact("子树跳过", snapshot.stats.skippedSubtrees.toString()),
+                            DiagnosticFact("VNode 数量", snapshot.structure.vnodeCount.toString()),
+                            DiagnosticFact("已挂载数量", snapshot.structure.mountedNodeCount.toString()),
+                            DiagnosticFact("VNode 深度", snapshot.structure.maxVNodeDepth.toString()),
+                            DiagnosticFact("挂载深度", snapshot.structure.maxMountedDepth.toString()),
+                        ),
+                        valueTagsByLabel = mapOf(
+                            "渲染次数" to DemoTestTags.DIAGNOSTICS_FACT_RENDER_COUNT,
+                        ),
+                    )
+                }
+                key(
+                    "diagnostics-patch-facts-${snapshotRefreshVersionState.value}-${patchCapturedAt}-${patchPatchedCount}",
+                ) {
+                    DiagnosticFactGroup(
+                        title = "最近 Patch-Active 快照",
+                        facts = listOf(
+                            DiagnosticFact("捕获时间", patchCapturedAt),
+                            DiagnosticFact("已 Patch", patchPatchedCount.toString()),
+                            DiagnosticFact("已重绑", patchSnapshot?.stats?.reboundNodes?.toString() ?: "0"),
+                            DiagnosticFact("已跳过", patchSnapshot?.stats?.skippedBindings?.toString() ?: "0"),
+                            DiagnosticFact("子树跳过", patchSnapshot?.stats?.skippedSubtrees?.toString() ?: "0"),
+                            DiagnosticFact("挂载深度", patchSnapshot?.structure?.maxMountedDepth?.toString() ?: "0"),
+                            DiagnosticFact("警告", patchSnapshot?.warnings?.joinToString() ?: "无"),
+                        ),
+                        valueTagsByLabel = mapOf(
+                            "已 Patch" to DemoTestTags.DIAGNOSTICS_FACT_PATCH_PATCHED,
+                        ),
+                    )
+                }
                 val bindingsByType = patchSnapshot?.stats?.bindingsByType
                 if (bindingsByType != null && bindingsByType.isNotEmpty()) {
                     DiagnosticFactGroup(

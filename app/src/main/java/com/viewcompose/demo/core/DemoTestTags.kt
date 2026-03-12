@@ -201,4 +201,6 @@ internal object DemoTestTags {
     const val DIAGNOSTICS_RENDER_UPDATED_AT = "diagnostics_render_updated_at"
     const val DIAGNOSTICS_PATCH_ACTIVE_PATCHED = "diagnostics_patch_active_patched"
     const val DIAGNOSTICS_PATCH_ACTIVE_CAPTURED_AT = "diagnostics_patch_active_captured_at"
+    const val DIAGNOSTICS_FACT_RENDER_COUNT = "diagnostics_fact_render_count"
+    const val DIAGNOSTICS_FACT_PATCH_PATCHED = "diagnostics_fact_patch_patched"
 }

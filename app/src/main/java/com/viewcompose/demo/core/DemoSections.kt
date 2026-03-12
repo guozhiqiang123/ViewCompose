@@ -7,6 +7,7 @@ import com.viewcompose.ui.modifier.fillMaxWidth
 import com.viewcompose.ui.modifier.height
 import com.viewcompose.ui.modifier.margin
 import com.viewcompose.ui.modifier.padding
+import com.viewcompose.ui.modifier.testTag
 import com.viewcompose.ui.modifier.width
 import com.viewcompose.widget.core.Box
 import com.viewcompose.widget.core.Column
@@ -260,6 +261,7 @@ internal fun UiTreeBuilder.ChecklistGroup(
 internal fun UiTreeBuilder.DiagnosticFactGroup(
     title: String,
     facts: List<DiagnosticFact>,
+    valueTagsByLabel: Map<String, String> = emptyMap(),
 ) {
     Column(
         spacing = 6.dp,
@@ -283,7 +285,13 @@ internal fun UiTreeBuilder.DiagnosticFactGroup(
                 )
                 Text(
                     text = fact.value,
-                    modifier = Modifier.weight(1f),
+                    modifier = valueTagsByLabel[fact.label]
+                        ?.let { tag ->
+                            Modifier
+                                .weight(1f)
+                                .testTag(tag)
+                        }
+                        ?: Modifier.weight(1f),
                 )
             }
         }
