@@ -269,13 +269,14 @@
 4. 手势事件消费规则固定为“手势优先，未消费再 clickable 回落”；涉及冲突策略修改时必须补“子手势 vs 父滚动容器”回归。
 5. 列表/分页动画能力默认 opt-in；改动 `lazyContainerMotion` 或 `lazyContainerReuse` 语义时必须补容器回归与文档说明。
 6. `AnimatedVisibility` 必须走 `NodeType.AnimatedVisibilityHost` 承载尺寸动画；隐藏语义固定为“exit 动画结束后再移除 subtree”。
-7. `pointerInput` 仲裁语义变更必须补“Consumed 强短路”回归：`pointerInput` 消费后，`transform/drag/swipe/combinedClickable` 均不可再触发。
+7. `pointerInput` 仲裁语义变更必须补“Consumed 强短路”回归：`pointerInput` 消费后，`transform/drag/anchoredDraggable/combinedClickable` 均不可再触发。
 8. transform 阈值语义变更必须补单测覆盖 slop 三路径（pan/zoom/rotation）与 instrumentation 覆盖双指平移/旋转变化。
-9. swipe settle 语义变更必须补单测覆盖“速度触发/距离触发/最近锚点”三路径，禁止仅凭人工回归上线。
+9. anchored settle 语义变更必须补单测覆盖“速度触发/距离触发/最近锚点”三路径，禁止仅凭人工回归上线。
 10. `updateTransition` 语义必须保持“单 transition 多 channel 共享时间线”；`AnimatedVisibility` 必须复用该时间线，不允许回退到多自动画时钟拼装。
 11. `Modifier.animateContentSize(...)` 必须保持布局级尺寸动画语义（父布局可观察到连续尺寸变化），禁止回退到 `graphicsLayer` 缩放假象。
 12. `AnimatedSizeHost` 实现改动必须覆盖“展开 + 收起”双向视觉连续性，禁止出现只展开平滑、收起瞬跳的回归。
 13. 手势策略算法（axis lock / transform slop / swipe settle）变更必须改在 `:viewcompose-gesture-core`，renderer 仅允许阈值采集与事件分发适配。
+14. `combinedClickable` 在 `enabled=true` 但无回调时必须保持 no-op，不得消费触摸流；语义变更必须补回归测试。
 
 ## 5.17 ConstraintLayout 约束
 
