@@ -273,6 +273,7 @@ internal fun UiTreeBuilder.DiagnosticFactGroup(
             color = TextDefaults.secondaryColor(),
         )
         facts.forEach { fact ->
+            val valueTag = valueTagsByLabel[fact.label]
             Row(
                 spacing = 12.dp,
                 modifier = Modifier.fillMaxWidth(),
@@ -285,7 +286,7 @@ internal fun UiTreeBuilder.DiagnosticFactGroup(
                 )
                 Text(
                     text = fact.value,
-                    modifier = valueTagsByLabel[fact.label]
+                    modifier = valueTag
                         ?.let { tag ->
                             Modifier
                                 .weight(1f)

@@ -29,6 +29,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+private const val SNAPSHOT_STABLE_FRAME_THRESHOLD = 2
+
 internal fun UiTreeBuilder.DiagnosticsPage(
     selectedPageState: MutableState<Int>,
     autoRefreshOnEnter: Boolean = false,
@@ -38,6 +40,8 @@ internal fun UiTreeBuilder.DiagnosticsPage(
     val snapshotRefreshRequestTokenState = remember { mutableStateOf(if (autoRefreshOnEnter) 1 else 0) }
     val scheduledSnapshotRefreshTokenState = remember { mutableStateOf(-1) }
     val snapshotRefreshVersionState = remember { mutableStateOf(0) }
+    val snapshotFollowUntilStableState = remember { mutableStateOf(autoRefreshOnEnter) }
+    val snapshotStableFrameCountState = remember { mutableStateOf(0) }
     val benchmarkRefreshCountState = remember { mutableStateOf(0) }
     val renderSnapshotState = remember { mutableStateOf(DemoRenderDiagnosticsStore.latestSnapshot()) }
     val patchSnapshotState = remember { mutableStateOf(DemoRenderDiagnosticsStore.latestPatchActiveSnapshot()) }
@@ -51,15 +55,45 @@ internal fun UiTreeBuilder.DiagnosticsPage(
             scheduledSnapshotRefreshTokenState.value = refreshToken
             Choreographer.getInstance().postFrameCallback {
                 if (!pendingSnapshotRefreshState.value || snapshotRefreshRequestTokenState.value != refreshToken) {
+                    scheduledSnapshotRefreshTokenState.value = -1
                     return@postFrameCallback
                 }
+                val previousSnapshot = renderSnapshotState.value
+                val previousPatchSnapshot = patchSnapshotState.value
+                val previousLayoutSnapshot = layoutSnapshotState.value
                 val latestSnapshot = DemoRenderDiagnosticsStore.latestSnapshot()
                 val latestPatchSnapshot = DemoRenderDiagnosticsStore.latestPatchActiveSnapshot()
-                renderSnapshotState.value = latestSnapshot
-                patchSnapshotState.value = latestPatchSnapshot
-                layoutSnapshotState.value = LayoutPassTracker.snapshot()
-                snapshotRefreshVersionState.value = snapshotRefreshVersionState.value + 1
-                pendingSnapshotRefreshState.value = false
+                val latestLayoutSnapshot = LayoutPassTracker.snapshot()
+                val hasSnapshotChanged = latestSnapshot != previousSnapshot ||
+                    latestPatchSnapshot != previousPatchSnapshot ||
+                    latestLayoutSnapshot != previousLayoutSnapshot
+                if (latestSnapshot != previousSnapshot) {
+                    renderSnapshotState.value = latestSnapshot
+                }
+                if (latestPatchSnapshot != previousPatchSnapshot) {
+                    patchSnapshotState.value = latestPatchSnapshot
+                }
+                if (latestLayoutSnapshot != previousLayoutSnapshot) {
+                    layoutSnapshotState.value = latestLayoutSnapshot
+                }
+                if (hasSnapshotChanged) {
+                    snapshotRefreshVersionState.value = snapshotRefreshVersionState.value + 1
+                }
+                if (snapshotFollowUntilStableState.value) {
+                    val stableFrames = if (hasSnapshotChanged) {
+                        0
+                    } else {
+                        snapshotStableFrameCountState.value + 1
+                    }
+                    snapshotStableFrameCountState.value = stableFrames
+                    pendingSnapshotRefreshState.value = stableFrames < SNAPSHOT_STABLE_FRAME_THRESHOLD
+                    if (!pendingSnapshotRefreshState.value) {
+                        snapshotFollowUntilStableState.value = false
+                        snapshotStableFrameCountState.value = 0
+                    }
+                } else {
+                    pendingSnapshotRefreshState.value = false
+                }
                 scheduledSnapshotRefreshTokenState.value = -1
             }
         }
@@ -101,6 +135,8 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                     onClick = {
                         benchmarkRefreshCountState.value = benchmarkRefreshCountState.value + 1
                         snapshotRefreshRequestTokenState.value = snapshotRefreshRequestTokenState.value + 1
+                        snapshotFollowUntilStableState.value = true
+                        snapshotStableFrameCountState.value = 0
                         pendingSnapshotRefreshState.value = true
                     },
                     modifier = Modifier.padding(bottom = 8.dp),
@@ -110,6 +146,8 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                     onClick = {
                         benchmarkRefreshCountState.value = 0
                         snapshotRefreshRequestTokenState.value = snapshotRefreshRequestTokenState.value + 1
+                        snapshotFollowUntilStableState.value = true
+                        snapshotStableFrameCountState.value = 0
                         pendingSnapshotRefreshState.value = true
                     },
                     modifier = Modifier.padding(bottom = 8.dp),
@@ -200,6 +238,8 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                     text = "刷新渲染器快照",
                     onClick = {
                         snapshotRefreshRequestTokenState.value = snapshotRefreshRequestTokenState.value + 1
+                        snapshotFollowUntilStableState.value = true
+                        snapshotStableFrameCountState.value = 0
                         pendingSnapshotRefreshState.value = true
                     },
                     modifier = Modifier
@@ -217,6 +257,8 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                     onClick = {
                         LayoutPassTracker.reset()
                         snapshotRefreshRequestTokenState.value = snapshotRefreshRequestTokenState.value + 1
+                        snapshotFollowUntilStableState.value = true
+                        snapshotStableFrameCountState.value = 0
                         pendingSnapshotRefreshState.value = true
                     },
                     modifier = Modifier.padding(bottom = 8.dp),
