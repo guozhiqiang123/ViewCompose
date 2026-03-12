@@ -187,10 +187,18 @@ internal object DemoTestTags {
     const val PREVIEW_SNAPSHOT_CMD = "preview_snapshot_cmd"
 
     const val STATE_PATCH_ADVANCE = "state_patch_advance"
+    const val STATE_PATCH_OPEN_DIAGNOSTICS = "state_patch_open_diagnostics"
     const val STATE_PATCH_SEGMENT_SUMMARY = "state_patch_segment_summary"
     const val STATE_PATCH_TAB_SUMMARY = "state_patch_tab_summary"
     const val STATE_STABLE_SUMMARY = "state_stable_summary"
     const val STATE_VERTICAL_PAGER_SUMMARY = "state_vertical_pager_summary"
     const val STATE_VM_COUNTER = "state_vm_counter"
     const val STATE_VM_INCREMENT = "state_vm_increment"
+
+    const val DIAGNOSTICS_RENDERER_REFRESH = "diagnostics_renderer_refresh"
+    const val DIAGNOSTICS_RENDER_REFRESH_SEQUENCE = "diagnostics_render_refresh_sequence"
+    const val DIAGNOSTICS_RENDER_COUNT = "diagnostics_render_count"
+    const val DIAGNOSTICS_RENDER_UPDATED_AT = "diagnostics_render_updated_at"
+    const val DIAGNOSTICS_PATCH_ACTIVE_PATCHED = "diagnostics_patch_active_patched"
+    const val DIAGNOSTICS_PATCH_ACTIVE_CAPTURED_AT = "diagnostics_patch_active_captured_at"
 }

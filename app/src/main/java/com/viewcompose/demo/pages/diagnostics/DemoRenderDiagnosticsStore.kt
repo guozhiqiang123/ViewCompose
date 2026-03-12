@@ -39,6 +39,11 @@ internal object DemoRenderDiagnosticsStore {
         snapshotHistory = listOf(snapshot) + snapshotHistory.take(MAX_HISTORY - 1)
     }
 
+    fun reset() {
+        latestSnapshot = DemoRenderSnapshot()
+        snapshotHistory = listOf(latestSnapshot)
+    }
+
     fun latestSnapshot(): DemoRenderSnapshot = latestSnapshot
 
     fun latestPatchActiveSnapshot(): DemoRenderSnapshot? {

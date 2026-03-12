@@ -1367,6 +1367,92 @@ class DemoVisualUiTest {
         }
     }
 
+    @Test
+    fun diagnosticsPage_rendererRefresh_updatesSnapshotProbes() {
+        DemoRenderDiagnosticsStore.reset()
+        val intent = DiagnosticsActivity.newIntent(
+            context = ApplicationProvider.getApplicationContext(),
+            page = DiagnosticsActivity.PAGE_RENDERER,
+        )
+        launchDemoActivity<DiagnosticsActivity>(intent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            var beforeSequence = ""
+            var beforeRenderCount = ""
+            var beforeUpdatedAt = ""
+            scenario.onActivity { activity ->
+                beforeSequence = activity.requireTextViewByTestTag(
+                    DemoTestTags.DIAGNOSTICS_RENDER_REFRESH_SEQUENCE,
+                ).text.toString()
+                beforeRenderCount = activity.requireTextViewByTestTag(
+                    DemoTestTags.DIAGNOSTICS_RENDER_COUNT,
+                ).text.toString()
+                beforeUpdatedAt = activity.requireTextViewByTestTag(
+                    DemoTestTags.DIAGNOSTICS_RENDER_UPDATED_AT,
+                ).text.toString()
+                activity.clickByTestTag(DemoTestTags.DIAGNOSTICS_RENDERER_REFRESH)
+            }
+            waitForUiIdle()
+            val updated = waitUntilActivityCondition(scenario, timeoutMs = 1_500L) { activity ->
+                val sequence = activity.requireTextViewByTestTag(
+                    DemoTestTags.DIAGNOSTICS_RENDER_REFRESH_SEQUENCE,
+                ).text.toString()
+                val count = activity.requireTextViewByTestTag(
+                    DemoTestTags.DIAGNOSTICS_RENDER_COUNT,
+                ).text.toString()
+                val updatedAt = activity.requireTextViewByTestTag(
+                    DemoTestTags.DIAGNOSTICS_RENDER_UPDATED_AT,
+                ).text.toString()
+                sequence != beforeSequence && (count != beforeRenderCount || updatedAt != beforeUpdatedAt)
+            }
+            assertTrue(
+                "Expected diagnostics refresh to update render snapshot probes " +
+                    "(beforeSeq=$beforeSequence, beforeCount=$beforeRenderCount, beforeAt=$beforeUpdatedAt).",
+                updated,
+            )
+        }
+    }
+
+    @Test
+    fun statePatchStress_openDiagnostics_showsPatchActiveSnapshotProbe() {
+        DemoRenderDiagnosticsStore.reset()
+        val stateIntent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            StateActivity::class.java,
+        ).putExtra(EXTRA_STATE_PAGE_INDEX, 2)
+        launchDemoActivity<StateActivity>(stateIntent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            scenario.onActivity { activity ->
+                activity.clickByTestTag(DemoTestTags.STATE_PATCH_ADVANCE)
+                activity.clickByTestTag(DemoTestTags.STATE_PATCH_ADVANCE)
+            }
+            waitForUiIdle()
+        }
+
+        val diagnosticsIntent = DiagnosticsActivity.newIntent(
+            context = ApplicationProvider.getApplicationContext(),
+            page = DiagnosticsActivity.PAGE_RENDERER,
+            autoRefreshRendererSnapshot = true,
+            entryHint = "UI test: state patch stress",
+        )
+        launchDemoActivity<DiagnosticsActivity>(diagnosticsIntent, themeMode = DemoThemeMode.Light).use { scenario ->
+            waitForUiIdle()
+            val patchCaptured = waitUntilActivityCondition(scenario, timeoutMs = 2_000L) { activity ->
+                val patchedText = activity.requireTextViewByTestTag(
+                    DemoTestTags.DIAGNOSTICS_PATCH_ACTIVE_PATCHED,
+                ).text.toString()
+                val capturedAtText = activity.requireTextViewByTestTag(
+                    DemoTestTags.DIAGNOSTICS_PATCH_ACTIVE_CAPTURED_AT,
+                ).text.toString()
+                val patched = extractCount(patchedText)
+                patched > 0 && !capturedAtText.contains("尚未捕获")
+            }
+            assertTrue(
+                "Expected state patch stress updates to appear in diagnostics patch-active snapshot probes.",
+                patchCaptured,
+            )
+        }
+    }
+
     private fun extractCount(text: String): Int {
         return "(\\d+)".toRegex().find(text)?.value?.toIntOrNull() ?: 0
     }

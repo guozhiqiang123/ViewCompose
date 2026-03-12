@@ -291,7 +291,9 @@ internal fun UiTreeBuilder.StatePage(
                 Button(
                     text = "打开诊断渲染器",
                     onClick = onOpenDiagnostics,
-                    modifier = Modifier.margin(bottom = 12.dp),
+                    modifier = Modifier
+                        .margin(bottom = 12.dp)
+                        .testTag(DemoTestTags.STATE_PATCH_OPEN_DIAGNOSTICS),
                 )
                 TextField(
                     value = patchFieldValueState.value,

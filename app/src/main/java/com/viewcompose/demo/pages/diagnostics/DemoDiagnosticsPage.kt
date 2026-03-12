@@ -3,6 +3,7 @@ package com.viewcompose
 import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.modifier.fillMaxSize
 import com.viewcompose.ui.modifier.padding
+import com.viewcompose.ui.modifier.testTag
 import com.viewcompose.runtime.mutableStateOf
 import com.viewcompose.renderer.view.tree.LayoutPassTracker
 import com.viewcompose.widget.core.Button
@@ -172,14 +173,18 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                 Text(
                     text = "快照刷新序号: ${snapshotRefreshVersionState.value}",
                     color = TextDefaults.secondaryColor(),
-                    modifier = Modifier.padding(bottom = 8.dp),
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                        .testTag(DemoTestTags.DIAGNOSTICS_RENDER_REFRESH_SEQUENCE),
                 )
                 Button(
                     text = "刷新渲染器快照",
                     onClick = {
                         pendingSnapshotRefreshState.value = true
                     },
-                    modifier = Modifier.padding(bottom = 8.dp),
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                        .testTag(DemoTestTags.DIAGNOSTICS_RENDERER_REFRESH),
                 )
                 if (pendingSnapshotRefreshState.value) {
                     Text(
@@ -212,6 +217,36 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                 val snapshot = renderSnapshotState.value
                 val patchSnapshot = patchSnapshotState.value
                 val layoutSnapshot = layoutSnapshotState.value
+                val patchCapturedAt = patchSnapshot?.updatedAtMillis?.formatDiagnosticsTime() ?: "尚未捕获"
+                val patchPatchedCount = patchSnapshot?.stats?.patchedNodes ?: 0
+                Text(
+                    text = "渲染次数(探针): ${snapshot.renderCount}",
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier
+                        .padding(bottom = 4.dp)
+                        .testTag(DemoTestTags.DIAGNOSTICS_RENDER_COUNT),
+                )
+                Text(
+                    text = "更新时间(探针): ${snapshot.updatedAtMillis.formatDiagnosticsTime()}",
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                        .testTag(DemoTestTags.DIAGNOSTICS_RENDER_UPDATED_AT),
+                )
+                Text(
+                    text = "Patch-active patched(探针): $patchPatchedCount",
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier
+                        .padding(bottom = 4.dp)
+                        .testTag(DemoTestTags.DIAGNOSTICS_PATCH_ACTIVE_PATCHED),
+                )
+                Text(
+                    text = "Patch-active 捕获时间(探针): $patchCapturedAt",
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                        .testTag(DemoTestTags.DIAGNOSTICS_PATCH_ACTIVE_CAPTURED_AT),
+                )
                 DiagnosticFactGroup(
                     title = "最近渲染快照",
                     facts = listOf(
@@ -234,8 +269,8 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                 DiagnosticFactGroup(
                     title = "最近 Patch-Active 快照",
                     facts = listOf(
-                        DiagnosticFact("捕获时间", patchSnapshot?.updatedAtMillis?.formatDiagnosticsTime() ?: "尚未捕获"),
-                        DiagnosticFact("已 Patch", patchSnapshot?.stats?.patchedNodes?.toString() ?: "0"),
+                        DiagnosticFact("捕获时间", patchCapturedAt),
+                        DiagnosticFact("已 Patch", patchPatchedCount.toString()),
                         DiagnosticFact("已重绑", patchSnapshot?.stats?.reboundNodes?.toString() ?: "0"),
                         DiagnosticFact("已跳过", patchSnapshot?.stats?.skippedBindings?.toString() ?: "0"),
                         DiagnosticFact("子树跳过", patchSnapshot?.stats?.skippedSubtrees?.toString() ?: "0"),
