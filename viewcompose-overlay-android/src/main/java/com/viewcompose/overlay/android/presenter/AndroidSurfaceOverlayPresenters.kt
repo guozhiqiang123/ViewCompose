@@ -12,7 +12,7 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.PopupWindow
 import androidx.core.view.doOnLayout
-import com.viewcompose.ui.modifier.OVERLAY_ANCHOR_TAG_KEY
+import com.viewcompose.ui.overlay.OVERLAY_ANCHOR_TAG_KEY
 import com.viewcompose.widget.core.AndroidEnvironmentBridge
 import com.viewcompose.widget.core.DialogOverlayContent
 import com.viewcompose.widget.core.DialogOverlayHandle

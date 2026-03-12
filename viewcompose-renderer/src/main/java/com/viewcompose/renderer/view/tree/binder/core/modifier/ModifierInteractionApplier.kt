@@ -5,11 +5,11 @@ import android.view.View
 import android.widget.TextView
 import com.viewcompose.renderer.R
 import com.viewcompose.ui.modifier.NativeViewElement
-import com.viewcompose.ui.modifier.OVERLAY_ANCHOR_TAG_KEY
 import com.viewcompose.ui.modifier.TransformOrigin
 import com.viewcompose.ui.modifier.Visibility
 import com.viewcompose.ui.node.NodeType
 import com.viewcompose.ui.node.VNode
+import com.viewcompose.ui.overlay.OVERLAY_ANCHOR_TAG_KEY
 import com.viewcompose.renderer.modifier.ResolvedModifiers
 
 internal object ModifierInteractionApplier {
