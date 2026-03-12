@@ -32,6 +32,7 @@ internal fun UiTreeBuilder.DiagnosticsPage(
     entryHint: String? = null,
 ) {
     val pendingSnapshotRefreshState = remember { mutableStateOf(autoRefreshOnEnter) }
+    val snapshotRefreshVersionState = remember { mutableStateOf(0) }
     val benchmarkRefreshCountState = remember { mutableStateOf(0) }
     val renderSnapshotState = remember { mutableStateOf(DemoRenderDiagnosticsStore.latestSnapshot()) }
     val patchSnapshotState = remember { mutableStateOf(DemoRenderDiagnosticsStore.latestPatchActiveSnapshot()) }
@@ -41,6 +42,7 @@ internal fun UiTreeBuilder.DiagnosticsPage(
             renderSnapshotState.value = DemoRenderDiagnosticsStore.latestSnapshot()
             patchSnapshotState.value = DemoRenderDiagnosticsStore.latestPatchActiveSnapshot()
             layoutSnapshotState.value = LayoutPassTracker.snapshot()
+            snapshotRefreshVersionState.value = snapshotRefreshVersionState.value + 1
             pendingSnapshotRefreshState.value = false
         }
     }
@@ -167,6 +169,11 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                         modifier = Modifier.padding(bottom = 8.dp),
                     )
                 }
+                Text(
+                    text = "快照刷新序号: ${snapshotRefreshVersionState.value}",
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier.padding(bottom = 8.dp),
+                )
                 Button(
                     text = "刷新渲染器快照",
                     onClick = {
@@ -208,6 +215,7 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                 DiagnosticFactGroup(
                     title = "最近渲染快照",
                     facts = listOf(
+                        DiagnosticFact("快照序号", snapshotRefreshVersionState.value.toString()),
                         DiagnosticFact("渲染次数", snapshot.renderCount.toString()),
                         DiagnosticFact("更新时间", snapshot.updatedAtMillis.formatDiagnosticsTime()),
                         DiagnosticFact("插入", snapshot.stats.inserts.toString()),
@@ -353,7 +361,7 @@ private fun Long.formatDiagnosticsTime(): String {
     if (this <= 0L) {
         return "尚未捕获"
     }
-    return SimpleDateFormat("HH:mm:ss", Locale.US).format(Date(this))
+    return SimpleDateFormat("HH:mm:ss.SSS", Locale.US).format(Date(this))
 }
 
 private fun Long.formatNsAsMs(): String {
