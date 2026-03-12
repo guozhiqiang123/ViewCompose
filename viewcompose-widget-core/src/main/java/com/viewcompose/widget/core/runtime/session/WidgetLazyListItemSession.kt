@@ -42,7 +42,9 @@ internal class WidgetLazyListItemSession(
     ) {
         capturedLocals = localSnapshot
         renderContent = content
-        diagnosticsListener = resolveDiagnosticsListener(localSnapshot)
+        // Keep the previously resolved listener if this snapshot does not carry it.
+        // This avoids accidentally dropping diagnostics callbacks during partial recomposition paths.
+        diagnosticsListener = resolveDiagnosticsListener(localSnapshot) ?: diagnosticsListener
     }
 
     private fun resolveDiagnosticsListener(
