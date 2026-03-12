@@ -203,4 +203,8 @@ internal object DemoTestTags {
     const val DIAGNOSTICS_PATCH_ACTIVE_CAPTURED_AT = "diagnostics_patch_active_captured_at"
     const val DIAGNOSTICS_FACT_RENDER_COUNT = "diagnostics_fact_render_count"
     const val DIAGNOSTICS_FACT_PATCH_PATCHED = "diagnostics_fact_patch_patched"
+    const val DIAGNOSTICS_RENDER_PROBE_KEY = "diagnostics_render_probe_key"
+    const val DIAGNOSTICS_RENDER_PROBE_TICK = "diagnostics_render_probe_tick"
+    const val DIAGNOSTICS_RENDER_PROBE_HASH = "diagnostics_render_probe_hash"
+    const val DIAGNOSTICS_RENDER_HISTORY = "diagnostics_render_history"
 }

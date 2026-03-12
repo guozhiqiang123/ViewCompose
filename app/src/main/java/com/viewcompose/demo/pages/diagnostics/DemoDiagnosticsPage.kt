@@ -8,6 +8,7 @@ import com.viewcompose.ui.modifier.testTag
 import com.viewcompose.runtime.mutableStateOf
 import com.viewcompose.renderer.view.tree.LayoutPassTracker
 import com.viewcompose.widget.core.Button
+import com.viewcompose.widget.core.DisposableEffect
 import com.viewcompose.widget.core.Environment
 import com.viewcompose.widget.core.LazyColumn
 import com.viewcompose.widget.core.SideEffect
@@ -21,7 +22,6 @@ import com.viewcompose.widget.core.UiLayoutDirection
 import com.viewcompose.widget.core.UiTextStyle
 import com.viewcompose.widget.core.UiTreeBuilder
 import com.viewcompose.widget.core.dp
-import com.viewcompose.widget.core.key
 import com.viewcompose.widget.core.remember
 import com.viewcompose.widget.core.sp
 import com.viewcompose.runtime.MutableState
@@ -46,6 +46,7 @@ internal fun UiTreeBuilder.DiagnosticsPage(
     val renderSnapshotState = remember { mutableStateOf(DemoRenderDiagnosticsStore.latestSnapshot()) }
     val patchSnapshotState = remember { mutableStateOf(DemoRenderDiagnosticsStore.latestPatchActiveSnapshot()) }
     val layoutSnapshotState = remember { mutableStateOf(LayoutPassTracker.snapshot()) }
+    val snapshotHistorySummaryState = remember { mutableStateOf(buildRenderHistorySummary()) }
     if (pendingSnapshotRefreshState.value) {
         val refreshToken = snapshotRefreshRequestTokenState.value
         SideEffect {
@@ -75,6 +76,10 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                 }
                 if (latestLayoutSnapshot != previousLayoutSnapshot) {
                     layoutSnapshotState.value = latestLayoutSnapshot
+                }
+                val latestHistorySummary = buildRenderHistorySummary()
+                if (latestHistorySummary != snapshotHistorySummaryState.value) {
+                    snapshotHistorySummaryState.value = latestHistorySummary
                 }
                 if (hasSnapshotChanged) {
                     snapshotRefreshVersionState.value = snapshotRefreshVersionState.value + 1
@@ -282,6 +287,23 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                 val layoutSnapshot = layoutSnapshotState.value
                 val patchCapturedAt = patchSnapshot?.updatedAtMillis?.formatDiagnosticsTime() ?: "尚未捕获"
                 val patchPatchedCount = patchSnapshot?.stats?.patchedNodes ?: 0
+                val renderProbeKey = listOf(
+                    snapshotRefreshVersionState.value,
+                    snapshot.renderCount,
+                    snapshot.updatedAtMillis,
+                    patchPatchedCount,
+                    patchCapturedAt,
+                    layoutSnapshot.totalMeasureCount,
+                    layoutSnapshot.totalLayoutCount,
+                ).joinToString(separator = "|")
+                val renderProbeTickState = remember { mutableStateOf(0) }
+                DisposableEffect(renderProbeKey) {
+                    renderProbeTickState.value = renderProbeTickState.value + 1
+                    {}
+                }
+                val probeHash = "snapshot=${System.identityHashCode(snapshot)} " +
+                    "patch=${patchSnapshot?.let { System.identityHashCode(it) } ?: 0} " +
+                    "layout=${System.identityHashCode(layoutSnapshot)}"
                 Text(
                     text = "渲染次数(探针): ${snapshot.renderCount}",
                     color = TextDefaults.secondaryColor(),
@@ -310,49 +332,52 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                         .padding(bottom = 8.dp)
                         .testTag(DemoTestTags.DIAGNOSTICS_PATCH_ACTIVE_CAPTURED_AT),
                 )
-                key("diagnostics-render-facts-${snapshotRefreshVersionState.value}-${snapshot.renderCount}-${snapshot.updatedAtMillis}") {
-                    DiagnosticFactGroup(
-                        title = "最近渲染快照",
-                        facts = listOf(
-                            DiagnosticFact("快照序号", snapshotRefreshVersionState.value.toString()),
-                            DiagnosticFact("渲染次数", snapshot.renderCount.toString()),
-                            DiagnosticFact("更新时间", snapshot.updatedAtMillis.formatDiagnosticsTime()),
-                            DiagnosticFact("插入", snapshot.stats.inserts.toString()),
-                            DiagnosticFact("复用", snapshot.stats.reuses.toString()),
-                            DiagnosticFact("移除", snapshot.stats.removals.toString()),
-                            DiagnosticFact("已 Patch", snapshot.stats.patchedNodes.toString()),
-                            DiagnosticFact("已重绑", snapshot.stats.reboundNodes.toString()),
-                            DiagnosticFact("已跳过", snapshot.stats.skippedBindings.toString()),
-                            DiagnosticFact("子树跳过", snapshot.stats.skippedSubtrees.toString()),
-                            DiagnosticFact("VNode 数量", snapshot.structure.vnodeCount.toString()),
-                            DiagnosticFact("已挂载数量", snapshot.structure.mountedNodeCount.toString()),
-                            DiagnosticFact("VNode 深度", snapshot.structure.maxVNodeDepth.toString()),
-                            DiagnosticFact("挂载深度", snapshot.structure.maxMountedDepth.toString()),
-                        ),
-                        valueTagsByLabel = mapOf(
-                            "渲染次数" to DemoTestTags.DIAGNOSTICS_FACT_RENDER_COUNT,
-                        ),
-                    )
-                }
-                key(
-                    "diagnostics-patch-facts-${snapshotRefreshVersionState.value}-${patchCapturedAt}-${patchPatchedCount}",
-                ) {
-                    DiagnosticFactGroup(
-                        title = "最近 Patch-Active 快照",
-                        facts = listOf(
-                            DiagnosticFact("捕获时间", patchCapturedAt),
-                            DiagnosticFact("已 Patch", patchPatchedCount.toString()),
-                            DiagnosticFact("已重绑", patchSnapshot?.stats?.reboundNodes?.toString() ?: "0"),
-                            DiagnosticFact("已跳过", patchSnapshot?.stats?.skippedBindings?.toString() ?: "0"),
-                            DiagnosticFact("子树跳过", patchSnapshot?.stats?.skippedSubtrees?.toString() ?: "0"),
-                            DiagnosticFact("挂载深度", patchSnapshot?.structure?.maxMountedDepth?.toString() ?: "0"),
-                            DiagnosticFact("警告", patchSnapshot?.warnings?.joinToString() ?: "无"),
-                        ),
-                        valueTagsByLabel = mapOf(
-                            "已 Patch" to DemoTestTags.DIAGNOSTICS_FACT_PATCH_PATCHED,
-                        ),
-                    )
-                }
+                DiagnosticFactGroup(
+                    title = "关键重组探针（优先看这里）",
+                    facts = listOf(
+                        DiagnosticFact("探针 Key", renderProbeKey),
+                        DiagnosticFact("探针 Tick", renderProbeTickState.value.toString()),
+                        DiagnosticFact("对象 Hash", probeHash),
+                        DiagnosticFact("最近回调历史", snapshotHistorySummaryState.value),
+                    ),
+                    valueTagsByLabel = mapOf(
+                        "探针 Key" to DemoTestTags.DIAGNOSTICS_RENDER_PROBE_KEY,
+                        "探针 Tick" to DemoTestTags.DIAGNOSTICS_RENDER_PROBE_TICK,
+                        "对象 Hash" to DemoTestTags.DIAGNOSTICS_RENDER_PROBE_HASH,
+                        "最近回调历史" to DemoTestTags.DIAGNOSTICS_RENDER_HISTORY,
+                    ),
+                )
+                DiagnosticFactGroup(
+                    title = "最近渲染快照（只用于辅助阅读）",
+                    facts = listOf(
+                        DiagnosticFact("快照序号", snapshotRefreshVersionState.value.toString()),
+                        DiagnosticFact("渲染次数", snapshot.renderCount.toString()),
+                        DiagnosticFact("更新时间", snapshot.updatedAtMillis.formatDiagnosticsTime()),
+                        DiagnosticFact("插入", snapshot.stats.inserts.toString()),
+                        DiagnosticFact("复用", snapshot.stats.reuses.toString()),
+                        DiagnosticFact("移除", snapshot.stats.removals.toString()),
+                        DiagnosticFact("已 Patch", snapshot.stats.patchedNodes.toString()),
+                        DiagnosticFact("已重绑", snapshot.stats.reboundNodes.toString()),
+                        DiagnosticFact("已跳过", snapshot.stats.skippedBindings.toString()),
+                        DiagnosticFact("子树跳过", snapshot.stats.skippedSubtrees.toString()),
+                        DiagnosticFact("VNode 数量", snapshot.structure.vnodeCount.toString()),
+                        DiagnosticFact("已挂载数量", snapshot.structure.mountedNodeCount.toString()),
+                        DiagnosticFact("VNode 深度", snapshot.structure.maxVNodeDepth.toString()),
+                        DiagnosticFact("挂载深度", snapshot.structure.maxMountedDepth.toString()),
+                    ),
+                )
+                DiagnosticFactGroup(
+                    title = "最近 Patch-Active 快照（只用于辅助阅读）",
+                    facts = listOf(
+                        DiagnosticFact("捕获时间", patchCapturedAt),
+                        DiagnosticFact("已 Patch", patchPatchedCount.toString()),
+                        DiagnosticFact("已重绑", patchSnapshot?.stats?.reboundNodes?.toString() ?: "0"),
+                        DiagnosticFact("已跳过", patchSnapshot?.stats?.skippedBindings?.toString() ?: "0"),
+                        DiagnosticFact("子树跳过", patchSnapshot?.stats?.skippedSubtrees?.toString() ?: "0"),
+                        DiagnosticFact("挂载深度", patchSnapshot?.structure?.maxMountedDepth?.toString() ?: "0"),
+                        DiagnosticFact("警告", patchSnapshot?.warnings?.joinToString() ?: "无"),
+                    ),
+                )
                 val bindingsByType = patchSnapshot?.stats?.bindingsByType
                 if (bindingsByType != null && bindingsByType.isNotEmpty()) {
                     DiagnosticFactGroup(
@@ -399,7 +424,8 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                 ChecklistGroup(
                     title = "手动探针",
                     items = listOf(
-                        "先进入 State -> Patch Stress 做几次切换，再返回这里点击刷新，确认最近 Patch-Active 快照里的 patched/skipped 开始增长。",
+                        "先看“关键重组探针”：刷新后探针 Tick 应增长，最近回调历史应追加新的 rN/pN 片段。",
+                        "进入 State -> Patch Stress 做几次切换，再返回这里点击刷新，确认最近回调历史和 Patch-active patched 都增长。",
                         "点击重置布局计数器后进入 Layouts / Input / Foundations，再回来刷新，确认布局 Pass 计数器主要由自定义容器增长。",
                         "切到 Layouts 或 Collections 压力页后再回来，确认挂载深度和 VNode 深度会跟随复杂场景变化。",
                         "打开 Layouts / Collections 压力页，观察日志中 VNode tree 与 Reconcile 摘要是否稳定。",
@@ -472,6 +498,18 @@ private fun Long.formatDiagnosticsTime(): String {
         return "尚未捕获"
     }
     return SimpleDateFormat("HH:mm:ss.SSS", Locale.US).format(Date(this))
+}
+
+private fun buildRenderHistorySummary(): String {
+    val recent = DemoRenderDiagnosticsStore
+        .recentSnapshots()
+        .take(6)
+    if (recent.isEmpty()) {
+        return "无"
+    }
+    return recent.joinToString(separator = " -> ") { snapshot ->
+        "r${snapshot.renderCount}/p${snapshot.stats.patchedNodes}"
+    }
 }
 
 private fun Long.formatNsAsMs(): String {
