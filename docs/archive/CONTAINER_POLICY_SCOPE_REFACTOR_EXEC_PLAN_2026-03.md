@@ -34,7 +34,7 @@
 - [x] Step 4 NodeSpec + renderer 主链从 modifier 解析改为 spec 读取
 - [x] Step 5 demo 与测试迁移
 - [x] Step 6 文档收口（MODIFIER/ARCHITECTURE/PERFORMANCE/WORKFLOW）
-- [ ] Step 7 收口归档执行计划到 `docs/archive/`
+- [x] Step 7 收口归档执行计划到 `docs/archive/`
 
 ## 5. 提交记录
 
@@ -43,6 +43,7 @@
 3. `refactor: hard-cut container policy modifiers to spec-driven container parameters`
 4. `test: migrate container policy coverage to dsl and spec reader tests`
 5. `docs: align container policy scope docs with spec-driven APIs`
+6. `docs: close and archive container policy scope refactor execution plan`
 
 ## 6. 阻塞记录
 
