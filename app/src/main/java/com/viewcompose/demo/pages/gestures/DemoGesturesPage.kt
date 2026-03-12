@@ -59,7 +59,7 @@ internal fun UiTreeBuilder.GesturePage(
             dragTextOffsetState.value = value
         }
     }
-    val swipeState = rememberAnchoredDraggableState("Left")
+    val swipeState = rememberAnchoredDraggableState("Center")
     val pointerEventState = remember { mutableStateOf("None") }
     val scaleState = remember { mutableStateOf(1f) }
     val rotationState = remember { mutableStateOf(0f) }
@@ -84,13 +84,23 @@ internal fun UiTreeBuilder.GesturePage(
         rotationState.value += rotation
         transformLogState.value = "delta pan=(${panX.roundToInt()}, ${panY.roundToInt()}) delta rot=${"%.2f".format(rotation)}"
     }
-    val swipeIsRight = swipeState.currentValue.value == "Right"
+    val swipeCurrentValue = swipeState.currentValue.value
+    val swipeTargetValue = swipeState.targetValue.value
+    val swipeOffsetValue = swipeState.currentOffsetPx.value ?: 0f
     val swipeVisualOffset = animateFloatAsState(
-        targetValue = if (swipeIsRight) 112f else 0f,
+        targetValue = when (swipeCurrentValue) {
+            "Left" -> -112f
+            "Right" -> 112f
+            else -> 0f
+        },
         animationSpec = spring(durationMillis = 280),
     )
     val swipeVisualColor = animateColorAsState(
-        targetValue = if (swipeIsRight) 0xFFD9FBE8.toInt() else 0xFFF1F5F9.toInt(),
+        targetValue = when (swipeCurrentValue) {
+            "Left" -> 0xFFDBEAFE.toInt()
+            "Right" -> 0xFFD9FBE8.toInt()
+            else -> 0xFFF1F5F9.toInt()
+        },
         animationSpec = tween(durationMillis = 220),
     )
 
@@ -185,7 +195,7 @@ internal fun UiTreeBuilder.GesturePage(
             "drag_swipe" -> ScenarioSection(
                 kind = ScenarioKind.Stress,
                 title = "Drag / Swipe",
-                subtitle = "draggable 与 swipeable 在同一页共存，含方向锁、slop 与优先级策略。",
+                subtitle = "draggable 与 anchoredDraggable 在同一页共存，含方向锁、slop 与多锚点 settle。",
             ) {
                 Surface(
                     variant = SurfaceVariant.Variant,
@@ -217,7 +227,11 @@ internal fun UiTreeBuilder.GesturePage(
                         .margin(top = 10.dp)
                         .anchoredDraggable(
                             state = swipeState,
-                            anchors = draggableAnchorsOf(0f to "Left", 120f to "Right"),
+                            anchors = draggableAnchorsOf(
+                                -120f to "Left",
+                                0f to "Center",
+                                120f to "Right",
+                            ),
                             orientation = GestureOrientation.Horizontal,
                         )
                         .graphicsLayer(translationX = swipeVisualOffset.value)
@@ -225,16 +239,38 @@ internal fun UiTreeBuilder.GesturePage(
                         .padding(12.dp)
                         .testTag(DemoTestTags.GESTURE_SWIPE_TARGET),
                 ) {
-                    Text(text = if (swipeIsRight) "Swipe horizontally · Right ✅" else "Swipe horizontally · Left ⬅")
+                    Text(
+                        text = when (swipeCurrentValue) {
+                            "Left" -> "Swipe horizontally · Left ⬅"
+                            "Right" -> "Swipe horizontally · Right ✅"
+                            else -> "Swipe horizontally · Center ◉"
+                        },
+                    )
                 }
                 Text(
-                    text = "Swipe state = ${swipeState.currentValue.value}",
+                    text = "Swipe current = $swipeCurrentValue",
                     modifier = Modifier
                         .margin(top = 6.dp)
                         .testTag(DemoTestTags.GESTURE_SWIPE_VALUE),
                 )
                 Text(
-                    text = if (swipeIsRight) "视觉反馈：卡片右移并变绿" else "视觉反馈：卡片归位并恢复浅灰",
+                    text = "Swipe target = $swipeTargetValue",
+                    color = TextDefaults.secondaryColor(),
+                    style = UiTextStyle(fontSizeSp = 12.sp),
+                    modifier = Modifier.testTag(DemoTestTags.GESTURE_SWIPE_TARGET_VALUE),
+                )
+                Text(
+                    text = "Swipe offset(px) = ${swipeOffsetValue.roundToInt()}",
+                    color = TextDefaults.secondaryColor(),
+                    style = UiTextStyle(fontSizeSp = 12.sp),
+                    modifier = Modifier.testTag(DemoTestTags.GESTURE_SWIPE_OFFSET_VALUE),
+                )
+                Text(
+                    text = when (swipeCurrentValue) {
+                        "Left" -> "视觉反馈：卡片左移并变蓝"
+                        "Right" -> "视觉反馈：卡片右移并变绿"
+                        else -> "视觉反馈：卡片居中并恢复浅灰"
+                    },
                     color = TextDefaults.secondaryColor(),
                     style = UiTextStyle(fontSizeSp = 12.sp),
                     modifier = Modifier.margin(top = 4.dp),

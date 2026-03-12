@@ -30,7 +30,7 @@
 - [x] Step 3 `gesture-core` 补齐多锚点决策内核
 - [x] Step 4 renderer 手势分发器硬切重构
 - [x] Step 5 `combinedClickable` 行为语义收口
-- [ ] Step 6 demo 与调用侧同步硬切
+- [x] Step 6 demo 与调用侧同步硬切
 - [ ] Step 7 测试体系同轮补齐
 - [ ] Step 8 文档与流程收口并归档
 
@@ -41,6 +41,7 @@
 - `DONE` feat: add anchored settle policy and threshold model in gesture-core
 - `DONE` refactor: make renderer gesture dispatcher core-driven and pointer-id stable
 - `DONE` fix: make combinedClickable non-consuming when callbacks are absent
+- `DONE` demo: migrate gestures page to anchored draggable and multi-anchor scenarios
 
 ## 6. 阻塞记录
 
