@@ -28,8 +28,10 @@ import java.util.Locale
 
 internal fun UiTreeBuilder.DiagnosticsPage(
     selectedPageState: MutableState<Int>,
+    autoRefreshOnEnter: Boolean = false,
+    entryHint: String? = null,
 ) {
-    val pendingSnapshotRefreshState = remember { mutableStateOf(false) }
+    val pendingSnapshotRefreshState = remember { mutableStateOf(autoRefreshOnEnter) }
     val benchmarkRefreshCountState = remember { mutableStateOf(0) }
     val renderSnapshotState = remember { mutableStateOf(DemoRenderDiagnosticsStore.latestSnapshot()) }
     val patchSnapshotState = remember { mutableStateOf(DemoRenderDiagnosticsStore.latestPatchActiveSnapshot()) }
@@ -158,6 +160,13 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                 title = "渲染器操作",
                 subtitle = "将手动探针放在顶部附近，使诊断刷新在反复测试和 benchmark 运行中易于触达。",
             ) {
+                if (!entryHint.isNullOrBlank()) {
+                    Text(
+                        text = entryHint,
+                        color = TextDefaults.secondaryColor(),
+                        modifier = Modifier.padding(bottom = 8.dp),
+                    )
+                }
                 Button(
                     text = "刷新渲染器快照",
                     onClick = {
@@ -186,6 +195,13 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                 title = "渲染器钩子",
                 subtitle = "示例现在手动暴露最近的渲染快照，以便检查 patch/rebind/skip 行为和树深度。",
             ) {
+                if (!entryHint.isNullOrBlank()) {
+                    Text(
+                        text = "提示: 请优先查看“最近 Patch-Active 快照”中的 patched/rebound/skipped。",
+                        color = TextDefaults.secondaryColor(),
+                        modifier = Modifier.padding(bottom = 8.dp),
+                    )
+                }
                 val snapshot = renderSnapshotState.value
                 val patchSnapshot = patchSnapshotState.value
                 val layoutSnapshot = layoutSnapshotState.value

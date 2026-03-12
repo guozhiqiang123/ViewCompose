@@ -15,14 +15,25 @@ class DiagnosticsActivity : DemoRenderActivity() {
         builder: UiTreeBuilder,
     ) {
         val initialPage = intent.getIntExtra(EXTRA_PAGE, PAGE_RUNTIME)
+        val autoRefreshRendererSnapshot = intent.getBooleanExtra(
+            EXTRA_AUTO_REFRESH_RENDERER_SNAPSHOT,
+            false,
+        )
+        val entryHint = intent.getStringExtra(EXTRA_ENTRY_HINT)
         with(builder) {
             val selectedPageState = remember { mutableStateOf(initialPage) }
-            DiagnosticsPage(selectedPageState = selectedPageState)
+            DiagnosticsPage(
+                selectedPageState = selectedPageState,
+                autoRefreshOnEnter = autoRefreshRendererSnapshot,
+                entryHint = entryHint,
+            )
         }
     }
 
     companion object {
         private const val EXTRA_PAGE = "page"
+        private const val EXTRA_AUTO_REFRESH_RENDERER_SNAPSHOT = "auto_refresh_renderer_snapshot"
+        private const val EXTRA_ENTRY_HINT = "entry_hint"
 
         const val PAGE_RUNTIME = 0
         const val PAGE_RENDERER = 1
@@ -31,9 +42,17 @@ class DiagnosticsActivity : DemoRenderActivity() {
         fun newIntent(
             context: Context,
             page: Int = PAGE_RUNTIME,
+            autoRefreshRendererSnapshot: Boolean = false,
+            entryHint: String? = null,
         ): Intent {
             return Intent(context, DiagnosticsActivity::class.java)
                 .putExtra(EXTRA_PAGE, page)
+                .putExtra(EXTRA_AUTO_REFRESH_RENDERER_SNAPSHOT, autoRefreshRendererSnapshot)
+                .apply {
+                    if (entryHint != null) {
+                        putExtra(EXTRA_ENTRY_HINT, entryHint)
+                    }
+                }
         }
     }
 }

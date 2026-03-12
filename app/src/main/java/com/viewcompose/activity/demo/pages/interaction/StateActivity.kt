@@ -15,7 +15,14 @@ class StateActivity : DemoRenderActivity() {
         builder.StatePage(
             initialPageIndex = intent?.getIntExtra(EXTRA_STATE_PAGE_INDEX, 0) ?: 0,
             onOpenDiagnostics = {
-                startActivity(DiagnosticsActivity.newIntent(this, DiagnosticsActivity.PAGE_RENDERER))
+                startActivity(
+                    DiagnosticsActivity.newIntent(
+                        context = this,
+                        page = DiagnosticsActivity.PAGE_RENDERER,
+                        autoRefreshRendererSnapshot = true,
+                        entryHint = "来自 State -> Patch 压力测试，已自动刷新渲染器快照。",
+                    ),
+                )
             },
         )
     }
