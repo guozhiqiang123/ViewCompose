@@ -20,6 +20,7 @@ import com.viewcompose.ui.gesture.PointerEvent
 import com.viewcompose.ui.gesture.PointerEventResult
 import com.viewcompose.ui.gesture.PointerEventType
 import com.viewcompose.ui.gesture.TransformDelta
+import com.viewcompose.ui.modifier.CombinedClickableModifierElement
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.sqrt
@@ -87,7 +88,7 @@ private class ViewGestureDispatcher(
         hostView.context,
         object : GestureDetector.SimpleOnGestureListener() {
             override fun onDown(e: MotionEvent): Boolean {
-                return resolved.combinedClickable?.enabled == true
+                return resolved.combinedClickable?.isParticipating() == true
             }
 
             override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
@@ -151,13 +152,13 @@ private class ViewGestureDispatcher(
             return true
         }
 
-        val combinedEnabled = resolved.combinedClickable?.enabled == true
+        val combinedParticipating = resolved.combinedClickable?.isParticipating() == true
         val requiresContinuousStream =
             hasPointerInput ||
             resolved.draggable?.enabled == true ||
                 resolved.anchoredDraggable?.enabled == true ||
                 resolved.transformable?.enabled == true
-        if (combinedEnabled) {
+        if (combinedParticipating) {
             combinedDetector.onTouchEvent(event)
         }
         val transformConsumed = dispatchTransform(event)
@@ -172,8 +173,8 @@ private class ViewGestureDispatcher(
             combinedTapConsumed = false
             pointerStreamActive = false
         }
-        // combinedClickable owns tap gesture arbitration; keep fallback clickable disabled for this pointer stream.
-        if (combinedEnabled) {
+        // combinedClickable owns tap gesture arbitration only when it has an active callback.
+        if (combinedParticipating) {
             if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
                 resetTrackingState()
             }
@@ -653,6 +654,13 @@ private class ViewGestureDispatcher(
 
     private fun vectorMagnitude(x: Float, y: Float): Float {
         return sqrt((x * x) + (y * y))
+    }
+
+    private fun CombinedClickableModifierElement.isParticipating(): Boolean {
+        if (!enabled) {
+            return false
+        }
+        return onClick != null || onDoubleClick != null || onLongClick != null
     }
 
     private inline fun debugLog(message: () -> String) {

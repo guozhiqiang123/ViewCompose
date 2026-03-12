@@ -30,6 +30,9 @@ fun Modifier.combinedClickable(
     onDoubleClick: (() -> Unit)? = null,
     onLongClick: (() -> Unit)? = null,
 ): Modifier {
+    if (!enabled || (onClick == null && onDoubleClick == null && onLongClick == null)) {
+        return this
+    }
     return then(
         CombinedClickableModifierElement(
             enabled = enabled,
