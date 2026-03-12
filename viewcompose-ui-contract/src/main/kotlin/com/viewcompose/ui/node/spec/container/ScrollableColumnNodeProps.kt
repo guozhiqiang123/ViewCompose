@@ -7,4 +7,5 @@ data class ScrollableColumnNodeProps(
     val spacing: Int,
     val arrangement: MainAxisArrangement,
     val horizontalAlignment: HorizontalAlignment,
+    val focusFollowKeyboard: Boolean = false,
 ) : NodeSpec
