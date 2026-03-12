@@ -14,12 +14,16 @@ internal class WidgetLazyListItemSession(
         ?: error("WidgetLazyListItemSession requires an Android ViewGroup container.")
     private var capturedLocals = localSnapshot
     private var renderContent = content
+    private var diagnosticsListener = resolveDiagnosticsListener(localSnapshot)
     private val session = RenderSession(
         container = hostContainer,
         content = {
             LocalContext.withSnapshot(capturedLocals) {
                 renderContent()
             }
+        },
+        onRenderResult = { result ->
+            diagnosticsListener?.invoke(result)
         },
     )
 
@@ -38,6 +42,13 @@ internal class WidgetLazyListItemSession(
     ) {
         capturedLocals = localSnapshot
         renderContent = content
+        diagnosticsListener = resolveDiagnosticsListener(localSnapshot)
+    }
+
+    private fun resolveDiagnosticsListener(
+        snapshot: LocalSnapshot,
+    ): ((RenderTreeResult) -> Unit)? {
+        @Suppress("UNCHECKED_CAST")
+        return snapshot.values[LocalRenderResultListener.holder] as? ((RenderTreeResult) -> Unit)
     }
 }
-

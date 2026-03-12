@@ -16,8 +16,10 @@ import com.viewcompose.widget.core.ProvideAnimationCoroutineContext
 import com.viewcompose.widget.core.OverlayHost
 import com.viewcompose.widget.core.OverlayHostDefaults
 import com.viewcompose.widget.core.ProvideMonotonicFrameClock
+import com.viewcompose.widget.core.ProvideLocal
 import com.viewcompose.widget.core.RenderStats
 import com.viewcompose.widget.core.RenderTreeResult
+import com.viewcompose.widget.core.LocalRenderResultListener
 import com.viewcompose.widget.core.UiEnvironment
 import com.viewcompose.widget.core.UiTreeBuilder
 import java.util.WeakHashMap
@@ -54,6 +56,7 @@ fun Fragment.setUiContent(
             root = root,
             lifecycleOwner = this@setUiContent,
             viewModelStoreOwner = this@setUiContent,
+            onRenderResult = onRenderResult,
             content = content,
         )
     }
@@ -88,6 +91,7 @@ fun ComponentActivity.setUiContent(
             root = root,
             lifecycleOwner = this@setUiContent,
             viewModelStoreOwner = this@setUiContent,
+            onRenderResult = onRenderResult,
             content = content,
         )
     }
@@ -113,14 +117,17 @@ private fun UiTreeBuilder.withHostEnvironment(
     root: ViewGroup,
     lifecycleOwner: LifecycleOwner,
     viewModelStoreOwner: ViewModelStoreOwner,
+    onRenderResult: ((RenderTreeResult) -> Unit)?,
     content: UiTreeBuilder.(ViewGroup) -> Unit,
 ) {
     ProvideLifecycleOwner(lifecycleOwner) {
         ProvideViewModelStoreOwner(viewModelStoreOwner) {
             ProvideAnimationCoroutineContext(defaultAnimationCoroutineContext) {
                 ProvideMonotonicFrameClock(defaultMonotonicFrameClock) {
-                    UiEnvironment(androidContext = root.context) {
-                        content(root)
+                    ProvideLocal(LocalRenderResultListener, onRenderResult) {
+                        UiEnvironment(androidContext = root.context) {
+                            content(root)
+                        }
                     }
                 }
             }
