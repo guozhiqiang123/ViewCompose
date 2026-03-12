@@ -33,7 +33,7 @@
 - [x] Step 3 容器 DSL 签名硬切（含垂直 focusFollowKeyboard 范围控制）
 - [x] Step 4 NodeSpec + renderer 主链从 modifier 解析改为 spec 读取
 - [x] Step 5 demo 与测试迁移
-- [ ] Step 6 文档收口（MODIFIER/ARCHITECTURE/PERFORMANCE/WORKFLOW）
+- [x] Step 6 文档收口（MODIFIER/ARCHITECTURE/PERFORMANCE/WORKFLOW）
 - [ ] Step 7 收口归档执行计划到 `docs/archive/`
 
 ## 5. 提交记录
@@ -42,7 +42,8 @@
 2. `feat: add collection reuse and motion policies to container specs`
 3. `refactor: hard-cut container policy modifiers to spec-driven container parameters`
 4. `test: migrate container policy coverage to dsl and spec reader tests`
+5. `docs: align container policy scope docs with spec-driven APIs`
 
 ## 6. 阻塞记录
 
-- 暂无。
+- 2026-03-12：`ANDROID_SERIAL=98101FFBA003AE ./gradlew qaFull` 运行到 instrumentation 阶段时出现统一环境失败：`Activity never becomes requested state "[RESUMED]"`（多个用例同因失败），已记录并待环境恢复后补跑 `qaFull` 收口。

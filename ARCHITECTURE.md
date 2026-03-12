@@ -86,7 +86,7 @@ renderer 侧避免“单目录平铺”，按职责拆到二级目录：
    - `NodeBinderDescriptors` 是 bind/patch/diff 元数据单源注册表（禁止并行映射）
    - descriptor 源文件固定收敛在 `core/descriptor/`，禁止回流平铺到 `core/` 根目录
    - `ViewModifierApplier` 仅作 facade，具体职责拆到 `core/modifier` 子模块
-   - 容器策略提取（如 lazy reuse / focus follow）位于 renderer `core/modifier`，不放在 `ui-contract` 的 `Modifier` 声明文件中
+   - 容器策略（reuse/motion/focus follow）由 widget DSL 写入 `NodeSpec`，binder 直接读 spec 应用，不再走 modifier 策略提取
 3. `viewcompose-renderer/src/main/java/.../view/tree/binder/widget`
    - 分控件 binder 实现（content/input/media/feedback/collection 等）
 4. `viewcompose-renderer/src/main/java/.../view/lazy/{adapter,focus,layout,reuse,session,state}`
@@ -121,7 +121,7 @@ flowchart TD
 1. `Modifier`：通用修饰与 scoped parent-data。
 2. 组件语义参数：走组件 DSL 参数 + `NodeSpec`。
 3. 主题默认值：走 `Theme -> Defaults`，不把主题直接做成通用 modifier。
-4. `viewcompose-ui-contract` 的 `Modifier` 文件只承载“元素声明 + builder”；运行时策略提取（policy resolver）必须下沉到 renderer。
+4. `viewcompose-ui-contract` 的 `Modifier` 文件只承载“全局稳定语义”的元素声明与 builder；仅特定容器生效的策略必须进入容器 DSL 参数与 `NodeSpec`。
 5. 禁止新增 `Props/TypedPropKeys/PropKeys/node.props` 动态语义路径。
 6. 约束 parent-data（`layoutId/constrainAs/constrain`）仅允许用于 `ConstraintLayout` 子节点；错误宿主必须输出 validator 警告。
 
@@ -148,7 +148,7 @@ flowchart TD
 1. 结构稳定时的可见内容刷新路径
 2. 空 diff 刷新保障
 3. recycle/dispose 与生命周期一致性
-4. framework 托管的 `RecyclerView/ViewPager2` 容器默认保持“本地池 + 系统动画器”；可通过 `Modifier.lazyContainerReuse(...)` 对单个容器启用共享池和关闭 `itemAnimator`
+4. framework 托管的 `RecyclerView/ViewPager2` 容器默认保持“本地池 + 系统动画器”；可通过容器参数 `reusePolicy/motionPolicy` 对单个容器启用共享池与动画策略，并通过垂直容器参数 `focusFollowKeyboard` 控制键盘跟随。
 
 专项清单：
 
@@ -226,7 +226,7 @@ flowchart TD
 2. `graphicsLayer` 是主链动画承载能力；与 `alpha/offset/elevation/zIndex` 冲突时，以 `graphicsLayer` 同语义字段优先。
 3. Android 高阶动画（`TransitionManager/MotionLayout/Animator`）只能通过 `viewcompose-host-android` 的 interop 入口接入，禁止回流到平台无关主链。
 4. renderer 手势消费规则固定为“手势先消费，未消费再回落 clickable”，并维持方向锁 + slop + priority 的冲突策略。
-5. 列表/分页动画默认 opt-in（`Modifier.lazyContainerMotion(...)`），并与 `Modifier.lazyContainerReuse(...)` 兼容，不改变未启用容器行为。
+5. 列表/分页动画默认 opt-in（`motionPolicy`），并与 `reusePolicy` 兼容，不改变未启用容器行为。
 6. `AnimatedVisibility` 语义固定为 Compose 对齐：默认 `fadeIn+expandIn` / `shrinkOut+fadeOut`，并通过 `NodeType.AnimatedVisibilityHost` 参与父布局尺寸动画；exit 全部动画完成后才移除 subtree。
 7. 手势仲裁顺序固定为 `pointerInput -> transform/drag/swipe -> combinedClickable`；当 `pointerInput` 返回 `Consumed` 时，必须强短路后续链路。
 8. transform 激活必须经过 slop 门槛：`panMotion`、`abs(1 - zoomChange) * centroidSize`、`abs(rotationRadians) * centroidSize` 任一超过 `touchSlop` 才进入 active 状态。

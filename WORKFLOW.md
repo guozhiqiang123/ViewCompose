@@ -241,13 +241,13 @@
 3. lazy item 子会话与 overlay surface 子会话必须通过会话契约创建，禁止直接 new 平台具体实现类。
 4. 相关重构必须补边界守卫测试，至少覆盖“禁止 renderer 类型泄漏到 host public API”与“provider 缺失回退 no-op”两条路径。
 
-## 5.14 Modifier 契约与策略提取边界
+## 5.14 Modifier 与容器策略边界
 
-涉及 `Modifier` 或容器策略（reuse/focus follow）相关改动时，必须遵守：
+涉及 `Modifier` 或容器策略（reuse/motion/focus follow）相关改动时，必须遵守：
 
-1. `viewcompose-ui-contract` 仅维护 modifier 元素与 builder API，禁止放 renderer 运行策略提取函数。
-2. 容器策略提取（如 `lazyContainerReusePolicy/focusFollowKeyboardPolicy`）必须落在 renderer `core/modifier` 子域。
-3. 若新增策略类型，必须同时补充 renderer 单测，覆盖默认值与“链式最后覆盖”语义。
+1. `viewcompose-ui-contract` 的 `Modifier` 仅维护“全局稳定语义”的元素与 builder API，禁止新增“仅特定容器生效”的策略型 modifier。
+2. 容器策略必须进入容器 DSL 参数与 `NodeSpec`（`reusePolicy/motionPolicy/focusFollowKeyboard`），renderer 直接读取 spec 应用，不再走 modifier 提取链路。
+3. 若新增策略类型，必须同轮补齐 DSL->NodeSpec 映射测试与 renderer bind/patch 生效测试。
 
 ## 5.15 开发预览约束
 
@@ -267,7 +267,7 @@
 2. Android 高阶动画能力（`TransitionManager/MotionLayout/Animator`）仅允许通过 `:viewcompose-host-android` interop API 暴露。
 3. `graphicsLayer` 语义变更必须同步补 renderer patch/rebind 稳定性测试，禁止通过全量 rebind 兜底。
 4. 手势事件消费规则固定为“手势优先，未消费再 clickable 回落”；涉及冲突策略修改时必须补“子手势 vs 父滚动容器”回归。
-5. 列表/分页动画能力默认 opt-in；改动 `lazyContainerMotion` 或 `lazyContainerReuse` 语义时必须补容器回归与文档说明。
+5. 列表/分页动画能力默认 opt-in；改动容器 `motionPolicy/reusePolicy` 语义时必须补容器回归与文档说明。
 6. `AnimatedVisibility` 必须走 `NodeType.AnimatedVisibilityHost` 承载尺寸动画；隐藏语义固定为“exit 动画结束后再移除 subtree”。
 7. `pointerInput` 仲裁语义变更必须补“Consumed 强短路”回归：`pointerInput` 消费后，`transform/drag/anchoredDraggable/combinedClickable` 均不可再触发。
 8. transform 阈值语义变更必须补单测覆盖 slop 三路径（pan/zoom/rotation）与 instrumentation 覆盖双指平移/旋转变化。

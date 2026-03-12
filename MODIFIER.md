@@ -12,9 +12,9 @@
 2. 文本语义类历史 modifier（如 `textColor/textSize`）已退场
 3. `weight/align/FlexibleSpacer` 仅通过 `RowScope/ColumnScope/BoxScope` 暴露
 4. 系统栏/键盘 inset 适配走组件侧 `Modifier.systemBarsInsetsPadding(...)` 与 `Modifier.imeInsetsPadding(...)`（若 Activity 使用 `adjustResize`，通常不再叠加 `imeInsetsPadding`，避免双重位移）
-5. 列表容器复用策略支持 `Modifier.lazyContainerReuse(sharePool, disableItemAnimator)`，默认不共享池
-6. 容器键盘跟随策略支持 `Modifier.focusFollowKeyboard(enabled)`，`enabled=true` 时由容器级 focus coordinator 统一执行最小滚动，避免 state 刷新与键盘跟随抢锚点
-7. `focusFollowKeyboard` 当前已覆盖 `LazyColumn`、`LazyVerticalGrid`、`VerticalPager`、`ScrollableColumn`；`LazyRow`、`HorizontalPager`、`ScrollableRow` 保持水平语义，不执行键盘上顶
+5. 列表容器策略已收口为容器参数：`reusePolicy`（`sharePool`）与 `motionPolicy`（`disableItemAnimator/animateInsert/animateRemove/animateMove/animateChange`）
+6. 键盘焦点跟随已收口为垂直容器参数：`focusFollowKeyboard`；当前覆盖 `LazyColumn`、`LazyVerticalGrid`、`VerticalPager`、`ScrollableColumn`
+7. `LazyRow`、`HorizontalPager`、`ScrollableRow` 不暴露 `focusFollowKeyboard`，避免“可调用但无效”的 API 漂移
 8. 背景资源支持 `Modifier.backgroundDrawableRes(resId)`；与 `backgroundColor` 同时存在时，drawable 优先；当同时存在 `cornerRadius` 时自动裁剪内容，`clip()` 仍可作为通用强制裁剪开关
 9. 内容尺寸动画支持 `Modifier.animateContentSize(...)`；renderer 会在 patch 前自动插入 `AnimatedSizeHost`，以“真实测量尺寸插值”参与父布局重排（非 graphicsLayer 视觉缩放），并保留 `AnimationSpec` 的 easing/spring/keyframes/repeat 语义（含 reverse 终态）
 10. 约束 parent-data 支持 `Modifier.layoutId(...)`、`Modifier.constrainAs(...)`、`Modifier.constrain(...)`；仅对 `ConstraintLayout` 子节点生效
@@ -33,10 +33,10 @@ rg "^\s*(public\s+)?(internal\s+)?fun\s+(RowScope|ColumnScope|BoxScope|Constrain
 
 当前扫描结果（2026-03）：
 
-1. `fun Modifier.*` 声明总数（含重载、含 scoped 内部定义）：`68`
-2. `fun Modifier.*` 唯一 API 名称数：`54`
+1. `fun Modifier.*` 声明总数（含重载、含 scoped 内部定义）：`62`
+2. `fun Modifier.*` 唯一 API 名称数：`53`
 3. scoped modifier 声明总数：`5`（`RowScope/ColumnScope/BoxScope`）
-4. renderer internal modifier 扩展：`4`（仅内部解析策略）
+4. renderer internal modifier 扩展：`1`（仅内部解析能力）
 
 ### 3.2 分组说明（按架构边界）
 
@@ -79,9 +79,6 @@ rg "^\s*(public\s+)?(internal\s+)?fun\s+(RowScope|ColumnScope|BoxScope|Constrain
 | `contentDescription` | `viewcompose-ui-contract` / `com.viewcompose.ui.modifier` | public | 设置无障碍描述 | 全局 | 映射 `View.contentDescription` |
 | `testTag` | `viewcompose-ui-contract` / `com.viewcompose.ui.modifier` | public | 设置测试标记 | 全局 | 供 UI 测试定位 |
 | `overlayAnchor` | `viewcompose-ui-contract` / `com.viewcompose.ui.modifier` | public | 设置 overlay 锚点 ID | 指定能力 | 用于 Popup/Tooltip/Dropdown 锚定 |
-| `lazyContainerReuse` | `viewcompose-ui-contract` / `com.viewcompose.ui.modifier` | public | 设置 lazy 容器复用策略 | 指定容器 | 仅 Lazy/Pager/部分滚动容器生效 |
-| `lazyContainerMotion` | `viewcompose-ui-contract` / `com.viewcompose.ui.modifier` | public | 设置容器 item 动画策略 | 指定容器 | 仅 Lazy/Pager 等容器生效 |
-| `focusFollowKeyboard` | `viewcompose-ui-contract` / `com.viewcompose.ui.modifier` | public | 控制输入聚焦随键盘上顶策略 | 指定容器 | 仅垂直滚动容器生效 |
 | `drawBehind` | `viewcompose-ui-contract` / `com.viewcompose.ui.modifier`、`viewcompose-graphics` / `com.viewcompose.graphics` | public | 在内容前执行自定义绘制 | 全局 | 两处同名入口；业务侧推荐 `com.viewcompose.graphics` |
 | `drawWithContent` | `viewcompose-ui-contract` / `com.viewcompose.ui.modifier`、`viewcompose-graphics` / `com.viewcompose.graphics` | public | 自定义内容绘制顺序（可调用内容） | 全局 | 适合混合前景/内容绘制 |
 | `drawWithCache` | `viewcompose-ui-contract` / `com.viewcompose.ui.modifier`、`viewcompose-graphics` / `com.viewcompose.graphics` | public | 构建并复用绘制缓存 | 全局 | 用于降低高频重绘成本 |
@@ -100,9 +97,6 @@ rg "^\s*(public\s+)?(internal\s+)?fun\s+(RowScope|ColumnScope|BoxScope|Constrain
 | `androidAnimation` | `viewcompose-host-android` / `com.viewcompose.host.android.animation` | public | 配置 Android 动画互操作 | Android interop | 基于 `nativeView` 封装别名 |
 | `androidGraphics` | `viewcompose-host-android` / `com.viewcompose.host.android.graphics` | public | 配置 Android 图形互操作 | Android interop | 基于 `nativeView` 封装别名 |
 | `resolve` | `viewcompose-renderer` / `com.viewcompose.renderer.modifier` | internal | 将 modifier 链解析为 `ResolvedModifiers` | renderer internal | 框架内部 API，业务侧不可依赖 |
-| `lazyContainerReusePolicy` | `viewcompose-renderer` / `com.viewcompose.renderer.view.tree` | internal | 解析复用策略默认值与覆盖 | renderer internal | 仅容器 binder 使用 |
-| `lazyContainerMotionPolicy` | `viewcompose-renderer` / `com.viewcompose.renderer.view.tree` | internal | 解析容器动画策略默认值与覆盖 | renderer internal | 仅容器 binder 使用 |
-| `focusFollowKeyboardPolicy` | `viewcompose-renderer` / `com.viewcompose.renderer.view.tree` | internal | 解析键盘跟随策略默认值与覆盖 | renderer internal | 仅容器 binder 使用 |
 
 ### 3.4 Scoped Modifier APIs
 
@@ -135,8 +129,8 @@ rg "^\s*(public\s+)?(internal\s+)?fun\s+(RowScope|ColumnScope|BoxScope|Constrain
 6. 系统栏内边距：`systemBarsInsetsPadding`
 7. 软键盘内边距：`imeInsetsPadding`
 8. 逃生通道：`nativeView(key, configure)`
-9. 列表性能策略：`lazyContainerReuse(sharePool, disableItemAnimator)`
-10. 容器输入跟随策略：`focusFollowKeyboard(enabled)`（仅对可垂直滚动容器生效）
+9. 列表性能策略：容器参数 `reusePolicy/motionPolicy`
+10. 容器输入跟随策略：垂直容器参数 `focusFollowKeyboard`
 11. 内容尺寸过渡：`animateContentSize(animationSpec)`（对节点尺寸变化做布局级动画，spec 语义透传到执行层）
 12. 图形绘制阶段：`drawBehind/drawWithContent/drawWithCache`（用于自定义绘制与缓存命令）
 
