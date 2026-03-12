@@ -32,7 +32,7 @@
 - [x] Step 2 新增双策略模型并删除旧 Modifier policy API/元素
 - [x] Step 3 容器 DSL 签名硬切（含垂直 focusFollowKeyboard 范围控制）
 - [x] Step 4 NodeSpec + renderer 主链从 modifier 解析改为 spec 读取
-- [ ] Step 5 demo 与测试迁移
+- [x] Step 5 demo 与测试迁移
 - [ ] Step 6 文档收口（MODIFIER/ARCHITECTURE/PERFORMANCE/WORKFLOW）
 - [ ] Step 7 收口归档执行计划到 `docs/archive/`
 
@@ -41,6 +41,7 @@
 1. `docs: add container policy scope refactor execution plan (p0 hard-cut)`
 2. `feat: add collection reuse and motion policies to container specs`
 3. `refactor: hard-cut container policy modifiers to spec-driven container parameters`
+4. `test: migrate container policy coverage to dsl and spec reader tests`
 
 ## 6. 阻塞记录
 

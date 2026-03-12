@@ -79,25 +79,6 @@ class ModifierContractTest {
     }
 
     @Test
-    fun `lazyContainerMotion appends expected motion policy`() {
-        val modifier = Modifier
-            .lazyContainerReuse(sharePool = true, disableItemAnimator = false)
-            .lazyContainerMotion(
-                animateInsert = true,
-                animateRemove = false,
-                animateMove = true,
-                animateChange = false,
-            )
-
-        assertEquals(2, modifier.elements.size)
-        val motion = modifier.elements[1] as LazyContainerMotionModifierElement
-        assertEquals(true, motion.animateInsert)
-        assertEquals(false, motion.animateRemove)
-        assertEquals(true, motion.animateMove)
-        assertEquals(false, motion.animateChange)
-    }
-
-    @Test
     fun `layoutId and constraint metadata append in order`() {
         val modifier = Modifier
             .layoutId("hero-card")

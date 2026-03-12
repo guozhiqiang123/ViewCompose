@@ -8,13 +8,18 @@ import com.viewcompose.ui.node.NodeType
 import com.viewcompose.ui.node.TextFieldImeAction
 import com.viewcompose.ui.node.VNode
 import com.viewcompose.ui.node.spec.FlowRowNodeProps
+import com.viewcompose.ui.node.spec.HorizontalPagerNodeProps
 import com.viewcompose.ui.node.spec.LazyRowNodeProps
+import com.viewcompose.ui.node.spec.LazyVerticalGridNodeProps
 import com.viewcompose.ui.node.spec.NavigationBarNodeProps
 import com.viewcompose.ui.node.spec.RowNodeProps
 import com.viewcompose.ui.node.spec.ScrollableColumnNodeProps
 import com.viewcompose.ui.node.spec.ScrollableRowNodeProps
 import com.viewcompose.ui.node.spec.TextFieldNodeProps
 import com.viewcompose.ui.node.spec.TextNodeProps
+import com.viewcompose.ui.node.spec.VerticalPagerNodeProps
+import com.viewcompose.ui.node.policy.CollectionMotionPolicy
+import com.viewcompose.ui.node.policy.CollectionReusePolicy
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -118,12 +123,22 @@ class AdditionalWidgetCoverageTest {
 
     @Test
     fun `lazy row emits content padding spacing and keyed items`() {
+        val reusePolicy = CollectionReusePolicy(sharePool = true)
+        val motionPolicy = CollectionMotionPolicy(
+            disableItemAnimator = true,
+            animateInsert = false,
+            animateRemove = true,
+            animateMove = false,
+            animateChange = true,
+        )
         val tree = buildVNodeTree {
             LazyRow(
                 items = listOf("A", "B"),
                 key = { it },
                 contentPadding = 14.dp,
                 spacing = 6.dp,
+                reusePolicy = reusePolicy,
+                motionPolicy = motionPolicy,
             ) { item ->
                 Text(item)
             }
@@ -137,6 +152,8 @@ class AdditionalWidgetCoverageTest {
         assertEquals(6.dp, spec.spacing)
         assertEquals("A", spec.items[0].key)
         assertEquals("B", spec.items[1].key)
+        assertEquals(reusePolicy, spec.reusePolicy)
+        assertEquals(motionPolicy, spec.motionPolicy)
     }
 
     @Test
@@ -169,6 +186,7 @@ class AdditionalWidgetCoverageTest {
                 spacing = 9.dp,
                 arrangement = MainAxisArrangement.SpaceBetween,
                 horizontalAlignment = HorizontalAlignment.Center,
+                focusFollowKeyboard = true,
             ) {
                 Text("A")
             }
@@ -181,6 +199,66 @@ class AdditionalWidgetCoverageTest {
         assertEquals(9.dp, spec.spacing)
         assertEquals(MainAxisArrangement.SpaceBetween, spec.arrangement)
         assertEquals(HorizontalAlignment.Center, spec.horizontalAlignment)
+        assertTrue(spec.focusFollowKeyboard)
+    }
+
+    @Test
+    fun `lazy grid and pagers emit reuse motion and focus policies`() {
+        val reusePolicy = CollectionReusePolicy(sharePool = true)
+        val motionPolicy = CollectionMotionPolicy(
+            disableItemAnimator = true,
+            animateInsert = false,
+            animateRemove = false,
+            animateMove = true,
+            animateChange = false,
+        )
+        val gridTree = buildVNodeTree {
+            LazyVerticalGrid(
+                items = listOf("A", "B"),
+                spanCount = 2,
+                reusePolicy = reusePolicy,
+                motionPolicy = motionPolicy,
+                focusFollowKeyboard = true,
+            ) { item ->
+                Text(item)
+            }
+        }
+        val gridSpec = gridTree.single().spec as LazyVerticalGridNodeProps
+        assertEquals(reusePolicy, gridSpec.reusePolicy)
+        assertEquals(motionPolicy, gridSpec.motionPolicy)
+        assertTrue(gridSpec.focusFollowKeyboard)
+
+        val horizontalPagerTree = buildVNodeTree {
+            HorizontalPager(
+                currentPage = 0,
+                onPageChanged = {},
+                reusePolicy = reusePolicy,
+                motionPolicy = motionPolicy,
+            ) {
+                Page(key = "p1") { Text("P1") }
+                Page(key = "p2") { Text("P2") }
+            }
+        }
+        val horizontalSpec = horizontalPagerTree.single().spec as HorizontalPagerNodeProps
+        assertEquals(reusePolicy, horizontalSpec.reusePolicy)
+        assertEquals(motionPolicy, horizontalSpec.motionPolicy)
+
+        val verticalPagerTree = buildVNodeTree {
+            VerticalPager(
+                currentPage = 0,
+                onPageChanged = {},
+                reusePolicy = reusePolicy,
+                motionPolicy = motionPolicy,
+                focusFollowKeyboard = true,
+            ) {
+                Page(key = "p1") { Text("P1") }
+                Page(key = "p2") { Text("P2") }
+            }
+        }
+        val verticalSpec = verticalPagerTree.single().spec as VerticalPagerNodeProps
+        assertEquals(reusePolicy, verticalSpec.reusePolicy)
+        assertEquals(motionPolicy, verticalSpec.motionPolicy)
+        assertTrue(verticalSpec.focusFollowKeyboard)
     }
 
     @Test
