@@ -32,7 +32,7 @@
 - [x] Step 5 `combinedClickable` 行为语义收口
 - [x] Step 6 demo 与调用侧同步硬切
 - [x] Step 7 测试体系同轮补齐
-- [ ] Step 8 文档与流程收口并归档
+- [x] Step 8 文档与流程收口并归档
 
 ## 5. 提交记录
 
@@ -43,6 +43,8 @@
 - `DONE` fix: make combinedClickable non-consuming when callbacks are absent
 - `DONE` demo: migrate gestures page to anchored draggable and multi-anchor scenarios
 - `DONE` test: add anchored gesture core and dispatcher regression coverage
+- `DONE` docs: codify anchored gesture architecture boundaries
+- `DONE` docs: close and archive gesture re-audit hard-cut plan
 
 ## 6. 阻塞记录
 

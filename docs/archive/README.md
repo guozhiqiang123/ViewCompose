@@ -74,6 +74,7 @@
 | `ANIMATION_REAUDIT_EXEC_PLAN_2026-03.md` | 已完成的动画复扫问题收口执行计划（repeat/infinite 语义修复、animateContentSize spec 语义透传、transformOrigin 同步） |
 | `MODIFIER_GESTURE_OPT_EXEC_PLAN_2026-03.md` | 已完成的 Modifier 手势优化执行计划（pointerInput 强短路、transform slop 门槛、swipe 距离+速度联合判定与回归补强） |
 | `GESTURE_ARCH_CONVERGENCE_EXEC_PLAN_2026-03.md` | 已完成的 Gesture 跨平台分层重构执行计划（`gesture-core` 策略内核 + `gesture` DSL 入口 + renderer 事件适配收口） |
+| `GESTURE_REAUDIT_HARDCUT_EXEC_PLAN_2026-03.md` | 已完成的 Gesture re-audit 硬切执行计划（anchoredDraggable API 替换、多锚点 settle、pointerId transform 稳定性与回归补齐） |
 | `GESTURE_ARCH_BLOCKER_CONTEXT_2026-03.md` | Gesture 架构重构阶段设备门禁阻塞记录（Huawei 并行噪声）及 Pixel 4 XL 单设备复跑解除记录 |
 | `CONSTRAINT_LAYOUT_EXEC_PLAN_2026-03.md` | 已完成的 ConstraintLayout 组件模块化执行计划（`viewcompose-widget-constraintlayout` + renderer 映射 + demo/preview/test/documentation 收口） |
 | `CONSTRAINT_LAYOUT_API_PARITY_EXEC_PLAN_2026-03.md` | 已完成的 ConstraintLayout API 补齐执行计划（P0+P1：advanced dimension/weights/circle/baseline extensions/barrier 行为） |
