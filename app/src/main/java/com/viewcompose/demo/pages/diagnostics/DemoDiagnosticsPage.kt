@@ -6,6 +6,8 @@ import com.viewcompose.ui.modifier.fillMaxSize
 import com.viewcompose.ui.modifier.padding
 import com.viewcompose.ui.modifier.testTag
 import com.viewcompose.runtime.mutableStateOf
+import com.viewcompose.runtime.Snapshot
+import com.viewcompose.runtime.SnapshotApplyConflictException
 import com.viewcompose.renderer.view.tree.LayoutPassTracker
 import com.viewcompose.widget.core.Button
 import com.viewcompose.widget.core.DisposableEffect
@@ -54,53 +56,72 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                 return@SideEffect
             }
             scheduledSnapshotRefreshTokenState.value = refreshToken
-            Choreographer.getInstance().postFrameCallback {
-                if (!pendingSnapshotRefreshState.value || snapshotRefreshRequestTokenState.value != refreshToken) {
-                    scheduledSnapshotRefreshTokenState.value = -1
-                    return@postFrameCallback
-                }
-                val previousSnapshot = renderSnapshotState.value
-                val previousPatchSnapshot = patchSnapshotState.value
-                val previousLayoutSnapshot = layoutSnapshotState.value
-                val latestSnapshot = DemoRenderDiagnosticsStore.latestSnapshot()
-                val latestPatchSnapshot = DemoRenderDiagnosticsStore.latestPatchActiveSnapshot()
-                val latestLayoutSnapshot = LayoutPassTracker.snapshot()
-                val hasSnapshotChanged = latestSnapshot != previousSnapshot ||
-                    latestPatchSnapshot != previousPatchSnapshot ||
-                    latestLayoutSnapshot != previousLayoutSnapshot
-                if (latestSnapshot != previousSnapshot) {
-                    renderSnapshotState.value = latestSnapshot
-                }
-                if (latestPatchSnapshot != previousPatchSnapshot) {
-                    patchSnapshotState.value = latestPatchSnapshot
-                }
-                if (latestLayoutSnapshot != previousLayoutSnapshot) {
-                    layoutSnapshotState.value = latestLayoutSnapshot
-                }
-                val latestHistorySummary = buildRenderHistorySummary()
-                if (latestHistorySummary != snapshotHistorySummaryState.value) {
-                    snapshotHistorySummaryState.value = latestHistorySummary
-                }
-                if (hasSnapshotChanged) {
-                    snapshotRefreshVersionState.value = snapshotRefreshVersionState.value + 1
-                }
-                if (snapshotFollowUntilStableState.value) {
-                    val stableFrames = if (hasSnapshotChanged) {
-                        0
+            val choreographer = Choreographer.getInstance()
+            lateinit var requestNextFrame: () -> Unit
+            requestNextFrame = {
+                choreographer.postFrameCallback {
+                    if (!pendingSnapshotRefreshState.value || snapshotRefreshRequestTokenState.value != refreshToken) {
+                        applyStateMutationWithRetry {
+                            scheduledSnapshotRefreshTokenState.value = -1
+                        }
+                        return@postFrameCallback
+                    }
+                    val previousSnapshot = renderSnapshotState.value
+                    val previousPatchSnapshot = patchSnapshotState.value
+                    val previousLayoutSnapshot = layoutSnapshotState.value
+                    val latestSnapshot = DemoRenderDiagnosticsStore.latestSnapshot()
+                    val latestPatchSnapshot = DemoRenderDiagnosticsStore.latestPatchActiveSnapshot()
+                    val latestLayoutSnapshot = LayoutPassTracker.snapshot()
+                    val hasSnapshotChanged = latestSnapshot != previousSnapshot ||
+                        latestPatchSnapshot != previousPatchSnapshot ||
+                        latestLayoutSnapshot != previousLayoutSnapshot
+                    val latestHistorySummary = buildRenderHistorySummary()
+                    val shouldUpdateHistorySummary = latestHistorySummary != snapshotHistorySummaryState.value
+                    val currentFollowUntilStable = snapshotFollowUntilStableState.value
+                    val currentStableFrameCount = snapshotStableFrameCountState.value
+                    val nextStableFrameCount = if (currentFollowUntilStable) {
+                        if (hasSnapshotChanged) 0 else currentStableFrameCount + 1
                     } else {
-                        snapshotStableFrameCountState.value + 1
+                        currentStableFrameCount
                     }
-                    snapshotStableFrameCountState.value = stableFrames
-                    pendingSnapshotRefreshState.value = stableFrames < SNAPSHOT_STABLE_FRAME_THRESHOLD
-                    if (!pendingSnapshotRefreshState.value) {
-                        snapshotFollowUntilStableState.value = false
-                        snapshotStableFrameCountState.value = 0
+                    val shouldContinueFollowing = currentFollowUntilStable &&
+                        nextStableFrameCount < SNAPSHOT_STABLE_FRAME_THRESHOLD
+
+                    val applied = applyStateMutationWithRetry {
+                        if (latestSnapshot != previousSnapshot) {
+                            renderSnapshotState.value = latestSnapshot
+                        }
+                        if (latestPatchSnapshot != previousPatchSnapshot) {
+                            patchSnapshotState.value = latestPatchSnapshot
+                        }
+                        if (latestLayoutSnapshot != previousLayoutSnapshot) {
+                            layoutSnapshotState.value = latestLayoutSnapshot
+                        }
+                        if (shouldUpdateHistorySummary) {
+                            snapshotHistorySummaryState.value = latestHistorySummary
+                        }
+                        if (hasSnapshotChanged) {
+                            snapshotRefreshVersionState.value = snapshotRefreshVersionState.value + 1
+                        }
+                        if (currentFollowUntilStable) {
+                            snapshotStableFrameCountState.value = if (shouldContinueFollowing) {
+                                nextStableFrameCount
+                            } else {
+                                0
+                            }
+                            pendingSnapshotRefreshState.value = shouldContinueFollowing
+                            snapshotFollowUntilStableState.value = shouldContinueFollowing
+                        } else {
+                            pendingSnapshotRefreshState.value = false
+                        }
+                        scheduledSnapshotRefreshTokenState.value = -1
                     }
-                } else {
-                    pendingSnapshotRefreshState.value = false
+                    if (!applied) {
+                        requestNextFrame()
+                    }
                 }
-                scheduledSnapshotRefreshTokenState.value = -1
             }
+            requestNextFrame()
         }
     }
     val pageItems = when (selectedPageState.value) {
@@ -510,6 +531,23 @@ private fun buildRenderHistorySummary(): String {
     return recent.joinToString(separator = " -> ") { snapshot ->
         "r${snapshot.renderCount}/p${snapshot.stats.patchedNodes}"
     }
+}
+
+private inline fun applyStateMutationWithRetry(
+    maxAttempts: Int = 3,
+    crossinline mutation: () -> Unit,
+): Boolean {
+    repeat(maxAttempts) {
+        try {
+            Snapshot.withMutableSnapshot {
+                mutation()
+            }
+            return true
+        } catch (_: SnapshotApplyConflictException) {
+            // Retry on next attempt.
+        }
+    }
+    return false
 }
 
 private fun Long.formatNsAsMs(): String {
