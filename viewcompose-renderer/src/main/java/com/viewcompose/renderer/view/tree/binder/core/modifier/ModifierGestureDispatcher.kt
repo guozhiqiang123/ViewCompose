@@ -6,12 +6,10 @@ import android.view.VelocityTracker
 import android.view.View
 import android.view.ViewConfiguration
 import android.util.Log
+import com.viewcompose.gesture.core.AnchoredThresholdPolicy
 import com.viewcompose.gesture.core.LockedAxis
-import com.viewcompose.gesture.core.SwipeDecision
-import com.viewcompose.gesture.core.SwipeDecisionAxis
-import com.viewcompose.gesture.core.SwipeSettleTarget
 import com.viewcompose.gesture.core.resolveLockAxis
-import com.viewcompose.gesture.core.resolveSwipeDecision
+import com.viewcompose.gesture.core.resolveAnchoredSettleTarget
 import com.viewcompose.gesture.core.shouldActivateTransform
 import com.viewcompose.renderer.R
 import com.viewcompose.renderer.modifier.ResolvedModifiers
@@ -21,13 +19,13 @@ import com.viewcompose.ui.gesture.PointerChange
 import com.viewcompose.ui.gesture.PointerEvent
 import com.viewcompose.ui.gesture.PointerEventResult
 import com.viewcompose.ui.gesture.PointerEventType
-import com.viewcompose.ui.gesture.SwipeDirection
 import com.viewcompose.ui.gesture.TransformDelta
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.sqrt
 
 private const val GESTURE_LOG_TAG: String = "ViewComposeGesture"
+private const val INVALID_POINTER_ID: Int = -1
 
 internal object ModifierGestureApplier {
     fun applyGestureState(
@@ -61,6 +59,7 @@ private class ViewGestureDispatcher(
     private val touchSlop: Float = ViewConfiguration.get(hostView.context).scaledTouchSlop.toFloat()
     private val minimumFlingVelocity: Float =
         ViewConfiguration.get(hostView.context).scaledMinimumFlingVelocity.toFloat()
+    private val anchoredThresholdPolicy = AnchoredThresholdPolicy()
 
     private var velocityTracker: VelocityTracker? = null
     private var downX: Float = 0f
@@ -81,6 +80,8 @@ private class ViewGestureDispatcher(
     private var transformPanMotion = 0f
     private var transformZoomMotion = 0f
     private var transformRotationMotion = 0f
+    private var primaryTransformPointerId = INVALID_POINTER_ID
+    private var secondaryTransformPointerId = INVALID_POINTER_ID
 
     private val combinedDetector = GestureDetector(
         hostView.context,
@@ -206,16 +207,8 @@ private class ViewGestureDispatcher(
         var dispatched = false
         when (event.actionMasked) {
             MotionEvent.ACTION_POINTER_DOWN, MotionEvent.ACTION_DOWN -> {
-                if (event.pointerCount >= 2) {
+                if (initializeTransformPointers(event) && captureTransformBaseline(event)) {
                     transformStreamActive = true
-                    transformPastTouchSlop = false
-                    transformMidX = (event.getX(0) + event.getX(1)) * 0.5f
-                    transformMidY = (event.getY(0) + event.getY(1)) * 0.5f
-                    transformAngle = calculateAngle(event)
-                    transformSpan = calculateSpan(event)
-                    transformPanMotion = 0f
-                    transformZoomMotion = 0f
-                    transformRotationMotion = 0f
                     debugLog {
                         "transform-start pointers=${event.pointerCount} " +
                             "mid=(${transformMidX.format(1)}, ${transformMidY.format(1)}) " +
@@ -225,73 +218,85 @@ private class ViewGestureDispatcher(
             }
 
             MotionEvent.ACTION_MOVE -> {
-                if (event.pointerCount >= 2) {
-                    val nextMidX = (event.getX(0) + event.getX(1)) * 0.5f
-                    val nextMidY = (event.getY(0) + event.getY(1)) * 0.5f
-                    val nextAngle = calculateAngle(event)
-                    val nextSpan = calculateSpan(event)
-                    val panX = if (transformMidX.isNaN()) 0f else nextMidX - transformMidX
-                    val panY = if (transformMidY.isNaN()) 0f else nextMidY - transformMidY
-                    val rotation = if (transformAngle.isNaN()) 0f else normalizeAngle(nextAngle - transformAngle)
-                    val zoom = if (transformSpan.isNaN() || transformSpan == 0f) 1f else nextSpan / transformSpan
-                    if (!transformPastTouchSlop) {
-                        val centroidSize = nextSpan * 0.5f
-                        val panMotion = vectorMagnitude(panX, panY)
-                        val zoomMotion = abs(1f - zoom) * centroidSize
-                        val rotationMotion =
-                            abs(Math.toRadians(rotation.toDouble()).toFloat()) * centroidSize
-                        transformPanMotion += panMotion
-                        transformZoomMotion += zoomMotion
-                        transformRotationMotion += rotationMotion
-                        if (shouldActivateTransform(
-                                panMotion = transformPanMotion,
-                                zoomMotion = transformZoomMotion,
-                                rotationMotion = transformRotationMotion,
-                                touchSlop = touchSlop,
-                            )
-                        ) {
-                            transformPastTouchSlop = true
-                            hostView.parent?.requestDisallowInterceptTouchEvent(true)
-                            debugLog {
-                                "transform-active panMotion=${transformPanMotion.format(2)} " +
-                                    "zoomMotion=${transformZoomMotion.format(2)} " +
-                                    "rotationMotion=${transformRotationMotion.format(2)} " +
-                                    "touchSlop=${touchSlop.format(2)}"
-                            }
-                        }
-                    }
-                    val hasTransformDelta = zoom != 1f || panX != 0f || panY != 0f || rotation != 0f
-                    if (transformPastTouchSlop && hasTransformDelta) {
-                        transform.onTransform(
-                            TransformDelta(
-                                zoom = zoom,
-                                panX = panX,
-                                panY = panY,
-                                rotation = rotation,
-                            ),
+                val snapshot = resolveTransformSnapshot(event) ?: return false
+                if (!transformStreamActive || transformMidX.isNaN() || transformMidY.isNaN()) {
+                    captureTransformBaseline(event)
+                    return false
+                }
+                val panX = snapshot.midX - transformMidX
+                val panY = snapshot.midY - transformMidY
+                val rotation = normalizeAngle(snapshot.angle - transformAngle)
+                val zoom = if (transformSpan.isNaN() || transformSpan == 0f) {
+                    1f
+                } else {
+                    snapshot.span / transformSpan
+                }
+                if (!transformPastTouchSlop) {
+                    val centroidSize = snapshot.span * 0.5f
+                    val panMotion = vectorMagnitude(panX, panY)
+                    val zoomMotion = abs(1f - zoom) * centroidSize
+                    val rotationMotion =
+                        abs(Math.toRadians(rotation.toDouble()).toFloat()) * centroidSize
+                    transformPanMotion += panMotion
+                    transformZoomMotion += zoomMotion
+                    transformRotationMotion += rotationMotion
+                    if (shouldActivateTransform(
+                            panMotion = transformPanMotion,
+                            zoomMotion = transformZoomMotion,
+                            rotationMotion = transformRotationMotion,
+                            touchSlop = touchSlop,
                         )
-                        dispatched = true
+                    ) {
+                        transformPastTouchSlop = true
+                        hostView.parent?.requestDisallowInterceptTouchEvent(true)
                         debugLog {
-                            "transform-move zoom=${zoom.format(3)} " +
-                                "pan=(${panX.format(2)}, ${panY.format(2)}) " +
-                                "rotation=${rotation.format(2)} pointers=${event.pointerCount}"
+                            "transform-active panMotion=${transformPanMotion.format(2)} " +
+                                "zoomMotion=${transformZoomMotion.format(2)} " +
+                                "rotationMotion=${transformRotationMotion.format(2)} " +
+                                "touchSlop=${touchSlop.format(2)}"
                         }
                     }
-                    transformMidX = nextMidX
-                    transformMidY = nextMidY
-                    transformAngle = nextAngle
-                    transformSpan = nextSpan
+                }
+                val hasTransformDelta = zoom != 1f || panX != 0f || panY != 0f || rotation != 0f
+                if (transformPastTouchSlop && hasTransformDelta) {
+                    transform.onTransform(
+                        TransformDelta(
+                            zoom = zoom,
+                            panX = panX,
+                            panY = panY,
+                            rotation = rotation,
+                        ),
+                    )
+                    dispatched = true
+                    debugLog {
+                        "transform-move zoom=${zoom.format(3)} " +
+                            "pan=(${panX.format(2)}, ${panY.format(2)}) " +
+                            "rotation=${rotation.format(2)} pointers=${event.pointerCount}"
+                    }
+                }
+                transformMidX = snapshot.midX
+                transformMidY = snapshot.midY
+                transformAngle = snapshot.angle
+                transformSpan = snapshot.span
+            }
+
+            MotionEvent.ACTION_POINTER_UP -> {
+                val hasRemainingPair = initializeTransformPointers(
+                    event = event,
+                    excludeActionIndex = event.actionIndex,
+                ) && captureTransformBaseline(
+                    event = event,
+                    excludeActionIndex = event.actionIndex,
+                )
+                if (!hasRemainingPair) {
+                    resetTransformTracking()
+                    debugLog { "transform-end action=${event.actionMasked} pointers=${event.pointerCount}" }
                 }
             }
 
-            MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                if (event.pointerCount <= 2) {
-                    transformStreamActive = false
-                    transformMidX = Float.NaN
-                    transformMidY = Float.NaN
-                    transformAngle = Float.NaN
-                    debugLog { "transform-end action=${event.actionMasked} pointers=${event.pointerCount}" }
-                }
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                resetTransformTracking()
+                debugLog { "transform-end action=${event.actionMasked} pointers=${event.pointerCount}" }
             }
         }
         return dispatched
@@ -320,7 +325,9 @@ private class ViewGestureDispatcher(
                 lastY = downY
                 lockAxis = null
                 dragStarted = false
-                swipeStartAnchorPx = anchoredDraggable?.currentOffsetPx ?: 0f
+                swipeStartAnchorPx = anchoredDraggable?.currentOffsetPx
+                    ?: anchoredDraggable?.anchorOffsetsPx?.firstOrNull()
+                    ?: 0f
                 tracker.clear()
                 tracker.addMovement(event)
                 return false
@@ -382,44 +389,23 @@ private class ViewGestureDispatcher(
                 }
                 val velocity = resolveAxisVelocity(axis = axis, tracker = tracker)
                 val swipeConsumed = if (axis != null && anchoredDraggable != null) {
-                    val minAnchorPx = anchoredDraggable.anchorOffsetsPx.firstOrNull()
-                    val maxAnchorPx = anchoredDraggable.anchorOffsetsPx.lastOrNull()
-                    when (
-                        val decision = resolveSwipeDecision(
-                            axis = axis.toSwipeDecisionAxis(),
-                            total = total,
-                            velocity = velocity,
-                            minAnchor = minAnchorPx,
-                            maxAnchor = maxAnchorPx,
-                            startAnchor = swipeStartAnchorPx,
-                            touchSlop = touchSlop,
-                            minFlingVelocity = minimumFlingVelocity,
+                    runCatching {
+                        val startOffset = anchoredDraggable.currentOffsetPx
+                            ?: swipeStartAnchorPx
+                        val settleResult = resolveAnchoredSettleTarget(
+                            anchorsPx = anchoredDraggable.anchorOffsetsPx,
+                            startOffsetPx = startOffset,
+                            currentOffsetPx = startOffset + total,
+                            velocityPxPerSecond = velocity,
+                            touchSlopPx = touchSlop,
+                            minFlingVelocityPxPerSecond = minimumFlingVelocity,
+                            thresholdPolicy = anchoredThresholdPolicy,
                         )
-                    ) {
-                        is SwipeDecision.Swipe -> {
-                            val targetOffset = when (decision.direction) {
-                                SwipeDirection.StartToEnd,
-                                SwipeDirection.TopToBottom -> maxAnchorPx
-                                SwipeDirection.EndToStart,
-                                SwipeDirection.BottomToTop -> minAnchorPx
-                            }
-                            if (targetOffset != null) {
-                                anchoredDraggable.onSettleToOffset(targetOffset)
-                            }
-                            true
-                        }
-
-                        is SwipeDecision.Settle -> {
-                            when (decision.target) {
-                                SwipeSettleTarget.Min -> minAnchorPx
-                                SwipeSettleTarget.Max -> maxAnchorPx
-                            }?.let { settledOffset ->
-                                anchoredDraggable.onSettleToOffset(settledOffset)
-                            }
-                            true
-                        }
-
-                        SwipeDecision.None -> false
+                        anchoredDraggable.onSettleToOffset(settleResult.targetOffsetPx)
+                        true
+                    }.getOrElse { error ->
+                        debugLog { "anchored-settle-failed reason=${error.message}" }
+                        false
                     }
                 } else {
                     false
@@ -455,6 +441,8 @@ private class ViewGestureDispatcher(
         transformZoomMotion = 0f
         transformRotationMotion = 0f
         transformStreamActive = false
+        primaryTransformPointerId = INVALID_POINTER_ID
+        secondaryTransformPointerId = INVALID_POINTER_ID
         pointerStreamActive = false
     }
 
@@ -501,11 +489,112 @@ private class ViewGestureDispatcher(
         }
     }
 
-    private fun LockedAxis.toSwipeDecisionAxis(): SwipeDecisionAxis {
-        return when (this) {
-            LockedAxis.Horizontal -> SwipeDecisionAxis.Horizontal
-            LockedAxis.Vertical -> SwipeDecisionAxis.Vertical
+    private data class TransformSnapshot(
+        val midX: Float,
+        val midY: Float,
+        val angle: Float,
+        val span: Float,
+    )
+
+    private fun initializeTransformPointers(
+        event: MotionEvent,
+        excludeActionIndex: Int? = null,
+    ): Boolean {
+        val availablePointerIds = collectAvailablePointerIds(event, excludeActionIndex)
+        if (availablePointerIds.size < 2) {
+            primaryTransformPointerId = INVALID_POINTER_ID
+            secondaryTransformPointerId = INVALID_POINTER_ID
+            return false
         }
+        val keepCurrentPair = availablePointerIds.contains(primaryTransformPointerId) &&
+            availablePointerIds.contains(secondaryTransformPointerId) &&
+            primaryTransformPointerId != secondaryTransformPointerId
+        if (keepCurrentPair) {
+            return true
+        }
+        primaryTransformPointerId = availablePointerIds[0]
+        secondaryTransformPointerId = availablePointerIds[1]
+        return true
+    }
+
+    private fun captureTransformBaseline(
+        event: MotionEvent,
+        excludeActionIndex: Int? = null,
+    ): Boolean {
+        val snapshot = resolveTransformSnapshot(
+            event = event,
+            excludeActionIndex = excludeActionIndex,
+        ) ?: return false
+        transformPastTouchSlop = false
+        transformPanMotion = 0f
+        transformZoomMotion = 0f
+        transformRotationMotion = 0f
+        transformMidX = snapshot.midX
+        transformMidY = snapshot.midY
+        transformAngle = snapshot.angle
+        transformSpan = snapshot.span
+        return true
+    }
+
+    private fun resolveTransformSnapshot(
+        event: MotionEvent,
+        excludeActionIndex: Int? = null,
+    ): TransformSnapshot? {
+        if (!initializeTransformPointers(event, excludeActionIndex)) {
+            return null
+        }
+        var primaryIndex = event.findPointerIndex(primaryTransformPointerId)
+        var secondaryIndex = event.findPointerIndex(secondaryTransformPointerId)
+        if (!isPointerUsable(primaryIndex, excludeActionIndex) ||
+            !isPointerUsable(secondaryIndex, excludeActionIndex) ||
+            primaryIndex == secondaryIndex
+        ) {
+            if (!initializeTransformPointers(event, excludeActionIndex)) {
+                return null
+            }
+            primaryIndex = event.findPointerIndex(primaryTransformPointerId)
+            secondaryIndex = event.findPointerIndex(secondaryTransformPointerId)
+            if (!isPointerUsable(primaryIndex, excludeActionIndex) ||
+                !isPointerUsable(secondaryIndex, excludeActionIndex) ||
+                primaryIndex == secondaryIndex
+            ) {
+                return null
+            }
+        }
+        val x1 = event.getX(primaryIndex)
+        val y1 = event.getY(primaryIndex)
+        val x2 = event.getX(secondaryIndex)
+        val y2 = event.getY(secondaryIndex)
+        val midX = (x1 + x2) * 0.5f
+        val midY = (y1 + y2) * 0.5f
+        return TransformSnapshot(
+            midX = midX,
+            midY = midY,
+            angle = calculateAngle(x1, y1, x2, y2),
+            span = vectorMagnitude(x2 - x1, y2 - y1),
+        )
+    }
+
+    private fun collectAvailablePointerIds(
+        event: MotionEvent,
+        excludeActionIndex: Int? = null,
+    ): IntArray {
+        val ids = IntArray(event.pointerCount)
+        var count = 0
+        for (index in 0 until event.pointerCount) {
+            if (excludeActionIndex != null && index == excludeActionIndex) {
+                continue
+            }
+            ids[count++] = event.getPointerId(index)
+        }
+        return ids.copyOf(count)
+    }
+
+    private fun isPointerUsable(
+        pointerIndex: Int,
+        excludeActionIndex: Int?,
+    ): Boolean {
+        return pointerIndex >= 0 && (excludeActionIndex == null || pointerIndex != excludeActionIndex)
     }
 
     private fun MotionEvent.toPointerEvent(): PointerEvent {
@@ -537,12 +626,16 @@ private class ViewGestureDispatcher(
         }
     }
 
-    private fun calculateAngle(event: MotionEvent): Float {
-        if (event.pointerCount < 2) return 0f
+    private fun calculateAngle(
+        x1: Float,
+        y1: Float,
+        x2: Float,
+        y2: Float,
+    ): Float {
         return Math.toDegrees(
             atan2(
-                (event.getY(1) - event.getY(0)).toDouble(),
-                (event.getX(1) - event.getX(0)).toDouble(),
+                (y2 - y1).toDouble(),
+                (x2 - x1).toDouble(),
             ),
         ).toFloat()
     }
@@ -556,13 +649,6 @@ private class ViewGestureDispatcher(
             normalized += 360f
         }
         return normalized
-    }
-
-    private fun calculateSpan(event: MotionEvent): Float {
-        if (event.pointerCount < 2) return 0f
-        val dx = event.getX(1) - event.getX(0)
-        val dy = event.getY(1) - event.getY(0)
-        return vectorMagnitude(dx, dy)
     }
 
     private fun vectorMagnitude(x: Float, y: Float): Float {
