@@ -128,7 +128,7 @@ internal fun UiTreeBuilder.DiagnosticsPage(
     }
     val pageItems = when (selectedPageState.value) {
         0 -> listOf("benchmark", "page", "page_filter", "runtime", "verify")
-        1 -> listOf("page", "page_filter", "theme", "verify")
+        1 -> listOf("page", "page_filter", "theme", "theme_verify")
         2 -> listOf("page", "page_filter", "renderer_actions", "renderer", "verify")
         else -> listOf("page", "page_filter", "gaps", "verify")
     }
@@ -491,6 +491,8 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                     ),
                 )
             }
+
+            "theme_verify" -> DiagnosticsThemeVerificationSection()
 
             else -> VerificationNotesSection(
                 what = "在假设视觉 bug 属于 widget、layout 或 runtime 层之前，诊断应是首先检查的地方。",

@@ -11,6 +11,7 @@ import com.viewcompose.ui.modifier.fillMaxWidth
 import com.viewcompose.ui.modifier.height
 import com.viewcompose.ui.modifier.padding
 import com.viewcompose.ui.modifier.size
+import com.viewcompose.ui.modifier.testTag
 import com.viewcompose.ui.node.ImageSource
 import com.viewcompose.widget.core.Badge
 import com.viewcompose.widget.core.BadgedBox
@@ -98,6 +99,9 @@ private fun UiTreeBuilder.DiagnosticsThemeSnapshotSection(root: ViewGroup) {
                 DiagnosticFact("InverseOnSurface", Theme.colors.inverseOnSurface.asColorHex()),
                 DiagnosticFact("Ripple", Theme.colors.ripple.asColorHex()),
             ),
+            valueTagsByLabel = mapOf(
+                "Mode" to DemoTestTags.DIAGNOSTICS_THEME_MODE,
+            ),
         )
         ThemeSwatchRow(
             label = "Surface / Inverse",
@@ -168,6 +172,7 @@ private fun UiTreeBuilder.DiagnosticsThemeSurfaceSection() {
             Surface(
                 modifier = Modifier
                     .weight(1f)
+                    .testTag(DemoTestTags.DIAGNOSTICS_THEME_SURFACE_SAMPLE)
                     .padding(12.dp),
             ) {
                 Column(spacing = 4.dp, modifier = Modifier.fillMaxWidth()) {
@@ -254,7 +259,14 @@ private fun UiTreeBuilder.DiagnosticsThemeActionSection() {
                 .fillMaxWidth()
                 .padding(bottom = 8.dp),
         ) {
-            Button(text = "Primary", onClick = {}, variant = ButtonVariant.Primary, modifier = Modifier.weight(1f))
+            Button(
+                text = "Primary",
+                onClick = {},
+                variant = ButtonVariant.Primary,
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag(DemoTestTags.DIAGNOSTICS_THEME_BUTTON_PRIMARY),
+            )
             Button(text = "Secondary", onClick = {}, variant = ButtonVariant.Secondary, modifier = Modifier.weight(1f))
         }
         Row(
@@ -280,7 +292,11 @@ private fun UiTreeBuilder.DiagnosticsThemeActionSection() {
                     contentDescription = "Fab",
                 )
             }
-            FloatingActionButton(onClick = {}, size = FabSize.Medium) {
+            FloatingActionButton(
+                onClick = {},
+                size = FabSize.Medium,
+                modifier = Modifier.testTag(DemoTestTags.DIAGNOSTICS_THEME_FAB),
+            ) {
                 Icon(
                     source = ImageSource.Resource(R.drawable.demo_media_icon),
                     contentDescription = "Fab",
@@ -353,6 +369,7 @@ private fun UiTreeBuilder.DiagnosticsThemeInputSection() {
             isError = true,
             modifier = Modifier
                 .fillMaxWidth()
+                .testTag(DemoTestTags.DIAGNOSTICS_THEME_TEXTFIELD_ERROR)
                 .padding(bottom = 8.dp),
         )
         TextField(
@@ -372,6 +389,7 @@ private fun UiTreeBuilder.DiagnosticsThemeInputSection() {
             leadingIcon = ImageSource.Resource(R.drawable.demo_media_icon),
             modifier = Modifier
                 .fillMaxWidth()
+                .testTag(DemoTestTags.DIAGNOSTICS_THEME_SEARCHBAR)
                 .padding(bottom = 8.dp),
         )
         Row(
@@ -438,7 +456,9 @@ private fun UiTreeBuilder.DiagnosticsThemeNavigationSection() {
         NavigationBar(
             selectedIndex = navIndexState.value,
             onItemSelected = { navIndexState.value = it },
-            modifier = Modifier.padding(bottom = 8.dp),
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+                .testTag(DemoTestTags.DIAGNOSTICS_THEME_NAVIGATION),
         ) {
             Item(label = "Home", icon = ImageSource.Resource(R.drawable.demo_media_icon))
             Item(label = "Search", icon = ImageSource.Resource(R.drawable.demo_media_icon), badgeCount = 3)
@@ -451,6 +471,7 @@ private fun UiTreeBuilder.DiagnosticsThemeNavigationSection() {
             size = SegmentedControlSize.Medium,
             modifier = Modifier
                 .fillMaxWidth()
+                .testTag(DemoTestTags.DIAGNOSTICS_THEME_SEGMENTED)
                 .padding(bottom = 8.dp),
         )
         TabRow(
@@ -486,9 +507,21 @@ private fun UiTreeBuilder.DiagnosticsThemeShapeSizeSection() {
                 .fillMaxWidth()
                 .padding(bottom = 8.dp),
         ) {
-            ShapeProbe("Small", Theme.shapes.smallCornerRadius, Modifier.weight(1f))
+            ShapeProbe(
+                label = "Small",
+                radius = Theme.shapes.smallCornerRadius,
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag(DemoTestTags.DIAGNOSTICS_THEME_SHAPE_SMALL),
+            )
             ShapeProbe("Medium", Theme.shapes.mediumCornerRadius, Modifier.weight(1f))
-            ShapeProbe("Large", Theme.shapes.largeCornerRadius, Modifier.weight(1f))
+            ShapeProbe(
+                label = "Large",
+                radius = Theme.shapes.largeCornerRadius,
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag(DemoTestTags.DIAGNOSTICS_THEME_SHAPE_LARGE),
+            )
         }
         Row(
             spacing = 8.dp,
@@ -541,6 +574,31 @@ private fun UiTreeBuilder.DiagnosticsThemeShapeSizeSection() {
             modifier = Modifier.fillMaxWidth(),
         )
     }
+}
+
+internal fun UiTreeBuilder.DiagnosticsThemeVerificationSection() {
+    VerificationNotesSection(
+        what = "该页是 Theme token 实际消费的权威人工回归入口，目标不是看数值对不对，而是确认 token 最终确实驱动了关键组件默认值。",
+        howToVerify = listOf(
+            "依次切换 Light / Dark / System，确认 Theme Snapshot 的颜色值和下方组件视觉一起变化，而不是只有数值变化。",
+            "先看 Surface 家族，确认 Default/Variant surface、ListItem、TopAppBar 的前景文字都保持可读，OutlinedCard 边框跟随 outline。",
+            "看 Action 家族，确认 Primary/Secondary/Tonal/Outlined/Text 五种按钮的强调层级明显不同，FAB 和 Extended FAB 跟随当前主题。",
+            "看 Input / Selection 家族，确认错误态 TextField 与普通 TextField 的 container、text、hint 有明显语义差异，SearchBar 使用较大圆角与较高 control sizing。",
+            "看 Navigation / Collection 家族，确认 NavigationBar 与 SegmentedControl 的 selected/unselected 对比稳定，badge 与 indicator 不会和背景融在一起。",
+            "看 Shape / Size 诊断，确认 small/medium/large radius 探针和 Button/TextField/SegmentedControl/SearchBar 的尺寸都与当前 theme token 一致。",
+            "再到 Feedback / Input / Navigation 页面抽查真实功能页，确认这里定义的主题语义没有在 live 页面里回退。",
+        ),
+        expected = listOf(
+            "Theme Snapshot 是诊断基线，组件视觉与 token 变化保持同向。",
+            "surface/content、outline、inverse、errorContainer 等语义都能从样本中直接看出来，而不是只能靠读代码确认。",
+            "shape tier 和 control sizing 不再停留在 token 定义层，而是能从真实组件高度、圆角、间距中直接观察到。",
+            "真实功能页中的 Dialog / Popup / BottomSheet、SearchBar、NavigationBar / SegmentedControl 与此页口径一致。",
+        ),
+        relatedGaps = listOf(
+            "本轮不新增主题专项 instrumentation，稳定 testTag 仅为后续自动化预留。",
+            "overlay 真实主题验证继续依赖既有功能页，不在本页重复堆叠完整交互。",
+        ),
+    )
 }
 
 private fun UiTreeBuilder.MenuVisualSample() {
