@@ -11,9 +11,22 @@ class AndroidThemeBridgeTest {
             com.google.android.material.R.attr.colorSurface to 2,
             com.google.android.material.R.attr.colorSurfaceVariant to 3,
             androidx.appcompat.R.attr.colorPrimary to 4,
+            com.google.android.material.R.attr.colorOnPrimary to 40,
+            com.google.android.material.R.attr.colorPrimaryContainer to 41,
+            com.google.android.material.R.attr.colorOnPrimaryContainer to 42,
             com.google.android.material.R.attr.colorSecondary to 5,
+            com.google.android.material.R.attr.colorOnSecondary to 50,
+            com.google.android.material.R.attr.colorSecondaryContainer to 51,
+            com.google.android.material.R.attr.colorOnSecondaryContainer to 52,
             android.R.attr.colorError to 9,
+            com.google.android.material.R.attr.colorOnError to 90,
+            com.google.android.material.R.attr.colorErrorContainer to 91,
+            com.google.android.material.R.attr.colorOnErrorContainer to 92,
             com.google.android.material.R.attr.colorOutline to 6,
+            com.google.android.material.R.attr.colorOutlineVariant to 61,
+            androidx.appcompat.R.attr.colorAccent to 62,
+            com.google.android.material.R.attr.colorSurfaceInverse to 63,
+            com.google.android.material.R.attr.colorOnSurfaceInverse to 64,
             android.R.attr.textColorPrimary to 7,
             android.R.attr.textColorSecondary to 8,
         )
@@ -24,9 +37,23 @@ class AndroidThemeBridgeTest {
         assertEquals(2, tokens.colors.surface)
         assertEquals(3, tokens.colors.surfaceVariant)
         assertEquals(4, tokens.colors.primary)
+        assertEquals(40, tokens.colors.onPrimary)
+        assertEquals(41, tokens.colors.primaryContainer)
+        assertEquals(42, tokens.colors.onPrimaryContainer)
         assertEquals(5, tokens.colors.secondary)
+        assertEquals(50, tokens.colors.onSecondary)
+        assertEquals(51, tokens.colors.secondaryContainer)
+        assertEquals(52, tokens.colors.onSecondaryContainer)
         assertEquals(9, tokens.colors.error)
+        assertEquals(90, tokens.colors.onError)
+        assertEquals(91, tokens.colors.errorContainer)
+        assertEquals(92, tokens.colors.onErrorContainer)
         assertEquals(6, tokens.colors.divider)
+        assertEquals(6, tokens.colors.outline)
+        assertEquals(61, tokens.colors.outlineVariant)
+        assertEquals(62, tokens.colors.surfaceTint)
+        assertEquals(63, tokens.colors.inverseSurface)
+        assertEquals(64, tokens.colors.inverseOnSurface)
         assertEquals(7, tokens.colors.textPrimary)
         assertEquals(8, tokens.colors.textSecondary)
     }
@@ -109,5 +136,64 @@ class AndroidThemeBridgeTest {
         assertEquals(fallback.typography.title.fontSizeSp, tokens.typography.title.fontSizeSp)
         assertEquals(20, tokens.typography.body.fontSizeSp)
         assertEquals(fallback.typography.label.fontSizeSp, tokens.typography.label.fontSizeSp)
+    }
+
+    @Test
+    fun `snapshot mapper bridges semantic shapes ripple and scrim`() {
+        val tokens = ThemeTokenMapper.fromSnapshot(
+            snapshot = AndroidThemeSnapshot(
+                colors = AndroidThemeColorSnapshot(
+                    ripple = 77,
+                ),
+                shapes = AndroidThemeShapeSnapshot(
+                    smallCornerRadius = 12,
+                    mediumCornerRadius = 20,
+                    largeCornerRadius = 28,
+                ),
+                scrimOpacity = 0.58f,
+            ),
+        )
+
+        assertEquals(77, tokens.colors.ripple)
+        assertEquals(0.58f, tokens.overlays.scrimOpacity, 0.0001f)
+        assertEquals(12, tokens.shapes.smallCornerRadius)
+        assertEquals(20, tokens.shapes.mediumCornerRadius)
+        assertEquals(28, tokens.shapes.largeCornerRadius)
+        assertEquals(20, tokens.shapes.cardCornerRadius)
+        assertEquals(12, tokens.shapes.interactiveCornerRadius)
+    }
+
+    @Test
+    fun `snapshot mapper bridges tiered typography and richer text style fields`() {
+        val tokens = ThemeTokenMapper.fromSnapshot(
+            snapshot = AndroidThemeSnapshot(
+                typography = AndroidThemeTypographySnapshot(
+                    titleLarge = AndroidTextStyleSnapshot(
+                        fontSizeSp = 30,
+                        fontWeight = 700,
+                        letterSpacingEm = 0.04f,
+                        lineHeightSp = 36,
+                        includeFontPadding = true,
+                    ),
+                    bodyLarge = AndroidTextStyleSnapshot(
+                        fontSizeSp = 19,
+                        fontWeight = 500,
+                    ),
+                    labelSmall = AndroidTextStyleSnapshot(
+                        fontSizeSp = 11,
+                    ),
+                ),
+            ),
+        )
+
+        assertEquals(30, tokens.typography.title.fontSizeSp)
+        assertEquals(700, tokens.typography.title.fontWeight)
+        assertEquals(0.04f, tokens.typography.title.letterSpacingEm)
+        assertEquals(36, tokens.typography.title.lineHeightSp)
+        assertEquals(true, tokens.typography.title.includeFontPadding)
+        assertEquals(19, tokens.typography.body.fontSizeSp)
+        assertEquals(500, tokens.typography.body.fontWeight)
+        assertEquals(11, tokens.typography.labelSmall.fontSizeSp)
+        assertEquals(UiThemeDefaults.light().typography.labelMedium.fontSizeSp, tokens.typography.labelMedium.fontSizeSp)
     }
 }
