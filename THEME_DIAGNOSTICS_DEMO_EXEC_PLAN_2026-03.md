@@ -24,7 +24,7 @@
 - [x] Step 2: 扩展 Diagnostics 页签与活动入口常量
 - [x] Step 3: 提取共享 theme diagnostic helper 并落主题诊断页主体
 - [x] Step 4: 补稳定 testTag 与页面内人工验证说明
-- [ ] Step 5: 更新 `ROADMAP.md` / `THEMING.md` 并归档执行计划
+- [x] Step 5: 更新 `ROADMAP.md` / `THEMING.md` 并归档执行计划
 
 ## Acceptance
 
@@ -40,6 +40,8 @@
 2. `feat: add diagnostics theme page entry skeleton`
 3. `feat: add diagnostics theme component coverage sections`
 4. `demo: add theme diagnostic probes and manual verification notes`
+5. `docs: codify diagnostics theme verification entry`
+6. `docs: close and archive demo theme diagnostics execution plan`
 
 ## Blockers
 

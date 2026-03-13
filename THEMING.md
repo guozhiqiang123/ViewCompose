@@ -197,6 +197,8 @@ Android 主题桥接只做“平台语义到框架语义”的映射，内部固
 4. demo 验证：Light/Dark + 局部覆盖场景
 5. 测试补齐：单测或 instrumentation 至少覆盖一种回归路径
 
+当前主题语义的权威 demo 验证入口为 `Diagnostics -> 主题诊断`。`Foundations` 中的 theme/overrides/typography 页面继续保留为教学与示例入口，不承担最终人工回归口径。
+
 ## 8. 当前阶段重点
 
 1. 保持主题模型稳定，不回退到“组件全量 token 预计算”。
