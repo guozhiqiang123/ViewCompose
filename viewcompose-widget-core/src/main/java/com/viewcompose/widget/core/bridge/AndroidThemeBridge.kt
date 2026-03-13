@@ -27,7 +27,8 @@ internal object ThemeTokenMapper {
         readTextSizeSp: (Int) -> Int? = { null },
         isDarkMode: Boolean = false,
     ): UiThemeTokens {
-        return fromThemeColors(
+        val fallback = if (isDarkMode) UiThemeDefaults.dark() else UiThemeDefaults.light()
+        val baseTokens = fromThemeColors(
             readColor = { attr ->
                 when (attr) {
                     android.R.attr.colorBackground -> snapshot.colors.background
@@ -59,6 +60,16 @@ internal object ThemeTokenMapper {
             readRippleColor = { snapshot.colors.ripple },
             readScrimOpacity = { snapshot.scrimOpacity },
             isDarkMode = isDarkMode,
+        )
+        return baseTokens.copy(
+            shapes = UiShapes(
+                cardCornerRadius = snapshot.shapes.mediumCornerRadius ?: fallback.shapes.cardCornerRadius,
+                interactiveCornerRadius = snapshot.shapes.smallCornerRadius
+                    ?: fallback.shapes.interactiveCornerRadius,
+                smallCornerRadius = snapshot.shapes.smallCornerRadius ?: fallback.shapes.smallCornerRadius,
+                mediumCornerRadius = snapshot.shapes.mediumCornerRadius ?: fallback.shapes.mediumCornerRadius,
+                largeCornerRadius = snapshot.shapes.largeCornerRadius ?: fallback.shapes.largeCornerRadius,
+            ),
         )
     }
 

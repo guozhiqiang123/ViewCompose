@@ -31,13 +31,21 @@ internal data class AndroidThemeColorSnapshot(
 
 internal data class AndroidThemeSnapshot(
     val colors: AndroidThemeColorSnapshot = AndroidThemeColorSnapshot(),
+    val shapes: AndroidThemeShapeSnapshot = AndroidThemeShapeSnapshot(),
     val scrimOpacity: Float? = null,
+)
+
+internal data class AndroidThemeShapeSnapshot(
+    val smallCornerRadius: Int? = null,
+    val mediumCornerRadius: Int? = null,
+    val largeCornerRadius: Int? = null,
 )
 
 internal object AndroidThemeSnapshotReader {
     fun read(context: Context): AndroidThemeSnapshot {
         return AndroidThemeSnapshot(
             colors = readColorSnapshot(context),
+            shapes = readShapeSnapshot(context),
             scrimOpacity = readScrimOpacity(context),
         )
     }
@@ -108,8 +116,61 @@ internal object AndroidThemeSnapshotReader {
             typedArray.recycle()
         }
     }
+
+    private fun readShapeSnapshot(context: Context): AndroidThemeShapeSnapshot {
+        val attrs = intArrayOf(
+            com.google.android.material.R.attr.shapeAppearanceSmallComponent,
+            com.google.android.material.R.attr.shapeAppearanceMediumComponent,
+            com.google.android.material.R.attr.shapeAppearanceLargeComponent,
+        )
+        val typedArray = context.obtainStyledAttributes(attrs)
+        return try {
+            AndroidThemeShapeSnapshot(
+                smallCornerRadius = typedArray.getStyleRadiusOrNull(context, 0),
+                mediumCornerRadius = typedArray.getStyleRadiusOrNull(context, 1),
+                largeCornerRadius = typedArray.getStyleRadiusOrNull(context, 2),
+            )
+        } finally {
+            typedArray.recycle()
+        }
+    }
 }
 
 private fun TypedArray.getColorOrNull(index: Int): Int? {
     return if (hasValue(index)) getColor(index, 0) else null
+}
+
+private fun TypedArray.getStyleRadiusOrNull(context: Context, index: Int): Int? {
+    if (!hasValue(index)) return null
+    val styleRes = getResourceId(index, 0)
+    if (styleRes == 0) return null
+    val styleArray = context.obtainStyledAttributes(
+        styleRes,
+        intArrayOf(
+            com.google.android.material.R.attr.cornerSize,
+            com.google.android.material.R.attr.cornerSizeTopLeft,
+            com.google.android.material.R.attr.cornerSizeTopRight,
+            com.google.android.material.R.attr.cornerSizeBottomRight,
+            com.google.android.material.R.attr.cornerSizeBottomLeft,
+        ),
+    )
+    return try {
+        if (styleArray.hasValue(0)) {
+            return styleArray.getDimensionPixelSize(0, 0)
+        }
+        val corners = buildList {
+            for (cornerIndex in 1..4) {
+                if (styleArray.hasValue(cornerIndex)) {
+                    add(styleArray.getDimensionPixelSize(cornerIndex, 0))
+                }
+            }
+        }
+        when {
+            corners.isEmpty() -> null
+            corners.distinct().size == 1 -> corners.first()
+            else -> null
+        }
+    } finally {
+        styleArray.recycle()
+    }
 }
