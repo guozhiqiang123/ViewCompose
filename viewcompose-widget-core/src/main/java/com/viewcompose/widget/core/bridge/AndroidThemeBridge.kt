@@ -69,12 +69,14 @@ private fun Context.resolveThemeColor(
     attr: Int,
 ): Int? {
     val typedArray: TypedArray = obtainStyledAttributes(intArrayOf(attr))
-    return typedArray.use { array ->
-        if (!array.hasValue(0)) {
+    return try {
+        if (!typedArray.hasValue(0)) {
             null
         } else {
-            array.getColor(0, 0)
+            typedArray.getColor(0, 0)
         }
+    } finally {
+        typedArray.recycle()
     }
 }
 
@@ -82,13 +84,19 @@ private fun Context.resolveTextAppearanceTextSizeSp(
     textAppearanceAttr: Int,
 ): Int? {
     val ta: TypedArray = obtainStyledAttributes(intArrayOf(textAppearanceAttr))
-    val resId = if (ta.hasValue(0)) ta.getResourceId(0, 0) else 0
-    ta.recycle()
+    val resId = try {
+        if (ta.hasValue(0)) ta.getResourceId(0, 0) else 0
+    } finally {
+        ta.recycle()
+    }
     if (resId == 0) return null
 
     val attrs: TypedArray = obtainStyledAttributes(resId, intArrayOf(android.R.attr.textSize))
-    val px = if (attrs.hasValue(0)) attrs.getDimensionPixelSize(0, 0) else -1
-    attrs.recycle()
+    val px = try {
+        if (attrs.hasValue(0)) attrs.getDimensionPixelSize(0, 0) else -1
+    } finally {
+        attrs.recycle()
+    }
     if (px <= 0) return null
 
     val density = resources.displayMetrics.density
