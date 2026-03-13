@@ -85,3 +85,4 @@
 | `GRAPHICS_EXEC_PLAN_2026-03.md` | 已完成的 Graphics 跨平台分层执行计划（graphics-core/graphics 模块、renderer draw pipeline、demo+preview+Paparazzi 收口） |
 | `GRAPHICS_V2_CONVERGENCE_EXEC_PLAN_2026-03.md` | 已完成的 Graphics v2 收口执行计划（RoundRect 四角半径、Drawable DrawPaint、ImageFilter Chain 语义修复与文档同步） |
 | `CONTAINER_POLICY_SCOPE_REFACTOR_EXEC_PLAN_2026-03.md` | 已完成的 P0 容器策略 API 作用域收口执行计划（移除 modifier 策略 API，改为容器 `reusePolicy/motionPolicy/focusFollowKeyboard` 参数） |
+| `ANDROID_THEME_BRIDGE_CONVERGENCE_EXEC_PLAN_2026-03.md` | 已完成的 Android Theme Bridge 收口执行计划（扩展颜色/tiered typography/shapeAppearance/scrim/ripple 桥接与文档同步） |

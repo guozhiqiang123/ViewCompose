@@ -57,7 +57,7 @@
 - [x] `feat: enrich android typography bridge with tiered text appearances`
 - [x] `test: add android theme bridge coverage for expanded token mapping`
 - [x] `docs: codify expanded android theme bridge coverage`
-- [ ] `docs: close and archive android theme bridge convergence plan`
+- [x] `docs: close and archive android theme bridge convergence plan`
 
 ## Blockers
 
