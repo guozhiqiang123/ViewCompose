@@ -57,6 +57,7 @@
 6. 动画与手势已形成“内核 + DSL + Android interop 扩展”分层模型（animation-core + animation、gesture-core + gesture、host interop）
 7. graphics 已形成“内核 + DSL + renderer + host interop”分层模型（graphics-core + graphics + renderer draw pipeline + host-android AndroidGraphicsInterop）
 8. ConstraintLayout 已按“widget DSL 模块 + renderer 平台映射”分层落地，支持 anchors/dimension/bias/baseline/baselineToTop/baselineToBottom/circle/guideline/barrier/chain(+weights)/Flow/Group/Layer/Placeholder/decoupled constraintSet，以及 match-constraint 进阶参数（min/max/percent/constrained）
+9. Theme token 已进入“消费闭环”阶段：新增 token 必须进入 defaults/composite 默认值，或明确登记为 reserved/compatibility alias
 
 ### 2.3 `app` 目录落位基线
 
@@ -127,6 +128,7 @@ flowchart TD
 7. `viewcompose-ui-contract` 的 `Modifier` 文件只承载“全局稳定语义”的元素声明与 builder；仅特定容器生效的策略必须进入容器 DSL 参数与 `NodeSpec`。
 8. 禁止新增 `Props/TypedPropKeys/PropKeys/node.props` 动态语义路径。
 9. 约束 parent-data（`layoutId/constrainAs/constrain`）仅允许用于 `ConstraintLayout` 子节点；错误宿主必须输出 validator 警告。
+10. 复合组件内部文本样式必须通过 `NodeSpec` 全量传递（`fontSize/fontWeight/fontFamily/letterSpacing/lineHeight/includeFontPadding`），禁止重新退回“只传 `textSizeSp`”。
 
 对应规范：
 

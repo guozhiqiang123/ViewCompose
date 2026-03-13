@@ -37,6 +37,32 @@
 4. `controls` 仍是框架自有尺寸 token，不承诺与 Android 原主题系统一一对齐。
 5. `overlays` 当前由语义 token 承载跨组件蒙层配置。
 
+## 2.3 Token 使用闭环
+
+公开 token 不允许长期停留在“已定义但无消费”的状态。当前规则固定为二选一：
+
+1. 至少被一个 core defaults/composite 默认值明确消费。
+2. 被列入 whitelist，并在文档中说明原因。
+
+当前 whitelist 分两类：
+
+1. `reserved semantic palette`
+   - `success`
+   - `warning`
+   - `info`
+   - `surfaceTint`
+   说明：本轮不强绑到现有核心组件，避免为了提高使用率污染语义。
+2. `compatibility aliases`
+   - colors: `textPrimary`、`textSecondary`、`divider`
+   - typography: `title`、`body`、`label`
+   - shapes: `cardCornerRadius`、`interactiveCornerRadius`
+   说明：这些字段保留兼容职责，不再作为内部 defaults 首选入口。
+
+为防止回流，仓库有 `ThemeTokenUsageAuditTest` 守卫：
+
+1. 新增 token 时，若未消费也未加入 whitelist，测试必须直接失败。
+2. defaults 若从语义 token 回退到旧 alias，也会在审计时暴露。
+
 ## 2.1 兼容迁移策略
 
 主题 token 扩展默认采用“先兼容后移除”：
@@ -65,6 +91,8 @@
 1. 不把主题直接变成通用 `Modifier`。
 2. 不在 renderer 中写业务语义默认值。
 3. 不在 DSL 层散落重复主题推导逻辑。
+4. 复合组件内部文本必须把完整文本样式写入 `NodeSpec`，不能只下发 `textSizeSp`。
+5. renderer 只负责应用 `NodeSpec` 中已经解析好的文本样式，不重新发明主题语义。
 
 ## 4. 局部覆盖（Override）规则
 
