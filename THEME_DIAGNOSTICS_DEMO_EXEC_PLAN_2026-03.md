@@ -20,8 +20,8 @@
 
 ## Checklist
 
-- [ ] Step 1: 新增执行计划文档并提交
-- [ ] Step 2: 扩展 Diagnostics 页签与活动入口常量
+- [x] Step 1: 新增执行计划文档并提交
+- [x] Step 2: 扩展 Diagnostics 页签与活动入口常量
 - [ ] Step 3: 提取共享 theme diagnostic helper 并落主题诊断页主体
 - [ ] Step 4: 补稳定 testTag 与页面内人工验证说明
 - [ ] Step 5: 更新 `ROADMAP.md` / `THEMING.md` 并归档执行计划
@@ -37,6 +37,7 @@
 ## Commit Log
 
 1. `docs: add demo theme diagnostics execution plan`
+2. `feat: add diagnostics theme page entry skeleton`
 
 ## Blockers
 

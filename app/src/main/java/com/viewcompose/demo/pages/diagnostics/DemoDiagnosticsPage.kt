@@ -126,7 +126,8 @@ internal fun UiTreeBuilder.DiagnosticsPage(
     }
     val pageItems = when (selectedPageState.value) {
         0 -> listOf("benchmark", "page", "page_filter", "runtime", "verify")
-        1 -> listOf("page", "page_filter", "renderer_actions", "renderer", "verify")
+        1 -> listOf("page", "page_filter", "theme", "verify")
+        2 -> listOf("page", "page_filter", "renderer_actions", "renderer", "verify")
         else -> listOf("page", "page_filter", "gaps", "verify")
     }
     LazyColumn(
@@ -137,12 +138,12 @@ internal fun UiTreeBuilder.DiagnosticsPage(
         when (section) {
             "page" -> ChapterPageOverviewSection(
                 title = "诊断",
-                goal = "将 demo 变为运行时 locals、渲染器 patch 和框架已知缺口的手动回归控制台。",
-                modules = listOf("debug logging", "theme locals", "renderer", "roadmap gaps"),
+                goal = "将 demo 变为运行时 locals、主题 token 消费、渲染器 patch 和框架已知缺口的手动回归控制台。",
+                modules = listOf("debug logging", "theme diagnostics", "renderer", "roadmap gaps"),
             )
 
             "page_filter" -> ChapterPageFilterSection(
-                pages = listOf("运行时", "渲染器", "缺口"),
+                pages = listOf("运行时", "主题", "渲染器", "缺口"),
                 selectedIndex = selectedPageState.value,
                 onSelectionChange = { selectedPageState.value = it },
             )
@@ -239,6 +240,19 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                         ),
                     )
                 }
+            }
+
+            "theme" -> ScenarioSection(
+                kind = ScenarioKind.Core,
+                title = "主题诊断",
+                subtitle = "此页签将作为 token -> defaults -> 组件视觉 的人工回归入口。",
+            ) {
+                Text(text = "主题诊断样本将在下一步补齐。")
+                Text(
+                    text = "目标：集中验证 surface/content、shape tier、control sizing 与关键组件默认值的实际消费结果。",
+                    color = TextDefaults.secondaryColor(),
+                    modifier = Modifier.padding(top = 8.dp),
+                )
             }
 
             "renderer_actions" -> ScenarioSection(

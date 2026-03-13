@@ -36,8 +36,9 @@ class DiagnosticsActivity : DemoRenderActivity() {
         private const val EXTRA_ENTRY_HINT = "entry_hint"
 
         const val PAGE_RUNTIME = 0
-        const val PAGE_RENDERER = 1
-        const val PAGE_GAPS = 2
+        const val PAGE_THEME = 1
+        const val PAGE_RENDERER = 2
+        const val PAGE_GAPS = 3
 
         fun newIntent(
             context: Context,
