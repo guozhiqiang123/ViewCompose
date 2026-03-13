@@ -123,7 +123,7 @@ internal fun UiTreeBuilder.FoundationsThemeSection() {
             ),
         )
         Text(
-            text = "Shapes: card=${Theme.shapes.cardCornerRadius}px, interactive=${Theme.shapes.interactiveCornerRadius}px",
+            text = "Shapes: card=${Theme.shapes.cardCornerRadius}px, small=${Theme.shapes.smallCornerRadius}px",
             style = UiTextStyle(fontSizeSp = 13.sp),
             color = TextDefaults.secondaryColor(),
         )
@@ -192,7 +192,7 @@ private fun UiTreeBuilder.BusinessLocalPreviewCard(
                     .height(24.dp)
                     .weight(1f)
                     .backgroundColor(tokens.cardColor)
-                    .cornerRadius(Theme.shapes.interactiveCornerRadius),
+                    .cornerRadius(Theme.shapes.smallCornerRadius),
             ) {}
             Text(
                 text = tokens.badgeLabel,
@@ -246,7 +246,7 @@ internal fun UiTreeBuilder.FoundationsOverridesSection() {
         }
         UiThemeOverride(
             shapes = {
-                copy(cardCornerRadius = 32.dp, interactiveCornerRadius = 24.dp)
+                copy(cardCornerRadius = 32.dp, smallCornerRadius = 24.dp)
             },
         ) {
             Column(
@@ -259,7 +259,7 @@ internal fun UiTreeBuilder.FoundationsOverridesSection() {
             ) {
                 Text(text = "形状覆盖")
                 Text(
-                    text = "局部 card=${Theme.shapes.cardCornerRadius}px, interactive=${Theme.shapes.interactiveCornerRadius}px",
+                    text = "局部 card=${Theme.shapes.cardCornerRadius}px, small=${Theme.shapes.smallCornerRadius}px",
                     style = UiTextStyle(fontSizeSp = 13.sp),
                     color = TextDefaults.secondaryColor(),
                 )

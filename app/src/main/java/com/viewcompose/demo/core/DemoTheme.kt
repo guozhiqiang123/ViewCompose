@@ -44,7 +44,7 @@ object DemoThemeTokens {
         ),
         shapes = UiShapes(
             cardCornerRadius = 24.dp,
-            interactiveCornerRadius = 18.dp,
+            smallCornerRadius = 18.dp,
         ),
         controls = UiControlSizing(
             button = UiButtonSizing(
@@ -110,7 +110,7 @@ object DemoThemeTokens {
         ),
         shapes = UiShapes(
             cardCornerRadius = 24.dp,
-            interactiveCornerRadius = 18.dp,
+            smallCornerRadius = 18.dp,
         ),
         controls = UiControlSizing(
             button = UiButtonSizing(

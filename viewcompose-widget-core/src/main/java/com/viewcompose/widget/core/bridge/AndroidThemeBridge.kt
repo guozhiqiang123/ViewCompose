@@ -77,8 +77,6 @@ internal object ThemeTokenMapper {
             ),
             shapes = UiShapes(
                 cardCornerRadius = snapshot.shapes.mediumCornerRadius ?: fallback.shapes.cardCornerRadius,
-                interactiveCornerRadius = snapshot.shapes.smallCornerRadius
-                    ?: fallback.shapes.interactiveCornerRadius,
                 smallCornerRadius = snapshot.shapes.smallCornerRadius ?: fallback.shapes.smallCornerRadius,
                 mediumCornerRadius = snapshot.shapes.mediumCornerRadius ?: fallback.shapes.mediumCornerRadius,
                 largeCornerRadius = snapshot.shapes.largeCornerRadius ?: fallback.shapes.largeCornerRadius,

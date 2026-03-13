@@ -166,7 +166,6 @@ class AndroidThemeBridgeTest {
         assertEquals(20, tokens.shapes.mediumCornerRadius)
         assertEquals(28, tokens.shapes.largeCornerRadius)
         assertEquals(20, tokens.shapes.cardCornerRadius)
-        assertEquals(12, tokens.shapes.interactiveCornerRadius)
     }
 
     @Test

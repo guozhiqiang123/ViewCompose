@@ -34,8 +34,7 @@ data class UiColors(
 
 data class UiShapes(
     val cardCornerRadius: Int,
-    val interactiveCornerRadius: Int,
-    val smallCornerRadius: Int = interactiveCornerRadius,
+    val smallCornerRadius: Int,
     val mediumCornerRadius: Int = cardCornerRadius,
     val largeCornerRadius: Int = cardCornerRadius,
 )

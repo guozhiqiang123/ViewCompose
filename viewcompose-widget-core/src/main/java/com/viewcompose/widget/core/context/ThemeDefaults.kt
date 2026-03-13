@@ -4,7 +4,7 @@ object UiShapeDefaults {
     fun default(): UiShapes {
         return UiShapes(
             cardCornerRadius = 20.dp,
-            interactiveCornerRadius = 14.dp,
+            smallCornerRadius = 14.dp,
         )
     }
 }

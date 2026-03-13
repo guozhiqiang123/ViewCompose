@@ -213,7 +213,6 @@ class ThemeTokenUsageAuditTest {
 
         private val shapeCompatibilityAliases = setOf(
             "cardCornerRadius",
-            "interactiveCornerRadius",
         )
     }
 }

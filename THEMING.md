@@ -33,7 +33,7 @@
 
 1. `colors` 同时承载基础色、`on*` 前景色、`*Container` 容器色、轮廓色、逆表面色与 ripple。
 2. `typography` 同时保留旧 `title/body/label` 和 tiered `title*/body*/label*`。
-3. `shapes` 同时保留旧 `cardCornerRadius / interactiveCornerRadius` 和语义化 `small / medium / large` 三级圆角。
+3. `shapes` 当前保留 `cardCornerRadius` 兼容入口，并以语义化 `small / medium / large` 三级圆角为主入口。
 4. `controls` 仍是框架自有尺寸 token，不承诺与 Android 原主题系统一一对齐。
 5. `overlays` 当前由语义 token 承载跨组件蒙层配置。
 
@@ -55,7 +55,7 @@
 2. `compatibility aliases`
    - colors: `textPrimary`、`textSecondary`、`divider`
    - typography: `title`、`body`、`label`
-   - shapes: `cardCornerRadius`、`interactiveCornerRadius`
+   - shapes: `cardCornerRadius`
    说明：这些字段保留兼容职责，不再作为内部 defaults 首选入口。
 
 为防止回流，仓库有 `ThemeTokenUsageAuditTest` 守卫：

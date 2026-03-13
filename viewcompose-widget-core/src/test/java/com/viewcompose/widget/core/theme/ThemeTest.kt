@@ -209,10 +209,10 @@ class ThemeTest {
             UiTheme(baseTheme) {
                 UiThemeOverride(
                     colors = { copy(primary = 0xFF445566.toInt()) },
-                    shapes = { copy(interactiveCornerRadius = 77) },
+                    shapes = { copy(smallCornerRadius = 77) },
                 ) {
                     resolvedPrimary = Theme.colors.primary
-                    resolvedCorner = Theme.shapes.interactiveCornerRadius
+                    resolvedCorner = Theme.shapes.smallCornerRadius
                     unchangedBody = Theme.typography.body.fontSizeSp
                 }
             }
@@ -253,12 +253,12 @@ class ThemeTest {
         buildVNodeTree {
             UiTheme(baseTheme) {
                 UiThemeOverride(
-                    shapes = { copy(interactiveCornerRadius = 99) },
+                    shapes = { copy(smallCornerRadius = 99) },
                 ) {
                     UiThemeOverride(
                         colors = { copy(primary = 0xFF778899.toInt()) },
                     ) {
-                        cornerRadius = Theme.shapes.interactiveCornerRadius
+                        cornerRadius = Theme.shapes.smallCornerRadius
                     }
                 }
             }
@@ -299,7 +299,7 @@ class ThemeTest {
 
         val spec = tree.single().spec as ButtonNodeProps
         assertEquals(customTheme.colors.primary, spec.backgroundColor)
-        assertEquals(customTheme.shapes.interactiveCornerRadius, spec.cornerRadius)
+        assertEquals(customTheme.shapes.smallCornerRadius, spec.cornerRadius)
         assertEquals(pressedOverlayColorFor(customTheme.colors.textPrimary), spec.rippleColor)
         assertEquals(0xFFFFFFFF.toInt(), spec.textColor)
         assertEquals(customTheme.typography.label.fontSizeSp, spec.textSizeSp)
@@ -699,7 +699,7 @@ class ThemeTest {
     @Test
     fun `theme current exposes fully overridden tokens`() {
         val baseTheme = UiThemeDefaults.light()
-        val overrideShapes = baseTheme.shapes.copy(interactiveCornerRadius = 99)
+        val overrideShapes = baseTheme.shapes.copy(smallCornerRadius = 99)
         var current: UiThemeTokens? = null
 
         buildVNodeTree {

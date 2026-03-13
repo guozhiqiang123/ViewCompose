@@ -32,7 +32,7 @@ class ThemeTokenCompatibilityTest {
             ),
             shapes = UiShapes(
                 cardCornerRadius = 20,
-                interactiveCornerRadius = 22,
+                smallCornerRadius = 22,
             ),
         )
         var secondaryContainer = 0
@@ -41,7 +41,7 @@ class ThemeTokenCompatibilityTest {
         var largeTextSize = 0
         var listHeadlineSize = 0
         var topTitleSize = 0
-        var interactiveCornerRadius = 0
+        var smallCornerRadius = 0
 
         buildVNodeTree {
             UiTheme(customTheme) {
@@ -51,7 +51,7 @@ class ThemeTokenCompatibilityTest {
                 largeTextSize = TextFieldDefaults.textStyle(TextFieldSize.Large).fontSizeSp
                 listHeadlineSize = ListItemDefaults.headlineStyle().fontSizeSp
                 topTitleSize = TopAppBarDefaults.titleStyle().fontSizeSp
-                interactiveCornerRadius = ButtonDefaults.cornerRadius()
+                smallCornerRadius = ButtonDefaults.cornerRadius()
             }
         }
 
@@ -61,7 +61,7 @@ class ThemeTokenCompatibilityTest {
         assertEquals(customTheme.typography.bodyLarge.fontSizeSp, largeTextSize)
         assertEquals(customTheme.typography.bodyLarge.fontSizeSp, listHeadlineSize)
         assertEquals(customTheme.typography.titleMedium.fontSizeSp, topTitleSize)
-        assertEquals(customTheme.shapes.interactiveCornerRadius, interactiveCornerRadius)
+        assertEquals(customTheme.shapes.smallCornerRadius, smallCornerRadius)
     }
 
     @Test
