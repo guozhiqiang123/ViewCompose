@@ -2,6 +2,9 @@ package com.viewcompose.widget.core
 
 import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.Typeface
+import android.util.TypedValue
+import androidx.core.content.res.ResourcesCompat
 
 internal data class AndroidThemeColorSnapshot(
     val background: Int? = null,
@@ -32,6 +35,7 @@ internal data class AndroidThemeColorSnapshot(
 internal data class AndroidThemeSnapshot(
     val colors: AndroidThemeColorSnapshot = AndroidThemeColorSnapshot(),
     val shapes: AndroidThemeShapeSnapshot = AndroidThemeShapeSnapshot(),
+    val typography: AndroidThemeTypographySnapshot = AndroidThemeTypographySnapshot(),
     val scrimOpacity: Float? = null,
 )
 
@@ -41,11 +45,33 @@ internal data class AndroidThemeShapeSnapshot(
     val largeCornerRadius: Int? = null,
 )
 
+internal data class AndroidTextStyleSnapshot(
+    val fontSizeSp: Int? = null,
+    val fontWeight: Int? = null,
+    val fontFamily: Typeface? = null,
+    val letterSpacingEm: Float? = null,
+    val lineHeightSp: Int? = null,
+    val includeFontPadding: Boolean? = null,
+)
+
+internal data class AndroidThemeTypographySnapshot(
+    val titleLarge: AndroidTextStyleSnapshot? = null,
+    val titleMedium: AndroidTextStyleSnapshot? = null,
+    val titleSmall: AndroidTextStyleSnapshot? = null,
+    val bodyLarge: AndroidTextStyleSnapshot? = null,
+    val bodyMedium: AndroidTextStyleSnapshot? = null,
+    val bodySmall: AndroidTextStyleSnapshot? = null,
+    val labelLarge: AndroidTextStyleSnapshot? = null,
+    val labelMedium: AndroidTextStyleSnapshot? = null,
+    val labelSmall: AndroidTextStyleSnapshot? = null,
+)
+
 internal object AndroidThemeSnapshotReader {
     fun read(context: Context): AndroidThemeSnapshot {
         return AndroidThemeSnapshot(
             colors = readColorSnapshot(context),
             shapes = readShapeSnapshot(context),
+            typography = readTypographySnapshot(context),
             scrimOpacity = readScrimOpacity(context),
         )
     }
@@ -134,6 +160,42 @@ internal object AndroidThemeSnapshotReader {
             typedArray.recycle()
         }
     }
+
+    private fun readTypographySnapshot(context: Context): AndroidThemeTypographySnapshot {
+        val attrs = intArrayOf(
+            com.google.android.material.R.attr.textAppearanceTitleLarge,
+            com.google.android.material.R.attr.textAppearanceTitleMedium,
+            com.google.android.material.R.attr.textAppearanceTitleSmall,
+            com.google.android.material.R.attr.textAppearanceBodyLarge,
+            com.google.android.material.R.attr.textAppearanceBodyMedium,
+            com.google.android.material.R.attr.textAppearanceBodySmall,
+            com.google.android.material.R.attr.textAppearanceLabelLarge,
+            com.google.android.material.R.attr.textAppearanceLabelMedium,
+            com.google.android.material.R.attr.textAppearanceLabelSmall,
+            android.R.attr.textAppearanceLarge,
+            android.R.attr.textAppearanceMedium,
+            android.R.attr.textAppearanceSmall,
+        )
+        val typedArray = context.obtainStyledAttributes(attrs)
+        return try {
+            val legacyTitle = typedArray.getTextStyleSnapshot(context, 9)
+            val legacyBody = typedArray.getTextStyleSnapshot(context, 10)
+            val legacyLabel = typedArray.getTextStyleSnapshot(context, 11)
+            AndroidThemeTypographySnapshot(
+                titleLarge = typedArray.getTextStyleSnapshot(context, 0) ?: legacyTitle,
+                titleMedium = typedArray.getTextStyleSnapshot(context, 1) ?: legacyTitle,
+                titleSmall = typedArray.getTextStyleSnapshot(context, 2) ?: legacyTitle,
+                bodyLarge = typedArray.getTextStyleSnapshot(context, 3) ?: legacyBody,
+                bodyMedium = typedArray.getTextStyleSnapshot(context, 4) ?: legacyBody,
+                bodySmall = typedArray.getTextStyleSnapshot(context, 5) ?: legacyBody,
+                labelLarge = typedArray.getTextStyleSnapshot(context, 6) ?: legacyLabel,
+                labelMedium = typedArray.getTextStyleSnapshot(context, 7) ?: legacyLabel,
+                labelSmall = typedArray.getTextStyleSnapshot(context, 8) ?: legacyLabel,
+            )
+        } finally {
+            typedArray.recycle()
+        }
+    }
 }
 
 private fun TypedArray.getColorOrNull(index: Int): Int? {
@@ -173,4 +235,60 @@ private fun TypedArray.getStyleRadiusOrNull(context: Context, index: Int): Int? 
     } finally {
         styleArray.recycle()
     }
+}
+
+private fun TypedArray.getTextStyleSnapshot(context: Context, index: Int): AndroidTextStyleSnapshot? {
+    if (!hasValue(index)) return null
+    val styleRes = getResourceId(index, 0)
+    if (styleRes == 0) return null
+    val styleArray = context.obtainStyledAttributes(
+        styleRes,
+        intArrayOf(
+            android.R.attr.textSize,
+            android.R.attr.textFontWeight,
+            android.R.attr.fontFamily,
+            androidx.appcompat.R.attr.fontFamily,
+            android.R.attr.letterSpacing,
+            android.R.attr.lineHeight,
+            android.R.attr.includeFontPadding,
+        ),
+    )
+    return try {
+        val fontSizePx = if (styleArray.hasValue(0)) styleArray.getDimensionPixelSize(0, 0) else 0
+        val lineHeightPx = if (styleArray.hasValue(5)) styleArray.getDimensionPixelSize(5, 0) else 0
+        AndroidTextStyleSnapshot(
+            fontSizeSp = fontSizePx.takeIf { it > 0 }?.let(context::pxToSp),
+            fontWeight = if (styleArray.hasValue(1)) styleArray.getInt(1, 400) else null,
+            fontFamily = resolveFontFamily(context, styleArray),
+            letterSpacingEm = if (styleArray.hasValue(4)) styleArray.getFloat(4, 0f) else null,
+            lineHeightSp = lineHeightPx.takeIf { it > 0 }?.let(context::pxToSp),
+            includeFontPadding = if (styleArray.hasValue(6)) styleArray.getBoolean(6, false) else null,
+        )
+    } finally {
+        styleArray.recycle()
+    }
+}
+
+private fun resolveFontFamily(context: Context, styleArray: TypedArray): Typeface? {
+    for (index in intArrayOf(2, 3)) {
+        if (!styleArray.hasValue(index)) continue
+        val resourceId = styleArray.getResourceId(index, 0)
+        if (resourceId != 0) {
+            runCatching { ResourcesCompat.getFont(context, resourceId) }.getOrNull()?.let { return it }
+        }
+        val value = styleArray.peekValue(index)
+        if (value?.type == TypedValue.TYPE_STRING) {
+            val familyName = value.string?.toString()
+            if (!familyName.isNullOrBlank()) {
+                return Typeface.create(familyName, Typeface.NORMAL)
+            }
+        }
+    }
+    return null
+}
+
+private fun Context.pxToSp(value: Int): Int {
+    val density = resources.displayMetrics.density
+    val fontScale = resources.configuration.fontScale.takeIf { it > 0f } ?: 1f
+    return kotlin.math.round(value / (density * fontScale)).toInt()
 }

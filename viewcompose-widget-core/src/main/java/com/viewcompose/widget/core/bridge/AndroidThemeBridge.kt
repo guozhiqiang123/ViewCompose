@@ -10,7 +10,6 @@ object AndroidThemeBridge {
         val snapshot = AndroidThemeSnapshotReader.read(context)
         return ThemeTokenMapper.fromSnapshot(
             snapshot = snapshot,
-            readTextSizeSp = { attr -> context.resolveTextAppearanceTextSizeSp(attr) },
             isDarkMode = isDark,
         )
     }
@@ -24,7 +23,6 @@ object AndroidThemeBridge {
 internal object ThemeTokenMapper {
     fun fromSnapshot(
         snapshot: AndroidThemeSnapshot,
-        readTextSizeSp: (Int) -> Int? = { null },
         isDarkMode: Boolean = false,
     ): UiThemeTokens {
         val fallback = if (isDarkMode) UiThemeDefaults.dark() else UiThemeDefaults.light()
@@ -56,12 +54,25 @@ internal object ThemeTokenMapper {
                     else -> null
                 }
             },
-            readTextSizeSp = readTextSizeSp,
             readRippleColor = { snapshot.colors.ripple },
             readScrimOpacity = { snapshot.scrimOpacity },
             isDarkMode = isDarkMode,
         )
         return baseTokens.copy(
+            typography = UiTypography(
+                title = resolveTextStyle(snapshot.typography.titleLarge, fallback.typography.title),
+                body = resolveTextStyle(snapshot.typography.bodyLarge, fallback.typography.body),
+                label = resolveTextStyle(snapshot.typography.labelLarge, fallback.typography.label),
+                titleLarge = resolveTextStyle(snapshot.typography.titleLarge, fallback.typography.titleLarge),
+                titleMedium = resolveTextStyle(snapshot.typography.titleMedium, fallback.typography.titleMedium),
+                titleSmall = resolveTextStyle(snapshot.typography.titleSmall, fallback.typography.titleSmall),
+                bodyLarge = resolveTextStyle(snapshot.typography.bodyLarge, fallback.typography.bodyLarge),
+                bodyMedium = resolveTextStyle(snapshot.typography.bodyMedium, fallback.typography.bodyMedium),
+                bodySmall = resolveTextStyle(snapshot.typography.bodySmall, fallback.typography.bodySmall),
+                labelLarge = resolveTextStyle(snapshot.typography.labelLarge, fallback.typography.labelLarge),
+                labelMedium = resolveTextStyle(snapshot.typography.labelMedium, fallback.typography.labelMedium),
+                labelSmall = resolveTextStyle(snapshot.typography.labelSmall, fallback.typography.labelSmall),
+            ),
             shapes = UiShapes(
                 cardCornerRadius = snapshot.shapes.mediumCornerRadius ?: fallback.shapes.cardCornerRadius,
                 interactiveCornerRadius = snapshot.shapes.smallCornerRadius
@@ -148,21 +159,6 @@ internal object ThemeTokenMapper {
     }
 }
 
-private fun Context.resolveThemeColor(
-    attr: Int,
-): Int? {
-    val typedArray: TypedArray = obtainStyledAttributes(intArrayOf(attr))
-    return try {
-        if (!typedArray.hasValue(0)) {
-            null
-        } else {
-            typedArray.getColor(0, 0)
-        }
-    } finally {
-        typedArray.recycle()
-    }
-}
-
 private fun Context.resolveTextAppearanceTextSizeSp(
     textAppearanceAttr: Int,
 ): Int? {
@@ -185,4 +181,19 @@ private fun Context.resolveTextAppearanceTextSizeSp(
     val density = resources.displayMetrics.density
     val fontScale = resources.configuration.fontScale.takeIf { it > 0f } ?: 1f
     return kotlin.math.round(px / (density * fontScale)).toInt()
+}
+
+private fun resolveTextStyle(
+    snapshot: AndroidTextStyleSnapshot?,
+    fallback: UiTextStyle,
+): UiTextStyle {
+    return UiTextStyle(
+        fontSizeSp = snapshot?.fontSizeSp ?: fallback.fontSizeSp,
+        fontWeight = snapshot?.fontWeight ?: fallback.fontWeight,
+        fontFamily = snapshot?.fontFamily ?: fallback.fontFamily,
+        letterSpacingEm = snapshot?.letterSpacingEm ?: fallback.letterSpacingEm,
+        lineHeightSp = snapshot?.lineHeightSp ?: fallback.lineHeightSp,
+        includeFontPadding = snapshot?.includeFontPadding ?: fallback.includeFontPadding,
+        textDecoration = fallback.textDecoration,
+    )
 }
