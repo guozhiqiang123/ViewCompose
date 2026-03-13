@@ -28,12 +28,12 @@
 
 ## Checklist
 
-- [ ] Step 1: 新增执行文档并提交
+- [x] Step 1: 新增执行文档并提交
 - [x] Step 2: 扩展 theme token 模型与 bridge/defaults
 - [x] Step 3: 收口组件 defaults 的颜色 / 形状 / 尺寸语义映射
 - [x] Step 4: 升级复合组件文本样式链路，去除仅 `textSizeSp` 限制
-- [ ] Step 5: 增加测试、守卫与文档同步
-- [ ] Step 6: 归档执行计划
+- [x] Step 5: 增加测试、守卫与文档同步
+- [x] Step 6: 归档执行计划
 
 ## Acceptance
 
@@ -50,7 +50,9 @@
 3. `refactor: expand control sizing tokens across component families`
 4. `refactor: align component defaults with semantic theme colors`
 5. `refactor: propagate rich text styles through composite widget specs`
+6. `test: add theme token usage audit and semantic error text coverage`
+7. `docs: codify theme token consumption audit boundaries`
 
 ## Blockers
 
-当前无阻塞。
+当前无阻塞。`qaQuick` 已通过。
