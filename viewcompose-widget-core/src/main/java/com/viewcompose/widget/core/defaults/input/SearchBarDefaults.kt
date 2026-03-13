@@ -9,17 +9,17 @@ object SearchBarDefaults {
 
     fun iconColor(): Int = Theme.colors.textSecondary
 
-    fun height(): Int = 56.dp
+    fun height(): Int = Theme.controls.searchBar.height
 
     fun cornerRadius(): Int = 28.dp
 
-    fun horizontalPadding(): Int = 16.dp
+    fun horizontalPadding(): Int = Theme.controls.searchBar.horizontalPadding
 
-    fun iconSize(): Int = 24.dp
+    fun iconSize(): Int = Theme.controls.searchBar.iconSize
 
-    fun iconSpacing(): Int = 16.dp
+    fun iconSpacing(): Int = Theme.controls.searchBar.iconSpacing
 
     fun textStyle(): UiTextStyle = Theme.typography.body
 
-    fun elevation(): Int = 2.dp
+    fun elevation(): Int = Theme.controls.searchBar.elevation
 }

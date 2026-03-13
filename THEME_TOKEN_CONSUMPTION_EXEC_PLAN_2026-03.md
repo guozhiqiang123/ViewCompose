@@ -47,6 +47,7 @@
 
 1. `docs: add theme token consumption execution plan`
 2. `feat: extend surface semantic theme tokens and bridge mappings`
+3. `refactor: expand control sizing tokens across component families`
 
 ## Blockers
 

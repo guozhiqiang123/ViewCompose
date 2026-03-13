@@ -7,9 +7,9 @@ object TopAppBarDefaults {
 
     fun titleStyle(): UiTextStyle = TextDefaults.titleMediumStyle()
 
-    fun height(): Int = 64.dp
+    fun height(): Int = Theme.controls.appBar.topHeight
 
-    fun horizontalPadding(): Int = 4.dp
+    fun horizontalPadding(): Int = Theme.controls.appBar.topHorizontalPadding
 
-    fun titleStartPadding(): Int = 16.dp
+    fun titleStartPadding(): Int = Theme.controls.appBar.topTitleStartPadding
 }

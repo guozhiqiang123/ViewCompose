@@ -16,13 +16,13 @@ object ListItemDefaults {
         letterSpacingEm = 0.04f,
     )
 
-    fun minHeight(): Int = 56.dp
+    fun minHeight(): Int = Theme.controls.listItem.minHeight
 
-    fun horizontalPadding(): Int = 16.dp
+    fun horizontalPadding(): Int = Theme.controls.listItem.horizontalPadding
 
-    fun verticalPadding(): Int = 8.dp
+    fun verticalPadding(): Int = Theme.controls.listItem.verticalPadding
 
-    fun leadingTrailingSpacing(): Int = 16.dp
+    fun leadingTrailingSpacing(): Int = Theme.controls.listItem.leadingTrailingSpacing
 
-    fun textSpacing(): Int = 2.dp
+    fun textSpacing(): Int = Theme.controls.listItem.textSpacing
 }

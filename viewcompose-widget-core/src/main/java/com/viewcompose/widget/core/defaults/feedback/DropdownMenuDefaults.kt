@@ -9,19 +9,19 @@ object DropdownMenuDefaults {
 
     fun cornerRadius(): Int = 4.dp
 
-    fun elevation(): Int = 3.dp
+    fun elevation(): Int = Theme.controls.menu.elevation
 
-    fun minWidth(): Int = 112.dp
+    fun minWidth(): Int = Theme.controls.menu.minWidth
 
-    fun verticalPadding(): Int = 8.dp
+    fun verticalPadding(): Int = Theme.controls.menu.verticalPadding
 
-    fun itemHeight(): Int = 48.dp
+    fun itemHeight(): Int = Theme.controls.menu.itemHeight
 
-    fun itemHorizontalPadding(): Int = 12.dp
+    fun itemHorizontalPadding(): Int = Theme.controls.menu.itemHorizontalPadding
 
-    fun iconSize(): Int = 24.dp
+    fun iconSize(): Int = Theme.controls.menu.iconSize
 
-    fun iconToTextSpacing(): Int = 12.dp
+    fun iconToTextSpacing(): Int = Theme.controls.menu.iconToTextSpacing
 
     fun trailingTextColor(): Int = Theme.colors.textSecondary
 

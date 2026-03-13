@@ -9,7 +9,7 @@ object TooltipDefaults {
 
     fun cornerRadius(): Int = 4.dp
 
-    fun horizontalPadding(): Int = 8.dp
+    fun horizontalPadding(): Int = Theme.controls.tooltip.horizontalPadding
 
-    fun verticalPadding(): Int = 4.dp
+    fun verticalPadding(): Int = Theme.controls.tooltip.verticalPadding
 }

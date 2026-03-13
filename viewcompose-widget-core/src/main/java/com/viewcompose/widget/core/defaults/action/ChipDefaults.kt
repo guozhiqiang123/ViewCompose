@@ -55,17 +55,17 @@ object ChipDefaults {
 
     fun cornerRadius(): Int = 8.dp
 
-    fun height(): Int = 32.dp
+    fun height(): Int = Theme.controls.chip.height
 
-    fun horizontalPadding(): Int = 16.dp
+    fun horizontalPadding(): Int = Theme.controls.chip.horizontalPadding
 
-    fun leadingIconPadding(): Int = 8.dp
+    fun leadingIconPadding(): Int = Theme.controls.chip.leadingIconPadding
 
-    fun iconSize(): Int = 18.dp
+    fun iconSize(): Int = Theme.controls.chip.iconSize
 
-    fun trailingIconSize(): Int = 18.dp
+    fun trailingIconSize(): Int = Theme.controls.chip.trailingIconSize
 
-    fun iconSpacing(): Int = 8.dp
+    fun iconSpacing(): Int = Theme.controls.chip.iconSpacing
 
     fun textStyle(): UiTextStyle = Theme.typography.label
 

@@ -15,11 +15,11 @@ object NavigationBarDefaults {
 
     fun rippleColor(): Int = Theme.colors.ripple
 
-    fun height(): Int = 80.dp
+    fun height(): Int = Theme.controls.navigationBar.height
 
-    fun iconSize(): Int = 24.dp
+    fun iconSize(): Int = Theme.controls.navigationBar.iconSize
 
-    fun labelSizeSp(): Int = 12
+    fun labelSizeSp(): Int = Theme.controls.navigationBar.labelSizeSp
 
     fun badgeColor(): Int = Theme.colors.error
 

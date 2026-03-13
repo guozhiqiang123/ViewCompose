@@ -50,6 +50,15 @@ object UiControlSizeDefaults {
                 circularSize = 32.dp,
                 circularTrackThickness = 4.dp,
             ),
+            fab = UiFabSizing.default(),
+            chip = UiChipSizing.default(),
+            searchBar = UiSearchBarSizing.default(),
+            navigationBar = UiNavigationBarSizing.default(),
+            appBar = UiAppBarSizing.default(),
+            listItem = UiListItemSizing.default(),
+            menu = UiMenuSizing.default(),
+            tooltip = UiTooltipSizing.default(),
+            badge = UiBadgeSizing.default(),
         )
     }
 }

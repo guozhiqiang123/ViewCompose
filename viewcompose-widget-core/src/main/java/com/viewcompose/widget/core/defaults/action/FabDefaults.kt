@@ -13,17 +13,17 @@ object FabDefaults {
 
     fun size(size: FabSize = FabSize.Medium): Int {
         return when (size) {
-            FabSize.Small -> 40.dp
-            FabSize.Medium -> 56.dp
-            FabSize.Large -> 96.dp
+            FabSize.Small -> Theme.controls.fab.smallSize
+            FabSize.Medium -> Theme.controls.fab.mediumSize
+            FabSize.Large -> Theme.controls.fab.largeSize
         }
     }
 
     fun iconSize(size: FabSize = FabSize.Medium): Int {
         return when (size) {
-            FabSize.Small -> 20.dp
-            FabSize.Medium -> 24.dp
-            FabSize.Large -> 36.dp
+            FabSize.Small -> Theme.controls.fab.smallIconSize
+            FabSize.Medium -> Theme.controls.fab.mediumIconSize
+            FabSize.Large -> Theme.controls.fab.largeIconSize
         }
     }
 
@@ -35,15 +35,15 @@ object FabDefaults {
         }
     }
 
-    fun elevation(): Int = 6.dp
+    fun elevation(): Int = Theme.controls.fab.elevation
 
-    fun extendedHeight(): Int = 56.dp
+    fun extendedHeight(): Int = Theme.controls.fab.extendedHeight
 
     fun extendedCornerRadius(): Int = 16.dp
 
-    fun extendedHorizontalPadding(): Int = 16.dp
+    fun extendedHorizontalPadding(): Int = Theme.controls.fab.extendedHorizontalPadding
 
-    fun extendedIconSpacing(): Int = 8.dp
+    fun extendedIconSpacing(): Int = Theme.controls.fab.extendedIconSpacing
 
     fun extendedTextStyle(): UiTextStyle = Theme.typography.label
 

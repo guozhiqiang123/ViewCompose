@@ -5,13 +5,13 @@ object BadgeDefaults {
 
     fun contentColor(): Int = contentColorFor(Theme.colors.error)
 
-    fun dotSize(): Int = 8.dp
+    fun dotSize(): Int = Theme.controls.badge.dotSize
 
-    fun pillHeight(): Int = 16.dp
+    fun pillHeight(): Int = Theme.controls.badge.pillHeight
 
-    fun pillMinWidth(): Int = 16.dp
+    fun pillMinWidth(): Int = Theme.controls.badge.pillMinWidth
 
-    fun pillHorizontalPadding(): Int = 4.dp
+    fun pillHorizontalPadding(): Int = Theme.controls.badge.pillHorizontalPadding
 
     fun textStyle(): UiTextStyle = UiTextStyle(fontSizeSp = 11.sp)
 }

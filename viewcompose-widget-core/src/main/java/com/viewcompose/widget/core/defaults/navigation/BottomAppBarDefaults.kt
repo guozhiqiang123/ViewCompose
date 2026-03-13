@@ -3,9 +3,9 @@ package com.viewcompose.widget.core
 object BottomAppBarDefaults {
     fun containerColor(): Int = Theme.colors.surface
 
-    fun height(): Int = 80.dp
+    fun height(): Int = Theme.controls.appBar.bottomHeight
 
-    fun horizontalPadding(): Int = 16.dp
+    fun horizontalPadding(): Int = Theme.controls.appBar.bottomHorizontalPadding
 
-    fun elevation(): Int = 3.dp
+    fun elevation(): Int = Theme.controls.appBar.bottomElevation
 }
