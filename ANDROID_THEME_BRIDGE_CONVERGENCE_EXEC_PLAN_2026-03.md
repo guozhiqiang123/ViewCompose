@@ -42,8 +42,8 @@
 
 ## Checklist
 
-- [ ] Step 1: 新增执行计划文档并提交。
-- [ ] Step 2: 扩 `UiColors` 语义字段，新增 Android 主题 snapshot 颜色读取与 ripple / dim amount 桥接。
+- [x] Step 1: 新增执行计划文档并提交。
+- [x] Step 2: 扩 `UiColors` 语义字段，新增 Android 主题 snapshot 颜色读取与 ripple / dim amount 桥接。
 - [ ] Step 3: 扩 `UiShapes` 三级圆角模型，并桥接 Material shape appearance。
 - [ ] Step 4: 重构 typography bridge，补齐 tiered text appearance 与 richer text style 字段。
 - [ ] Step 5: 补齐 `AndroidThemeBridgeTest` 与相关兼容测试，运行 `qaQuick`。
@@ -52,7 +52,7 @@
 ## Commit Log
 
 - [ ] `docs: add android theme bridge convergence execution plan`
-- [ ] `feat: expand theme color bridge and android theme snapshot mapping`
+- [x] `feat: expand theme color bridge and android theme snapshot mapping`
 - [ ] `feat: bridge material shape appearance into semantic shape tokens`
 - [ ] `feat: enrich android typography bridge with tiered text appearances`
 - [ ] `test: add android theme bridge coverage for expanded token mapping`

@@ -5,20 +5,37 @@ data class UiColors(
     val surface: Int,
     val surfaceVariant: Int,
     val primary: Int,
+    val onPrimary: Int = contentColorFor(primary),
+    val primaryContainer: Int = primary,
+    val onPrimaryContainer: Int = contentColorFor(primaryContainer),
     val secondary: Int,
+    val onSecondary: Int = contentColorFor(secondary),
+    val secondaryContainer: Int = secondary,
+    val onSecondaryContainer: Int = contentColorFor(secondaryContainer),
     val error: Int,
+    val onError: Int = contentColorFor(error),
+    val errorContainer: Int = error,
+    val onErrorContainer: Int = contentColorFor(errorContainer),
     val success: Int,
     val warning: Int,
     val info: Int,
     val divider: Int,
     val textPrimary: Int,
     val textSecondary: Int,
+    val outline: Int = divider,
+    val outlineVariant: Int = outline,
+    val surfaceTint: Int = primary,
+    val inverseSurface: Int = textPrimary,
+    val inverseOnSurface: Int = background,
     val ripple: Int = pressedOverlayColorFor(textPrimary),
 )
 
 data class UiShapes(
     val cardCornerRadius: Int,
     val interactiveCornerRadius: Int,
+    val smallCornerRadius: Int = interactiveCornerRadius,
+    val mediumCornerRadius: Int = cardCornerRadius,
+    val largeCornerRadius: Int = cardCornerRadius,
 )
 
 data class UiTextStyle(
