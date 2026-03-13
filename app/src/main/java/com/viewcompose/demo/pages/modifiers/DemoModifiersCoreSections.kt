@@ -231,15 +231,16 @@ internal fun UiTreeBuilder.ModifierNativeViewSection() {
                 .fillMaxWidth()
                 .height(64.dp)
                 .backgroundColor(Theme.colors.surfaceVariant)
-                .cornerRadius(8.dp)
-                .nativeView("bold_text") { view ->
-                    if (view is TextView) {
-                        view.typeface = Typeface.DEFAULT_BOLD
-                        view.letterSpacing = 0.1f
-                    }
-                },
+                .cornerRadius(8.dp),
         ) {
-            Text(text = "nativeView 设置粗体+字间距")
+            Text(
+                text = "nativeView 设置粗体+字间距", modifier = Modifier
+                    .nativeView("bold_text") { view ->
+                        if (view is TextView) {
+                            view.typeface = Typeface.DEFAULT_BOLD
+                            view.letterSpacing = 0.1f
+                        }
+                    })
         }
         Text(
             text = "通过 nativeView 直接修改 TextView 的 typeface 和 letterSpacing。",
