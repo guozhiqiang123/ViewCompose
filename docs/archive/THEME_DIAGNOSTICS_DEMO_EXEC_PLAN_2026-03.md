@@ -46,3 +46,10 @@
 ## Blockers
 
 当前无阻塞。
+
+## Result
+
+1. `Diagnostics` 已新增 `主题诊断` 页签，并形成 `运行时 / 主题 / 渲染器 / 缺口` 四页结构。
+2. 主题诊断页已覆盖 token snapshot、关键组件 defaults 消费样本、shape/size 探针与页面内人工回归说明。
+3. `ROADMAP.md` / `THEMING.md` 已同步写死 `Diagnostics -> 主题诊断` 为当前主题语义的权威 demo 验证入口。
+4. `./gradlew qaQuick` 已于 2026-03-13 通过。
