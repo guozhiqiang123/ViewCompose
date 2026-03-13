@@ -214,6 +214,8 @@ class TextFieldTest {
 
         assertEquals(202, disabledSpec.backgroundColor)
         assertEquals(209, errorSpec.borderColor)
+        assertEquals(Theme.colors.onErrorContainer, errorSpec.textColor)
+        assertEquals(Theme.colors.onErrorContainer, errorSpec.hintColor)
     }
 
     private fun com.viewcompose.ui.modifier.Modifier.readModifierElements(): List<Any?> {

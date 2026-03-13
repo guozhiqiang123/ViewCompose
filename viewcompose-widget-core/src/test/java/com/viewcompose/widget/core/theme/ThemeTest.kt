@@ -650,7 +650,7 @@ class ThemeTest {
 
         assertEquals(customTheme.colors.surface, container)
         assertEquals(customTheme.colors.surfaceVariant, disabledContainer)
-        assertEquals(customTheme.colors.error, errorColor)
+        assertEquals(customTheme.colors.onErrorContainer, errorColor)
         assertEquals(customTheme.colors.primary, controlColor)
         assertEquals(customTheme.shapes.cardCornerRadius, cardCornerRadius)
         assertEquals(pressedOverlayColorFor(customTheme.colors.textPrimary), pressedColor)

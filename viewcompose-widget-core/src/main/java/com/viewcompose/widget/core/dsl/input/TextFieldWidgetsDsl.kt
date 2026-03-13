@@ -127,7 +127,10 @@ fun UiTreeBuilder.TextField(
             imeAction = imeAction,
             hintColor = hintColor,
             readOnly = readOnly,
-            textColor = TextFieldDefaults.textColor(enabled = enabled),
+            textColor = TextFieldDefaults.textColor(
+                enabled = enabled,
+                isError = isError,
+            ),
             textStyle = style,
             backgroundColor = TextFieldDefaults.containerColor(
                 variant = variant,

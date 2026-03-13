@@ -23,11 +23,14 @@ object TextFieldDefaults {
         }
     }
 
-    fun textColor(enabled: Boolean = true): Int {
-        return if (enabled) {
-            Theme.colors.onSurface
-        } else {
-            Theme.colors.onSurfaceVariant
+    fun textColor(
+        enabled: Boolean = true,
+        isError: Boolean = false,
+    ): Int {
+        return when {
+            isError -> Theme.colors.onErrorContainer
+            enabled -> Theme.colors.onSurface
+            else -> Theme.colors.onSurfaceVariant
         }
     }
 
@@ -36,7 +39,7 @@ object TextFieldDefaults {
         isError: Boolean = false,
     ): Int {
         return when {
-            isError -> Theme.colors.error
+            isError -> Theme.colors.onErrorContainer
             enabled -> Theme.colors.onSurfaceVariant
             else -> Theme.colors.outlineVariant
         }

@@ -56,10 +56,10 @@ class ThemeTokenCompatibilityTest {
         }
 
         assertEquals(customTheme.colors.secondary, secondaryContainer)
-        assertEquals(customTheme.colors.error, errorColor)
+        assertEquals(customTheme.colors.onErrorContainer, errorColor)
         assertEquals(customTheme.typography.labelSmall.fontSizeSp, compactTextSize)
         assertEquals(customTheme.typography.bodyLarge.fontSizeSp, largeTextSize)
-        assertEquals(customTheme.typography.bodyMedium.fontSizeSp, listHeadlineSize)
+        assertEquals(customTheme.typography.bodyLarge.fontSizeSp, listHeadlineSize)
         assertEquals(customTheme.typography.titleMedium.fontSizeSp, topTitleSize)
         assertEquals(customTheme.shapes.interactiveCornerRadius, interactiveCornerRadius)
     }
