@@ -29,7 +29,7 @@
 ## Checklist
 
 - [ ] Step 1: 新增执行文档并提交
-- [ ] Step 2: 扩展 theme token 模型与 bridge/defaults
+- [x] Step 2: 扩展 theme token 模型与 bridge/defaults
 - [ ] Step 3: 收口组件 defaults 的颜色 / 形状 / 尺寸语义映射
 - [ ] Step 4: 升级复合组件文本样式链路，去除仅 `textSizeSp` 限制
 - [ ] Step 5: 增加测试、守卫与文档同步
@@ -46,6 +46,7 @@
 ## Commit Log
 
 1. `docs: add theme token consumption execution plan`
+2. `feat: extend surface semantic theme tokens and bridge mappings`
 
 ## Blockers
 

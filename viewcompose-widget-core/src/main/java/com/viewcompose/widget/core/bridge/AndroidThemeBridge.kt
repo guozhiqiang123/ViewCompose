@@ -32,6 +32,8 @@ internal object ThemeTokenMapper {
                     android.R.attr.colorBackground -> snapshot.colors.background
                     com.google.android.material.R.attr.colorSurface -> snapshot.colors.surface
                     com.google.android.material.R.attr.colorSurfaceVariant -> snapshot.colors.surfaceVariant
+                    com.google.android.material.R.attr.colorOnSurface -> snapshot.colors.onSurface
+                    com.google.android.material.R.attr.colorOnSurfaceVariant -> snapshot.colors.onSurfaceVariant
                     androidx.appcompat.R.attr.colorPrimary -> snapshot.colors.primary
                     com.google.android.material.R.attr.colorOnPrimary -> snapshot.colors.onPrimary
                     com.google.android.material.R.attr.colorPrimaryContainer -> snapshot.colors.primaryContainer
@@ -98,6 +100,12 @@ internal object ThemeTokenMapper {
                 surface = readColor(com.google.android.material.R.attr.colorSurface) ?: fallback.colors.surface,
                 surfaceVariant = readColor(com.google.android.material.R.attr.colorSurfaceVariant)
                     ?: fallback.colors.surfaceVariant,
+                textPrimary = readColor(android.R.attr.textColorPrimary) ?: fallback.colors.textPrimary,
+                textSecondary = readColor(android.R.attr.textColorSecondary) ?: fallback.colors.textSecondary,
+                onSurface = readColor(com.google.android.material.R.attr.colorOnSurface)
+                    ?: fallback.colors.onSurface,
+                onSurfaceVariant = readColor(com.google.android.material.R.attr.colorOnSurfaceVariant)
+                    ?: fallback.colors.onSurfaceVariant,
                 primary = readColor(androidx.appcompat.R.attr.colorPrimary) ?: fallback.colors.primary,
                 onPrimary = readColor(com.google.android.material.R.attr.colorOnPrimary)
                     ?: fallback.colors.onPrimary,
@@ -132,8 +140,6 @@ internal object ThemeTokenMapper {
                     ?: fallback.colors.inverseSurface,
                 inverseOnSurface = readColor(com.google.android.material.R.attr.colorOnSurfaceInverse)
                     ?: fallback.colors.inverseOnSurface,
-                textPrimary = readColor(android.R.attr.textColorPrimary) ?: fallback.colors.textPrimary,
-                textSecondary = readColor(android.R.attr.textColorSecondary) ?: fallback.colors.textSecondary,
                 ripple = readRippleColor() ?: fallback.colors.ripple,
             ),
             typography = UiTypography(

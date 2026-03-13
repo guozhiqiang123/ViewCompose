@@ -10,6 +10,10 @@ class AndroidThemeBridgeTest {
             android.R.attr.colorBackground to 1,
             com.google.android.material.R.attr.colorSurface to 2,
             com.google.android.material.R.attr.colorSurfaceVariant to 3,
+            android.R.attr.textColorPrimary to 7,
+            android.R.attr.textColorSecondary to 8,
+            com.google.android.material.R.attr.colorOnSurface to 70,
+            com.google.android.material.R.attr.colorOnSurfaceVariant to 80,
             androidx.appcompat.R.attr.colorPrimary to 4,
             com.google.android.material.R.attr.colorOnPrimary to 40,
             com.google.android.material.R.attr.colorPrimaryContainer to 41,
@@ -27,8 +31,6 @@ class AndroidThemeBridgeTest {
             androidx.appcompat.R.attr.colorAccent to 62,
             com.google.android.material.R.attr.colorSurfaceInverse to 63,
             com.google.android.material.R.attr.colorOnSurfaceInverse to 64,
-            android.R.attr.textColorPrimary to 7,
-            android.R.attr.textColorSecondary to 8,
         )
 
         val tokens = ThemeTokenMapper.fromThemeColors(attrs::get)
@@ -36,6 +38,10 @@ class AndroidThemeBridgeTest {
         assertEquals(1, tokens.colors.background)
         assertEquals(2, tokens.colors.surface)
         assertEquals(3, tokens.colors.surfaceVariant)
+        assertEquals(7, tokens.colors.textPrimary)
+        assertEquals(8, tokens.colors.textSecondary)
+        assertEquals(70, tokens.colors.onSurface)
+        assertEquals(80, tokens.colors.onSurfaceVariant)
         assertEquals(4, tokens.colors.primary)
         assertEquals(40, tokens.colors.onPrimary)
         assertEquals(41, tokens.colors.primaryContainer)
@@ -54,8 +60,6 @@ class AndroidThemeBridgeTest {
         assertEquals(62, tokens.colors.surfaceTint)
         assertEquals(63, tokens.colors.inverseSurface)
         assertEquals(64, tokens.colors.inverseOnSurface)
-        assertEquals(7, tokens.colors.textPrimary)
-        assertEquals(8, tokens.colors.textSecondary)
     }
 
     @Test
@@ -72,6 +76,7 @@ class AndroidThemeBridgeTest {
         assertEquals(99, tokens.colors.primary)
         assertEquals(UiThemeDefaults.light().colors.surface, tokens.colors.surface)
         assertEquals(UiThemeDefaults.light().colors.textPrimary, tokens.colors.textPrimary)
+        assertEquals(UiThemeDefaults.light().colors.onSurface, tokens.colors.onSurface)
         assertEquals(UiThemeDefaults.light().typography.body.fontSizeSp, tokens.typography.body.fontSizeSp)
     }
 
@@ -86,6 +91,7 @@ class AndroidThemeBridgeTest {
         assertEquals(UiThemeDefaults.dark().colors.surface, tokens.colors.surface)
         assertEquals(UiThemeDefaults.dark().colors.primary, tokens.colors.primary)
         assertEquals(UiThemeDefaults.dark().colors.textPrimary, tokens.colors.textPrimary)
+        assertEquals(UiThemeDefaults.dark().colors.onSurface, tokens.colors.onSurface)
         assertEquals(UiThemeDefaults.dark().typography.title.fontSizeSp, tokens.typography.title.fontSizeSp)
     }
 

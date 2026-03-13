@@ -4,6 +4,10 @@ data class UiColors(
     val background: Int,
     val surface: Int,
     val surfaceVariant: Int,
+    val textPrimary: Int,
+    val textSecondary: Int,
+    val onSurface: Int = textPrimary,
+    val onSurfaceVariant: Int = textSecondary,
     val primary: Int,
     val onPrimary: Int = contentColorFor(primary),
     val primaryContainer: Int = primary,
@@ -20,14 +24,12 @@ data class UiColors(
     val warning: Int,
     val info: Int,
     val divider: Int,
-    val textPrimary: Int,
-    val textSecondary: Int,
     val outline: Int = divider,
     val outlineVariant: Int = outline,
     val surfaceTint: Int = primary,
-    val inverseSurface: Int = textPrimary,
+    val inverseSurface: Int = onSurface,
     val inverseOnSurface: Int = background,
-    val ripple: Int = pressedOverlayColorFor(textPrimary),
+    val ripple: Int = pressedOverlayColorFor(onSurface),
 )
 
 data class UiShapes(
