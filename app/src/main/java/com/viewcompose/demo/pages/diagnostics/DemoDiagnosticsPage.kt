@@ -1,6 +1,7 @@
 package com.viewcompose
 
 import android.view.Choreographer
+import android.view.ViewGroup
 import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.modifier.fillMaxSize
 import com.viewcompose.ui.modifier.padding
@@ -34,6 +35,7 @@ import java.util.Locale
 private const val SNAPSHOT_STABLE_FRAME_THRESHOLD = 2
 
 internal fun UiTreeBuilder.DiagnosticsPage(
+    root: ViewGroup,
     selectedPageState: MutableState<Int>,
     autoRefreshOnEnter: Boolean = false,
     entryHint: String? = null,
@@ -242,18 +244,7 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                 }
             }
 
-            "theme" -> ScenarioSection(
-                kind = ScenarioKind.Core,
-                title = "主题诊断",
-                subtitle = "此页签将作为 token -> defaults -> 组件视觉 的人工回归入口。",
-            ) {
-                Text(text = "主题诊断样本将在下一步补齐。")
-                Text(
-                    text = "目标：集中验证 surface/content、shape tier、control sizing 与关键组件默认值的实际消费结果。",
-                    color = TextDefaults.secondaryColor(),
-                    modifier = Modifier.padding(top = 8.dp),
-                )
-            }
+            "theme" -> DiagnosticsThemeSections(root)
 
             "renderer_actions" -> ScenarioSection(
                 kind = ScenarioKind.Benchmark,

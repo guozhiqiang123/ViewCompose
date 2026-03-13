@@ -59,7 +59,12 @@ internal fun UiTreeBuilder.DemoHomeScaffold(
                     modifier = Modifier.fillMaxSize(),
                 ) {
                     Page(key = "catalog") { DemoCatalogPage(root) }
-                    Page(key = "diagnostics") { DiagnosticsPage(diagnosticsPageState) }
+                    Page(key = "diagnostics") {
+                        DiagnosticsPage(
+                            root = root,
+                            selectedPageState = diagnosticsPageState,
+                        )
+                    }
                     Page(key = "settings") { SettingsPage(themeModeState, root) }
                     Page(key = "about") { AboutPage() }
                 }

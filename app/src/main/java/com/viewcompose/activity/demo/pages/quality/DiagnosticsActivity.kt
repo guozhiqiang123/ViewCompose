@@ -23,6 +23,7 @@ class DiagnosticsActivity : DemoRenderActivity() {
         with(builder) {
             val selectedPageState = remember { mutableStateOf(initialPage) }
             DiagnosticsPage(
+                root = root,
                 selectedPageState = selectedPageState,
                 autoRefreshOnEnter = autoRefreshRendererSnapshot,
                 entryHint = entryHint,
