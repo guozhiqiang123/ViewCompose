@@ -121,9 +121,12 @@ flowchart TD
 1. `Modifier`：通用修饰与 scoped parent-data。
 2. 组件语义参数：走组件 DSL 参数 + `NodeSpec`。
 3. 主题默认值：走 `Theme -> Defaults`，不把主题直接做成通用 modifier。
-4. `viewcompose-ui-contract` 的 `Modifier` 文件只承载“全局稳定语义”的元素声明与 builder；仅特定容器生效的策略必须进入容器 DSL 参数与 `NodeSpec`。
-5. 禁止新增 `Props/TypedPropKeys/PropKeys/node.props` 动态语义路径。
-6. 约束 parent-data（`layoutId/constrainAs/constrain`）仅允许用于 `ConstraintLayout` 子节点；错误宿主必须输出 validator 警告。
+4. `AndroidThemeBridge` 固定走“snapshot reader + token mapper”两层实现：reader 只读 Android / AppCompat / Material 平台字段，mapper 只做语义映射与 fallback。
+5. `AndroidThemeBridge` 当前允许 best-effort 映射 `surfaceTint` 与统一圆角 `shapeAppearance*Component`；不允许为了表面覆盖率在 bridge 中猜测非统一四角 shape 或控件三档尺寸。
+6. `controls` 继续保持 framework-owned defaults，除非 Android 原主题系统存在稳定且统一的来源；禁止把零散 widget style 强行提升为全局 token 真相源。
+7. `viewcompose-ui-contract` 的 `Modifier` 文件只承载“全局稳定语义”的元素声明与 builder；仅特定容器生效的策略必须进入容器 DSL 参数与 `NodeSpec`。
+8. 禁止新增 `Props/TypedPropKeys/PropKeys/node.props` 动态语义路径。
+9. 约束 parent-data（`layoutId/constrainAs/constrain`）仅允许用于 `ConstraintLayout` 子节点；错误宿主必须输出 validator 警告。
 
 对应规范：
 

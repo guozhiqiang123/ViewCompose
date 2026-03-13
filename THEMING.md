@@ -29,6 +29,14 @@
 2. 组件默认值在 `Defaults` 层按需从 `Theme` 派生，不做全量预计算。
 3. 组件显式参数优先级高于主题默认值。
 
+当前 token 语义补充：
+
+1. `colors` 同时承载基础色、`on*` 前景色、`*Container` 容器色、轮廓色、逆表面色与 ripple。
+2. `typography` 同时保留旧 `title/body/label` 和 tiered `title*/body*/label*`。
+3. `shapes` 同时保留旧 `cardCornerRadius / interactiveCornerRadius` 和语义化 `small / medium / large` 三级圆角。
+4. `controls` 仍是框架自有尺寸 token，不承诺与 Android 原主题系统一一对齐。
+5. `overlays` 当前由语义 token 承载跨组件蒙层配置。
+
 ## 2.1 兼容迁移策略
 
 主题 token 扩展默认采用“先兼容后移除”：
@@ -94,15 +102,51 @@
 
 ## 5. Android Bridge 边界
 
-Android 主题桥接只做“平台语义到框架语义”的映射：
+Android 主题桥接只做“平台语义到框架语义”的映射，内部固定为：
 
-1. 读取系统/主题关键颜色与文本尺寸
-2. 映射暗色模式与基础环境信息
+`AndroidThemeSnapshotReader -> ThemeTokenMapper -> UiThemeTokens`
+
+其中：
+
+1. `SnapshotReader` 负责批量读取 Android / AppCompat / Material 主题字段。
+2. `ThemeTokenMapper` 负责把平台字段映射到框架 token，并处理 fallback。
+3. bridge 不直接产出组件级默认值，不绕过 `Defaults` 层。
+
+当前 bridge 覆盖矩阵：
+
+1. `colors`
+   - 已桥接：`background / surface / surfaceVariant / primary / secondary / error`
+   - 已桥接：`onPrimary / onSecondary / onError`
+   - 已桥接：`primaryContainer / secondaryContainer / errorContainer`
+   - 已桥接：`onPrimaryContainer / onSecondaryContainer / onErrorContainer`
+   - 已桥接：`outline / outlineVariant / inverseSurface / inverseOnSurface`
+   - 已桥接：`textPrimary / textSecondary`
+   - 已桥接：`ripple`（优先读 `colorControlHighlight`）
+   - best-effort：`surfaceTint` 当前优先对接 `colorAccent` 语义来源
+2. `typography`
+   - 已桥接：Material 3 `textAppearanceTitle*/Body*/Label*`
+   - fallback：旧 Android `textAppearanceLarge/Medium/Small`
+   - 已桥接字段：`fontSizeSp / fontWeight / fontFamily / letterSpacingEm / lineHeightSp / includeFontPadding`
+3. `shapes`
+   - 已桥接：`shapeAppearanceSmallComponent / Medium / Large`
+   - 当前仅桥接“统一圆角”语义；若四角不一致，则安全回退 framework defaults
+4. `overlays`
+   - 已桥接：`android:backgroundDimAmount -> scrimOpacity`
+5. `controls`
+   - 当前不做主题级强桥接，继续走 framework defaults
+   - 原因：Android 原主题系统没有与 `compact / medium / large` 一一对应的统一来源
 
 不做：
 
 1. 在 bridge 层写组件业务默认值
 2. 在 bridge 层引入组件级条件分支
+3. 为了“看起来全覆盖”而猜测性映射非统一 shape 或控件尺寸
+
+实现约束：
+
+1. bridge 的 fallback 必须显式落到 `UiThemeDefaults.light/dark()`，禁止散落字面量。
+2. 新增桥接字段时，必须同时定义“读取来源 + fallback 规则 + token 归属”。
+3. bridge 新能力若改变可视结果，必须补 `AndroidThemeBridgeTest` 或 Android 侧桥接测试。
 
 ## 6. 与组件和 Modifier 的边界
 
