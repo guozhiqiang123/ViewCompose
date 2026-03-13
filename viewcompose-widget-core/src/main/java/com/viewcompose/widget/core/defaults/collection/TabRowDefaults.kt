@@ -5,6 +5,8 @@ object TabRowDefaults {
 
     fun indicatorColor(): Int = Theme.colors.primary
 
+    fun inactiveContentColor(): Int = Theme.colors.onSurfaceVariant
+
     fun indicatorHeight(): Int = 3.dp
 
     fun indicatorCornerRadius(): Int = 2.dp

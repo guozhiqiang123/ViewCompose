@@ -17,14 +17,14 @@ object SurfaceDefaults {
 
     fun variantBackgroundColor(): Int = Theme.colors.surfaceVariant
 
-    fun cardCornerRadius(): Int = Theme.shapes.cardCornerRadius
+    fun cardCornerRadius(): Int = Theme.shapes.mediumCornerRadius
 
     fun contentColor(
         variant: SurfaceVariant = SurfaceVariant.Default,
     ): Int {
         return when (variant) {
-            SurfaceVariant.Default -> Theme.colors.textPrimary
-            SurfaceVariant.Variant -> Theme.colors.textSecondary
+            SurfaceVariant.Default -> Theme.colors.onSurface
+            SurfaceVariant.Variant -> Theme.colors.onSurfaceVariant
         }
     }
 

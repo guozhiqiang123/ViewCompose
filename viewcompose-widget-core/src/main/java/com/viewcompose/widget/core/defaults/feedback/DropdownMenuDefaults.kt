@@ -3,11 +3,11 @@ package com.viewcompose.widget.core
 object DropdownMenuDefaults {
     fun containerColor(): Int = Theme.colors.surface
 
-    fun contentColor(): Int = Theme.colors.textPrimary
+    fun contentColor(): Int = Theme.colors.onSurface
 
-    fun textStyle(): UiTextStyle = Theme.typography.body
+    fun textStyle(): UiTextStyle = TextDefaults.bodyMediumStyle()
 
-    fun cornerRadius(): Int = 4.dp
+    fun cornerRadius(): Int = Theme.shapes.mediumCornerRadius
 
     fun elevation(): Int = Theme.controls.menu.elevation
 
@@ -23,7 +23,7 @@ object DropdownMenuDefaults {
 
     fun iconToTextSpacing(): Int = Theme.controls.menu.iconToTextSpacing
 
-    fun trailingTextColor(): Int = Theme.colors.textSecondary
+    fun trailingTextColor(): Int = Theme.colors.onSurfaceVariant
 
     fun disabledAlpha(): Float = 0.38f
 }

@@ -7,9 +7,9 @@ enum class FabSize {
 }
 
 object FabDefaults {
-    fun containerColor(): Int = Theme.colors.primary
+    fun containerColor(): Int = Theme.colors.primaryContainer
 
-    fun contentColor(): Int = contentColorFor(Theme.colors.primary)
+    fun contentColor(): Int = Theme.colors.onPrimaryContainer
 
     fun size(size: FabSize = FabSize.Medium): Int {
         return when (size) {
@@ -39,13 +39,13 @@ object FabDefaults {
 
     fun extendedHeight(): Int = Theme.controls.fab.extendedHeight
 
-    fun extendedCornerRadius(): Int = 16.dp
+    fun extendedCornerRadius(): Int = Theme.shapes.largeCornerRadius
 
     fun extendedHorizontalPadding(): Int = Theme.controls.fab.extendedHorizontalPadding
 
     fun extendedIconSpacing(): Int = Theme.controls.fab.extendedIconSpacing
 
-    fun extendedTextStyle(): UiTextStyle = Theme.typography.label
+    fun extendedTextStyle(): UiTextStyle = TextDefaults.labelLargeStyle()
 
     fun pressedColor(): Int = Theme.colors.ripple
 }

@@ -3,17 +3,17 @@ package com.viewcompose.widget.core
 object AlertDialogDefaults {
     fun containerColor(): Int = Theme.colors.surface
 
-    fun titleColor(): Int = Theme.colors.textPrimary
+    fun titleColor(): Int = Theme.colors.onSurface
 
-    fun textColor(): Int = Theme.colors.textSecondary
+    fun textColor(): Int = Theme.colors.onSurfaceVariant
 
     fun iconTint(): Int = Theme.colors.primary
 
-    fun titleStyle(): UiTextStyle = Theme.typography.title
+    fun titleStyle(): UiTextStyle = TextDefaults.titleLargeStyle()
 
-    fun textStyle(): UiTextStyle = Theme.typography.body
+    fun textStyle(): UiTextStyle = TextDefaults.bodyMediumStyle()
 
-    fun cornerRadius(): Int = Theme.shapes.cardCornerRadius
+    fun cornerRadius(): Int = Theme.shapes.mediumCornerRadius
 
     fun contentPadding(): Int = 24.dp
 

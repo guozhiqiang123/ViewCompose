@@ -26,9 +26,9 @@ object ChipDefaults {
         enabled: Boolean = true,
     ): Int {
         return when {
-            !enabled -> Theme.colors.textSecondary
+            !enabled -> Theme.colors.onSurfaceVariant
             selected -> Theme.colors.primary
-            else -> Theme.colors.textPrimary
+            else -> Theme.colors.onSurface
         }
     }
 
@@ -39,7 +39,7 @@ object ChipDefaults {
     ): Int {
         return when {
             selected && variant == ChipVariant.Filter -> 0x00000000
-            else -> Theme.colors.divider
+            else -> Theme.colors.outline
         }
     }
 
@@ -53,7 +53,7 @@ object ChipDefaults {
         }
     }
 
-    fun cornerRadius(): Int = 8.dp
+    fun cornerRadius(): Int = Theme.shapes.smallCornerRadius
 
     fun height(): Int = Theme.controls.chip.height
 
@@ -67,7 +67,7 @@ object ChipDefaults {
 
     fun iconSpacing(): Int = Theme.controls.chip.iconSpacing
 
-    fun textStyle(): UiTextStyle = Theme.typography.label
+    fun textStyle(): UiTextStyle = TextDefaults.labelMediumStyle()
 
     fun pressedColor(): Int = Theme.colors.ripple
 }

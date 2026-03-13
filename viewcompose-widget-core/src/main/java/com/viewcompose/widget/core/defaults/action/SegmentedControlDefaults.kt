@@ -21,27 +21,27 @@ object SegmentedControlDefaults {
         return if (enabled) {
             override?.indicator ?: Theme.colors.primary
         } else {
-            override?.indicatorDisabled ?: Theme.colors.divider
+            override?.indicatorDisabled ?: Theme.colors.outlineVariant
         }
     }
 
-    fun cornerRadius(): Int = Theme.shapes.interactiveCornerRadius
+    fun cornerRadius(): Int = Theme.shapes.smallCornerRadius
 
     fun textColor(enabled: Boolean = true): Int {
         val override = UiLocals.current(LocalSegmentedControlColors)
         return if (enabled) {
-            override?.text ?: Theme.colors.textSecondary
+            override?.text ?: Theme.colors.onSurfaceVariant
         } else {
-            override?.textDisabled ?: Theme.colors.textSecondary
+            override?.textDisabled ?: Theme.colors.onSurfaceVariant
         }
     }
 
     fun selectedTextColor(enabled: Boolean = true): Int {
         val override = UiLocals.current(LocalSegmentedControlColors)
         return if (enabled) {
-            override?.selectedText ?: contentColorFor(Theme.colors.primary)
+            override?.selectedText ?: Theme.colors.onPrimary
         } else {
-            override?.selectedTextDisabled ?: Theme.colors.textSecondary
+            override?.selectedTextDisabled ?: Theme.colors.onSurfaceVariant
         }
     }
 
@@ -57,11 +57,9 @@ object SegmentedControlDefaults {
         size: SegmentedControlSize = SegmentedControlSize.Medium,
     ): UiTextStyle {
         return when (size) {
-            SegmentedControlSize.Compact,
-            SegmentedControlSize.Medium,
-            -> Theme.typography.label
-
-            SegmentedControlSize.Large -> Theme.typography.body
+            SegmentedControlSize.Compact -> TextDefaults.labelMediumStyle()
+            SegmentedControlSize.Medium -> TextDefaults.labelLargeStyle()
+            SegmentedControlSize.Large -> TextDefaults.bodyLargeStyle()
         }
     }
 

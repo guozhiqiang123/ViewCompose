@@ -3,7 +3,7 @@ package com.viewcompose.widget.core
 object BadgeDefaults {
     fun containerColor(): Int = Theme.colors.error
 
-    fun contentColor(): Int = contentColorFor(Theme.colors.error)
+    fun contentColor(): Int = Theme.colors.onError
 
     fun dotSize(): Int = Theme.controls.badge.dotSize
 
@@ -13,5 +13,5 @@ object BadgeDefaults {
 
     fun pillHorizontalPadding(): Int = Theme.controls.badge.pillHorizontalPadding
 
-    fun textStyle(): UiTextStyle = UiTextStyle(fontSizeSp = 11.sp)
+    fun textStyle(): UiTextStyle = TextDefaults.labelSmallStyle()
 }

@@ -1,6 +1,6 @@
 package com.viewcompose.widget.core
 
-val LocalContentColor = uiLocalOf { Theme.colors.textPrimary }
+val LocalContentColor = uiLocalOf { Theme.colors.onSurface }
 
 object ContentColor {
     val current: Int

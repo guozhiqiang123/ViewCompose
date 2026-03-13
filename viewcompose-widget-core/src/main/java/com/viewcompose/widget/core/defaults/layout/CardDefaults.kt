@@ -18,9 +18,9 @@ object CardDefaults {
         }
     }
 
-    fun contentColor(): Int = Theme.colors.textPrimary
+    fun contentColor(): Int = Theme.colors.onSurface
 
-    fun cornerRadius(): Int = Theme.shapes.cardCornerRadius
+    fun cornerRadius(): Int = Theme.shapes.mediumCornerRadius
 
     fun elevation(
         variant: CardVariant = CardVariant.Filled,
@@ -44,7 +44,7 @@ object CardDefaults {
         variant: CardVariant = CardVariant.Filled,
     ): Int {
         return when (variant) {
-            CardVariant.Outlined -> Theme.colors.divider
+            CardVariant.Outlined -> Theme.colors.outline
             else -> 0x00000000
         }
     }

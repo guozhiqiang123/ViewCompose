@@ -3,15 +3,15 @@ package com.viewcompose.widget.core
 object SearchBarDefaults {
     fun containerColor(): Int = Theme.colors.surfaceVariant
 
-    fun contentColor(): Int = Theme.colors.textPrimary
+    fun contentColor(): Int = Theme.colors.onSurface
 
-    fun placeholderColor(): Int = Theme.colors.textSecondary
+    fun placeholderColor(): Int = Theme.colors.onSurfaceVariant
 
-    fun iconColor(): Int = Theme.colors.textSecondary
+    fun iconColor(): Int = Theme.colors.onSurfaceVariant
 
     fun height(): Int = Theme.controls.searchBar.height
 
-    fun cornerRadius(): Int = 28.dp
+    fun cornerRadius(): Int = Theme.shapes.largeCornerRadius
 
     fun horizontalPadding(): Int = Theme.controls.searchBar.horizontalPadding
 
@@ -19,7 +19,7 @@ object SearchBarDefaults {
 
     fun iconSpacing(): Int = Theme.controls.searchBar.iconSpacing
 
-    fun textStyle(): UiTextStyle = Theme.typography.body
+    fun textStyle(): UiTextStyle = TextDefaults.bodyLargeStyle()
 
     fun elevation(): Int = Theme.controls.searchBar.elevation
 }

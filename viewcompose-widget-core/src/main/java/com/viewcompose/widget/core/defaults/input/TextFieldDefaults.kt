@@ -25,9 +25,9 @@ object TextFieldDefaults {
 
     fun textColor(enabled: Boolean = true): Int {
         return if (enabled) {
-            Theme.colors.textPrimary
+            Theme.colors.onSurface
         } else {
-            Theme.colors.textSecondary
+            Theme.colors.onSurfaceVariant
         }
     }
 
@@ -37,8 +37,8 @@ object TextFieldDefaults {
     ): Int {
         return when {
             isError -> Theme.colors.error
-            enabled -> Theme.colors.textSecondary
-            else -> Theme.colors.divider
+            enabled -> Theme.colors.onSurfaceVariant
+            else -> Theme.colors.outlineVariant
         }
     }
 
@@ -65,10 +65,10 @@ object TextFieldDefaults {
         return when {
             variant == TextFieldVariant.Outlined -> 0x00000000
             isError && variant == TextFieldVariant.Tonal ->
-                override?.tonalErrorContainer ?: Theme.colors.error
+                override?.tonalErrorContainer ?: Theme.colors.errorContainer
 
             isError ->
-                override?.filledErrorContainer ?: Theme.colors.error
+                override?.filledErrorContainer ?: Theme.colors.errorContainer
 
             variant == TextFieldVariant.Tonal && enabled ->
                 override?.tonalContainer ?: Theme.colors.surfaceVariant
@@ -95,10 +95,10 @@ object TextFieldDefaults {
                 override?.outlinedErrorBorder ?: Theme.colors.error
 
             variant == TextFieldVariant.Outlined && enabled ->
-                override?.outlinedBorder ?: Theme.colors.primary
+                override?.outlinedBorder ?: Theme.colors.outline
 
             variant == TextFieldVariant.Outlined ->
-                override?.outlinedDisabledBorder ?: Theme.colors.divider
+                override?.outlinedDisabledBorder ?: Theme.colors.outlineVariant
 
             else -> 0x00000000
         }
@@ -113,7 +113,7 @@ object TextFieldDefaults {
         }
     }
 
-    fun cornerRadius(): Int = Theme.shapes.interactiveCornerRadius
+    fun cornerRadius(): Int = Theme.shapes.smallCornerRadius
 
     fun height(
         size: TextFieldSize = TextFieldSize.Medium,

@@ -8,7 +8,7 @@ object ProgressIndicatorDefaults {
 
     fun linearTrackColor(): Int {
         val override = UiLocals.current(LocalProgressIndicatorColors)
-        return override?.linearTrack ?: Theme.colors.divider
+        return override?.linearTrack ?: Theme.colors.outlineVariant
     }
 
     fun linearTrackThickness(): Int = Theme.controls.progressIndicator.linearTrackThickness
@@ -20,7 +20,7 @@ object ProgressIndicatorDefaults {
 
     fun circularTrackColor(): Int {
         val override = UiLocals.current(LocalProgressIndicatorColors)
-        return override?.circularTrack ?: Theme.colors.divider
+        return override?.circularTrack ?: Theme.colors.outlineVariant
     }
 
     fun circularSize(): Int = Theme.controls.progressIndicator.circularSize

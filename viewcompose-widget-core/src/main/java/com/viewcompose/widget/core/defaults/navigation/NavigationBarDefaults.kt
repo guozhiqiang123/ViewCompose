@@ -3,15 +3,15 @@ package com.viewcompose.widget.core
 object NavigationBarDefaults {
     fun containerColor(): Int = Theme.colors.surface
 
-    fun selectedIconColor(): Int = Theme.colors.primary
+    fun selectedIconColor(): Int = Theme.colors.onSecondaryContainer
 
-    fun unselectedIconColor(): Int = Theme.colors.textSecondary
+    fun unselectedIconColor(): Int = Theme.colors.onSurfaceVariant
 
-    fun selectedLabelColor(): Int = Theme.colors.primary
+    fun selectedLabelColor(): Int = Theme.colors.onSecondaryContainer
 
-    fun unselectedLabelColor(): Int = Theme.colors.textSecondary
+    fun unselectedLabelColor(): Int = Theme.colors.onSurfaceVariant
 
-    fun indicatorColor(): Int = Theme.colors.surfaceVariant
+    fun indicatorColor(): Int = Theme.colors.secondaryContainer
 
     fun rippleColor(): Int = Theme.colors.ripple
 
@@ -23,5 +23,5 @@ object NavigationBarDefaults {
 
     fun badgeColor(): Int = Theme.colors.error
 
-    fun badgeTextColor(): Int = contentColorFor(Theme.colors.error)
+    fun badgeTextColor(): Int = Theme.colors.onError
 }

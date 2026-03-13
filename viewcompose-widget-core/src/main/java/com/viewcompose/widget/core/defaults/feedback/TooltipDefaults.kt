@@ -1,13 +1,13 @@
 package com.viewcompose.widget.core
 
 object TooltipDefaults {
-    fun containerColor(): Int = 0xFF2C2621.toInt()
+    fun containerColor(): Int = Theme.colors.inverseSurface
 
-    fun contentColor(): Int = 0xFFF4EFE8.toInt()
+    fun contentColor(): Int = Theme.colors.inverseOnSurface
 
-    fun textStyle(): UiTextStyle = Theme.typography.label
+    fun textStyle(): UiTextStyle = TextDefaults.labelMediumStyle()
 
-    fun cornerRadius(): Int = 4.dp
+    fun cornerRadius(): Int = Theme.shapes.smallCornerRadius
 
     fun horizontalPadding(): Int = Theme.controls.tooltip.horizontalPadding
 

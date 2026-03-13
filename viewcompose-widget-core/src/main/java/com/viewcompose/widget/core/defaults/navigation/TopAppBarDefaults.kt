@@ -3,7 +3,7 @@ package com.viewcompose.widget.core
 object TopAppBarDefaults {
     fun containerColor(): Int = Theme.colors.surface
 
-    fun titleColor(): Int = Theme.colors.textPrimary
+    fun titleColor(): Int = Theme.colors.onSurface
 
     fun titleStyle(): UiTextStyle = TextDefaults.titleMediumStyle()
 

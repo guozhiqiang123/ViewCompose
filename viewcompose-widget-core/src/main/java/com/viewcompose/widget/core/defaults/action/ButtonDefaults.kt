@@ -24,17 +24,17 @@ object ButtonDefaults {
             ButtonVariant.Primary -> if (enabled) {
                 override?.primaryContainer ?: Theme.colors.primary
             } else {
-                override?.primaryDisabledContainer ?: Theme.colors.divider
+                override?.primaryDisabledContainer ?: Theme.colors.outlineVariant
             }
 
             ButtonVariant.Secondary -> if (enabled) {
                 override?.secondaryContainer ?: Theme.colors.secondary
             } else {
-                override?.secondaryDisabledContainer ?: Theme.colors.divider
+                override?.secondaryDisabledContainer ?: Theme.colors.outlineVariant
             }
 
             ButtonVariant.Tonal -> if (enabled) {
-                override?.tonalContainer ?: Theme.colors.surfaceVariant
+                override?.tonalContainer ?: Theme.colors.secondaryContainer
             } else {
                 override?.tonalDisabledContainer ?: Theme.colors.surfaceVariant
             }
@@ -52,33 +52,33 @@ object ButtonDefaults {
         val override = UiLocals.current(LocalButtonColors)
         return when (variant) {
             ButtonVariant.Primary -> if (enabled) {
-                override?.primaryContent ?: contentColorFor(Theme.colors.primary)
+                override?.primaryContent ?: Theme.colors.onPrimary
             } else {
-                override?.primaryDisabledContent ?: Theme.colors.textSecondary
+                override?.primaryDisabledContent ?: Theme.colors.onSurfaceVariant
             }
 
             ButtonVariant.Secondary -> if (enabled) {
-                override?.secondaryContent ?: contentColorFor(Theme.colors.secondary)
+                override?.secondaryContent ?: Theme.colors.onSecondary
             } else {
-                override?.secondaryDisabledContent ?: Theme.colors.textSecondary
+                override?.secondaryDisabledContent ?: Theme.colors.onSurfaceVariant
             }
 
             ButtonVariant.Tonal -> if (enabled) {
-                override?.tonalContent ?: Theme.colors.textPrimary
+                override?.tonalContent ?: Theme.colors.onSecondaryContainer
             } else {
-                override?.tonalDisabledContent ?: Theme.colors.textSecondary
+                override?.tonalDisabledContent ?: Theme.colors.onSurfaceVariant
             }
 
             ButtonVariant.Outlined -> if (enabled) {
-                override?.outlinedContent ?: Theme.colors.textPrimary
+                override?.outlinedContent ?: Theme.colors.onSurface
             } else {
-                override?.outlinedDisabledContent ?: Theme.colors.textSecondary
+                override?.outlinedDisabledContent ?: Theme.colors.onSurfaceVariant
             }
 
             ButtonVariant.Text -> if (enabled) {
                 Theme.colors.primary
             } else {
-                Theme.colors.textSecondary
+                Theme.colors.onSurfaceVariant
             }
         }
     }
@@ -90,9 +90,9 @@ object ButtonDefaults {
         val override = UiLocals.current(LocalButtonColors)
         return when (variant) {
             ButtonVariant.Outlined -> if (enabled) {
-                override?.outlinedBorder ?: Theme.colors.divider
+                override?.outlinedBorder ?: Theme.colors.outline
             } else {
-                override?.outlinedDisabledBorder ?: Theme.colors.divider
+                override?.outlinedDisabledBorder ?: Theme.colors.outlineVariant
             }
 
             else -> 0x00000000
@@ -108,7 +108,7 @@ object ButtonDefaults {
         }
     }
 
-    fun cornerRadius(): Int = Theme.shapes.interactiveCornerRadius
+    fun cornerRadius(): Int = Theme.shapes.smallCornerRadius
 
     fun height(
         size: ButtonSize = ButtonSize.Medium,
@@ -144,11 +144,9 @@ object ButtonDefaults {
         size: ButtonSize = ButtonSize.Medium,
     ): UiTextStyle {
         return when (size) {
-            ButtonSize.Compact,
-            ButtonSize.Medium,
-            -> Theme.typography.label
-
-            ButtonSize.Large -> Theme.typography.body
+            ButtonSize.Compact -> TextDefaults.labelMediumStyle()
+            ButtonSize.Medium -> TextDefaults.labelLargeStyle()
+            ButtonSize.Large -> TextDefaults.bodyLargeStyle()
         }
     }
 

@@ -53,5 +53,5 @@ object TextDefaults {
 
     fun primaryColor(): Int = ContentColor.current
 
-    fun secondaryColor(): Int = Theme.colors.textSecondary
+    fun secondaryColor(): Int = Theme.colors.onSurfaceVariant
 }

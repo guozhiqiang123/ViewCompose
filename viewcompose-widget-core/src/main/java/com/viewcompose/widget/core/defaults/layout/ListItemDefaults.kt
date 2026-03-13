@@ -1,20 +1,17 @@
 package com.viewcompose.widget.core
 
 object ListItemDefaults {
-    fun headlineColor(): Int = Theme.colors.textPrimary
+    fun headlineColor(): Int = Theme.colors.onSurface
 
-    fun supportingColor(): Int = Theme.colors.textSecondary
+    fun supportingColor(): Int = Theme.colors.onSurfaceVariant
 
-    fun overlineColor(): Int = Theme.colors.textSecondary
+    fun overlineColor(): Int = Theme.colors.onSurfaceVariant
 
-    fun headlineStyle(): UiTextStyle = TextDefaults.bodyMediumStyle()
+    fun headlineStyle(): UiTextStyle = TextDefaults.bodyLargeStyle()
 
     fun supportingStyle(): UiTextStyle = TextDefaults.labelMediumStyle()
 
-    fun overlineStyle(): UiTextStyle = UiTextStyle(
-        fontSizeSp = 12.sp,
-        letterSpacingEm = 0.04f,
-    )
+    fun overlineStyle(): UiTextStyle = TextDefaults.labelSmallStyle()
 
     fun minHeight(): Int = Theme.controls.listItem.minHeight
 

@@ -308,7 +308,7 @@ class ThemeTest {
     }
 
     @Test
-    fun `outlined button uses transparent container and divider border`() {
+    fun `outlined button uses transparent container and semantic outline border`() {
         val tree = buildVNodeTree {
             UiTheme(UiThemeDefaults.light()) {
                 Button(
@@ -320,9 +320,9 @@ class ThemeTest {
 
         val spec = tree.single().spec as ButtonNodeProps
         assertEquals(0x00000000, spec.backgroundColor)
-        assertEquals(Theme.colors.divider, spec.borderColor)
+        assertEquals(Theme.colors.outline, spec.borderColor)
         assertEquals(1.dp, spec.borderWidth)
-        assertEquals(Theme.colors.textPrimary, spec.textColor)
+        assertEquals(Theme.colors.onSurface, spec.textColor)
     }
 
     @Test
@@ -473,7 +473,7 @@ class ThemeTest {
             }
         }
 
-        assertEquals(customTheme.colors.surfaceVariant, buttonTonal)
+        assertEquals(customTheme.colors.secondaryContainer, buttonTonal)
         assertEquals(customTheme.colors.divider, outlinedBorder)
         assertEquals(customTheme.colors.divider, disabledPrimary)
         assertEquals(customTheme.colors.divider, linearProgressTrack)
