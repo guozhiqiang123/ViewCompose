@@ -19,6 +19,12 @@ object NavigationBarDefaults {
 
     fun iconSize(): Int = Theme.controls.navigationBar.iconSize
 
+    fun labelStyle(): UiTextStyle {
+        return TextDefaults.labelSmallStyle().copy(
+            fontSizeSp = Theme.controls.navigationBar.labelSizeSp,
+        )
+    }
+
     fun labelSizeSp(): Int = Theme.controls.navigationBar.labelSizeSp
 
     fun badgeColor(): Int = Theme.colors.error

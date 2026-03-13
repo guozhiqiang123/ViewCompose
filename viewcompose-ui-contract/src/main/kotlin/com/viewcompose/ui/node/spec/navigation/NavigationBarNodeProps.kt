@@ -15,6 +15,11 @@ data class NavigationBarNodeProps(
     val rippleColor: Int,
     val iconSize: Int,
     val labelSizeSp: Int,
+    val labelFontWeight: Int? = null,
+    val labelFontFamily: UiFontFamily? = null,
+    val labelLetterSpacingEm: Float? = null,
+    val labelLineHeightSp: Int? = null,
+    val labelIncludeFontPadding: Boolean = false,
     val badgeColor: Int,
     val badgeTextColor: Int,
 ) : NodeSpec

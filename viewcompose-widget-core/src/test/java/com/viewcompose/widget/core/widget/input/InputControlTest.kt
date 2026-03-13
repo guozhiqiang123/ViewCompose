@@ -27,7 +27,13 @@ class InputControlTest {
             ),
             typography = UiTypography(
                 title = UiTextStyle(fontSizeSp = 31),
-                body = UiTextStyle(fontSizeSp = 19),
+                body = UiTextStyle(
+                    fontSizeSp = 19,
+                    fontWeight = 600,
+                    letterSpacingEm = 0.02f,
+                    lineHeightSp = 24,
+                    includeFontPadding = true,
+                ),
                 label = UiTextStyle(fontSizeSp = 13),
             ),
         )
@@ -51,6 +57,10 @@ class InputControlTest {
         assertEquals(customTheme.colors.primary, spec.controlColor)
         assertEquals(customTheme.colors.textPrimary, spec.textColor)
         assertEquals(customTheme.typography.body.fontSizeSp, spec.textSizeSp)
+        assertEquals(customTheme.typography.body.fontWeight, spec.fontWeight)
+        assertEquals(customTheme.typography.body.letterSpacingEm, spec.letterSpacingEm)
+        assertEquals(customTheme.typography.body.lineHeightSp, spec.lineHeightSp)
+        assertEquals(customTheme.typography.body.includeFontPadding, spec.includeFontPadding)
         assertEquals(pressedOverlayColorFor(customTheme.colors.textPrimary), spec.rippleColor)
         assertTrue(node.spec is ToggleNodeProps)
     }

@@ -11,6 +11,7 @@ import com.viewcompose.ui.node.SegmentedControlItem
 import com.viewcompose.ui.node.spec.ButtonNodeProps
 import com.viewcompose.ui.node.spec.IconButtonNodeProps
 import com.viewcompose.ui.node.spec.SegmentedControlNodeProps
+import com.viewcompose.ui.node.spec.uiFontFamily
 
 fun UiTreeBuilder.Button(
     text: String,
@@ -37,6 +38,11 @@ fun UiTreeBuilder.Button(
             onClick = onClick,
             textColor = contentColor,
             textSizeSp = style.fontSizeSp,
+            fontWeight = style.fontWeight,
+            fontFamily = uiFontFamily(style.fontFamily),
+            letterSpacingEm = style.letterSpacingEm,
+            lineHeightSp = style.lineHeightSp,
+            includeFontPadding = style.includeFontPadding,
             backgroundColor = ButtonDefaults.containerColor(variant, enabled),
             borderWidth = ButtonDefaults.borderWidth(variant),
             borderColor = ButtonDefaults.borderColor(variant, enabled),
@@ -135,6 +141,7 @@ fun UiTreeBuilder.SegmentedControl(
     key: Any? = null,
     modifier: Modifier = Modifier,
 ) {
+    val style = SegmentedControlDefaults.textStyle(size)
     val resolvedItems = items.map { label -> SegmentedControlItem(label = label) }
     val backgroundColor = SegmentedControlDefaults.backgroundColor(enabled)
     val indicatorColor = SegmentedControlDefaults.indicatorColor(enabled)
@@ -142,7 +149,6 @@ fun UiTreeBuilder.SegmentedControl(
     val textColor = SegmentedControlDefaults.textColor(enabled)
     val selectedTextColor = SegmentedControlDefaults.selectedTextColor(enabled)
     val rippleColor = SegmentedControlDefaults.rippleColor(enabled)
-    val textSizeSp = SegmentedControlDefaults.textStyle(size).fontSizeSp
     val paddingHorizontal = SegmentedControlDefaults.paddingHorizontal(size)
     val paddingVertical = SegmentedControlDefaults.paddingVertical(size)
     emit(
@@ -159,7 +165,12 @@ fun UiTreeBuilder.SegmentedControl(
             textColor = textColor,
             selectedTextColor = selectedTextColor,
             rippleColor = rippleColor,
-            textSizeSp = textSizeSp,
+            textSizeSp = style.fontSizeSp,
+            fontWeight = style.fontWeight,
+            fontFamily = uiFontFamily(style.fontFamily),
+            letterSpacingEm = style.letterSpacingEm,
+            lineHeightSp = style.lineHeightSp,
+            includeFontPadding = style.includeFontPadding,
             paddingHorizontal = paddingHorizontal,
             paddingVertical = paddingVertical,
         ),

@@ -1,11 +1,9 @@
 package com.viewcompose.renderer.view.tree.patch
 
 import android.text.TextUtils
-import android.util.TypedValue
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import androidx.core.widget.TextViewCompat
 import com.viewcompose.ui.node.TextOverflow
 import com.viewcompose.renderer.view.tree.ButtonNodePatch
 import com.viewcompose.renderer.view.tree.CanvasNodePatch
@@ -35,33 +33,17 @@ internal object ContentNodePatchApplier {
         if (patch.previous.textAlign != patch.next.textAlign) {
             view.gravity = ContentViewBinder.toTextGravity(patch.next.textAlign)
         }
-        if (patch.previous.textColor != patch.next.textColor) {
-            view.setTextColor(patch.next.textColor)
-        }
-        if (patch.previous.textSizeSp != patch.next.textSizeSp) {
-            view.setTextSize(TypedValue.COMPLEX_UNIT_SP, patch.next.textSizeSp.toFloat())
-        }
-        if (
-            patch.previous.fontWeight != patch.next.fontWeight ||
-            patch.previous.fontFamily != patch.next.fontFamily
-        ) {
-            ContentViewBinder.applyTypeface(view, patch.next.fontWeight, patch.next.fontFamily)
-        }
-        if (patch.previous.letterSpacingEm != patch.next.letterSpacingEm) {
-            view.letterSpacing = patch.next.letterSpacingEm ?: 0f
-        }
-        if (patch.previous.lineHeightSp != patch.next.lineHeightSp) {
-            val lineHeight = patch.next.lineHeightSp
-            if (lineHeight != null) {
-                TextViewCompat.setLineHeight(
-                    view,
-                    TypedValue.COMPLEX_UNIT_SP,
-                    lineHeight.toFloat(),
-                )
-            }
-        }
-        if (patch.previous.includeFontPadding != patch.next.includeFontPadding) {
-            view.includeFontPadding = patch.next.includeFontPadding
+        if (hasTextAppearanceChange(patch)) {
+            ContentViewBinder.applyTextAppearance(
+                view = view,
+                textColor = patch.next.textColor,
+                textSizeSp = patch.next.textSizeSp,
+                fontWeight = patch.next.fontWeight,
+                fontFamily = patch.next.fontFamily,
+                letterSpacingEm = patch.next.letterSpacingEm,
+                lineHeightSp = patch.next.lineHeightSp,
+                includeFontPadding = patch.next.includeFontPadding,
+            )
         }
         if (patch.previous.textDecoration != patch.next.textDecoration) {
             ContentViewBinder.applyTextDecoration(view, patch.next.textDecoration)
@@ -114,11 +96,17 @@ internal object ContentNodePatchApplier {
                 }
             }
         }
-        if (patch.previous.textColor != patch.next.textColor) {
-            view.setTextColor(patch.next.textColor)
-        }
-        if (patch.previous.textSizeSp != patch.next.textSizeSp) {
-            view.setTextSize(TypedValue.COMPLEX_UNIT_SP, patch.next.textSizeSp.toFloat())
+        if (hasTextAppearanceChange(patch)) {
+            ContentViewBinder.applyTextAppearance(
+                view = view,
+                textColor = patch.next.textColor,
+                textSizeSp = patch.next.textSizeSp,
+                fontWeight = patch.next.fontWeight,
+                fontFamily = patch.next.fontFamily,
+                letterSpacingEm = patch.next.letterSpacingEm,
+                lineHeightSp = patch.next.lineHeightSp,
+                includeFontPadding = patch.next.includeFontPadding,
+            )
         }
         if (hasStyleChange(patch)) {
             ViewModifierApplier.applyStylePatch(
@@ -171,5 +159,25 @@ internal object ContentNodePatchApplier {
             patch.previous.borderColor != patch.next.borderColor ||
             patch.previous.cornerRadius != patch.next.cornerRadius ||
             patch.previous.rippleColor != patch.next.rippleColor
+    }
+
+    private fun hasTextAppearanceChange(patch: TextNodePatch): Boolean {
+        return patch.previous.textColor != patch.next.textColor ||
+            patch.previous.textSizeSp != patch.next.textSizeSp ||
+            patch.previous.fontWeight != patch.next.fontWeight ||
+            patch.previous.fontFamily != patch.next.fontFamily ||
+            patch.previous.letterSpacingEm != patch.next.letterSpacingEm ||
+            patch.previous.lineHeightSp != patch.next.lineHeightSp ||
+            patch.previous.includeFontPadding != patch.next.includeFontPadding
+    }
+
+    private fun hasTextAppearanceChange(patch: ButtonNodePatch): Boolean {
+        return patch.previous.textColor != patch.next.textColor ||
+            patch.previous.textSizeSp != patch.next.textSizeSp ||
+            patch.previous.fontWeight != patch.next.fontWeight ||
+            patch.previous.fontFamily != patch.next.fontFamily ||
+            patch.previous.letterSpacingEm != patch.next.letterSpacingEm ||
+            patch.previous.lineHeightSp != patch.next.lineHeightSp ||
+            patch.previous.includeFontPadding != patch.next.includeFontPadding
     }
 }

@@ -4,6 +4,7 @@ import com.viewcompose.ui.modifier.Modifier
 import com.viewcompose.ui.node.NodeType
 import com.viewcompose.ui.node.spec.SliderNodeProps
 import com.viewcompose.ui.node.spec.ToggleNodeProps
+import com.viewcompose.ui.node.spec.uiFontFamily
 
 fun UiTreeBuilder.Checkbox(
     text: String,
@@ -30,6 +31,11 @@ fun UiTreeBuilder.Checkbox(
             onCheckedChange = onCheckedChange,
             textColor = InputControlDefaults.checkboxLabelColor(enabled),
             textSizeSp = style.fontSizeSp,
+            fontWeight = style.fontWeight,
+            fontFamily = uiFontFamily(style.fontFamily),
+            letterSpacingEm = style.letterSpacingEm,
+            lineHeightSp = style.lineHeightSp,
+            includeFontPadding = style.includeFontPadding,
             rippleColor = InputControlDefaults.pressedColor(),
         ),
         modifier = modifier,
@@ -61,6 +67,11 @@ fun UiTreeBuilder.Switch(
             onCheckedChange = onCheckedChange,
             textColor = InputControlDefaults.switchLabelColor(enabled),
             textSizeSp = style.fontSizeSp,
+            fontWeight = style.fontWeight,
+            fontFamily = uiFontFamily(style.fontFamily),
+            letterSpacingEm = style.letterSpacingEm,
+            lineHeightSp = style.lineHeightSp,
+            includeFontPadding = style.includeFontPadding,
             rippleColor = InputControlDefaults.pressedColor(),
         ),
         modifier = modifier,
@@ -92,6 +103,11 @@ fun UiTreeBuilder.RadioButton(
             onCheckedChange = onCheckedChange,
             textColor = InputControlDefaults.radioButtonLabelColor(enabled),
             textSizeSp = style.fontSizeSp,
+            fontWeight = style.fontWeight,
+            fontFamily = uiFontFamily(style.fontFamily),
+            letterSpacingEm = style.letterSpacingEm,
+            lineHeightSp = style.lineHeightSp,
+            includeFontPadding = style.includeFontPadding,
             rippleColor = InputControlDefaults.pressedColor(),
         ),
         modifier = modifier,

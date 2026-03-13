@@ -31,7 +31,13 @@ class TextFieldTest {
             ),
             typography = UiTypography(
                 title = UiTextStyle(fontSizeSp = 31),
-                body = UiTextStyle(fontSizeSp = 19),
+                body = UiTextStyle(
+                    fontSizeSp = 19,
+                    fontWeight = 500,
+                    letterSpacingEm = 0.03f,
+                    lineHeightSp = 26,
+                    includeFontPadding = true,
+                ),
                 label = UiTextStyle(fontSizeSp = 13),
             ),
         )
@@ -66,6 +72,10 @@ class TextFieldTest {
         assertEquals(customTheme.colors.textSecondary, spec.hintColor)
         assertEquals(customTheme.colors.textPrimary, spec.textColor)
         assertEquals(customTheme.typography.body.fontSizeSp, spec.textSizeSp)
+        assertEquals(customTheme.typography.body.fontWeight, spec.fontWeight)
+        assertEquals(customTheme.typography.body.letterSpacingEm, spec.letterSpacingEm)
+        assertEquals(customTheme.typography.body.lineHeightSp, spec.lineHeightSp)
+        assertEquals(customTheme.typography.body.includeFontPadding, spec.includeFontPadding)
         assertEquals(customTheme.colors.surface, spec.backgroundColor)
         assertEquals(customTheme.shapes.interactiveCornerRadius, spec.cornerRadius)
         assertEquals(true, spec.enabled)
@@ -136,7 +146,7 @@ class TextFieldTest {
         val spec = findFirstTextFieldNode(tree).spec as TextFieldNodeProps
 
         assertEquals(0x00000000, spec.backgroundColor)
-        assertEquals(Theme.colors.primary, spec.borderColor)
+        assertEquals(Theme.colors.outline, spec.borderColor)
         assertEquals(1.dp, spec.borderWidth)
     }
 

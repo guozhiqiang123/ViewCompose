@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.widget.TextViewCompat
+import com.viewcompose.renderer.R
 import com.viewcompose.ui.node.ImageSource
 import com.viewcompose.ui.node.TextDecoration
 import com.viewcompose.ui.node.TextOverflow
@@ -63,18 +64,14 @@ internal object ContentViewBinder {
             TextOverflow.Ellipsis -> TextUtils.TruncateAt.END
         }
         view.gravity = spec.gravity
-        applyTypeface(view, spec.fontWeight, spec.fontFamily)
-        if (spec.letterSpacingEm != null) {
-            view.letterSpacing = spec.letterSpacingEm
-        }
-        if (spec.lineHeightSp != null) {
-            TextViewCompat.setLineHeight(
-                view,
-                TypedValue.COMPLEX_UNIT_SP,
-                spec.lineHeightSp.toFloat(),
-            )
-        }
-        view.includeFontPadding = spec.includeFontPadding
+        applyTextAppearance(
+            view = view,
+            fontWeight = spec.fontWeight,
+            fontFamily = spec.fontFamily,
+            letterSpacingEm = spec.letterSpacingEm,
+            lineHeightSp = spec.lineHeightSp,
+            includeFontPadding = spec.includeFontPadding,
+        )
         applyTextDecoration(view, spec.textDecoration)
     }
 
@@ -206,8 +203,12 @@ internal object ContentViewBinder {
         fontWeight: Int?,
         fontFamily: UiFontFamily?,
     ) {
-        if (fontWeight == null && fontFamily == null) return
-        val base = fontFamily.toTypefaceOrNull() ?: view.typeface ?: Typeface.DEFAULT
+        val originalTypeface = ensureOriginalTextAppearanceCached(view)
+        if (fontWeight == null && fontFamily == null) {
+            view.typeface = originalTypeface
+            return
+        }
+        val base = fontFamily.toTypefaceOrNull() ?: originalTypeface
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && fontWeight != null) {
             view.typeface = Typeface.create(base, fontWeight, false)
         } else {
@@ -217,6 +218,51 @@ internal object ContentViewBinder {
             }
             view.setTypeface(base, style)
         }
+    }
+
+    internal fun applyTextAppearance(
+        view: TextView,
+        textColor: Int? = null,
+        textSizeSp: Int? = null,
+        fontWeight: Int? = null,
+        fontFamily: UiFontFamily? = null,
+        letterSpacingEm: Float? = null,
+        lineHeightSp: Int? = null,
+        includeFontPadding: Boolean? = null,
+    ) {
+        ensureOriginalTextAppearanceCached(view)
+        if (textColor != null) {
+            view.setTextColor(textColor)
+        }
+        if (textSizeSp != null) {
+            view.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp.toFloat())
+        }
+        applyTypeface(view, fontWeight, fontFamily)
+        val originalLetterSpacing = view.getTag(R.id.viewcompose_original_letter_spacing) as? Float ?: 0f
+        view.letterSpacing = letterSpacingEm ?: originalLetterSpacing
+        val originalLineHeight = view.getTag(R.id.viewcompose_original_line_height) as? Int ?: view.lineHeight
+        if (lineHeightSp != null) {
+            TextViewCompat.setLineHeight(
+                view,
+                TypedValue.COMPLEX_UNIT_SP,
+                lineHeightSp.toFloat(),
+            )
+        } else {
+            TextViewCompat.setLineHeight(view, originalLineHeight)
+        }
+        includeFontPadding?.let { view.includeFontPadding = it }
+    }
+
+    private fun ensureOriginalTextAppearanceCached(view: TextView): Typeface {
+        val cachedTypeface = view.getTag(R.id.viewcompose_original_typeface) as? Typeface
+        if (cachedTypeface != null) {
+            return cachedTypeface
+        }
+        val originalTypeface = view.typeface ?: Typeface.DEFAULT
+        view.setTag(R.id.viewcompose_original_typeface, originalTypeface)
+        view.setTag(R.id.viewcompose_original_letter_spacing, view.letterSpacing)
+        view.setTag(R.id.viewcompose_original_line_height, view.lineHeight)
+        return originalTypeface
     }
 
     internal fun applyTextDecoration(view: TextView, decoration: TextDecoration) {

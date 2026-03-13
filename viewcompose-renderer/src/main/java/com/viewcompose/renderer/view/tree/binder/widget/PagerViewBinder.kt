@@ -10,6 +10,7 @@ import com.viewcompose.ui.node.policy.CollectionReusePolicy
 import com.viewcompose.ui.node.spec.HorizontalPagerNodeProps
 import com.viewcompose.ui.node.spec.SegmentedControlNodeProps
 import com.viewcompose.ui.node.spec.TabRowNodeProps
+import com.viewcompose.ui.node.spec.UiFontFamily
 import com.viewcompose.ui.node.spec.VerticalPagerNodeProps
 import com.viewcompose.renderer.view.container.DeclarativeHorizontalPagerLayout
 import com.viewcompose.renderer.view.container.DeclarativeSegmentedControlLayout
@@ -30,6 +31,11 @@ internal object PagerViewBinder {
         val selectedTextColor: Int,
         val rippleColor: Int,
         val textSizeSp: Int,
+        val fontWeight: Int? = null,
+        val fontFamily: UiFontFamily? = null,
+        val letterSpacingEm: Float? = null,
+        val lineHeightSp: Int? = null,
+        val includeFontPadding: Boolean = false,
         val paddingHorizontal: Int,
         val paddingVertical: Int,
     )
@@ -94,6 +100,11 @@ internal object PagerViewBinder {
             selectedTextColor = spec.selectedTextColor,
             rippleColor = spec.rippleColor,
             textSizeSp = spec.textSizeSp,
+            fontWeight = spec.fontWeight,
+            fontFamily = spec.fontFamily,
+            letterSpacingEm = spec.letterSpacingEm,
+            lineHeightSp = spec.lineHeightSp,
+            includeFontPadding = spec.includeFontPadding,
             paddingHorizontal = spec.paddingHorizontal,
             paddingVertical = spec.paddingVertical,
         )
@@ -184,6 +195,11 @@ internal object PagerViewBinder {
             selectedTextColor = spec.selectedTextColor,
             rippleColor = spec.rippleColor,
             textSizeSp = spec.textSizeSp,
+            fontWeight = spec.fontWeight,
+            fontFamily = spec.fontFamily,
+            letterSpacingEm = spec.letterSpacingEm,
+            lineHeightSp = spec.lineHeightSp,
+            includeFontPadding = spec.includeFontPadding,
             paddingHorizontal = spec.paddingHorizontal,
             paddingVertical = spec.paddingVertical,
         )

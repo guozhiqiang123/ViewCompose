@@ -12,5 +12,10 @@ data class ToggleNodeProps(
     val onCheckedChange: ((Boolean) -> Unit)?,
     val textColor: Int,
     val textSizeSp: Int,
+    val fontWeight: Int? = null,
+    val fontFamily: UiFontFamily? = null,
+    val letterSpacingEm: Float? = null,
+    val lineHeightSp: Int? = null,
+    val includeFontPadding: Boolean = false,
     val rippleColor: Int,
 ) : NodeSpec

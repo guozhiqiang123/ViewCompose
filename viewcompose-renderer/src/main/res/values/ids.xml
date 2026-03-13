@@ -9,6 +9,9 @@
     <item name="viewcompose_test_tag" type="id" />
     <item name="viewcompose_constraint_layout_id" type="id" />
     <item name="viewcompose_constraint_item_spec" type="id" />
+    <item name="viewcompose_original_typeface" type="id" />
+    <item name="viewcompose_original_letter_spacing" type="id" />
+    <item name="viewcompose_original_line_height" type="id" />
     <item name="viewcompose_transform_origin" type="id" />
     <item name="viewcompose_transform_origin_listener" type="id" />
     <item name="viewcompose_system_bars_padding_state" type="id" />

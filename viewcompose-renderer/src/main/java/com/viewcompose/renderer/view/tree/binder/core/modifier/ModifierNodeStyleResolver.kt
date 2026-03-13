@@ -10,6 +10,7 @@ import com.viewcompose.ui.node.spec.IconButtonNodeProps
 import com.viewcompose.ui.node.spec.TextFieldNodeProps
 import com.viewcompose.ui.node.spec.TextNodeProps
 import com.viewcompose.ui.node.spec.ToggleNodeProps
+import com.viewcompose.ui.node.spec.UiFontFamily
 import com.viewcompose.renderer.modifier.ResolvedModifiers
 
 internal object ModifierNodeStyleResolver {
@@ -33,6 +34,11 @@ internal object ModifierNodeStyleResolver {
             rippleColor = readNodeRippleColor(node) ?: defaultRippleColor,
             textColor = readNodeTextColor(node),
             textSizeSp = readNodeTextSize(node),
+            fontWeight = readNodeFontWeight(node),
+            fontFamily = readNodeFontFamily(node),
+            letterSpacingEm = readNodeLetterSpacing(node),
+            lineHeightSp = readNodeLineHeight(node),
+            includeFontPadding = readNodeIncludeFontPadding(node),
             clickable = resolved.clickable != null || readNodeClickable(node),
         )
     }
@@ -135,6 +141,46 @@ internal object ModifierNodeStyleResolver {
         )
         else -> null
     }
+
+    private fun readNodeFontWeight(node: VNode): Int? = when (val spec = node.spec) {
+        is ButtonNodeProps -> spec.fontWeight
+        is TextNodeProps -> spec.fontWeight
+        is TextFieldNodeProps -> spec.fontWeight
+        is ToggleNodeProps -> spec.fontWeight
+        else -> null
+    }
+
+    private fun readNodeFontFamily(node: VNode): UiFontFamily? = when (val spec = node.spec) {
+        is ButtonNodeProps -> spec.fontFamily
+        is TextNodeProps -> spec.fontFamily
+        is TextFieldNodeProps -> spec.fontFamily
+        is ToggleNodeProps -> spec.fontFamily
+        else -> null
+    }
+
+    private fun readNodeLetterSpacing(node: VNode): Float? = when (val spec = node.spec) {
+        is ButtonNodeProps -> spec.letterSpacingEm
+        is TextNodeProps -> spec.letterSpacingEm
+        is TextFieldNodeProps -> spec.letterSpacingEm
+        is ToggleNodeProps -> spec.letterSpacingEm
+        else -> null
+    }
+
+    private fun readNodeLineHeight(node: VNode): Int? = when (val spec = node.spec) {
+        is ButtonNodeProps -> spec.lineHeightSp
+        is TextNodeProps -> spec.lineHeightSp
+        is TextFieldNodeProps -> spec.lineHeightSp
+        is ToggleNodeProps -> spec.lineHeightSp
+        else -> null
+    }
+
+    private fun readNodeIncludeFontPadding(node: VNode): Boolean? = when (val spec = node.spec) {
+        is ButtonNodeProps -> spec.includeFontPadding
+        is TextNodeProps -> spec.includeFontPadding
+        is TextFieldNodeProps -> spec.includeFontPadding
+        is ToggleNodeProps -> spec.includeFontPadding
+        else -> null
+    }
 }
 
 internal data class NodeStyle(
@@ -149,6 +195,11 @@ internal data class NodeStyle(
     val rippleColor: Int,
     val textColor: Int?,
     val textSizeSp: Int?,
+    val fontWeight: Int?,
+    val fontFamily: UiFontFamily?,
+    val letterSpacingEm: Float?,
+    val lineHeightSp: Int?,
+    val includeFontPadding: Boolean?,
     val clickable: Boolean,
 )
 

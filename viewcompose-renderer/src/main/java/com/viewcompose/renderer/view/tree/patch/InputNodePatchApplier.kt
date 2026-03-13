@@ -1,17 +1,19 @@
 package com.viewcompose.renderer.view.tree.patch
 
 import android.content.res.ColorStateList
-import android.util.TypedValue
 import android.widget.CompoundButton
 import android.widget.EditText
 import android.widget.SeekBar
 import android.widget.Switch
 import com.viewcompose.renderer.R
+import com.viewcompose.renderer.view.tree.ContentViewBinder
 import com.viewcompose.renderer.view.tree.InputViewBinder
 import com.viewcompose.renderer.view.tree.SliderNodePatch
 import com.viewcompose.renderer.view.tree.TextFieldNodePatch
 import com.viewcompose.renderer.view.tree.ToggleNodePatch
 import com.viewcompose.renderer.view.tree.ViewModifierApplier
+import com.viewcompose.ui.node.spec.TextFieldNodeProps
+import com.viewcompose.ui.node.spec.ToggleNodeProps
 
 internal object InputNodePatchApplier {
     fun applyTextFieldPatch(
@@ -79,11 +81,17 @@ internal object InputNodePatchApplier {
                 onValueChange = next.onValueChange,
             )
         }
-        if (previous.textColor != next.textColor) {
-            view.setTextColor(next.textColor)
-        }
-        if (previous.textSizeSp != next.textSizeSp) {
-            view.setTextSize(TypedValue.COMPLEX_UNIT_SP, next.textSizeSp.toFloat())
+        if (hasTextAppearanceChange(previous, next)) {
+            ContentViewBinder.applyTextAppearance(
+                view = view,
+                textColor = next.textColor,
+                textSizeSp = next.textSizeSp,
+                fontWeight = next.fontWeight,
+                fontFamily = next.fontFamily,
+                letterSpacingEm = next.letterSpacingEm,
+                lineHeightSp = next.lineHeightSp,
+                includeFontPadding = next.includeFontPadding,
+            )
         }
         if (
             previous.backgroundColor != next.backgroundColor ||
@@ -167,11 +175,17 @@ internal object InputNodePatchApplier {
                 next.onCheckedChange?.invoke(isChecked)
             }
         }
-        if (previous.textColor != next.textColor) {
-            view.setTextColor(next.textColor)
-        }
-        if (previous.textSizeSp != next.textSizeSp) {
-            view.setTextSize(TypedValue.COMPLEX_UNIT_SP, next.textSizeSp.toFloat())
+        if (hasTextAppearanceChange(previous, next)) {
+            ContentViewBinder.applyTextAppearance(
+                view = view,
+                textColor = next.textColor,
+                textSizeSp = next.textSizeSp,
+                fontWeight = next.fontWeight,
+                fontFamily = next.fontFamily,
+                letterSpacingEm = next.letterSpacingEm,
+                lineHeightSp = next.lineHeightSp,
+                includeFontPadding = next.includeFontPadding,
+            )
         }
     }
 
@@ -214,5 +228,31 @@ internal object InputNodePatchApplier {
         }
         view.setOnSeekBarChangeListener(nextListener)
         view.setTag(R.id.viewcompose_seek_listener, nextListener)
+    }
+
+    private fun hasTextAppearanceChange(
+        previous: TextFieldNodeProps,
+        next: TextFieldNodeProps,
+    ): Boolean {
+        return previous.textColor != next.textColor ||
+            previous.textSizeSp != next.textSizeSp ||
+            previous.fontWeight != next.fontWeight ||
+            previous.fontFamily != next.fontFamily ||
+            previous.letterSpacingEm != next.letterSpacingEm ||
+            previous.lineHeightSp != next.lineHeightSp ||
+            previous.includeFontPadding != next.includeFontPadding
+    }
+
+    private fun hasTextAppearanceChange(
+        previous: ToggleNodeProps,
+        next: ToggleNodeProps,
+    ): Boolean {
+        return previous.textColor != next.textColor ||
+            previous.textSizeSp != next.textSizeSp ||
+            previous.fontWeight != next.fontWeight ||
+            previous.fontFamily != next.fontFamily ||
+            previous.letterSpacingEm != next.letterSpacingEm ||
+            previous.lineHeightSp != next.lineHeightSp ||
+            previous.includeFontPadding != next.includeFontPadding
     }
 }

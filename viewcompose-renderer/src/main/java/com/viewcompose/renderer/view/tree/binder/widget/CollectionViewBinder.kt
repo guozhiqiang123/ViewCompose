@@ -13,6 +13,7 @@ import com.viewcompose.ui.node.spec.LazyColumnNodeProps
 import com.viewcompose.ui.node.spec.LazyRowNodeProps
 import com.viewcompose.ui.node.spec.LazyVerticalGridNodeProps
 import com.viewcompose.ui.node.spec.NavigationBarNodeProps
+import com.viewcompose.ui.node.spec.UiFontFamily
 import com.viewcompose.renderer.view.container.DeclarativeLazyVerticalGridLayout
 import com.viewcompose.renderer.view.container.DeclarativeNavigationBarLayout
 import com.viewcompose.ui.state.LazyListConnector
@@ -43,6 +44,11 @@ internal object CollectionViewBinder {
         val rippleColor: Int,
         val iconSize: Int,
         val labelSizeSp: Int,
+        val labelFontWeight: Int? = null,
+        val labelFontFamily: UiFontFamily? = null,
+        val labelLetterSpacingEm: Float? = null,
+        val labelLineHeightSp: Int? = null,
+        val labelIncludeFontPadding: Boolean = false,
         val badgeColor: Int,
         val badgeTextColor: Int,
     )
@@ -149,6 +155,11 @@ internal object CollectionViewBinder {
             rippleColor = spec.rippleColor,
             iconSize = spec.iconSize,
             labelSizeSp = spec.labelSizeSp,
+            labelFontWeight = spec.labelFontWeight,
+            labelFontFamily = spec.labelFontFamily,
+            labelLetterSpacingEm = spec.labelLetterSpacingEm,
+            labelLineHeightSp = spec.labelLineHeightSp,
+            labelIncludeFontPadding = spec.labelIncludeFontPadding,
             badgeColor = spec.badgeColor,
             badgeTextColor = spec.badgeTextColor,
         )
@@ -218,6 +229,11 @@ internal object CollectionViewBinder {
             rippleColor = spec.rippleColor,
             iconSize = spec.iconSize,
             labelSizeSp = spec.labelSizeSp,
+            labelFontWeight = spec.labelFontWeight,
+            labelFontFamily = spec.labelFontFamily,
+            labelLetterSpacingEm = spec.labelLetterSpacingEm,
+            labelLineHeightSp = spec.labelLineHeightSp,
+            labelIncludeFontPadding = spec.labelIncludeFontPadding,
             badgeColor = spec.badgeColor,
             badgeTextColor = spec.badgeTextColor,
         )

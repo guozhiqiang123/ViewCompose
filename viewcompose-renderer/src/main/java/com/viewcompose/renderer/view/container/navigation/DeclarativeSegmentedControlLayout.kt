@@ -12,6 +12,8 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.viewcompose.ui.node.SegmentedControlItem
+import com.viewcompose.ui.node.spec.UiFontFamily
+import com.viewcompose.renderer.view.tree.ContentViewBinder
 import com.viewcompose.renderer.view.dpToPx
 
 internal class DeclarativeSegmentedControlLayout(
@@ -29,6 +31,11 @@ internal class DeclarativeSegmentedControlLayout(
     private var selectedTextColorState: Int = Color.WHITE
     private var rippleColorState: Int = Color.TRANSPARENT
     private var textSizeSpState: Int = 14
+    private var fontWeightState: Int? = null
+    private var fontFamilyState: UiFontFamily? = null
+    private var letterSpacingState: Float? = null
+    private var lineHeightSpState: Int? = null
+    private var includeFontPaddingState: Boolean = false
     private var paddingHorizontalState: Int = 0
     private var paddingVerticalState: Int = 0
     private val indicatorInset = context.dpToPx(2).toFloat()
@@ -55,6 +62,11 @@ internal class DeclarativeSegmentedControlLayout(
         selectedTextColor: Int,
         rippleColor: Int,
         textSizeSp: Int,
+        fontWeight: Int?,
+        fontFamily: UiFontFamily?,
+        letterSpacingEm: Float?,
+        lineHeightSp: Int?,
+        includeFontPadding: Boolean,
         paddingHorizontal: Int,
         paddingVertical: Int,
     ) {
@@ -79,6 +91,11 @@ internal class DeclarativeSegmentedControlLayout(
             selectedTextColorState != selectedTextColor ||
             rippleColorState != rippleColor ||
             textSizeSpState != textSizeSp ||
+            fontWeightState != fontWeight ||
+            fontFamilyState != fontFamily ||
+            letterSpacingState != letterSpacingEm ||
+            lineHeightSpState != lineHeightSp ||
+            includeFontPaddingState != includeFontPadding ||
             paddingHorizontalState != paddingHorizontal ||
             paddingVerticalState != paddingVertical
 
@@ -100,6 +117,11 @@ internal class DeclarativeSegmentedControlLayout(
         selectedTextColorState = selectedTextColor
         rippleColorState = rippleColor
         textSizeSpState = textSizeSp
+        fontWeightState = fontWeight
+        fontFamilyState = fontFamily
+        letterSpacingState = letterSpacingEm
+        lineHeightSpState = lineHeightSp
+        includeFontPaddingState = includeFontPadding
         paddingHorizontalState = paddingHorizontal
         paddingVerticalState = paddingVertical
         styleInitialized = true
@@ -113,6 +135,11 @@ internal class DeclarativeSegmentedControlLayout(
                 selectedTextColor = selectedTextColor,
                 rippleColor = rippleColor,
                 textSizeSp = textSizeSp,
+                fontWeight = fontWeight,
+                fontFamily = fontFamily,
+                letterSpacingEm = letterSpacingEm,
+                lineHeightSp = lineHeightSp,
+                includeFontPadding = includeFontPadding,
                 paddingHorizontal = paddingHorizontal,
                 paddingVertical = paddingVertical,
             )
@@ -126,6 +153,11 @@ internal class DeclarativeSegmentedControlLayout(
                 textColor = textColor,
                 selectedTextColor = selectedTextColor,
                 rippleColor = rippleColor,
+                fontWeight = fontWeight,
+                fontFamily = fontFamily,
+                letterSpacingEm = letterSpacingEm,
+                lineHeightSp = lineHeightSp,
+                includeFontPadding = includeFontPadding,
             )
         }
     }
@@ -157,6 +189,11 @@ internal class DeclarativeSegmentedControlLayout(
         selectedTextColor: Int,
         rippleColor: Int,
         textSizeSp: Int,
+        fontWeight: Int?,
+        fontFamily: UiFontFamily?,
+        letterSpacingEm: Float?,
+        lineHeightSp: Int?,
+        includeFontPadding: Boolean,
         paddingHorizontal: Int,
         paddingVertical: Int,
     ) {
@@ -167,8 +204,16 @@ internal class DeclarativeSegmentedControlLayout(
             val isSelected = index == selectedIndex
             child.text = item.label
             child.isEnabled = enabled
-            child.setTextColor(if (isSelected) selectedTextColor else textColor)
-            child.textSize = textSizeSp.toFloat()
+            ContentViewBinder.applyTextAppearance(
+                view = child,
+                textColor = if (isSelected) selectedTextColor else textColor,
+                textSizeSp = textSizeSp,
+                fontWeight = fontWeight,
+                fontFamily = fontFamily,
+                letterSpacingEm = letterSpacingEm,
+                lineHeightSp = lineHeightSp,
+                includeFontPadding = includeFontPadding,
+            )
             child.setPadding(paddingHorizontal, paddingVertical, paddingHorizontal, paddingVertical)
             val childParams = child.layoutParams as LayoutParams
             if (childParams.leftMargin != insetPx ||
@@ -202,6 +247,11 @@ internal class DeclarativeSegmentedControlLayout(
         textColor: Int,
         selectedTextColor: Int,
         rippleColor: Int,
+        fontWeight: Int?,
+        fontFamily: UiFontFamily?,
+        letterSpacingEm: Float?,
+        lineHeightSp: Int?,
+        includeFontPadding: Boolean,
     ) {
         val indices = linkedSetOf(previousSelectedIndex, nextSelectedIndex)
         val cornerRadiusPx = (cornerRadius - indicatorInset).coerceAtLeast(0f)
@@ -209,7 +259,16 @@ internal class DeclarativeSegmentedControlLayout(
             if (index !in 0 until childCount) return@forEach
             val child = getChildAt(index) as? TextView ?: return@forEach
             val isSelected = index == nextSelectedIndex
-            child.setTextColor(if (isSelected) selectedTextColor else textColor)
+            ContentViewBinder.applyTextAppearance(
+                view = child,
+                textColor = if (isSelected) selectedTextColor else textColor,
+                textSizeSp = textSizeSpState,
+                fontWeight = fontWeight,
+                fontFamily = fontFamily,
+                letterSpacingEm = letterSpacingEm,
+                lineHeightSp = lineHeightSp,
+                includeFontPadding = includeFontPadding,
+            )
             child.background = createSegmentBackground(
                 enabled = enabled,
                 selected = isSelected,

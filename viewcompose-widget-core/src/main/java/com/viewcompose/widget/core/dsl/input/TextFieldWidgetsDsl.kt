@@ -7,6 +7,7 @@ import com.viewcompose.ui.node.NodeType
 import com.viewcompose.ui.node.TextFieldImeAction
 import com.viewcompose.ui.node.TextFieldType
 import com.viewcompose.ui.node.spec.TextFieldNodeProps
+import com.viewcompose.ui.node.spec.uiFontFamily
 
 fun UiTreeBuilder.BasicTextField(
     value: String,
@@ -51,7 +52,7 @@ fun UiTreeBuilder.BasicTextField(
             hintColor = hintColor,
             readOnly = readOnly,
             textColor = textColor,
-            textSizeSp = textStyle.fontSizeSp,
+            textStyle = textStyle,
             backgroundColor = backgroundColor,
             borderWidth = borderWidth,
             borderColor = borderColor,
@@ -171,7 +172,7 @@ private fun basicTextFieldSpec(
     hintColor: Int,
     readOnly: Boolean,
     textColor: Int,
-    textSizeSp: Int,
+    textStyle: UiTextStyle,
     backgroundColor: Int,
     borderWidth: Int,
     borderColor: Int,
@@ -195,7 +196,12 @@ private fun basicTextFieldSpec(
         readOnly = readOnly,
         onValueChange = onValueChange,
         textColor = textColor,
-        textSizeSp = textSizeSp,
+        textSizeSp = textStyle.fontSizeSp,
+        fontWeight = textStyle.fontWeight,
+        fontFamily = uiFontFamily(textStyle.fontFamily),
+        letterSpacingEm = textStyle.letterSpacingEm,
+        lineHeightSp = textStyle.lineHeightSp,
+        includeFontPadding = textStyle.includeFontPadding,
         backgroundColor = backgroundColor,
         borderWidth = borderWidth,
         borderColor = borderColor,

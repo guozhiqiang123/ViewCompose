@@ -78,13 +78,29 @@ class AdditionalWidgetCoverageTest {
 
     @Test
     fun `navigation bar emits items and selection props`() {
+        val theme = UiThemeDefaults.light().copy(
+            typography = UiTypography(
+                title = UiTextStyle(fontSizeSp = 30),
+                body = UiTextStyle(fontSizeSp = 18),
+                label = UiTextStyle(fontSizeSp = 14),
+                labelSmall = UiTextStyle(
+                    fontSizeSp = 12,
+                    fontWeight = 600,
+                    letterSpacingEm = 0.04f,
+                    lineHeightSp = 18,
+                    includeFontPadding = true,
+                ),
+            ),
+        )
         val tree = buildVNodeTree {
-            NavigationBar(
-                selectedIndex = 1,
-                onItemSelected = {},
-            ) {
-                Item(label = "Home", icon = ImageSource.Resource(1), badgeCount = 2)
-                Item(label = "Profile", icon = ImageSource.Resource(2))
+            UiTheme(theme) {
+                NavigationBar(
+                    selectedIndex = 1,
+                    onItemSelected = {},
+                ) {
+                    Item(label = "Home", icon = ImageSource.Resource(1), badgeCount = 2)
+                    Item(label = "Profile", icon = ImageSource.Resource(2))
+                }
             }
         }
 
@@ -96,6 +112,10 @@ class AdditionalWidgetCoverageTest {
         assertEquals(2, spec.items.size)
         assertEquals("Home", spec.items[0].label)
         assertEquals(2, spec.items[0].badgeCount)
+        assertEquals(theme.typography.labelSmall.fontWeight, spec.labelFontWeight)
+        assertEquals(theme.typography.labelSmall.letterSpacingEm, spec.labelLetterSpacingEm)
+        assertEquals(theme.typography.labelSmall.lineHeightSp, spec.labelLineHeightSp)
+        assertEquals(theme.typography.labelSmall.includeFontPadding, spec.labelIncludeFontPadding)
     }
 
     @Test

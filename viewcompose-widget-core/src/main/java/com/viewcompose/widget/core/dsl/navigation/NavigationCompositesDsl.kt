@@ -11,6 +11,7 @@ import com.viewcompose.ui.node.ImageSource
 import com.viewcompose.ui.node.NavigationBarItem
 import com.viewcompose.ui.node.NodeType
 import com.viewcompose.ui.node.spec.NavigationBarNodeProps
+import com.viewcompose.ui.node.spec.uiFontFamily
 
 fun UiTreeBuilder.TopAppBar(
     title: String,
@@ -108,6 +109,7 @@ fun UiTreeBuilder.NavigationBar(
     rippleColor: Int = NavigationBarDefaults.rippleColor(),
     iconSize: Int = NavigationBarDefaults.iconSize(),
     labelSizeSp: Int = NavigationBarDefaults.labelSizeSp(),
+    labelStyle: UiTextStyle = NavigationBarDefaults.labelStyle(),
     badgeColor: Int = NavigationBarDefaults.badgeColor(),
     badgeTextColor: Int = NavigationBarDefaults.badgeTextColor(),
     key: Any? = null,
@@ -131,6 +133,11 @@ fun UiTreeBuilder.NavigationBar(
             rippleColor = rippleColor,
             iconSize = iconSize,
             labelSizeSp = labelSizeSp,
+            labelFontWeight = labelStyle.fontWeight,
+            labelFontFamily = uiFontFamily(labelStyle.fontFamily),
+            labelLetterSpacingEm = labelStyle.letterSpacingEm,
+            labelLineHeightSp = labelStyle.lineHeightSp,
+            labelIncludeFontPadding = labelStyle.includeFontPadding,
             badgeColor = badgeColor,
             badgeTextColor = badgeTextColor,
         ),

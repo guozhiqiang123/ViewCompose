@@ -1,6 +1,5 @@
 package com.viewcompose.renderer.view.tree
 
-import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
 import com.viewcompose.renderer.R
@@ -85,14 +84,23 @@ internal object ModifierInteractionApplier {
         view: View,
         textColor: Int?,
         textSizeSp: Int?,
+        fontWeight: Int?,
+        fontFamily: com.viewcompose.ui.node.spec.UiFontFamily?,
+        letterSpacingEm: Float?,
+        lineHeightSp: Int?,
+        includeFontPadding: Boolean?,
     ) {
         if (view !is TextView) return
-        if (textColor != null) {
-            view.setTextColor(textColor)
-        }
-        if (textSizeSp != null) {
-            view.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp.toFloat())
-        }
+        ContentViewBinder.applyTextAppearance(
+            view = view,
+            textColor = textColor,
+            textSizeSp = textSizeSp,
+            fontWeight = fontWeight,
+            fontFamily = fontFamily,
+            letterSpacingEm = letterSpacingEm,
+            lineHeightSp = lineHeightSp,
+            includeFontPadding = includeFontPadding,
+        )
     }
 
     fun applyNativeViewConfigs(

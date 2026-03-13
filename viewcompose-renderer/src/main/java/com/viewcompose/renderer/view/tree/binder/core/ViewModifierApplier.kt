@@ -104,6 +104,11 @@ internal object ViewModifierApplier {
             view = view,
             textColor = nodeStyle.textColor,
             textSizeSp = nodeStyle.textSizeSp,
+            fontWeight = nodeStyle.fontWeight,
+            fontFamily = nodeStyle.fontFamily,
+            letterSpacingEm = nodeStyle.letterSpacingEm,
+            lineHeightSp = nodeStyle.lineHeightSp,
+            includeFontPadding = nodeStyle.includeFontPadding,
         )
     }
 }

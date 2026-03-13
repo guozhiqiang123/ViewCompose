@@ -32,4 +32,29 @@ class ButtonTest {
         assertEquals(ButtonDefaults.height(ButtonSize.Large), spec.minHeight)
         assertTrue(node.spec is ButtonNodeProps)
     }
+
+    @Test
+    fun `button emits full text style fields`() {
+        val style = UiTextStyle(
+            fontSizeSp = 17.sp,
+            fontWeight = 700,
+            letterSpacingEm = 0.06f,
+            lineHeightSp = 24.sp,
+            includeFontPadding = true,
+        )
+
+        val tree = buildVNodeTree {
+            Button(
+                text = "Styled",
+                style = style,
+            )
+        }
+
+        val spec = tree.single().spec as ButtonNodeProps
+
+        assertEquals(style.fontWeight, spec.fontWeight)
+        assertEquals(style.letterSpacingEm, spec.letterSpacingEm)
+        assertEquals(style.lineHeightSp, spec.lineHeightSp)
+        assertEquals(style.includeFontPadding, spec.includeFontPadding)
+    }
 }

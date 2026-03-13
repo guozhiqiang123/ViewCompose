@@ -14,6 +14,11 @@ data class SegmentedControlNodeProps(
     val selectedTextColor: Int,
     val rippleColor: Int,
     val textSizeSp: Int,
+    val fontWeight: Int? = null,
+    val fontFamily: UiFontFamily? = null,
+    val letterSpacingEm: Float? = null,
+    val lineHeightSp: Int? = null,
+    val includeFontPadding: Boolean = false,
     val paddingHorizontal: Int,
     val paddingVertical: Int,
 ) : NodeSpec

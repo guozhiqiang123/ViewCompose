@@ -78,6 +78,42 @@ class SegmentedControlTest {
     }
 
     @Test
+    fun `segmented control emits full text style fields`() {
+        val customTheme = UiThemeDefaults.light().copy(
+            typography = UiTypography(
+                title = UiTextStyle(fontSizeSp = 30),
+                body = UiTextStyle(fontSizeSp = 18),
+                label = UiTextStyle(fontSizeSp = 14),
+                labelLarge = UiTextStyle(
+                    fontSizeSp = 15,
+                    fontWeight = 700,
+                    letterSpacingEm = 0.05f,
+                    lineHeightSp = 22,
+                    includeFontPadding = true,
+                ),
+            ),
+        )
+
+        val tree = buildVNodeTree {
+            UiTheme(customTheme) {
+                SegmentedControl(
+                    items = listOf("A", "B"),
+                    selectedIndex = 0,
+                    onSelectionChange = {},
+                    size = SegmentedControlSize.Medium,
+                )
+            }
+        }
+
+        val spec = tree.single().spec as SegmentedControlNodeProps
+
+        assertEquals(customTheme.typography.labelLarge.fontWeight, spec.fontWeight)
+        assertEquals(customTheme.typography.labelLarge.letterSpacingEm, spec.letterSpacingEm)
+        assertEquals(customTheme.typography.labelLarge.lineHeightSp, spec.lineHeightSp)
+        assertEquals(customTheme.typography.labelLarge.includeFontPadding, spec.includeFontPadding)
+    }
+
+    @Test
     fun `segmented control uses disabled color override tokens`() {
         val baseTheme = UiThemeDefaults.light()
 
