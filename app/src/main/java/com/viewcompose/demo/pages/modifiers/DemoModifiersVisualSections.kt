@@ -78,7 +78,7 @@ internal fun UiTreeBuilder.ModifierBorderClipSection() {
                 modifier = Modifier
                     .weight(1f)
                     .height(64.dp)
-                    .border(1.dp, Theme.colors.divider)
+                    .border(1.dp, Theme.colors.outlineVariant)
                     .cornerRadius(8.dp),
             ) {
                 Text(text = "1dp 边框")
@@ -219,12 +219,12 @@ internal fun UiTreeBuilder.ModifierBackgroundDrawableSection() {
                     .height(96.dp)
                     .backgroundColor(Theme.colors.error)
                     .cornerRadius(12.dp)
-                    .border(1.dp, Theme.colors.divider)
+                    .border(1.dp, Theme.colors.outlineVariant)
                     .testTag(DemoTestTags.MODIFIERS_DRAWABLE_BACKGROUND_COLOR_ONLY),
             ) {
                 Text(
                     text = "仅颜色",
-                    color = Theme.colors.textPrimary,
+                    color = Theme.colors.onSurface,
                     style = UiTextStyle(fontSizeSp = 13.sp),
                 )
             }

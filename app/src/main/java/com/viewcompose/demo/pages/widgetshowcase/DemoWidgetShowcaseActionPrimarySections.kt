@@ -144,7 +144,7 @@ internal fun UiTreeBuilder.ShowcaseIconButton() {
                 )
                 IconButton(
                     icon = ImageSource.Resource(R.drawable.demo_media_icon),
-                    tint = Theme.colors.textSecondary,
+                    tint = Theme.colors.onSurfaceVariant,
                     onClick = {},
                 )
             }

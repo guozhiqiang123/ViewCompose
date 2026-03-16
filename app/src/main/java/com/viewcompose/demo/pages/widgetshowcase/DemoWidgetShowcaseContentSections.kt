@@ -152,7 +152,7 @@ internal fun UiTreeBuilder.ShowcaseImageIcon() {
                 )
                 Icon(
                     source = ImageSource.Resource(R.drawable.demo_media_icon),
-                    tint = Theme.colors.textSecondary,
+                    tint = Theme.colors.onSurfaceVariant,
                 )
             }
         }
@@ -182,7 +182,7 @@ internal fun UiTreeBuilder.ShowcaseDivider() {
                 style = UiTextStyle(fontSizeSp = 13.sp),
                 modifier = Modifier.margin(top = 8.dp),
             )
-            Divider(color = Theme.colors.textSecondary)
+            Divider(color = Theme.colors.onSurfaceVariant)
         }
 
         DemoSection(title = "粗细对比", subtitle = "不同 thickness 的分隔线") {

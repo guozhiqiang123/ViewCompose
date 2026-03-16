@@ -57,7 +57,7 @@ internal fun UiTreeBuilder.ShowcaseCheckbox() {
                 checked = c.value,
                 onCheckedChange = { c.value = it },
                 checkedColor = Theme.colors.secondary,
-                uncheckedColor = Theme.colors.textSecondary,
+                uncheckedColor = Theme.colors.onSurfaceVariant,
             )
         }
     }
@@ -151,7 +151,7 @@ internal fun UiTreeBuilder.ShowcaseRadioButton() {
                 checked = c.value,
                 onCheckedChange = { c.value = it },
                 checkedColor = Theme.colors.secondary,
-                uncheckedColor = Theme.colors.textSecondary,
+                uncheckedColor = Theme.colors.onSurfaceVariant,
             )
         }
     }

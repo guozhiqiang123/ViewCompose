@@ -26,7 +26,7 @@ class ThemeTokenUsageAuditTest {
             roots = sourceRoots,
             regex = Regex("""Theme\.colors\.([A-Za-z0-9_]+)"""),
         )
-        val allowed = colorCompatibilityAliases + reservedColorTokens
+        val allowed = reservedColorTokens
         val missing = expected - used - allowed
 
         assertTrue(
@@ -42,7 +42,7 @@ class ThemeTokenUsageAuditTest {
             roots = sourceRoots,
             regex = Regex("""Theme\.typography\.([A-Za-z0-9_]+)"""),
         )
-        val missing = expected - used - typographyCompatibilityAliases
+        val missing = expected - used
 
         assertTrue(
             "Unconsumed typography tokens: $missing. Used=$used",
@@ -57,7 +57,7 @@ class ThemeTokenUsageAuditTest {
             roots = sourceRoots,
             regex = Regex("""Theme\.shapes\.([A-Za-z0-9_]+)"""),
         )
-        val missing = expected - used - shapeCompatibilityAliases
+        val missing = expected - used
 
         assertTrue(
             "Unconsumed shape tokens: $missing. Used=$used",
@@ -199,20 +199,5 @@ class ThemeTokenUsageAuditTest {
             "surfaceTint",
         )
 
-        private val colorCompatibilityAliases = setOf(
-            "textPrimary",
-            "textSecondary",
-            "divider",
-        )
-
-        private val typographyCompatibilityAliases = setOf(
-            "title",
-            "body",
-            "label",
-        )
-
-        private val shapeCompatibilityAliases = setOf(
-            "cardCornerRadius",
-        )
     }
 }

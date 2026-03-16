@@ -37,7 +37,7 @@ internal object ModifierPreviewSpecs {
                         modifier = Modifier
                             .fillMaxWidth()
                             .cornerRadius(16.dp)
-                            .border(1.dp, Theme.colors.divider)
+                            .border(1.dp, Theme.colors.outlineVariant)
                             .padding(12.dp),
                     ) {
                         Text(text = "圆角/边框/内边距")

@@ -25,20 +25,20 @@ class TextFieldTest {
                 success = 10,
                 warning = 11,
                 info = 12,
-                divider = 6,
-                textPrimary = 70,
-                textSecondary = 80,
+                onSurface = 70,
+                onSurfaceVariant = 80,
+                outline = 6,
             ),
             typography = UiTypography(
-                title = UiTextStyle(fontSizeSp = 31),
-                body = UiTextStyle(
+                titleMedium = UiTextStyle(fontSizeSp = 31),
+                bodyMedium = UiTextStyle(
                     fontSizeSp = 19,
                     fontWeight = 500,
                     letterSpacingEm = 0.03f,
                     lineHeightSp = 26,
                     includeFontPadding = true,
                 ),
-                label = UiTextStyle(fontSizeSp = 13),
+                labelMedium = UiTextStyle(fontSizeSp = 13),
             ),
         )
         val tree = buildVNodeTree {
@@ -69,13 +69,13 @@ class TextFieldTest {
         assertEquals(TextFieldType.Text, spec.keyboardType)
         assertEquals(3, spec.maxLines)
         assertEquals(TextFieldImeAction.Next, spec.imeAction)
-        assertEquals(customTheme.colors.textSecondary, spec.hintColor)
-        assertEquals(customTheme.colors.textPrimary, spec.textColor)
-        assertEquals(customTheme.typography.body.fontSizeSp, spec.textSizeSp)
-        assertEquals(customTheme.typography.body.fontWeight, spec.fontWeight)
-        assertEquals(customTheme.typography.body.letterSpacingEm, spec.letterSpacingEm)
-        assertEquals(customTheme.typography.body.lineHeightSp, spec.lineHeightSp)
-        assertEquals(customTheme.typography.body.includeFontPadding, spec.includeFontPadding)
+        assertEquals(customTheme.colors.onSurfaceVariant, spec.hintColor)
+        assertEquals(customTheme.colors.onSurface, spec.textColor)
+        assertEquals(customTheme.typography.bodyMedium.fontSizeSp, spec.textSizeSp)
+        assertEquals(customTheme.typography.bodyMedium.fontWeight, spec.fontWeight)
+        assertEquals(customTheme.typography.bodyMedium.letterSpacingEm, spec.letterSpacingEm)
+        assertEquals(customTheme.typography.bodyMedium.lineHeightSp, spec.lineHeightSp)
+        assertEquals(customTheme.typography.bodyMedium.includeFontPadding, spec.includeFontPadding)
         assertEquals(customTheme.colors.surface, spec.backgroundColor)
         assertEquals(customTheme.shapes.smallCornerRadius, spec.cornerRadius)
         assertEquals(true, spec.enabled)
@@ -168,7 +168,7 @@ class TextFieldTest {
 
         assertFalse(elements.any { it is com.viewcompose.ui.modifier.HeightModifierElement })
         assertEquals(TextFieldDefaults.height(TextFieldSize.Compact), spec.minHeight)
-        assertEquals(Theme.typography.label.fontSizeSp, spec.textSizeSp)
+        assertEquals(Theme.typography.labelSmall.fontSizeSp, spec.textSizeSp)
     }
 
     @Test

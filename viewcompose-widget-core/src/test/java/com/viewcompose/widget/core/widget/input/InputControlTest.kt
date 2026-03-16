@@ -21,20 +21,20 @@ class InputControlTest {
                 success = 10,
                 warning = 11,
                 info = 12,
-                divider = 6,
-                textPrimary = 70,
-                textSecondary = 80,
+                onSurface = 70,
+                onSurfaceVariant = 80,
+                outline = 6,
             ),
             typography = UiTypography(
-                title = UiTextStyle(fontSizeSp = 31),
-                body = UiTextStyle(
+                titleMedium = UiTextStyle(fontSizeSp = 31),
+                bodyMedium = UiTextStyle(
                     fontSizeSp = 19,
                     fontWeight = 600,
                     letterSpacingEm = 0.02f,
                     lineHeightSp = 24,
                     includeFontPadding = true,
                 ),
-                label = UiTextStyle(fontSizeSp = 13),
+                labelMedium = UiTextStyle(fontSizeSp = 13),
             ),
         )
         val tree = buildVNodeTree {
@@ -55,13 +55,13 @@ class InputControlTest {
         assertEquals(true, spec.checked)
         assertEquals(true, spec.enabled)
         assertEquals(customTheme.colors.primary, spec.controlColor)
-        assertEquals(customTheme.colors.textPrimary, spec.textColor)
-        assertEquals(customTheme.typography.body.fontSizeSp, spec.textSizeSp)
-        assertEquals(customTheme.typography.body.fontWeight, spec.fontWeight)
-        assertEquals(customTheme.typography.body.letterSpacingEm, spec.letterSpacingEm)
-        assertEquals(customTheme.typography.body.lineHeightSp, spec.lineHeightSp)
-        assertEquals(customTheme.typography.body.includeFontPadding, spec.includeFontPadding)
-        assertEquals(pressedOverlayColorFor(customTheme.colors.textPrimary), spec.rippleColor)
+        assertEquals(customTheme.colors.onSurface, spec.textColor)
+        assertEquals(customTheme.typography.bodyMedium.fontSizeSp, spec.textSizeSp)
+        assertEquals(customTheme.typography.bodyMedium.fontWeight, spec.fontWeight)
+        assertEquals(customTheme.typography.bodyMedium.letterSpacingEm, spec.letterSpacingEm)
+        assertEquals(customTheme.typography.bodyMedium.lineHeightSp, spec.lineHeightSp)
+        assertEquals(customTheme.typography.bodyMedium.includeFontPadding, spec.includeFontPadding)
+        assertEquals(pressedOverlayColorFor(customTheme.colors.onSurface), spec.rippleColor)
         assertTrue(node.spec is ToggleNodeProps)
     }
 

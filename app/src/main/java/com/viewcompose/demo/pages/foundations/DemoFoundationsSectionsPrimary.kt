@@ -119,11 +119,11 @@ internal fun UiTreeBuilder.FoundationsThemeSection() {
                 ThemeSwatch("Field", Theme.colors.surface),
                 ThemeSwatch("Control", Theme.colors.primary),
                 ThemeSwatch("Error", 0xFFB3261E.toInt()),
-                ThemeSwatch("Pressed", 0x22000000 or (Theme.colors.textPrimary and 0x00FFFFFF)),
+                ThemeSwatch("Pressed", 0x22000000 or (Theme.colors.onSurface and 0x00FFFFFF)),
             ),
         )
         Text(
-            text = "Shapes: card=${Theme.shapes.cardCornerRadius}px, small=${Theme.shapes.smallCornerRadius}px",
+            text = "Shapes: card=${Theme.shapes.mediumCornerRadius}px, small=${Theme.shapes.smallCornerRadius}px",
             style = UiTextStyle(fontSizeSp = 13.sp),
             color = TextDefaults.secondaryColor(),
         )
@@ -246,7 +246,7 @@ internal fun UiTreeBuilder.FoundationsOverridesSection() {
         }
         UiThemeOverride(
             shapes = {
-                copy(cardCornerRadius = 32.dp, smallCornerRadius = 24.dp)
+                copy(mediumCornerRadius = 32.dp, smallCornerRadius = 24.dp)
             },
         ) {
             Column(
@@ -259,7 +259,7 @@ internal fun UiTreeBuilder.FoundationsOverridesSection() {
             ) {
                 Text(text = "形状覆盖")
                 Text(
-                    text = "局部 card=${Theme.shapes.cardCornerRadius}px, small=${Theme.shapes.smallCornerRadius}px",
+                    text = "局部 card=${Theme.shapes.mediumCornerRadius}px, small=${Theme.shapes.smallCornerRadius}px",
                     style = UiTextStyle(fontSizeSp = 13.sp),
                     color = TextDefaults.secondaryColor(),
                 )
@@ -295,7 +295,7 @@ internal fun UiTreeBuilder.FoundationsOverridesSection() {
             ThemeSwatchRow(
                 label = "按压覆盖",
                 swatches = listOf(
-                    ThemeSwatch("Base", 0x22000000 or (Theme.colors.textPrimary and 0x00FFFFFF)),
+                    ThemeSwatch("Base", 0x22000000 or (Theme.colors.onSurface and 0x00FFFFFF)),
                     ThemeSwatch("Primary", Theme.colors.primary),
                 ),
             )
@@ -309,12 +309,12 @@ internal fun UiTreeBuilder.FoundationsOverridesSection() {
         }
         ProvideButtonColors(
             ButtonColorOverride(
-                primaryContainer = Theme.colors.textPrimary,
+                primaryContainer = Theme.colors.onSurface,
                 primaryContent = Theme.colors.background,
-                primaryDisabledContainer = Theme.colors.divider,
-                primaryDisabledContent = Theme.colors.textSecondary,
+                primaryDisabledContainer = Theme.colors.outlineVariant,
+                primaryDisabledContent = Theme.colors.onSurfaceVariant,
                 outlinedBorder = Theme.colors.secondary,
-                outlinedDisabledBorder = Theme.colors.textSecondary,
+                outlinedDisabledBorder = Theme.colors.onSurfaceVariant,
             ),
         ) {
             ProvideTextFieldColors(
@@ -326,9 +326,9 @@ internal fun UiTreeBuilder.FoundationsOverridesSection() {
                 ProvideSegmentedControlColors(
                     SegmentedControlColorOverride(
                         indicator = Theme.colors.secondary,
-                        indicatorDisabled = Theme.colors.divider,
+                        indicatorDisabled = Theme.colors.outlineVariant,
                         selectedText = Theme.colors.background,
-                        selectedTextDisabled = Theme.colors.textSecondary,
+                        selectedTextDisabled = Theme.colors.onSurfaceVariant,
                     ),
                 ) {
                     Column(

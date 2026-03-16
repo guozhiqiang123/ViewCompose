@@ -51,8 +51,8 @@ internal object ThemeTokenMapper {
                     androidx.appcompat.R.attr.colorAccent -> snapshot.colors.surfaceTint
                     com.google.android.material.R.attr.colorSurfaceInverse -> snapshot.colors.inverseSurface
                     com.google.android.material.R.attr.colorOnSurfaceInverse -> snapshot.colors.inverseOnSurface
-                    android.R.attr.textColorPrimary -> snapshot.colors.textPrimary
-                    android.R.attr.textColorSecondary -> snapshot.colors.textSecondary
+                    android.R.attr.textColorPrimary -> snapshot.colors.onSurface
+                    android.R.attr.textColorSecondary -> snapshot.colors.onSurfaceVariant
                     else -> null
                 }
             },
@@ -62,21 +62,32 @@ internal object ThemeTokenMapper {
         )
         return baseTokens.copy(
             typography = UiTypography(
-                title = resolveTextStyle(snapshot.typography.titleLarge, fallback.typography.title),
-                body = resolveTextStyle(snapshot.typography.bodyLarge, fallback.typography.body),
-                label = resolveTextStyle(snapshot.typography.labelLarge, fallback.typography.label),
+                titleMedium = resolveTextStyle(
+                    snapshot.typography.titleMedium
+                        ?: snapshot.typography.titleLarge
+                        ?: snapshot.typography.titleSmall,
+                    fallback.typography.titleMedium,
+                ),
+                bodyMedium = resolveTextStyle(
+                    snapshot.typography.bodyMedium
+                        ?: snapshot.typography.bodyLarge
+                        ?: snapshot.typography.bodySmall,
+                    fallback.typography.bodyMedium,
+                ),
+                labelMedium = resolveTextStyle(
+                    snapshot.typography.labelMedium
+                        ?: snapshot.typography.labelLarge
+                        ?: snapshot.typography.labelSmall,
+                    fallback.typography.labelMedium,
+                ),
                 titleLarge = resolveTextStyle(snapshot.typography.titleLarge, fallback.typography.titleLarge),
-                titleMedium = resolveTextStyle(snapshot.typography.titleMedium, fallback.typography.titleMedium),
                 titleSmall = resolveTextStyle(snapshot.typography.titleSmall, fallback.typography.titleSmall),
                 bodyLarge = resolveTextStyle(snapshot.typography.bodyLarge, fallback.typography.bodyLarge),
-                bodyMedium = resolveTextStyle(snapshot.typography.bodyMedium, fallback.typography.bodyMedium),
                 bodySmall = resolveTextStyle(snapshot.typography.bodySmall, fallback.typography.bodySmall),
                 labelLarge = resolveTextStyle(snapshot.typography.labelLarge, fallback.typography.labelLarge),
-                labelMedium = resolveTextStyle(snapshot.typography.labelMedium, fallback.typography.labelMedium),
                 labelSmall = resolveTextStyle(snapshot.typography.labelSmall, fallback.typography.labelSmall),
             ),
             shapes = UiShapes(
-                cardCornerRadius = snapshot.shapes.mediumCornerRadius ?: fallback.shapes.cardCornerRadius,
                 smallCornerRadius = snapshot.shapes.smallCornerRadius ?: fallback.shapes.smallCornerRadius,
                 mediumCornerRadius = snapshot.shapes.mediumCornerRadius ?: fallback.shapes.mediumCornerRadius,
                 largeCornerRadius = snapshot.shapes.largeCornerRadius ?: fallback.shapes.largeCornerRadius,
@@ -98,11 +109,11 @@ internal object ThemeTokenMapper {
                 surface = readColor(com.google.android.material.R.attr.colorSurface) ?: fallback.colors.surface,
                 surfaceVariant = readColor(com.google.android.material.R.attr.colorSurfaceVariant)
                     ?: fallback.colors.surfaceVariant,
-                textPrimary = readColor(android.R.attr.textColorPrimary) ?: fallback.colors.textPrimary,
-                textSecondary = readColor(android.R.attr.textColorSecondary) ?: fallback.colors.textSecondary,
                 onSurface = readColor(com.google.android.material.R.attr.colorOnSurface)
+                    ?: readColor(android.R.attr.textColorPrimary)
                     ?: fallback.colors.onSurface,
                 onSurfaceVariant = readColor(com.google.android.material.R.attr.colorOnSurfaceVariant)
+                    ?: readColor(android.R.attr.textColorSecondary)
                     ?: fallback.colors.onSurfaceVariant,
                 primary = readColor(androidx.appcompat.R.attr.colorPrimary) ?: fallback.colors.primary,
                 onPrimary = readColor(com.google.android.material.R.attr.colorOnPrimary)
@@ -128,7 +139,6 @@ internal object ThemeTokenMapper {
                 success = fallback.colors.success,
                 warning = fallback.colors.warning,
                 info = fallback.colors.info,
-                divider = readColor(com.google.android.material.R.attr.colorOutline) ?: fallback.colors.divider,
                 outline = readColor(com.google.android.material.R.attr.colorOutline) ?: fallback.colors.outline,
                 outlineVariant = readColor(com.google.android.material.R.attr.colorOutlineVariant)
                     ?: fallback.colors.outlineVariant,
@@ -141,17 +151,17 @@ internal object ThemeTokenMapper {
                 ripple = readRippleColor() ?: fallback.colors.ripple,
             ),
             typography = UiTypography(
-                title = UiTextStyle(
+                titleMedium = UiTextStyle(
                     fontSizeSp = readTextSizeSp(android.R.attr.textAppearanceLarge)
-                        ?: fallback.typography.title.fontSizeSp,
+                        ?: fallback.typography.titleMedium.fontSizeSp,
                 ),
-                body = UiTextStyle(
+                bodyMedium = UiTextStyle(
                     fontSizeSp = readTextSizeSp(android.R.attr.textAppearanceMedium)
-                        ?: fallback.typography.body.fontSizeSp,
+                        ?: fallback.typography.bodyMedium.fontSizeSp,
                 ),
-                label = UiTextStyle(
+                labelMedium = UiTextStyle(
                     fontSizeSp = readTextSizeSp(android.R.attr.textAppearanceSmall)
-                        ?: fallback.typography.label.fontSizeSp,
+                        ?: fallback.typography.labelMedium.fontSizeSp,
                 ),
             ),
             shapes = fallback.shapes,

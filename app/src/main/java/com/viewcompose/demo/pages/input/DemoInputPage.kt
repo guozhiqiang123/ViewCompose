@@ -312,31 +312,31 @@ internal fun UiTreeBuilder.InputPage(
                 ProvideCheckboxColors(
                     InputControlColorOverride(
                         control = Theme.colors.secondary,
-                        controlDisabled = Theme.colors.divider,
-                        label = Theme.colors.textPrimary,
-                        labelDisabled = Theme.colors.textSecondary,
+                        controlDisabled = Theme.colors.outlineVariant,
+                        label = Theme.colors.onSurface,
+                        labelDisabled = Theme.colors.onSurfaceVariant,
                     ),
                 ) {
                 ProvideSwitchColors(
                     InputControlColorOverride(
                         control = Theme.colors.secondary,
-                        controlDisabled = Theme.colors.divider,
-                        label = Theme.colors.textPrimary,
-                        labelDisabled = Theme.colors.textSecondary,
+                        controlDisabled = Theme.colors.outlineVariant,
+                        label = Theme.colors.onSurface,
+                        labelDisabled = Theme.colors.onSurfaceVariant,
                     ),
                 ) {
                 ProvideRadioButtonColors(
                     InputControlColorOverride(
                         control = Theme.colors.secondary,
-                        controlDisabled = Theme.colors.divider,
-                        label = Theme.colors.textPrimary,
-                        labelDisabled = Theme.colors.textSecondary,
+                        controlDisabled = Theme.colors.outlineVariant,
+                        label = Theme.colors.onSurface,
+                        labelDisabled = Theme.colors.onSurfaceVariant,
                     ),
                 ) {
                 ProvideSliderColors(
                     InputControlColorOverride(
                         control = Theme.colors.secondary,
-                        controlDisabled = Theme.colors.divider,
+                        controlDisabled = Theme.colors.outlineVariant,
                     ),
                 ) {
                     Column(

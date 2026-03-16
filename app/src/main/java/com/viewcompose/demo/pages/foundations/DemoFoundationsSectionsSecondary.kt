@@ -88,7 +88,7 @@ internal fun UiTreeBuilder.FoundationsMediaSection() {
                 contentScale = ImageContentScale.Crop,
                 modifier = Modifier
                     .size(64.dp, 64.dp)
-                    .cornerRadius(Theme.shapes.cardCornerRadius),
+                    .cornerRadius(Theme.shapes.mediumCornerRadius),
             )
             Column(
                 spacing = 8.dp,
@@ -113,7 +113,7 @@ internal fun UiTreeBuilder.FoundationsMediaSection() {
                 .fillMaxWidth()
                 .height(140.dp)
                 .backgroundColor(SurfaceDefaults.variantBackgroundColor())
-                .cornerRadius(Theme.shapes.cardCornerRadius)
+                .cornerRadius(Theme.shapes.mediumCornerRadius)
                 .testTag(DemoTestTags.FOUNDATIONS_REMOTE_IMAGE)
                 .margin(bottom = 12.dp),
         )
@@ -126,7 +126,7 @@ internal fun UiTreeBuilder.FoundationsMediaSection() {
                 .fillMaxWidth()
                 .height(88.dp)
                 .backgroundColor(SurfaceDefaults.variantBackgroundColor())
-                .cornerRadius(Theme.shapes.cardCornerRadius)
+                .cornerRadius(Theme.shapes.mediumCornerRadius)
                 .testTag(DemoTestTags.FOUNDATIONS_FALLBACK_IMAGE)
                 .margin(bottom = 12.dp),
         )
@@ -138,7 +138,7 @@ internal fun UiTreeBuilder.FoundationsMediaSection() {
             Surface(modifier = Modifier.padding(8.dp)) {
                 Icon(source = ImageSource.Resource(R.drawable.demo_media_icon), contentDescription = "前景图标")
             }
-            UiThemeOverride(colors = { copy(textPrimary = secondary) }) {
+            UiThemeOverride(colors = { copy(onSurface = secondary) }) {
                 Surface(variant = SurfaceVariant.Variant, modifier = Modifier.padding(8.dp)) {
                     Icon(source = ImageSource.Resource(R.drawable.demo_media_icon), contentDescription = "Secondary 图标")
                 }

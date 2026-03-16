@@ -49,6 +49,6 @@ class TextTest {
         }
 
         val spec = tree.single().spec as TextNodeProps
-        assertEquals(Theme.colors.textPrimary, spec.textColor)
+        assertEquals(Theme.colors.onSurface, spec.textColor)
     }
 }

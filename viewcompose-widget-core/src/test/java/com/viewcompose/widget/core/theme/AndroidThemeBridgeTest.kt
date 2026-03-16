@@ -38,8 +38,6 @@ class AndroidThemeBridgeTest {
         assertEquals(1, tokens.colors.background)
         assertEquals(2, tokens.colors.surface)
         assertEquals(3, tokens.colors.surfaceVariant)
-        assertEquals(7, tokens.colors.textPrimary)
-        assertEquals(8, tokens.colors.textSecondary)
         assertEquals(70, tokens.colors.onSurface)
         assertEquals(80, tokens.colors.onSurfaceVariant)
         assertEquals(4, tokens.colors.primary)
@@ -54,7 +52,6 @@ class AndroidThemeBridgeTest {
         assertEquals(90, tokens.colors.onError)
         assertEquals(91, tokens.colors.errorContainer)
         assertEquals(92, tokens.colors.onErrorContainer)
-        assertEquals(6, tokens.colors.divider)
         assertEquals(6, tokens.colors.outline)
         assertEquals(61, tokens.colors.outlineVariant)
         assertEquals(62, tokens.colors.surfaceTint)
@@ -75,9 +72,9 @@ class AndroidThemeBridgeTest {
 
         assertEquals(99, tokens.colors.primary)
         assertEquals(UiThemeDefaults.light().colors.surface, tokens.colors.surface)
-        assertEquals(UiThemeDefaults.light().colors.textPrimary, tokens.colors.textPrimary)
         assertEquals(UiThemeDefaults.light().colors.onSurface, tokens.colors.onSurface)
-        assertEquals(UiThemeDefaults.light().typography.body.fontSizeSp, tokens.typography.body.fontSizeSp)
+        assertEquals(UiThemeDefaults.light().colors.onSurfaceVariant, tokens.colors.onSurfaceVariant)
+        assertEquals(UiThemeDefaults.light().typography.bodyMedium.fontSizeSp, tokens.typography.bodyMedium.fontSizeSp)
     }
 
     @Test
@@ -90,9 +87,9 @@ class AndroidThemeBridgeTest {
         assertEquals(UiThemeDefaults.dark().colors.background, tokens.colors.background)
         assertEquals(UiThemeDefaults.dark().colors.surface, tokens.colors.surface)
         assertEquals(UiThemeDefaults.dark().colors.primary, tokens.colors.primary)
-        assertEquals(UiThemeDefaults.dark().colors.textPrimary, tokens.colors.textPrimary)
         assertEquals(UiThemeDefaults.dark().colors.onSurface, tokens.colors.onSurface)
-        assertEquals(UiThemeDefaults.dark().typography.title.fontSizeSp, tokens.typography.title.fontSizeSp)
+        assertEquals(UiThemeDefaults.dark().colors.onSurfaceVariant, tokens.colors.onSurfaceVariant)
+        assertEquals(UiThemeDefaults.dark().typography.titleMedium.fontSizeSp, tokens.typography.titleMedium.fontSizeSp)
     }
 
     @Test
@@ -108,9 +105,9 @@ class AndroidThemeBridgeTest {
             readTextSizeSp = textSizes::get,
         )
 
-        assertEquals(28, tokens.typography.title.fontSizeSp)
-        assertEquals(18, tokens.typography.body.fontSizeSp)
-        assertEquals(12, tokens.typography.label.fontSizeSp)
+        assertEquals(28, tokens.typography.titleMedium.fontSizeSp)
+        assertEquals(18, tokens.typography.bodyMedium.fontSizeSp)
+        assertEquals(12, tokens.typography.labelMedium.fontSizeSp)
     }
 
     @Test
@@ -121,9 +118,9 @@ class AndroidThemeBridgeTest {
         )
 
         val fallback = UiThemeDefaults.light()
-        assertEquals(fallback.typography.title.fontSizeSp, tokens.typography.title.fontSizeSp)
-        assertEquals(fallback.typography.body.fontSizeSp, tokens.typography.body.fontSizeSp)
-        assertEquals(fallback.typography.label.fontSizeSp, tokens.typography.label.fontSizeSp)
+        assertEquals(fallback.typography.titleMedium.fontSizeSp, tokens.typography.titleMedium.fontSizeSp)
+        assertEquals(fallback.typography.bodyMedium.fontSizeSp, tokens.typography.bodyMedium.fontSizeSp)
+        assertEquals(fallback.typography.labelMedium.fontSizeSp, tokens.typography.labelMedium.fontSizeSp)
     }
 
     @Test
@@ -139,9 +136,9 @@ class AndroidThemeBridgeTest {
         )
 
         val fallback = UiThemeDefaults.light()
-        assertEquals(fallback.typography.title.fontSizeSp, tokens.typography.title.fontSizeSp)
-        assertEquals(20, tokens.typography.body.fontSizeSp)
-        assertEquals(fallback.typography.label.fontSizeSp, tokens.typography.label.fontSizeSp)
+        assertEquals(fallback.typography.titleMedium.fontSizeSp, tokens.typography.titleMedium.fontSizeSp)
+        assertEquals(20, tokens.typography.bodyMedium.fontSizeSp)
+        assertEquals(fallback.typography.labelMedium.fontSizeSp, tokens.typography.labelMedium.fontSizeSp)
     }
 
     @Test
@@ -165,7 +162,7 @@ class AndroidThemeBridgeTest {
         assertEquals(12, tokens.shapes.smallCornerRadius)
         assertEquals(20, tokens.shapes.mediumCornerRadius)
         assertEquals(28, tokens.shapes.largeCornerRadius)
-        assertEquals(20, tokens.shapes.cardCornerRadius)
+        assertEquals(20, tokens.shapes.mediumCornerRadius)
     }
 
     @Test
@@ -191,14 +188,16 @@ class AndroidThemeBridgeTest {
             ),
         )
 
-        assertEquals(30, tokens.typography.title.fontSizeSp)
-        assertEquals(700, tokens.typography.title.fontWeight)
-        assertEquals(0.04f, tokens.typography.title.letterSpacingEm)
-        assertEquals(36, tokens.typography.title.lineHeightSp)
-        assertEquals(true, tokens.typography.title.includeFontPadding)
-        assertEquals(19, tokens.typography.body.fontSizeSp)
-        assertEquals(500, tokens.typography.body.fontWeight)
+        assertEquals(30, tokens.typography.titleLarge.fontSizeSp)
+        assertEquals(700, tokens.typography.titleLarge.fontWeight)
+        assertEquals(0.04f, tokens.typography.titleLarge.letterSpacingEm)
+        assertEquals(36, tokens.typography.titleLarge.lineHeightSp)
+        assertEquals(true, tokens.typography.titleLarge.includeFontPadding)
+        assertEquals(30, tokens.typography.titleMedium.fontSizeSp)
+        assertEquals(19, tokens.typography.bodyLarge.fontSizeSp)
+        assertEquals(500, tokens.typography.bodyLarge.fontWeight)
+        assertEquals(19, tokens.typography.bodyMedium.fontSizeSp)
         assertEquals(11, tokens.typography.labelSmall.fontSizeSp)
-        assertEquals(UiThemeDefaults.light().typography.labelMedium.fontSizeSp, tokens.typography.labelMedium.fontSizeSp)
+        assertEquals(11, tokens.typography.labelMedium.fontSizeSp)
     }
 }

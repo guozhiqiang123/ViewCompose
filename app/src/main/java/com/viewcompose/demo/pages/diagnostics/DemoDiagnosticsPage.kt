@@ -219,8 +219,8 @@ internal fun UiTreeBuilder.DiagnosticsPage(
                         DiagnosticFact("Surface", Theme.colors.surface.asColorHex()),
                         DiagnosticFact("Primary", Theme.colors.primary.asColorHex()),
                         DiagnosticFact("Secondary", Theme.colors.secondary.asColorHex()),
-                        DiagnosticFact("Pressed", (0x22000000 or (Theme.colors.textPrimary and 0x00FFFFFF)).asColorHex()),
-                        DiagnosticFact("Card radius", "${Theme.shapes.cardCornerRadius}px"),
+                        DiagnosticFact("Pressed", (0x22000000 or (Theme.colors.onSurface and 0x00FFFFFF)).asColorHex()),
+                        DiagnosticFact("Card radius", "${Theme.shapes.mediumCornerRadius}px"),
                     ),
                 )
                 UiEnvironment(

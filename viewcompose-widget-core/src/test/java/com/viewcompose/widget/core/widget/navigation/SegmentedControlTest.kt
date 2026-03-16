@@ -81,9 +81,9 @@ class SegmentedControlTest {
     fun `segmented control emits full text style fields`() {
         val customTheme = UiThemeDefaults.light().copy(
             typography = UiTypography(
-                title = UiTextStyle(fontSizeSp = 30),
-                body = UiTextStyle(fontSizeSp = 18),
-                label = UiTextStyle(fontSizeSp = 14),
+                titleMedium = UiTextStyle(fontSizeSp = 30),
+                bodyMedium = UiTextStyle(fontSizeSp = 18),
+                labelMedium = UiTextStyle(fontSizeSp = 14),
                 labelLarge = UiTextStyle(
                     fontSizeSp = 15,
                     fontWeight = 700,

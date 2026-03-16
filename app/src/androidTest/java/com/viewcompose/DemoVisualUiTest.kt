@@ -386,7 +386,7 @@ class DemoVisualUiTest {
                 assertTextNotEllipsized(tokenButton)
                 assertViewBackgroundColor(
                     view = tokenButton,
-                    expectedColor = DemoThemeTokens.light.colors.textPrimary,
+                    expectedColor = DemoThemeTokens.light.colors.onSurface,
                 )
             }
         }

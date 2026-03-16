@@ -4,10 +4,8 @@ data class UiColors(
     val background: Int,
     val surface: Int,
     val surfaceVariant: Int,
-    val textPrimary: Int,
-    val textSecondary: Int,
-    val onSurface: Int = textPrimary,
-    val onSurfaceVariant: Int = textSecondary,
+    val onSurface: Int,
+    val onSurfaceVariant: Int,
     val primary: Int,
     val onPrimary: Int = contentColorFor(primary),
     val primaryContainer: Int = primary,
@@ -23,8 +21,7 @@ data class UiColors(
     val success: Int,
     val warning: Int,
     val info: Int,
-    val divider: Int,
-    val outline: Int = divider,
+    val outline: Int,
     val outlineVariant: Int = outline,
     val surfaceTint: Int = primary,
     val inverseSurface: Int = onSurface,
@@ -33,10 +30,9 @@ data class UiColors(
 )
 
 data class UiShapes(
-    val cardCornerRadius: Int,
     val smallCornerRadius: Int,
-    val mediumCornerRadius: Int = cardCornerRadius,
-    val largeCornerRadius: Int = cardCornerRadius,
+    val mediumCornerRadius: Int,
+    val largeCornerRadius: Int = mediumCornerRadius,
 )
 
 data class UiTextStyle(
@@ -50,18 +46,15 @@ data class UiTextStyle(
 )
 
 data class UiTypography(
-    val title: UiTextStyle,
-    val body: UiTextStyle,
-    val label: UiTextStyle,
-    val titleLarge: UiTextStyle = title,
-    val titleMedium: UiTextStyle = title,
-    val titleSmall: UiTextStyle = title,
-    val bodyLarge: UiTextStyle = body,
-    val bodyMedium: UiTextStyle = body,
-    val bodySmall: UiTextStyle = body,
-    val labelLarge: UiTextStyle = label,
-    val labelMedium: UiTextStyle = label,
-    val labelSmall: UiTextStyle = label,
+    val titleMedium: UiTextStyle,
+    val bodyMedium: UiTextStyle,
+    val labelMedium: UiTextStyle,
+    val titleLarge: UiTextStyle = titleMedium,
+    val titleSmall: UiTextStyle = titleMedium,
+    val bodyLarge: UiTextStyle = bodyMedium,
+    val bodySmall: UiTextStyle = bodyMedium,
+    val labelLarge: UiTextStyle = labelMedium,
+    val labelSmall: UiTextStyle = labelMedium,
 )
 
 data class UiThemeTokens(
@@ -76,8 +69,8 @@ data class UiOverlays(
     val scrimOpacity: Float,
 )
 
-internal fun pressedOverlayColorFor(textPrimary: Int): Int {
-    val base = textPrimary and 0x00FFFFFF
+internal fun pressedOverlayColorFor(contentColor: Int): Int {
+    val base = contentColor and 0x00FFFFFF
     return 0x22000000 or base
 }
 

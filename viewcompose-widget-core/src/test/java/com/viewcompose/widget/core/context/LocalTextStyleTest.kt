@@ -18,13 +18,13 @@ class LocalTextStyleTest {
     }
 
     @Test
-    fun `text style falls back to body when no provider`() {
+    fun `text style falls back to body medium when no provider`() {
         val tree = buildVNodeTree {
             Text("hello")
         }
 
         val spec = tree.single().spec as TextNodeProps
-        assertEquals(Theme.typography.body.fontSizeSp, spec.textSizeSp)
+        assertEquals(Theme.typography.bodyMedium.fontSizeSp, spec.textSizeSp)
     }
 
     @Test

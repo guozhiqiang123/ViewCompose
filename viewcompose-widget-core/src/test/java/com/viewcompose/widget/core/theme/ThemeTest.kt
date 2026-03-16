@@ -28,14 +28,14 @@ class ThemeTest {
                 success = 10,
                 warning = 11,
                 info = 12,
-                divider = 6,
-                textPrimary = 7,
-                textSecondary = 8,
+                onSurface = 7,
+                onSurfaceVariant = 8,
+                outline = 6,
             ),
             typography = UiTypography(
-                title = UiTextStyle(fontSizeSp = 30),
-                body = UiTextStyle(fontSizeSp = 18),
-                label = UiTextStyle(fontSizeSp = 12),
+                titleMedium = UiTextStyle(fontSizeSp = 30),
+                bodyMedium = UiTextStyle(fontSizeSp = 18),
+                labelMedium = UiTextStyle(fontSizeSp = 12),
             ),
         )
 
@@ -63,14 +63,14 @@ class ThemeTest {
                 success = 10,
                 warning = 11,
                 info = 12,
-                divider = 42,
-                textPrimary = 7,
-                textSecondary = 8,
+                onSurface = 7,
+                onSurfaceVariant = 8,
+                outline = 42,
             ),
             typography = UiTypography(
-                title = UiTextStyle(fontSizeSp = 30),
-                body = UiTextStyle(fontSizeSp = 18),
-                label = UiTextStyle(fontSizeSp = 12),
+                titleMedium = UiTextStyle(fontSizeSp = 30),
+                bodyMedium = UiTextStyle(fontSizeSp = 18),
+                labelMedium = UiTextStyle(fontSizeSp = 12),
             ),
         )
 
@@ -95,19 +95,19 @@ class ThemeTest {
 
         buildVNodeTree {
             UiTheme(outerTheme) {
-                outerColor = Theme.colors.textPrimary
-                outerSize = Theme.typography.body.fontSizeSp
+                outerColor = Theme.colors.onSurface
+                outerSize = Theme.typography.bodyMedium.fontSizeSp
                 UiTheme(innerTheme) {
-                    innerColor = Theme.colors.textPrimary
-                    innerSize = Theme.typography.body.fontSizeSp
+                    innerColor = Theme.colors.onSurface
+                    innerSize = Theme.typography.bodyMedium.fontSizeSp
                 }
             }
         }
 
-        assertEquals(outerTheme.colors.textPrimary, outerColor)
-        assertEquals(innerTheme.colors.textPrimary, innerColor)
-        assertEquals(outerTheme.typography.body.fontSizeSp, outerSize)
-        assertEquals(innerTheme.typography.body.fontSizeSp, innerSize)
+        assertEquals(outerTheme.colors.onSurface, outerColor)
+        assertEquals(innerTheme.colors.onSurface, innerColor)
+        assertEquals(outerTheme.typography.bodyMedium.fontSizeSp, outerSize)
+        assertEquals(innerTheme.typography.bodyMedium.fontSizeSp, innerSize)
     }
 
     @Test
@@ -122,13 +122,13 @@ class ThemeTest {
                     colors = baseTheme.colors.copy(primary = 0xFF225577.toInt()),
                 ) {
                     primary = Theme.colors.primary
-                    bodySize = Theme.typography.body.fontSizeSp
+                    bodySize = Theme.typography.bodyMedium.fontSizeSp
                 }
             }
         }
 
         assertEquals(0xFF225577.toInt(), primary)
-        assertEquals(baseTheme.typography.body.fontSizeSp, bodySize)
+        assertEquals(baseTheme.typography.bodyMedium.fontSizeSp, bodySize)
     }
 
     @Test
@@ -213,14 +213,14 @@ class ThemeTest {
                 ) {
                     resolvedPrimary = Theme.colors.primary
                     resolvedCorner = Theme.shapes.smallCornerRadius
-                    unchangedBody = Theme.typography.body.fontSizeSp
+                    unchangedBody = Theme.typography.bodyMedium.fontSizeSp
                 }
             }
         }
 
         assertEquals(0xFF445566.toInt(), resolvedPrimary)
         assertEquals(77, resolvedCorner)
-        assertEquals(baseTheme.typography.body.fontSizeSp, unchangedBody)
+        assertEquals(baseTheme.typography.bodyMedium.fontSizeSp, unchangedBody)
     }
 
     @Test
@@ -280,14 +280,14 @@ class ThemeTest {
                 success = 10,
                 warning = 11,
                 info = 12,
-                divider = 6,
-                textPrimary = 7,
-                textSecondary = 8,
+                onSurface = 7,
+                onSurfaceVariant = 8,
+                outline = 6,
             ),
             typography = UiTypography(
-                title = UiTextStyle(fontSizeSp = 30),
-                body = UiTextStyle(fontSizeSp = 18),
-                label = UiTextStyle(fontSizeSp = 12),
+                titleMedium = UiTextStyle(fontSizeSp = 30),
+                bodyMedium = UiTextStyle(fontSizeSp = 18),
+                labelMedium = UiTextStyle(fontSizeSp = 12),
             ),
         )
 
@@ -300,9 +300,9 @@ class ThemeTest {
         val spec = tree.single().spec as ButtonNodeProps
         assertEquals(customTheme.colors.primary, spec.backgroundColor)
         assertEquals(customTheme.shapes.smallCornerRadius, spec.cornerRadius)
-        assertEquals(pressedOverlayColorFor(customTheme.colors.textPrimary), spec.rippleColor)
+        assertEquals(pressedOverlayColorFor(customTheme.colors.onSurface), spec.rippleColor)
         assertEquals(0xFFFFFFFF.toInt(), spec.textColor)
-        assertEquals(customTheme.typography.label.fontSizeSp, spec.textSizeSp)
+        assertEquals(customTheme.typography.labelLarge.fontSizeSp, spec.textSizeSp)
         assertEquals(customTheme.controls.button.mediumHeight, ButtonDefaults.height())
         assertEquals(customTheme.controls.button.mediumHeight, spec.minHeight)
     }
@@ -341,8 +341,8 @@ class ThemeTest {
         val spec = tree.single().spec as ButtonNodeProps
 
         assertEquals(false, spec.enabled)
-        assertEquals(baseTheme.colors.divider, spec.backgroundColor)
-        assertEquals(baseTheme.colors.textSecondary, spec.textColor)
+        assertEquals(baseTheme.colors.outlineVariant, spec.backgroundColor)
+        assertEquals(baseTheme.colors.onSurfaceVariant, spec.textColor)
     }
 
     @Test
@@ -431,7 +431,7 @@ class ThemeTest {
 
         assertEquals(31, compactHeight)
         assertEquals(31, largeHorizontalPadding)
-        assertEquals(customTheme.typography.body.fontSizeSp, largeStyle)
+        assertEquals(customTheme.typography.bodyLarge.fontSizeSp, largeStyle)
     }
 
     @Test
@@ -447,14 +447,14 @@ class ThemeTest {
                 success = 0xFF2E7D32.toInt(),
                 warning = 0xFFF57C00.toInt(),
                 info = 0xFF1565C0.toInt(),
-                divider = 0xFF778899.toInt(),
-                textPrimary = 0xFFAABBCC.toInt(),
-                textSecondary = 0xFFDDEEFF.toInt(),
+                onSurface = 0xFFAABBCC.toInt(),
+                onSurfaceVariant = 0xFFDDEEFF.toInt(),
+                outline = 0xFF778899.toInt(),
             ),
             typography = UiTypography(
-                title = UiTextStyle(fontSizeSp = 30),
-                body = UiTextStyle(fontSizeSp = 18),
-                label = UiTextStyle(fontSizeSp = 12),
+                titleMedium = UiTextStyle(fontSizeSp = 30),
+                bodyMedium = UiTextStyle(fontSizeSp = 18),
+                labelMedium = UiTextStyle(fontSizeSp = 12),
             ),
         )
         var buttonTonal = 0
@@ -474,9 +474,9 @@ class ThemeTest {
         }
 
         assertEquals(customTheme.colors.secondaryContainer, buttonTonal)
-        assertEquals(customTheme.colors.divider, outlinedBorder)
-        assertEquals(customTheme.colors.divider, disabledPrimary)
-        assertEquals(customTheme.colors.divider, linearProgressTrack)
+        assertEquals(customTheme.colors.outline, outlinedBorder)
+        assertEquals(customTheme.colors.outlineVariant, disabledPrimary)
+        assertEquals(customTheme.colors.outlineVariant, linearProgressTrack)
         assertEquals(customTheme.colors.primary, segmentedIndicator)
     }
 
@@ -493,14 +493,14 @@ class ThemeTest {
                 success = 10,
                 warning = 11,
                 info = 12,
-                divider = 6,
-                textPrimary = 70,
-                textSecondary = 80,
+                onSurface = 70,
+                onSurfaceVariant = 80,
+                outline = 6,
             ),
             typography = UiTypography(
-                title = UiTextStyle(fontSizeSp = 31),
-                body = UiTextStyle(fontSizeSp = 19),
-                label = UiTextStyle(fontSizeSp = 13),
+                titleMedium = UiTextStyle(fontSizeSp = 31),
+                bodyMedium = UiTextStyle(fontSizeSp = 19),
+                labelMedium = UiTextStyle(fontSizeSp = 13),
             ),
         )
         var primaryColor = 0
@@ -515,9 +515,9 @@ class ThemeTest {
             }
         }
 
-        assertEquals(customTheme.colors.textPrimary, primaryColor)
-        assertEquals(customTheme.colors.textSecondary, secondaryColor)
-        assertEquals(customTheme.typography.title.fontSizeSp, titleSize)
+        assertEquals(customTheme.colors.onSurface, primaryColor)
+        assertEquals(customTheme.colors.onSurfaceVariant, secondaryColor)
+        assertEquals(customTheme.typography.titleMedium.fontSizeSp, titleSize)
     }
 
     @Test
@@ -533,14 +533,14 @@ class ThemeTest {
                 success = 10,
                 warning = 11,
                 info = 12,
-                divider = 66,
-                textPrimary = 70,
-                textSecondary = 80,
+                onSurface = 70,
+                onSurfaceVariant = 80,
+                outline = 66,
             ),
             typography = UiTypography(
-                title = UiTextStyle(fontSizeSp = 31),
-                body = UiTextStyle(fontSizeSp = 19),
-                label = UiTextStyle(fontSizeSp = 13),
+                titleMedium = UiTextStyle(fontSizeSp = 31),
+                bodyMedium = UiTextStyle(fontSizeSp = 19),
+                labelMedium = UiTextStyle(fontSizeSp = 13),
             ),
         )
         var surface = 0
@@ -557,7 +557,7 @@ class ThemeTest {
 
         assertEquals(customTheme.colors.surface, surface)
         assertEquals(customTheme.colors.surfaceVariant, surfaceVariant)
-        assertEquals(customTheme.colors.divider, divider)
+        assertEquals(customTheme.colors.outlineVariant, divider)
     }
 
     @Test
@@ -620,21 +620,21 @@ class ThemeTest {
                 success = 10,
                 warning = 11,
                 info = 12,
-                divider = 66,
-                textPrimary = 77,
-                textSecondary = 88,
+                onSurface = 77,
+                onSurfaceVariant = 88,
+                outline = 66,
             ),
             typography = UiTypography(
-                title = UiTextStyle(fontSizeSp = 31),
-                body = UiTextStyle(fontSizeSp = 19),
-                label = UiTextStyle(fontSizeSp = 13),
+                titleMedium = UiTextStyle(fontSizeSp = 31),
+                bodyMedium = UiTextStyle(fontSizeSp = 19),
+                labelMedium = UiTextStyle(fontSizeSp = 13),
             ),
         )
         var container = 0
         var disabledContainer = 0
         var errorColor = 0
         var controlColor = 0
-        var cardCornerRadius = 0
+        var surfaceCornerRadius = 0
         var pressedColor = 0
 
         buildVNodeTree {
@@ -643,7 +643,7 @@ class ThemeTest {
                 disabledContainer = TextFieldDefaults.containerColor(enabled = false)
                 errorColor = TextFieldDefaults.hintColor(isError = true)
                 controlColor = InputControlDefaults.checkboxControlColor()
-                cardCornerRadius = SurfaceDefaults.cardCornerRadius()
+                surfaceCornerRadius = SurfaceDefaults.cardCornerRadius()
                 pressedColor = SurfaceDefaults.pressedColor()
             }
         }
@@ -652,8 +652,8 @@ class ThemeTest {
         assertEquals(customTheme.colors.surfaceVariant, disabledContainer)
         assertEquals(customTheme.colors.onErrorContainer, errorColor)
         assertEquals(customTheme.colors.primary, controlColor)
-        assertEquals(customTheme.shapes.cardCornerRadius, cardCornerRadius)
-        assertEquals(pressedOverlayColorFor(customTheme.colors.textPrimary), pressedColor)
+        assertEquals(customTheme.shapes.mediumCornerRadius, surfaceCornerRadius)
+        assertEquals(pressedOverlayColorFor(customTheme.colors.onSurface), pressedColor)
     }
 
     @Test
@@ -693,7 +693,7 @@ class ThemeTest {
 
         assertEquals(35, compactHeight)
         assertEquals(7, mediumVerticalPadding)
-        assertEquals(customTheme.typography.label.fontSizeSp, compactStyle)
+        assertEquals(customTheme.typography.labelSmall.fontSizeSp, compactStyle)
     }
 
     @Test

@@ -23,14 +23,14 @@ class ProgressIndicatorTest {
                 success = 10,
                 warning = 11,
                 info = 12,
-                divider = 6,
-                textPrimary = 7,
-                textSecondary = 8,
+                onSurface = 7,
+                onSurfaceVariant = 8,
+                outline = 6,
             ),
             typography = UiTypography(
-                title = UiTextStyle(fontSizeSp = 30),
-                body = UiTextStyle(fontSizeSp = 16),
-                label = UiTextStyle(fontSizeSp = 14),
+                titleMedium = UiTextStyle(fontSizeSp = 30),
+                bodyMedium = UiTextStyle(fontSizeSp = 16),
+                labelMedium = UiTextStyle(fontSizeSp = 14),
             ),
         )
 
@@ -49,7 +49,7 @@ class ProgressIndicatorTest {
         assertEquals(NodeType.LinearProgressIndicator, node.type)
         assertEquals(0.42f, spec.progress)
         assertEquals(customTheme.colors.primary, spec.indicatorColor)
-        assertEquals(customTheme.colors.divider, spec.trackColor)
+        assertEquals(customTheme.colors.outlineVariant, spec.trackColor)
         assertEquals(customTheme.controls.progressIndicator.linearTrackThickness, spec.trackThickness)
         assertEquals(android.view.ViewGroup.LayoutParams.MATCH_PARENT, width.width)
         assertEquals(customTheme.controls.progressIndicator.linearTrackThickness, height.height)
@@ -69,14 +69,14 @@ class ProgressIndicatorTest {
                 success = 20,
                 warning = 21,
                 info = 22,
-                divider = 16,
-                textPrimary = 17,
-                textSecondary = 18,
+                onSurface = 17,
+                onSurfaceVariant = 18,
+                outline = 16,
             ),
             typography = UiTypography(
-                title = UiTextStyle(fontSizeSp = 28),
-                body = UiTextStyle(fontSizeSp = 16),
-                label = UiTextStyle(fontSizeSp = 13),
+                titleMedium = UiTextStyle(fontSizeSp = 28),
+                bodyMedium = UiTextStyle(fontSizeSp = 16),
+                labelMedium = UiTextStyle(fontSizeSp = 13),
             ),
         )
 
@@ -93,7 +93,7 @@ class ProgressIndicatorTest {
         assertEquals(NodeType.CircularProgressIndicator, node.type)
         assertEquals(null, spec.progress)
         assertEquals(customTheme.colors.primary, spec.indicatorColor)
-        assertEquals(customTheme.colors.divider, spec.trackColor)
+        assertEquals(customTheme.colors.outlineVariant, spec.trackColor)
         assertEquals(customTheme.controls.progressIndicator.circularTrackThickness, spec.trackThickness)
         assertEquals(customTheme.controls.progressIndicator.circularSize, spec.indicatorSize)
         assertEquals(customTheme.controls.progressIndicator.circularSize, size.width)

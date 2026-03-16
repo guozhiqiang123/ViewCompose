@@ -29,8 +29,6 @@ internal data class AndroidThemeColorSnapshot(
     val surfaceTint: Int? = null,
     val inverseSurface: Int? = null,
     val inverseOnSurface: Int? = null,
-    val textPrimary: Int? = null,
-    val textSecondary: Int? = null,
     val ripple: Int? = null,
 )
 
@@ -108,12 +106,14 @@ internal object AndroidThemeSnapshotReader {
         )
         val typedArray = context.obtainStyledAttributes(attrs)
         return try {
+            val onSurface = typedArray.getColorOrNull(3) ?: typedArray.getColorOrNull(22)
+            val onSurfaceVariant = typedArray.getColorOrNull(4) ?: typedArray.getColorOrNull(23)
             AndroidThemeColorSnapshot(
                 background = typedArray.getColorOrNull(0),
                 surface = typedArray.getColorOrNull(1),
                 surfaceVariant = typedArray.getColorOrNull(2),
-                onSurface = typedArray.getColorOrNull(3),
-                onSurfaceVariant = typedArray.getColorOrNull(4),
+                onSurface = onSurface,
+                onSurfaceVariant = onSurfaceVariant,
                 primary = typedArray.getColorOrNull(5),
                 onPrimary = typedArray.getColorOrNull(6),
                 primaryContainer = typedArray.getColorOrNull(7),
@@ -131,8 +131,6 @@ internal object AndroidThemeSnapshotReader {
                 surfaceTint = typedArray.getColorOrNull(19),
                 inverseSurface = typedArray.getColorOrNull(20),
                 inverseOnSurface = typedArray.getColorOrNull(21),
-                textPrimary = typedArray.getColorOrNull(22),
-                textSecondary = typedArray.getColorOrNull(23),
                 ripple = typedArray.getColorOrNull(24),
             )
         } finally {

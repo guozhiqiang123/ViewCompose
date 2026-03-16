@@ -11,28 +11,26 @@ class ThemeTokenCompatibilityTest {
                 background = 1,
                 surface = 2,
                 surfaceVariant = 3,
+                onSurface = 11,
+                onSurfaceVariant = 12,
                 primary = 4,
                 secondary = 44,
                 error = 66,
                 success = 7,
                 warning = 8,
                 info = 9,
-                divider = 10,
-                textPrimary = 11,
-                textSecondary = 12,
+                outline = 10,
             ),
             typography = UiTypography(
-                title = UiTextStyle(fontSizeSp = 30),
-                body = UiTextStyle(fontSizeSp = 18),
-                label = UiTextStyle(fontSizeSp = 14),
                 titleMedium = UiTextStyle(fontSizeSp = 26),
                 bodyLarge = UiTextStyle(fontSizeSp = 20),
                 bodyMedium = UiTextStyle(fontSizeSp = 17),
+                labelMedium = UiTextStyle(fontSizeSp = 14),
                 labelSmall = UiTextStyle(fontSizeSp = 12),
             ),
             shapes = UiShapes(
-                cardCornerRadius = 20,
                 smallCornerRadius = 22,
+                mediumCornerRadius = 20,
             ),
         )
         var secondaryContainer = 0
@@ -67,13 +65,16 @@ class ThemeTokenCompatibilityTest {
     @Test
     fun `tiered typography defaults map to base tokens when tiers are omitted`() {
         val typography = UiTypography(
-            title = UiTextStyle(fontSizeSp = 30),
-            body = UiTextStyle(fontSizeSp = 18),
-            label = UiTextStyle(fontSizeSp = 14),
+            titleMedium = UiTextStyle(fontSizeSp = 30),
+            bodyMedium = UiTextStyle(fontSizeSp = 18),
+            labelMedium = UiTextStyle(fontSizeSp = 14),
         )
 
-        assertEquals(typography.title, typography.titleMedium)
-        assertEquals(typography.body, typography.bodyMedium)
-        assertEquals(typography.label, typography.labelMedium)
+        assertEquals(typography.titleMedium, typography.titleLarge)
+        assertEquals(typography.titleMedium, typography.titleSmall)
+        assertEquals(typography.bodyMedium, typography.bodyLarge)
+        assertEquals(typography.bodyMedium, typography.bodySmall)
+        assertEquals(typography.labelMedium, typography.labelLarge)
+        assertEquals(typography.labelMedium, typography.labelSmall)
     }
 }

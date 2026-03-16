@@ -80,9 +80,9 @@ class AdditionalWidgetCoverageTest {
     fun `navigation bar emits items and selection props`() {
         val theme = UiThemeDefaults.light().copy(
             typography = UiTypography(
-                title = UiTextStyle(fontSizeSp = 30),
-                body = UiTextStyle(fontSizeSp = 18),
-                label = UiTextStyle(fontSizeSp = 14),
+                titleMedium = UiTextStyle(fontSizeSp = 30),
+                bodyMedium = UiTextStyle(fontSizeSp = 18),
+                labelMedium = UiTextStyle(fontSizeSp = 14),
                 labelSmall = UiTextStyle(
                     fontSizeSp = 12,
                     fontWeight = 600,

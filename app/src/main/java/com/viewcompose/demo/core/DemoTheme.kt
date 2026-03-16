@@ -33,18 +33,18 @@ object DemoThemeTokens {
             success = 0xFF2E7D32.toInt(),
             warning = 0xFFF57C00.toInt(),
             info = 0xFF1565C0.toInt(),
-            divider = 0xFFCCBDAA.toInt(),
-            textPrimary = 0xFF2F241B.toInt(),
-            textSecondary = 0xFF6A5A4A.toInt(),
+            onSurface = 0xFF2F241B.toInt(),
+            onSurfaceVariant = 0xFF6A5A4A.toInt(),
+            outline = 0xFFCCBDAA.toInt(),
         ),
         typography = UiTypography(
-            title = UiTextStyle(fontSizeSp = 22.sp),
-            body = UiTextStyle(fontSizeSp = 16.sp),
-            label = UiTextStyle(fontSizeSp = 14.sp),
+            titleMedium = UiTextStyle(fontSizeSp = 22.sp),
+            bodyMedium = UiTextStyle(fontSizeSp = 16.sp),
+            labelMedium = UiTextStyle(fontSizeSp = 14.sp),
         ),
         shapes = UiShapes(
-            cardCornerRadius = 24.dp,
             smallCornerRadius = 18.dp,
+            mediumCornerRadius = 24.dp,
         ),
         controls = UiControlSizing(
             button = UiButtonSizing(
@@ -99,18 +99,18 @@ object DemoThemeTokens {
             success = 0xFF81C784.toInt(),
             warning = 0xFFFBC02D.toInt(),
             info = 0xFF64B5F6.toInt(),
-            divider = 0xFF5B5046.toInt(),
-            textPrimary = 0xFFF4EFE8.toInt(),
-            textSecondary = 0xFFD0C4B6.toInt(),
+            onSurface = 0xFFF4EFE8.toInt(),
+            onSurfaceVariant = 0xFFD0C4B6.toInt(),
+            outline = 0xFF5B5046.toInt(),
         ),
         typography = UiTypography(
-            title = UiTextStyle(fontSizeSp = 22.sp),
-            body = UiTextStyle(fontSizeSp = 16.sp),
-            label = UiTextStyle(fontSizeSp = 14.sp),
+            titleMedium = UiTextStyle(fontSizeSp = 22.sp),
+            bodyMedium = UiTextStyle(fontSizeSp = 16.sp),
+            labelMedium = UiTextStyle(fontSizeSp = 14.sp),
         ),
         shapes = UiShapes(
-            cardCornerRadius = 24.dp,
             smallCornerRadius = 18.dp,
+            mediumCornerRadius = 24.dp,
         ),
         controls = UiControlSizing(
             button = UiButtonSizing(
