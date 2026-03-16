@@ -57,7 +57,7 @@
 6. 动画与手势已形成“内核 + DSL + Android interop 扩展”分层模型（animation-core + animation、gesture-core + gesture、host interop）
 7. graphics 已形成“内核 + DSL + renderer + host interop”分层模型（graphics-core + graphics + renderer draw pipeline + host-android AndroidGraphicsInterop）
 8. ConstraintLayout 已按“widget DSL 模块 + renderer 平台映射”分层落地，支持 anchors/dimension/bias/baseline/baselineToTop/baselineToBottom/circle/guideline/barrier/chain(+weights)/Flow/Group/Layer/Placeholder/decoupled constraintSet，以及 match-constraint 进阶参数（min/max/percent/constrained）
-9. Theme token 已进入“消费闭环”阶段：新增 token 必须进入 defaults/composite 默认值，或明确登记为 reserved/compatibility alias
+9. Theme token 已进入“消费闭环”阶段：新增 token 必须进入 defaults/composite 默认值，或明确登记为 reserved semantic palette
 
 ### 2.3 `app` 目录落位基线
 

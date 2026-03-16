@@ -17,9 +17,9 @@
 ## Checklist
 
 - [x] Step 1: 新增执行计划文档并提交
-- [ ] Step 2: 硬切 ThemeTokens/Defaults/Bridge/Local 到纯语义主入口
-- [ ] Step 3: 同步迁移 demo、测试与审计守卫
-- [ ] Step 4: 更新 `THEMING.md` 并归档执行计划
+- [x] Step 2: 硬切 ThemeTokens/Defaults/Bridge/Local 到纯语义主入口
+- [x] Step 3: 同步迁移 demo、测试与审计守卫
+- [x] Step 4: 更新 `THEMING.md` 并归档执行计划
 
 ## Acceptance
 
@@ -32,6 +32,7 @@
 ## Commit Log
 
 1. `docs: add theme tokens alias cleanup execution plan`
+2. `refactor: hard-cut theme tokens to semantic-only model`
 
 ## Blockers
 

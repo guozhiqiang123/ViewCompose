@@ -32,8 +32,8 @@
 当前 token 语义补充：
 
 1. `colors` 同时承载基础色、`on*` 前景色、`*Container` 容器色、轮廓色、逆表面色与 ripple。
-2. `typography` 同时保留旧 `title/body/label` 和 tiered `title*/body*/label*`。
-3. `shapes` 当前保留 `cardCornerRadius` 兼容入口，并以语义化 `small / medium / large` 三级圆角为主入口。
+2. `typography` 只保留 tiered `title*/body*/label*` 作为唯一主入口。
+3. `shapes` 只保留语义化 `small / medium / large` 三级圆角作为唯一主入口。
 4. `controls` 仍是框架自有尺寸 token，不承诺与 Android 原主题系统一一对齐。
 5. `overlays` 当前由语义 token 承载跨组件蒙层配置。
 
@@ -44,33 +44,28 @@
 1. 至少被一个 core defaults/composite 默认值明确消费。
 2. 被列入 whitelist，并在文档中说明原因。
 
-当前 whitelist 分两类：
+当前 whitelist 仅保留 `reserved semantic palette`：
 
-1. `reserved semantic palette`
-   - `success`
-   - `warning`
-   - `info`
-   - `surfaceTint`
-   说明：本轮不强绑到现有核心组件，避免为了提高使用率污染语义。
-2. `compatibility aliases`
-   - colors: `textPrimary`、`textSecondary`、`divider`
-   - typography: `title`、`body`、`label`
-   - shapes: `cardCornerRadius`
-   说明：这些字段保留兼容职责，不再作为内部 defaults 首选入口。
+1. `success`
+2. `warning`
+3. `info`
+4. `surfaceTint`
+
+说明：本轮不强绑到现有核心组件，避免为了提高使用率污染语义。
 
 为防止回流，仓库有 `ThemeTokenUsageAuditTest` 守卫：
 
 1. 新增 token 时，若未消费也未加入 whitelist，测试必须直接失败。
 2. defaults 若从语义 token 回退到旧 alias，也会在审计时暴露。
 
-## 2.1 兼容迁移策略
+## 2.1 语义主入口规则
 
-主题 token 扩展默认采用“先兼容后移除”：
+主题 token 扩展默认采用“语义主入口 + 一次性收口”：
 
-1. 新语义字段先引入并成为推荐入口。
-2. 旧字段进入 `@Deprecated` 过渡期，保持行为不变。
-3. 文档必须写明迁移路径与预期移除窗口。
-4. 新增默认值逻辑优先走新语义字段，旧字段只保留兼容别名职责。
+1. 新字段一旦成为主语义入口，defaults 与 demo 必须同轮迁移。
+2. 若旧字段只是历史别名，应在收口轮次直接移除，不继续长期并存。
+3. 文档必须写明哪些字段属于正式语义入口，哪些字段仅是 reserved token。
+4. 新增默认值逻辑只允许读取正式语义字段，不允许引入别名回流。
 
 ## 2.2 硬编码禁用清单
 
@@ -148,7 +143,7 @@ Android 主题桥接只做“平台语义到框架语义”的映射，内部固
    - 已桥接：`primaryContainer / secondaryContainer / errorContainer`
    - 已桥接：`onPrimaryContainer / onSecondaryContainer / onErrorContainer`
    - 已桥接：`outline / outlineVariant / inverseSurface / inverseOnSurface`
-   - 已桥接：`textPrimary / textSecondary`
+   - 已桥接：`onSurface / onSurfaceVariant`
    - 已桥接：`ripple`（优先读 `colorControlHighlight`）
    - best-effort：`surfaceTint` 当前优先对接 `colorAccent` 语义来源
 2. `typography`
