@@ -75,6 +75,7 @@
 
 ```bash
 git clone https://github.com/guozhiqiang123/ViewCompose.git
+
 cd ViewCompose
 ./gradlew qaQuick
 ```
