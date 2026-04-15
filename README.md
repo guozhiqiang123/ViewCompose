@@ -1,5 +1,10 @@
 # ViewCompose
 
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Status: Experimental](https://img.shields.io/badge/Status-Experimental-orange)
+![Production Ready: No](https://img.shields.io/badge/Production_Ready-No-red)
+![AI Generated: 99%](https://img.shields.io/badge/AI_Generated-99%25-blueviolet)
+
 `ViewCompose` 是一个基于 Android View 渲染管线的声明式 UI 框架，采用 Kotlin DSL 描述 UI，并通过可观测状态驱动增量更新。  
 `ViewCompose` is a declarative UI framework on top of the Android View rendering pipeline. It uses a Kotlin DSL to describe UI and applies incremental updates from observable state.
 
