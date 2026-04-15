@@ -279,12 +279,16 @@ internal class TabRowContainer(context: Context) : ViewGroup(context) {
     private val indicatorDrawable = GradientDrawable()
     private var indicatorLeft = 0f
     private var indicatorRight = 0f
+    private var indicatorCurrentIndex = 0
+    private var indicatorCurrentOffset = 0f
 
     init {
         setWillNotDraw(false)
     }
 
     fun updateIndicatorPosition(currentIndex: Int, offset: Float) {
+        indicatorCurrentIndex = currentIndex
+        indicatorCurrentOffset = offset
         if (childCount == 0) {
             clearIndicator()
             return
@@ -392,6 +396,10 @@ internal class TabRowContainer(context: Context) : ViewGroup(context) {
             val child = getChildAt(i)
             child.layout(left, 0, left + child.measuredWidth, child.measuredHeight)
             left += child.measuredWidth + itemSpacingPx
+        }
+        if (childCount > 0) {
+            // Recompute indicator with final child bounds to avoid missing first-frame indicator.
+            updateIndicatorPosition(indicatorCurrentIndex, indicatorCurrentOffset)
         }
     }
 
