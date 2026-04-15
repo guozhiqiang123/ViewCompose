@@ -75,7 +75,7 @@
 
 ```bash
 git clone https://github.com/guozhiqiang123/ViewCompose.git
-cd UIFramework
+cd ViewCompose
 ./gradlew qaQuick
 ```
 
