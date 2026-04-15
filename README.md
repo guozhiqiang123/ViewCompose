@@ -74,7 +74,7 @@
 ### 拉取与构建 | Clone & Build
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/guozhiqiang123/ViewCompose.git
 cd UIFramework
 ./gradlew qaQuick
 ```
